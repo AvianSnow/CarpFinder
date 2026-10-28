@@ -5,8 +5,9 @@
   skillBoosts:
     - Religion
     - Diplomacy
-  trainedSkills:
-    - Religion
+  skillRanks:
+    Religion: trained
+    Diplomacy: trained
   abilityBoosts:
     - Wisdom
-    - Charisma  
+    - Charisma

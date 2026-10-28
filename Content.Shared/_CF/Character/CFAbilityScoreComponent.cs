@@ -6,7 +6,7 @@ namespace Content.Shared.CF.Character;
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class CFAbilityScoreComponent : Component
 {
-    [DataField("abilityScores")]
+    [DataField("abilityScores"), AutoNetworkedField]
     public Dictionary<CFAbility, int> AbilityScores = new()
     {
         { CFAbility.Strength, 10 },
@@ -16,6 +16,7 @@ public sealed partial class CFAbilityScoreComponent : Component
         { CFAbility.Wisdom, 10 },
         { CFAbility.Charisma, 10 }
     };
+
     public int GetAbilityScore(CFAbility ability)
     {
         return AbilityScores.TryGetValue(ability, out var score) ? score : 10;
