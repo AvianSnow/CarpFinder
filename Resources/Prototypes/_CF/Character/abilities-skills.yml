@@ -1,0 +1,96 @@
+- type: cfAbilitySkill
+  id: Acrobatics
+  name: cf-ability-skill-acrobatics
+  ability: Dexterity
+  order: 0
+
+- type: cfAbilitySkill
+  id: Arcana
+  name: cf-ability-skill-arcana
+  ability: Intelligence
+  order: 1
+
+- type: cfAbilitySkill
+  id: Athletics
+  name: cf-ability-skill-athletics
+  ability: Strength
+  order: 2
+
+- type: cfAbilitySkill
+  id: Crafting
+  name: cf-ability-skill-crafting
+  ability: Intelligence
+  order: 3
+
+- type: cfAbilitySkill
+  id: Deception
+  name: cf-ability-skill-deception
+  ability: Charisma
+  order: 4
+
+- type: cfAbilitySkill
+  id: Diplomacy
+  name: cf-ability-skill-diplomacy
+  ability: Charisma
+  order: 5
+
+- type: cfAbilitySkill
+  id: Intimidation
+  name: cf-ability-skill-intimidation
+  ability: Charisma
+  order: 6
+
+- type: cfAbilitySkill
+  id: Medicine
+  name: cf-ability-skill-medicine
+  ability: Wisdom
+  order: 7
+
+- type: cfAbilitySkill
+  id: Nature
+  name: cf-ability-skill-nature
+  ability: Intelligence
+  order: 8
+
+- type: cfAbilitySkill
+  id: Occultism
+  name: cf-ability-skill-occultism
+  ability: Intelligence
+  order: 9
+
+- type: cfAbilitySkill
+  id: Performance
+  name: cf-ability-skill-performance
+  ability: Charisma
+  order: 10
+
+- type: cfAbilitySkill
+  id: Religion
+  name: cf-ability-skill-religion
+  ability: Intelligence
+  order: 11
+
+- type: cfAbilitySkill
+  id: Society
+  name: cf-ability-skill-society
+  ability: Intelligence
+  order: 12
+
+- type: cfAbilitySkill
+  id: Stealth
+  name: cf-ability-skill-stealth
+  ability: Dexterity
+  order: 13
+
+- type: cfAbilitySkill
+  id: Survival
+  name: cf-ability-skill-survival
+  ability: Wisdom
+  order: 14
+
+- type: cfAbilitySkill
+  id: Thievery
+  name: cf-ability-skill-thievery
+  ability: Dexterity
+  order: 15
+  
