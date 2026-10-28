@@ -10,14 +10,34 @@ public static class CFMelee
 {
     // <summary>
     /// How far a melee swing reaching, In tiles, One tile in ss14 is 32x32pixels, wich is 1.8m in real life, roughly 6ft.
-    /// but we need to make sure that melee weapons can reach a bit further than 1 tile, so we will set the range to 1.5 tiles, wich is 48x48pixels, wich is 2.7m in real life, roughly 9ft.
-    /// </summary>
-    public const float MeleeRange = 1.5f;
+    /// but we need to make sure that melee weapons can reach a bit further than 1 tile, so we will set the range to 1.25 tiles,
+    public const float MeleeRange = 1.25f;
 
     public static bool InReach(float distance)
     {
         return distance <= MeleeRange;
     }
+    public static int AttackAbility(int strength, int dexterity, int proficiencyBonus, bool isProficient, bool finesse)
+    {
+        // If the weapon is a finesse weapon, we can use either strength or dexterity, whichever is higher.
+        // For now we will just use strength, but we will add finesse weapons later.
+        int abilityScore = Math.Max(strength, dexterity);
+        int abilityModifier = (abilityScore - 10) / 2;
+        return abilityModifier + (isProficient ? proficiencyBonus : 0);
+    }
+    public static bool Hits(int attackRoll, int targetAC)
+    {
+        return attackRoll >= targetAC;
+    }
+    public static int DamageRoll(int damageDice, int damageModifier)
+    {
+        // Roll the damage dice and add the damage modifier.
+        System.Random rand = new System.Random();
+        int roll = rand.Next(1, damageDice + 1);
+        return roll + damageModifier;
+    }
+
+
     public static readonly Dictionary<string, string> DamageTypes = new()
     {
         { "slashing", "Slashing" },
