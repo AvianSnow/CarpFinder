@@ -1,0 +1,41 @@
+- type: gamePreset
+  id: Secret
+  alias:
+    - secret
+    - sekrit
+  name: secret-title
+  showInVote: true
+  description: secret-description
+  rules:
+  - Secret
+
+- type: gamePreset
+  id: BaselineSandbox
+  alias:
+    - sandbox
+  name: sandbox-title
+  description: sandbox-description
+  showInVote: false
+  maxPlayers: 5
+  rules:
+  - Sandbox
+
+- type: gamePreset
+  id: CEGreenshift
+  name: ce-game-preset-greenshift-title
+  description: ce-game-preset-greenshift-description
+  showInVote: true
+  rules:
+  - CEGameRuleMurkConsuming
+  #- CEGameRuleThieves
+  - CERampingStationEventScheduler
+
+- type: gamePreset
+  id: CENightmareAwakening
+  name: ce-game-preset-nightmare-awakening-title
+  description: ce-game-preset-nightmare-awakening-description
+  showInVote: true
+  rules:
+  - CEGameRuleMurkConsuming
+  - CEGameRuleNightmareAwakening
+  - CERampingStationEventScheduler

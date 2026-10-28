@@ -1,0 +1,8 @@
+- type: Tag
+  id: CERecipeWorkbench
+
+- type: Tag
+  id: CERecipeMeltingFurnace
+
+- type: Tag
+  id: CERecipeEngineeringTable

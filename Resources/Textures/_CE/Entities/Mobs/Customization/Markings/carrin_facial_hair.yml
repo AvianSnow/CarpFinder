@@ -1,0 +1,15 @@
+- type: marking
+  id: CECarrinBeard1
+  bodyPart: FacialHair
+  groupWhitelist: [ CECarrin ]
+  sprites:
+    - sprite: _CE/Mobs/Customization/carrin_facial_hair.rsi
+      state: 1
+
+- type: marking
+  id: CECarrinBeard2
+  bodyPart: FacialHair
+  groupWhitelist: [ CECarrin ]
+  sprites:
+  - sprite: _CE/Mobs/Customization/carrin_facial_hair.rsi
+    state: 2
