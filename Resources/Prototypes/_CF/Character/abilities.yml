@@ -1,0 +1,35 @@
+- type: cfAbility
+  id: Strength
+  name: cf-ability-strength
+  ability: Strength
+  order: 0
+
+- type: cfAbility
+  id: Dexterity
+  name: cf-ability-dexterity
+  ability: Dexterity
+  order: 1
+
+- type: cfAbility
+  id: Constitution
+  name: cf-ability-constitution
+  ability: Constitution
+  order: 2  
+
+- type: cfAbility
+  id: Intelligence
+  name: cf-ability-intelligence
+  ability: Intelligence
+  order: 3
+
+- type: cfAbility
+  id: Wisdom
+  name: cf-ability-wisdom
+  ability: Wisdom
+  order: 4
+
+- type: cfAbility
+  id: Charisma
+  name: cf-ability-charisma
+  ability: Charisma
+  order: 5
