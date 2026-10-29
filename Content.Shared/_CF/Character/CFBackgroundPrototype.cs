@@ -23,4 +23,7 @@ public sealed partial class CFBackgroundPrototype : IPrototype
 
     [DataField]
     public List<CFAbilityBoost> AbilityBoosts = new();
+
+    [DataField]
+    public CFRarity Rarity = CFRarity.Common;
 }

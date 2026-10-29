@@ -1,6 +1,6 @@
 - type: cfBackground
   id: Acolyte
-  name: acolyte
+  name: cf-background-acolyte
   description: cf-background-description-acolyte
   skillBoosts:
     - Religion
