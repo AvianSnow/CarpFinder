@@ -1,8 +1,6 @@
 using Content.Client.CharacterInfo;
 using Content.Client.Chat.Managers;
-using Content.Shared._DND.Character;
 using Content.Shared.Chat;
-using Content.Shared._DND.Preferences;
 using Content.Shared.Damage.Systems;
 using Content.Shared.FixedPoint;
 using Content.Shared.Mobs;

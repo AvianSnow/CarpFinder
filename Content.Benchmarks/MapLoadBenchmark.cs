@@ -61,7 +61,6 @@ public class MapLoadBenchmark
         "Sushi",
         "TestTeg",
         "Tram2",
-        "Snowball"
         "Snowball",
         "gear"
     };
