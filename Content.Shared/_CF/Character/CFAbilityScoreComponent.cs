@@ -7,6 +7,7 @@ namespace Content.Shared.CF.Character;
 public sealed partial class CFAbilityScoreComponent : Component
 {
     [DataField("abilityScores")]
+    [AutoNetworkedField]
     public Dictionary<CFAbility, int> AbilityScores = new()
     {
         { CFAbility.Strength, 10 },
