@@ -1,6 +1,6 @@
 - type: species
   id: CF-Goblin
-  name: cf-species-name-goblin
+  name: Goblin
   roundStart: true
   prototype: CFMobGoblin
   dollPrototype: CFAppearanceGoblin

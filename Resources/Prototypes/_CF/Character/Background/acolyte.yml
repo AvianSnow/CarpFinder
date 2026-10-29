@@ -1,12 +1,15 @@
 - type: cfBackground
   id: Acolyte
-  name: cf-background-acolyte
+  name: acolyte
   description: cf-background-description-acolyte
   skillBoosts:
     - Religion
     - Diplomacy
-  trainedSkills:
-    - Religion
   abilityBoosts:
     - Wisdom
-    - Charisma  
+    - Charisma
+  proficiencies:
+    skills:
+      trained:
+        - Religion
+        - Diplomacy

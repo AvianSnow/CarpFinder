@@ -1,13 +1,13 @@
 - type: cfClass
   id: Barbarian
-  name: cf-class-barbarian
+  name: Barbarian
   description: cf-class-description-barbarian
   hitPoints: 12
   keyAbility: Strength
   hitPointsAbility: Constitution
   classDC: cf-class-barbarian
   proficiencies:
-    perception:   
+    perception:
       trained:
         - Perception
     savingThrows:
@@ -30,4 +30,4 @@
   abilityBoosts:
     - Strength
     - Constitution
-    - Free      
+    - Free
