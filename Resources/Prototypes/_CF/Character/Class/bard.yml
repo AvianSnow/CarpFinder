@@ -1,6 +1,6 @@
 - type: cfClass
   id: Bard
-  name: cf-class-bard
+  name: Bard
   description: cf-class-description-bard
   hitPoints: 8
   keyAbility: Charisma

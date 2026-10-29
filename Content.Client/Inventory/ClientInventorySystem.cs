@@ -250,6 +250,7 @@ namespace Content.Client.Inventory
                 return;
 
             _pointing.TryPointAtEntity(GetNetEntity(item.Value));
+            _pointing.TryPointAtEntity(item.Value);
         }
 
         protected override void UpdateInventoryTemplate(Entity<InventoryComponent> ent)

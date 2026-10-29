@@ -1,0 +1,61 @@
+- type: cfAncestry
+  id: Human
+  name: cf-ancestry-human
+  description: cf-ancestry-human-description
+  species: Human
+  rarity: Common
+  hitPoints: 8
+  size: Medium
+  speed: 25
+  abilityBoosts:
+  - Free
+  - Free
+  languages:
+  - cf-language-common
+  traits:
+  - cf-trait-human
+  - cf-trait-humanoid
+
+- type: cfAncestry
+  id: Dwarf
+  name: cf-ancestry-dwarf
+  description: cf-ancestry-dwarf-description
+  species: Dwarf
+  rarity: Common
+  hitPoints: 10
+  size: Medium
+  speed: 20
+  abilityBoosts:
+  - Constitution
+  - Wisdom
+  - Free
+  abilityFlaws:
+  - Charisma
+  languages:
+  - cf-language-common
+  - cf-language-dwarven
+  traits:
+  - cf-trait-dwarf
+  - cf-trait-humanoid
+
+- type: cfAncestry
+  id: Goblin
+  name: cf-ancestry-goblin
+  description: cf-ancestry-goblin-description
+  species: CF-Goblin
+  rarity: Common
+  hitPoints: 6
+  size: Small
+  speed: 25
+  abilityBoosts:
+  - Charisma
+  - Dexterity
+  - Free
+  abilityFlaws:
+  - Wisdom
+  languages:
+  - cf-language-common
+  - cf-language-goblin
+  traits:
+  - cf-trait-goblin
+  - cf-trait-humanoid
