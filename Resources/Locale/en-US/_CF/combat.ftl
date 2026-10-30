@@ -1,6 +1,11 @@
 cf-combat-strike-defeated = Defeated!
 cf-combat-strike-no-combatant = That cannot be damaged.
 
+cf-combat-off-guard = Off-guard (−2 AC)
+cf-combat-off-guard-cleared = No longer off-guard.
+cf-combat-off-guard-examine = Off-guard (−2 circumstance penalty to AC against melee attacks from creatures flanking it).
+cf-combat-off-guard-name = Off-guard
+
 cf-combat-dying-gain = Dying { $value }
 cf-combat-dying-increase = Dying { $value }
 cf-combat-dying-death = Dead!

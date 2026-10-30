@@ -1,5 +1,6 @@
 <BoxContainer xmlns="https://spacestation14.io"
               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              xmlns:sheet="clr-namespace:Content.Client.CF.Character"
               x:Class="Content.Client.CF.Character.CFCharacterSheetTab"
               Orientation="Vertical"
               HorizontalExpand="True"
@@ -37,34 +38,40 @@
                 <Label Text="{Loc 'cf-sheet-abilities'}" HorizontalAlignment="Center" FontColorOverride="#E6C15A"/>
 
                 <BoxContainer Orientation="Horizontal" SeparationOverride="6">
-                    <Button Name="RollStrBtn" Text="{Loc 'cf-ability-strength'}" MinWidth="100" StyleClasses="OpenBoth"/>
+                    <sheet:CFDiceLabel Name="StrDiceLabel"/>
+                    <Label Name="StrNameLabel" Text="{Loc 'cf-ability-strength'}" MinWidth="100" FontColorOverride="#FFFFFF"/>
                     <Label Name="StrScoreLabel" Text="10" MinWidth="28" Align="Center"/>
-                    <Button Name="RollStrModBtn" Text="+0" MinWidth="40" StyleClasses="OpenBoth"/>
+                    <Label Name="StrModLabel" Text="+0" MinWidth="40" Align="Center" FontColorOverride="#FFFFFF"/>
                 </BoxContainer>
                 <BoxContainer Orientation="Horizontal" SeparationOverride="6">
-                    <Button Name="RollDexBtn" Text="{Loc 'cf-ability-dexterity'}" MinWidth="100" StyleClasses="OpenBoth"/>
+                    <sheet:CFDiceLabel Name="DexDiceLabel"/>
+                    <Label Name="DexNameLabel" Text="{Loc 'cf-ability-dexterity'}" MinWidth="100" FontColorOverride="#FFFFFF"/>
                     <Label Name="DexScoreLabel" Text="10" MinWidth="28" Align="Center"/>
-                    <Button Name="RollDexModBtn" Text="+0" MinWidth="40" StyleClasses="OpenBoth"/>
+                    <Label Name="DexModLabel" Text="+0" MinWidth="40" Align="Center" FontColorOverride="#FFFFFF"/>
                 </BoxContainer>
                 <BoxContainer Orientation="Horizontal" SeparationOverride="6">
-                    <Button Name="RollConBtn" Text="{Loc 'cf-ability-constitution'}" MinWidth="100" StyleClasses="OpenBoth"/>
+                    <sheet:CFDiceLabel Name="ConDiceLabel"/>
+                    <Label Name="ConNameLabel" Text="{Loc 'cf-ability-constitution'}" MinWidth="100" FontColorOverride="#FFFFFF"/>
                     <Label Name="ConScoreLabel" Text="10" MinWidth="28" Align="Center"/>
-                    <Button Name="RollConModBtn" Text="+0" MinWidth="40" StyleClasses="OpenBoth"/>
+                    <Label Name="ConModLabel" Text="+0" MinWidth="40" Align="Center" FontColorOverride="#FFFFFF"/>
                 </BoxContainer>
                 <BoxContainer Orientation="Horizontal" SeparationOverride="6">
-                    <Button Name="RollIntBtn" Text="{Loc 'cf-ability-intelligence'}" MinWidth="100" StyleClasses="OpenBoth"/>
+                    <sheet:CFDiceLabel Name="IntDiceLabel"/>
+                    <Label Name="IntNameLabel" Text="{Loc 'cf-ability-intelligence'}" MinWidth="100" FontColorOverride="#FFFFFF"/>
                     <Label Name="IntScoreLabel" Text="10" MinWidth="28" Align="Center"/>
-                    <Button Name="RollIntModBtn" Text="+0" MinWidth="40" StyleClasses="OpenBoth"/>
+                    <Label Name="IntModLabel" Text="+0" MinWidth="40" Align="Center" FontColorOverride="#FFFFFF"/>
                 </BoxContainer>
                 <BoxContainer Orientation="Horizontal" SeparationOverride="6">
-                    <Button Name="RollWisBtn" Text="{Loc 'cf-ability-wisdom'}" MinWidth="100" StyleClasses="OpenBoth"/>
+                    <sheet:CFDiceLabel Name="WisDiceLabel"/>
+                    <Label Name="WisNameLabel" Text="{Loc 'cf-ability-wisdom'}" MinWidth="100" FontColorOverride="#FFFFFF"/>
                     <Label Name="WisScoreLabel" Text="10" MinWidth="28" Align="Center"/>
-                    <Button Name="RollWisModBtn" Text="+0" MinWidth="40" StyleClasses="OpenBoth"/>
+                    <Label Name="WisModLabel" Text="+0" MinWidth="40" Align="Center" FontColorOverride="#FFFFFF"/>
                 </BoxContainer>
                 <BoxContainer Orientation="Horizontal" SeparationOverride="6">
-                    <Button Name="RollChaBtn" Text="{Loc 'cf-ability-charisma'}" MinWidth="100" StyleClasses="OpenBoth"/>
+                    <sheet:CFDiceLabel Name="ChaDiceLabel"/>
+                    <Label Name="ChaNameLabel" Text="{Loc 'cf-ability-charisma'}" MinWidth="100" FontColorOverride="#FFFFFF"/>
                     <Label Name="ChaScoreLabel" Text="10" MinWidth="28" Align="Center"/>
-                    <Button Name="RollChaModBtn" Text="+0" MinWidth="40" StyleClasses="OpenBoth"/>
+                    <Label Name="ChaModLabel" Text="+0" MinWidth="40" Align="Center" FontColorOverride="#FFFFFF"/>
                 </BoxContainer>
             </BoxContainer>
         </PanelContainer>
@@ -124,17 +131,26 @@
                     <Label Text="{Loc 'cf-sheet-saves'}" HorizontalAlignment="Center" FontColorOverride="#E6C15A"/>
                     <GridContainer Columns="3" HorizontalExpand="True">
                         <BoxContainer Orientation="Vertical" HorizontalAlignment="Center">
-                            <Button Name="RollFortBtn" Text="{Loc 'cf-sheet-fortitude'}" StyleClasses="OpenBoth"/>
+                            <BoxContainer Orientation="Horizontal" HorizontalAlignment="Center" SeparationOverride="4">
+                                <sheet:CFDiceLabel Name="FortDiceLabel"/>
+                                <Label Name="FortNameLabel" Text="{Loc 'cf-sheet-fortitude'}" FontColorOverride="#FFFFFF"/>
+                            </BoxContainer>
                             <Label Name="FortRankLabel" Text="U" HorizontalAlignment="Center" StyleClasses="LabelSubText"/>
                             <Label Name="FortModLabel" Text="+0" HorizontalAlignment="Center" StyleClasses="LabelHeading"/>
                         </BoxContainer>
                         <BoxContainer Orientation="Vertical" HorizontalAlignment="Center">
-                            <Button Name="RollRefBtn" Text="{Loc 'cf-sheet-reflex'}" StyleClasses="OpenBoth"/>
+                            <BoxContainer Orientation="Horizontal" HorizontalAlignment="Center" SeparationOverride="4">
+                                <sheet:CFDiceLabel Name="RefDiceLabel"/>
+                                <Label Name="RefNameLabel" Text="{Loc 'cf-sheet-reflex'}" FontColorOverride="#FFFFFF"/>
+                            </BoxContainer>
                             <Label Name="RefRankLabel" Text="U" HorizontalAlignment="Center" StyleClasses="LabelSubText"/>
                             <Label Name="RefModLabel" Text="+0" HorizontalAlignment="Center" StyleClasses="LabelHeading"/>
                         </BoxContainer>
                         <BoxContainer Orientation="Vertical" HorizontalAlignment="Center">
-                            <Button Name="RollWillBtn" Text="{Loc 'cf-sheet-will'}" StyleClasses="OpenBoth"/>
+                            <BoxContainer Orientation="Horizontal" HorizontalAlignment="Center" SeparationOverride="4">
+                                <sheet:CFDiceLabel Name="WillDiceLabel"/>
+                                <Label Name="WillNameLabel" Text="{Loc 'cf-sheet-will'}" FontColorOverride="#FFFFFF"/>
+                            </BoxContainer>
                             <Label Name="WillRankLabel" Text="U" HorizontalAlignment="Center" StyleClasses="LabelSubText"/>
                             <Label Name="WillModLabel" Text="+0" HorizontalAlignment="Center" StyleClasses="LabelHeading"/>
                         </BoxContainer>

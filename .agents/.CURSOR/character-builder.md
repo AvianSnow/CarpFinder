@@ -20,7 +20,7 @@
 ## In-game character sheet
 
 - Overlay: `Content.Client/_CF/UserInterface/Systems/Character/` (same csproj Remove pattern as lobby — stock `CharacterWindow` / `CharacterUIController` stay on disk).
-- Sheet UI: `Content.Client/_CF/Character/CFCharacterSheetTab` — abilities, AC/HP/saves, 3-column skills; click name/mod to emote a d20 check.
+- Sheet UI: `Content.Client/_CF/Character/CFCharacterSheetTab` — abilities, AC/HP/saves, 3-column skills. Roll targets are white `Label`s (hand cursor, `UIClick`), same pattern as crystall-edge `DndSheetSkillRow`. A Font Awesome d20 (`CFDiceLabel`, U+F6CF, `Resources/Fonts/_CF/FontAwesome/fa-solid-900.ttf`) sits beside each ability, save, and skill name. Click the die, the name, or an ability modifier to emote a d20 check.
 - Skill/save math: `CFSkills` + class/background proficiency lists. Ability “scores” shown as `10 + 2×mod` (CF stores modifiers).
 
 ## Combat (lean PF2e Strike)
@@ -40,6 +40,7 @@
 - **Ranged**: `CFRangedWeapon` on bows; on projectile collide (`BeforeProjectileHitEvent`) resolve Dex Strike (range increments, volley −2, deadly die). `CFLongbow` — 1d8 P, range 100 ft, deadly d10, volley 30 ft (wield to shoot, nock `CFArrow`).
 - **Dying (PF2e)**: at 0 HP → SS14 `Critical` + dying 1 (2 on crit knockout) + wounded. Recovery flat check every 6s (DC 10 + dying). Dying 4 → `Dead`. Strikes on downed raise dying (+2 on crit). Alt-click **Stabilize (Medicine)** (DC 5 + dying). Stabilize revives at 1 HP and clears bleed; `RestoreHitPoints` heals CF HP + `HealEvenly` across SS14 damage types.
 - **Alchemy / potions**: `CFAlchemicalItem` + optional `CFHealConsumable` under `Content.Shared/_CF/Alchemy/`. PF2e traits as Tags (`CFConsumable`, `CFHealing`, `CFMagical`, `CFPotion`, `CFVitality`, …) in `Resources/Prototypes/_CF/tags.yml`. `CFHealingPotionMinor` — 1d8 HP (`spawn CFHealingPotionMinor`).
+- **Flanking / off-guard**: `CFFlankingSystem`. Each creature is one tile. Two allies flank a foe when the line between their tile centers passes through opposite sides or opposite corners of the foe, both can act, both can melee (weapon or free hand / unarmed), and both have the foe within reach (`CFMeleeWeapon.ReachFeet`, default 5; reach trait 10). The foe gains `CFOffGuardComponent`: −2 circumstance AC against those flankers' melee Strikes only. Faction-mates are allies; two players with no NPC faction are allies. A player and a factioned mob are not. The `CFFlankedIcon` status icon (`Resources/Textures/_CF/flanked.rsi`) is drawn on the right side of the mob whenever they are off-guard, with no HUD glasses required.
 
 ## Loadouts (Weapons / Defense / Gear)
 

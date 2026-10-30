@@ -40,6 +40,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private CFCombatBridgeSystem _bridge = default!;
     [Dependency] private CFDyingSystem _dying = default!;
+    [Dependency] private CFFlankingSystem _flanking = default!;
 
     /// <summary>Unconscious / dying creatures are off-guard (−4 AC status, simplified).</summary>
     private const int DownedAcPenalty = 4;
@@ -54,7 +55,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (!_net.IsServer)
             return;
 
-        BeginMeleeStrikes(args.User, args.HitEntities, combat, abilities, CFStrikeWeaponStats.FromMelee(weapon.Comp));
+        BeginMeleeStrikes(args.User, args.HitEntities, combat, abilities, CFStrikeWeaponStats.FromMelee(weapon.Comp), melee: true);
     }
 
     [SubscribeLocalEvent]
@@ -73,7 +74,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (!_net.IsServer)
             return;
 
-        BeginMeleeStrikes(args.User, args.HitEntities, combat, abilities, CFStrikeWeaponStats.Unarmed());
+        BeginMeleeStrikes(args.User, args.HitEntities, combat, abilities, CFStrikeWeaponStats.Unarmed(), melee: true);
     }
 
     /// <summary>
@@ -107,7 +108,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
             abilities,
             stats,
             distanceFeet,
-            ranged.Propulsive);
+            ranged.Propulsive,
+            melee: false);
     }
 
     private bool TryGetMeleeAttacker(
@@ -143,11 +145,12 @@ public sealed partial class CFStrikeSystem : EntitySystem
         IReadOnlySet<EntityUid> targets,
         CFCombatantComponent combat,
         CFAbilityScoreComponent abilities,
-        CFStrikeWeaponStats stats)
+        CFStrikeWeaponStats stats,
+        bool melee)
     {
         foreach (var target in targets)
         {
-            ResolveStrike(user, target, combat, abilities, stats, distanceFeet: 0f, propulsive: false);
+            ResolveStrike(user, target, combat, abilities, stats, distanceFeet: 0f, propulsive: false, melee);
         }
     }
 
@@ -158,7 +161,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
         CFAbilityScoreComponent attackerAbilities,
         CFStrikeWeaponStats weapon,
         float distanceFeet,
-        bool propulsive)
+        bool propulsive,
+        bool melee)
     {
         if (!_bridge.TryEnsureCombatTarget(target, out var defender, out var hardness, out var isObject))
         {
@@ -191,7 +195,14 @@ public sealed partial class CFStrikeSystem : EntitySystem
             return;
         }
 
-        var targetAc = defender.ArmorClass - (alreadyDown ? DownedAcPenalty : 0);
+        // Downed creatures already take a larger AC penalty. Off-guard does not stack with itself.
+        var acPenalty = 0;
+        if (alreadyDown)
+            acPenalty = DownedAcPenalty;
+        else if (melee && !isObject && _flanking.IsOffGuardTo(target, user))
+            acPenalty = CFFlanking.OffGuardAcPenalty;
+
+        var targetAc = defender.ArmorClass - acPenalty;
         var damageMod = CFMelee.DamageBonus(attackerAbilities, weapon, propulsive);
         var d20 = _random.Next(1, 21);
         var degree = CFMelee.DegreeOfSuccess(d20, attackBonus, targetAc);

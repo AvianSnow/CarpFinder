@@ -29,4 +29,11 @@ public sealed partial class CFMeleeWeaponComponent : Component
 
     [DataField, AutoNetworkedField]
     public int ItemBonus;
+
+    /// <summary>
+    /// Pathfinder reach in feet. 5 threatens adjacent tiles. 10 is the reach trait
+    /// and also lengthens the SS14 swing so the weapon can Strike at that distance.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public int ReachFeet = CFFlanking.DefaultReachFeet;
 }

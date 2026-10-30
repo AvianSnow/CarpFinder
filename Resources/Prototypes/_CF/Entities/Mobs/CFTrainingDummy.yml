@@ -39,6 +39,8 @@
     armorClass: 15
     maxHp: 20
     currentHp: 20
+  - type: StatusIcon
+    bounds: -0.5,-0.5,0.5,0.5
   - type: NpcFactionMember
     factions:
     - SimpleNeutral
