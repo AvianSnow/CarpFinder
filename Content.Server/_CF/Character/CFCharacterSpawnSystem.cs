@@ -61,6 +61,10 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         combatant.MaxHp = sheet.MaxHp;
         combatant.CurrentHp = sheet.MaxHp;
         combatant.ClassId = profile.CFBuild.Class?.Id;
+        combatant.BackgroundId = profile.CFBuild.Background?.Id;
+        combatant.TemporaryHp = 0;
+        combatant.Dying = 0;
+        combatant.Wounded = 0;
         Dirty(mob, combatant);
     }
 }

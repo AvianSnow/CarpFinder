@@ -1,6 +1,8 @@
+using System.Numerics;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Preferences;
 using Content.Shared.Damage;
+using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Systems;
 using Content.Shared.Destructible;
 using Content.Shared.FixedPoint;
@@ -10,6 +12,7 @@ using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Popups;
+using Content.Shared.Projectiles;
 using Content.Shared.Weapons.Melee;
 using Content.Shared.Weapons.Melee.Events;
 using Robust.Shared.Network;
@@ -20,7 +23,7 @@ using Robust.Shared.Random;
 namespace Content.Shared.CF.Combat;
 
 /// <summary>
-/// Pathfinder 2e Strikes via stock SS14 light attacks (held CF weapons and unarmed body/gloves).
+/// Pathfinder 2e Strikes via stock SS14 melee and projectile hits.
 /// </summary>
 public sealed partial class CFStrikeSystem : EntitySystem
 {
@@ -34,46 +37,80 @@ public sealed partial class CFStrikeSystem : EntitySystem
     [Dependency] private SharedDestructibleSystem _destructible = default!;
     [Dependency] private SharedHandsSystem _hands = default!;
     [Dependency] private InventorySystem _inventory = default!;
+    [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private CFCombatBridgeSystem _bridge = default!;
+    [Dependency] private CFDyingSystem _dying = default!;
+
+    /// <summary>Unconscious / dying creatures are off-guard (−4 AC status, simplified).</summary>
+    private const int DownedAcPenalty = 4;
 
     [SubscribeLocalEvent]
     private void OnCfWeaponHit(Entity<CFMeleeWeaponComponent> weapon, ref MeleeHitEvent args)
     {
-        if (!TryGetAttacker(args, out var combat, out var abilities))
+        if (!TryGetMeleeAttacker(args, out var combat, out var abilities))
             return;
 
-        BeginStrike(args, combat, abilities, weapon.Comp);
+        args.Handled = true;
+        if (!_net.IsServer)
+            return;
+
+        BeginMeleeStrikes(args.User, args.HitEntities, combat, abilities, CFStrikeWeaponStats.FromMelee(weapon.Comp));
     }
 
-    /// <summary>
-    /// Empty-hand / glove melee on CF combatants — stock body <see cref="MeleeWeaponComponent"/> without a CF weapon.
-    /// </summary>
     [SubscribeLocalEvent]
     private void OnUnarmedMeleeHit(Entity<MeleeWeaponComponent> weapon, ref MeleeHitEvent args)
     {
         if (HasComp<CFMeleeWeaponComponent>(weapon))
             return;
 
-        if (!TryGetAttacker(args, out var combat, out var abilities))
+        if (!TryGetMeleeAttacker(args, out var combat, out var abilities))
             return;
 
         if (!IsUnarmedWeapon(args.User, weapon.Owner))
             return;
 
-        var unarmed = new CFMeleeWeaponComponent
-        {
-            DamageDice = CFMelee.UnarmedDamageDice,
-            DamageDie = CFMelee.UnarmedDamageDie,
-            DamageType = CFMelee.UnarmedDamageType,
-            Proficiency = CFMelee.UnarmedProficiency,
-            Finesse = false,
-            ItemBonus = 0,
-        };
+        args.Handled = true;
+        if (!_net.IsServer)
+            return;
 
-        BeginStrike(args, combat, abilities, unarmed);
+        BeginMeleeStrikes(args.User, args.HitEntities, combat, abilities, CFStrikeWeaponStats.Unarmed());
     }
 
-    private bool TryGetAttacker(
+    /// <summary>
+    /// Projectile fired from a <see cref="CFRangedWeaponComponent"/> — replace SS14 damage with a PF2e Strike.
+    /// </summary>
+    [SubscribeLocalEvent]
+    private void OnBeforeProjectileHit(Entity<ProjectileComponent> projectile, ref BeforeProjectileHitEvent args)
+    {
+        if (projectile.Comp.Weapon is not { } weaponUid
+            || !TryComp(weaponUid, out CFRangedWeaponComponent? ranged))
+            return;
+
+        var shooter = args.Shooter ?? projectile.Comp.Shooter;
+        if (shooter == null
+            || !TryComp(shooter.Value, out CFCombatantComponent? combat)
+            || !TryComp(shooter.Value, out CFAbilityScoreComponent? abilities))
+            return;
+
+        // Cancel stock projectile damage (CF Strike applies its own mirrored SS14 damage).
+        args.Damage = new DamageSpecifier();
+
+        if (!_net.IsServer)
+            return;
+
+        var stats = CFStrikeWeaponStats.FromRanged(ranged);
+        var distanceFeet = GetDistanceFeet(shooter.Value, args.Target);
+        ResolveStrike(
+            shooter.Value,
+            args.Target,
+            combat,
+            abilities,
+            stats,
+            distanceFeet,
+            ranged.Propulsive);
+    }
+
+    private bool TryGetMeleeAttacker(
         MeleeHitEvent args,
         out CFCombatantComponent combat,
         out CFAbilityScoreComponent abilities)
@@ -87,9 +124,6 @@ public sealed partial class CFStrikeSystem : EntitySystem
         return TryComp(args.User, out combat!) && TryComp(args.User, out abilities!);
     }
 
-    /// <summary>
-    /// True when the melee "weapon" is the body itself or equipped gloves (not a held item).
-    /// </summary>
     private bool IsUnarmedWeapon(EntityUid user, EntityUid weapon)
     {
         if (weapon == user)
@@ -98,40 +132,121 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (_inventory.TryGetSlotEntity(user, "gloves", out var gloves) && gloves == weapon)
             return true;
 
-        // Held item without CFMeleeWeapon stays on stock SS14 damage for now.
         if (_hands.IsHolding(user, weapon))
             return false;
 
         return false;
     }
 
-    private void BeginStrike(
-        MeleeHitEvent args,
+    private void BeginMeleeStrikes(
+        EntityUid user,
+        IReadOnlySet<EntityUid> targets,
+        CFCombatantComponent combat,
+        CFAbilityScoreComponent abilities,
+        CFStrikeWeaponStats stats)
+    {
+        foreach (var target in targets)
+        {
+            ResolveStrike(user, target, combat, abilities, stats, distanceFeet: 0f, propulsive: false);
+        }
+    }
+
+    private void ResolveStrike(
+        EntityUid user,
+        EntityUid target,
         CFCombatantComponent attackerCombat,
         CFAbilityScoreComponent attackerAbilities,
-        CFMeleeWeaponComponent weapon)
+        CFStrikeWeaponStats weapon,
+        float distanceFeet,
+        bool propulsive)
     {
-        // Cancel stock damage; we resolve PF2e Strikes ourselves.
-        args.Handled = true;
+        if (!_bridge.TryEnsureCombatTarget(target, out var defender, out var hardness, out var isObject))
+        {
+            _popup.PopupEntity(Loc.GetString("cf-combat-strike-no-combatant"), user, user);
+            return;
+        }
 
-        if (!_net.IsServer)
+        // Objects at 0 HP are already destroyed; creatures at 0 HP are dying / unconscious and can be finished.
+        var alreadyDown = !isObject && _dying.IsDown(defender);
+        if (isObject && defender.CurrentHp <= 0)
+            return;
+
+        if (!isObject && TryComp(target, out MobStateComponent? mobState) && _mobState.IsDead(target, mobState))
             return;
 
         var weaponTrained = IsWeaponTrained(attackerCombat, weapon.Proficiency);
-        var attackBonus = CFMelee.AttackBonusFromCombatant(
+        var attackBonus = CFMelee.AttackBonus(
             attackerAbilities,
             attackerCombat,
             weapon,
-            weaponTrained);
-        var damageMod = CFMelee.DamageModifier(
-            attackerAbilities.GetModifier(CFAbility.Strength),
-            weapon.Finesse,
-            attackerAbilities.GetModifier(CFAbility.Dexterity));
+            weaponTrained,
+            distanceFeet);
 
-        foreach (var target in args.HitEntities)
+        // Beyond sixth range increment: automatic miss.
+        if (weapon.Ranged && attackBonus <= -900)
         {
-            ResolveStrike(args.User, target, weapon, attackBonus, damageMod);
+            RaiseNetworkEvent(
+                new CFCombatNumberEvent(GetNetEntity(target), CFStrikeDegree.Failure, 0, weapon.DamageType),
+                Filter.Pvs(target));
+            return;
         }
+
+        var targetAc = defender.ArmorClass - (alreadyDown ? DownedAcPenalty : 0);
+        var damageMod = CFMelee.DamageBonus(attackerAbilities, weapon, propulsive);
+        var d20 = _random.Next(1, 21);
+        var degree = CFMelee.DegreeOfSuccess(d20, attackBonus, targetAc);
+        var damage = 0;
+        var criticalHit = degree == CFStrikeDegree.CriticalSuccess;
+
+        if (degree is CFStrikeDegree.Success or CFStrikeDegree.CriticalSuccess)
+        {
+            if (alreadyDown)
+            {
+                // Damage while dying / unconscious at 0 HP increases dying (can kill at dying 4).
+                _dying.ApplyDamageWhileDown(target, defender, criticalHit, user);
+            }
+            else
+            {
+                damage = CFMelee.RollStrikeDamage(
+                    _random,
+                    weapon,
+                    damageMod,
+                    criticalHit);
+
+                if (isObject && hardness > 0)
+                    damage = Math.Max(0, damage - hardness);
+
+                if (damage > 0)
+                {
+                    defender.CurrentHp = Math.Max(0, defender.CurrentHp - damage);
+                    Dirty(target, defender);
+                    MirrorToSs14(user, target, defender, damage, weapon.DamageType, isObject);
+                }
+
+                if (!isObject && defender.CurrentHp <= 0)
+                {
+                    _popup.PopupEntity(Loc.GetString("cf-combat-strike-defeated"), target, user);
+                    _dying.KnockOut(target, defender, criticalHit, user);
+                }
+                else if (isObject && defender.CurrentHp <= 0)
+                {
+                    _popup.PopupEntity(Loc.GetString("cf-combat-strike-defeated"), target, user);
+                    DestroyObject(user, target);
+                }
+            }
+        }
+
+        RaiseNetworkEvent(
+            new CFCombatNumberEvent(GetNetEntity(target), degree, damage, weapon.DamageType),
+            Filter.Pvs(target));
+    }
+
+    private float GetDistanceFeet(EntityUid from, EntityUid to)
+    {
+        var a = _transform.GetWorldPosition(from);
+        var b = _transform.GetWorldPosition(to);
+        var tiles = Vector2.Distance(a, b);
+        return CFMelee.TilesToFeet(tiles);
     }
 
     private bool IsWeaponTrained(CFCombatantComponent attackerCombat, string proficiency)
@@ -142,59 +257,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
             return CFAttributeMath.IsWeaponTrained(cls, proficiency);
         }
 
-        // No class (or commoner) — treat as trained so testing / NPCs still work.
         return true;
-    }
-
-    private void ResolveStrike(
-        EntityUid user,
-        EntityUid target,
-        CFMeleeWeaponComponent weapon,
-        int attackBonus,
-        int damageMod)
-    {
-        if (!_bridge.TryEnsureCombatTarget(target, out var defender, out var hardness, out var isObject))
-        {
-            _popup.PopupEntity(Loc.GetString("cf-combat-strike-no-combatant"), user, user);
-            return;
-        }
-
-        if (defender.CurrentHp <= 0)
-            return;
-
-        var d20 = _random.Next(1, 21);
-        var degree = CFMelee.DegreeOfSuccess(d20, attackBonus, defender.ArmorClass);
-        var damage = 0;
-
-        if (degree is CFStrikeDegree.Success or CFStrikeDegree.CriticalSuccess)
-        {
-            damage = CFMelee.RollDamage(
-                _random,
-                weapon.DamageDice,
-                weapon.DamageDie,
-                damageMod,
-                degree == CFStrikeDegree.CriticalSuccess);
-
-            if (isObject && hardness > 0)
-                damage = Math.Max(0, damage - hardness);
-
-            if (damage > 0)
-            {
-                defender.CurrentHp = Math.Max(0, defender.CurrentHp - damage);
-                Dirty(target, defender);
-                MirrorToSs14(user, target, defender, damage, weapon.DamageType, isObject);
-            }
-        }
-
-        RaiseNetworkEvent(
-            new CFCombatNumberEvent(GetNetEntity(target), degree, damage, weapon.DamageType),
-            Filter.Pvs(target));
-
-        if (defender.CurrentHp > 0 || degree is CFStrikeDegree.Failure or CFStrikeDegree.CriticalFailure)
-            return;
-
-        _popup.PopupEntity(Loc.GetString("cf-combat-strike-defeated"), target, user);
-        DefeatTarget(user, target, isObject);
     }
 
     private void MirrorToSs14(
@@ -208,12 +271,23 @@ public sealed partial class CFStrikeSystem : EntitySystem
         var ss14Type = ToSs14DamageType(damageType);
         FixedPoint2 amount;
 
+        // Scale toward Critical (not Dead) so MobThresholds won't finish the kill — CF dying owns death.
         if (!isObject
-            && _mobThresholds.TryGetThresholdForState(target, MobState.Dead, out var deadThreshold)
-            && deadThreshold != null
+            && _mobThresholds.TryGetThresholdForState(target, MobState.Critical, out var critThreshold)
+            && critThreshold != null
             && defender.MaxHp > 0)
         {
-            amount = deadThreshold.Value * cfDamage / defender.MaxHp;
+            amount = critThreshold.Value * cfDamage / defender.MaxHp;
+            // Leave a sliver below Dead if a Dead threshold exists and equals Crit somehow.
+            if (_mobThresholds.TryGetThresholdForState(target, MobState.Dead, out var deadThreshold)
+                && deadThreshold != null
+                && TryComp(target, out DamageableComponent? damageable))
+            {
+                var total = _damageable.GetTotalDamage((target, damageable));
+                var maxAdd = deadThreshold.Value - FixedPoint2.Epsilon - total;
+                if (maxAdd < amount)
+                    amount = FixedPoint2.Max(0, maxAdd);
+            }
         }
         else
         {
@@ -228,26 +302,18 @@ public sealed partial class CFStrikeSystem : EntitySystem
         _damageable.TryChangeDamage(target, spec, ignoreResistances: true, origin: user);
     }
 
-    private void DefeatTarget(EntityUid user, EntityUid target, bool isObject)
+    private void DestroyObject(EntityUid user, EntityUid target)
     {
-        if (isObject)
+        var finish = new DamageSpecifier();
+        finish.DamageDict["Blunt"] = 10000;
+        _damageable.TryChangeDamage(target, finish, ignoreResistances: true, origin: user);
+
+        if (!Deleted(target) && !EntityManager.IsQueuedForDeletion(target))
         {
-            var finish = new DamageSpecifier();
-            finish.DamageDict["Blunt"] = 10000;
-            _damageable.TryChangeDamage(target, finish, ignoreResistances: true, origin: user);
-
+            _destructible.BreakEntity(target);
             if (!Deleted(target) && !EntityManager.IsQueuedForDeletion(target))
-            {
-                _destructible.BreakEntity(target);
-                if (!Deleted(target) && !EntityManager.IsQueuedForDeletion(target))
-                    _destructible.DestroyEntity(target);
-            }
-
-            return;
+                _destructible.DestroyEntity(target);
         }
-
-        if (TryComp(target, out MobStateComponent? mobState))
-            _mobState.ChangeMobState(target, MobState.Dead, mobState, user);
     }
 
     private static string ToSs14DamageType(string pf2eType)

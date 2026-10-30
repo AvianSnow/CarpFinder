@@ -13,7 +13,13 @@
 
 - `Content.Server/_CF/Character/CFCharacterSpawnSystem` listens to `PlayerSpawnCompleteEvent` and applies:
   - `CFAbilityScoreComponent` (modifiers)
-  - `CFCombatantComponent` (level, AC, HP, class id)
+  - `CFCombatantComponent` (level, AC, HP, class id, background id)
+
+## In-game character sheet
+
+- Overlay: `Content.Client/_CF/UserInterface/Systems/Character/` (same csproj Remove pattern as lobby — stock `CharacterWindow` / `CharacterUIController` stay on disk).
+- Sheet UI: `Content.Client/_CF/Character/CFCharacterSheetTab` — abilities, AC/HP/saves, 3-column skills; click name/mod to emote a d20 check.
+- Skill/save math: `CFSkills` + class/background proficiency lists. Ability “scores” shown as `10 + 2×mod` (CF stores modifiers).
 
 ## Combat (lean PF2e Strike)
 
@@ -29,6 +35,9 @@
   - **Objects**: inferred `cfMaterial` (hardness/HP) from `damageModifierSet` / `damageContainer`, or set `CFMaterial` explicitly. Hardness subtracted from damage; 0 HP breaks/destroys via Destructible.
   - CF damage is mirrored into SS14 `Damageable` (scaled to mob dead threshold).
 - **Unarmed**: empty hands (body or gloves `MeleeWeapon`) use PF2e fist Strike — 1d4 bludgeoning, `Unarmed` proficiency — instead of stock SS14 blunt.
+- **Ranged**: `CFRangedWeapon` on bows; on projectile collide (`BeforeProjectileHitEvent`) resolve Dex Strike (range increments, volley −2, deadly die). `CFLongbow` — 1d8 P, range 100 ft, deadly d10, volley 30 ft (wield to shoot, nock `CFArrow`).
+- **Dying (PF2e)**: at 0 HP → SS14 `Critical` + dying 1 (2 on crit knockout) + wounded. Recovery flat check every 6s (DC 10 + dying). Dying 4 → `Dead`. Strikes on downed raise dying (+2 on crit). Alt-click **Stabilize (Medicine)** (DC 5 + dying). Stabilize revives at 1 HP and clears bleed; `RestoreHitPoints` heals CF HP + `HealEvenly` across SS14 damage types.
+- **Alchemy / potions**: `CFAlchemicalItem` + optional `CFHealConsumable` under `Content.Shared/_CF/Alchemy/`. PF2e traits as Tags (`CFConsumable`, `CFHealing`, `CFMagical`, `CFPotion`, `CFVitality`, …) in `Resources/Prototypes/_CF/tags.yml`. `CFHealingPotionMinor` — 1d8 HP (`spawn CFHealingPotionMinor`).
 
 ## Loadouts (Weapons / Defense / Gear)
 

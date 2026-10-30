@@ -20,7 +20,12 @@ public static class CFMelee
     public const string UnarmedDamageType = "bludgeoning";
     public const string UnarmedProficiency = "Unarmed";
 
+    /// <summary>Approximate PF feet per SS14 tile (1 tile ≈ 1.5 m ≈ 5 ft grid square).</summary>
+    public const float FeetPerTile = 5f;
+
     public static bool InReach(float distance) => distance <= MeleeRange;
+
+    public static float TilesToFeet(float tiles) => tiles * FeetPerTile;
 
     public static int AttackModifier(
         int strengthMod,
@@ -111,6 +116,90 @@ public static class CFMelee
             proficiency,
             finesse,
             itemBonus);
+    }
+
+    /// <summary>
+    /// Attack bonus for a Strike. Ranged always uses Dexterity; melee uses Str (or max Str/Dex if finesse).
+    /// </summary>
+    public static int AttackBonus(
+        CFAbilityScoreComponent abilities,
+        CFCombatantComponent combatant,
+        CFStrikeWeaponStats weapon,
+        bool weaponTrained,
+        float distanceFeet = 0f)
+    {
+        var proficiency = CFAttributeMath.ProficiencyBonus(combatant.Level, weaponTrained);
+        int ability;
+        if (weapon.Ranged)
+            ability = abilities.GetModifier(CFAbility.Dexterity);
+        else if (weapon.Finesse)
+            ability = Math.Max(abilities.GetModifier(CFAbility.Strength), abilities.GetModifier(CFAbility.Dexterity));
+        else
+            ability = abilities.GetModifier(CFAbility.Strength);
+
+        var bonus = ability + proficiency + weapon.ItemBonus;
+        bonus += RangeIncrementPenalty(distanceFeet, weapon.RangeIncrementFeet);
+        bonus += VolleyPenalty(distanceFeet, weapon.VolleyFeet);
+        return bonus;
+    }
+
+    public static int DamageBonus(
+        CFAbilityScoreComponent abilities,
+        CFStrikeWeaponStats weapon,
+        bool propulsive = false)
+    {
+        if (weapon.Ranged)
+        {
+            if (!propulsive)
+                return 0;
+
+            var str = abilities.GetModifier(CFAbility.Strength);
+            return str < 0 ? str : str / 2;
+        }
+
+        return DamageModifier(
+            abilities.GetModifier(CFAbility.Strength),
+            weapon.Finesse,
+            abilities.GetModifier(CFAbility.Dexterity));
+    }
+
+    /// <summary>−2 per range increment beyond the first. Attacks beyond 6 increments are impossible (−999).</summary>
+    public static int RangeIncrementPenalty(float distanceFeet, int rangeIncrementFeet)
+    {
+        if (rangeIncrementFeet <= 0 || distanceFeet <= 0f)
+            return 0;
+
+        // First increment is 0..range (no penalty). Each further multiple is −2.
+        var incrementIndex = (int)Math.Ceiling(distanceFeet / rangeIncrementFeet);
+        if (incrementIndex <= 1)
+            return 0;
+
+        if (incrementIndex > 6)
+            return -999;
+
+        return -2 * (incrementIndex - 1);
+    }
+
+    /// <summary>Volley trait: −2 when the target is within the listed distance.</summary>
+    public static int VolleyPenalty(float distanceFeet, int volleyFeet)
+    {
+        if (volleyFeet <= 0)
+            return 0;
+
+        return distanceFeet <= volleyFeet ? -2 : 0;
+    }
+
+    public static int RollStrikeDamage(
+        IRobustRandom random,
+        CFStrikeWeaponStats weapon,
+        int damageMod,
+        bool critical)
+    {
+        var total = RollDamage(random, weapon.DamageDice, weapon.DamageDie, damageMod, critical);
+        if (critical && weapon.DeadlyDie is { } deadly and > 0)
+            total += random.Next(1, deadly + 1);
+
+        return Math.Max(0, total);
     }
 
     private static CFStrikeDegree Improve(CFStrikeDegree degree)

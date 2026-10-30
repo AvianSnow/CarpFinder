@@ -67,6 +67,14 @@ Referenced from the editor XAML as:
 xmlns:builder="clr-namespace:Content.Client.CF.Lobby.UI.CharacterBuilder"
 ```
 
+## Character window overlay
+
+Same pattern for the in-game character menu (`C`):
+
+- Stock: `Content.Client/UserInterface/Systems/Character/CharacterWindow.*` + `CharacterUIController.cs` (Compile/EmbeddedResource/AdditionalFiles Remove)
+- CF: `Content.Client/_CF/UserInterface/Systems/Character/` — Pathfinder sheet tab + stock Info tab
+- Sheet controls: `Content.Client/_CF/Character/` (`CFCharacterSheetTab`, `CFSheetSkillRow`) with `x:Class="Content.Client.CF.Character.…"`
+
 ## Verify
 
 ```bash

@@ -6,19 +6,27 @@
   - CFLongsword
 
 - type: loadout
+  id: CFLoadoutLongbow
+  equipment:
+    belt: CFQuiverFilled
+  inhand:
+  - CFLongbow
+
+- type: loadout
   id: CFLoadoutLeatherArmor
   equipment:
     outerClothing: CFLeatherArmor
 
 - type: loadoutGroup
   id: CFWeaponsMelee
-  name: cf-loadout-group-weapons-melee
+  name: cf-loadout-group-weapons
   minLimit: 1
   maxLimit: 1
   defaultSelected: 1
   editorTab: Weapons
   loadouts:
   - CFLoadoutLongsword
+  - CFLoadoutLongbow
 
 - type: loadoutGroup
   id: CFDefenseArmor
@@ -72,3 +80,4 @@
   groups:
   - CFWeaponsMelee
   - CFDefenseArmor
+

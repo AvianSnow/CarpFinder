@@ -22,4 +22,16 @@ public sealed partial class CFCombatantComponent : Component
 
     [DataField, AutoNetworkedField]
     public string? ClassId;
+
+    [DataField, AutoNetworkedField]
+    public string? BackgroundId;
+
+    [DataField, AutoNetworkedField]
+    public int TemporaryHp;
+
+    [DataField, AutoNetworkedField]
+    public int Dying;
+
+    [DataField, AutoNetworkedField]
+    public int Wounded;
 }

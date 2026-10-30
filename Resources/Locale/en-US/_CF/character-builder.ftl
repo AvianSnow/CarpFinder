@@ -5,8 +5,10 @@ cf-character-builder-gear-tab = Gear
 cf-character-builder-spells-tab = Spells
 
 cf-loadout-group-weapons-melee = Melee Weapons
+cf-loadout-group-weapons = Weapons
 cf-loadout-group-defense-armor = Armor
 cf-loadout-group-gear-basics = Adventuring Gear
+
 
 cf-character-builder-ancestry = Ancestry
 cf-character-builder-background = Background
