@@ -7,7 +7,7 @@ using Robust.Client.UserInterface.XAML;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 
-namespace Content.Client.Lobby.UI.CharacterBuilder;
+namespace Content.Client.CF.Lobby.UI.CharacterBuilder;
 
 [GenerateTypedNameReferences]
 public sealed partial class WeaponsTab : BoxContainer

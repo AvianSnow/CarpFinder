@@ -4,6 +4,10 @@ cf-character-builder-defense-tab = Defense
 cf-character-builder-gear-tab = Gear
 cf-character-builder-spells-tab = Spells
 
+cf-loadout-group-weapons-melee = Melee Weapons
+cf-loadout-group-defense-armor = Armor
+cf-loadout-group-gear-basics = Adventuring Gear
+
 cf-character-builder-ancestry = Ancestry
 cf-character-builder-background = Background
 cf-character-builder-class = Class
@@ -37,6 +41,13 @@ cf-character-builder-level-1 = level 1
 cf-character-builder-level-2 = level 2
 cf-character-builder-level-3 = level 3
 cf-character-builder-set-abilities = Set Abilities
+cf-character-builder-set-abilities-done = Set Abilities ✓
+cf-character-builder-boost-help = Assign each free or choice boost to a different attribute within that step. Finishing free boosts must each go to a different attribute.
+cf-character-builder-boost-need-abc = Pick an ancestry, background, and class first, then assign boosts.
+cf-character-builder-boost-ancestry-free = Ancestry free boost {$index}
+cf-character-builder-boost-background-choice = Background boost (choose one)
+cf-character-builder-boost-background-free = Background free boost
+cf-character-builder-boost-finishing = Free boost {$index}
 cf-character-builder-skill-training = Skill Training
 cf-character-builder-class-skill = Class Skill
 cf-character-builder-heritage-slot = Heritage: Not Selected
@@ -101,7 +112,9 @@ cf-ancestry-goblin = Goblin
 cf-ancestry-goblin-description = Goblins are small, quick, and impossible to ignore.
 
 cf-department-adventures = Adventures
+cf-department-adventures-description = Adventuring party members.
 cf-department-npc = NPC
+cf-department-npc-description = Non-player companions and specialists.
 
 cf-job-alpha = Alpha
 cf-job-alpha-desc = An adventuring party member.

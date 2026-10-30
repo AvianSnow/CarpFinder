@@ -27,7 +27,4 @@
         - LightArmor
         - MediumArmor
         - Unarmored
-  abilityBoosts:
-    - Strength
-    - Constitution
-    - Free
+  # Class key-attribute boost is applied from keyAbility in code (PF2e).

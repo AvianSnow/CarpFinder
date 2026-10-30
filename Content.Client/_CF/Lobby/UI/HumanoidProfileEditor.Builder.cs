@@ -1,5 +1,5 @@
 using System.Linq;
-using Content.Client.Lobby.UI.CharacterBuilder;
+using Content.Client.CF.Lobby.UI.CharacterBuilder;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Preferences;
 using Content.Shared.Humanoid.Prototypes;
@@ -30,13 +30,13 @@ public sealed partial class HumanoidProfileEditor
     private BuilderSelection _selection = BuilderSelection.Ancestry;
     private bool _pickerOpen;
     private string? _pendingId;
-    private string? _backgroundId;
-    private string? _classId;
     private string? _prdUrl;
 
     private const string AncestryPrd = "https://2e.aonprd.com/Ancestries.aspx";
     private const string BackgroundPrd = "https://2e.aonprd.com/Backgrounds.aspx";
     private const string ClassPrd = "https://2e.aonprd.com/Classes.aspx";
+
+    private static readonly CFAbility[] AllAbilities = Enum.GetValues<CFAbility>();
 
     private void SetupCharacterBuilder()
     {
@@ -59,6 +59,10 @@ public sealed partial class HumanoidProfileEditor
         SelectionView.OnClosed += ClosePicker;
         SelectionView.OnPrdPressed += OpenPrd;
 
+        BoostView.OnClosed += ClosePicker;
+        BoostView.OnAccept += AcceptBoostAssignment;
+        SetAbilitiesButton.OnPressed += _ => ShowBoostAssignment();
+
         TabContainer.SetTabTitle(DetailsTab, Loc.GetString("cf-character-builder-details-tab"));
         TabContainer.SetTabTitle(WeaponsTabIndex, Loc.GetString("cf-character-builder-weapons-tab"));
         TabContainer.SetTabTitle(DefenseTabIndex, Loc.GetString("cf-character-builder-defense-tab"));
@@ -68,6 +72,21 @@ public sealed partial class HumanoidProfileEditor
         UpdateBuilderSummary();
         Level2Toggle.OnPressed += _ => Level2Body.Visible = Level2Toggle.Pressed;
         Level3Toggle.OnPressed += _ => Level3Body.Visible = Level3Toggle.Pressed;
+    }
+
+    private CFCharacterBuildData CurrentBuild()
+    {
+        return Profile?.CFBuild.Clone() ?? new CFCharacterBuildData();
+    }
+
+    private void SetBuild(CFCharacterBuildData build)
+    {
+        if (Profile == null)
+            return;
+
+        Profile = Profile.WithCFBuild(build);
+        SetDirty();
+        UpdateBuilderSummary();
     }
 
     private void AcceptPicker()
@@ -83,6 +102,7 @@ public sealed partial class HumanoidProfileEditor
         _pickerOpen = false;
         _pendingId = null;
         SelectionView.Visible = false;
+        BoostView.Visible = false;
         JobPane.Visible = false;
         EditorPane.Visible = true;
         AncestryButton.Pressed = false;
@@ -95,7 +115,17 @@ public sealed partial class HumanoidProfileEditor
     {
         EditorPane.Visible = false;
         JobPane.Visible = false;
+        BoostView.Visible = false;
         SelectionView.Visible = true;
+        _pickerOpen = true;
+    }
+
+    private void OpenBoostView()
+    {
+        EditorPane.Visible = false;
+        JobPane.Visible = false;
+        SelectionView.Visible = false;
+        BoostView.Visible = true;
         _pickerOpen = true;
     }
 
@@ -105,6 +135,7 @@ public sealed partial class HumanoidProfileEditor
         _pickerOpen = false;
         EditorPane.Visible = false;
         SelectionView.Visible = false;
+        BoostView.Visible = false;
         JobPane.Visible = true;
         RefreshJobs();
     }
@@ -123,16 +154,27 @@ public sealed partial class HumanoidProfileEditor
         {
             case BuilderSelection.Ancestry:
                 SetSpecies(id);
-                UpdateBuilderSummary();
+                // Clear ancestry free boosts when ancestry/species changes — count may differ.
+                var build = CurrentBuild();
+                build.AncestryFreeBoosts.Clear();
+                SetBuild(build);
                 break;
             case BuilderSelection.Background:
-                _backgroundId = id;
-                UpdateBuilderSummary();
+            {
+                var next = CurrentBuild();
+                next.Background = id;
+                next.BackgroundBoost = null;
+                next.BackgroundFreeBoost = null;
+                SetBuild(next);
                 break;
+            }
             case BuilderSelection.Class:
-                _classId = id;
-                UpdateBuilderSummary();
+            {
+                var next = CurrentBuild();
+                next.Class = id;
+                SetBuild(next);
                 break;
+            }
         }
     }
 
@@ -195,7 +237,8 @@ public sealed partial class HumanoidProfileEditor
     {
         _selection = BuilderSelection.Background;
         _prdUrl = BackgroundPrd;
-        _pendingId = _backgroundId;
+        var selected = Profile?.CFBuild.Background?.Id;
+        _pendingId = selected;
         var options = new List<Pf2eListEntry>();
 
         foreach (var background in _prototypeManager.EnumeratePrototypes<CFBackgroundPrototype>().OrderBy(background => Loc.GetString(background.Name), StringComparer.CurrentCultureIgnoreCase))
@@ -215,7 +258,7 @@ public sealed partial class HumanoidProfileEditor
             Loc.GetString("cf-character-builder-title-background"),
             Loc.GetString("cf-character-builder-filter-all-backgrounds"),
             options,
-            _backgroundId);
+            selected);
         OpenPicker();
     }
 
@@ -223,7 +266,8 @@ public sealed partial class HumanoidProfileEditor
     {
         _selection = BuilderSelection.Class;
         _prdUrl = ClassPrd;
-        _pendingId = _classId;
+        var selected = Profile?.CFBuild.Class?.Id;
+        _pendingId = selected;
         var options = new List<Pf2eListEntry>();
 
         foreach (var cls in _prototypeManager.EnumeratePrototypes<CFClassPrototype>().OrderBy(cls => Loc.GetString(cls.Name), StringComparer.CurrentCultureIgnoreCase))
@@ -236,7 +280,7 @@ public sealed partial class HumanoidProfileEditor
                 Traits = Loc.GetString("cf-character-builder-class-key-ability", ("ability", AbilityName(cls.KeyAbility))),
                 Description = Loc.GetString(cls.Description),
                 HitPoints = Stat("cf-character-builder-stat-hp", cls.HitPoints.ToString()),
-                Boosts = Stat("cf-character-builder-stat-boosts", FormatBoosts(cls.AbilityBoosts)),
+                Boosts = Stat("cf-character-builder-stat-boosts", AbilityName(cls.KeyAbility)),
                 Rules = string.Join('\n', new[]
                 {
                     Loc.GetString("cf-character-builder-class-hp-ability", ("ability", AbilityName(cls.HitPointsAbility))),
@@ -249,8 +293,136 @@ public sealed partial class HumanoidProfileEditor
             Loc.GetString("cf-character-builder-title-class"),
             Loc.GetString("cf-character-builder-filter-all-classes"),
             options,
-            _classId);
+            selected);
         OpenPicker();
+    }
+
+    private void ShowBoostAssignment()
+    {
+        if (Profile == null)
+            return;
+
+        var build = CurrentBuild();
+        var ancestry = CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species);
+        var slots = new List<BoostSlotDefinition>();
+
+        if (ancestry != null)
+        {
+            var freeCount = CFAttributeMath.CountAncestryFreeBoosts(ancestry);
+            for (var i = 0; i < freeCount; i++)
+            {
+                CFAbility? selected = i < build.AncestryFreeBoosts.Count ? build.AncestryFreeBoosts[i] : null;
+                slots.Add(new BoostSlotDefinition
+                {
+                    Id = $"ancestry-free-{i}",
+                    Label = Loc.GetString("cf-character-builder-boost-ancestry-free", ("index", i + 1)),
+                    Allowed = AllAbilities.ToList(),
+                    Selected = selected,
+                });
+            }
+        }
+
+        if (build.Background != null
+            && _prototypeManager.TryIndex(build.Background.Value, out CFBackgroundPrototype? background))
+        {
+            var choices = CFAttributeMath.BackgroundBoostChoices(background);
+            if (choices.Count > 0)
+            {
+                slots.Add(new BoostSlotDefinition
+                {
+                    Id = "background-choice",
+                    Label = Loc.GetString("cf-character-builder-boost-background-choice"),
+                    Allowed = choices,
+                    Selected = build.BackgroundBoost,
+                });
+            }
+
+            slots.Add(new BoostSlotDefinition
+            {
+                Id = "background-free",
+                Label = Loc.GetString("cf-character-builder-boost-background-free"),
+                Allowed = AllAbilities.ToList(),
+                Selected = build.BackgroundFreeBoost,
+            });
+        }
+
+        for (var i = 0; i < CFAttributeMath.FinishingFreeBoostCount; i++)
+        {
+            CFAbility? selected = i < build.FreeBoosts.Count ? build.FreeBoosts[i] : null;
+            slots.Add(new BoostSlotDefinition
+            {
+                Id = $"free-{i}",
+                Label = Loc.GetString("cf-character-builder-boost-finishing", ("index", i + 1)),
+                Allowed = AllAbilities.ToList(),
+                Selected = selected,
+            });
+        }
+
+        if (slots.Count == 0)
+        {
+            // Nothing to assign yet — still show empty guidance.
+            BoostView.Show(
+                Loc.GetString("cf-character-builder-set-abilities"),
+                Loc.GetString("cf-character-builder-boost-need-abc"),
+                Array.Empty<BoostSlotDefinition>());
+            OpenBoostView();
+            return;
+        }
+
+        BoostView.Show(
+            Loc.GetString("cf-character-builder-set-abilities"),
+            Loc.GetString("cf-character-builder-boost-help"),
+            slots);
+        OpenBoostView();
+    }
+
+    private void AcceptBoostAssignment()
+    {
+        if (Profile == null)
+            return;
+
+        var selections = BoostView.GetSelections();
+        var build = CurrentBuild();
+        var ancestry = CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species);
+
+        build.AncestryFreeBoosts.Clear();
+        if (ancestry != null)
+        {
+            var freeCount = CFAttributeMath.CountAncestryFreeBoosts(ancestry);
+            var picked = new HashSet<CFAbility>();
+            for (var i = 0; i < freeCount; i++)
+            {
+                if (!selections.TryGetValue($"ancestry-free-{i}", out var ability) || ability == null)
+                    continue;
+
+                if (!picked.Add(ability.Value))
+                    continue;
+
+                build.AncestryFreeBoosts.Add(ability.Value);
+            }
+        }
+
+        if (selections.TryGetValue("background-choice", out var bgChoice))
+            build.BackgroundBoost = bgChoice;
+
+        if (selections.TryGetValue("background-free", out var bgFree))
+            build.BackgroundFreeBoost = bgFree;
+
+        build.FreeBoosts.Clear();
+        var finishingPicked = new HashSet<CFAbility>();
+        for (var i = 0; i < CFAttributeMath.FinishingFreeBoostCount; i++)
+        {
+            if (!selections.TryGetValue($"free-{i}", out var ability) || ability == null)
+                continue;
+
+            if (!finishingPicked.Add(ability.Value))
+                continue;
+
+            build.FreeBoosts.Add(ability.Value);
+        }
+
+        ClosePicker();
+        SetBuild(build);
     }
 
     private void UpdateBuilderSummary()
@@ -259,12 +431,14 @@ public sealed partial class HumanoidProfileEditor
         if (Profile != null && _prototypeManager.TryIndex(Profile.Species, out SpeciesPrototype? species))
             ancestry = Loc.GetString(species.Name);
 
+        var build = CurrentBuild();
+
         var background = Loc.GetString("cf-character-builder-none");
-        if (_backgroundId != null && _prototypeManager.TryIndex<CFBackgroundPrototype>(_backgroundId, out var backgroundProto))
+        if (build.Background != null && _prototypeManager.TryIndex(build.Background.Value, out CFBackgroundPrototype? backgroundProto))
             background = Loc.GetString(backgroundProto.Name);
 
         var clsName = Loc.GetString("cf-character-builder-none");
-        if (_classId != null && _prototypeManager.TryIndex<CFClassPrototype>(_classId, out var classProto))
+        if (build.Class != null && _prototypeManager.TryIndex(build.Class.Value, out CFClassPrototype? classProto))
             clsName = Loc.GetString(classProto.Name);
 
         var jobName = Loc.GetString("cf-character-builder-none");
@@ -279,52 +453,52 @@ public sealed partial class HumanoidProfileEditor
         BackgroundButton.Text = $"{Loc.GetString("cf-character-builder-background")}: {background}";
         ClassButton.Text = $"{Loc.GetString("cf-character-builder-class")}: {clsName}";
         JobButton.Text = $"{Loc.GetString("cf-character-builder-job")}: {jobName}";
+
+        var boostComplete = IsBoostAssignmentComplete(build);
+        SetAbilitiesButton.Text = boostComplete
+            ? Loc.GetString("cf-character-builder-set-abilities-done")
+            : Loc.GetString("cf-character-builder-set-abilities");
+
         UpdateHeaderStats();
+    }
+
+    private bool IsBoostAssignmentComplete(CFCharacterBuildData build)
+    {
+        if (Profile == null)
+            return false;
+
+        var ancestry = CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species);
+        if (ancestry != null)
+        {
+            var need = CFAttributeMath.CountAncestryFreeBoosts(ancestry);
+            if (build.AncestryFreeBoosts.Count < need)
+                return false;
+        }
+
+        if (build.Background != null)
+        {
+            if (build.BackgroundFreeBoost == null)
+                return false;
+
+            if (_prototypeManager.TryIndex(build.Background.Value, out CFBackgroundPrototype? background)
+                && CFAttributeMath.BackgroundBoostChoices(background).Count > 0
+                && build.BackgroundBoost == null)
+            {
+                return false;
+            }
+        }
+
+        return build.FreeBoosts.Count >= CFAttributeMath.FinishingFreeBoostCount;
     }
 
     private void UpdateHeaderStats()
     {
-        CFAncestryPrototype? ancestry = null;
-        if (Profile != null)
-        {
-            foreach (var proto in _prototypeManager.EnumeratePrototypes<CFAncestryPrototype>())
-            {
-                if (proto.Species != Profile.Species)
-                    continue;
+        if (Profile == null)
+            return;
 
-                ancestry = proto;
-                break;
-            }
-        }
-
-        CFClassPrototype? cls = null;
-        if (_classId != null)
-            _prototypeManager.TryIndex(_classId, out cls);
-
-        CFBackgroundPrototype? background = null;
-        if (_backgroundId != null)
-            _prototypeManager.TryIndex(_backgroundId, out background);
-
-        var scores = Enum.GetValues<CFAbility>().ToDictionary(ability => ability, _ => 10);
-        if (ancestry != null)
-        {
-            foreach (var boost in ancestry.AbilityBoosts)
-                ApplyBoost(scores, boost);
-            foreach (var flaw in ancestry.AbilityFlaws)
-                scores[flaw] -= 2;
-        }
-
-        if (cls != null)
-        {
-            foreach (var boost in cls.AbilityBoosts)
-                ApplyBoost(scores, boost);
-        }
-
-        if (background != null)
-        {
-            foreach (var boost in background.AbilityBoosts)
-                ApplyBoost(scores, boost);
-        }
+        var sheet = CFAttributeMath.Snapshot(_prototypeManager, Profile);
+        var mods = sheet.Modifiers;
+        var ancestry = sheet.Ancestry;
 
         var size = ancestry == null
             ? Loc.GetString("cf-character-builder-none")
@@ -335,50 +509,35 @@ public sealed partial class HumanoidProfileEditor
 
         SizeLabel.Text = Loc.GetString("cf-character-builder-size", ("size", size));
         SpeedLabel.Text = Loc.GetString("cf-character-builder-speed", ("speed", speed));
-        StrLabel.Text = Loc.GetString("cf-character-builder-str", ("score", scores[CFAbility.Strength]));
-        DexLabel.Text = Loc.GetString("cf-character-builder-dex", ("score", scores[CFAbility.Dexterity]));
-        ConLabel.Text = Loc.GetString("cf-character-builder-con", ("score", scores[CFAbility.Constitution]));
-        IntLabel.Text = Loc.GetString("cf-character-builder-int", ("score", scores[CFAbility.Intelligence]));
-        WisLabel.Text = Loc.GetString("cf-character-builder-wis", ("score", scores[CFAbility.Wisdom]));
-        ChaLabel.Text = Loc.GetString("cf-character-builder-cha", ("score", scores[CFAbility.Charisma]));
+        StrLabel.Text = Loc.GetString("cf-character-builder-str", ("score", CFAbilityScores.FormatModifier(mods[CFAbility.Strength])));
+        DexLabel.Text = Loc.GetString("cf-character-builder-dex", ("score", CFAbilityScores.FormatModifier(mods[CFAbility.Dexterity])));
+        ConLabel.Text = Loc.GetString("cf-character-builder-con", ("score", CFAbilityScores.FormatModifier(mods[CFAbility.Constitution])));
+        IntLabel.Text = Loc.GetString("cf-character-builder-int", ("score", CFAbilityScores.FormatModifier(mods[CFAbility.Intelligence])));
+        WisLabel.Text = Loc.GetString("cf-character-builder-wis", ("score", CFAbilityScores.FormatModifier(mods[CFAbility.Wisdom])));
+        ChaLabel.Text = Loc.GetString("cf-character-builder-cha", ("score", CFAbilityScores.FormatModifier(mods[CFAbility.Charisma])));
 
-        var conMod = AbilityMod(scores[CFAbility.Constitution]);
-        var maxHp = (ancestry?.HitPoints ?? 0) + (cls?.HitPoints ?? 0) + conMod;
-        if (maxHp < 0)
-            maxHp = 0;
+        HpSummary.Text = Loc.GetString("cf-character-builder-hp-summary", ("current", sheet.MaxHp), ("max", sheet.MaxHp));
+        AcValue.Text = sheet.ArmorClass.ToString();
 
-        HpSummary.Text = Loc.GetString("cf-character-builder-hp-summary", ("current", maxHp), ("max", maxHp));
-        AcValue.Text = (10 + AbilityMod(scores[CFAbility.Dexterity])).ToString();
-
-        var trainedSaves = cls?.Proficiencies.SavingThrows.Trained ?? new List<string>();
-        FortitudeLabel.Text = SaveLine("cf-character-builder-save-fortitude", trainedSaves.Contains("Fortitude"), AbilityMod(scores[CFAbility.Constitution]));
-        ReflexLabel.Text = SaveLine("cf-character-builder-save-reflex", trainedSaves.Contains("Reflex"), AbilityMod(scores[CFAbility.Dexterity]));
-        WillLabel.Text = SaveLine("cf-character-builder-save-will", trainedSaves.Contains("Will"), AbilityMod(scores[CFAbility.Wisdom]));
+        FortitudeLabel.Text = SaveLine("cf-character-builder-save-fortitude",
+            CFAttributeMath.IsSaveTrained(sheet.Class, "Fortitude"),
+            sheet.Fortitude);
+        ReflexLabel.Text = SaveLine("cf-character-builder-save-reflex",
+            CFAttributeMath.IsSaveTrained(sheet.Class, "Reflex"),
+            sheet.Reflex);
+        WillLabel.Text = SaveLine("cf-character-builder-save-will",
+            CFAttributeMath.IsSaveTrained(sheet.Class, "Will"),
+            sheet.Will);
     }
 
-    private static void ApplyBoost(Dictionary<CFAbility, int> scores, CFAbilityBoost boost)
+    private static string SaveLine(string saveLoc, bool trained, int bonus)
     {
-        if (boost == CFAbilityBoost.Free)
-            return;
-
-        scores[(CFAbility)boost] += 2;
-    }
-
-    private static int AbilityMod(int score)
-    {
-        return (int)Math.Floor((score - 10) / 2.0);
-    }
-
-    private static string SaveLine(string saveLoc, bool trained, int abilityMod)
-    {
-        var bonus = abilityMod + (trained ? 3 : 0);
         var rank = Loc.GetString(trained
             ? "cf-character-builder-prof-trained-short"
             : "cf-character-builder-prof-untrained-short");
-        var text = bonus >= 0 ? $"+{bonus}" : bonus.ToString();
         return Loc.GetString("cf-character-builder-save-line",
             ("rank", rank),
-            ("bonus", text),
+            ("bonus", CFAbilityScores.FormatModifier(bonus)),
             ("save", Loc.GetString(saveLoc)));
     }
 

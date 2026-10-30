@@ -9,7 +9,7 @@ using Robust.Client.UserInterface.Controls;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 
-namespace Content.Client.Lobby.UI.CharacterBuilder;
+namespace Content.Client.CF.Lobby.UI.CharacterBuilder;
 
 /// <summary>
 /// Fills a character-builder tab with the role loadout groups for one editor tab.

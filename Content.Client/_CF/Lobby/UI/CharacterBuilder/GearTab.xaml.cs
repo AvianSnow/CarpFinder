@@ -7,17 +7,17 @@ using Robust.Client.UserInterface.XAML;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 
-namespace Content.Client.Lobby.UI.CharacterBuilder;
+namespace Content.Client.CF.Lobby.UI.CharacterBuilder;
 
 [GenerateTypedNameReferences]
-public sealed partial class SpellsTab : BoxContainer
+public sealed partial class GearTab : BoxContainer
 {
     private readonly LoadoutCategoryTabController _controller;
 
-    public SpellsTab()
+    public GearTab()
     {
         RobustXamlLoader.Load(this);
-        _controller = new LoadoutCategoryTabController(SpellsGroups, LoadoutEditorTabs.Spells);
+        _controller = new LoadoutCategoryTabController(GearGroups, LoadoutEditorTabs.Gear);
     }
 
     public void Rebuild(
