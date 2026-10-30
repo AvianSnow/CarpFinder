@@ -93,4 +93,10 @@
   name: cf-ability-skill-thievery
   ability: Dexterity
   order: 15
+
+- type: cfAbilitySkill
+  id: Lore
+  name: cf-ability-skill-lore
+  ability: Intelligence
+  order: 16
   

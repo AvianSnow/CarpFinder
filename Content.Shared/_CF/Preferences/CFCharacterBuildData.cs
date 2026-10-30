@@ -58,6 +58,12 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
     [DataField]
     public int Level = 1;
 
+    /// <summary>
+    /// Spells chosen for each rank slot. Bonus spells use <see cref="CFSpellSlots.BonusRank"/>.
+    /// </summary>
+    [DataField]
+    public List<CFSpellPick> Spells = new();
+
     public CFCharacterBuildData Clone()
     {
         return new CFCharacterBuildData
@@ -71,6 +77,7 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
             BackgroundTrainedSkills = BackgroundTrainedSkills.ToList(),
             ClassTrainedSkills = ClassTrainedSkills.ToList(),
             Level = Level,
+            Spells = Spells.Select(spell => spell.Copy()).ToList(),
         };
     }
 
@@ -87,7 +94,8 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
                && AncestryFreeBoosts.SequenceEqual(other.AncestryFreeBoosts)
                && FreeBoosts.SequenceEqual(other.FreeBoosts)
                && BackgroundTrainedSkills.SequenceEqual(other.BackgroundTrainedSkills)
-               && ClassTrainedSkills.SequenceEqual(other.ClassTrainedSkills);
+               && ClassTrainedSkills.SequenceEqual(other.ClassTrainedSkills)
+               && Spells.SequenceEqual(other.Spells);
     }
 
     public override bool Equals(object? obj)
@@ -111,6 +119,59 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
             hash.Add(skill);
         foreach (var skill in ClassTrainedSkills)
             hash.Add(skill);
+        foreach (var spell in Spells)
+            hash.Add(spell);
         return hash.ToHashCode();
+    }
+}
+
+/// <summary>A spell placed in one character-builder slot.</summary>
+[DataDefinition]
+[Serializable, NetSerializable]
+public sealed partial class CFSpellPick : IEquatable<CFSpellPick>
+{
+    [DataField]
+    public int Rank;
+
+    [DataField]
+    public int Index;
+
+    [DataField]
+    public ProtoId<CFSpellPrototype> Spell;
+
+    /// <summary>The Cast button on a ranked slot. Cantrips leave this false.</summary>
+    [DataField]
+    public bool Expended;
+
+    public bool HasSpell => !string.IsNullOrEmpty(Spell.Id);
+
+    public CFSpellPick Copy()
+    {
+        return new CFSpellPick
+        {
+            Rank = Rank,
+            Index = Index,
+            Spell = Spell,
+            Expended = Expended,
+        };
+    }
+
+    public bool Equals(CFSpellPick? other)
+    {
+        return other != null
+               && Rank == other.Rank
+               && Index == other.Index
+               && Spell == other.Spell
+               && Expended == other.Expended;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is CFSpellPick other && Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Rank, Index, Spell, Expended);
     }
 }

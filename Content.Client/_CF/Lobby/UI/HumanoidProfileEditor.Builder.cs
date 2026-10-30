@@ -791,6 +791,8 @@ public sealed partial class HumanoidProfileEditor
         WillLabel.Text = SaveLine("cf-character-builder-save-will",
             CFAttributeMath.IsSaveTrained(sheet.Class, "Will"),
             sheet.Will);
+
+        SpellsTab.Rebuild(Profile, _prototypeManager, SetBuild);
     }
 
     private static string SaveLine(string saveLoc, bool trained, int bonus)
@@ -820,7 +822,7 @@ public sealed partial class HumanoidProfileEditor
         WeaponsTab.Rebuild(Profile, JobOverride, session, collection, _prototypeManager, GetProfile, OnChanged);
         DefenseTab.Rebuild(Profile, JobOverride, session, collection, _prototypeManager, GetProfile, OnChanged);
         GearTab.Rebuild(Profile, JobOverride, session, collection, _prototypeManager, GetProfile, OnChanged);
-        SpellsTab.Rebuild(Profile, JobOverride, session, collection, _prototypeManager, GetProfile, OnChanged);
+        SpellsTab.Rebuild(Profile, _prototypeManager, SetBuild);
     }
 
     public void FocusGearTab(JobPrototype job)

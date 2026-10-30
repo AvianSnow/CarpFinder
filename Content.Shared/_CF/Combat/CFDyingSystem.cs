@@ -37,6 +37,8 @@ public sealed partial class CFDyingSystem : EntitySystem
 
     public override void Update(float frameTime)
     {
+        // Game tick, not a physics substep. Only creatures that still have the dying condition are checked,
+        // and each one at most once per recovery interval.
         if (!_net.IsServer)
             return;
 

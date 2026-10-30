@@ -8,8 +8,10 @@
 - Attribute math is PF2e modifiers (+0 base, boost +1, flaw −1) via `CFAttributeMath`.
 - Level 1 buttons: **Abilities** (`BoostAssignmentView`), **Skill** / **Class** (`SkillAssignmentView`).
 - Skill Training: one slot per background `trainedSkills`/`skillBoosts`; player assigns distinct skills (defaults from background).
+- Backgrounds: `Resources/Prototypes/_CF/Character/Background/`. Player Core and the other Archives of Nethys backgrounds. Each restricted attribute boost is listed (the builder always adds one free boost). A Lore subcategory is the `Lore` skill; the specific lore is named in the description. Skill feats are named only; they are not granted.
 - Class Skill: `additionalSkillTrainings + max(0, Int)` free picks; excludes fixed class + background skills.
 - Sheet preview (HP / AC / saves) uses `CFAttributeMath.Snapshot`.
+- Spells tab (`SpellsTab.xaml`) lists slots by rank. A class with `spellcasting` uses its cantrips and slot counts (Bard: 5 cantrips, two rank-1 spells). Other classes show a preview sheet (5 cantrips, 3/2/2). Slot buttons use the standard button style. `SpellSelectionPopup.xaml` filters `cfSpell` prototypes by tradition and rank. Choices are stored on `CFCharacterBuildData.Spells`. Skill feats and spell descriptions are short mechanical notes.
 
 ## Spawn
 
@@ -26,7 +28,7 @@
 ## Combat (lean PF2e Strike)
 
 - `CFMeleeWeapon` on weapons + `CFCombatant` + `CFAbilityScore` on attackers/targets.
-- `CFStrikeSystem` handles `MeleeHitEvent` on CF weapons: cancels stock damage, rolls d20+mod vs AC, applies CF HP.
+- `CFStrikeSystem` handles `MeleeHitEvent` on CF weapons: cancels stock damage, rolls d20+mod vs AC, applies CF HP. Marking the hit handled skips the stock sounds. A melee hit plays `soundHit`. A melee miss plays `soundSwing` at the target. A CF weapon with no `soundHit` uses a slash or smash sound from its damage type. A swing that touches nothing still uses the stock swing sound.
 - Floating numbers (`CFDamageNumberSystem` / `CFCombatNumberEvent`): **HIT / MISS / CRIT HIT / CRIT MISS**, then damage amount on hits.
 - Entities:
   - `CFLongsword` — d8 slashing martial weapon

@@ -75,15 +75,17 @@ public sealed partial class CFDamageNumberSystem : EntitySystem
             Stack = 0,
         });
 
-        if ((ev.Degree is CFStrikeDegree.Success or CFStrikeDegree.CriticalSuccess) && ev.Amount > 0)
+        if (ev.Degree is CFStrikeDegree.Success or CFStrikeDegree.CriticalSuccess)
         {
+            var blocked = ev.Amount <= 0;
+            var criticalHit = ev.Degree == CFStrikeDegree.CriticalSuccess;
             _numbers.Add(new FloatingNumber
             {
                 Map = origin,
-                Text = ev.Amount.ToString(),
-                Color = ColorForDamage(ev.DamageType),
-                Critical = ev.Degree == CFStrikeDegree.CriticalSuccess,
-                Scale = FontScale(ev.Amount, ev.Degree == CFStrikeDegree.CriticalSuccess),
+                Text = blocked ? "0" : ev.Amount.ToString(),
+                Color = blocked ? new Color(255, 40, 40) : ColorForDamage(ev.DamageType),
+                Critical = criticalHit,
+                Scale = FontScale(blocked ? 1 : ev.Amount, criticalHit),
                 Lifetime = 0.9f + _random.Next(0, 41) / 100f,
                 Horizontal = horizontal + _random.Next(-4, 5),
                 Stack = 1,
@@ -152,7 +154,8 @@ public sealed partial class CFDamageNumberSystem : EntitySystem
 
     private static float FontScale(int amount, bool critical)
     {
-        var scale = 0.9f + Math.Abs(amount) * 0.04f;
+        var shown = Math.Max(amount, 1);
+        var scale = 0.9f + shown * 0.04f;
         if (critical)
             scale += 0.45f;
 

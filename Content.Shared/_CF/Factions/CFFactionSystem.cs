@@ -15,6 +15,7 @@ public sealed partial class CFFactionSystem : EntitySystem
     [Dependency] private EntityLookupSystem _lookup = default!;
 
     private readonly Dictionary<string, string> _jobFactions = new();
+    private readonly List<EntityUid> _hostileRemove = new();
 
     public override void Initialize()
     {
@@ -119,21 +120,24 @@ public sealed partial class CFFactionSystem : EntitySystem
     /// </summary>
     public void ApplyHostileQuery(EntityUid owner, float range, HashSet<EntityUid> entities)
     {
-        if (!HasComp<CFFactionComponent>(owner))
+        if (!TryComp(owner, out CFFactionComponent? faction))
             return;
 
-        var remove = new List<EntityUid>();
+        _hostileRemove.Clear();
         foreach (var target in entities)
         {
             if (!HasComp<CFFactionComponent>(target))
                 continue;
 
             if (GetAlliance(owner, target) != CFAlliance.Opposition)
-                remove.Add(target);
+                _hostileRemove.Add(target);
         }
 
-        foreach (var target in remove)
+        foreach (var target in _hostileRemove)
             entities.Remove(target);
+
+        if (!_prototypes.TryIndex(faction.Faction, out CFFactionPrototype? proto) || proto.Opposition.Count == 0)
+            return;
 
         foreach (var other in _lookup.GetEntitiesInRange<MobStateComponent>(Transform(owner).Coordinates, range))
         {

@@ -14,7 +14,7 @@ How CarpFinder replaces the stock character editor without rewriting upstream Lo
 Content.Client/Lobby/UI/HumanoidProfileEditor.*     # stock upstream (on disk, not compiled)
 Content.Client/_CF/Lobby/UI/
   HumanoidProfileEditor.xaml(+.cs, Appearance, BasicInfo, Builder, FlavorText, Roles, Traits)
-  CharacterBuilder/   # Weapons/Defense/Gear/Spells tabs, Pf2eSelectionView, …
+  CharacterBuilder/   # Weapons/Defense/Gear/Spells tabs, SpellSelectionPopup, Pf2eSelectionView, …
 ```
 
 Stock partials that still match CF controls can stay compiled from Lobby if desired (`Markings.cs`, `Exports.cs`, `Sheetlet.cs`). Overridden partials are `Compile Remove`d in the csproj.

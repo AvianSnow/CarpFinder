@@ -29,4 +29,10 @@
         - MediumArmor
         - Unarmored
   additionalSkillTrainings: 4
+  spellcasting:
+    tradition: Occult
+    ability: Charisma
+    cantrips: 5
+    slots:
+      - 2
   # Class key-attribute boost is applied from keyAbility in code (PF2e).

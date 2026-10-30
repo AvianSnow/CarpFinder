@@ -16,6 +16,8 @@ using Content.Shared.Popups;
 using Content.Shared.Projectiles;
 using Content.Shared.Weapons.Melee;
 using Content.Shared.Weapons.Melee.Events;
+using Robust.Shared.Audio;
+using Robust.Shared.Audio.Systems;
 using Robust.Shared.Network;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
@@ -42,6 +44,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
     [Dependency] private CFDyingSystem _dying = default!;
     [Dependency] private CFFlankingSystem _flanking = default!;
     [Dependency] private CFFactionSystem _factions = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
 
     /// <summary>Unconscious / dying creatures are off-guard (−4 AC status, simplified).</summary>
     private const int DownedAcPenalty = 4;
@@ -56,7 +59,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (!_net.IsServer)
             return;
 
-        BeginMeleeStrikes(args.User, args.HitEntities, combat, abilities, CFStrikeWeaponStats.FromMelee(weapon.Comp), melee: true);
+        BeginMeleeStrikes(args.User, args.HitEntities, combat, abilities, CFStrikeWeaponStats.FromMelee(weapon.Comp), weapon.Owner, melee: true);
     }
 
     [SubscribeLocalEvent]
@@ -75,7 +78,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (!_net.IsServer)
             return;
 
-        BeginMeleeStrikes(args.User, args.HitEntities, combat, abilities, CFStrikeWeaponStats.Unarmed(), melee: true);
+        BeginMeleeStrikes(args.User, args.HitEntities, combat, abilities, CFStrikeWeaponStats.Unarmed(), weapon.Owner, melee: true);
     }
 
     /// <summary>
@@ -116,6 +119,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
             stats,
             distanceFeet,
             ranged.Propulsive,
+            weaponUid,
             melee: false);
     }
 
@@ -153,6 +157,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
         CFCombatantComponent combat,
         CFAbilityScoreComponent abilities,
         CFStrikeWeaponStats stats,
+        EntityUid weaponUid,
         bool melee)
     {
         foreach (var target in targets)
@@ -161,7 +166,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
             if (!_factions.CanHarm(user, target))
                 continue;
 
-            ResolveStrike(user, target, combat, abilities, stats, distanceFeet: 0f, propulsive: false, melee);
+            ResolveStrike(user, target, combat, abilities, stats, distanceFeet: 0f, propulsive: false, weaponUid, melee);
         }
     }
 
@@ -173,6 +178,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
         CFStrikeWeaponStats weapon,
         float distanceFeet,
         bool propulsive,
+        EntityUid weaponUid,
         bool melee)
     {
         if (!_factions.CanHarm(user, target))
@@ -261,9 +267,27 @@ public sealed partial class CFStrikeSystem : EntitySystem
             }
         }
 
+        PlayStrikeImpact(weaponUid, target, degree, weapon.DamageType, melee);
+
         RaiseNetworkEvent(
             new CFCombatNumberEvent(GetNetEntity(target), degree, damage, weapon.DamageType),
             Filter.Pvs(target));
+    }
+
+    /// <summary>
+    /// A miss plays the weapon swing at the target, so it does not use the hit noise.
+    /// A hit plays <c>soundHit</c>, or a slash/smash default when the weapon has none.
+    /// </summary>
+    private void PlayStrikeImpact(EntityUid weaponUid, EntityUid target, CFStrikeDegree degree, string cfDamageType, bool melee)
+    {
+        if (!melee || !TryComp(weaponUid, out MeleeWeaponComponent? weapon))
+            return;
+
+        var sound = degree is CFStrikeDegree.Failure or CFStrikeDegree.CriticalFailure
+            ? weapon.SwingSound
+            : weapon.HitSound ?? CFMeleeAudio.HitSound(cfDamageType);
+
+        _audio.PlayPvs(sound, Transform(target).Coordinates, sound.Params.WithVariation(0.05f));
     }
 
     private float GetDistanceFeet(EntityUid from, EntityUid to)

@@ -1,7 +1,8 @@
 namespace Content.Shared.CF.Preferences;
 
 /// <summary>
-/// The 16 Pathfinder 2e skills (Perception is tracked separately as a proficiency).
+/// The Pathfinder 2e skills (Perception is tracked separately as a proficiency).
+/// Lore stands in for every Lore subcategory.
 /// Prefer <c>cfAbilitySkill</c> prototype ids in data; this enum mirrors those ids.
 /// </summary>
 public enum CFAbilitySkill
@@ -22,4 +23,5 @@ public enum CFAbilitySkill
     Stealth,
     Survival,
     Thievery,
+    Lore,
 }

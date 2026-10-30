@@ -35,8 +35,40 @@ public sealed partial class CFFlankingSystem : EntitySystem
     [Dependency] private SharedStatusIconSystem _statusIcons = default!;
 
     private readonly List<EntityUid> _affected = new();
+    private readonly List<EntityUid> _refreshSnapshot = new();
     private readonly List<FlankCandidate> _candidates = new();
     private readonly HashSet<EntityUid> _flankers = new();
+    private readonly HashSet<EntityUid> _moveRefresh = new();
+
+    public override void Update(float frameTime)
+    {
+        if (!_net.IsServer || _moveRefresh.Count == 0)
+            return;
+
+        _affected.Clear();
+        foreach (var uid in _moveRefresh)
+        {
+            if (TerminatingOrDeleted(uid))
+                continue;
+
+            _affected.Add(uid);
+            if (!TryComp(uid, out TransformComponent? xform))
+                continue;
+
+            foreach (var other in _lookup.GetEntitiesInRange<MobStateComponent>(xform.Coordinates, CFFlanking.SearchRange))
+                _affected.Add(other.Owner);
+        }
+
+        _moveRefresh.Clear();
+        _refreshSnapshot.Clear();
+        _refreshSnapshot.AddRange(_affected);
+
+        foreach (var id in _refreshSnapshot)
+        {
+            if (!TerminatingOrDeleted(id))
+                Refresh(id);
+        }
+    }
 
     [SubscribeLocalEvent]
     private void OnMove(Entity<MobStateComponent> ent, ref MoveEvent args)
@@ -44,7 +76,13 @@ public sealed partial class CFFlankingSystem : EntitySystem
         if (!_net.IsServer || args.OnlyRotation)
             return;
 
-        RefreshAround(ent.Owner);
+        // A dying or dead body keeps sliding in the physics step. That must not schedule flanking.
+        // Dying recovery itself already runs once per game tick in CFDyingSystem.Update.
+        if (IsDeadOrDying(ent.Owner, ent.Comp))
+            return;
+
+        // One flanking pass per tick, not one per physics step.
+        _moveRefresh.Add(ent.Owner);
     }
 
     // By-value broadcast. The directed MobStateComponent subscription is already taken by stun,
@@ -175,7 +213,12 @@ public sealed partial class CFFlankingSystem : EntitySystem
             return;
         }
 
-        var comp = EnsureComp<CFOffGuardComponent>(target);
+        if (TryComp(target, out CFOffGuardComponent? existing)
+            && existing.Active
+            && existing.FlankedBy.SetEquals(_flankers))
+            return;
+
+        var comp = existing ?? EnsureComp<CFOffGuardComponent>(target);
         var wasActive = comp.Active;
         comp.FlankedBy.Clear();
         foreach (var flanker in _flankers)

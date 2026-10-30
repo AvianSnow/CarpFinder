@@ -27,6 +27,7 @@ public static class CFSkills
         "Intimidation",
         "Occultism",
         "Society",
+        "Lore",
     ];
 
     public static readonly string[] Column2 =
