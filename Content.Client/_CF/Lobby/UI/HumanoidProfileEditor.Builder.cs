@@ -27,7 +27,14 @@ public sealed partial class HumanoidProfileEditor
         Job,
     }
 
+    private enum SkillAssignMode
+    {
+        Background,
+        Class,
+    }
+
     private BuilderSelection _selection = BuilderSelection.Ancestry;
+    private SkillAssignMode _skillMode;
     private bool _pickerOpen;
     private string? _pendingId;
     private string? _prdUrl;
@@ -62,6 +69,11 @@ public sealed partial class HumanoidProfileEditor
         BoostView.OnClosed += ClosePicker;
         BoostView.OnAccept += AcceptBoostAssignment;
         SetAbilitiesButton.OnPressed += _ => ShowBoostAssignment();
+
+        SkillView.OnClosed += ClosePicker;
+        SkillView.OnAccept += AcceptSkillAssignment;
+        SkillTrainingButton.OnPressed += _ => ShowSkillTraining();
+        ClassSkillButton.OnPressed += _ => ShowClassSkill();
 
         TabContainer.SetTabTitle(DetailsTab, Loc.GetString("cf-character-builder-details-tab"));
         TabContainer.SetTabTitle(WeaponsTabIndex, Loc.GetString("cf-character-builder-weapons-tab"));
@@ -103,6 +115,7 @@ public sealed partial class HumanoidProfileEditor
         _pendingId = null;
         SelectionView.Visible = false;
         BoostView.Visible = false;
+        SkillView.Visible = false;
         JobPane.Visible = false;
         EditorPane.Visible = true;
         AncestryButton.Pressed = false;
@@ -116,6 +129,7 @@ public sealed partial class HumanoidProfileEditor
         EditorPane.Visible = false;
         JobPane.Visible = false;
         BoostView.Visible = false;
+        SkillView.Visible = false;
         SelectionView.Visible = true;
         _pickerOpen = true;
     }
@@ -125,7 +139,18 @@ public sealed partial class HumanoidProfileEditor
         EditorPane.Visible = false;
         JobPane.Visible = false;
         SelectionView.Visible = false;
+        SkillView.Visible = false;
         BoostView.Visible = true;
+        _pickerOpen = true;
+    }
+
+    private void OpenSkillView()
+    {
+        EditorPane.Visible = false;
+        JobPane.Visible = false;
+        SelectionView.Visible = false;
+        BoostView.Visible = false;
+        SkillView.Visible = true;
         _pickerOpen = true;
     }
 
@@ -136,6 +161,7 @@ public sealed partial class HumanoidProfileEditor
         EditorPane.Visible = false;
         SelectionView.Visible = false;
         BoostView.Visible = false;
+        SkillView.Visible = false;
         JobPane.Visible = true;
         RefreshJobs();
     }
@@ -165,6 +191,7 @@ public sealed partial class HumanoidProfileEditor
                 next.Background = id;
                 next.BackgroundBoost = null;
                 next.BackgroundFreeBoost = null;
+                next.BackgroundTrainedSkills.Clear();
                 SetBuild(next);
                 break;
             }
@@ -172,6 +199,7 @@ public sealed partial class HumanoidProfileEditor
             {
                 var next = CurrentBuild();
                 next.Class = id;
+                next.ClassTrainedSkills.Clear();
                 SetBuild(next);
                 break;
             }
@@ -421,8 +449,213 @@ public sealed partial class HumanoidProfileEditor
             build.FreeBoosts.Add(ability.Value);
         }
 
+        // Int can change free class-skill slot count — trim excess picks.
+        if (build.Class != null
+            && _prototypeManager.TryIndex(build.Class.Value, out CFClassPrototype? cls))
+        {
+            var preview = Profile.WithCFBuild(build);
+            var mods = CFAttributeMath.Snapshot(_prototypeManager, preview).Modifiers;
+            var need = CFSkills.ClassSkillSlotCount(cls, mods);
+            if (build.ClassTrainedSkills.Count > need)
+                build.ClassTrainedSkills = build.ClassTrainedSkills.Take(need).ToList();
+        }
+
         ClosePicker();
         SetBuild(build);
+    }
+
+    private void ShowSkillTraining()
+    {
+        _skillMode = SkillAssignMode.Background;
+        var build = CurrentBuild();
+        if (build.Background == null
+            || !_prototypeManager.TryIndex(build.Background.Value, out CFBackgroundPrototype? background))
+        {
+            SkillView.Show(
+                Loc.GetString("cf-character-builder-skill-training"),
+                Loc.GetString("cf-character-builder-skill-need-background"),
+                Array.Empty<SkillSlotDefinition>());
+            OpenSkillView();
+            return;
+        }
+
+        var defaults = CFSkills.BackgroundSkillSlots(background);
+        if (defaults.Count == 0)
+        {
+            SkillView.Show(
+                Loc.GetString("cf-character-builder-skill-training"),
+                Loc.GetString("cf-character-builder-skill-need-background"),
+                Array.Empty<SkillSlotDefinition>());
+            OpenSkillView();
+            return;
+        }
+
+        var labels = SkillLabelMap();
+        var allowed = labels.Keys.OrderBy(id => labels[id], StringComparer.CurrentCultureIgnoreCase).ToList();
+        var slots = new List<SkillSlotDefinition>();
+        for (var i = 0; i < defaults.Count; i++)
+        {
+            string? selected = null;
+            if (i < build.BackgroundTrainedSkills.Count)
+                selected = build.BackgroundTrainedSkills[i].Id;
+            else
+                selected = defaults[i].Id;
+
+            slots.Add(new SkillSlotDefinition
+            {
+                Id = $"bg-skill-{i}",
+                Label = Loc.GetString("cf-character-builder-skill-slot", ("index", i + 1)),
+                Allowed = allowed,
+                Labels = labels,
+                Selected = selected,
+            });
+        }
+
+        SkillView.Show(
+            Loc.GetString("cf-character-builder-skill-training"),
+            Loc.GetString("cf-character-builder-skill-help"),
+            slots);
+        OpenSkillView();
+    }
+
+    private void ShowClassSkill()
+    {
+        _skillMode = SkillAssignMode.Class;
+        var build = CurrentBuild();
+        if (Profile == null
+            || build.Class == null
+            || !_prototypeManager.TryIndex(build.Class.Value, out CFClassPrototype? cls))
+        {
+            SkillView.Show(
+                Loc.GetString("cf-character-builder-class-skill"),
+                Loc.GetString("cf-character-builder-class-skill-need-class"),
+                Array.Empty<SkillSlotDefinition>());
+            OpenSkillView();
+            return;
+        }
+
+        var sheet = CFAttributeMath.Snapshot(_prototypeManager, Profile);
+        var slotCount = CFSkills.ClassSkillSlotCount(cls, sheet.Modifiers);
+        if (slotCount == 0)
+        {
+            SkillView.Show(
+                Loc.GetString("cf-character-builder-class-skill"),
+                Loc.GetString("cf-character-builder-class-skill-need-class"),
+                Array.Empty<SkillSlotDefinition>());
+            OpenSkillView();
+            return;
+        }
+
+        var blocked = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var skill in cls.Proficiencies.Skills.Trained)
+            blocked.Add(skill);
+
+        if (build.BackgroundTrainedSkills.Count > 0)
+        {
+            foreach (var skill in build.BackgroundTrainedSkills)
+                blocked.Add(skill.Id);
+        }
+        else if (build.Background != null
+                 && _prototypeManager.TryIndex(build.Background.Value, out CFBackgroundPrototype? background))
+        {
+            foreach (var skill in CFSkills.BackgroundSkillSlots(background))
+                blocked.Add(skill.Id);
+        }
+
+        var labels = SkillLabelMap();
+        var allowed = labels.Keys
+            .Where(id => !blocked.Contains(id))
+            .OrderBy(id => labels[id], StringComparer.CurrentCultureIgnoreCase)
+            .ToList();
+
+        var slots = new List<SkillSlotDefinition>();
+        for (var i = 0; i < slotCount; i++)
+        {
+            string? selected = i < build.ClassTrainedSkills.Count
+                ? build.ClassTrainedSkills[i].Id
+                : null;
+            if (selected != null && !allowed.Contains(selected))
+                selected = null;
+
+            slots.Add(new SkillSlotDefinition
+            {
+                Id = $"class-skill-{i}",
+                Label = Loc.GetString("cf-character-builder-class-skill-slot", ("index", i + 1)),
+                Allowed = allowed,
+                Labels = labels,
+                Selected = selected,
+            });
+        }
+
+        SkillView.Show(
+            Loc.GetString("cf-character-builder-class-skill"),
+            Loc.GetString("cf-character-builder-class-skill-help"),
+            slots);
+        OpenSkillView();
+    }
+
+    private void AcceptSkillAssignment()
+    {
+        if (Profile == null)
+            return;
+
+        var selections = SkillView.GetSelections();
+        var build = CurrentBuild();
+
+        if (_skillMode == SkillAssignMode.Background)
+        {
+            if (build.Background == null
+                || !_prototypeManager.TryIndex(build.Background.Value, out CFBackgroundPrototype? background))
+            {
+                ClosePicker();
+                return;
+            }
+
+            var need = CFSkills.BackgroundSkillSlots(background).Count;
+            build.BackgroundTrainedSkills.Clear();
+            var picked = new HashSet<string>(StringComparer.Ordinal);
+            for (var i = 0; i < need; i++)
+            {
+                if (!selections.TryGetValue($"bg-skill-{i}", out var skillId) || skillId == null)
+                    continue;
+                if (!picked.Add(skillId))
+                    continue;
+                build.BackgroundTrainedSkills.Add(skillId);
+            }
+        }
+        else
+        {
+            if (build.Class == null
+                || !_prototypeManager.TryIndex(build.Class.Value, out CFClassPrototype? cls))
+            {
+                ClosePicker();
+                return;
+            }
+
+            var sheet = CFAttributeMath.Snapshot(_prototypeManager, Profile);
+            var need = CFSkills.ClassSkillSlotCount(cls, sheet.Modifiers);
+            build.ClassTrainedSkills.Clear();
+            var picked = new HashSet<string>(StringComparer.Ordinal);
+            for (var i = 0; i < need; i++)
+            {
+                if (!selections.TryGetValue($"class-skill-{i}", out var skillId) || skillId == null)
+                    continue;
+                if (!picked.Add(skillId))
+                    continue;
+                build.ClassTrainedSkills.Add(skillId);
+            }
+        }
+
+        ClosePicker();
+        SetBuild(build);
+    }
+
+    private Dictionary<string, string> SkillLabelMap()
+    {
+        var labels = new Dictionary<string, string>(StringComparer.Ordinal);
+        foreach (var skill in _prototypeManager.EnumeratePrototypes<CFAbilitySkillPrototype>())
+            labels[skill.ID] = Loc.GetString(skill.Name);
+        return labels;
     }
 
     private void UpdateBuilderSummary()
@@ -459,7 +692,37 @@ public sealed partial class HumanoidProfileEditor
             ? Loc.GetString("cf-character-builder-set-abilities-done")
             : Loc.GetString("cf-character-builder-set-abilities");
 
+        SkillTrainingButton.Text = IsSkillTrainingComplete(build)
+            ? Loc.GetString("cf-character-builder-skill-training-done")
+            : Loc.GetString("cf-character-builder-skill-training");
+
+        ClassSkillButton.Text = IsClassSkillComplete(build)
+            ? Loc.GetString("cf-character-builder-class-skill-done")
+            : Loc.GetString("cf-character-builder-class-skill");
+
         UpdateHeaderStats();
+    }
+
+    private bool IsSkillTrainingComplete(CFCharacterBuildData build)
+    {
+        if (build.Background == null
+            || !_prototypeManager.TryIndex(build.Background.Value, out CFBackgroundPrototype? background))
+            return false;
+
+        var need = CFSkills.BackgroundSkillSlots(background).Count;
+        return need > 0 && build.BackgroundTrainedSkills.Count >= need;
+    }
+
+    private bool IsClassSkillComplete(CFCharacterBuildData build)
+    {
+        if (Profile == null
+            || build.Class == null
+            || !_prototypeManager.TryIndex(build.Class.Value, out CFClassPrototype? cls))
+            return false;
+
+        var sheet = CFAttributeMath.Snapshot(_prototypeManager, Profile);
+        var need = CFSkills.ClassSkillSlotCount(cls, sheet.Modifiers);
+        return need > 0 && build.ClassTrainedSkills.Count >= need;
     }
 
     private bool IsBoostAssignmentComplete(CFCharacterBuildData build)

@@ -26,6 +26,13 @@ public sealed partial class CFCombatantComponent : Component
     [DataField, AutoNetworkedField]
     public string? BackgroundId;
 
+    /// <summary>
+    /// Extra trained skills from background picks and free class skill picks
+    /// (class fixed skills stay on the class proficiency list).
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public List<string> TrainedSkills = new();
+
     [DataField, AutoNetworkedField]
     public int TemporaryHp;
 

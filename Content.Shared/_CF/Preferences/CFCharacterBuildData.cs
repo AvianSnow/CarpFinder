@@ -43,6 +43,18 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
     [DataField]
     public List<CFAbility> FreeBoosts = new();
 
+    /// <summary>
+    /// Skills chosen for background skill trainings (one per background skill slot).
+    /// </summary>
+    [DataField]
+    public List<ProtoId<CFAbilitySkillPrototype>> BackgroundTrainedSkills = new();
+
+    /// <summary>
+    /// Free class skill trainings chosen at level 1 (in addition to fixed class skills).
+    /// </summary>
+    [DataField]
+    public List<ProtoId<CFAbilitySkillPrototype>> ClassTrainedSkills = new();
+
     [DataField]
     public int Level = 1;
 
@@ -56,6 +68,8 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
             BackgroundBoost = BackgroundBoost,
             BackgroundFreeBoost = BackgroundFreeBoost,
             FreeBoosts = FreeBoosts.ToList(),
+            BackgroundTrainedSkills = BackgroundTrainedSkills.ToList(),
+            ClassTrainedSkills = ClassTrainedSkills.ToList(),
             Level = Level,
         };
     }
@@ -71,7 +85,9 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
                && BackgroundBoost == other.BackgroundBoost
                && BackgroundFreeBoost == other.BackgroundFreeBoost
                && AncestryFreeBoosts.SequenceEqual(other.AncestryFreeBoosts)
-               && FreeBoosts.SequenceEqual(other.FreeBoosts);
+               && FreeBoosts.SequenceEqual(other.FreeBoosts)
+               && BackgroundTrainedSkills.SequenceEqual(other.BackgroundTrainedSkills)
+               && ClassTrainedSkills.SequenceEqual(other.ClassTrainedSkills);
     }
 
     public override bool Equals(object? obj)
@@ -91,6 +107,10 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
             hash.Add(boost);
         foreach (var boost in FreeBoosts)
             hash.Add(boost);
+        foreach (var skill in BackgroundTrainedSkills)
+            hash.Add(skill);
+        foreach (var skill in ClassTrainedSkills)
+            hash.Add(skill);
         return hash.ToHashCode();
     }
 }

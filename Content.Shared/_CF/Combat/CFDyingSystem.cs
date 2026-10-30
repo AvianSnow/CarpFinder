@@ -219,7 +219,7 @@ public sealed partial class CFDyingSystem : EntitySystem
         if (healerCombat.BackgroundId != null)
             _prototypes.TryIndex(healerCombat.BackgroundId, out background);
 
-        var rank = CFSkills.GetSkillRank(cls, background, "Medicine");
+        var rank = CFSkills.GetSkillRank(cls, background, "Medicine", healerCombat.TrainedSkills);
         var bonus = CFSkills.SkillModifier(healerAbilities.AbilityModifiers, CFAbility.Wisdom, healerCombat.Level, rank);
         var dc = CFDyingTrackerComponent.BaseStabilizeDc + patient.Dying;
         var d20 = _random.Next(1, 21);

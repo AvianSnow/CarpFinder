@@ -62,6 +62,7 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         combatant.CurrentHp = sheet.MaxHp;
         combatant.ClassId = profile.CFBuild.Class?.Id;
         combatant.BackgroundId = profile.CFBuild.Background?.Id;
+        combatant.TrainedSkills = CFSkills.CollectTrainedSkills(_prototypes, profile.CFBuild);
         combatant.TemporaryHp = 0;
         combatant.Dying = 0;
         combatant.Wounded = 0;

@@ -112,7 +112,7 @@ public sealed partial class CFCharacterSheetTab : BoxContainer
             if (!_prototypes.TryIndex(skillId, out CFAbilitySkillPrototype? skill))
                 continue;
 
-            var rank = CFSkills.GetSkillRank(cls, background, skillId);
+            var rank = CFSkills.GetSkillRank(cls, background, skillId, combatant.TrainedSkills);
             var mod = CFSkills.SkillModifier(abilities.AbilityModifiers, skill.Ability, combatant.Level, rank);
             row.Set(
                 skillId,

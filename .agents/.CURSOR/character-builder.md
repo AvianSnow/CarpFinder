@@ -3,17 +3,19 @@
 ## Character builder (lobby)
 
 - Overlay UI lives under `Content.Client/_CF/Lobby/UI/` (see `lobby-overlay.md`).
-- Profile field: `HumanoidCharacterProfile.CFBuild` (`CFCharacterBuildData`) — background, class, ancestry free boosts, background choice/free boosts, four finishing free boosts.
+- Profile field: `HumanoidCharacterProfile.CFBuild` (`CFCharacterBuildData`) — background, class, ancestry free boosts, background choice/free boosts, four finishing free boosts, background/class trained skill picks.
 - Ancestry is `Profile.Species` resolved through `cfAncestry` prototypes.
 - Attribute math is PF2e modifiers (+0 base, boost +1, flaw −1) via `CFAttributeMath`.
-- **Set Abilities** opens `BoostAssignmentView` for free/choice boost slots.
+- Level 1 buttons: **Abilities** (`BoostAssignmentView`), **Skill** / **Class** (`SkillAssignmentView`).
+- Skill Training: one slot per background `trainedSkills`/`skillBoosts`; player assigns distinct skills (defaults from background).
+- Class Skill: `additionalSkillTrainings + max(0, Int)` free picks; excludes fixed class + background skills.
 - Sheet preview (HP / AC / saves) uses `CFAttributeMath.Snapshot`.
 
 ## Spawn
 
 - `Content.Server/_CF/Character/CFCharacterSpawnSystem` listens to `PlayerSpawnCompleteEvent` and applies:
   - `CFAbilityScoreComponent` (modifiers)
-  - `CFCombatantComponent` (level, AC, HP, class id, background id)
+  - `CFCombatantComponent` (level, AC, HP, class/background ids, trained skill picks)
 
 ## In-game character sheet
 

@@ -72,20 +72,69 @@ public static class CFSkills
     public static CFProficiencyRank GetSkillRank(
         CFClassPrototype? cls,
         CFBackgroundPrototype? background,
-        string skillId)
+        string skillId,
+        IReadOnlyCollection<string>? trainedSkills = null)
     {
         var rank = CFProficiencyRank.Untrained;
         if (cls != null)
             rank = RankFromList(cls.Proficiencies.Skills, skillId);
 
-        if (rank == CFProficiencyRank.Untrained
-            && background != null
-            && background.TrainedSkills.Any(s => s.Id == skillId))
+        if (rank != CFProficiencyRank.Untrained)
+            return rank;
+
+        if (trainedSkills != null)
+            return trainedSkills.Contains(skillId) ? CFProficiencyRank.Trained : CFProficiencyRank.Untrained;
+
+        // Fallback when no explicit picks (NPC / incomplete build): prototype background lists.
+        if (background != null
+            && (background.TrainedSkills.Any(s => s.Id == skillId)
+                || background.SkillBoosts.Any(s => s.Id == skillId)))
         {
-            rank = CFProficiencyRank.Trained;
+            return CFProficiencyRank.Trained;
         }
 
-        return rank;
+        return CFProficiencyRank.Untrained;
+    }
+
+    /// <summary>
+    /// Background + free class skill picks for a build (class fixed skills stay on the class list).
+    /// </summary>
+    public static List<string> CollectTrainedSkills(IPrototypeManager prototypes, CFCharacterBuildData build)
+    {
+        var result = new List<string>();
+
+        if (build.BackgroundTrainedSkills.Count > 0)
+        {
+            foreach (var skill in build.BackgroundTrainedSkills)
+                result.Add(skill.Id);
+        }
+        else if (build.Background != null
+                 && prototypes.TryIndex(build.Background.Value, out CFBackgroundPrototype? background))
+        {
+            foreach (var skill in BackgroundSkillSlots(background))
+                result.Add(skill.Id);
+        }
+
+        foreach (var skill in build.ClassTrainedSkills)
+            result.Add(skill.Id);
+
+        return result.Distinct(StringComparer.Ordinal).ToList();
+    }
+
+    public static List<ProtoId<CFAbilitySkillPrototype>> BackgroundSkillSlots(CFBackgroundPrototype background)
+    {
+        return background.SkillBoosts
+            .Concat(background.TrainedSkills)
+            .Distinct()
+            .ToList();
+    }
+
+    public static int ClassSkillSlotCount(
+        CFClassPrototype cls,
+        IReadOnlyDictionary<CFAbility, int> abilityModifiers)
+    {
+        var intMod = Math.Max(0, abilityModifiers.GetValueOrDefault(CFAbility.Intelligence));
+        return Math.Max(0, cls.AdditionalSkillTrainings + intMod);
     }
 
     public static CFProficiencyRank GetSaveRank(CFClassPrototype? cls, string saveName)

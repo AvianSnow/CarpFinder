@@ -178,6 +178,7 @@
             </BoxContainer>
             <builder:Pf2eSelectionView Name="SelectionView" Visible="False" HorizontalExpand="True" VerticalExpand="True" />
             <builder:BoostAssignmentView Name="BoostView" Visible="False" HorizontalExpand="True" VerticalExpand="True" />
+            <builder:SkillAssignmentView Name="SkillView" Visible="False" HorizontalExpand="True" VerticalExpand="True" />
             <BoxContainer Name="JobPane" Visible="False" Orientation="Vertical" HorizontalExpand="True" VerticalExpand="True" SeparationOverride="6">
                 <BoxContainer Name="JobHeader" Orientation="Horizontal" HorizontalExpand="True">
                     <Label Name="JobTitle" Text="{Loc 'cf-character-builder-title-job'}" StyleClasses="LabelHeading" HorizontalExpand="True" VerticalAlignment="Center" />

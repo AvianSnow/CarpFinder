@@ -33,6 +33,13 @@ public sealed partial class CFClassPrototype : IPrototype
     [DataField]
     public List<CFAbilityBoost> AbilityBoosts = new();
 
+    /// <summary>
+    /// Free skill trainings at level 1, before Intelligence modifier
+    /// (final slots = this + max(0, Int mod)).
+    /// </summary>
+    [DataField]
+    public int AdditionalSkillTrainings;
+
     [DataField]
     public CFRarity Rarity = CFRarity.Common;
 }
