@@ -1,0 +1,41 @@
+using Content.Client.CF.Hud;
+using Content.Shared.CF.Character;
+using Content.Shared.CF.Combat;
+using JetBrains.Annotations;
+using Robust.Client.Player;
+using Robust.Client.UserInterface.Controllers;
+using Robust.Shared.Timing;
+
+namespace Content.Client.CF.Hud;
+
+/// <summary>
+/// Fills the health bottles and spell pips from the local creature's Pathfinder components.
+/// </summary>
+[UsedImplicitly]
+public sealed class CFHudUiController : UIController
+{
+    [Dependency] private IPlayerManager _player = default!;
+
+    public override void FrameUpdate(FrameEventArgs args)
+    {
+        base.FrameUpdate(args);
+
+        if (UIManager.GetActiveUIWidgetOrNull<CFGameHud>() is not { } hud)
+            return;
+
+        if (_player.LocalEntity is not { } player
+            || !EntityManager.TryGetComponent<CFCombatantComponent>(player, out var combatant))
+        {
+            hud.Ball.Visible = false;
+            hud.Spells.SetBook(null);
+            hud.ApplySpellVisibility();
+            return;
+        }
+
+        hud.Ball.Visible = true;
+        hud.Ball.Set(combatant.CurrentHp, combatant.MaxHp, combatant.TemporaryHp, combatant.ArmorClass);
+        EntityManager.TryGetComponent<CFSpellbookComponent>(player, out var book);
+        hud.Spells.SetBook(book);
+        hud.ApplySpellVisibility();
+    }
+}

@@ -70,5 +70,38 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         combatant.Dying = 0;
         combatant.Wounded = 0;
         Dirty(mob, combatant);
+        ApplySpellbook(mob, profile, sheet.Class);
+    }
+
+    /// <summary>
+    /// Copies class spell slots onto the mob so the HUD can draw pips.
+    /// Expended slots come from the character sheet. Cantrips stay in index 0 and are not drawn.
+    /// </summary>
+    private void ApplySpellbook(EntityUid mob, Content.Shared.Preferences.HumanoidCharacterProfile profile, CFClassPrototype? cls)
+    {
+        var casting = cls?.Spellcasting;
+        if (casting == null)
+            return;
+
+        var book = EnsureComp<CFSpellbookComponent>(mob);
+        book.Slots.Clear();
+        book.Slots.Add(casting.Cantrips);
+        book.Slots.AddRange(casting.Slots);
+
+        book.Expended.Clear();
+        for (var i = 0; i < book.Slots.Count; i++)
+            book.Expended.Add(0);
+
+        foreach (var pick in profile.CFBuild.Spells)
+        {
+            if (!pick.Expended || !pick.HasSpell || pick.Rank < 0 || pick.Rank >= book.Expended.Count)
+                continue;
+
+            book.Expended[pick.Rank]++;
+        }
+
+        book.FocusPoints = casting.FocusPoints;
+        book.FocusSpent = 0;
+        Dirty(mob, book);
     }
 }

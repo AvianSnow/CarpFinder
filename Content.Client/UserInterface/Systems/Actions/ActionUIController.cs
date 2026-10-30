@@ -239,6 +239,12 @@ public sealed partial class ActionUIController : UIController, IOnStateChanged<G
         }
 
         // TODO: probably should have a clientside event raised for flexibility
+        // CarpFinder: the radial wheel uses the same activation as a hotbar click.
+        UseAction(action);
+    }
+
+    public void UseAction(Entity<ActionComponent> action)
+    {
         if (EntityManager.TryGetComponent<TargetActionComponent>(action, out var target))
             ToggleTargeting((action, action, target));
         else

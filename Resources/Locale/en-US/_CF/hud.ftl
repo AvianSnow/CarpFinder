@@ -1,0 +1,16 @@
+cf-hud-actions = Actions
+cf-hud-reactions = Reactions
+cf-hud-spells = Spells
+cf-hud-actions-tooltip = Activities that cost one, two, or three actions. Drag one onto the bar.
+cf-hud-reactions-tooltip = Reactions. Drag one onto the bar.
+cf-hud-spells-tooltip = Spells and cantrips. Drag one onto the bar.
+cf-hud-ball-tooltip = Hit Points { $current }/{ $max }. Temporary Hit Points { $temp }. Armor Class { $ac }.
+cf-hud-focus = Focus
+cf-hud-rank = Rank { $rank }
+cf-radial-back = Back
+cf-radial-vocal = Vocal
+cf-radial-actions = Actions
+cf-radial-reactions = Reactions
+cf-radial-free = Free actions
+cf-radial-cantrips = Cantrips
+cf-radial-rank = Rank { $rank }
