@@ -3,9 +3,8 @@ using System.Numerics;
 namespace Content.Shared.CF.Combat;
 
 /// <summary>
-/// Pathfinder 2e flanking for creatures that each occupy one tile.
-/// A line between the centers of two allies must pass through opposite sides
-/// or opposite corners of the foe's space.
+/// Pathfinder 2e flanking on free movement.
+/// Two allies flank when each is within reach and the line between them passes through the foe.
 /// </summary>
 public static class CFFlanking
 {
@@ -15,8 +14,14 @@ public static class CFFlanking
     /// <summary>Normal melee reach. The reach trait is 10.</summary>
     public const int DefaultReachFeet = 5;
 
-    /// <summary>Lookup radius (tiles) when searching for flankers. Covers a 30-foot reach.</summary>
+    /// <summary>Lookup radius (tiles) when searching for flankers. Covers a long reach.</summary>
     public const float SearchRange = 8f;
+
+    /// <summary>
+    /// The line between the allies must pass within this distance of the foe's position.
+    /// About half a tile, so it has to cross the creature rather than merely pass nearby.
+    /// </summary>
+    public const float BodyRadius = 0.5f;
 
     public static int ReachInTiles(int reachFeet)
     {
@@ -27,18 +32,24 @@ public static class CFFlanking
     }
 
     /// <summary>
-    /// Chebyshev distance on the 5-foot grid. Diagonals cost one square, matching PF2e.
-    /// The foe's own tile does not count as within reach.
+    /// World-unit reach. Five feet matches a normal melee swing, so standing on the foe's tile still counts.
     /// </summary>
-    public static bool InReach(Vector2i from, Vector2i target, int reachFeet)
+    public static float ReachInUnits(int reachFeet)
     {
-        var tiles = ReachInTiles(reachFeet);
-        if (tiles <= 0)
+        if (reachFeet <= 0)
+            return 0f;
+
+        return reachFeet / (float)DefaultReachFeet * CFMelee.MeleeRange;
+    }
+
+    public static bool InReach(Vector2 from, Vector2 target, int reachFeet)
+    {
+        var reach = ReachInUnits(reachFeet);
+        if (reach <= 0f)
             return false;
 
         var delta = from - target;
-        var chebyshev = Math.Max(Math.Abs(delta.X), Math.Abs(delta.Y));
-        return chebyshev >= 1 && chebyshev <= tiles;
+        return delta.LengthSquared() <= reach * reach;
     }
 
     /// <summary>
@@ -51,52 +62,22 @@ public static class CFFlanking
     }
 
     /// <summary>
-    /// True when the segment between the centers of <paramref name="a"/> and <paramref name="b"/>
-    /// passes through opposite sides or opposite corners of the 1-tile space at <paramref name="target"/>.
+    /// True when the segment from <paramref name="a"/> to <paramref name="b"/> crosses the foe.
+    /// The foe has to lie between the two allies, not off to one side.
     /// </summary>
-    public static bool CentersFlank(Vector2i a, Vector2i b, Vector2i target)
+    public static bool LineFlanks(Vector2 a, Vector2 b, Vector2 target)
     {
-        if (a == b || a == target || b == target)
+        var ab = b - a;
+        var lengthSq = ab.LengthSquared();
+        if (lengthSq < 0.0001f)
             return false;
 
-        var p = new Vector2(a.X - target.X, a.Y - target.Y);
-        var q = new Vector2(b.X - target.X, b.Y - target.Y);
-        const float half = 0.5f;
-
-        var left = HitsVertical(p, q, -half, half);
-        var right = HitsVertical(p, q, half, half);
-        var bottom = HitsHorizontal(p, q, -half, half);
-        var top = HitsHorizontal(p, q, half, half);
-        return left && right || top && bottom;
-    }
-
-    private const float Epsilon = 0.0001f;
-
-    private static bool HitsVertical(Vector2 p, Vector2 q, float x, float half)
-    {
-        var dx = q.X - p.X;
-        if (MathF.Abs(dx) < Epsilon)
+        var t = Vector2.Dot(target - a, ab) / lengthSq;
+        if (t <= 0.02f || t >= 0.98f)
             return false;
 
-        var t = (x - p.X) / dx;
-        if (t < -Epsilon || t > 1f + Epsilon)
-            return false;
-
-        var y = p.Y + t * (q.Y - p.Y);
-        return y >= -half - Epsilon && y <= half + Epsilon;
-    }
-
-    private static bool HitsHorizontal(Vector2 p, Vector2 q, float y, float half)
-    {
-        var dy = q.Y - p.Y;
-        if (MathF.Abs(dy) < Epsilon)
-            return false;
-
-        var t = (y - p.Y) / dy;
-        if (t < -Epsilon || t > 1f + Epsilon)
-            return false;
-
-        var x = p.X + t * (q.X - p.X);
-        return x >= -half - Epsilon && x <= half + Epsilon;
+        var closest = a + ab * t;
+        var miss = target - closest;
+        return miss.LengthSquared() <= BodyRadius * BodyRadius;
     }
 }

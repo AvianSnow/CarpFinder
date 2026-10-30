@@ -4,7 +4,7 @@ CarpFinder (CF) is a fork of Space Station 14 built on RobustToolbox. It uses an
 
 ## Editing and Making Documents
 
-Whenever you understand how SS14 is built and structured, add or update docs under `.agents/.CURSOR/` (e.g. `ss14.md`).
+Whenever you understand how SS14 is built and structured, add or update docs under `.agents/.CURSOR/` (e.g. `ss14.md`). Warnings and errors to avoid are in `ss14rules.md`.
 
 You may edit this document with any rules and information that make the project easier to work on.
 

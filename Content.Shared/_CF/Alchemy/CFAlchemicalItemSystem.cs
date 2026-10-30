@@ -20,13 +20,13 @@ public sealed partial class CFAlchemicalItemSystem : EntitySystem
 {
     private const float MaxFeedDistance = 1.5f;
 
-    [Dependency] private readonly INetManager _net = default!;
-    [Dependency] private readonly IRobustRandom _random = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly SharedAudioSystem _audio = default!;
-    [Dependency] private readonly SharedDoAfterSystem _doAfter = default!;
-    [Dependency] private readonly CFDyingSystem _dying = default!;
-    [Dependency] private readonly CFCombatBridgeSystem _bridge = default!;
+    [Dependency] private INetManager _net = default!;
+    [Dependency] private IRobustRandom _random = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private SharedAudioSystem _audio = default!;
+    [Dependency] private SharedDoAfterSystem _doAfter = default!;
+    [Dependency] private CFDyingSystem _dying = default!;
+    [Dependency] private CFCombatBridgeSystem _bridge = default!;
 
     public override void Initialize()
     {

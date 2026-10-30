@@ -1,5 +1,6 @@
 using System.Numerics;
 using Content.Shared.CF.Character;
+using Content.Shared.CF.Factions;
 using Content.Shared.CF.Preferences;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Components;
@@ -32,7 +33,6 @@ public sealed partial class CFStrikeSystem : EntitySystem
     [Dependency] private INetManager _net = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private MobStateSystem _mobState = default!;
-    [Dependency] private MobThresholdSystem _mobThresholds = default!;
     [Dependency] private DamageableSystem _damageable = default!;
     [Dependency] private SharedDestructibleSystem _destructible = default!;
     [Dependency] private SharedHandsSystem _hands = default!;
@@ -41,6 +41,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
     [Dependency] private CFCombatBridgeSystem _bridge = default!;
     [Dependency] private CFDyingSystem _dying = default!;
     [Dependency] private CFFlankingSystem _flanking = default!;
+    [Dependency] private CFFactionSystem _factions = default!;
 
     /// <summary>Unconscious / dying creatures are off-guard (−4 AC status, simplified).</summary>
     private const int DownedAcPenalty = 4;
@@ -83,11 +84,17 @@ public sealed partial class CFStrikeSystem : EntitySystem
     [SubscribeLocalEvent]
     private void OnBeforeProjectileHit(Entity<ProjectileComponent> projectile, ref BeforeProjectileHitEvent args)
     {
+        var shooter = args.Shooter ?? projectile.Comp.Shooter;
+        if (shooter != null && !_factions.CanHarm(shooter.Value, args.Target))
+        {
+            args.Damage = new DamageSpecifier();
+            return;
+        }
+
         if (projectile.Comp.Weapon is not { } weaponUid
             || !TryComp(weaponUid, out CFRangedWeaponComponent? ranged))
             return;
 
-        var shooter = args.Shooter ?? projectile.Comp.Shooter;
         if (shooter == null
             || !TryComp(shooter.Value, out CFCombatantComponent? combat)
             || !TryComp(shooter.Value, out CFAbilityScoreComponent? abilities))
@@ -150,6 +157,10 @@ public sealed partial class CFStrikeSystem : EntitySystem
     {
         foreach (var target in targets)
         {
+            // Party members never reach AC, the d20, or damage.
+            if (!_factions.CanHarm(user, target))
+                continue;
+
             ResolveStrike(user, target, combat, abilities, stats, distanceFeet: 0f, propulsive: false, melee);
         }
     }
@@ -164,6 +175,9 @@ public sealed partial class CFStrikeSystem : EntitySystem
         bool propulsive,
         bool melee)
     {
+        if (!_factions.CanHarm(user, target))
+            return;
+
         if (!_bridge.TryEnsureCombatTarget(target, out var defender, out var hardness, out var isObject))
         {
             _popup.PopupEntity(Loc.GetString("cf-combat-strike-no-combatant"), user, user);
@@ -279,31 +293,15 @@ public sealed partial class CFStrikeSystem : EntitySystem
         string damageType,
         bool isObject)
     {
-        var ss14Type = ToSs14DamageType(damageType);
-        FixedPoint2 amount;
+        if (!isObject)
+        {
+            // CF HP is the source of truth. The SS14 bar is rewritten from it, under the Critical threshold.
+            _dying.SyncHealthBar(target, defender);
+            return;
+        }
 
-        // Scale toward Critical (not Dead) so MobThresholds won't finish the kill — CF dying owns death.
-        if (!isObject
-            && _mobThresholds.TryGetThresholdForState(target, MobState.Critical, out var critThreshold)
-            && critThreshold != null
-            && defender.MaxHp > 0)
-        {
-            amount = critThreshold.Value * cfDamage / defender.MaxHp;
-            // Leave a sliver below Dead if a Dead threshold exists and equals Crit somehow.
-            if (_mobThresholds.TryGetThresholdForState(target, MobState.Dead, out var deadThreshold)
-                && deadThreshold != null
-                && TryComp(target, out DamageableComponent? damageable))
-            {
-                var total = _damageable.GetTotalDamage((target, damageable));
-                var maxAdd = deadThreshold.Value - FixedPoint2.Epsilon - total;
-                if (maxAdd < amount)
-                    amount = FixedPoint2.Max(0, maxAdd);
-            }
-        }
-        else
-        {
-            amount = cfDamage;
-        }
+        var ss14Type = ToSs14DamageType(damageType);
+        var amount = (FixedPoint2) cfDamage;
 
         if (amount <= 0)
             return;

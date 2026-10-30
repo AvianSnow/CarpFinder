@@ -41,6 +41,8 @@
     currentHp: 20
   - type: StatusIcon
     bounds: -0.5,-0.5,0.5,0.5
+  - type: CFFaction
+    faction: Neutral
   - type: NpcFactionMember
     factions:
     - SimpleNeutral

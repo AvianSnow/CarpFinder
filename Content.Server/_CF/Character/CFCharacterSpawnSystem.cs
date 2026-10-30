@@ -1,5 +1,6 @@
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Combat;
+using Content.Shared.CF.Factions;
 using Content.Shared.CF.Preferences;
 using Content.Shared.GameTicking;
 using Content.Shared.Inventory;
@@ -14,11 +15,13 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
 {
     [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private InventorySystem _inventory = default!;
+    [Dependency] private CFFactionSystem _factions = default!;
 
     [SubscribeLocalEvent]
     private void OnPlayerSpawnComplete(PlayerSpawnCompleteEvent args)
     {
         ApplyBuild(args.Mob, args.Profile);
+        _factions.AssignJob(args.Mob, args.JobId);
     }
 
     public void ApplyBuild(EntityUid mob, Content.Shared.Preferences.HumanoidCharacterProfile profile)

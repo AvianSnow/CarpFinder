@@ -10,6 +10,7 @@ using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Popups;
+using Content.Shared.Rejuvenate;
 using Content.Shared.Verbs;
 using Robust.Shared.Network;
 using Robust.Shared.Player;
@@ -24,15 +25,15 @@ namespace Content.Shared.CF.Combat;
 /// </summary>
 public sealed partial class CFDyingSystem : EntitySystem
 {
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly INetManager _net = default!;
-    [Dependency] private readonly IRobustRandom _random = default!;
-    [Dependency] private readonly IPrototypeManager _prototypes = default!;
-    [Dependency] private readonly SharedPopupSystem _popup = default!;
-    [Dependency] private readonly MobStateSystem _mobState = default!;
-    [Dependency] private readonly MobThresholdSystem _mobThresholds = default!;
-    [Dependency] private readonly DamageableSystem _damageable = default!;
-    [Dependency] private readonly BloodstreamSystem _bloodstream = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private INetManager _net = default!;
+    [Dependency] private IRobustRandom _random = default!;
+    [Dependency] private IPrototypeManager _prototypes = default!;
+    [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private MobStateSystem _mobState = default!;
+    [Dependency] private MobThresholdSystem _mobThresholds = default!;
+    [Dependency] private DamageableSystem _damageable = default!;
+    [Dependency] private BloodstreamSystem _bloodstream = default!;
 
     public override void Update(float frameTime)
     {
@@ -56,6 +57,25 @@ public sealed partial class CFDyingSystem : EntitySystem
             Dirty(uid, tracker);
             AttemptRecoveryCheck(uid, combatant);
         }
+    }
+
+    /// <summary>
+    /// Stock revive heals SS14 damage and sets the mob Alive, but leaves Pathfinder HP at 0.
+    /// That kept the creature "down", so flanking never applied again.
+    /// </summary>
+    [SubscribeLocalEvent]
+    private void OnRejuvenate(Entity<CFCombatantComponent> ent, ref RejuvenateEvent args)
+    {
+        if (!_net.IsServer)
+            return;
+
+        ent.Comp.Dying = 0;
+        ent.Comp.CurrentHp = Math.Max(1, ent.Comp.MaxHp);
+        Dirty(ent.Owner, ent.Comp);
+        RemComp<CFDyingTrackerComponent>(ent.Owner);
+
+        var revived = new CFCombatantRevivedEvent();
+        RaiseLocalEvent(ent.Owner, ref revived);
     }
 
     [SubscribeLocalEvent]
@@ -372,21 +392,12 @@ public sealed partial class CFDyingSystem : EntitySystem
     }
 
     /// <summary>
-    /// After partial healing, make sure MobThresholds won't keep a conscious CF combatant Critical.
+    /// After partial healing, rewrite the SS14 bar from remaining CF HP so MobThresholds cannot leave them Critical.
     /// </summary>
     private void EnsureConsciousSs14(EntityUid target, EntityUid? origin)
     {
-        if (_mobThresholds.TryGetThresholdForState(target, MobState.Critical, out var crit)
-            && crit != null
-            && TryComp(target, out DamageableComponent? damageable))
-        {
-            var total = _damageable.GetTotalDamage((target, damageable));
-            if (total >= crit.Value)
-            {
-                var excess = total - crit.Value + FixedPoint2.Epsilon;
-                _damageable.HealEvenly((target, damageable), -excess, origin: origin);
-            }
-        }
+        if (TryComp(target, out CFCombatantComponent? combatant))
+            SyncSs14FromHp(target, combatant);
 
         ForceAlive(target, origin);
     }
@@ -422,30 +433,15 @@ public sealed partial class CFDyingSystem : EntitySystem
             return;
 
         // Put damage just at the Critical threshold so MobThresholds agrees with Critical.
-        if (_mobThresholds.TryGetThresholdForState(target, MobState.Critical, out var crit)
-            && crit != null
-            && TryComp(target, out DamageableComponent? damageable))
+        if (_mobThresholds.TryGetThresholdForState(target, MobState.Critical, out var crit) && crit != null)
         {
-            var total = _damageable.GetTotalDamage((target, damageable));
-            var needed = crit.Value - total;
-            if (needed > 0)
-            {
-                var spec = new DamageSpecifier();
-                spec.DamageDict["Blunt"] = needed;
-                _damageable.TryChangeDamage(target, spec, ignoreResistances: true, origin: origin);
-            }
-            else if (_mobThresholds.TryGetThresholdForState(target, MobState.Dead, out var dead)
-                     && dead != null
-                     && total >= dead.Value)
-            {
-                // Pulled back from dead threshold into crit range.
-                var excess = total - crit.Value + FixedPoint2.Epsilon;
-                _damageable.TryChangeDamage(
-                    target,
-                    new DamageSpecifier { DamageDict = { ["Blunt"] = -excess } },
-                    ignoreResistances: true,
-                    origin: origin);
-            }
+            var amount = crit.Value;
+            if (_mobThresholds.TryGetThresholdForState(target, MobState.Dead, out var dead)
+                && dead != null
+                && dead.Value <= amount)
+                amount = FixedPoint2.Max(FixedPoint2.Zero, dead.Value - FixedPoint2.Epsilon);
+
+            SetSs14Damage(target, amount);
         }
 
         if (mob.CurrentState != MobState.Critical)
@@ -457,59 +453,57 @@ public sealed partial class CFDyingSystem : EntitySystem
         if (!TryComp(target, out MobStateComponent? mob))
             return;
 
-        if (_mobThresholds.TryGetThresholdForState(target, MobState.Dead, out var dead)
-            && dead != null
-            && TryComp(target, out DamageableComponent? damageable))
-        {
-            var total = _damageable.GetTotalDamage((target, damageable));
-            var needed = dead.Value - total;
-            if (needed > 0)
-            {
-                var spec = new DamageSpecifier();
-                spec.DamageDict["Blunt"] = needed;
-                _damageable.TryChangeDamage(target, spec, ignoreResistances: true, origin: origin);
-            }
-        }
+        if (_mobThresholds.TryGetThresholdForState(target, MobState.Dead, out var dead) && dead != null)
+            SetSs14Damage(target, dead.Value);
 
         if (mob.CurrentState != MobState.Dead)
             _mobState.ChangeMobState(target, MobState.Dead, mob, origin);
     }
 
-    private void SyncSs14FromHp(EntityUid target, CFCombatantComponent combatant, EntityUid? origin)
+    /// <summary>
+    /// Rewrite the SS14 bar from remaining CF HP. Conscious creatures stay under the Critical threshold.
+    /// </summary>
+    public void SyncHealthBar(EntityUid target, CFCombatantComponent combatant)
     {
-        if (!TryComp(target, out DamageableComponent? damageable))
+        if (combatant.CurrentHp <= 0)
             return;
 
+        SyncSs14FromHp(target, combatant);
+    }
+
+    private void SyncSs14FromHp(EntityUid target, CFCombatantComponent combatant)
+    {
         if (!_mobThresholds.TryGetThresholdForState(target, MobState.Critical, out var crit) || crit == null)
             return;
 
-        // Map CF HP fraction onto damage below the crit threshold when alive.
+        // Map missing CF HP onto damage below the crit threshold while conscious.
         FixedPoint2 desired;
-        if (combatant.CurrentHp <= 0)
-        {
-            desired = crit.Value;
-        }
-        else if (combatant.MaxHp <= 0)
-        {
-            desired = 0;
-        }
+        if (combatant.MaxHp <= 0)
+            desired = FixedPoint2.Zero;
         else
         {
             var missing = combatant.MaxHp - combatant.CurrentHp;
             desired = crit.Value * missing / combatant.MaxHp;
-            // Stay strictly below crit while conscious.
             if (desired >= crit.Value)
                 desired = crit.Value - FixedPoint2.Epsilon;
         }
 
-        var total = _damageable.GetTotalDamage((target, damageable));
-        var delta = desired - total;
-        if (delta == 0)
+        SetSs14Damage(target, FixedPoint2.Max(FixedPoint2.Zero, desired));
+    }
+
+    /// <summary>
+    /// Replace SS14 damage with one Blunt value. The bar is a mirror of CF HP, not a sum of old damage.
+    /// </summary>
+    private void SetSs14Damage(EntityUid target, FixedPoint2 amount)
+    {
+        if (!TryComp(target, out DamageableComponent? damageable))
             return;
 
         var spec = new DamageSpecifier();
-        spec.DamageDict["Blunt"] = delta;
-        _damageable.TryChangeDamage(target, spec, ignoreResistances: true, origin: origin);
+        if (amount > FixedPoint2.Zero)
+            spec.DamageDict["Blunt"] = amount;
+
+        _damageable.SetDamage((target, damageable), spec);
     }
 
     private static string DegreeKey(CFStrikeDegree degree) => degree switch
@@ -521,3 +515,9 @@ public sealed partial class CFDyingSystem : EntitySystem
         _ => "failure",
     };
 }
+
+/// <summary>
+/// Raised after a rejuvenate restores this creature's Pathfinder hit points.
+/// </summary>
+[ByRefEvent]
+public readonly record struct CFCombatantRevivedEvent;

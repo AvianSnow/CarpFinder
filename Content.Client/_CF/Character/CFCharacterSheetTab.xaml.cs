@@ -18,10 +18,10 @@ namespace Content.Client.CF.Character;
 [GenerateTypedNameReferences]
 public sealed partial class CFCharacterSheetTab : BoxContainer
 {
-    [Dependency] private readonly IEntityManager _entities = default!;
-    [Dependency] private readonly IPrototypeManager _prototypes = default!;
-    [Dependency] private readonly IChatManager _chat = default!;
-    [Dependency] private readonly IRobustRandom _random = default!;
+    [Dependency] private IEntityManager _entities = default!;
+    [Dependency] private IPrototypeManager _prototypes = default!;
+    [Dependency] private IChatManager _chat = default!;
+    [Dependency] private IRobustRandom _random = default!;
 
     private readonly Dictionary<string, CFSheetSkillRow> _skills = new();
     private readonly Dictionary<CFAbility, int> _abilityMods = new();

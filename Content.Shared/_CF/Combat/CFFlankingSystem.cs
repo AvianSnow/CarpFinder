@@ -1,4 +1,5 @@
 using Content.Shared.ActionBlocker;
+using Content.Shared.CF.Factions;
 using Content.Shared.Examine;
 using Content.Shared.Hands;
 using Content.Shared.Hands.EntitySystems;
@@ -8,9 +9,9 @@ using Content.Shared.NPC.Systems;
 using Content.Shared.Popups;
 using Content.Shared.StatusIcon;
 using Content.Shared.Weapons.Melee;
+using System.Numerics;
 using Robust.Shared.Containers;
 using Robust.Shared.Map;
-using Robust.Shared.Map.Components;
 using Robust.Shared.Network;
 using Robust.Shared.Player;
 
@@ -23,11 +24,11 @@ public sealed partial class CFFlankingSystem : EntitySystem
 {
     [Dependency] private INetManager _net = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
-    [Dependency] private SharedMapSystem _map = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private SharedHandsSystem _hands = default!;
     [Dependency] private ActionBlockerSystem _blocker = default!;
     [Dependency] private NpcFactionSystem _factions = default!;
+    [Dependency] private CFFactionSystem _cfFactions = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private CFDyingSystem _dying = default!;
     [Dependency] private SharedContainerSystem _container = default!;
@@ -43,16 +44,20 @@ public sealed partial class CFFlankingSystem : EntitySystem
         if (!_net.IsServer || args.OnlyRotation)
             return;
 
-        if (TryGetTile(args.OldPosition, out var oldSpace)
-            && TryGetTile(args.NewPosition, out var newSpace)
-            && oldSpace.Equals(newSpace))
-            return;
-
         RefreshAround(ent.Owner);
     }
 
     // By-value broadcast. The directed MobStateComponent subscription is already taken by stun,
     // and the existing broadcast handlers are by-value.
+    [SubscribeLocalEvent]
+    private void OnRevived(Entity<CFCombatantComponent> ent, ref CFCombatantRevivedEvent args)
+    {
+        if (!_net.IsServer)
+            return;
+
+        RefreshAround(ent.Owner);
+    }
+
     [SubscribeLocalEvent]
     private void OnMobState(MobStateChangedEvent args)
     {
@@ -139,9 +144,9 @@ public sealed partial class CFFlankingSystem : EntitySystem
 
     private void Refresh(EntityUid target)
     {
-        if (!TryComp(target, out MobStateComponent? _))
+        if (!TryComp(target, out MobStateComponent? state) || IsDeadOrDying(target, state))
         {
-            Clear(target);
+            Clear(target, announce: false);
             return;
         }
 
@@ -156,7 +161,7 @@ public sealed partial class CFFlankingSystem : EntitySystem
                 if (!AreAllies(a.Uid, b.Uid))
                     continue;
 
-                if (!CFFlanking.CentersFlank(a.Tile, b.Tile, a.TargetTile))
+                if (!CFFlanking.LineFlanks(a.Position, b.Position, a.TargetPosition))
                     continue;
 
                 _flankers.Add(a.Uid);
@@ -185,7 +190,7 @@ public sealed partial class CFFlankingSystem : EntitySystem
         _popup.PopupEntity(Loc.GetString("cf-combat-off-guard"), target, PopupType.Medium);
     }
 
-    private void Clear(EntityUid target)
+    private void Clear(EntityUid target, bool announce = true)
     {
         var wasActive = false;
         if (TryComp(target, out CFOffGuardComponent? comp))
@@ -195,8 +200,20 @@ public sealed partial class CFFlankingSystem : EntitySystem
         }
 
         RemoveFlankIcon(target);
-        if (wasActive)
+        if (wasActive && announce)
             _popup.PopupEntity(Loc.GetString("cf-combat-off-guard-cleared"), target, PopupType.Small);
+    }
+
+    /// <summary>
+    /// Dead and dying creatures do not take the flanking off-guard condition.
+    /// </summary>
+    private bool IsDeadOrDying(EntityUid uid, MobStateComponent state)
+    {
+        if (state.CurrentState != MobState.Alive)
+            return true;
+
+        return TryComp(uid, out CFCombatantComponent? combat)
+            && (_dying.IsDying(combat) || _dying.IsDown(combat));
     }
 
     private void EnsureFlankIcon(EntityUid uid)
@@ -217,7 +234,7 @@ public sealed partial class CFFlankingSystem : EntitySystem
     private void CollectFlankers(EntityUid target, List<FlankCandidate> candidates)
     {
         candidates.Clear();
-        if (!TryGetTile(Transform(target).Coordinates, out var targetSpace))
+        if (!TryGetWorld(target, out var targetPos))
             return;
 
         foreach (var other in _lookup.GetEntitiesInRange<MobStateComponent>(Transform(target).Coordinates, CFFlanking.SearchRange))
@@ -229,14 +246,14 @@ public sealed partial class CFFlankingSystem : EntitySystem
             if (AreAllies(uid, target))
                 continue;
 
-            if (!TryGetTile(Transform(uid).Coordinates, out var space) || !targetSpace.SameSpace(space))
+            if (!TryGetWorld(uid, out var pos) || pos.MapId != targetPos.MapId)
                 continue;
 
             var reach = GetMeleeReachFeet(uid);
-            if (!CFFlanking.InReach(space.Tile, targetSpace.Tile, reach))
+            if (!CFFlanking.InReach(pos.Position, targetPos.Position, reach))
                 continue;
 
-            candidates.Add(new FlankCandidate(uid, space.Tile, targetSpace.Tile));
+            candidates.Add(new FlankCandidate(uid, pos.Position, targetPos.Position));
         }
     }
 
@@ -290,13 +307,16 @@ public sealed partial class CFFlankingSystem : EntitySystem
     }
 
     /// <summary>
-    /// Allies share a faction, or are two player characters with no NPC faction.
-    /// A player and a factioned mob are not allies, so they do not flank together.
+    /// Party members flank together. Creatures with no CF faction fall back to the stock NPC faction,
+    /// or two player characters with no NPC faction.
     /// </summary>
     private bool AreAllies(EntityUid a, EntityUid b)
     {
         if (a == b)
             return false;
+
+        if (HasComp<CFFactionComponent>(a) && HasComp<CFFactionComponent>(b))
+            return _cfFactions.GetAlliance(a, b) == CFAlliance.Party;
 
         if (_factions.IsEntityFriendly(a, b) || _factions.IsEntityFriendly(b, a))
             return true;
@@ -307,47 +327,15 @@ public sealed partial class CFFlankingSystem : EntitySystem
         return !aFaction && !bFaction && HasComp<ActorComponent>(a) && HasComp<ActorComponent>(b);
     }
 
-    private bool TryGetTile(EntityCoordinates coordinates, out TileSpace space)
+    private bool TryGetWorld(EntityUid uid, out MapCoordinates coords)
     {
-        space = default;
-        if (!coordinates.IsValid(EntityManager))
+        coords = default;
+        if (!TryComp(uid, out TransformComponent? xform))
             return false;
 
-        var mapCoords = _transform.ToMapCoordinates(coordinates);
-        if (mapCoords.MapId == MapId.Nullspace)
-            return false;
-
-        var parent = coordinates.EntityId;
-        EntityUid? gridId = null;
-        if (HasComp<MapGridComponent>(parent))
-            gridId = parent;
-        else if (TryComp(parent, out TransformComponent? parentXform))
-            gridId = parentXform.GridUid;
-
-        if (gridId is { } grid && TryComp(grid, out MapGridComponent? gridComp))
-        {
-            space = new TileSpace(grid, mapCoords.MapId, _map.WorldToTile(grid, gridComp, mapCoords.Position));
-            return true;
-        }
-
-        var floored = new Vector2i((int)MathF.Floor(mapCoords.X), (int)MathF.Floor(mapCoords.Y));
-        space = new TileSpace(EntityUid.Invalid, mapCoords.MapId, floored);
-        return true;
+        coords = _transform.GetMapCoordinates(uid, xform);
+        return coords.MapId != MapId.Nullspace;
     }
 
-    private readonly record struct FlankCandidate(EntityUid Uid, Vector2i Tile, Vector2i TargetTile);
-
-    private readonly record struct TileSpace(EntityUid Grid, MapId Map, Vector2i Tile)
-    {
-        public bool SameSpace(TileSpace other)
-        {
-            if (Map != other.Map)
-                return false;
-
-            if (Grid.IsValid() || other.Grid.IsValid())
-                return Grid == other.Grid;
-
-            return true;
-        }
-    }
+    private readonly record struct FlankCandidate(EntityUid Uid, Vector2 Position, Vector2 TargetPosition);
 }

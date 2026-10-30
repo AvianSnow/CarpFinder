@@ -9,6 +9,7 @@ Before editing this repo, read and follow:
 
 - `.agents/.CURSOR/CURSOR.md` — build/test, CF `_CF` layout, prototypes, ECS, Pathfinder 2e
 - `.agents/.CURSOR/ss14.md` — SS14/Robust structure notes
+- `.agents/.CURSOR/ss14rules.md` — warnings and errors to avoid (RA0051, damage totals, UI dispose, event subscriptions)
 - `.agents/.CURSOR/lobby-overlay.md` — when touching lobby / HumanoidProfileEditor / client XAML under `_CF`
 - `.agents/.CURSOR/hot-reload.md` — XAML/prototype reload; lobby editor is cached so restart client after XAML edits
 

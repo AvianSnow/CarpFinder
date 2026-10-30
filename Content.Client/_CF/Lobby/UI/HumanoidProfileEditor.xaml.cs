@@ -359,14 +359,6 @@ namespace Content.Client.Lobby.UI
             SetDirty();
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            base.Dispose(disposing);
-            if (!disposing)
-                return;
-
-        }
-
         protected override void EnteredTree()
         {
             base.EnteredTree();
