@@ -284,14 +284,46 @@
   summary: The target loses the dying condition, remains unconscious at 0 Hit Points, and does not gain wounded from this stabilization.
 
 - type: cfSpell
-  id: KnowDirection
-  name: Know Direction
+  id: KnowTheWay
+  name: Know the Way
   rank: 0
   traditions: [Divine, Occult, Primal]
   traits: [Cantrip, Concentrate, Detection, Manipulate]
   actionCost: Two
   components: Somatic, verbal
   summary: You learn which direction is north.
+
+- type: cfSpell
+  id: NeedleDarts
+  name: Needle Darts
+  rank: 0
+  traditions: [Arcane, Primal]
+  traits: [Attack, Cantrip, Concentrate, Manipulate, Metal]
+  actionCost: Two
+  components: Somatic, verbal
+  range: 60 feet
+  targets: 1 creature
+  defense: Spell attack
+  summary: A spell attack deals 3d4 piercing. A critical hit also deals 1 persistent bleed.
+  criticalSuccess: Double damage and 1 persistent bleed.
+  success: Full damage.
+  heightened: Each rank above the cantrip adds 1d4 and increases the critical bleed by 1.
+
+- type: cfSpell
+  id: PhaseBolt
+  name: Phase Bolt
+  rank: 0
+  traditions: [Arcane, Occult]
+  traits: [Attack, Cantrip, Concentrate, Manipulate]
+  actionCost: Two
+  components: Somatic, verbal
+  range: 60 feet
+  targets: 1 creature
+  defense: Spell attack
+  summary: A spell attack deals 3d4 piercing at 60 feet. Circumstance bonuses to AC are reduced by 2 against this attack.
+  criticalSuccess: Double damage.
+  success: Full damage.
+  heightened: Damage increases by 1d4 per rank.
 
 - type: cfSpell
   id: Fear
@@ -447,8 +479,8 @@
   heightened: The item bonus increases at higher ranks.
 
 - type: cfSpell
-  id: TrueStrike
-  name: True Strike
+  id: SureStrike
+  name: Sure Strike
   rank: 1
   traditions: [Arcane, Occult]
   traits: [Concentrate, Fortune]
@@ -458,17 +490,17 @@
   summary: Your next attack roll this turn is rolled twice and you use the better result.
 
 - type: cfSpell
-  id: MagicMissile
-  name: Magic Missile
+  id: ForceBarrage
+  name: Force Barrage
   rank: 1
-  traditions: [Arcane]
+  traditions: [Arcane, Occult]
   traits: [Concentrate, Force, Manipulate]
   actionCost: Variable
   components: Somatic, verbal
   range: 120 feet
-  targets: 1 creature per missile
-  summary: Each action you spend fires one missile that hits automatically and deals 1d4+1 force damage.
-  heightened: You fire one extra missile for every 2 ranks above 1st.
+  targets: 1 creature per bolt
+  summary: Each action you spend fires one bolt that hits automatically and deals 1d4+1 force damage.
+  heightened: You fire one extra bolt for every 2 ranks above 1st.
 
 - type: cfSpell
   id: HydraulicPush
@@ -674,8 +706,8 @@
   heightened: At 4th rank the target can grow two sizes.
 
 - type: cfSpell
-  id: HideousLaughter
-  name: Hideous Laughter
+  id: LaughingFit
+  name: Laughing Fit
   rank: 2
   traditions: [Arcane, Occult]
   traits: [Concentrate, Emotion, Incapacitation, Manipulate, Mental]
@@ -700,7 +732,7 @@
   actionCost: Two
   components: Somatic, verbal
   duration: 1 minute
-  summary: Your outline wavers. Creatures that fail a flat DC 5 check are off-guard against your Strikes, and attacks against you have a miss chance.
+  summary: You are concealed. Attacks against you must succeed at a DC 5 flat check or they miss.
 
 - type: cfSpell
   id: Restoration
@@ -716,18 +748,18 @@
   heightened: Higher ranks can remove stronger or additional conditions.
 
 - type: cfSpell
-  id: FlamingSphere
-  name: Flaming Sphere
+  id: FloatingFlame
+  name: Floating Flame
   rank: 2
   traditions: [Arcane, Primal]
   traits: [Concentrate, Fire, Manipulate]
   actionCost: Two
   components: Somatic, verbal
   range: 30 feet
-  area: 5-foot square
+  area: 5-foot burst
   defense: Reflex
   duration: Sustained up to 1 minute
-  summary: A rolling sphere of fire deals 3d6 fire damage. You can move it when you sustain the spell.
+  summary: A 5-foot burst of fire deals 3d6 fire damage. You can move it when you sustain the spell.
   criticalSuccess: No damage.
   success: Half damage.
   failure: Full damage.

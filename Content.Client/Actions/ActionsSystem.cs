@@ -1,5 +1,6 @@
 using System.IO;
 using System.Linq;
+using Content.Client.CF.Spells;
 using Content.Shared.Actions;
 using Content.Shared.Actions.Components;
 using Content.Shared.Mapping;
@@ -32,6 +33,8 @@ namespace Content.Client.Actions
         [Dependency] private MetaDataSystem _metaData = default!;
         [Dependency] private ISerializationManager _serialization = default!;
         [Dependency] private SpriteSystem _sprite = default!;
+        // CarpFinder: spell clicks use the outlined creature when the cursor hits the floor.
+        [Dependency] private CFSpellTargetingSystem _spellTargeting = default!;
 
         public event Action<EntityUid>? OnActionAdded;
         public event Action<EntityUid>? OnActionRemoved;
@@ -366,7 +369,11 @@ namespace Content.Client.Actions
             args.Handled = true;
 
             if (args.Input.EntityUid is not { Valid: true } entity)
+            {
+                // CarpFinder: the outline can show a creature the click did not hit.
+                _spellTargeting.TryUseOutlinedCreature(ent, ref args);
                 return;
+            }
 
             // let world target component handle it
             var (uid, comp) = ent;
@@ -380,7 +387,11 @@ namespace Content.Client.Actions
             var user = args.User;
 
             if (!ValidateEntityTarget(user, entity, ent))
+            {
+                // CarpFinder: a worn item or the floor was clicked beside the outlined creature.
+                _spellTargeting.TryUseOutlinedCreature(ent, ref args);
                 return;
+            }
 
             if (action.ClientExclusive)
             {

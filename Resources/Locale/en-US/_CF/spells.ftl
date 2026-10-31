@@ -1,0 +1,14 @@
+cf-spell-no-slots = You have no spell slots of that rank left.
+cf-spell-out-of-range = That is beyond the spell's range.
+cf-spell-no-target = You can't cast that on them.
+cf-spell-pick-creature = Click a creature.
+cf-spell-no-grid = Area spells need a tiled floor.
+cf-spell-no-one = The spell finds no one.
+cf-spell-resisted = The spell has no effect.
+cf-spell-affected = The spell takes hold.
+cf-spell-stabilize = The creature is stabilized and stays unconscious.
+cf-spell-sleep = The creature falls unconscious.
+cf-spell-paralyze = The creature is paralyzed.
+cf-spell-prone = The creature falls prone.
+cf-spell-light = The target sheds light.
+cf-spell-utility = The spell takes hold.

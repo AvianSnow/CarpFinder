@@ -84,10 +84,16 @@ public sealed partial class SpellSelectionPopup : DefaultWindow
 
     private void PressTradition(CFSpellTradition tradition)
     {
-        TabArcane.Pressed = tradition == CFSpellTradition.Arcane;
-        TabDivine.Pressed = tradition == CFSpellTradition.Divine;
-        TabOccult.Pressed = tradition == CFSpellTradition.Occult;
-        TabPrimal.Pressed = tradition == CFSpellTradition.Primal;
+        // The group does not allow every tab to be off. Pressing the chosen tab
+        // clears the others. Setting Pressed = false on the current tab throws.
+        var tab = tradition switch
+        {
+            CFSpellTradition.Divine => TabDivine,
+            CFSpellTradition.Occult => TabOccult,
+            CFSpellTradition.Primal => TabPrimal,
+            _ => TabArcane,
+        };
+        tab.Pressed = true;
     }
 
     private void RebuildList()

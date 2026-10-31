@@ -2,6 +2,7 @@ using System.Numerics;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Factions;
 using Content.Shared.CF.Preferences;
+using Content.Shared.CF.Spells;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Systems;
@@ -223,8 +224,21 @@ public sealed partial class CFStrikeSystem : EntitySystem
             acPenalty = CFFlanking.OffGuardAcPenalty;
 
         var targetAc = defender.ArmorClass - acPenalty;
+        if (TryComp(target, out CFSpellStatusComponent? ward))
+            targetAc += ward.AcBonus;
+
         var damageMod = CFMelee.DamageBonus(attackerAbilities, weapon, propulsive);
         var d20 = _random.Next(1, 21);
+        if (TryComp(user, out CFSpellStatusComponent? boon))
+        {
+            attackBonus += boon.AttackBonus;
+            if (boon.TrueStrike)
+            {
+                d20 = Math.Max(d20, _random.Next(1, 21));
+                boon.TrueStrike = false;
+            }
+        }
+
         var degree = CFMelee.DegreeOfSuccess(d20, attackBonus, targetAc);
         var damage = 0;
         var criticalHit = degree == CFStrikeDegree.CriticalSuccess;

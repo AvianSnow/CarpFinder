@@ -1,3 +1,4 @@
+using Content.Shared.Actions;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Factions;
@@ -16,6 +17,7 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
     [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private InventorySystem _inventory = default!;
     [Dependency] private CFFactionSystem _factions = default!;
+    [Dependency] private SharedActionsSystem _actions = default!;
 
     [SubscribeLocalEvent]
     private void OnPlayerSpawnComplete(PlayerSpawnCompleteEvent args)
@@ -71,6 +73,26 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         combatant.Wounded = 0;
         Dirty(mob, combatant);
         ApplySpellbook(mob, profile, sheet.Class);
+        GrantSpellActions(mob, profile);
+    }
+
+    /// <summary>
+    /// Known spells become radial actions when a matching <c>CF{spell}</c> entity exists.
+    /// </summary>
+    private void GrantSpellActions(EntityUid mob, Content.Shared.Preferences.HumanoidCharacterProfile profile)
+    {
+        var granted = new HashSet<string>();
+        foreach (var pick in profile.CFBuild.Spells)
+        {
+            if (!pick.HasSpell || pick.Rank < 0)
+                continue;
+
+            var id = "CF" + pick.Spell.Id;
+            if (!granted.Add(id) || !_prototypes.TryIndex<EntityPrototype>(id, out _))
+                continue;
+
+            _actions.AddAction(mob, id);
+        }
     }
 
     /// <summary>
