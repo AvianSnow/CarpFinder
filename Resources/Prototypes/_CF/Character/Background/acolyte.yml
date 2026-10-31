@@ -6,6 +6,9 @@
   trainedSkills:
     - Religion
     - Diplomacy
+  skillRanks:
+    Religion: trained
+    Diplomacy: trained
   abilityBoosts:
     - Wisdom
     - Charisma

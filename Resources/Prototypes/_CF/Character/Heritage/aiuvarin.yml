@@ -1,0 +1,7 @@
+- type: cfHeritage
+  id: Aiuvarin
+  name: cf-heritage-aiuvarin
+  description: cf-heritage-description-aiuvarin
+  abilityBoosts:
+    - Dexterity
+    - Charisma
