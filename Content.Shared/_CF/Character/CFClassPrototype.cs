@@ -33,8 +33,40 @@ public sealed partial class CFClassPrototype : IPrototype
     [DataField]
     public List<CFAbilityBoost> AbilityBoosts = new();
 
+    /// <summary>
+    /// Free skill trainings at level 1, before Intelligence modifier
+    /// (final slots = this + max(0, Int mod)).
+    /// </summary>
+    [DataField]
+    public int AdditionalSkillTrainings;
+
+    [DataField]
+    public CFSpellcasting? Spellcasting;
+
     [DataField]
     public CFRarity Rarity = CFRarity.Common;
+}
+
+/// <summary>
+/// Prepared or spontaneous spell slots for a class. Rank 1 is <see cref="Slots"/> index 0.
+/// </summary>
+[DataDefinition]
+public sealed partial class CFSpellcasting
+{
+    [DataField(required: true)]
+    public CFSpellTradition Tradition;
+
+    [DataField(required: true)]
+    public CFAbility Ability;
+
+    [DataField]
+    public int Cantrips = 5;
+
+    [DataField]
+    public List<int> Slots = new();
+
+    [DataField]
+    public int FocusPoints;
 }
 
 [DataDefinition]

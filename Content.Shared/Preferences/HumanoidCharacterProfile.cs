@@ -2,6 +2,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Content.Shared.CCVar;
+using Content.Shared.CF.Preferences;
 using Content.Shared.Chat.Prototypes;
 using Content.Shared.EntityEffects.Effects;
 using Content.Shared.GameTicking;
@@ -130,6 +131,11 @@ namespace Content.Shared.Preferences
         public PreferenceUnavailableMode PreferenceUnavailable { get; private set; } =
             PreferenceUnavailableMode.SpawnAsOverflow;
 
+        // CarpFinder: Pathfinder 2e ancestry/background/class + boost assignments
+        [DataField]
+        public CFCharacterBuildData CFBuild { get; set; } = new();
+        // CarpFinder end
+
         public HumanoidCharacterProfile(
             string name,
             string flavortext,
@@ -193,6 +199,9 @@ namespace Content.Shared.Preferences
                 new HashSet<ProtoId<TraitPrototype>>(other.TraitPreferences),
                 new Dictionary<string, RoleLoadout>(other.Loadouts))
         {
+            // CarpFinder: copy PF2e build
+            CFBuild = other.CFBuild.Clone();
+            // CarpFinder end
         }
 
         /// <summary>
@@ -626,6 +635,7 @@ namespace Content.Shared.Preferences
             if (!_traitPreferences.SequenceEqual(other._traitPreferences)) return false;
             if (!Loadouts.SequenceEqual(other.Loadouts)) return false;
             if (FlavorText != other.FlavorText) return false;
+            if (!CFBuild.Equals(other.CFBuild)) return false; // CarpFinder: PF2e build
             return Appearance.Equals(other.Appearance);
         }
 
@@ -802,6 +812,19 @@ namespace Content.Shared.Preferences
             {
                 _loadouts.Remove(value);
             }
+
+            // CarpFinder: drop invalid PF2e background/class prototype ids
+            if (CFBuild.Background is { } backgroundId
+                && !prototypeManager.HasIndex(backgroundId))
+            {
+                CFBuild.Background = null;
+                CFBuild.BackgroundBoost = null;
+                CFBuild.BackgroundFreeBoost = null;
+            }
+
+            if (CFBuild.Class is { } classId && !prototypeManager.HasIndex(classId))
+                CFBuild.Class = null;
+            // CarpFinder end
         }
 
         /// <summary>

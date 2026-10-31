@@ -16,22 +16,8 @@
         - Reflex
     skills:
       trained:
-        - Acrobatics
-        - Arcana
-        - Athletics
-        - Crafting
-        - Deception
-        - Diplomacy
-        - Intimidation
-        - Medicine
-        - Nature
         - Occultism
         - Performance
-        - Religion
-        - Society
-        - Stealth
-        - Survival
-        - Thievery
     attacks:
       trained:
         - SimpleWeapons
@@ -42,7 +28,11 @@
         - LightArmor
         - MediumArmor
         - Unarmored
-  abilityBoosts:
-    - Charisma
-    - Dexterity
-    - Free
+  additionalSkillTrainings: 4
+  spellcasting:
+    tradition: Occult
+    ability: Charisma
+    cantrips: 5
+    slots:
+      - 2
+  # Class key-attribute boost is applied from keyAbility in code (PF2e).

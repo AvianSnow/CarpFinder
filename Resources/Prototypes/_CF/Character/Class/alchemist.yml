@@ -29,7 +29,5 @@
         - LightArmor
         - MediumArmor
         - Unarmored
-  abilityBoosts:
-    - Intelligence
-    - Dexterity
-    - Free
+  additionalSkillTrainings: 3
+  # Class key-attribute boost is applied from keyAbility in code (PF2e).

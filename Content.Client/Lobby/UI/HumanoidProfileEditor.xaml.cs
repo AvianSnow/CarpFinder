@@ -3,6 +3,7 @@ using Content.Client.Message;
 using Content.Client.Players.PlayTimeTracking;
 using Content.Client.Sprite;
 using Content.Shared.CCVar;
+using Content.Shared.GameTicking;
 using Content.Shared.Humanoid;
 using Content.Shared.Humanoid.Markings;
 using Content.Shared.Preferences;
@@ -103,6 +104,7 @@ namespace Content.Client.Lobby.UI
             _sprite = _entManager.System<SpriteSystem>();
 
             _maxNameLength = _cfgManager.GetCVar(CCVars.MaxNameLength);
+            _allowFlavorText = _cfgManager.GetCVar(CCVars.FlavorText);
 
             Markings.SetModel(_markingsModel);
 
@@ -142,11 +144,14 @@ namespace Content.Client.Lobby.UI
 
             NameEdit.OnTextChanged += args => { SetName(args.Text); };
             NameEdit.IsValid = args => args.Length <= _maxNameLength;
+            RandomizeUnlockedButton.OnPressed += args => { RandomizeProfile(); };
             WarningLabel.SetMarkup($"[color=red]{Loc.GetString("humanoid-profile-editor-naming-rules-warning")}[/color]");
 
             #endregion Name
 
             #region Appearance
+
+            TabContainer.SetTabTitle(0, Loc.GetString("humanoid-profile-editor-appearance-tab"));
 
             #region Sex
 
@@ -197,6 +202,13 @@ namespace Content.Client.Lobby.UI
 
             RefreshSpecies();
 
+            SpeciesButton.OnItemSelected += args =>
+            {
+                SpeciesButton.SelectId(args.Id);
+                SetSpecies(_species[args.Id].ID);
+                OnSkinColorOnValueChanged();
+            };
+
             #region Skin
 
             Skin.OnValueChanged += _ =>
@@ -244,12 +256,46 @@ namespace Content.Client.Lobby.UI
 
             #endregion Appearance
 
+            #region Jobs
+
+            TabContainer.SetTabTitle(1, Loc.GetString("humanoid-profile-editor-jobs-tab"));
+
+            PreferenceUnavailableButton.AddItem(
+                Loc.GetString("humanoid-profile-editor-preference-unavailable-stay-in-lobby-button"),
+                (int)PreferenceUnavailableMode.StayInLobby);
+            PreferenceUnavailableButton.AddItem(
+                Loc.GetString("humanoid-profile-editor-preference-unavailable-spawn-as-overflow-button",
+                              ("overflowJob", Loc.GetString(GameTicker.FallbackOverflowJobName))),
+                (int)PreferenceUnavailableMode.SpawnAsOverflow);
+
+            PreferenceUnavailableButton.OnItemSelected += args =>
+            {
+                PreferenceUnavailableButton.SelectId(args.Id);
+                Profile = Profile?.WithPreferenceUnavailable((PreferenceUnavailableMode)args.Id);
+                SetDirty();
+            };
+
+            _jobCategories = new Dictionary<string, BoxContainer>();
+
+            RefreshAntags();
+            RefreshJobs();
+
+            #endregion Jobs
+
+            TabContainer.SetTabTitle(2, Loc.GetString("humanoid-profile-editor-antags-tab"));
+
+            RefreshTraits();
+
             #region Markings
+
+            TabContainer.SetTabTitle(4, Loc.GetString("humanoid-profile-editor-markings-tab"));
 
             _markingsModel.MarkingsChanged += (_, _) => OnMarkingChange();
             _markingsModel.MarkingsReset += OnMarkingChange;
 
             #endregion Markings
+
+            RefreshFlavorText();
 
             #region Dummy
 
@@ -273,7 +319,9 @@ namespace Content.Client.Lobby.UI
                 ReloadPreview();
             };
 
-            SetupCharacterBuilder();
+            SpeciesInfoButton.OnPressed += OnSpeciesInfoButtonPressed;
+
+            UpdateSpeciesGuidebookIcon();
             IsDirty = false;
         }
 
@@ -339,9 +387,18 @@ namespace Content.Client.Lobby.UI
             UpdateSaveButton();
             UpdateMarkings();
 
+            RefreshAntags();
+            RefreshJobs();
             RefreshLoadouts();
             RefreshSpecies();
+            RefreshTraits();
+            RefreshFlavorText();
             ReloadPreview();
+
+            if (Profile != null)
+            {
+                PreferenceUnavailableButton.SelectId((int)Profile.PreferenceUnavailable);
+            }
         }
 
         /// <summary>
@@ -364,6 +421,8 @@ namespace Content.Client.Lobby.UI
             if (!disposing)
                 return;
 
+            _loadoutWindow?.Dispose();
+            _loadoutWindow = null;
         }
 
         protected override void EnteredTree()

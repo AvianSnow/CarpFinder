@@ -1,0 +1,83 @@
+# Pathfinder adventurer loadouts — Weapons / Defense / Gear tabs on the character builder.
+
+- type: loadout
+  id: CFLoadoutLongsword
+  inhand:
+  - CFLongsword
+
+- type: loadout
+  id: CFLoadoutLongbow
+  equipment:
+    belt: CFQuiverFilled
+  inhand:
+  - CFLongbow
+
+- type: loadout
+  id: CFLoadoutLeatherArmor
+  equipment:
+    outerClothing: CFLeatherArmor
+
+- type: loadoutGroup
+  id: CFWeaponsMelee
+  name: cf-loadout-group-weapons
+  minLimit: 1
+  maxLimit: 1
+  defaultSelected: 1
+  editorTab: Weapons
+  loadouts:
+  - CFLoadoutLongsword
+  - CFLoadoutLongbow
+
+- type: loadoutGroup
+  id: CFDefenseArmor
+  name: cf-loadout-group-defense-armor
+  minLimit: 0
+  maxLimit: 1
+  defaultSelected: 1
+  editorTab: Defense
+  loadouts:
+  - CFLoadoutLeatherArmor
+
+# roleLoadout ids must be Job<JobId> (see LoadoutSystem.GetJobPrototype).
+- type: roleLoadout
+  id: JobCFAlpha
+  groups:
+  - CFWeaponsMelee
+  - CFDefenseArmor
+
+- type: roleLoadout
+  id: JobCFBeta
+  groups:
+  - CFWeaponsMelee
+  - CFDefenseArmor
+
+- type: roleLoadout
+  id: JobCFCharlie
+  groups:
+  - CFWeaponsMelee
+  - CFDefenseArmor
+
+- type: roleLoadout
+  id: JobCFDelta
+  groups:
+  - CFWeaponsMelee
+  - CFDefenseArmor
+
+- type: roleLoadout
+  id: JobCFMerchant
+  groups:
+  - CFWeaponsMelee
+  - CFDefenseArmor
+
+- type: roleLoadout
+  id: JobCFArcaneResearcher
+  groups:
+  - CFWeaponsMelee
+  - CFDefenseArmor
+
+- type: roleLoadout
+  id: JobCFArcaneArtificer
+  groups:
+  - CFWeaponsMelee
+  - CFDefenseArmor
+
