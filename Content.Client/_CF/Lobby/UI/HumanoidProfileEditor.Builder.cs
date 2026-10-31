@@ -337,14 +337,26 @@ public sealed partial class HumanoidProfileEditor
         if (ancestry != null)
         {
             var freeCount = CFAttributeMath.CountAncestryFreeBoosts(ancestry);
+            var ancestryBlocked = new HashSet<CFAbility>();
+            foreach (var boost in ancestry.AbilityBoosts)
+            {
+                if (boost != CFAbilityBoost.Free)
+                    ancestryBlocked.Add((CFAbility) boost);
+            }
+
+            foreach (var flaw in ancestry.AbilityFlaws)
+                ancestryBlocked.Add(flaw);
+
+            var ancestryAllowed = AllAbilities.Where(ability => !ancestryBlocked.Contains(ability)).ToList();
             for (var i = 0; i < freeCount; i++)
             {
                 CFAbility? selected = i < build.AncestryFreeBoosts.Count ? build.AncestryFreeBoosts[i] : null;
                 slots.Add(new BoostSlotDefinition
                 {
                     Id = $"ancestry-free-{i}",
+                    Group = "ancestry",
                     Label = Loc.GetString("cf-character-builder-boost-ancestry-free", ("index", i + 1)),
-                    Allowed = AllAbilities.ToList(),
+                    Allowed = ancestryAllowed,
                     Selected = selected,
                 });
             }
@@ -359,6 +371,7 @@ public sealed partial class HumanoidProfileEditor
                 slots.Add(new BoostSlotDefinition
                 {
                     Id = "background-choice",
+                    Group = "background",
                     Label = Loc.GetString("cf-character-builder-boost-background-choice"),
                     Allowed = choices,
                     Selected = build.BackgroundBoost,
@@ -368,6 +381,7 @@ public sealed partial class HumanoidProfileEditor
             slots.Add(new BoostSlotDefinition
             {
                 Id = "background-free",
+                Group = "background",
                 Label = Loc.GetString("cf-character-builder-boost-background-free"),
                 Allowed = AllAbilities.ToList(),
                 Selected = build.BackgroundFreeBoost,
@@ -380,6 +394,7 @@ public sealed partial class HumanoidProfileEditor
             slots.Add(new BoostSlotDefinition
             {
                 Id = $"free-{i}",
+                Group = "finishing",
                 Label = Loc.GetString("cf-character-builder-boost-finishing", ("index", i + 1)),
                 Allowed = AllAbilities.ToList(),
                 Selected = selected,

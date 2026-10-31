@@ -45,6 +45,28 @@
 
 - type: entity
   abstract: true
+  parent: BaseAction
+  id: CFSpellObject
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Action
+    useDelay: 0.6
+    itemIconStyle: BigAction
+    raiseOnAction: true
+  - type: TargetAction
+    range: 2
+    checkCanAccess: false
+    targetingIndicator: true
+  - type: EntityTargetAction
+    canTargetSelf: false
+    event: !type:CFSpellCastTargetEvent
+  - type: Sprite
+    sprite: Objects/Magic/magicactions.rsi
+    layers:
+    - state: spell_default
+
+- type: entity
+  abstract: true
   parent: CFSpellTarget
   id: CFSpellProjectile
   categories: [ HideSpawnMenu ]

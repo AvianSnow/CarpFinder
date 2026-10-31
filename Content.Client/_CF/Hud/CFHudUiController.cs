@@ -1,4 +1,5 @@
 using Content.Client.CF.Hud;
+using Content.Shared.CF.Actions;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Combat;
 using JetBrains.Annotations;
@@ -27,6 +28,7 @@ public sealed class CFHudUiController : UIController
             || !EntityManager.TryGetComponent<CFCombatantComponent>(player, out var combatant))
         {
             hud.Ball.Visible = false;
+            hud.ActionPips.Set(null);
             hud.Spells.SetBook(null);
             hud.ApplySpellVisibility();
             return;
@@ -34,6 +36,8 @@ public sealed class CFHudUiController : UIController
 
         hud.Ball.Visible = true;
         hud.Ball.Set(combatant.CurrentHp, combatant.MaxHp, combatant.TemporaryHp, combatant.ArmorClass);
+        EntityManager.TryGetComponent<CFActionPoolComponent>(player, out var actions);
+        hud.ActionPips.Set(actions);
         EntityManager.TryGetComponent<CFSpellbookComponent>(player, out var book);
         hud.Spells.SetBook(book);
         hud.ApplySpellVisibility();

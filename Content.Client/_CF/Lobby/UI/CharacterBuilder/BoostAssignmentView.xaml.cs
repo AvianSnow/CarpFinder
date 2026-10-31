@@ -31,11 +31,19 @@ public sealed partial class BoostAssignmentView : BoxContainer
 
         foreach (var definition in slots)
         {
+            var row = new BoxContainer
+            {
+                Orientation = BoxContainer.LayoutOrientation.Horizontal,
+                SeparationOverride = 4,
+                HorizontalExpand = true,
+            };
             var state = new BoostSlotState
             {
                 Id = definition.Id,
+                Group = definition.Group,
                 Allowed = definition.Allowed.ToList(),
                 Selected = definition.Selected,
+                Row = row,
             };
             _slots.Add(state);
 
@@ -46,38 +54,11 @@ public sealed partial class BoostAssignmentView : BoxContainer
                 HorizontalExpand = true,
             };
             panel.AddChild(new Label { Text = definition.Label });
-
-            var row = new BoxContainer
-            {
-                Orientation = BoxContainer.LayoutOrientation.Horizontal,
-                SeparationOverride = 4,
-                HorizontalExpand = true,
-            };
-
-            var group = new ButtonGroup();
-            foreach (var ability in definition.Allowed)
-            {
-                var abilityCaptured = ability;
-                var button = new Button
-                {
-                    Text = Loc.GetString($"cf-ability-{ability.ToString().ToLower()}"),
-                    ToggleMode = true,
-                    Group = group,
-                    Pressed = definition.Selected == ability,
-                };
-                button.OnPressed += _ =>
-                {
-                    state.Selected = abilityCaptured;
-                    RefreshAccept();
-                };
-                row.AddChild(button);
-            }
-
             panel.AddChild(row);
             SlotsList.AddChild(panel);
         }
 
-        RefreshAccept();
+        Rebuild();
     }
 
     public IReadOnlyDictionary<string, CFAbility?> GetSelections()
@@ -85,15 +66,85 @@ public sealed partial class BoostAssignmentView : BoxContainer
         return _slots.ToDictionary(slot => slot.Id, slot => slot.Selected);
     }
 
-    private void RefreshAccept()
+    private bool _rebuilding;
+
+    /// <summary>
+    /// A pick stays on its own row and leaves every other row in the same step.
+    /// </summary>
+    private void Rebuild()
     {
+        if (_rebuilding)
+            return;
+
+        _rebuilding = true;
+        ClearConflicts();
+        foreach (var slot in _slots)
+            RebuildRow(slot);
         AcceptButton.Disabled = _slots.Any(slot => slot.Selected == null);
+        _rebuilding = false;
+    }
+
+    private void ClearConflicts()
+    {
+        var used = new Dictionary<string, HashSet<CFAbility>>();
+        foreach (var slot in _slots)
+        {
+            if (!used.TryGetValue(slot.Group, out var taken))
+            {
+                taken = new HashSet<CFAbility>();
+                used[slot.Group] = taken;
+            }
+
+            if (slot.Selected is not { } ability || !slot.Allowed.Contains(ability) || !taken.Add(ability))
+                slot.Selected = null;
+        }
+    }
+
+    private void RebuildRow(BoostSlotState slot)
+    {
+        slot.Row.RemoveAllChildren();
+        var taken = new HashSet<CFAbility>();
+        foreach (var other in _slots)
+        {
+            if (other == slot || other.Group != slot.Group || other.Selected == null)
+                continue;
+
+            taken.Add(other.Selected.Value);
+        }
+
+        var group = new ButtonGroup();
+        foreach (var ability in slot.Allowed)
+        {
+            if (taken.Contains(ability))
+                continue;
+
+            var abilityCaptured = ability;
+            var button = new Button
+            {
+                Text = Loc.GetString($"cf-ability-{ability.ToString().ToLower()}"),
+                ToggleMode = true,
+                Group = group,
+                Pressed = slot.Selected == ability,
+                HorizontalExpand = true,
+            };
+            button.OnPressed += _ =>
+            {
+                if (_rebuilding || slot.Selected == abilityCaptured)
+                    return;
+
+                slot.Selected = abilityCaptured;
+                Rebuild();
+            };
+            slot.Row.AddChild(button);
+        }
     }
 
     private sealed class BoostSlotState
     {
         public required string Id { get; init; }
+        public required string Group { get; init; }
         public required List<CFAbility> Allowed { get; init; }
+        public required BoxContainer Row { get; init; }
         public CFAbility? Selected { get; set; }
     }
 }
@@ -101,6 +152,7 @@ public sealed partial class BoostAssignmentView : BoxContainer
 public sealed class BoostSlotDefinition
 {
     public required string Id { get; init; }
+    public required string Group { get; init; }
     public required string Label { get; init; }
     public required List<CFAbility> Allowed { get; init; }
     public CFAbility? Selected { get; init; }

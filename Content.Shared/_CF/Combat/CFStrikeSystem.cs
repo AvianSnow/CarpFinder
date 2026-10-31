@@ -1,4 +1,5 @@
 using System.Numerics;
+using Content.Shared.CF.Actions;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Factions;
 using Content.Shared.CF.Preferences;
@@ -45,6 +46,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
     [Dependency] private CFDyingSystem _dying = default!;
     [Dependency] private CFFlankingSystem _flanking = default!;
     [Dependency] private CFFactionSystem _factions = default!;
+    [Dependency] private CFActionPoolSystem _actions = default!;
     [Dependency] private SharedAudioSystem _audio = default!;
 
     /// <summary>Unconscious / dying creatures are off-guard (−4 AC status, simplified).</summary>
@@ -60,7 +62,14 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (!_net.IsServer)
             return;
 
-        BeginMeleeStrikes(args.User, args.HitEntities, combat, abilities, CFStrikeWeaponStats.FromMelee(weapon.Comp), weapon.Owner, melee: true);
+        var stats = CFStrikeWeaponStats.FromMelee(weapon.Comp);
+        if (args.HitEntities.Count == 0)
+        {
+            _actions.CountAttack(args.User);
+            return;
+        }
+
+        BeginMeleeStrikes(args.User, args.HitEntities, combat, abilities, stats, weapon.Owner, melee: true);
     }
 
     [SubscribeLocalEvent]
@@ -69,15 +78,21 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (HasComp<CFMeleeWeaponComponent>(weapon))
             return;
 
-        if (!TryGetMeleeAttacker(args, out var combat, out var abilities))
+        if (!IsUnarmedWeapon(args.User, weapon.Owner))
             return;
 
-        if (!IsUnarmedWeapon(args.User, weapon.Owner))
+        if (!TryGetMeleeAttacker(args, out var combat, out var abilities))
             return;
 
         args.Handled = true;
         if (!_net.IsServer)
             return;
+
+        if (args.HitEntities.Count == 0)
+        {
+            _actions.CountAttack(args.User);
+            return;
+        }
 
         BeginMeleeStrikes(args.User, args.HitEntities, combat, abilities, CFStrikeWeaponStats.Unarmed(), weapon.Owner, melee: true);
     }
@@ -112,6 +127,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
 
         var stats = CFStrikeWeaponStats.FromRanged(ranged);
         var distanceFeet = GetDistanceFeet(shooter.Value, args.Target);
+        var map = _actions.MapPenalty(shooter.Value, stats.Agile);
+        _actions.CountAttack(shooter.Value);
         ResolveStrike(
             shooter.Value,
             args.Target,
@@ -121,7 +138,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
             distanceFeet,
             ranged.Propulsive,
             weaponUid,
-            melee: false);
+            melee: false,
+            map);
     }
 
     private bool TryGetMeleeAttacker(
@@ -132,7 +150,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
         combat = default!;
         abilities = default!;
 
-        if (!args.IsHit || args.HitEntities.Count == 0)
+        if (!args.IsHit)
             return false;
 
         return TryComp(args.User, out combat!) && TryComp(args.User, out abilities!);
@@ -161,13 +179,22 @@ public sealed partial class CFStrikeSystem : EntitySystem
         EntityUid weaponUid,
         bool melee)
     {
+        // One swing is one attack, even when the arc touches more than one creature.
+        var map = _actions.MapPenalty(user, stats.Agile);
+        var counted = false;
         foreach (var target in targets)
         {
             // Party members never reach AC, the d20, or damage.
             if (!_factions.CanHarm(user, target))
                 continue;
 
-            ResolveStrike(user, target, combat, abilities, stats, distanceFeet: 0f, propulsive: false, weaponUid, melee);
+            if (!counted)
+            {
+                _actions.CountAttack(user);
+                counted = true;
+            }
+
+            ResolveStrike(user, target, combat, abilities, stats, distanceFeet: 0f, propulsive: false, weaponUid, melee, map);
         }
     }
 
@@ -180,7 +207,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
         float distanceFeet,
         bool propulsive,
         EntityUid weaponUid,
-        bool melee)
+        bool melee,
+        int mapPenalty = 0)
     {
         if (!_factions.CanHarm(user, target))
             return;
@@ -200,7 +228,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
             return;
 
         var weaponTrained = IsWeaponTrained(attackerCombat, weapon.Proficiency);
-        var attackBonus = CFMelee.AttackBonus(
+        var attackBonus = mapPenalty + CFMelee.AttackBonus(
             attackerAbilities,
             attackerCombat,
             weapon,

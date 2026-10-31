@@ -13,7 +13,7 @@ using Robust.Shared.Utility;
 namespace Content.Client.CF.Hud;
 
 /// <summary>
-/// The wheel: vocal chat, actions, reactions, free actions, cantrips, and spell ranks.
+/// The wheel: vocal chat, actions, free actions, cantrips, and spell ranks.
 /// Ranks 1 through 3 are always present. A higher rank appears when an action uses it.
 /// </summary>
 public static class CFRadialMenu
@@ -22,8 +22,6 @@ public static class CFRadialMenu
 
     private static readonly Color ActionColor = new(46, 120, 52, 190);
     private static readonly Color ActionHot = new(96, 176, 88, 220);
-    private static readonly Color ReactionColor = new(122, 78, 36, 190);
-    private static readonly Color ReactionHot = new(176, 124, 64, 220);
     private static readonly Color FreeColor = new(22, 22, 24, 210);
     private static readonly Color FreeHot = new(78, 78, 84, 230);
     private static readonly Color CantripColor = new(64, 48, 120, 200);
@@ -69,7 +67,6 @@ public static class CFRadialMenu
         }
 
         var main = Layer(menu);
-        var reactions = Layer(menu);
         var free = Layer(menu);
         var rankCount = AlwaysShownRanks;
         foreach (var action in actions.GetClientActions())
@@ -87,7 +84,8 @@ public static class CFRadialMenu
 
         foreach (var action in actions.GetClientActions())
         {
-            if (!entities.TryGetComponent<CFRadialSlotComponent>(action.Owner, out var slot))
+            if (!entities.TryGetComponent<CFRadialSlotComponent>(action.Owner, out var slot)
+                || slot.Group == CFRadialGroup.Reaction)
                 continue;
 
             var option = new RadialMenuActionOption<Entity<ActionComponent>>(useAction, action)
@@ -100,9 +98,6 @@ public static class CFRadialMenu
             {
                 case CFRadialGroup.Action:
                     main.Add(option);
-                    break;
-                case CFRadialGroup.Reaction:
-                    reactions.Add(option);
                     break;
                 case CFRadialGroup.Free:
                     free.Add(option);
@@ -118,15 +113,14 @@ public static class CFRadialMenu
             Nest(vocal, 0, "cf-radial-vocal",
                 new SpriteSpecifier.Texture(new ResPath("/Textures/Interface/Emotes/vocal.png"))),
             Nest(main, 1, "cf-radial-actions", ActionColor, ActionHot),
-            Nest(reactions, 2, "cf-radial-reactions", ReactionColor, ReactionHot),
-            Nest(free, 3, "cf-radial-free", FreeColor, FreeHot),
-            Nest(spells[0], 4, "cf-radial-cantrips", CantripColor, CantripHot),
+            Nest(free, 2, "cf-radial-free", FreeColor, FreeHot),
+            Nest(spells[0], 3, "cf-radial-cantrips", CantripColor, CantripHot),
         };
 
         for (var rank = 1; rank < spells.Length; rank++)
         {
             var label = Loc.GetString("cf-radial-rank", ("rank", rank));
-            wheel.Add(Nest(spells[rank], 4 + rank, label, SpellColor, SpellHot, rank.ToString()));
+            wheel.Add(Nest(spells[rank], 3 + rank, label, SpellColor, SpellHot, rank.ToString()));
         }
 
         return wheel;

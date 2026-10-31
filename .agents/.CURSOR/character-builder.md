@@ -6,7 +6,7 @@
 - Profile field: `HumanoidCharacterProfile.CFBuild` (`CFCharacterBuildData`) — background, class, ancestry free boosts, background choice/free boosts, four finishing free boosts, background/class trained skill picks.
 - Ancestry is `Profile.Species` resolved through `cfAncestry` prototypes.
 - Attribute math is PF2e modifiers (+0 base, boost +1, flaw −1) via `CFAttributeMath`.
-- Level 1 buttons: **Abilities** (`BoostAssignmentView`), **Skill** / **Class** (`SkillAssignmentView`).
+- Level 1 buttons: **Abilities** (`BoostAssignmentView`), **Skill** / **Class** (`SkillAssignmentView`). Within one step (ancestry, background, or the four free boosts; likewise each skill screen), a picked attribute or skill is removed from the other rows. Ancestry free boosts also omit that ancestry's fixed boosts and flaws. Accept stays disabled until every row has a remaining choice, so a duplicate cannot be saved and then reappear as blank.
 - Skill Training: one slot per background `trainedSkills`/`skillBoosts`; player assigns distinct skills (defaults from background).
 - Backgrounds: `Resources/Prototypes/_CF/Character/Background/`. Player Core and the other Archives of Nethys backgrounds. Each restricted attribute boost is listed (the builder always adds one free boost). A Lore subcategory is the `Lore` skill; the specific lore is named in the description. Skill feats are named only; they are not granted.
 - Class Skill: `additionalSkillTrainings + max(0, Int)` free picks; excludes fixed class + background skills.

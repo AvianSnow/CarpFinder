@@ -18,9 +18,8 @@ public sealed partial class CFGameHud : UIWidget
     {
         RobustXamlLoader.Load(this);
         MouseFilter = MouseFilterMode.Ignore;
-        _filters = [ActionsFilter, ReactionsFilter, SpellsFilter];
+        _filters = [ActionsFilter, SpellsFilter];
         _colors[ActionsFilter] = (new Color(46, 120, 52), new Color(96, 176, 88));
-        _colors[ReactionsFilter] = (new Color(122, 78, 36), new Color(176, 124, 64));
         _colors[SpellsFilter] = (new Color(36, 72, 140), new Color(90, 150, 210));
         Select(ActionsFilter);
 

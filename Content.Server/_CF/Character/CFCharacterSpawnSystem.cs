@@ -1,4 +1,5 @@
 using Content.Shared.Actions;
+using Content.Shared.CF.Actions;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Factions;
@@ -18,6 +19,7 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
     [Dependency] private InventorySystem _inventory = default!;
     [Dependency] private CFFactionSystem _factions = default!;
     [Dependency] private SharedActionsSystem _actions = default!;
+    [Dependency] private CFActionPoolSystem _actionPool = default!;
 
     [SubscribeLocalEvent]
     private void OnPlayerSpawnComplete(PlayerSpawnCompleteEvent args)
@@ -72,6 +74,7 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         combatant.Dying = 0;
         combatant.Wounded = 0;
         Dirty(mob, combatant);
+        _actionPool.Ensure(mob);
         ApplySpellbook(mob, profile, sheet.Class);
         GrantSpellActions(mob, profile);
     }

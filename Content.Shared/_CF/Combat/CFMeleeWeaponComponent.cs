@@ -27,6 +27,10 @@ public sealed partial class CFMeleeWeaponComponent : Component
     [DataField, AutoNetworkedField]
     public bool Finesse;
 
+    /// <summary>Agile trait. The second attack is −4 and later attacks are −8, instead of −5/−10.</summary>
+    [DataField, AutoNetworkedField]
+    public bool Agile;
+
     [DataField, AutoNetworkedField]
     public int ItemBonus;
 

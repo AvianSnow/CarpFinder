@@ -45,4 +45,8 @@ public sealed partial class CFRangedWeaponComponent : Component
     /// </summary>
     [DataField, AutoNetworkedField]
     public bool Propulsive;
+
+    /// <summary>Agile trait. The second attack is −4 and later attacks are −8, instead of −5/−10.</summary>
+    [DataField, AutoNetworkedField]
+    public bool Agile;
 }

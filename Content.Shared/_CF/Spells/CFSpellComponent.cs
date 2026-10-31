@@ -93,6 +93,65 @@ public sealed partial class CFSpellComponent : Component
 
     [DataField, AutoNetworkedField]
     public EntProtoId BoltPrototype = "CFSpellBolt";
+
+    /// <summary>
+    /// Highest number of bolts one cast can fire. 1 is a single shot.
+    /// Force Barrage is 3: the caster picks 1, 2, or 3, and the spell slot is spent once.
+    /// </summary>
+    [DataField]
+    public int MaxBolts = 1;
+
+    /// <summary>Bolts chosen for the cast that is being aimed. The server copies this from the perform request.</summary>
+    [DataField]
+    public int ChosenBolts = 1;
+
+    /// <summary>Opens Food, Lift, Make, and Tidy before the cast. Prestidigitation.</summary>
+    [DataField]
+    public bool TrickMenu;
+
+    /// <summary>Trick chosen for this cast. The server copies this from the perform request.</summary>
+    [DataField]
+    public byte ChosenTrick;
+
+    /// <summary>Bolts of this volley that still need a click. Counted down on the client as you aim.</summary>
+    public int VolleyLeft;
+
+    /// <summary>The first bolt of this volley has been sent. Later clicks do not pay the action cost or the spell slot again.</summary>
+    public bool VolleyArmed;
+
+    /// <summary>This perform is the opening shot, so it pays for the whole volley.</summary>
+    public bool PayThisShot;
+
+    /// <summary>
+    /// Puts the volley on a perform request. The first shot carries the full count.
+    /// Each later shot is marked as a continuation and fires one stored bolt.
+    /// </summary>
+    public void WriteVolley(RequestPerformActionEvent request)
+    {
+        request.SpellTrick = ChosenTrick;
+        if (MaxBolts <= 1)
+        {
+            request.SpellBolts = SelectedBolts();
+            request.SpellVolleyContinue = false;
+            return;
+        }
+
+        request.SpellBolts = (byte) Math.Clamp(ChosenBolts < 1 ? 1 : ChosenBolts, 1, MaxBolts);
+        request.SpellVolleyContinue = VolleyArmed;
+        VolleyArmed = true;
+        if (VolleyLeft > 0)
+            VolleyLeft--;
+    }
+
+    /// <summary>0 when this cast is not a multi-bolt spell. Otherwise the chosen count, clamped to <see cref="MaxBolts"/>.</summary>
+    public byte SelectedBolts()
+    {
+        if (MaxBolts <= 1)
+            return 0;
+
+        var count = ChosenBolts < 1 ? 1 : ChosenBolts;
+        return (byte) Math.Clamp(count, 1, MaxBolts);
+    }
 }
 
 public enum CFSpellDelivery : byte
@@ -144,4 +203,13 @@ public sealed partial class CFSpellCastTargetEvent : EntityTargetActionEvent
 
 public sealed partial class CFSpellCastAreaEvent : WorldTargetActionEvent
 {
+}
+
+public enum CFPrestidigitationTrick : byte
+{
+    None = 0,
+    Food = 1,
+    Lift = 2,
+    Make = 3,
+    Tidy = 4,
 }

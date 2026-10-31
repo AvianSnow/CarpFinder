@@ -24,9 +24,9 @@
     <PanelContainer Name="DividerLeft" MinSize="2 120" />
     <PanelContainer Name="ActionPanel" VerticalAlignment="Bottom">
         <BoxContainer Orientation="Vertical" SeparationOverride="4" Align="Center" Margin="6">
+            <hud:CFActionPips Name="ActionPips" Access="Public" HorizontalAlignment="Center" />
             <BoxContainer Orientation="Horizontal" SeparationOverride="6" HorizontalAlignment="Center">
                 <Button Name="ActionsFilter" ToggleMode="True" MinSize="88 26" Text="{Loc 'cf-hud-actions'}" ToolTip="{Loc 'cf-hud-actions-tooltip'}" />
-                <Button Name="ReactionsFilter" ToggleMode="True" MinSize="88 26" Text="{Loc 'cf-hud-reactions'}" ToolTip="{Loc 'cf-hud-reactions-tooltip'}" />
                 <Button Name="SpellsFilter" ToggleMode="True" MinSize="88 26" Text="{Loc 'cf-hud-spells'}" ToolTip="{Loc 'cf-hud-spells-tooltip'}" />
             </BoxContainer>
             <actions:ActionsBar />

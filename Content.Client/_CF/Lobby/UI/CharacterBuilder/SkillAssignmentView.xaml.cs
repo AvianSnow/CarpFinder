@@ -30,11 +30,18 @@ public sealed partial class SkillAssignmentView : BoxContainer
 
         foreach (var definition in slots)
         {
+            var grid = new GridContainer
+            {
+                Columns = 4,
+                HorizontalExpand = true,
+            };
             var state = new SkillSlotState
             {
                 Id = definition.Id,
                 Allowed = definition.Allowed.ToList(),
+                Labels = definition.Labels,
                 Selected = definition.Selected,
+                Grid = grid,
             };
             _slots.Add(state);
 
@@ -45,37 +52,11 @@ public sealed partial class SkillAssignmentView : BoxContainer
                 HorizontalExpand = true,
             };
             panel.AddChild(new Label { Text = definition.Label });
-
-            var grid = new GridContainer
-            {
-                Columns = 4,
-                HorizontalExpand = true,
-            };
-
-            var group = new ButtonGroup();
-            foreach (var skillId in definition.Allowed)
-            {
-                var skillCaptured = skillId;
-                var button = new Button
-                {
-                    Text = definition.Labels.TryGetValue(skillId, out var label) ? label : skillId,
-                    ToggleMode = true,
-                    Group = group,
-                    Pressed = definition.Selected == skillId,
-                };
-                button.OnPressed += _ =>
-                {
-                    state.Selected = skillCaptured;
-                    RefreshAccept();
-                };
-                grid.AddChild(button);
-            }
-
             panel.AddChild(grid);
             SlotsList.AddChild(panel);
         }
 
-        RefreshAccept();
+        Rebuild();
     }
 
     public IReadOnlyDictionary<string, string?> GetSelections()
@@ -83,28 +64,79 @@ public sealed partial class SkillAssignmentView : BoxContainer
         return _slots.ToDictionary(slot => slot.Id, slot => slot.Selected);
     }
 
-    private void RefreshAccept()
+    private bool _rebuilding;
+
+    /// <summary>
+    /// A picked skill stays on its own row and leaves every other row.
+    /// </summary>
+    private void Rebuild()
     {
-        if (_slots.Count == 0)
-        {
-            AcceptButton.Disabled = true;
+        if (_rebuilding)
             return;
+
+        _rebuilding = true;
+        ClearConflicts();
+        foreach (var slot in _slots)
+            RebuildGrid(slot);
+
+        AcceptButton.Disabled = _slots.Count == 0 || _slots.Any(slot => slot.Selected == null);
+        _rebuilding = false;
+    }
+
+    private void ClearConflicts()
+    {
+        var taken = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var slot in _slots)
+        {
+            if (slot.Selected is not { } skill || !slot.Allowed.Contains(skill) || !taken.Add(skill))
+                slot.Selected = null;
+        }
+    }
+
+    private void RebuildGrid(SkillSlotState slot)
+    {
+        slot.Grid.RemoveAllChildren();
+        var taken = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var other in _slots)
+        {
+            if (other == slot || other.Selected == null)
+                continue;
+
+            taken.Add(other.Selected);
         }
 
-        if (_slots.Any(slot => slot.Selected == null))
+        var group = new ButtonGroup();
+        foreach (var skillId in slot.Allowed)
         {
-            AcceptButton.Disabled = true;
-            return;
-        }
+            if (taken.Contains(skillId))
+                continue;
 
-        var selected = _slots.Select(slot => slot.Selected!).ToList();
-        AcceptButton.Disabled = selected.Count != selected.Distinct(StringComparer.Ordinal).Count();
+            var skillCaptured = skillId;
+            var button = new Button
+            {
+                Text = slot.Labels.TryGetValue(skillId, out var label) ? label : skillId,
+                ToggleMode = true,
+                Group = group,
+                Pressed = slot.Selected == skillId,
+            };
+            button.OnPressed += _ =>
+            {
+                if (_rebuilding || slot.Selected == skillCaptured)
+                    return;
+
+                slot.Selected = skillCaptured;
+                Rebuild();
+            };
+            slot.Grid.AddChild(button);
+        }
     }
 
     private sealed class SkillSlotState
     {
         public required string Id { get; init; }
         public required List<string> Allowed { get; init; }
+        public required Dictionary<string, string> Labels { get; init; }
+        public required GridContainer Grid { get; init; }
         public string? Selected { get; set; }
     }
 }

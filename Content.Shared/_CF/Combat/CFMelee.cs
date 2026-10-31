@@ -23,6 +23,19 @@ public static class CFMelee
     /// <summary>Approximate PF feet per SS14 tile (1 tile ≈ 1.5 m ≈ 5 ft grid square).</summary>
     public const float FeetPerTile = 5f;
 
+    /// <summary>
+    /// Multiple Attack Penalty for an attack roll. <paramref name="attacksAlreadyMade"/> is how many
+    /// attack rolls this creature has made since its action pool was last full.
+    /// </summary>
+    public static int MapPenalty(int attacksAlreadyMade, bool agile)
+    {
+        var step = Math.Clamp(attacksAlreadyMade, 0, 2);
+        if (agile)
+            return step == 0 ? 0 : step == 1 ? -4 : -8;
+
+        return step == 0 ? 0 : step == 1 ? -5 : -10;
+    }
+
     public static bool InReach(float distance) => distance <= MeleeRange;
 
     public static float TilesToFeet(float tiles) => tiles * FeetPerTile;
