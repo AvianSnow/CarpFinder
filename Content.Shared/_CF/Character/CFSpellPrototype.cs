@@ -1,3 +1,4 @@
+using Content.Shared.CF.Traits;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
 
@@ -47,7 +48,7 @@ public sealed partial class CFSpellPrototype : IPrototype
     public CFRarity Rarity = CFRarity.Common;
 
     [DataField]
-    public List<string> Traits = new();
+    public List<ProtoId<CFTraitPrototype>> Traits = new();
 
     [DataField]
     public CFSpellActionCost ActionCost = CFSpellActionCost.Two;

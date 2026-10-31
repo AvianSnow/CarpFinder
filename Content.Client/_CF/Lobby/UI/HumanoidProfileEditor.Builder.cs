@@ -1,4 +1,6 @@
+using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Content.Client.CF.Lobby.UI.CharacterBuilder;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Preferences;
@@ -8,6 +10,7 @@ using Content.Shared.Roles;
 using Robust.Client.UserInterface;
 using Robust.Client.UserInterface.Controls;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Utility;
 
 namespace Content.Client.Lobby.UI;
 
@@ -25,6 +28,8 @@ public sealed partial class HumanoidProfileEditor
         Background,
         Class,
         Job,
+        Heritage,
+        Sprite,
     }
 
     private enum SkillAssignMode
@@ -69,6 +74,8 @@ public sealed partial class HumanoidProfileEditor
         BoostView.OnClosed += ClosePicker;
         BoostView.OnAccept += AcceptBoostAssignment;
         SetAbilitiesButton.OnPressed += _ => ShowBoostAssignment();
+        HeritageSlot.OnPressed += _ => ShowHeritageSelection();
+        SpriteSlot.OnPressed += _ => ShowSpriteSelection();
 
         SkillView.OnClosed += ClosePicker;
         SkillView.OnAccept += AcceptSkillAssignment;
@@ -122,6 +129,8 @@ public sealed partial class HumanoidProfileEditor
         BackgroundButton.Pressed = false;
         ClassButton.Pressed = false;
         JobButton.Pressed = false;
+        HeritageSlot.Pressed = false;
+        SpriteSlot.Pressed = false;
     }
 
     private void OpenPicker()
@@ -179,11 +188,26 @@ public sealed partial class HumanoidProfileEditor
         switch (_selection)
         {
             case BuilderSelection.Ancestry:
-                SetSpecies(id);
-                // Clear ancestry free boosts when ancestry/species changes — count may differ.
+            {
+                var current = Profile == null ? null : CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species);
+                var picked = CFAttributeMath.FindAncestry(_prototypeManager, id);
+                if (picked == null)
+                    SetSpecies(id);
+                else if (current?.ID != picked.ID)
+                    SetSpecies(picked.Species);
+
                 var build = CurrentBuild();
-                build.AncestryFreeBoosts.Clear();
+                if (current?.ID != picked?.ID)
+                    build.AncestryFreeBoosts.Clear();
+                if (build.Heritage != null
+                    && _prototypeManager.TryIndex(build.Heritage.Value, out CFHeritagePrototype? heritage)
+                    && !heritage.Fits(picked?.ID))
+                    build.Heritage = null;
                 SetBuild(build);
+                break;
+            }
+            case BuilderSelection.Sprite:
+                SetSpecies(id);
                 break;
             case BuilderSelection.Background:
             {
@@ -193,6 +217,19 @@ public sealed partial class HumanoidProfileEditor
                 next.BackgroundFreeBoost = null;
                 next.BackgroundTrainedSkills.Clear();
                 SetBuild(next);
+                break;
+            }
+            case BuilderSelection.Heritage:
+            {
+                var next = CurrentBuild();
+                next.Heritage = id;
+                SetBuild(next);
+                if (Profile != null
+                    && CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species) is { } ancestry
+                    && ancestry.Sprites.FirstOrDefault(sprite => sprite.Species == Profile.Species) is { } current
+                    && current.Heritage is { } required
+                    && required.Id != id)
+                    SetSpecies(ancestry.Species);
                 break;
             }
             case BuilderSelection.Class:
@@ -210,7 +247,8 @@ public sealed partial class HumanoidProfileEditor
     {
         _selection = BuilderSelection.Ancestry;
         _prdUrl = AncestryPrd;
-        var selected = Profile?.Species.Id;
+        var currentAncestry = Profile == null ? null : CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species);
+        var selected = currentAncestry?.Species.Id ?? Profile?.Species.Id;
         _pendingId = selected;
         var covered = new HashSet<string>();
         var options = new List<Pf2eListEntry>();
@@ -218,6 +256,8 @@ public sealed partial class HumanoidProfileEditor
         foreach (var ancestry in _prototypeManager.EnumeratePrototypes<CFAncestryPrototype>().OrderBy(ancestry => Loc.GetString(ancestry.Name), StringComparer.CurrentCultureIgnoreCase))
         {
             covered.Add(ancestry.Species);
+            foreach (var sprite in ancestry.Sprites)
+                covered.Add(sprite.Species);
             options.Add(new Pf2eListEntry
             {
                 Id = ancestry.Species,
@@ -323,6 +363,150 @@ public sealed partial class HumanoidProfileEditor
             options,
             selected);
         OpenPicker();
+    }
+
+    private void ShowHeritageSelection()
+    {
+        if (Profile == null)
+            return;
+
+        _selection = BuilderSelection.Heritage;
+        _prdUrl = AncestryPrd;
+        AncestryButton.Pressed = false;
+        BackgroundButton.Pressed = false;
+        ClassButton.Pressed = false;
+        JobButton.Pressed = false;
+        HeritageSlot.Pressed = true;
+        SpriteSlot.Pressed = false;
+
+        var ancestry = CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species);
+        var selected = Profile.CFBuild.Heritage?.Id;
+        _pendingId = selected;
+        var options = new List<Pf2eListEntry>();
+
+        foreach (var heritage in _prototypeManager.EnumeratePrototypes<CFHeritagePrototype>()
+                     .Where(heritage => heritage.Fits(ancestry?.ID))
+                     .OrderBy(heritage => Loc.GetString(heritage.Name), StringComparer.CurrentCultureIgnoreCase))
+        {
+            var traits = heritage.Ancestries.Count == 0
+                ? Loc.GetString("cf-character-builder-heritage-versatile")
+                : Loc.GetString(ancestry?.Name ?? "cf-character-builder-none");
+            options.Add(new Pf2eListEntry
+            {
+                Id = heritage.ID,
+                Name = Loc.GetString(heritage.Name),
+                Rarity = heritage.Rarity,
+                Traits = traits,
+                Description = Loc.GetString(heritage.Description),
+                HitPoints = heritage.HitPoints > 0 ? Stat("cf-character-builder-stat-hp", heritage.HitPoints.ToString()) : null,
+                Size = heritage.Size is { } size
+                    ? Stat("cf-character-builder-stat-size", Loc.GetString($"cf-size-{size.ToString().ToLower()}"))
+                    : null,
+                Speed = heritage.Speed > 0
+                    ? Stat("cf-character-builder-stat-speed", $"{heritage.Speed} {Loc.GetString("cf-character-builder-feet")}")
+                    : null,
+            });
+        }
+
+        SelectionView.Show(
+            Loc.GetString("cf-character-builder-title-heritage"),
+            Loc.GetString("cf-character-builder-filter-all-heritages"),
+            options,
+            selected);
+        OpenPicker();
+    }
+
+    private void ShowSpriteSelection()
+    {
+        if (Profile == null)
+            return;
+
+        _selection = BuilderSelection.Sprite;
+        _prdUrl = AncestryPrd;
+        AncestryButton.Pressed = false;
+        BackgroundButton.Pressed = false;
+        ClassButton.Pressed = false;
+        JobButton.Pressed = false;
+        HeritageSlot.Pressed = false;
+        SpriteSlot.Pressed = true;
+
+        var ancestry = CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species);
+        var selected = Profile.Species.Id;
+        _pendingId = selected;
+        var options = new List<Pf2eListEntry>();
+
+        if (ancestry != null)
+        {
+            var defaultName = ancestry.Species.Id is "Human" or "Dwarf"
+                ? Loc.GetString(_prototypeManager.Index<SpeciesPrototype>(ancestry.Species).Name)
+                : Loc.GetString("cf-sprite-humanoid");
+            options.Add(new Pf2eListEntry
+            {
+                Id = ancestry.Species,
+                Name = defaultName,
+                Rarity = CFRarity.Common,
+                Traits = Loc.GetString(ancestry.Name),
+                Description = WithSpriteCredits(Loc.GetString("cf-sprite-humanoid-desc"), "Mobs/Species/Human/parts.rsi"),
+            });
+
+            var heritageId = Profile.CFBuild.Heritage?.Id;
+            foreach (var sprite in ancestry.Sprites.OrderBy(sprite => Loc.GetString(sprite.Name), StringComparer.CurrentCultureIgnoreCase))
+            {
+                if (sprite.Heritage is { } required && required.Id != heritageId)
+                    continue;
+
+                options.Add(new Pf2eListEntry
+                {
+                    Id = sprite.Species,
+                    Name = Loc.GetString(sprite.Name),
+                    Rarity = CFRarity.Common,
+                    Traits = Loc.GetString(ancestry.Name),
+                    Description = WithSpriteCredits(Loc.GetString(sprite.Description), sprite.Parts),
+                });
+            }
+        }
+
+        SelectionView.Show(
+            Loc.GetString("cf-character-builder-title-sprite"),
+            Loc.GetString("cf-character-builder-filter-all-sprites"),
+            options,
+            selected);
+        OpenPicker();
+    }
+
+    /// <summary>Appends the parts RSI license and copyright so the picker shows who drew the sprite.</summary>
+    private string WithSpriteCredits(string description, string? rsiPath)
+    {
+        var credits = ReadSpriteCredits(rsiPath);
+        return string.IsNullOrEmpty(credits) ? description : $"{description}\n\n{credits}";
+    }
+
+    private string? ReadSpriteCredits(string? rsiPath)
+    {
+        if (string.IsNullOrWhiteSpace(rsiPath))
+            return null;
+
+        var path = new ResPath($"/Textures/{rsiPath}/meta.json");
+        if (!_resManager.TryContentFileRead(path, out var stream))
+            return null;
+
+        using (stream)
+        using (var reader = new StreamReader(stream))
+        {
+            var text = reader.ReadToEnd();
+            var license = MatchMeta(text, "license");
+            var copyright = MatchMeta(text, "copyright");
+            if (license == null && copyright == null)
+                return null;
+
+            return license != null && copyright != null ? $"{license}\n{copyright}" : license ?? copyright;
+        }
+    }
+
+    private static string? MatchMeta(string text, string key)
+    {
+        var match = Regex.Match(text, $"\"{key}\"\\s*:\\s*\"(?<value>(?:\\\\.|[^\"\\\\])*)\"");
+        return match.Success ? Regex.Unescape(match.Groups["value"].Value) : null;
     }
 
     private void ShowBoostAssignment()
@@ -702,6 +886,23 @@ public sealed partial class HumanoidProfileEditor
         ClassButton.Text = $"{Loc.GetString("cf-character-builder-class")}: {clsName}";
         JobButton.Text = $"{Loc.GetString("cf-character-builder-job")}: {jobName}";
 
+        var heritageName = Loc.GetString("cf-character-builder-none");
+        if (build.Heritage != null && _prototypeManager.TryIndex(build.Heritage.Value, out CFHeritagePrototype? chosenHeritage))
+            heritageName = Loc.GetString(chosenHeritage.Name);
+        HeritageSlot.Text = Loc.GetString("cf-character-builder-heritage-selected", ("name", heritageName));
+
+        var spriteName = Loc.GetString("cf-sprite-humanoid");
+        if (Profile != null)
+        {
+            var spriteAncestry = CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species);
+            var spriteMatch = spriteAncestry?.Sprites.FirstOrDefault(sprite => sprite.Species == Profile.Species);
+            if (spriteMatch != null)
+                spriteName = Loc.GetString(spriteMatch.Name);
+            else if (Profile.Species.Id is "Human" or "Dwarf")
+                spriteName = ancestry;
+        }
+        SpriteSlot.Text = Loc.GetString("cf-character-builder-sprite-selected", ("name", spriteName));
+
         var boostComplete = IsBoostAssignmentComplete(build);
         SetAbilitiesButton.Text = boostComplete
             ? Loc.GetString("cf-character-builder-set-abilities-done")
@@ -778,12 +979,19 @@ public sealed partial class HumanoidProfileEditor
         var mods = sheet.Modifiers;
         var ancestry = sheet.Ancestry;
 
-        var size = ancestry == null
+        CFHeritagePrototype? heritage = null;
+        if (Profile.CFBuild.Heritage != null)
+            _prototypeManager.TryIndex(Profile.CFBuild.Heritage.Value, out heritage);
+        if (heritage != null && !heritage.Fits(ancestry?.ID))
+            heritage = null;
+
+        var size = ancestry == null && heritage?.Size == null
             ? Loc.GetString("cf-character-builder-none")
-            : Loc.GetString($"cf-size-{ancestry.Size.ToString().ToLower()}");
-        var speed = ancestry == null
+            : Loc.GetString($"cf-size-{CFAttributeMath.EffectiveSize(ancestry, heritage).ToString().ToLower()}");
+        var speedFeet = CFAttributeMath.EffectiveSpeed(ancestry, heritage);
+        var speed = ancestry == null && heritage == null
             ? Loc.GetString("cf-character-builder-none")
-            : $"{ancestry.Speed} {Loc.GetString("cf-character-builder-feet")}";
+            : $"{speedFeet} {Loc.GetString("cf-character-builder-feet")}";
 
         SizeLabel.Text = Loc.GetString("cf-character-builder-size", ("size", size));
         SpeedLabel.Text = Loc.GetString("cf-character-builder-speed", ("speed", speed));

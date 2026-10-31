@@ -6,6 +6,8 @@ using Content.Shared.CF.Factions;
 using Content.Shared.CF.Preferences;
 using Content.Shared.GameTicking;
 using Content.Shared.Inventory;
+using Content.Shared.Movement.Systems;
+using Content.Shared.Overlays;
 using Robust.Shared.Prototypes;
 
 namespace Content.Server.CF.Character;
@@ -20,6 +22,10 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
     [Dependency] private CFFactionSystem _factions = default!;
     [Dependency] private SharedActionsSystem _actions = default!;
     [Dependency] private CFActionPoolSystem _actionPool = default!;
+    [Dependency] private MovementSpeedModifierSystem _speed = default!;
+
+    /// <summary>Pathfinder Speed of 25 feet is the usual human walk.</summary>
+    private const float BaselineSpeedFeet = 25f;
 
     [SubscribeLocalEvent]
     private void OnPlayerSpawnComplete(PlayerSpawnCompleteEvent args)
@@ -74,9 +80,39 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         combatant.Dying = 0;
         combatant.Wounded = 0;
         Dirty(mob, combatant);
+        CFHeritagePrototype? heritage = null;
+        if (profile.CFBuild.Heritage != null)
+            _prototypes.TryIndex(profile.CFBuild.Heritage.Value, out heritage);
+        if (heritage != null && !heritage.Fits(sheet.Ancestry?.ID))
+            heritage = null;
+        ApplyAncestry(mob, sheet.Ancestry, heritage);
         _actionPool.Ensure(mob);
         ApplySpellbook(mob, profile, sheet.Class);
         GrantSpellActions(mob, profile);
+    }
+
+    /// <summary>
+    /// Speed scales the usual walk and sprint. Darkvision uses the same night-vision overlay as goblins.
+    /// </summary>
+    private void ApplyAncestry(EntityUid mob, CFAncestryPrototype? ancestry, CFHeritagePrototype? heritage)
+    {
+        var speed = CFAttributeMath.EffectiveSpeed(ancestry, heritage);
+        if (speed > 0 && speed != (int) BaselineSpeedFeet)
+        {
+            var scale = speed / BaselineSpeedFeet;
+            // 2.5 walk, 4.5 sprint, and 20 acceleration are the usual humanoid speeds.
+            _speed.ChangeBaseSpeed(mob, 2.5f * scale, 4.5f * scale, 20f);
+        }
+
+        if (!CFAttributeMath.HasDarkvision(ancestry, heritage))
+            return;
+
+        var vision = EnsureComp<NightVisionComponent>(mob);
+        vision.Enabled = true;
+        vision.Prioritized = true;
+        vision.LightingColor = new Color((byte) 0x9B, (byte) 0xB6, (byte) 0xFF, (byte) 0x30);
+        vision.NoiseAmount = 0f;
+        Dirty(mob, vision);
     }
 
     /// <summary>

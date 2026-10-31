@@ -262,9 +262,9 @@ public sealed partial class SpellSelectionPopup : DefaultWindow
 
         foreach (var trait in spell.Traits)
         {
-            if (spell.Rank == 0 && trait.Equals("Cantrip", StringComparison.OrdinalIgnoreCase))
+            if (spell.Rank == 0 && trait.Id == "Cantrip")
                 continue;
-            TraitRow.AddChild(Chip(trait, Color.FromHex("#3d5270")));
+            TraitRow.AddChild(Chip(trait.Id, Color.FromHex("#3d5270")));
         }
 
         var body = new StringBuilder();

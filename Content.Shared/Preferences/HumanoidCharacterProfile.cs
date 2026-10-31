@@ -2,6 +2,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Content.Shared.CCVar;
+using Content.Shared.CF.Character;
 using Content.Shared.CF.Preferences;
 using Content.Shared.Chat.Prototypes;
 using Content.Shared.EntityEffects.Effects;
@@ -644,7 +645,9 @@ namespace Content.Shared.Preferences
             var configManager = collection.Resolve<IConfigurationManager>();
             var prototypeManager = collection.Resolve<IPrototypeManager>();
 
-            if (!prototypeManager.TryIndex(Species, out var speciesPrototype) || speciesPrototype.RoundStart == false)
+            // CarpFinder: a sprite body is roundStart false so it is not its own ancestry, but it is a valid saved species.
+            if (!prototypeManager.TryIndex(Species, out var speciesPrototype)
+                || (speciesPrototype.RoundStart == false && CFAttributeMath.FindAncestry(prototypeManager, Species) == null))
             {
                 Species = HumanoidCharacterProfile.DefaultSpecies;
                 speciesPrototype = prototypeManager.Index(Species);

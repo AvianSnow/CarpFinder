@@ -92,7 +92,8 @@
                                     <Button Name="SkillTrainingButton" Text="{Loc 'cf-character-builder-skill-training'}" />
                                     <Button Name="ClassSkillButton" Text="{Loc 'cf-character-builder-class-skill'}" />
                                 </GridContainer>
-                                <Button Name="HeritageSlot" Text="{Loc 'cf-character-builder-heritage-slot'}" HorizontalExpand="True" />
+                                <Button Name="HeritageSlot" ToggleMode="True" Text="{Loc 'cf-character-builder-heritage-slot'}" HorizontalExpand="True" />
+                                <Button Name="SpriteSlot" ToggleMode="True" Text="{Loc 'cf-character-builder-sprite-slot'}" HorizontalExpand="True" />
                                 <Button Name="AncestryFeatSlot" Text="{Loc 'cf-character-builder-ancestry-feat-slot'}" HorizontalExpand="True" />
                                 <Button Name="ClassFeatSlot" Text="{Loc 'cf-character-builder-class-feat-slot'}" HorizontalExpand="True" />
                             </BoxContainer>

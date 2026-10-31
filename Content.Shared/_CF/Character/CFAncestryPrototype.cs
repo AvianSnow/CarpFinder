@@ -37,6 +37,24 @@ public sealed partial class CFAncestryPrototype : IPrototype
     [DataField(required: true)]
     public ProtoId<SpeciesPrototype> Species;
 
+    /// <summary>Extra bodies the player can pick for this ancestry. The default body is <see cref="Species"/>.</summary>
+    [DataField]
+    public List<CFAncestrySprite> Sprites = new();
+
+    public bool OwnsSpecies(string speciesId)
+    {
+        if (Species.Id == speciesId)
+            return true;
+
+        foreach (var sprite in Sprites)
+        {
+            if (sprite.Species.Id == speciesId)
+                return true;
+        }
+
+        return false;
+    }
+
     [DataField]
     public CFRarity Rarity = CFRarity.Common;
 
@@ -49,6 +67,10 @@ public sealed partial class CFAncestryPrototype : IPrototype
     [DataField]
     public int Speed = 25;
 
+    /// <summary>Darkvision. Applied as night vision when the character spawns. Low-light vision is a listed trait only.</summary>
+    [DataField]
+    public bool Darkvision;
+
     [DataField]
     public List<CFAbilityBoost> AbilityBoosts = new();
 
@@ -60,4 +82,26 @@ public sealed partial class CFAncestryPrototype : IPrototype
 
     [DataField]
     public List<LocId> Traits = new();
+}
+
+/// <summary>A body sprite a player can use for an ancestry.</summary>
+[DataDefinition]
+public sealed partial class CFAncestrySprite
+{
+    [DataField(required: true)]
+    public ProtoId<SpeciesPrototype> Species;
+
+    [DataField(required: true)]
+    public LocId Name;
+
+    [DataField(required: true)]
+    public LocId Description;
+
+    /// <summary>Parts RSI whose meta.json license and copyright are shown in the sprite picker.</summary>
+    [DataField]
+    public string? Parts;
+
+    /// <summary>When set, the sprite is listed only while the character has this heritage.</summary>
+    [DataField]
+    public ProtoId<CFHeritagePrototype>? Heritage;
 }

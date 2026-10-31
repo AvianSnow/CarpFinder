@@ -19,6 +19,10 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
     [DataField]
     public ProtoId<CFClassPrototype>? Class;
 
+    /// <summary>Chosen heritage. Must match the ancestry, unless it is versatile.</summary>
+    [DataField]
+    public ProtoId<CFHeritagePrototype>? Heritage;
+
     /// <summary>
     /// Free attribute boosts granted by ancestry (one entry per Free in the ancestry prototype).
     /// </summary>
@@ -70,6 +74,7 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
         {
             Background = Background,
             Class = Class,
+            Heritage = Heritage,
             AncestryFreeBoosts = AncestryFreeBoosts.ToList(),
             BackgroundBoost = BackgroundBoost,
             BackgroundFreeBoost = BackgroundFreeBoost,
@@ -88,6 +93,7 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
 
         return Background == other.Background
                && Class == other.Class
+               && Heritage == other.Heritage
                && Level == other.Level
                && BackgroundBoost == other.BackgroundBoost
                && BackgroundFreeBoost == other.BackgroundFreeBoost
@@ -108,6 +114,7 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
         var hash = new HashCode();
         hash.Add(Background);
         hash.Add(Class);
+        hash.Add(Heritage);
         hash.Add(Level);
         hash.Add(BackgroundBoost);
         hash.Add(BackgroundFreeBoost);

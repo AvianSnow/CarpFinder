@@ -26,4 +26,7 @@
     damageDice: 1
     damageType: slashing
     proficiency: MartialWeapons
+  - type: CFTrait
+    traits:
+    - VersatileP
   - type: DisarmMalus

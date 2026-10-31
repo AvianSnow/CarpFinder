@@ -21,11 +21,38 @@ public static class CFAttributeMath
         return Enum.GetValues<CFAbility>().ToDictionary(ability => ability, _ => 0);
     }
 
+    public static int EffectiveSpeed(CFAncestryPrototype? ancestry, CFHeritagePrototype? heritage)
+    {
+        if (heritage is { Speed: > 0 })
+            return heritage.Speed;
+
+        return ancestry?.Speed ?? 25;
+    }
+
+    public static CFSize EffectiveSize(CFAncestryPrototype? ancestry, CFHeritagePrototype? heritage)
+    {
+        if (heritage?.Size is { } size)
+            return size;
+
+        return ancestry?.Size ?? CFSize.Medium;
+    }
+
+    public static bool HasDarkvision(CFAncestryPrototype? ancestry, CFHeritagePrototype? heritage)
+    {
+        if (ancestry?.Darkvision == true || heritage?.Darkvision == true)
+            return true;
+
+        if (heritage?.UpgradeVision != true || ancestry == null)
+            return false;
+
+        return ancestry.Darkvision || ancestry.Traits.Any(trait => trait.Id == "cf-trait-low-light-vision");
+    }
+
     public static CFAncestryPrototype? FindAncestry(IPrototypeManager prototypes, ProtoId<SpeciesPrototype> species)
     {
         foreach (var ancestry in prototypes.EnumeratePrototypes<CFAncestryPrototype>())
         {
-            if (ancestry.Species == species)
+            if (ancestry.OwnsSpecies(species))
                 return ancestry;
         }
 
@@ -114,6 +141,11 @@ public static class CFAttributeMath
     {
         var ancestry = FindAncestry(prototypes, species);
         var ancestryHp = ancestry?.HitPoints ?? 0;
+        if (build.Heritage != null
+            && prototypes.TryIndex(build.Heritage.Value, out CFHeritagePrototype? heritage)
+            && heritage.HitPoints > 0
+            && heritage.Fits(ancestry?.ID))
+            ancestryHp = heritage.HitPoints;
         var classHp = 0;
         if (build.Class != null && prototypes.TryIndex(build.Class.Value, out CFClassPrototype? cls))
             classHp = cls.HitPoints;
