@@ -67,6 +67,13 @@ public sealed partial class CFSpellcasting
 
     [DataField]
     public int FocusPoints;
+
+    /// <summary>
+    /// Prepared casters fill their slots from the character-sheet preparation window.
+    /// Spontaneous casters cast the spells they know.
+    /// </summary>
+    [DataField]
+    public bool Prepared;
 }
 
 [DataDefinition]

@@ -1,4 +1,5 @@
 using Content.Client.CF.Hud;
+using Content.Client.UserInterface.Systems.Hotbar.Widgets;
 using Content.Shared.CF.Actions;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Combat;
@@ -23,6 +24,12 @@ public sealed class CFHudUiController : UIController
 
         if (UIManager.GetActiveUIWidgetOrNull<CFGameHud>() is not { } hud)
             return;
+
+        // The stock hotbar strip (hands, status panels, old slot row) stays hidden.
+        // Storage windows still parent to that widget, above this HUD.
+        if (UIManager.GetActiveUIWidgetOrNull<HotbarGui>() is { } hotbar
+            && hotbar.HandContainer.Parent is { } row)
+            row.Visible = false;
 
         if (_player.LocalEntity is not { } player
             || !EntityManager.TryGetComponent<CFCombatantComponent>(player, out var combatant))

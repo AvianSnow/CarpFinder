@@ -53,8 +53,9 @@
 
 - Prototypes: `Resources/Prototypes/_CF/Loadouts/cf_loadouts.yml`
 - `roleLoadout` ids are `JobCFAlpha` … (must match `Job` + job id).
-- Groups use `editorTab: Weapons|Defense|Gear` so builder tabs populate.
-- Default: longsword (required) + leather armor selected.
+- Groups use `editorTab: Weapons|Defense|Gear`. Those tabs list only what was bought. The Shop tab (after Details) buys and sells them at full price.
+- Starting coin: level 0 is 5 gp, level 1 and up is 15 gp. Stored as copper and shown as pp / gp / sp / cp, rolling up at every 10. Nothing is selected for free (`minLimit` and `defaultSelected` are 0).
+- In-game `CFPurseComponent` is that leftover coin. The character-menu shop spends it at full price. A 50% merchant sell rate is not implemented.
 
 ## Dev / Sandbox spawn checklist
 

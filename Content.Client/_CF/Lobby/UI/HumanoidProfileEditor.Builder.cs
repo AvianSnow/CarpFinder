@@ -17,10 +17,11 @@ namespace Content.Client.Lobby.UI;
 public sealed partial class HumanoidProfileEditor
 {
     private const int DetailsTab = 0;
-    private const int WeaponsTabIndex = 1;
-    private const int DefenseTabIndex = 2;
-    private const int GearTabIndex = 3;
-    private const int SpellsTabIndex = 4;
+    private const int ShopTabIndex = 1;
+    private const int WeaponsTabIndex = 2;
+    private const int DefenseTabIndex = 3;
+    private const int GearTabIndex = 4;
+    private const int SpellsTabIndex = 5;
 
     private enum BuilderSelection
     {
@@ -83,6 +84,7 @@ public sealed partial class HumanoidProfileEditor
         ClassSkillButton.OnPressed += _ => ShowClassSkill();
 
         TabContainer.SetTabTitle(DetailsTab, Loc.GetString("cf-character-builder-details-tab"));
+        TabContainer.SetTabTitle(ShopTabIndex, Loc.GetString("cf-character-builder-shop-tab"));
         TabContainer.SetTabTitle(WeaponsTabIndex, Loc.GetString("cf-character-builder-weapons-tab"));
         TabContainer.SetTabTitle(DefenseTabIndex, Loc.GetString("cf-character-builder-defense-tab"));
         TabContainer.SetTabTitle(GearTabIndex, Loc.GetString("cf-character-builder-gear-tab"));
@@ -1040,11 +1042,16 @@ public sealed partial class HumanoidProfileEditor
             Profile = updated;
             SetDirty();
             ReloadPreview();
+            WeaponsTab.Apply(updated);
+            DefenseTab.Apply(updated);
+            GearTab.Apply(updated);
+            ShopTab.Apply(updated);
         }
 
         WeaponsTab.Rebuild(Profile, JobOverride, session, collection, _prototypeManager, GetProfile, OnChanged);
         DefenseTab.Rebuild(Profile, JobOverride, session, collection, _prototypeManager, GetProfile, OnChanged);
         GearTab.Rebuild(Profile, JobOverride, session, collection, _prototypeManager, GetProfile, OnChanged);
+        ShopTab.Rebuild(Profile, JobOverride, session, collection, _prototypeManager, GetProfile, OnChanged);
         SpellsTab.Rebuild(Profile, _prototypeManager, SetBuild);
     }
 

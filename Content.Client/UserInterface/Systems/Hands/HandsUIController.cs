@@ -40,7 +40,7 @@ public sealed partial class HandsUIController : UIController, IOnStateEntered<Ga
 
     private HotbarGui? HandsGui => UIManager.GetActiveUIWidgetOrNull<HotbarGui>();
 
-    // CarpFinder: the action HUD owns the hand buttons. The hotbar keeps its status panels.
+    // CarpFinder: the action HUD owns the hand buttons. The stock hotbar strip stays hidden.
     private HandsContainer? ActiveHands()
     {
         if (UIManager.GetActiveUIWidgetOrNull<CFGameHud>()?.Hands is { } hands)

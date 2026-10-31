@@ -52,6 +52,8 @@
     volleyFeet: 30
     deadlyDie: 10
     propulsive: false
+  - type: CFItemPrice
+    copper: 600 # 6 gp
 
 - type: entity
   parent: ArrowRegular

@@ -1,4 +1,8 @@
 cf-character-builder-details-tab = Details
+cf-character-builder-shop-tab = Shop
+cf-character-builder-shop-buy = Buy
+cf-character-builder-shop-sell = Sell
+cf-character-builder-owned-empty = Nothing bought yet. Buy it on the Shop tab.
 cf-character-builder-weapons-tab = Weapons
 cf-character-builder-defense-tab = Defense
 cf-character-builder-gear-tab = Gear

@@ -146,7 +146,7 @@ public sealed partial class CFSpellPick : IEquatable<CFSpellPick>
     [DataField]
     public ProtoId<CFSpellPrototype> Spell;
 
-    /// <summary>The Cast button on a ranked slot. Cantrips leave this false.</summary>
+    /// <summary>Unused. Kept so older saved profiles still load.</summary>
     [DataField]
     public bool Expended;
 

@@ -171,6 +171,7 @@
                             </BoxContainer>
                         </ScrollContainer>
                     </BoxContainer>
+                    <builder:BuilderShopTab Name="ShopTab" />
                     <builder:WeaponsTab Name="WeaponsTab" />
                     <builder:DefenseTab Name="DefenseTab" />
                     <builder:GearTab Name="GearTab" />

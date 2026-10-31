@@ -1,6 +1,7 @@
 using Content.Shared.Actions;
 using Content.Shared.CF.Actions;
 using Content.Shared.CF.Character;
+using Content.Shared.CF.Shop;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Factions;
 using Content.Shared.CF.Preferences;
@@ -31,7 +32,16 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
     private void OnPlayerSpawnComplete(PlayerSpawnCompleteEvent args)
     {
         ApplyBuild(args.Mob, args.Profile);
+        GrantPurse(args.Mob, args.Profile, args.JobId);
         _factions.AssignJob(args.Mob, args.JobId);
+    }
+
+    private void GrantPurse(EntityUid mob, Content.Shared.Preferences.HumanoidCharacterProfile profile, string? jobId)
+    {
+        var purse = EnsureComp<CFPurseComponent>(mob);
+        purse.Copper = CFCoins.Remaining(profile, jobId, _prototypes);
+        purse.Seeded = true;
+        Dirty(mob, purse);
     }
 
     public void ApplyBuild(EntityUid mob, Content.Shared.Preferences.HumanoidCharacterProfile profile)

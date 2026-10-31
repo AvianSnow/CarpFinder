@@ -118,7 +118,7 @@ public sealed partial class SpellsTab : BoxContainer
         for (var index = 0; index < count; index++)
         {
             var pick = Find(build, rank, index);
-            block.AddChild(SlotRow(rank, index, pick, showCast: rank > 0));
+            block.AddChild(SlotRow(rank, index, pick));
         }
 
         return block;
@@ -136,7 +136,7 @@ public sealed partial class SpellsTab : BoxContainer
         block.AddChild(ColumnHeader());
         block.AddChild(RankTitle(CFSpellSlots.BonusRank));
         foreach (var pick in picks)
-            block.AddChild(SlotRow(pick.Rank, pick.Index, pick, showCast: true));
+            block.AddChild(SlotRow(pick.Rank, pick.Index, pick));
         return block;
     }
 
@@ -184,7 +184,7 @@ public sealed partial class SpellsTab : BoxContainer
         return row;
     }
 
-    private Control SlotRow(int rank, int index, CFSpellPick? pick, bool showCast)
+    private Control SlotRow(int rank, int index, CFSpellPick? pick)
     {
         CFSpellPrototype? spell = null;
         if (pick != null && pick.HasSpell && _prototypes != null)
@@ -204,21 +204,6 @@ public sealed partial class SpellsTab : BoxContainer
             MaxWidth = SlotColumnWidth,
             SeparationOverride = 4,
         };
-
-        if (showCast)
-        {
-            var cast = new Button
-            {
-                Text = Loc.GetString("cf-spell-cast"),
-                ToggleMode = true,
-                Pressed = pick?.Expended ?? false,
-                MinWidth = 64,
-            };
-            var capturedRank = rank;
-            var capturedIndex = index;
-            cast.OnPressed += _ => SetExpended(capturedRank, capturedIndex, cast.Pressed);
-            slots.AddChild(cast);
-        }
 
         var slot = new Button
         {
@@ -276,30 +261,6 @@ public sealed partial class SpellsTab : BoxContainer
             _onChanged(next);
         };
         popup.OpenCentered();
-    }
-
-    private void SetExpended(int rank, int index, bool expended)
-    {
-        if (_profile == null || _onChanged == null)
-            return;
-
-        var next = _profile.CFBuild.Clone();
-        var pick = Find(next, rank, index);
-        if (pick == null)
-        {
-            next.Spells.Add(new CFSpellPick
-            {
-                Rank = rank,
-                Index = index,
-                Expended = expended,
-            });
-        }
-        else
-        {
-            pick.Expended = expended;
-        }
-
-        _onChanged(next);
     }
 
     private void AddBonusSpell()

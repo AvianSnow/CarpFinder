@@ -1,10 +1,9 @@
-using System.Linq;
-using Content.Client.Lobby.UI.Loadouts;
+using Content.Shared.CF.Shop;
 using Content.Shared.Clothing;
-using Content.Shared.GameTicking;
 using Content.Shared.Preferences;
 using Content.Shared.Preferences.Loadouts;
 using Content.Shared.Roles;
+using Robust.Client.UserInterface;
 using Robust.Client.UserInterface.Controls;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
@@ -12,17 +11,18 @@ using Robust.Shared.Prototypes;
 namespace Content.Client.CF.Lobby.UI.CharacterBuilder;
 
 /// <summary>
-/// Fills a character-builder tab with the role loadout groups for one editor tab.
+/// Weapons, Defense, and Gear list only what this character bought. Selling refunds the full price.
 /// </summary>
 public sealed class LoadoutCategoryTabController
 {
     private readonly BoxContainer _groups;
     private readonly string _category;
-    private readonly List<LoadoutGroupContainer> _containers = new();
 
-    private RoleLoadout? _loadout;
+    private HumanoidCharacterProfile? _profile;
+    private JobPrototype? _jobOverride;
     private ICommonSession? _session;
-    private IDependencyCollection? _collection;
+    private IPrototypeManager? _prototypes;
+    private Action<HumanoidCharacterProfile>? _onChanged;
 
     public LoadoutCategoryTabController(BoxContainer groups, string category)
     {
@@ -39,16 +39,32 @@ public sealed class LoadoutCategoryTabController
         Func<HumanoidCharacterProfile?> getProfile,
         Action<HumanoidCharacterProfile> onChanged)
     {
-        _groups.RemoveAllChildren();
-        _containers.Clear();
-        _loadout = null;
+        _ = collection;
+        _ = getProfile;
+        _profile = profile;
+        _jobOverride = jobOverride;
         _session = session;
-        _collection = collection;
+        _prototypes = prototypes;
+        _onChanged = onChanged;
+        Paint();
+    }
 
-        if (profile == null || session == null || collection == null)
+    public void Apply(HumanoidCharacterProfile profile)
+    {
+        if (_prototypes == null || _onChanged == null)
             return;
 
-        if (!TryGetRole(profile, jobOverride, session, prototypes, out var roleProto, out var roleLoadout))
+        _profile = profile;
+        Paint();
+    }
+
+    private void Paint()
+    {
+        _groups.RemoveAllChildren();
+        if (_profile == null || _prototypes == null)
+            return;
+
+        if (!CFBuilderRole.TryGet(_profile, _jobOverride, _session, _prototypes, out var roleProto, out var roleLoadout))
         {
             _groups.AddChild(new Label
             {
@@ -57,38 +73,35 @@ public sealed class LoadoutCategoryTabController
             return;
         }
 
-        _loadout = roleLoadout;
-
         var matched = false;
+        var anyOwned = false;
         foreach (var groupId in roleProto.Groups)
         {
-            if (!prototypes.Resolve(groupId, out var group))
+            if (!_prototypes.Resolve(groupId, out var group))
                 continue;
 
             if (group.Hidden || !string.Equals(group.EditorTab, _category, StringComparison.OrdinalIgnoreCase))
                 continue;
 
             matched = true;
-            var container = new LoadoutGroupContainer(profile, roleLoadout, group, session, collection);
-            _containers.Add(container);
+            if (!roleLoadout.SelectedLoadouts.TryGetValue(group.ID, out var picks) || picks.Count == 0)
+                continue;
 
-            container.OnLoadoutPressed += proto =>
-            {
-                Commit(proto, add: true, group.ID, prototypes, getProfile, onChanged);
-            };
-
-            container.OnLoadoutUnpressed += proto =>
-            {
-                Commit(proto, add: false, group.ID, prototypes, getProfile, onChanged);
-            };
-
+            anyOwned = true;
             _groups.AddChild(new Label
             {
                 Text = Loc.GetString(group.Name),
                 StyleClasses = { "LabelHeading" },
                 Margin = new Thickness(0, 8, 0, 4),
             });
-            _groups.AddChild(container);
+
+            foreach (var pick in picks)
+            {
+                if (!_prototypes.TryIndex(pick.Prototype, out var loadout))
+                    continue;
+
+                _groups.AddChild(OwnedRow(group.ID, loadout));
+            }
         }
 
         if (!matched)
@@ -98,69 +111,61 @@ public sealed class LoadoutCategoryTabController
                 Text = Loc.GetString("cf-character-builder-no-loadouts"),
             });
         }
+        else if (!anyOwned)
+        {
+            _groups.AddChild(new Label
+            {
+                Text = Loc.GetString("cf-character-builder-owned-empty"),
+                Margin = new Thickness(0, 8, 0, 0),
+            });
+        }
     }
 
-    public void Apply(HumanoidCharacterProfile profile)
+    private Control OwnedRow(string groupId, LoadoutPrototype loadout)
     {
-        if (_loadout == null || _session == null || _collection == null)
+        var row = new BoxContainer
+        {
+            Orientation = BoxContainer.LayoutOrientation.Horizontal,
+            HorizontalExpand = true,
+            SeparationOverride = 8,
+        };
+
+        row.AddChild(new Label
+        {
+            Text = IoCManager.Resolve<IEntityManager>().System<LoadoutSystem>().GetName(loadout),
+            HorizontalExpand = true,
+            ClipText = true,
+        });
+        row.AddChild(new Label
+        {
+            Text = CFCoins.FormatPrice(CFCoins.LoadoutPrice(_prototypes!, loadout)),
+            MinWidth = 90,
+            Align = Label.AlignMode.Right,
+        });
+
+        var sell = new Button
+        {
+            Text = Loc.GetString("cf-character-builder-shop-sell"),
+            MinWidth = 70,
+        };
+        var id = loadout.ID;
+        var capturedGroup = groupId;
+        sell.OnPressed += _ => Commit(id, capturedGroup);
+        row.AddChild(sell);
+        return row;
+    }
+
+    private void Commit(string loadoutId, string groupId)
+    {
+        if (_profile == null || _prototypes == null || _onChanged == null)
             return;
 
-        foreach (var container in _containers)
-            container.RefreshLoadouts(profile, _loadout, _session, _collection);
-    }
-
-    private void Commit(
-        ProtoId<LoadoutPrototype> proto,
-        bool add,
-        string groupId,
-        IPrototypeManager prototypes,
-        Func<HumanoidCharacterProfile?> getProfile,
-        Action<HumanoidCharacterProfile> onChanged)
-    {
-        var current = getProfile();
-        if (current == null || _loadout == null)
+        if (!CFBuilderRole.TryGet(_profile, _jobOverride, _session, _prototypes, out _, out var roleLoadout))
             return;
 
-        if (add)
-            _loadout.AddLoadout(groupId, proto, prototypes);
-        else
-            _loadout.RemoveLoadout(groupId, proto, prototypes);
+        if (!roleLoadout.RemoveLoadout(groupId, loadoutId, _prototypes))
+            return;
 
-        var updated = current.WithLoadout(_loadout);
-        onChanged(updated);
-        Apply(updated);
-    }
-
-    private static bool TryGetRole(
-        HumanoidCharacterProfile profile,
-        JobPrototype? jobOverride,
-        ICommonSession session,
-        IPrototypeManager prototypes,
-        out RoleLoadoutPrototype roleProto,
-        out RoleLoadout roleLoadout)
-    {
-        roleProto = default!;
-        roleLoadout = default!;
-
-        var job = jobOverride ?? GetPreferredJob(profile, prototypes);
-        var roleId = LoadoutSystem.GetJobPrototype(job.ID);
-        if (!prototypes.TryIndex<RoleLoadoutPrototype>(roleId, out var resolved) || resolved == null)
-            return false;
-
-        roleProto = resolved;
-        roleLoadout = profile.GetLoadoutOrDefault(
-            roleId,
-            session,
-            profile.Species,
-            IoCManager.Resolve<IEntityManager>(),
-            prototypes);
-        return true;
-    }
-
-    private static JobPrototype GetPreferredJob(HumanoidCharacterProfile profile, IPrototypeManager prototypes)
-    {
-        var highPriorityJob = profile.JobPriorities.FirstOrDefault(p => p.Value == JobPriority.High).Key;
-        var jobId = string.IsNullOrEmpty(highPriorityJob) ? GameTicker.FallbackOverflowJob : highPriorityJob;
-        return prototypes.Index<JobPrototype>(jobId);
+        _onChanged(_profile.WithLoadout(roleLoadout));
     }
 }

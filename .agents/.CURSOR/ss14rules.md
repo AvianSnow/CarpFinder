@@ -12,6 +12,12 @@ Robust assigns `[Dependency]` fields after the object is constructed. `readonly`
 
 Do not write `[Dependency] private readonly`.
 
+## No collection expressions for `List<T>`
+
+The client sandbox rejects `CollectionsMarshal.SetCount`. A collection expression that builds a `List<T>` (`return [item, item];`) compiles to that call and the client dies at startup with `Assembly Content.Client failed type checks`.
+
+Build the list with `new List<T>()` and `Add`. Array expressions (`new[] { "a" }`) are fine.
+
 ## Do not sum SS14 damage
 
 `DamageableSystem.GetTotalDamage`, `GetAllDamage`, and `GetDamagePerGroup` are obsolete: do not treat damage as one number. `DamageableComponent.TotalDamage` and `Damage` are access-restricted to `DamageableSystem`.

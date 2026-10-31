@@ -30,3 +30,5 @@
     traits:
     - VersatileP
   - type: DisarmMalus
+  - type: CFItemPrice
+    copper: 100 # 1 gp

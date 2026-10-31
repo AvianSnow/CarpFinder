@@ -12,6 +12,10 @@
     VerticalAlignment="Bottom">
     <BoxContainer Orientation="Horizontal" SeparationOverride="8" VerticalAlignment="Bottom">
         <BoxContainer Orientation="Vertical" SeparationOverride="4">
+            <inventory:ItemSlotButtonContainer Name="SuitStorage" SlotGroup="CFSuitStorage" MaxColumns="1" />
+            <inventory:ItemSlotButtonContainer Name="Id" SlotGroup="CFId" MaxColumns="1" />
+        </BoxContainer>
+        <BoxContainer Orientation="Vertical" SeparationOverride="4">
             <inventory:ItemSlotButtonContainer Name="Belt" SlotGroup="CFBelt" MaxColumns="1" />
             <inventory:ItemSlotButtonContainer Name="Bag" SlotGroup="CFBag" MaxColumns="1" />
         </BoxContainer>

@@ -6,10 +6,11 @@
     xmlns:cf="clr-namespace:Content.Client.CF.Character"
     x:Class="Content.Client.UserInterface.Systems.Character.Windows.CharacterWindow"
     Title="{Loc 'character-info-title'}"
-    MinWidth="900"
+    MinWidth="980"
     MinHeight="720">
     <TabContainer Name="Tabs" Access="Public" HorizontalExpand="True" VerticalExpand="True">
         <cf:CFCharacterSheetTab Name="SheetTab" Access="Public"/>
+        <cf:CFSpellsTab Name="SpellsTab" Access="Public"/>
         <ScrollContainer>
             <BoxContainer Orientation="Vertical" Margin="8">
                 <Label Name="RoleType" VerticalAlignment="Top" Margin="0 6 0 10" HorizontalAlignment="Center" StyleClasses="LabelHeading" Access="Public"/>
@@ -25,5 +26,6 @@
                 <cc:Placeholder Name="RolePlaceholder" Access="Public" PlaceholderText="{Loc 'character-info-roles-antagonist-text'}"/>
             </BoxContainer>
         </ScrollContainer>
+        <cf:CFShopView Name="ShopTab" Access="Public"/>
     </TabContainer>
 </windows:CharacterWindow>

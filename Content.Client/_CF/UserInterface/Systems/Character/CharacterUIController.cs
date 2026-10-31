@@ -18,6 +18,7 @@ using Robust.Client.UserInterface.Controllers;
 using Robust.Client.UserInterface.Controls;
 using Robust.Shared.Input.Binding;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Timing;
 using Robust.Shared.Utility;
 using static Content.Client.CharacterInfo.CharacterInfoSystem;
 using static Robust.Client.UserInterface.Controls.BaseButton;
@@ -53,6 +54,8 @@ public sealed partial class CharacterUIController : UIController, IOnStateEntere
 
         _window.OnClose += DeactivateButton;
         _window.OnOpen += ActivateButton;
+        _window.OnClose += _window.SpellsTab.CancelDrag;
+        _window.SpellsTab.OnCast += () => _window?.Close();
 
         CommandBinds.Builder
             .Bind(ContentKeyFunctions.OpenCharacterMenu,
@@ -99,6 +102,12 @@ public sealed partial class CharacterUIController : UIController, IOnStateEntere
         CharacterButton.OnPressed += CharacterButtonPressed;
     }
 
+    public override void FrameUpdate(FrameEventArgs args)
+    {
+        base.FrameUpdate(args);
+        _window?.SpellsTab.FrameUpdate();
+    }
+
     private void DeactivateButton()
     {
         if (CharacterButton == null)
@@ -123,6 +132,7 @@ public sealed partial class CharacterUIController : UIController, IOnStateEntere
         var (entity, objectives, briefing, jobId, entityName) = data;
 
         _window.SheetTab.Update(entity);
+        _window.SpellsTab.Update(entity);
 
         _window.SpriteView.SetEntity(entity);
 
