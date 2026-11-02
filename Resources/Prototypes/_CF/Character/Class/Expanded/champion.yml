@@ -35,7 +35,7 @@
   features:
     - level: 1
       name: "Cause"
-      description: "This feature will be implemented later."
+      description: "When an ally within 15 feet is hit, you can Strike the attacker if they are in your reach. Uses your reaction."
     - level: 1
       name: "Deity (Champion)"
       description: "This feature will be implemented later."
@@ -44,7 +44,7 @@
       description: "This feature will be implemented later."
     - level: 1
       name: "Shield Block"
-      description: "This feature will be implemented later."
+      description: "While your shield is raised, you can spend your reaction to block 5 damage."
     - level: 3
       name: "Blessing of the Devoted"
       description: "This feature will be implemented later."

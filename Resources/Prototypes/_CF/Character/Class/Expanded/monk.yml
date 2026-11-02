@@ -27,10 +27,10 @@
   features:
     - level: 1
       name: "Flurry of Blows"
-      description: "This feature will be implemented later."
+      description: "Flurry of Blows is on your action wheel. Two unarmed Strikes for 1 action."
     - level: 1
       name: "Powerful Fist"
-      description: "This feature will be implemented later."
+      description: "Your fist Strike deals 1d6 bludgeoning."
     - level: 3
       name: "Incredible Movement"
       description: "This feature will be implemented later."

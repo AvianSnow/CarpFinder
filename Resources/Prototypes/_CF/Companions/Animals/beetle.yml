@@ -1,0 +1,85 @@
+# Young Beetle. Ancestry Hit Points 8. At 1st level that is 17 Hit Points.
+- type: cfPet
+  id: CFPetBeetle
+  name: Beetle
+  kind: Companion
+  entity: CFCompanionBeetle
+  size: "Medium or Large"
+  strength: 3
+  dexterity: 1
+  constitution: 3
+  intelligence: -4
+  wisdom: 1
+  charisma: 0
+  hitPoints: 8
+  description: "A young beetle companion. It is built to be ridden."
+  mount: true
+  speeds:
+    - name: Speed
+      feet: 35
+  senses:
+    - "low-light vision"
+  attacks:
+    - name: "Mandible"
+      die: 8
+      damage: piercing
+    - name: "Foot"
+      die: 6
+      damage: bludgeoning
+      agile: true
+  skills:
+    - name: Survival
+      ability: Wisdom
+  support: "While you ride it, a damaging Strike either leaves the target off-guard until the end of your next turn or shoves it 5 feet."
+  advanced: "Hustle"
+
+- type: entity
+  parent: [ SimpleMobBase, CFCompanionBase ]
+  id: CFCompanionBeetle
+  name: beetle companion
+  description: "A young beetle companion. It is built to be ridden."
+  suffix: Companion
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: companion
+      sprite: _CF/Mobs/companion-default.rsi
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: companion
+      Critical:
+        Base: dead
+      Dead:
+        Base: dead
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 14
+    maxHp: 17
+    currentHp: 17
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 3
+      Dexterity: 1
+      Constitution: 3
+      Intelligence: -4
+      Wisdom: 1
+      Charisma: 0
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 8
+    naturalType: piercing
+    naturalFinesse: false
+    naturalAgile: false
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      17: Dead

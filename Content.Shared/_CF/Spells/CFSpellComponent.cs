@@ -91,6 +91,65 @@ public sealed partial class CFSpellComponent : Component
     [DataField, AutoNetworkedField]
     public float DurationSeconds = 60f;
 
+    /// <summary>On a failed save the target becomes frightened by this value. A critical failure adds one.</summary>
+    [DataField, AutoNetworkedField]
+    public int Frightened;
+
+    [DataField, AutoNetworkedField]
+    public bool Command;
+
+    [DataField, AutoNetworkedField]
+    public bool Charm;
+
+    [DataField, AutoNetworkedField]
+    public bool Calm;
+
+    [DataField, AutoNetworkedField]
+    public bool Blind;
+
+    /// <summary>Flat check to affect the target. 5 is concealed. 11 is hidden.</summary>
+    [DataField, AutoNetworkedField]
+    public int FlatCheckDc;
+
+    [DataField, AutoNetworkedField]
+    public bool ConcealBreaks;
+
+    [DataField, AutoNetworkedField]
+    public bool Sanctuary;
+
+    /// <summary>Hardness of the shield cantrip's block.</summary>
+    [DataField, AutoNetworkedField]
+    public int ShieldBlock;
+
+    [DataField, AutoNetworkedField]
+    public int ExtraWeaponDie;
+
+    [DataField, AutoNetworkedField]
+    public int SaveBonus;
+
+    [DataField, AutoNetworkedField]
+    public bool Immobilize;
+
+    /// <summary>Further creatures the spell also hits, such as electric arc's second target.</summary>
+    [DataField, AutoNetworkedField]
+    public int ExtraTargets;
+
+    /// <summary>Replaces the action cap while the spell lasts. 4 is quickened. 2 is slowed.</summary>
+    [DataField, AutoNetworkedField]
+    public int ActionCap;
+
+    [DataField, AutoNetworkedField]
+    public int EnlargeDamage;
+
+    [DataField, AutoNetworkedField]
+    public int ResistAmount;
+
+    [DataField, AutoNetworkedField]
+    public string ResistType = "";
+
+    [DataField, AutoNetworkedField]
+    public bool Darkvision;
+
     [DataField, AutoNetworkedField]
     public EntProtoId BoltPrototype = "CFSpellBolt";
 

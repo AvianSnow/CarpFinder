@@ -1,0 +1,84 @@
+# Young Scorpion. Ancestry Hit Points 6. At 1st level that is 13 Hit Points.
+- type: cfPet
+  id: CFPetScorpion
+  name: Scorpion
+  kind: Companion
+  entity: CFCompanionScorpion
+  size: "Small"
+  strength: 3
+  dexterity: 3
+  constitution: 1
+  intelligence: -4
+  wisdom: 1
+  charisma: 0
+  hitPoints: 6
+  description: "A young scorpion companion. Its stinger adds 1d4 poison damage, or 2d4 once specialized."
+  speeds:
+    - name: Speed
+      feet: 30
+  senses:
+    - "darkvision"
+  attacks:
+    - name: "Stinger"
+      die: 6
+      damage: piercing
+    - name: "Pincer"
+      die: 6
+      damage: slashing
+      agile: true
+  skills:
+    - name: Stealth
+      ability: Dexterity
+  support: "Until your next turn, a damaging Strike against a creature in its reach also deals 1d6 persistent poison, or 2d6 once it is nimble or savage."
+  advanced: "Grab and Sting"
+
+- type: entity
+  parent: [ SimpleMobBase, CFCompanionBase ]
+  id: CFCompanionScorpion
+  name: scorpion companion
+  description: "A young scorpion companion. Its stinger adds 1d4 poison damage, or 2d4 once specialized."
+  suffix: Companion
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: companion
+      sprite: _CF/Mobs/companion-default.rsi
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: companion
+      Critical:
+        Base: dead
+      Dead:
+        Base: dead
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 16
+    maxHp: 13
+    currentHp: 13
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 3
+      Dexterity: 3
+      Constitution: 1
+      Intelligence: -4
+      Wisdom: 1
+      Charisma: 0
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 6
+    naturalType: piercing
+    naturalFinesse: false
+    naturalAgile: false
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      13: Dead

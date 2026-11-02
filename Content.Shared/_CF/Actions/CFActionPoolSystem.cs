@@ -57,6 +57,7 @@ public sealed class CFActionPoolSystem : EntitySystem
                 {
                     pool.MapAttacks = 0;
                     Dirty(uid, pool);
+                    RaiseLocalEvent(uid, new CFTurnRefilledEvent());
                 }
 
                 continue;
@@ -69,9 +70,12 @@ public sealed class CFActionPoolSystem : EntitySystem
             var gained = (int) (pool.RegenProgress / pool.RegenSeconds);
             pool.RegenProgress -= gained * pool.RegenSeconds;
             pool.Stamina = Math.Min(max, pool.Stamina + gained);
-            if (pool.Stamina >= max)
+            var refilled = pool.Stamina >= max;
+            if (refilled)
                 pool.MapAttacks = 0;
             Dirty(uid, pool);
+            if (refilled)
+                RaiseLocalEvent(uid, new CFTurnRefilledEvent());
         }
     }
 
@@ -135,6 +139,16 @@ public sealed class CFActionPoolSystem : EntitySystem
             return;
 
         pool.MapAttacks++;
+        Dirty(uid, pool);
+    }
+
+    /// <summary>Drops one attack off the multiple-attack count. Exacting Strike uses this on a miss.</summary>
+    public void UndoAttack(EntityUid uid, CFActionPoolComponent? pool = null)
+    {
+        if (!_net.IsServer || !Resolve(uid, ref pool, false) || pool.MapAttacks <= 0)
+            return;
+
+        pool.MapAttacks--;
         Dirty(uid, pool);
     }
 

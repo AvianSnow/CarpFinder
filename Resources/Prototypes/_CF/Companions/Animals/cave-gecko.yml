@@ -1,0 +1,70 @@
+# Young Cave Gecko. Ancestry Hit Points 6. At 1st level that is 13 Hit Points.
+- type: cfPet
+  id: CFPetCaveGecko
+  name: Cave Gecko
+  kind: Companion
+  entity: CFCompanionCaveGecko
+  size: "Small"
+  strength: 2
+  dexterity: 3
+  constitution: 1
+  intelligence: -4
+  wisdom: 2
+  charisma: 0
+  hitPoints: 6
+  description: "A young cave gecko companion."
+  speeds:
+    - name: Speed
+      feet: 25
+    - name: climb
+      feet: 25
+  senses:
+    - "low-light vision"
+    - "scent (imprecise, 30 feet)"
+  attacks:
+    - name: "Jaws"
+      die: 6
+      damage: piercing
+      finesse: true
+  skills:
+    - name: Stealth
+      ability: Dexterity
+  support: "While you are adjacent to it, a critical failure on Disarm, Shove, or Trip becomes a failure instead. This lasts until the end of your next turn."
+  advanced: "Tongue Pull"
+
+- type: entity
+  parent: [ MobLizard, CFCompanionBase ]
+  id: CFCompanionCaveGecko
+  name: cave gecko companion
+  description: "A young cave gecko companion."
+  suffix: Companion
+  components:
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 16
+    maxHp: 13
+    currentHp: 13
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 2
+      Dexterity: 3
+      Constitution: 1
+      Intelligence: -4
+      Wisdom: 2
+      Charisma: 0
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 6
+    naturalType: piercing
+    naturalFinesse: true
+    naturalAgile: false
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      13: Dead

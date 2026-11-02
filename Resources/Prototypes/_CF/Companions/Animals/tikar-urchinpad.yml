@@ -1,0 +1,84 @@
+# Young Tikar Urchinpad. Ancestry Hit Points 6. At 1st level that is 14 Hit Points.
+- type: cfPet
+  id: CFPetTikarUrchinpad
+  name: Tikar Urchinpad
+  kind: Companion
+  entity: CFCompanionTikarUrchinpad
+  size: "Small or Medium"
+  strength: 2
+  dexterity: 3
+  constitution: 2
+  intelligence: -4
+  wisdom: 1
+  charisma: 0
+  hitPoints: 6
+  description: "A young tikar urchinpad companion."
+  speeds:
+    - name: Speed
+      feet: 10
+    - name: swim
+      feet: 40
+  senses:
+    - "scent (precise, 10 feet)"
+  attacks:
+    - name: "Tendril"
+      die: 6
+      damage: slashing
+      agile: true
+      finesse: true
+  skills:
+    - name: Stealth
+      ability: Dexterity
+  support: "While you are adjacent to it, a critical failure on Shove or Trip becomes a failure instead. This lasts until the end of your next turn."
+  advanced: "Wrapping Tendrils"
+
+- type: entity
+  parent: [ SimpleMobBase, CFCompanionBase ]
+  id: CFCompanionTikarUrchinpad
+  name: tikar urchinpad companion
+  description: "A young tikar urchinpad companion."
+  suffix: Companion
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: companion
+      sprite: _CF/Mobs/companion-default.rsi
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: companion
+      Critical:
+        Base: dead
+      Dead:
+        Base: dead
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 16
+    maxHp: 14
+    currentHp: 14
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 2
+      Dexterity: 3
+      Constitution: 2
+      Intelligence: -4
+      Wisdom: 1
+      Charisma: 0
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 6
+    naturalType: slashing
+    naturalFinesse: true
+    naturalAgile: true
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      14: Dead

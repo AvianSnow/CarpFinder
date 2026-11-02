@@ -2,7 +2,7 @@
   parent: CFSpellTarget
   id: CFRunicWeapon
   name: Runic Weapon
-  description: A weapon you touch grants a +1 status bonus to attack rolls.
+  description: Strikes with this creature's weapon deal one extra damage die.
   components:
   - type: Sprite
     sprite: Objects/Magic/magicactions.rsi
@@ -17,7 +17,7 @@
     delivery: Target
     rangeFeet: 5
     defense: None
-    attackBonus: 1
+    extraWeaponDie: 1
     friendly: true
     includeSelf: true
   - type: EntityTargetAction

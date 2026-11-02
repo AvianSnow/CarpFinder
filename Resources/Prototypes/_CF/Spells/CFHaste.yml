@@ -2,7 +2,7 @@
   parent: CFSpellTarget
   id: CFHaste
   name: Haste
-  description: The target is quickened and gains a +1 status bonus to attack rolls.
+  description: The target is quickened and can hold 4 actions.
   components:
   - type: Sprite
     sprite: Objects/Magic/magicactions.rsi
@@ -17,7 +17,8 @@
     delivery: Target
     rangeFeet: 30
     defense: None
-    attackBonus: 1
+    actionCap: 4
+    durationSeconds: 60
     friendly: true
     includeSelf: true
   - type: EntityTargetAction

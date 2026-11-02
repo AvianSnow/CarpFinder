@@ -18,3 +18,4 @@
     rangeFeet: 30
     defense: Fortitude
     basicSave: false
+    blind: true

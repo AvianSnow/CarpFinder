@@ -1,0 +1,9 @@
+cf-companion-attack = Your ally moves to attack.
+cf-companion-follow = Your ally follows you.
+cf-companion-fetch = Your ally goes to fetch it.
+cf-companion-fetched = Your ally sets the item down beside you.
+cf-companion-stop = Your ally breaks off.
+cf-companion-give = Your ally hands you the item.
+cf-companion-give-ground = Your ally sets the item down beside you.
+cf-companion-ghost-name = Summoned ally
+cf-companion-ghost-desc = A dead player can take this body. It belongs to the summoner's company and Strikes with its own stats.

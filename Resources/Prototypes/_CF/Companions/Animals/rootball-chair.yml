@@ -1,0 +1,83 @@
+# Young Rootball Chair. Ancestry Hit Points 8. At 1st level that is 17 Hit Points.
+- type: cfPet
+  id: CFPetRootballChair
+  name: Rootball Chair
+  kind: Companion
+  entity: CFCompanionRootballChair
+  size: "Medium or Large"
+  strength: 2
+  dexterity: 2
+  constitution: 3
+  intelligence: -4
+  wisdom: 1
+  charisma: 0
+  hitPoints: 8
+  description: "A young rootball chair companion. It is built to be ridden."
+  mount: true
+  speeds:
+    - name: Speed
+      feet: 30
+  senses:
+    - "low-light vision"
+  attacks:
+    - name: "Vine"
+      die: 8
+      damage: slashing
+      traits:
+        - "reach 10 feet"
+  skills:
+    - name: Stealth
+      ability: Dexterity
+  support: "It ignores difficult terrain until the end of the turn, then Strides."
+  advanced: "Seedpod Spring"
+
+- type: entity
+  parent: [ SimpleMobBase, CFCompanionBase ]
+  id: CFCompanionRootballChair
+  name: rootball chair companion
+  description: "A young rootball chair companion. It is built to be ridden."
+  suffix: Companion
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: companion
+      sprite: _CF/Mobs/companion-default.rsi
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: companion
+      Critical:
+        Base: dead
+      Dead:
+        Base: dead
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 15
+    maxHp: 17
+    currentHp: 17
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 2
+      Dexterity: 2
+      Constitution: 3
+      Intelligence: -4
+      Wisdom: 1
+      Charisma: 0
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 8
+    naturalType: slashing
+    naturalFinesse: false
+    naturalAgile: false
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      17: Dead

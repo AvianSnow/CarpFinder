@@ -106,6 +106,8 @@ public sealed partial class CharacterUIController : UIController, IOnStateEntere
     {
         base.FrameUpdate(args);
         _window?.SpellsTab.FrameUpdate();
+        if (_window is { IsOpen: true } && _player.LocalEntity is { } entity)
+            _window.SheetTab.UpdateXp(entity);
     }
 
     private void DeactivateButton()

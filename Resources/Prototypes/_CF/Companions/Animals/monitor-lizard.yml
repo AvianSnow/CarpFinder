@@ -1,0 +1,68 @@
+# Young Monitor Lizard. Ancestry Hit Points 8. At 1st level that is 16 Hit Points.
+- type: cfPet
+  id: CFPetMonitorLizard
+  name: Monitor Lizard
+  kind: Companion
+  entity: CFCompanionMonitorLizard
+  size: "Medium"
+  strength: 3
+  dexterity: 2
+  constitution: 2
+  intelligence: -4
+  wisdom: 1
+  charisma: 0
+  hitPoints: 8
+  description: "A young monitor lizard companion. It is built to be ridden."
+  mount: true
+  speeds:
+    - name: Speed
+      feet: 30
+  senses:
+    - "low-light vision"
+    - "scent (imprecise, 30 feet)"
+  attacks:
+    - name: "Jaws"
+      die: 8
+      damage: piercing
+  skills:
+    - name: Survival
+      ability: Wisdom
+  support: "Until your next turn, a foe you damage must succeed at a DC 5 flat check to use a manipulate action, or the action is disrupted."
+  advanced: "Lurching Rush"
+
+- type: entity
+  parent: [ MobLizard, CFCompanionBase ]
+  id: CFCompanionMonitorLizard
+  name: monitor lizard companion
+  description: "A young monitor lizard companion. It is built to be ridden."
+  suffix: Companion
+  components:
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 15
+    maxHp: 16
+    currentHp: 16
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 3
+      Dexterity: 2
+      Constitution: 2
+      Intelligence: -4
+      Wisdom: 1
+      Charisma: 0
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 8
+    naturalType: piercing
+    naturalFinesse: false
+    naturalAgile: false
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      16: Dead

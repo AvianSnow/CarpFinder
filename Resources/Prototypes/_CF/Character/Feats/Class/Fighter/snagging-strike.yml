@@ -3,10 +3,9 @@
 - type: cfFeat
   id: CFSnaggingStrike
   name: "Snagging Strike"
-  description: "Costs 1 action. This feature will be implemented later."
+  description: "A Strike. On a hit the target is off-guard until your next turn."
   class: Fighter
   level: 1
   traits:
     - "Fighter"
   action: Action
-  pendingAction: true

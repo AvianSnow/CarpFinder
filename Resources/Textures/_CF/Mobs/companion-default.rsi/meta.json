@@ -1,0 +1,17 @@
+{
+    "version": 1,
+    "license": "CC-BY-SA-3.0",
+    "copyright": "Temporary CarpFinder placeholder for animal companions that have no existing sprite. Replace companion.png and dead.png.",
+    "size": {
+        "x": 32,
+        "y": 32
+    },
+    "states": [
+        {
+            "name": "companion"
+        },
+        {
+            "name": "dead"
+        }
+    ]
+}

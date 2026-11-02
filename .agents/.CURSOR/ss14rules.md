@@ -18,6 +18,8 @@ The client sandbox rejects `CollectionsMarshal.SetCount`. A collection expressio
 
 Build the list with `new List<T>()` and `Add`. Array expressions (`new[] { "a" }`) are fine.
 
+A string range (`text[1..]`) and `char + string` both compile to `ReadOnlySpan<char>`'s by-ref constructor. The sandbox rejects that. Use `Substring` and `string.Concat`.
+
 ## Do not sum SS14 damage
 
 `DamageableSystem.GetTotalDamage`, `GetAllDamage`, and `GetDamagePerGroup` are obsolete: do not treat damage as one number. `DamageableComponent.TotalDamage` and `Damage` are access-restricted to `DamageableSystem`.
@@ -43,6 +45,10 @@ One directed component + event pair. A second subscriber throws `Duplicate Subsc
 
 - Never build `Content.Shared` alone. Build `Content.Server` and/or `Content.Client`.
 - `MSB3027` means the client or server is locking DLLs. Close them, then rebuild.
+
+## Prototype variant registration
+
+`PrototypeManager.LoadDirectory` reads YAML on many threads. `RegisterVariantCollection` is the shared write on that path and must stay locked (`KindData.VariantSync`). An unlocked dictionary can freeze with a null key and the client dies during prototype load: `Value cannot be null. (Parameter 'key')` in `KindData.Freeze`.
 
 ## Leave these alone
 

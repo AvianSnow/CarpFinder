@@ -1,0 +1,89 @@
+# Young Mongoose. Ancestry Hit Points 4. At 1st level that is 11 Hit Points.
+- type: cfPet
+  id: CFPetMongoose
+  name: Mongoose
+  kind: Companion
+  entity: CFCompanionMongoose
+  size: "Small"
+  strength: 2
+  dexterity: 3
+  constitution: 1
+  intelligence: -4
+  wisdom: 1
+  charisma: 1
+  hitPoints: 4
+  description: "A young mongoose companion."
+  speeds:
+    - name: Speed
+      feet: 25
+    - name: burrow
+      feet: 10
+  senses:
+    - "low-light vision"
+    - "scent (imprecise, 30 feet)"
+  attacks:
+    - name: "Jaws"
+      die: 6
+      damage: piercing
+      finesse: true
+    - name: "Claw"
+      die: 4
+      damage: slashing
+      agile: true
+      finesse: true
+  skills:
+    - name: Survival
+      ability: Wisdom
+  support: "Until the end of your next turn, creatures adjacent to it cannot flank you."
+  advanced: "Liberating Bite"
+
+- type: entity
+  parent: [ SimpleMobBase, CFCompanionBase ]
+  id: CFCompanionMongoose
+  name: mongoose companion
+  description: "A young mongoose companion."
+  suffix: Companion
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: companion
+      sprite: _CF/Mobs/companion-default.rsi
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: companion
+      Critical:
+        Base: dead
+      Dead:
+        Base: dead
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 16
+    maxHp: 11
+    currentHp: 11
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 2
+      Dexterity: 3
+      Constitution: 1
+      Intelligence: -4
+      Wisdom: 1
+      Charisma: 1
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 6
+    naturalType: piercing
+    naturalFinesse: true
+    naturalAgile: false
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      11: Dead

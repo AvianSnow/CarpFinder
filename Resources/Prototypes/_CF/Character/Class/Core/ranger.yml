@@ -34,10 +34,10 @@
   features:
     - level: 1
       name: "Hunt Prey"
-      description: "This feature will be implemented later."
+      description: "Hunt Prey is on your action wheel. Your first hit each turn against that creature deals 1d8 precision damage."
     - level: 1
       name: "Hunter's Edge"
-      description: "This feature will be implemented later."
+      description: "Precision. The extra damage is part of Hunt Prey."
     - level: 3
       name: "Will Expertise"
       description: "This feature will be implemented later."

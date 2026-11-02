@@ -3,7 +3,7 @@
 - type: cfFeat
   id: CFSuddenChargeFighter
   name: "Sudden Charge"
-  description: "Costs 2 actions. This feature will be implemented later."
+  description: "Stride into reach and Strike. Costs 2 actions."
   class: Fighter
   level: 1
   traits:
@@ -11,4 +11,3 @@
     - "Fighter"
     - "Flourish"
   action: Action
-  pendingAction: true

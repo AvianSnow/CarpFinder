@@ -1,0 +1,84 @@
+# Young Water Wraith. Ancestry Hit Points 6. At 1st level that is 14 Hit Points.
+- type: cfPet
+  id: CFPetWaterWraith
+  name: Water Wraith
+  kind: Companion
+  entity: CFCompanionWaterWraith
+  size: "Small"
+  strength: 3
+  dexterity: 2
+  constitution: 2
+  intelligence: -4
+  wisdom: 1
+  charisma: 0
+  hitPoints: 6
+  description: "A young water wraith companion. It can hold its breath for about 2 hours."
+  speeds:
+    - name: Speed
+      feet: 20
+    - name: swim
+      feet: 25
+  attacks:
+    - name: "Jaws"
+      die: 8
+      damage: piercing
+    - name: "Claw"
+      die: 6
+      damage: slashing
+      agile: true
+  skills:
+    - name: Survival
+      ability: Wisdom
+  support: "Until your next turn, a creature in its reach that you hit is dazzled for 1 round."
+  advanced: "Gulp Blood"
+
+- type: entity
+  parent: [ SimpleMobBase, CFCompanionBase ]
+  id: CFCompanionWaterWraith
+  name: water wraith companion
+  description: "A young water wraith companion. It can hold its breath for about 2 hours."
+  suffix: Companion
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: companion
+      sprite: _CF/Mobs/companion-default.rsi
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: companion
+      Critical:
+        Base: dead
+      Dead:
+        Base: dead
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 15
+    maxHp: 14
+    currentHp: 14
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 3
+      Dexterity: 2
+      Constitution: 2
+      Intelligence: -4
+      Wisdom: 1
+      Charisma: 0
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 8
+    naturalType: piercing
+    naturalFinesse: false
+    naturalAgile: false
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      14: Dead

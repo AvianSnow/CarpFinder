@@ -3,9 +3,12 @@
 - type: cfFeat
   id: CFSaberTeeth
   name: "Saber Teeth"
-  description: "Unarmed attack (Jaws) 1d6 Piercing. TBA - action will be added"
+  description: "Your unarmed Strike deals 1d6 piercing and is finesse."
   ancestry: Catfolk
   level: 1
   traits:
     - "Catfolk"
-  pendingAction: true
+  naturalDice: 1
+  naturalDie: 6
+  naturalDamage: piercing
+  naturalFinesse: true

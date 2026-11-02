@@ -1,0 +1,81 @@
+# Young Rhinoceros. Ancestry Hit Points 8. At 1st level that is 17 Hit Points.
+- type: cfPet
+  id: CFPetRhinoceros
+  name: Rhinoceros
+  kind: Companion
+  entity: CFCompanionRhinoceros
+  size: "Large"
+  strength: 3
+  dexterity: 1
+  constitution: 3
+  intelligence: -4
+  wisdom: 1
+  charisma: 0
+  hitPoints: 8
+  description: "A young rhinoceros companion. It is built to be ridden."
+  mount: true
+  speeds:
+    - name: Speed
+      feet: 30
+  senses:
+    - "scent (imprecise, 30 feet)"
+  attacks:
+    - name: "Horn"
+      die: 8
+      damage: piercing
+  skills:
+    - name: Survival
+      ability: Wisdom
+  support: "The first creature in its reach that you damage becomes clumsy 1 until the end of your next turn."
+  advanced: "Rhinoceros Charge"
+
+- type: entity
+  parent: [ SimpleMobBase, CFCompanionBase ]
+  id: CFCompanionRhinoceros
+  name: rhinoceros companion
+  description: "A young rhinoceros companion. It is built to be ridden."
+  suffix: Companion
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: companion
+      sprite: _CF/Mobs/companion-default.rsi
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: companion
+      Critical:
+        Base: dead
+      Dead:
+        Base: dead
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 14
+    maxHp: 17
+    currentHp: 17
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 3
+      Dexterity: 1
+      Constitution: 3
+      Intelligence: -4
+      Wisdom: 1
+      Charisma: 0
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 8
+    naturalType: piercing
+    naturalFinesse: false
+    naturalAgile: false
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      17: Dead

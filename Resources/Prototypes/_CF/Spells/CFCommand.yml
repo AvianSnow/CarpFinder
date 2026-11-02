@@ -18,3 +18,4 @@
     rangeFeet: 30
     defense: Will
     basicSave: false
+    command: true

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using Content.Shared.CCVar;
 using Content.Shared.CF.Character;
+using Content.Shared.CF.Companions;
 using Content.Shared.CF.Preferences;
 using Content.Shared.Chat.Prototypes;
 using Content.Shared.EntityEffects.Effects;
@@ -827,6 +828,9 @@ namespace Content.Shared.Preferences
 
             if (CFBuild.Class is { } classId && !prototypeManager.HasIndex(classId))
                 CFBuild.Class = null;
+
+            if (!string.IsNullOrEmpty(CFBuild.PetId) && !prototypeManager.HasIndex<CFPetPrototype>(CFBuild.PetId))
+                CFBuild.PetId = "";
             // CarpFinder end
         }
 
@@ -913,6 +917,7 @@ namespace Content.Shared.Preferences
             hashCode.Add(Appearance);
             hashCode.Add((int)SpawnPriority);
             hashCode.Add((int)PreferenceUnavailable);
+            hashCode.Add(CFBuild);
             return hashCode.ToHashCode();
         }
 

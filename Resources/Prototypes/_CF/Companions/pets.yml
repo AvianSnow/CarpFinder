@@ -1,0 +1,201 @@
+# Familiar bodies for the character-builder pet tab.
+# Animal companions are one file each under Animals/.
+# A familiar uses the master's AC and saves and keeps a flat 5 Hit Points.
+
+- type: cfPet
+  id: CFFamiliarBat
+  name: Bat
+  kind: Familiar
+  size: Tiny
+  strength: -4
+  dexterity: 3
+  constitution: 0
+  intelligence: 0
+  wisdom: 1
+  charisma: 1
+  hitPoints: 5
+  scaleHitPoints: false
+  usesMaster: true
+  description: A tiny flying familiar. Its defenses match yours. It has 5 Hit Points and does not Strike.
+  speeds:
+    - name: Speed
+      feet: 15
+    - name: fly
+      feet: 25
+  senses:
+    - low-light vision
+    - echolocation (imprecise, 20 feet)
+  support: Choose the familiar's daily abilities later. This sheet is the body.
+  advanced: A familiar returns the day after it is dismissed or reduced to 0 Hit Points.
+
+- type: cfPet
+  id: CFFamiliarCat
+  name: Cat
+  kind: Familiar
+  size: Tiny
+  strength: -4
+  dexterity: 3
+  constitution: 0
+  intelligence: 0
+  wisdom: 1
+  charisma: 1
+  hitPoints: 5
+  scaleHitPoints: false
+  usesMaster: true
+  description: A tiny familiar. Its defenses match yours. It has 5 Hit Points and does not Strike.
+  speeds:
+    - name: Speed
+      feet: 25
+  senses:
+    - low-light vision
+  support: Choose the familiar's daily abilities later. This sheet is the body.
+  advanced: A familiar returns the day after it is dismissed or reduced to 0 Hit Points.
+
+- type: cfPet
+  id: CFFamiliarRaven
+  name: Raven
+  kind: Familiar
+  size: Tiny
+  strength: -4
+  dexterity: 3
+  constitution: 0
+  intelligence: 0
+  wisdom: 1
+  charisma: 1
+  hitPoints: 5
+  scaleHitPoints: false
+  usesMaster: true
+  description: A tiny speaking familiar. Its defenses match yours. It has 5 Hit Points and does not Strike.
+  speeds:
+    - name: Speed
+      feet: 10
+    - name: fly
+      feet: 25
+  senses:
+    - low-light vision
+  support: Choose the familiar's daily abilities later. This sheet is the body.
+  advanced: A familiar returns the day after it is dismissed or reduced to 0 Hit Points.
+
+- type: cfPet
+  id: CFFamiliarOwl
+  name: Owl
+  kind: Familiar
+  size: Tiny
+  strength: -4
+  dexterity: 3
+  constitution: 0
+  intelligence: 0
+  wisdom: 2
+  charisma: 1
+  hitPoints: 5
+  scaleHitPoints: false
+  usesMaster: true
+  description: A tiny familiar with sharp eyes. Its defenses match yours. It has 5 Hit Points and does not Strike.
+  speeds:
+    - name: Speed
+      feet: 10
+    - name: fly
+      feet: 25
+  senses:
+    - low-light vision
+  support: Choose the familiar's daily abilities later. This sheet is the body.
+  advanced: A familiar returns the day after it is dismissed or reduced to 0 Hit Points.
+
+- type: cfPet
+  id: CFFamiliarRat
+  name: Rat
+  kind: Familiar
+  size: Tiny
+  strength: -4
+  dexterity: 3
+  constitution: 1
+  intelligence: 0
+  wisdom: 1
+  charisma: 1
+  hitPoints: 5
+  scaleHitPoints: false
+  usesMaster: true
+  description: A tiny familiar. Its defenses match yours. It has 5 Hit Points and does not Strike.
+  speeds:
+    - name: Speed
+      feet: 25
+  senses:
+    - low-light vision
+    - scent (imprecise, 30 feet)
+  support: Choose the familiar's daily abilities later. This sheet is the body.
+  advanced: A familiar returns the day after it is dismissed or reduced to 0 Hit Points.
+
+- type: cfPet
+  id: CFFamiliarToad
+  name: Toad
+  kind: Familiar
+  size: Tiny
+  strength: -4
+  dexterity: 2
+  constitution: 1
+  intelligence: 0
+  wisdom: 1
+  charisma: 1
+  hitPoints: 5
+  scaleHitPoints: false
+  usesMaster: true
+  description: A tiny familiar that can swim. Its defenses match yours. It has 5 Hit Points and does not Strike.
+  speeds:
+    - name: Speed
+      feet: 15
+    - name: swim
+      feet: 15
+  senses:
+    - low-light vision
+  support: Choose the familiar's daily abilities later. This sheet is the body.
+  advanced: A familiar returns the day after it is dismissed or reduced to 0 Hit Points.
+
+- type: cfPet
+  id: CFFamiliarFox
+  name: Fox
+  kind: Familiar
+  size: Tiny
+  strength: -4
+  dexterity: 3
+  constitution: 0
+  intelligence: 0
+  wisdom: 1
+  charisma: 2
+  hitPoints: 5
+  scaleHitPoints: false
+  usesMaster: true
+  description: A tiny familiar. Its defenses match yours. It has 5 Hit Points and does not Strike.
+  speeds:
+    - name: Speed
+      feet: 25
+  senses:
+    - low-light vision
+    - scent (imprecise, 30 feet)
+  support: Choose the familiar's daily abilities later. This sheet is the body.
+  advanced: A familiar returns the day after it is dismissed or reduced to 0 Hit Points.
+
+- type: cfPet
+  id: CFFamiliarSnake
+  name: Snake
+  kind: Familiar
+  size: Tiny
+  strength: -4
+  dexterity: 3
+  constitution: 0
+  intelligence: 0
+  wisdom: 1
+  charisma: 1
+  hitPoints: 5
+  scaleHitPoints: false
+  usesMaster: true
+  description: A tiny climbing familiar. Its defenses match yours. It has 5 Hit Points and does not Strike.
+  speeds:
+    - name: Speed
+      feet: 20
+    - name: climb
+      feet: 20
+  senses:
+    - low-light vision
+    - scent (imprecise, 30 feet)
+  support: Choose the familiar's daily abilities later. This sheet is the body.
+  advanced: A familiar returns the day after it is dismissed or reduced to 0 Hit Points.

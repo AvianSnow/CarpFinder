@@ -18,6 +18,11 @@
     outerClothing: CFLeatherArmor
 
 - type: loadout
+  id: CFLoadoutSteelShield
+  inhand:
+  - CFSteelShield
+
+- type: loadout
   id: CFLoadoutHealingPotion
   inhand:
   - CFHealingPotionMinor
@@ -42,6 +47,7 @@
   editorTab: Defense
   loadouts:
   - CFLoadoutLeatherArmor
+  - CFLoadoutSteelShield
 
 - type: loadoutGroup
   id: CFGearBasics

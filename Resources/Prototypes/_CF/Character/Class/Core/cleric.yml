@@ -44,7 +44,7 @@
       description: "Your deity's favored weapon is trained. This feature will be implemented later."
     - level: 1
       name: "Divine Font"
-      description: "This feature will be implemented later."
+      description: "You gain extra rank 1 spell slots equal to 1 plus your Charisma modifier."
     - level: 1
       name: "Doctrine"
       description: "This feature will be implemented later."

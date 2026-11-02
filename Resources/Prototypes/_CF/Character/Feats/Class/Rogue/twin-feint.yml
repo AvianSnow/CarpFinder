@@ -3,10 +3,9 @@
 - type: cfFeat
   id: CFTwinFeint
   name: "Twin Feint"
-  description: "Costs 2 actions. This feature will be implemented later."
+  description: "Feint, then Strike. Costs 2 actions."
   class: Rogue
   level: 1
   traits:
     - "Rogue"
   action: Action
-  pendingAction: true

@@ -3,9 +3,12 @@
 - type: cfFeat
   id: CFTusksOrc
   name: "Tusks (Orc)"
-  description: "Unarmed attack (Unarmed) 1d6 Piercing. TBA - action will be added"
+  description: "Your unarmed Strike deals 1d6 piercing."
   ancestry: Orc
   level: 1
   traits:
     - "Orc"
-  pendingAction: true
+  naturalDice: 1
+  naturalDie: 6
+  naturalDamage: piercing
+  naturalAgile: false

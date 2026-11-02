@@ -1,0 +1,79 @@
+# Young Thorngrip Shuffler. Ancestry Hit Points 6. At 1st level that is 14 Hit Points.
+- type: cfPet
+  id: CFPetThorngripShuffler
+  name: Thorngrip Shuffler
+  kind: Companion
+  entity: CFCompanionThorngripShuffler
+  size: "Small"
+  strength: 1
+  dexterity: 3
+  constitution: 2
+  intelligence: -4
+  wisdom: 1
+  charisma: 1
+  hitPoints: 6
+  description: "A young thorngrip shuffler companion."
+  speeds:
+    - name: Speed
+      feet: 30
+  attacks:
+    - name: "Barbs"
+      die: 6
+      damage: piercing
+      finesse: true
+  skills:
+    - name: Intimidation
+      ability: Charisma
+  support: "Until your next turn, a damaging Strike against a creature in its reach hooks that creature. A hooked creature that steps away is pulled."
+  advanced: "Unsettling Stridulation"
+
+- type: entity
+  parent: [ SimpleMobBase, CFCompanionBase ]
+  id: CFCompanionThorngripShuffler
+  name: thorngrip shuffler companion
+  description: "A young thorngrip shuffler companion."
+  suffix: Companion
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: companion
+      sprite: _CF/Mobs/companion-default.rsi
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: companion
+      Critical:
+        Base: dead
+      Dead:
+        Base: dead
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 16
+    maxHp: 14
+    currentHp: 14
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 1
+      Dexterity: 3
+      Constitution: 2
+      Intelligence: -4
+      Wisdom: 1
+      Charisma: 1
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 6
+    naturalType: piercing
+    naturalFinesse: true
+    naturalAgile: false
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      14: Dead

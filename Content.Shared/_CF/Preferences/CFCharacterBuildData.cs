@@ -35,6 +35,14 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
     [DataField]
     public ProtoId<CFFeatPrototype>? ClassFeatLevel2;
 
+    /// <summary>Level 4 class feat. It can be a class feat of level 4 or lower.</summary>
+    [DataField]
+    public ProtoId<CFFeatPrototype>? ClassFeatLevel4;
+
+    /// <summary>Level 5 ancestry feat. It can be an ancestry feat of level 5 or lower.</summary>
+    [DataField]
+    public ProtoId<CFFeatPrototype>? AncestryFeatLevel5;
+
     /// <summary>
     /// Free attribute boosts granted by ancestry (one entry per Free in the ancestry prototype).
     /// </summary>
@@ -80,6 +88,22 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
     [DataField]
     public List<CFSpellPick> Spells = new();
 
+    /// <summary>Chosen animal companion or familiar prototype. Empty until the pet tab saves one.</summary>
+    [DataField]
+    public string PetId = "";
+
+    /// <summary>Nickname shown on the pet tab. Empty uses the species name.</summary>
+    [DataField]
+    public string PetName = "";
+
+    /// <summary>Empty, light, or heavy. Familiars leave this empty.</summary>
+    [DataField]
+    public string PetBarding = "";
+
+    /// <summary>Companion gear prototype ids picked in the equipment popup.</summary>
+    [DataField]
+    public List<string> PetGear = new();
+
     public CFCharacterBuildData Clone()
     {
         return new CFCharacterBuildData
@@ -90,6 +114,8 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
             AncestryFeat = AncestryFeat,
             ClassFeat = ClassFeat,
             ClassFeatLevel2 = ClassFeatLevel2,
+            ClassFeatLevel4 = ClassFeatLevel4,
+            AncestryFeatLevel5 = AncestryFeatLevel5,
             AncestryFreeBoosts = AncestryFreeBoosts.ToList(),
             BackgroundBoost = BackgroundBoost,
             BackgroundFreeBoost = BackgroundFreeBoost,
@@ -98,6 +124,10 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
             ClassTrainedSkills = ClassTrainedSkills.ToList(),
             Level = Level,
             Spells = Spells.Select(spell => spell.Copy()).ToList(),
+            PetId = PetId,
+            PetName = PetName,
+            PetBarding = PetBarding,
+            PetGear = PetGear.ToList(),
         };
     }
 
@@ -112,6 +142,8 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
                && AncestryFeat == other.AncestryFeat
                && ClassFeat == other.ClassFeat
                && ClassFeatLevel2 == other.ClassFeatLevel2
+               && ClassFeatLevel4 == other.ClassFeatLevel4
+               && AncestryFeatLevel5 == other.AncestryFeatLevel5
                && Level == other.Level
                && BackgroundBoost == other.BackgroundBoost
                && BackgroundFreeBoost == other.BackgroundFreeBoost
@@ -119,7 +151,11 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
                && FreeBoosts.SequenceEqual(other.FreeBoosts)
                && BackgroundTrainedSkills.SequenceEqual(other.BackgroundTrainedSkills)
                && ClassTrainedSkills.SequenceEqual(other.ClassTrainedSkills)
-               && Spells.SequenceEqual(other.Spells);
+               && Spells.SequenceEqual(other.Spells)
+               && PetId == other.PetId
+               && PetName == other.PetName
+               && PetBarding == other.PetBarding
+               && PetGear.SequenceEqual(other.PetGear);
     }
 
     public override bool Equals(object? obj)
@@ -136,6 +172,8 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
         hash.Add(AncestryFeat);
         hash.Add(ClassFeat);
         hash.Add(ClassFeatLevel2);
+        hash.Add(ClassFeatLevel4);
+        hash.Add(AncestryFeatLevel5);
         hash.Add(Level);
         hash.Add(BackgroundBoost);
         hash.Add(BackgroundFreeBoost);
@@ -149,6 +187,11 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
             hash.Add(skill);
         foreach (var spell in Spells)
             hash.Add(spell);
+        hash.Add(PetId);
+        hash.Add(PetName);
+        hash.Add(PetBarding);
+        foreach (var gear in PetGear)
+            hash.Add(gear);
         return hash.ToHashCode();
     }
 }

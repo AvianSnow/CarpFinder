@@ -40,7 +40,7 @@
       description: "This feature will be implemented later."
     - level: 1
       name: "Exploit Vulnerability"
-      description: "This feature will be implemented later."
+      description: "Exploit Vulnerability is on your action wheel. The creature is off-guard to you and your Strikes deal 2 extra damage."
     - level: 1
       name: "First Implement and Esoterica"
       description: "This feature will be implemented later."

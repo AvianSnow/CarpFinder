@@ -1,0 +1,86 @@
+# Young Chetamog. Ancestry Hit Points 8. At 1st level that is 16 Hit Points.
+- type: cfPet
+  id: CFPetChetamog
+  name: Chetamog
+  kind: Companion
+  entity: CFCompanionChetamog
+  size: "Medium or Large"
+  strength: 1
+  dexterity: 3
+  constitution: 2
+  intelligence: -4
+  wisdom: 1
+  charisma: 0
+  hitPoints: 8
+  description: "A young chetamog companion. It is built to be ridden."
+  mount: true
+  speeds:
+    - name: Speed
+      feet: 40
+  senses:
+    - "low-light vision"
+    - "scent (imprecise, 30 feet)"
+  attacks:
+    - name: "Jaws"
+      die: 8
+      damage: piercing
+    - name: "Claw"
+      die: 6
+      damage: slashing
+      agile: true
+  skills:
+    - name: Survival
+      ability: Wisdom
+  support: "It ignores difficult terrain and greater difficult terrain from non-magical foliage."
+  advanced: "Scurry"
+
+- type: entity
+  parent: [ SimpleMobBase, CFCompanionBase ]
+  id: CFCompanionChetamog
+  name: chetamog companion
+  description: "A young chetamog companion. It is built to be ridden."
+  suffix: Companion
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: companion
+      sprite: _CF/Mobs/companion-default.rsi
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: companion
+      Critical:
+        Base: dead
+      Dead:
+        Base: dead
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 16
+    maxHp: 16
+    currentHp: 16
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 1
+      Dexterity: 3
+      Constitution: 2
+      Intelligence: -4
+      Wisdom: 1
+      Charisma: 0
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 8
+    naturalType: piercing
+    naturalFinesse: false
+    naturalAgile: false
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      16: Dead

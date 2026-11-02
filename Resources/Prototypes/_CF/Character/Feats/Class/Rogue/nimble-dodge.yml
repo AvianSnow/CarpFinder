@@ -3,10 +3,9 @@
 - type: cfFeat
   id: CFNimbleDodge
   name: "Nimble Dodge"
-  description: "+2 circumstance bonus to Ac. Reaction. This feature will be implemented later."
+  description: "Reaction. +2 circumstance bonus to AC against one attack."
   class: Rogue
   level: 1
   traits:
     - "Rogue"
   action: Reaction
-  pendingAction: true

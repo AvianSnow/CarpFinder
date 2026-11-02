@@ -22,6 +22,7 @@ public sealed partial class HumanoidProfileEditor
     private const int DefenseTabIndex = 3;
     private const int GearTabIndex = 4;
     private const int SpellsTabIndex = 5;
+    private const int PetTabIndex = 6;
 
     private enum BuilderSelection
     {
@@ -34,6 +35,8 @@ public sealed partial class HumanoidProfileEditor
         AncestryFeat,
         ClassFeat,
         ClassFeatLevel2,
+        ClassFeatLevel4,
+        AncestryFeatLevel5,
     }
 
     private enum SkillAssignMode
@@ -79,9 +82,11 @@ public sealed partial class HumanoidProfileEditor
         BoostView.OnAccept += AcceptBoostAssignment;
         SetAbilitiesButton.OnPressed += _ => ShowBoostAssignment();
         HeritageSlot.OnPressed += _ => ShowHeritageSelection();
-        AncestryFeatSlot.OnPressed += _ => ShowAncestryFeatSelection();
         ClassFeatSlot.OnPressed += _ => ShowClassFeatSelection(1);
         Level2FeatSlot.OnPressed += _ => ShowClassFeatSelection(2);
+        Level4FeatSlot.OnPressed += _ => ShowClassFeatSelection(4);
+        AncestryFeatSlot.OnPressed += _ => ShowAncestryFeatSelection(1);
+        Level5FeatSlot.OnPressed += _ => ShowAncestryFeatSelection(5);
         SpriteSlot.OnPressed += _ => ShowSpriteSelection();
 
         SkillView.OnClosed += ClosePicker;
@@ -95,10 +100,13 @@ public sealed partial class HumanoidProfileEditor
         TabContainer.SetTabTitle(DefenseTabIndex, Loc.GetString("cf-character-builder-defense-tab"));
         TabContainer.SetTabTitle(GearTabIndex, Loc.GetString("cf-character-builder-gear-tab"));
         TabContainer.SetTabTitle(SpellsTabIndex, Loc.GetString("cf-character-builder-spells-tab"));
+        TabContainer.SetTabTitle(PetTabIndex, Loc.GetString("cf-character-builder-pet-tab"));
 
         UpdateBuilderSummary();
         Level2Toggle.OnPressed += _ => Level2Body.Visible = Level2Toggle.Pressed;
         Level3Toggle.OnPressed += _ => Level3Body.Visible = Level3Toggle.Pressed;
+        Level4Toggle.OnPressed += _ => Level4Body.Visible = Level4Toggle.Pressed;
+        Level5Toggle.OnPressed += _ => Level5Body.Visible = Level5Toggle.Pressed;
     }
 
     private CFCharacterBuildData CurrentBuild()
@@ -142,6 +150,8 @@ public sealed partial class HumanoidProfileEditor
         AncestryFeatSlot.Pressed = false;
         ClassFeatSlot.Pressed = false;
         Level2FeatSlot.Pressed = false;
+        Level4FeatSlot.Pressed = false;
+        Level5FeatSlot.Pressed = false;
     }
 
     private void OpenPicker()
@@ -216,8 +226,12 @@ public sealed partial class HumanoidProfileEditor
                     build.Heritage = null;
                 if (build.AncestryFeat != null
                     && _prototypeManager.TryIndex(build.AncestryFeat.Value, out CFFeatPrototype? feat)
-                    && !feat.Fits(picked?.ID, build.Level))
+                    && !feat.Fits(picked?.ID, 1))
                     build.AncestryFeat = null;
+                if (build.AncestryFeatLevel5 != null
+                    && _prototypeManager.TryIndex(build.AncestryFeatLevel5.Value, out CFFeatPrototype? feat5)
+                    && !feat5.Fits(picked?.ID, 5))
+                    build.AncestryFeatLevel5 = null;
                 SetBuild(build);
                 break;
             }
@@ -238,6 +252,8 @@ public sealed partial class HumanoidProfileEditor
             {
                 var next = CurrentBuild();
                 next.AncestryFeat = id;
+                if (next.AncestryFeatLevel5?.Id == id)
+                    next.AncestryFeatLevel5 = null;
                 SetBuild(next);
                 break;
             }
@@ -267,24 +283,28 @@ public sealed partial class HumanoidProfileEditor
                     && _prototypeManager.TryIndex(next.ClassFeatLevel2.Value, out CFFeatPrototype? classFeatLevel2)
                     && !classFeatLevel2.FitsClass(id, 2))
                     next.ClassFeatLevel2 = null;
+                if (next.ClassFeatLevel4 != null
+                    && _prototypeManager.TryIndex(next.ClassFeatLevel4.Value, out CFFeatPrototype? classFeatLevel4)
+                    && !classFeatLevel4.FitsClass(id, 4))
+                    next.ClassFeatLevel4 = null;
                 SetBuild(next);
                 break;
             }
             case BuilderSelection.ClassFeat:
-            {
-                var next = CurrentBuild();
-                next.ClassFeat = id;
-                if (next.ClassFeatLevel2?.Id == id)
-                    next.ClassFeatLevel2 = null;
-                SetBuild(next);
+                SetBuild(AssignClassFeat(CurrentBuild(), 1, id));
                 break;
-            }
             case BuilderSelection.ClassFeatLevel2:
+                SetBuild(AssignClassFeat(CurrentBuild(), 2, id));
+                break;
+            case BuilderSelection.ClassFeatLevel4:
+                SetBuild(AssignClassFeat(CurrentBuild(), 4, id));
+                break;
+            case BuilderSelection.AncestryFeatLevel5:
             {
                 var next = CurrentBuild();
-                next.ClassFeatLevel2 = id;
-                if (next.ClassFeat?.Id == id)
-                    next.ClassFeat = null;
+                next.AncestryFeatLevel5 = id;
+                if (next.AncestryFeat?.Id == id)
+                    next.AncestryFeat = null;
                 SetBuild(next);
                 break;
             }
@@ -426,12 +446,30 @@ public sealed partial class HumanoidProfileEditor
         return string.Join("\n", lines);
     }
 
-    private void ShowAncestryFeatSelection()
+    private static CFCharacterBuildData AssignClassFeat(CFCharacterBuildData build, int slot, string id)
+    {
+        if (slot == 2)
+            build.ClassFeatLevel2 = id;
+        else if (slot >= 4)
+            build.ClassFeatLevel4 = id;
+        else
+            build.ClassFeat = id;
+
+        if (slot != 1 && build.ClassFeat?.Id == id)
+            build.ClassFeat = null;
+        if (slot != 2 && build.ClassFeatLevel2?.Id == id)
+            build.ClassFeatLevel2 = null;
+        if (slot < 4 && build.ClassFeatLevel4?.Id == id)
+            build.ClassFeatLevel4 = null;
+        return build;
+    }
+
+    private void ShowAncestryFeatSelection(int maxLevel)
     {
         if (Profile == null)
             return;
 
-        _selection = BuilderSelection.AncestryFeat;
+        _selection = maxLevel <= 1 ? BuilderSelection.AncestryFeat : BuilderSelection.AncestryFeatLevel5;
         _prdUrl = AncestryPrd;
         AncestryButton.Pressed = false;
         BackgroundButton.Pressed = false;
@@ -439,18 +477,21 @@ public sealed partial class HumanoidProfileEditor
         JobButton.Pressed = false;
         HeritageSlot.Pressed = false;
         SpriteSlot.Pressed = false;
-        AncestryFeatSlot.Pressed = true;
+        AncestryFeatSlot.Pressed = maxLevel <= 1;
         ClassFeatSlot.Pressed = false;
         Level2FeatSlot.Pressed = false;
+        Level4FeatSlot.Pressed = false;
+        Level5FeatSlot.Pressed = maxLevel > 1;
 
         var build = CurrentBuild();
         var ancestry = CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species);
-        var selected = build.AncestryFeat?.Id;
+        var selected = maxLevel <= 1 ? build.AncestryFeat?.Id : build.AncestryFeatLevel5?.Id;
+        var other = maxLevel <= 1 ? build.AncestryFeatLevel5?.Id : build.AncestryFeat?.Id;
         _pendingId = selected;
         var options = new List<Pf2eListEntry>();
 
         foreach (var feat in _prototypeManager.EnumeratePrototypes<CFFeatPrototype>()
-                     .Where(feat => ancestry != null && feat.Fits(ancestry.ID, build.Level))
+                     .Where(feat => ancestry != null && feat.Fits(ancestry.ID, maxLevel) && feat.ID != other)
                      .OrderBy(feat => feat.Level)
                      .ThenBy(feat => Loc.GetString(feat.Name), StringComparer.CurrentCultureIgnoreCase))
         {
@@ -477,7 +518,12 @@ public sealed partial class HumanoidProfileEditor
         if (Profile == null)
             return;
 
-        _selection = maxLevel <= 1 ? BuilderSelection.ClassFeat : BuilderSelection.ClassFeatLevel2;
+        _selection = maxLevel switch
+        {
+            <= 1 => BuilderSelection.ClassFeat,
+            2 => BuilderSelection.ClassFeatLevel2,
+            _ => BuilderSelection.ClassFeatLevel4,
+        };
         _prdUrl = AncestryPrd;
         AncestryButton.Pressed = false;
         BackgroundButton.Pressed = false;
@@ -486,18 +532,31 @@ public sealed partial class HumanoidProfileEditor
         HeritageSlot.Pressed = false;
         SpriteSlot.Pressed = false;
         AncestryFeatSlot.Pressed = false;
+        Level5FeatSlot.Pressed = false;
         ClassFeatSlot.Pressed = maxLevel <= 1;
-        Level2FeatSlot.Pressed = maxLevel > 1;
+        Level2FeatSlot.Pressed = maxLevel == 2;
+        Level4FeatSlot.Pressed = maxLevel >= 4;
 
         var build = CurrentBuild();
         var classId = build.Class?.Id;
-        var selected = maxLevel <= 1 ? build.ClassFeat?.Id : build.ClassFeatLevel2?.Id;
-        var other = maxLevel <= 1 ? build.ClassFeatLevel2?.Id : build.ClassFeat?.Id;
+        var selected = maxLevel switch
+        {
+            <= 1 => build.ClassFeat?.Id,
+            2 => build.ClassFeatLevel2?.Id,
+            _ => build.ClassFeatLevel4?.Id,
+        };
+        var taken = new HashSet<string>();
+        if (maxLevel != 1 && build.ClassFeat != null)
+            taken.Add(build.ClassFeat.Value.Id);
+        if (maxLevel != 2 && build.ClassFeatLevel2 != null)
+            taken.Add(build.ClassFeatLevel2.Value.Id);
+        if (maxLevel < 4 && build.ClassFeatLevel4 != null)
+            taken.Add(build.ClassFeatLevel4.Value.Id);
         _pendingId = selected;
         var options = new List<Pf2eListEntry>();
 
         foreach (var feat in _prototypeManager.EnumeratePrototypes<CFFeatPrototype>()
-                     .Where(feat => feat.FitsClass(classId, maxLevel) && feat.ID != other)
+                     .Where(feat => feat.FitsClass(classId, maxLevel) && !taken.Contains(feat.ID))
                      .OrderBy(feat => feat.Level)
                      .ThenBy(feat => Loc.GetString(feat.Name), StringComparer.CurrentCultureIgnoreCase))
         {
@@ -535,6 +594,8 @@ public sealed partial class HumanoidProfileEditor
         AncestryFeatSlot.Pressed = false;
         ClassFeatSlot.Pressed = false;
         Level2FeatSlot.Pressed = false;
+        Level4FeatSlot.Pressed = false;
+        Level5FeatSlot.Pressed = false;
 
         var ancestry = CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species);
         var selected = Profile.CFBuild.Heritage?.Id;
@@ -589,6 +650,8 @@ public sealed partial class HumanoidProfileEditor
         AncestryFeatSlot.Pressed = false;
         ClassFeatSlot.Pressed = false;
         Level2FeatSlot.Pressed = false;
+        Level4FeatSlot.Pressed = false;
+        Level5FeatSlot.Pressed = false;
 
         var ancestry = CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species);
         var selected = Profile.Species.Id;
@@ -1066,6 +1129,16 @@ public sealed partial class HumanoidProfileEditor
             classFeatLevel2Name = Loc.GetString(chosenClassFeatLevel2.Name);
         Level2FeatSlot.Text = Loc.GetString("cf-character-builder-class-feat-level-2-selected", ("name", classFeatLevel2Name));
 
+        var classFeatLevel4Name = Loc.GetString("cf-character-builder-none");
+        if (build.ClassFeatLevel4 != null && _prototypeManager.TryIndex(build.ClassFeatLevel4.Value, out CFFeatPrototype? chosenClassFeatLevel4))
+            classFeatLevel4Name = Loc.GetString(chosenClassFeatLevel4.Name);
+        Level4FeatSlot.Text = Loc.GetString("cf-character-builder-class-feat-level-4-selected", ("name", classFeatLevel4Name));
+
+        var ancestryFeatLevel5Name = Loc.GetString("cf-character-builder-none");
+        if (build.AncestryFeatLevel5 != null && _prototypeManager.TryIndex(build.AncestryFeatLevel5.Value, out CFFeatPrototype? chosenAncestryFeatLevel5))
+            ancestryFeatLevel5Name = Loc.GetString(chosenAncestryFeatLevel5.Name);
+        Level5FeatSlot.Text = Loc.GetString("cf-character-builder-ancestry-feat-level-5-selected", ("name", ancestryFeatLevel5Name));
+
         var spriteName = Loc.GetString("cf-sprite-humanoid");
         if (Profile != null)
         {
@@ -1191,6 +1264,15 @@ public sealed partial class HumanoidProfileEditor
             sheet.Will);
 
         SpellsTab.Rebuild(Profile, _prototypeManager, SetBuild);
+        ApplyPetTab();
+    }
+
+    private void ApplyPetTab()
+    {
+        var show = PetTab.Rebuild(Profile, _prototypeManager, SetBuild);
+        TabContainer.SetTabVisible(PetTab, show);
+        if (!show && TabContainer.CurrentTab == PetTabIndex)
+            TabContainer.CurrentTab = DetailsTab;
     }
 
     private static string SaveLine(string saveLoc, bool trained, int bonus)
@@ -1226,6 +1308,7 @@ public sealed partial class HumanoidProfileEditor
         GearTab.Rebuild(Profile, JobOverride, session, collection, _prototypeManager, GetProfile, OnChanged);
         ShopTab.Rebuild(Profile, JobOverride, session, collection, _prototypeManager, GetProfile, OnChanged);
         SpellsTab.Rebuild(Profile, _prototypeManager, SetBuild);
+        ApplyPetTab();
     }
 
     public void FocusGearTab(JobPrototype job)

@@ -3,10 +3,9 @@
 - type: cfFeat
   id: CFDoubleSlice
   name: "Double Slice"
-  description: "-2 bonus to Melee Strike Attack Roll. Costs 2 actions. This feature will be implemented later."
+  description: "Two Strikes at your current multiple attack penalty. The second takes -2 if the weapon is not agile. Costs 2 actions."
   class: Fighter
   level: 1
   traits:
     - "Fighter"
   action: Action
-  pendingAction: true

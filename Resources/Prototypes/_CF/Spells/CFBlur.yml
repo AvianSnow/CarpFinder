@@ -2,7 +2,7 @@
   parent: CFSpellInstant
   id: CFBlur
   name: Blur
-  description: You are concealed. Represented as a +1 circumstance bonus to AC.
+  description: You are concealed. Attackers must pass a DC 5 flat check.
   components:
   - type: Sprite
     sprite: Objects/Magic/magicactions.rsi
@@ -16,6 +16,6 @@
     rank: 2
     delivery: Instant
     defense: None
-    acBonus: 1
+    flatCheckDc: 5
     friendly: true
     includeSelf: true

@@ -3,9 +3,11 @@
 - type: cfFeat
   id: CFSeedpod
   name: "Seedpod"
-  description: "Unarmed attack (Unarmed) 1d4 Bludgeoning. TBA - action will be added"
+  description: "Your unarmed Strike deals 1d4 bludgeoning."
   ancestry: Leshy
   level: 1
   traits:
     - "Leshy"
-  pendingAction: true
+  naturalDice: 1
+  naturalDie: 4
+  naturalDamage: bludgeoning

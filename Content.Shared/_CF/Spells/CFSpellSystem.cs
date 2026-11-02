@@ -50,6 +50,8 @@ public sealed class CFSpellSystem : EntitySystem
     [Dependency] private CFPrestidigitationSystem _prestidigitation = default!;
     [Dependency] private SharedActionsSystem _actionDelays = default!;
     [Dependency] private CFActionPoolSystem _actions = default!;
+    [Dependency] private CFConditionSystem _conditions = default!;
+    [Dependency] private CFStrikeSystem _strikes = default!;
 
     public override void Initialize()
     {
@@ -82,6 +84,7 @@ public sealed class CFSpellSystem : EntitySystem
             return;
 
         ApplyTo(args.Performer, args.Performer, spell, explicitTarget: true);
+        FinishCast(args.Performer);
     }
 
     private void OnTarget(Entity<CFSpellComponent> spell, ref CFSpellCastTargetEvent args)
@@ -105,6 +108,8 @@ public sealed class CFSpellSystem : EntitySystem
                 return;
 
             args.Handled = true;
+            if (_net.IsServer)
+                FinishCast(args.Performer);
             return;
         }
 
@@ -128,12 +133,14 @@ public sealed class CFSpellSystem : EntitySystem
                 return;
             }
 
+            var opening = false;
             if (spell.Comp.PayThisShot)
             {
                 if (!TrySpend(args.Performer, spell.Comp))
                     return;
 
                 spell.Comp.VolleyLeft = Math.Clamp(spell.Comp.ChosenBolts, 1, spell.Comp.MaxBolts);
+                opening = true;
             }
             else if (spell.Comp.VolleyLeft <= 0)
             {
@@ -143,6 +150,8 @@ public sealed class CFSpellSystem : EntitySystem
             LaunchBolts(args.Performer, args.Target, spell, 1);
             spell.Comp.VolleyLeft--;
             args.Handled = true;
+            if (opening)
+                FinishCast(args.Performer);
             return;
         }
 
@@ -168,7 +177,12 @@ public sealed class CFSpellSystem : EntitySystem
         if (spell.Comp.Delivery == CFSpellDelivery.Projectile)
             LaunchBolts(args.Performer, args.Target, spell);
         else
+        {
             ApplyTo(args.Performer, args.Target, spell, explicitTarget: true);
+            ChainTarget(args.Performer, args.Target, spell);
+        }
+
+        FinishCast(args.Performer);
     }
 
     private void OnArea(Entity<CFSpellComponent> spell, ref CFSpellCastAreaEvent args)
@@ -243,6 +257,8 @@ public sealed class CFSpellSystem : EntitySystem
 
         if (affected == 0)
             _popup.PopupEntity(Loc.GetString("cf-spell-no-one"), args.Performer, args.Performer);
+
+        FinishCast(args.Performer);
     }
 
     private void OnVolleyPerformed(Entity<CFSpellComponent> spell, ref ActionPerformedEvent args)
@@ -367,9 +383,38 @@ public sealed class CFSpellSystem : EntitySystem
         return true;
     }
 
+    private void ChainTarget(EntityUid caster, EntityUid first, Entity<CFSpellComponent> spell)
+    {
+        if (spell.Comp.ExtraTargets <= 0)
+            return;
+
+        var origin = _transform.GetMapCoordinates(caster);
+        var reach = Math.Max(1f, spell.Comp.RangeFeet / CFSpellGrid.FeetPerTile);
+        foreach (var uid in _lookup.GetEntitiesInRange(origin, reach))
+        {
+            if (uid == caster || uid == first || !HasComp<MobStateComponent>(uid))
+                continue;
+
+            if (!ShouldAffect(caster, uid, spell.Comp, explicitTarget: true) || !InRange(caster, uid, spell.Comp))
+                continue;
+
+            ApplyTo(caster, uid, spell, explicitTarget: true);
+            return;
+        }
+    }
+
+    private void FinishCast(EntityUid caster)
+    {
+        _conditions.NoteAttack(caster);
+        _strikes.ReactiveStrike(caster);
+    }
+
     private void ApplyTo(EntityUid caster, EntityUid target, Entity<CFSpellComponent> spell, bool explicitTarget)
     {
         var data = spell.Comp;
+        if (caster != target && !_conditions.PassFlatCheck(caster, target))
+            return;
+
         GetCasting(caster, out var attackBonus, out var spellDc, out var abilityMod);
 
         var degree = CFStrikeDegree.Success;
@@ -454,14 +499,18 @@ public sealed class CFSpellSystem : EntitySystem
         }
 
         ApplyRider(caster, target, data, degree);
-        if (data.AcBonus != 0 || data.AttackBonus != 0)
+        if (data.AcBonus != 0 || data.AttackBonus != 0 || data.SaveBonus != 0 || data.ExtraWeaponDie != 0)
             ApplyStatus(target, data, trueStrike: false);
 
-        if (data.Rider == CFSpellRider.None
+        var special = _conditions.ApplySpellEffect(caster, target, data, degree, spellDc);
+        if (!special
+            && data.Rider == CFSpellRider.None
             && damage <= 0
             && data.HealDice <= 0
             && data.AcBonus == 0
-            && data.AttackBonus == 0)
+            && data.AttackBonus == 0
+            && data.SaveBonus == 0
+            && data.ExtraWeaponDie == 0)
         {
             _popup.PopupEntity(Loc.GetString("cf-spell-affected"), target);
         }
@@ -477,6 +526,9 @@ public sealed class CFSpellSystem : EntitySystem
 
         if (TryComp(target, out CFSpellStatusComponent? ward))
             armorClass += ward.AcBonus;
+
+        armorClass -= _conditions.Frightened(target);
+        attackBonus -= _conditions.Frightened(caster);
 
         armorClass -= spell.TargetAcPenalty;
 
@@ -502,24 +554,27 @@ public sealed class CFSpellSystem : EntitySystem
 
     private int SaveBonus(EntityUid target, CFSpellDefense defense)
     {
-        if (!TryComp(target, out CFCombatantComponent? combat) || string.IsNullOrEmpty(combat.ClassId))
-            return CommonerSave(defense);
-
-        if (!TryComp(target, out CFAbilityScoreComponent? abilities))
-            return CommonerSave(defense);
-
-        if (!_prototypes.TryIndex(combat.ClassId, out CFClassPrototype? cls))
-            return CommonerSave(defense);
-
-        var ability = defense switch
+        var bonus = CommonerSave(defense);
+        if (TryComp(target, out CFCombatantComponent? combat)
+            && !string.IsNullOrEmpty(combat.ClassId)
+            && TryComp(target, out CFAbilityScoreComponent? abilities)
+            && _prototypes.TryIndex(combat.ClassId, out CFClassPrototype? cls))
         {
-            CFSpellDefense.Reflex => CFAbility.Dexterity,
-            CFSpellDefense.Will => CFAbility.Wisdom,
-            _ => CFAbility.Constitution,
-        };
+            var ability = defense switch
+            {
+                CFSpellDefense.Reflex => CFAbility.Dexterity,
+                CFSpellDefense.Will => CFAbility.Wisdom,
+                _ => CFAbility.Constitution,
+            };
+            var trained = CFAttributeMath.IsSaveTrained(cls, defense.ToString());
+            bonus = CFAttributeMath.ComputeSave(abilities.AbilityModifiers, ability, combat.Level, trained);
+        }
 
-        var trained = CFAttributeMath.IsSaveTrained(cls, defense.ToString());
-        return CFAttributeMath.ComputeSave(abilities.AbilityModifiers, ability, combat.Level, trained);
+        if (TryComp(target, out CFSpellStatusComponent? status))
+            bonus += status.SaveBonus;
+
+        bonus -= _conditions.Frightened(target);
+        return bonus;
     }
 
     private static int CommonerSave(CFSpellDefense defense)
@@ -659,6 +714,12 @@ public sealed class CFSpellSystem : EntitySystem
         if (spell.AttackBonus != 0)
             status.AttackBonus = spell.AttackBonus;
 
+        if (spell.SaveBonus != 0)
+            status.SaveBonus = spell.SaveBonus;
+
+        if (spell.ExtraWeaponDie != 0)
+            status.ExtraWeaponDie = spell.ExtraWeaponDie;
+
         if (trueStrike)
             status.TrueStrike = true;
 
@@ -689,6 +750,9 @@ public sealed class CFSpellSystem : EntitySystem
         {
             if (status.Expires > _timing.CurTime)
                 continue;
+
+            if (status.ActionCap != 0)
+                _conditions.ClearActionCap(uid);
 
             RemComp<CFSpellStatusComponent>(uid);
         }

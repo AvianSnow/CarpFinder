@@ -2,7 +2,7 @@
   parent: CFSpellTarget
   id: CFEnlarge
   name: Enlarge
-  description: The target grows larger.
+  description: The target's melee Strikes deal 2 extra damage.
   components:
   - type: Sprite
     sprite: Objects/Magic/magicactions.rsi
@@ -17,6 +17,7 @@
     delivery: Target
     rangeFeet: 30
     defense: None
+    enlargeDamage: 2
     friendly: true
     includeSelf: true
   - type: EntityTargetAction

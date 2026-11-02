@@ -62,6 +62,22 @@ public sealed partial class CFFeatPrototype : IPrototype
     [DataField]
     public int SpeedBonus;
 
+    /// <summary>Replaces the fist Strike when this feat is chosen. 0 keeps the fist.</summary>
+    [DataField]
+    public int NaturalDice;
+
+    [DataField]
+    public int NaturalDie;
+
+    [DataField]
+    public string NaturalDamage = "";
+
+    [DataField]
+    public bool NaturalFinesse;
+
+    [DataField]
+    public bool NaturalAgile = true;
+
     [DataField]
     public CFFeatAction Action = CFFeatAction.Passive;
 

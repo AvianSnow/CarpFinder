@@ -104,12 +104,22 @@ public static class CFSkills
         IPrototypeManager prototypes,
         CFCharacterBuildData build,
         string? ancestryId,
-        string? classId)
+        string? classId,
+        int level)
     {
         var result = new List<CFFeatPrototype>();
-        AddFeat(prototypes, result, build.AncestryFeat, feat => feat.Fits(ancestryId, build.Level));
-        AddFeat(prototypes, result, build.ClassFeat, feat => feat.FitsClass(classId, 1));
-        AddFeat(prototypes, result, build.ClassFeatLevel2, feat => feat.FitsClass(classId, 2));
+        if (level >= 1)
+        {
+            AddFeat(prototypes, result, build.AncestryFeat, feat => feat.Fits(ancestryId, 1));
+            AddFeat(prototypes, result, build.ClassFeat, feat => feat.FitsClass(classId, 1));
+        }
+
+        if (level >= 2)
+            AddFeat(prototypes, result, build.ClassFeatLevel2, feat => feat.FitsClass(classId, 2));
+        if (level >= 4)
+            AddFeat(prototypes, result, build.ClassFeatLevel4, feat => feat.FitsClass(classId, 4));
+        if (level >= 5)
+            AddFeat(prototypes, result, build.AncestryFeatLevel5, feat => feat.Fits(ancestryId, 5));
         return result;
     }
 
@@ -129,7 +139,8 @@ public static class CFSkills
         IPrototypeManager prototypes,
         CFCharacterBuildData build,
         string? ancestryId = null,
-        string? classId = null)
+        string? classId = null,
+        int level = 1)
     {
         var result = new List<string>();
 
@@ -148,7 +159,7 @@ public static class CFSkills
         foreach (var skill in build.ClassTrainedSkills)
             result.Add(skill.Id);
 
-        foreach (var feat in SelectedFeats(prototypes, build, ancestryId, classId))
+        foreach (var feat in SelectedFeats(prototypes, build, ancestryId, classId, level))
         {
             foreach (var skill in feat.TrainedSkills)
                 result.Add(skill.Id);

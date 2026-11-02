@@ -78,6 +78,7 @@ public sealed partial class CFCharacterSheetTab : BoxContainer
         SetAbility(CFAbility.Wisdom, WisScoreLabel, WisModLabel, abilities);
         SetAbility(CFAbility.Charisma, ChaScoreLabel, ChaModLabel, abilities);
 
+        UpdateXp(entity);
         ArmorClassLabel.Text = combatant.ArmorClass.ToString();
         CurrentHpLabel.Text = combatant.CurrentHp.ToString();
         MaxHpLabel.Text = combatant.MaxHp.ToString();
@@ -128,6 +129,26 @@ public sealed partial class CFCharacterSheetTab : BoxContainer
                 rank,
                 mod);
         }
+    }
+
+    public void UpdateXp(EntityUid entity)
+    {
+        var xp = 0;
+        var level = 1;
+        if (_entities.EntityExists(entity))
+        {
+            if (_entities.TryGetComponent(entity, out CFExperienceComponent? experience))
+                xp = experience.Xp;
+            if (_entities.TryGetComponent(entity, out CFCombatantComponent? combatant))
+                level = combatant.Level;
+        }
+
+        var cap = CFExperienceComponent.XpPerLevel;
+        XpBar.MaxValue = cap;
+        XpBar.Value = Math.Min(xp, cap);
+        XpLabel.Text = level >= CFExperienceComponent.MaxLevel
+            ? Loc.GetString("cf-sheet-xp-max", ("xp", xp), ("level", level))
+            : Loc.GetString("cf-sheet-xp-value", ("xp", xp), ("max", cap));
     }
 
     private void BuildSkillColumns()

@@ -1,0 +1,87 @@
+# Young Sundaflora. Ancestry Hit Points 6. At 1st level that is 13 Hit Points.
+- type: cfPet
+  id: CFPetSundaflora
+  name: Sundaflora
+  kind: Companion
+  entity: CFCompanionSundaflora
+  size: "Small"
+  strength: 2
+  dexterity: 3
+  constitution: 1
+  intelligence: -4
+  wisdom: 1
+  charisma: 1
+  hitPoints: 6
+  description: "A young sundaflora companion."
+  speeds:
+    - name: Speed
+      feet: 20
+    - name: swim
+      feet: 15
+  senses:
+    - "low-light vision"
+    - "scent (imprecise, 30 feet)"
+  attacks:
+    - name: "Clubbed Tail"
+      die: 8
+      damage: bludgeoning
+    - name: "Claws"
+      die: 6
+      damage: slashing
+      agile: true
+  skills:
+    - name: Performance
+      ability: Charisma
+  support: "One ally within 30 feet gains a +1 circumstance bonus to their next Strike against a foe in its reach. The bonus ends when they use it or at the start of your next turn."
+  advanced: "Flower Dance"
+
+- type: entity
+  parent: [ SimpleMobBase, CFCompanionBase ]
+  id: CFCompanionSundaflora
+  name: sundaflora companion
+  description: "A young sundaflora companion."
+  suffix: Companion
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: companion
+      sprite: _CF/Mobs/companion-default.rsi
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: companion
+      Critical:
+        Base: dead
+      Dead:
+        Base: dead
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 16
+    maxHp: 13
+    currentHp: 13
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 2
+      Dexterity: 3
+      Constitution: 1
+      Intelligence: -4
+      Wisdom: 1
+      Charisma: 1
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 8
+    naturalType: bludgeoning
+    naturalFinesse: false
+    naturalAgile: false
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      13: Dead

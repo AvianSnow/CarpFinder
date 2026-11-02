@@ -2,7 +2,7 @@
   parent: CFSpellTarget
   id: CFInvisibility
   name: Invisibility
-  description: The target is concealed until it attacks or the spell ends. Represented as a +1 circumstance bonus to AC.
+  description: The target is hidden until it attacks or the spell ends.
   components:
   - type: Sprite
     sprite: Objects/Magic/magicactions.rsi
@@ -17,7 +17,8 @@
     delivery: Target
     rangeFeet: 5
     defense: None
-    acBonus: 1
+    flatCheckDc: 11
+    concealBreaks: true
     friendly: true
     includeSelf: true
   - type: EntityTargetAction

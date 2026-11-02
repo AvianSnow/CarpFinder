@@ -36,7 +36,7 @@
       description: "This feature will be implemented later."
     - level: 1
       name: "Sneak Attack"
-      description: "This feature will be implemented later."
+      description: "Melee Strikes against an off-guard creature deal extra precision damage."
     - level: 1
       name: "Surprise Attack"
       description: "This feature will be implemented later."

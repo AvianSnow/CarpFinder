@@ -1,0 +1,70 @@
+# Young Vulture. Ancestry Hit Points 6. At 1st level that is 14 Hit Points.
+- type: cfPet
+  id: CFPetVulture
+  name: Vulture
+  kind: Companion
+  entity: CFCompanionVulture
+  size: "Small"
+  strength: 2
+  dexterity: 2
+  constitution: 2
+  intelligence: -4
+  wisdom: 2
+  charisma: 0
+  hitPoints: 6
+  description: "A young vulture companion. It has a +1 status bonus against disease, and a success becomes a critical success."
+  speeds:
+    - name: Speed
+      feet: 10
+    - name: fly
+      feet: 45
+  senses:
+    - "low-light vision"
+    - "scent (imprecise, 30 feet)"
+  attacks:
+    - name: "Jaws"
+      die: 8
+      damage: piercing
+      finesse: true
+  skills:
+    - name: Survival
+      ability: Wisdom
+  support: "It retches at a foe within 10 feet. Until your next turn, if you damage that foe, it must succeed at a Fortitude save or become sickened 1."
+  advanced: "Feast on the Fallen"
+
+- type: entity
+  parent: [ MobParrot, CFCompanionBase ]
+  id: CFCompanionVulture
+  name: vulture companion
+  description: "A young vulture companion. It has a +1 status bonus against disease, and a success becomes a critical success."
+  suffix: Companion
+  components:
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 15
+    maxHp: 14
+    currentHp: 14
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 2
+      Dexterity: 2
+      Constitution: 2
+      Intelligence: -4
+      Wisdom: 2
+      Charisma: 0
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 8
+    naturalType: piercing
+    naturalFinesse: true
+    naturalAgile: false
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      14: Dead

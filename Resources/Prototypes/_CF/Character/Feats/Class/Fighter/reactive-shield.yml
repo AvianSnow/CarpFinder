@@ -3,11 +3,10 @@
 - type: cfFeat
   id: CFReactiveShieldFighter
   name: "Reactive Shield"
-  description: "Reaction. This feature will be implemented later."
+  description: "Reaction. Raise a Shield when you are hit, if you are holding one."
   class: Fighter
   level: 1
   traits:
     - "Fighter"
     - "Guardian"
   action: Reaction
-  pendingAction: true

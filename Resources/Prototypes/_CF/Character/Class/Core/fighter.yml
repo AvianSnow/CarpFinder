@@ -34,10 +34,10 @@
   features:
     - level: 1
       name: "Reactive Strike"
-      description: "This feature will be implemented later."
+      description: "When a creature in your reach casts a spell or makes a ranged Strike, you can Strike it. Uses your reaction."
     - level: 1
       name: "Shield Block"
-      description: "This feature will be implemented later."
+      description: "While your shield is raised, you can spend your reaction to block 5 damage."
     - level: 3
       name: "Bravery"
       description: "This feature will be implemented later."

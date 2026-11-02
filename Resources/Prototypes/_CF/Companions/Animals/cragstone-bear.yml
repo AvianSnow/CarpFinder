@@ -1,0 +1,85 @@
+# Young Cragstone Bear. Ancestry Hit Points 8. At 1st level that is 17 Hit Points.
+- type: cfPet
+  id: CFPetCragstoneBear
+  name: Cragstone Bear
+  kind: Companion
+  entity: CFCompanionCragstoneBear
+  size: "Small"
+  strength: 3
+  dexterity: 1
+  constitution: 3
+  intelligence: -4
+  wisdom: 1
+  charisma: 0
+  hitPoints: 8
+  description: "A young cragstone bear companion."
+  speeds:
+    - name: Speed
+      feet: 35
+  senses:
+    - "darkvision"
+    - "tremorsense (imprecise, 20 feet)"
+  attacks:
+    - name: "Slam"
+      die: 8
+      damage: bludgeoning
+    - name: "Claw"
+      die: 6
+      damage: slashing
+      agile: true
+  skills:
+    - name: Survival
+      ability: Wisdom
+  support: "Until your next turn, you gain a +1 circumstance bonus to AC while it is adjacent, or +2 once it is nimble or savage."
+  advanced: "Rolling Charge"
+
+- type: entity
+  parent: [ SimpleMobBase, CFCompanionBase ]
+  id: CFCompanionCragstoneBear
+  name: cragstone bear companion
+  description: "A young cragstone bear companion."
+  suffix: Companion
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: companion
+      sprite: _CF/Mobs/companion-default.rsi
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: companion
+      Critical:
+        Base: dead
+      Dead:
+        Base: dead
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 14
+    maxHp: 17
+    currentHp: 17
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 3
+      Dexterity: 1
+      Constitution: 3
+      Intelligence: -4
+      Wisdom: 1
+      Charisma: 0
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 8
+    naturalType: bludgeoning
+    naturalFinesse: false
+    naturalAgile: false
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      17: Dead

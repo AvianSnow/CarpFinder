@@ -33,13 +33,13 @@
   features:
     - level: 1
       name: "Confident Finisher"
-      description: "This feature will be implemented later."
+      description: "Confident Finisher is on your action wheel. It spends panache. A miss still deals 2 precision damage."
     - level: 1
       name: "Panache"
-      description: "This feature will be implemented later."
+      description: "A successful Demoralize or Feint gives you panache."
     - level: 1
       name: "Precise Strike"
-      description: "This feature will be implemented later."
+      description: "While you have panache, melee Strikes deal 2 extra precision damage."
     - level: 1
       name: "Stylish Combatant"
       description: "This feature will be implemented later."

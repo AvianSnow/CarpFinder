@@ -40,7 +40,7 @@
       description: "This feature will be implemented later."
     - level: 1
       name: "Rage"
-      description: "This feature will be implemented later."
+      description: "Rage is on your action wheel. While raging, melee Strikes deal +2 damage and your AC takes -1."
     - level: 3
       name: "Furious Footfalls"
       description: "This feature will be implemented later."

@@ -16,6 +16,8 @@ Character builder + PF2e spawn/combat MVP notes: `character-builder.md`.
 
 CarpFinder is an action-based RPG based on the Pathfinder 2e system. Use https://2e.aonprd.com/ for rule questions (ancestries, classes, backgrounds, feats, skills, combat math, etc.).
 
+Real time, Pathfinder time, adjusted combat timers, and the CarpFinder day are four clocks. See `time.md`.
+
 ## Building
 
 The project takes ~5 minutes for a full build.

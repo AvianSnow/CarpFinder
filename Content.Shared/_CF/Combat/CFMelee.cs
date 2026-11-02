@@ -139,7 +139,8 @@ public static class CFMelee
         CFCombatantComponent combatant,
         CFStrikeWeaponStats weapon,
         bool weaponTrained,
-        float distanceFeet = 0f)
+        float distanceFeet = 0f,
+        bool ignoreVolley = false)
     {
         var proficiency = CFAttributeMath.ProficiencyBonus(combatant.Level, weaponTrained);
         int ability;
@@ -152,7 +153,8 @@ public static class CFMelee
 
         var bonus = ability + proficiency + weapon.ItemBonus;
         bonus += RangeIncrementPenalty(distanceFeet, weapon.RangeIncrementFeet);
-        bonus += VolleyPenalty(distanceFeet, weapon.VolleyFeet);
+        if (!ignoreVolley)
+            bonus += VolleyPenalty(distanceFeet, weapon.VolleyFeet);
         return bonus;
     }
 

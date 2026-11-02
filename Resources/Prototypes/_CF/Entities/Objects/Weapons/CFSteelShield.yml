@@ -1,0 +1,18 @@
+- type: entity
+  parent: BaseItem
+  id: CFSteelShield
+  name: steel shield
+  description: A steel shield. Raise it for +2 AC. Shield Block stops 5 damage once each turn.
+  components:
+  - type: Sprite
+    sprite: Objects/Weapons/Melee/shields.rsi
+    state: riot-icon
+  - type: Item
+    size: Normal
+    sprite: Objects/Weapons/Melee/shields.rsi
+    heldPrefix: riot
+  - type: CFShield
+    acBonus: 2
+    hardness: 5
+  - type: CFItemPrice
+    copper: 200

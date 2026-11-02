@@ -1,0 +1,74 @@
+# Young Cave Pterosaur. Ancestry Hit Points 4. At 1st level that is 11 Hit Points.
+- type: cfPet
+  id: CFPetCavePterosaur
+  name: Cave Pterosaur
+  kind: Companion
+  entity: CFCompanionCavePterosaur
+  size: "Small"
+  strength: 2
+  dexterity: 3
+  constitution: 1
+  intelligence: -4
+  wisdom: 2
+  charisma: 0
+  hitPoints: 4
+  description: "A young cave pterosaur companion. Its Thievery is only for palming or stealing an object."
+  speeds:
+    - name: Speed
+      feet: 10
+    - name: fly
+      feet: 60
+  senses:
+    - "darkvision"
+  attacks:
+    - name: "Beak"
+      die: 6
+      damage: piercing
+      finesse: true
+    - name: "Talon"
+      die: 4
+      damage: slashing
+      agile: true
+      finesse: true
+  skills:
+    - name: Thievery
+      ability: Dexterity
+  support: "A creature that would have lesser cover from the pterosaur has standard cover instead."
+  advanced: "Pterosaur Swoop"
+
+- type: entity
+  parent: [ MobBat, CFCompanionBase ]
+  id: CFCompanionCavePterosaur
+  name: cave pterosaur companion
+  description: "A young cave pterosaur companion. Its Thievery is only for palming or stealing an object."
+  suffix: Companion
+  components:
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 16
+    maxHp: 11
+    currentHp: 11
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 2
+      Dexterity: 3
+      Constitution: 1
+      Intelligence: -4
+      Wisdom: 2
+      Charisma: 0
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 6
+    naturalType: piercing
+    naturalFinesse: true
+    naturalAgile: false
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      11: Dead

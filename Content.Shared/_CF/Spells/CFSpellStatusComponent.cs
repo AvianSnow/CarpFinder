@@ -17,6 +17,18 @@ public sealed partial class CFSpellStatusComponent : Component
     [DataField]
     public bool TrueStrike;
 
+    /// <summary>Status bonus to saves from bless, bane, or heroism.</summary>
+    [DataField]
+    public int SaveBonus;
+
+    /// <summary>Extra weapon damage dice from runic weapon.</summary>
+    [DataField]
+    public int ExtraWeaponDie;
+
+    /// <summary>Non-zero while haste or slow has replaced the action cap.</summary>
+    [DataField]
+    public int ActionCap;
+
     [DataField]
     public TimeSpan Expires;
 }

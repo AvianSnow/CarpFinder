@@ -1,0 +1,68 @@
+# Young Wolf. Ancestry Hit Points 6. At 1st level that is 14 Hit Points.
+- type: cfPet
+  id: CFPetWolf
+  name: Wolf
+  kind: Companion
+  entity: CFCompanionWolf
+  size: "Small"
+  strength: 2
+  dexterity: 3
+  constitution: 2
+  intelligence: -4
+  wisdom: 1
+  charisma: 0
+  hitPoints: 6
+  description: "A young wolf companion."
+  speeds:
+    - name: Speed
+      feet: 40
+  senses:
+    - "low-light vision"
+    - "scent (imprecise, 30 feet)"
+  attacks:
+    - name: "Jaws"
+      die: 8
+      damage: piercing
+      finesse: true
+  skills:
+    - name: Survival
+      ability: Wisdom
+  support: "Until your next turn, a damaging Strike against a creature it threatens gives that creature a -5-foot status penalty to Speed for 1 minute, or -10 on a critical success."
+  advanced: "Takedown"
+
+- type: entity
+  parent: [ MobFox, CFCompanionBase ]
+  id: CFCompanionWolf
+  name: wolf companion
+  description: "A young wolf companion."
+  suffix: Companion
+  components:
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 16
+    maxHp: 14
+    currentHp: 14
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 2
+      Dexterity: 3
+      Constitution: 2
+      Intelligence: -4
+      Wisdom: 1
+      Charisma: 0
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 8
+    naturalType: piercing
+    naturalFinesse: true
+    naturalAgile: false
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      14: Dead

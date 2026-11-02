@@ -43,7 +43,7 @@
       description: "Level 1 cantrips and spell slots are on the spell sheet."
     - level: 1
       name: "Composition Spells"
-      description: "This feature will be implemented later."
+      description: "Inspire Courage is on your action wheel."
     - level: 1
       name: "Muses"
       description: "This feature will be implemented later."

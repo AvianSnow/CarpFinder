@@ -1,0 +1,90 @@
+# Shared body for an eidolon, animal companion, familiar, or summon.
+# Parent this and override the name, sprite, and the CFCombatant / CFCombatOptions numbers.
+# A young animal companion's level matches its master. It is trained in unarmed attacks,
+# unarmored defense, barding, saves, Perception, Acrobatics, and Athletics.
+# Hit Points are the type's ancestry Hit Points plus 6 + Constitution at each level.
+# Each species lives in Resources/Prototypes/_CF/Companions/Animals.
+# The ally takes the summoner's company. Point at a creature and it closes in and Strikes.
+# Point at an item and it fetches the item, then sets it down beside the summoner.
+# Point at the floor and it stops. A ghost can take the body.
+# One hand can pick items up. A drop beside the summoner puts the item in their hands.
+
+- type: entity
+  id: CFCompanionBase
+  abstract: true
+  components:
+  - type: CFCompanion
+  - type: Hands
+    startingHands:
+      hand:
+        location: Middle
+  - type: ComplexInteraction
+  - type: Strippable
+  - type: UserInterface
+    interfaces:
+      enum.StrippingUiKey.Key:
+        type: StrippableBoundUserInterface
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: CFFaction
+    faction: Neutral
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 16
+    maxHp: 20
+    currentHp: 20
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 3
+      Dexterity: 2
+      Constitution: 2
+      Intelligence: -4
+      Wisdom: 1
+      Charisma: 0
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 8
+    naturalType: piercing
+    naturalAgile: true
+  - type: MeleeWeapon
+    hidden: true
+    angle: 0
+    animation: WeaponArcBite
+    soundHit:
+      path: /Audio/Effects/bite.ogg
+    damage:
+      types:
+        Piercing: 0
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      200: Dead
+  - type: GhostRole
+    makeSentient: true
+    allowMovement: true
+    name: cf-companion-ghost-name
+    description: cf-companion-ghost-desc
+    rules: ghost-role-information-familiar-rules
+    mindRoles:
+    - MindRoleGhostRoleFamiliar
+    raffle:
+      settings: short
+  - type: GhostTakeoverAvailable
+
+- type: entity
+  parent: [ MobFox, CFCompanionBase ]
+  id: CFSummon
+  name: summoned ally
+  description: An eidolon, animal companion, familiar, or summon. It fights the creature its summoner points at.
+  suffix: Companion
+  components:
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive

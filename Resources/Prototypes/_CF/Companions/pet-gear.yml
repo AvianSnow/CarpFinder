@@ -1,0 +1,19 @@
+# Gear listed in the pet tab's equipment popup.
+
+- type: cfPetGear
+  id: CFPetSaddlebags
+  name: Saddlebags
+  entity: CFPetSaddlebagsItem
+  summary: A pair of bags the companion can carry.
+
+- type: cfPetGear
+  id: CFPetCollar
+  name: Collar
+  entity: CFPetCollarItem
+  summary: A fitted collar with a name plate.
+
+- type: cfPetGear
+  id: CFPetHarness
+  name: Harness
+  entity: CFPetHarnessItem
+  summary: Straps that keep a load on the companion.

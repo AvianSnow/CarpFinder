@@ -3,9 +3,11 @@
 - type: cfFeat
   id: CFIronFists
   name: "Iron Fists"
-  description: "Unarmed attack (Unarmed). Changes an item. Not applied in play yet. TBA - action will be added"
+  description: "Your fist Strike deals 1d6 bludgeoning."
   ancestry: Orc
   level: 1
   traits:
     - "Orc"
-  pendingAction: true
+  naturalDice: 1
+  naturalDie: 6
+  naturalDamage: bludgeoning

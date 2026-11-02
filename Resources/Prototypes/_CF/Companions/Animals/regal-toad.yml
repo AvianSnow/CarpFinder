@@ -1,0 +1,69 @@
+# Young Regal Toad. Ancestry Hit Points 8. At 1st level that is 17 Hit Points.
+- type: cfPet
+  id: CFPetRegalToad
+  name: Regal Toad
+  kind: Companion
+  entity: CFCompanionRegalToad
+  size: "Small"
+  strength: 2
+  dexterity: 2
+  constitution: 3
+  intelligence: -4
+  wisdom: 1
+  charisma: 0
+  hitPoints: 8
+  description: "A young regal toad companion."
+  speeds:
+    - name: Speed
+      feet: 20
+    - name: burrow
+      feet: 10
+  attacks:
+    - name: "Tongue"
+      die: 6
+      damage: bludgeoning
+      agile: true
+      traits:
+        - "reach 10 feet"
+  skills:
+    - name: Survival
+      ability: Wisdom
+  support: "Until your next turn, it grants cover as if it were Huge, while still occupying its own space."
+  advanced: "Bellowing Croak"
+
+- type: entity
+  parent: [ MobFrog, CFCompanionBase ]
+  id: CFCompanionRegalToad
+  name: regal toad companion
+  description: "A young regal toad companion."
+  suffix: Companion
+  components:
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 15
+    maxHp: 17
+    currentHp: 17
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 2
+      Dexterity: 2
+      Constitution: 3
+      Intelligence: -4
+      Wisdom: 1
+      Charisma: 0
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 6
+    naturalType: bludgeoning
+    naturalFinesse: false
+    naturalAgile: true
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      17: Dead

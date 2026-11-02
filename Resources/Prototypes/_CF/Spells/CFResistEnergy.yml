@@ -2,7 +2,7 @@
   parent: CFSpellTarget
   id: CFResistEnergy
   name: Resist Energy
-  description: The target resists one energy type.
+  description: The target resists 5 fire damage.
   components:
   - type: Sprite
     sprite: Objects/Magic/magicactions.rsi
@@ -17,6 +17,8 @@
     delivery: Target
     rangeFeet: 5
     defense: None
+    resistType: fire
+    resistAmount: 5
     friendly: true
     includeSelf: true
   - type: EntityTargetAction

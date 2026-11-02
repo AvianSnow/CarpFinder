@@ -1,0 +1,89 @@
+# Young Giraffe. Ancestry Hit Points 8. At 1st level that is 16 Hit Points.
+- type: cfPet
+  id: CFPetGiraffe
+  name: Giraffe
+  kind: Companion
+  entity: CFCompanionGiraffe
+  size: "Large"
+  strength: 3
+  dexterity: 2
+  constitution: 2
+  intelligence: -4
+  wisdom: 1
+  charisma: 0
+  hitPoints: 8
+  description: "A young giraffe companion. It is built to be ridden."
+  mount: true
+  speeds:
+    - name: Speed
+      feet: 35
+  senses:
+    - "low-light vision"
+    - "scent (imprecise, 30 feet)"
+  attacks:
+    - name: "Hoof"
+      die: 6
+      damage: bludgeoning
+      agile: true
+    - name: "Neck"
+      die: 4
+      damage: bludgeoning
+      traits:
+        - "nonlethal"
+        - "reach 10 feet"
+  skills:
+    - name: Intimidation
+      ability: Charisma
+  support: "While you ride it this turn, you can Shove without a free hand, and a successful Shove moves the foe 10 feet, or 15 on a critical success."
+  advanced: "Long Stomp"
+
+- type: entity
+  parent: [ SimpleMobBase, CFCompanionBase ]
+  id: CFCompanionGiraffe
+  name: giraffe companion
+  description: "A young giraffe companion. It is built to be ridden."
+  suffix: Companion
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: companion
+      sprite: _CF/Mobs/companion-default.rsi
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: companion
+      Critical:
+        Base: dead
+      Dead:
+        Base: dead
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 15
+    maxHp: 16
+    currentHp: 16
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 3
+      Dexterity: 2
+      Constitution: 2
+      Intelligence: -4
+      Wisdom: 1
+      Charisma: 0
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 6
+    naturalType: bludgeoning
+    naturalFinesse: false
+    naturalAgile: true
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      16: Dead

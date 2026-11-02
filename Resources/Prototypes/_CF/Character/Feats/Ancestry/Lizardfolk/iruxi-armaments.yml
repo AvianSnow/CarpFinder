@@ -3,9 +3,12 @@
 - type: cfFeat
   id: CFIruxiArmaments
   name: "Iruxi Armaments"
-  description: "Changes an item. Not applied in play yet. Unarmed attack (Unarmed) 1d8 Piercing. Unarmed attack (Unarmed) 1d6 Bludgeoning. TBA - action will be added"
+  description: "Your unarmed Strike deals 1d8 piercing."
   ancestry: Lizardfolk
   level: 1
   traits:
     - "Lizardfolk"
-  pendingAction: true
+  naturalDice: 1
+  naturalDie: 8
+  naturalDamage: piercing
+  naturalAgile: false

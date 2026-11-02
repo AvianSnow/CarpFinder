@@ -3,11 +3,10 @@
 - type: cfFeat
   id: CFExactingStrike
   name: "Exacting Strike"
-  description: "Costs 1 action. This feature will be implemented later."
+  description: "A Strike. A miss does not raise your multiple attack penalty."
   class: Fighter
   level: 1
   traits:
     - "Fighter"
     - "Press"
   action: Action
-  pendingAction: true
