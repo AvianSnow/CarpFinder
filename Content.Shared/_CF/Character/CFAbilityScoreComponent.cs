@@ -4,7 +4,7 @@ using Robust.Shared.GameStates;
 namespace Content.Shared.CF.Character;
 
 /// <summary>
-/// Pathfinder 2e attribute modifiers (not D&amp;D ability scores). Default is +0.
+/// Carpfinder 2e attribute modifiers (not D&amp;D ability scores). Default is +0.
 /// </summary>
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class CFAbilityScoreComponent : Component

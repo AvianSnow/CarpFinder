@@ -6,7 +6,7 @@ using Robust.Shared.Serialization;
 namespace Content.Shared.CF.Preferences;
 
 /// <summary>
-/// Pathfinder 2e build choices stored on <see cref="Content.Shared.Preferences.HumanoidCharacterProfile"/>.
+/// Carpfinder 2e build choices stored on <see cref="Content.Shared.Preferences.HumanoidCharacterProfile"/>.
 /// Ancestry is implied by <c>Species</c>; this holds background, class, and free/choice boost assignments.
 /// </summary>
 [DataDefinition]

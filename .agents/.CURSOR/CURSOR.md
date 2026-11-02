@@ -12,11 +12,11 @@ Read and follow everything in this folder before making CF or upstream-touching 
 
 Character builder + PF2e spawn/combat MVP notes: `character-builder.md`.
 
-## Pathfinder Game Rules
+## Carpfinder Game Rules
 
-CarpFinder is an action-based RPG based on the Pathfinder 2e system. Use https://2e.aonprd.com/ for rule questions (ancestries, classes, backgrounds, feats, skills, combat math, etc.).
+CarpFinder is an action-based RPG based on the Carpfinder 2e system. Use https://2e.aonprd.com/ for rule questions (ancestries, classes, backgrounds, feats, skills, combat math, etc.).
 
-Real time, Pathfinder time, adjusted combat timers, and the CarpFinder day are four clocks. See `time.md`.
+Real time, Carpfinder time, adjusted combat timers, and the CarpFinder day are four clocks. See `time.md`.
 
 Monsters are YAML copies of the Kobold Warrior. See `monsters.md`.
 
@@ -82,18 +82,18 @@ Repo-wide Grep times out (~54k files, mostly textures and maps). Always pass a p
 
 **Always place CF code in `_CF/` subfolders** and prefix class names with `CF`:
 
-| Location | Folder | C# namespace |
-|---|---|---|
-| Shared | `Content.Shared/_CF/MyFeature/` | `Content.Shared.CF.MyFeature` |
-| Server | `Content.Server/_CF/MyFeature/` | `Content.Server.CF.MyFeature` |
-| Client | `Content.Client/_CF/MyFeature/` | `Content.Client.CF.MyFeature` |
-| Resources | `Resources/Prototypes/_CF/`, `Resources/Locale/en-US/_CF/` | n/a |
+| Location  | Folder                                                     | C# namespace                  |
+| --------- | ---------------------------------------------------------- | ----------------------------- |
+| Shared    | `Content.Shared/_CF/MyFeature/`                            | `Content.Shared.CF.MyFeature` |
+| Server    | `Content.Server/_CF/MyFeature/`                            | `Content.Server.CF.MyFeature` |
+| Client    | `Content.Client/_CF/MyFeature/`                            | `Content.Client.CF.MyFeature` |
+| Resources | `Resources/Prototypes/_CF/`, `Resources/Locale/en-US/_CF/` | n/a                           |
 
 Folder uses `_CF` (sorts with other fork folders). Namespace drops the underscore: `Content.*.CF.*`.
 
 Class examples: `CFMySystem`, `CFMyServerSystem`, `CFMyClientSystem`, `CFExampleComponent`.
 
-**XAML under `_CF/`:** Robust derives the default type from the *file path* (`Content.Client._CF.…`). That does **not** match `Content.Client.CF.…` or a replaced upstream type. Always set `x:Class` to the real C# type. See `lobby-overlay.md`.
+**XAML under `_CF/`:** Robust derives the default type from the _file path_ (`Content.Client._CF.…`). That does **not** match `Content.Client.CF.…` or a replaced upstream type. Always set `x:Class` to the real C# type. See `lobby-overlay.md`.
 
 **Prototype IDs** — the `CF` prefix exists only to avoid name collisions with upstream:
 

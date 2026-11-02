@@ -8,7 +8,7 @@ public sealed partial class HTNPrimitiveTask : HTNTask
 {
     /// <summary>
     /// Should we re-apply our blackboard state as a result of our operator during startup?
-    /// This means you can re-use old data, e.g. re-using a pathfinder result, and avoid potentially expensive operations.
+    /// This means you can re-use old data, e.g. re-using a carpfinder result, and avoid potentially expensive operations.
     /// </summary>
     [DataField("applyEffectsOnStartup")] public bool ApplyEffectsOnStartup = true;
 

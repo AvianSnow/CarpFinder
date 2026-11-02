@@ -5,7 +5,7 @@ namespace Content.Shared.CF.Time;
 /// <summary>
 /// Which clock a duration belongs to. These are not four names for one multiplier.
 /// Real and Adjusted are wall-clock seconds the engine waits.
-/// Pathfinder is the tabletop book and is not a timer.
+/// Carpfinder is the tabletop book and is not a timer.
 /// CarpFinder is the world clock: day, night, and the round.
 /// </summary>
 public enum CFTimeScale : byte
@@ -13,8 +13,8 @@ public enum CFTimeScale : byte
     /// <summary>Wall clock. One second is one second of game time.</summary>
     Real = 0,
 
-    /// <summary>Tabletop Pathfinder. One round is <see cref="CFTimeComponent.PathfinderRoundSeconds"/>.</summary>
-    Pathfinder = 1,
+    /// <summary>Tabletop Carpfinder. One round is <see cref="CFTimeComponent.CarpfinderRoundSeconds"/>.</summary>
+    Carpfinder = 1,
 
     /// <summary>Wall-clock seconds chosen for this feature, instead of the book duration.</summary>
     Adjusted = 2,
@@ -46,9 +46,9 @@ public sealed partial class CFTimeComponent : Component
     [DataField, AutoNetworkedField]
     public float NightInGameHours = 10f;
 
-    /// <summary>One Pathfinder round, in book seconds. Combat does not tick in these rounds.</summary>
+    /// <summary>One Carpfinder round, in book seconds. Combat does not tick in these rounds.</summary>
     [DataField, AutoNetworkedField]
-    public float PathfinderRoundSeconds = 6f;
+    public float CarpfinderRoundSeconds = 6f;
 
     public float RealSecondsPerInGameSecond =>
         InGameSecondsPerRealSecond <= 0f ? 0f : 1f / InGameSecondsPerRealSecond;
@@ -64,7 +64,7 @@ public sealed partial class CFTimeComponent : Component
     /// <summary>
     /// Real and Adjusted are already wall-clock seconds.
     /// CarpFinder converts world seconds into wall-clock seconds.
-    /// Pathfinder does not convert: pick an Adjusted duration for that feature.
+    /// Carpfinder does not convert: pick an Adjusted duration for that feature.
     /// </summary>
     public bool TryGetRealSeconds(float amount, CFTimeScale scale, out float realSeconds)
     {
@@ -88,14 +88,14 @@ public sealed partial class CFTimeComponent : Component
         return realSeconds * InGameSecondsPerRealSecond;
     }
 
-    public float PathfinderSeconds(float rounds)
+    public float CarpfinderSeconds(float rounds)
     {
-        return rounds * PathfinderRoundSeconds;
+        return rounds * CarpfinderRoundSeconds;
     }
 
-    public float PathfinderRounds(float pathfinderSeconds)
+    public float CarpfinderRounds(float carpfinderSeconds)
     {
-        return PathfinderRoundSeconds <= 0f ? 0f : pathfinderSeconds / PathfinderRoundSeconds;
+        return CarpfinderRoundSeconds <= 0f ? 0f : carpfinderSeconds / CarpfinderRoundSeconds;
     }
 
     /// <summary>True during the daylight portion. <paramref name="realSinceDawn"/> is wall-clock time since the round started.</summary>

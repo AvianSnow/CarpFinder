@@ -1,5 +1,5 @@
 # CarpFinder: ancestry feat through level 5. Short mechanical note, not source text.
-# source: Pathfinder Player Core
+# source: Carpfinder Player Core
 - type: cfFeat
   id: CFBeastTrainer
   name: "Beast Trainer"

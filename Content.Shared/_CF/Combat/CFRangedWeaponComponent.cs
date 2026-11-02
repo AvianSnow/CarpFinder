@@ -3,7 +3,7 @@ using Robust.Shared.GameStates;
 namespace Content.Shared.CF.Combat;
 
 /// <summary>
-/// Pathfinder ranged weapon stats. Projectiles shot from this weapon resolve PF2e Strikes on hit.
+/// Carpfinder ranged weapon stats. Projectiles shot from this weapon resolve PF2e Strikes on hit.
 /// </summary>
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class CFRangedWeaponComponent : Component

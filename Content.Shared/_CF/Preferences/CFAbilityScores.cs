@@ -3,7 +3,7 @@ using Robust.Shared.Serialization;
 namespace Content.Shared.CF.Preferences;
 
 /// <summary>
-/// Helpers for Pathfinder attribute modifiers stored on profiles / components.
+/// Helpers for Carpfinder attribute modifiers stored on profiles / components.
 /// </summary>
 public static class CFAbilityScores
 {

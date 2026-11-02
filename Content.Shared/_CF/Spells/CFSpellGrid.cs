@@ -3,7 +3,7 @@ using System.Numerics;
 namespace Content.Shared.CF.Spells;
 
 /// <summary>
-/// Pathfinder 2e remaster areas on the map grid. One tile is 5 feet.
+/// Carpfinder 2e remaster areas on the map grid. One tile is 5 feet.
 /// This is the real tile size, not the 1.25 melee reach used for Strikes.
 /// </summary>
 public static class CFSpellGrid

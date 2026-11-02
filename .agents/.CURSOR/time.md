@@ -4,14 +4,14 @@
 
 Four scales. Do not convert one into another unless the method for that scale says so.
 
-| Scale | What a second means | Use it for |
-|---|---|---|
-| Real | One wall-clock second | Engine waits. Action regen, popup cooldowns. |
-| Pathfinder | One tabletop second. One round is 6. | The book duration. Not a timer. |
-| Adjusted | One wall-clock second, chosen per feature | Spells, conditions, and class features in real-time combat. |
-| CarpFinder | 0.25 wall-clock seconds (4 world seconds pass per real second) | Day, night, and the round. |
+| Scale      | What a second means                                            | Use it for                                                  |
+| ---------- | -------------------------------------------------------------- | ----------------------------------------------------------- |
+| Real       | One wall-clock second                                          | Engine waits. Action regen, popup cooldowns.                |
+| Carpfinder | One tabletop second. One round is 6.                           | The book duration. Not a timer.                             |
+| Adjusted   | One wall-clock second, chosen per feature                      | Spells, conditions, and class features in real-time combat. |
+| CarpFinder | 0.25 wall-clock seconds (4 world seconds pass per real second) | Day, night, and the round.                                  |
 
-`TryGetRealSeconds` accepts Real, Adjusted, and CarpFinder. It refuses Pathfinder. A feature that should last "1 minute" in the book needs its own Adjusted wall-clock duration.
+`TryGetRealSeconds` accepts Real, Adjusted, and CarpFinder. It refuses Carpfinder. A feature that should last "1 minute" in the book needs its own Adjusted wall-clock duration.
 
 With the YAML rates:
 

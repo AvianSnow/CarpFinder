@@ -1,4 +1,4 @@
-# Pathfinder 2e item traits as SS14 Tags (CF-prefixed — Tag is an upstream prototype kind).
+# Carpfinder 2e item traits as SS14 Tags (CF-prefixed — Tag is an upstream prototype kind).
 
 - type: Tag
   id: CFAlchemical # PF2e Alchemical trait — crafted via alchemy.

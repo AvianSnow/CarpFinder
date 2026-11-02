@@ -1,7 +1,7 @@
 - type: species
   id: Arachnid
   name: species-name-arachnid
-  roundStart: false # CarpFinder: no Pathfinder ancestry stats
+  roundStart: false # CarpFinder: no Carpfinder ancestry stats
   prototype: MobArachnid
   defaultSkinTone: "#385878"
   dollPrototype: AppearanceArachnid
@@ -10,10 +10,10 @@
   femaleFirstNames: NamesArachnidFirst
   lastNames: NamesArachnidLast
   sexes:
-  - Unsexed
+    - Unsexed
   defaultSoundsBySex:
-  - UnisexArachnid
-  - UnisexArachnid
-  - UnisexArachnid
+    - UnisexArachnid
+    - UnisexArachnid
+    - UnisexArachnid
   voices:
-  - UnisexArachnid
+    - UnisexArachnid

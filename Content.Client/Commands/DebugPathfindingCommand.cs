@@ -11,7 +11,7 @@ public sealed partial class DebugPathfindingCommand : LocalizedCommands
 {
     [Dependency] private IEntitySystemManager _entitySystemManager = default!;
 
-    public override string Command => "pathfinder";
+    public override string Command => "carpfinder";
 
     public override string Help => LocalizationManager.GetString($"cmd-{Command}-help", ("command", Command));
 

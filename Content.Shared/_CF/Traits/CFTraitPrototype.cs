@@ -3,7 +3,7 @@ using Robust.Shared.Prototypes;
 namespace Content.Shared.CF.Traits;
 
 /// <summary>
-/// A Pathfinder trait. Ids match the names used on spells and items, such as Agile or Fire.
+/// A Carpfinder trait. Ids match the names used on spells and items, such as Agile or Fire.
 /// Summaries are short mechanical notes, not source-book text.
 /// </summary>
 [Prototype("cfTrait")]

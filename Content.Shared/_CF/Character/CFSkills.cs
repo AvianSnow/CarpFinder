@@ -14,7 +14,7 @@ public enum CFProficiencyRank : byte
     Legendary = 8,
 }
 
-/// <summary>Skill / Perception check math for Pathfinder character sheets.</summary>
+/// <summary>Skill / Perception check math for Carpfinder character sheets.</summary>
 public static class CFSkills
 {
     /// <summary>

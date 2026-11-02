@@ -3,7 +3,7 @@ using System.Numerics;
 namespace Content.Shared.CF.Combat;
 
 /// <summary>
-/// Pathfinder 2e flanking on free movement.
+/// Carpfinder 2e flanking on free movement.
 /// Two allies flank when each is within reach and the line between them passes through the foe.
 /// </summary>
 public static class CFFlanking

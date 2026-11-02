@@ -3,7 +3,7 @@ using Content.Shared.CF.Preferences;
 namespace Content.Shared.CF.Combat;
 
 /// <summary>
-/// Pathfinder 2e Commoner (Creature -1) — used as the default for vanilla SS14 mobs.
+/// Carpfinder 2e Commoner (Creature -1) — used as the default for vanilla SS14 mobs.
 /// Source: NPC Core / https://2e.aonprd.com/NPCs.aspx?ID=3488
 /// </summary>
 public static class CFCommonerStats

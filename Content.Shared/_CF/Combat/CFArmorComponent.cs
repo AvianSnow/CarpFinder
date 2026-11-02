@@ -3,7 +3,7 @@ using Robust.Shared.GameStates;
 namespace Content.Shared.CF.Combat;
 
 /// <summary>
-/// Pathfinder armor item bonus / Dex cap applied to Armor Class when worn.
+/// Carpfinder armor item bonus / Dex cap applied to Armor Class when worn.
 /// </summary>
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class CFArmorComponent : Component

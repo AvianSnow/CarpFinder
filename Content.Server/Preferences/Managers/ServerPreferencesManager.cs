@@ -209,7 +209,7 @@ namespace Content.Server.Preferences.Managers
                 }
                 catch (Exception exception)
                 {
-                    _sawmill.Warning($"Could not read the Pathfinder build for {profile.CharacterName}: {exception.Message}");
+                    _sawmill.Warning($"Could not read the Carpfinder build for {profile.CharacterName}: {exception.Message}");
                 }
             }
 

@@ -3,7 +3,7 @@ using Robust.Shared.GameStates;
 namespace Content.Shared.CF.Combat;
 
 /// <summary>
-/// Pathfinder combat stats (AC / HP) for player characters and mobs.
+/// Carpfinder combat stats (AC / HP) for player characters and mobs.
 /// </summary>
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class CFCombatantComponent : Component

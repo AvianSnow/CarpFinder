@@ -1,7 +1,7 @@
 namespace Content.Shared.CF.Character;
 
 /// <summary>
-/// Pathfinder medium-advancement awards. The amount is per character.
+/// Carpfinder medium-advancement awards. The amount is per character.
 /// A larger or smaller party still uses these numbers.
 /// </summary>
 public static class CFExperienceAwards

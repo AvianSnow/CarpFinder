@@ -89,9 +89,9 @@ public sealed partial class PathfindingSystem
                         // pFactor is tie-breaker where the fscore is otherwise equal.
                         // See http://theory.stanford.edu/~amitp/GameProgramming/Heuristics.html#breaking-ties
                         // There's other ways to do it but future consideration
-                        // The closer the fScore is to the actual distance then the better the pathfinder will be
+                        // The closer the fScore is to the actual distance then the better the carpfinder will be
                         // (i.e. somewhere between 1 and infinite)
-                        // Can use hierarchical pathfinder or whatever to improve the heuristic but this is fine for now.
+                        // Can use hierarchical carpfinder or whatever to improve the heuristic but this is fine for now.
                         var hScore = OctileDistance(args.End, neighbor) * (1.0f + 1.0f / 1000.0f);
                         var fScore = gScore + hScore;
                         frontier.Enqueue(neighbor, fScore);

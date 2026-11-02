@@ -19,7 +19,7 @@ using Robust.Shared.Prototypes;
 namespace Content.Server.CF.Character;
 
 /// <summary>
-/// Applies Pathfinder build data from the character profile when a player spawns.
+/// Applies Carpfinder build data from the character profile when a player spawns.
 /// </summary>
 public sealed partial class CFCharacterSpawnSystem : EntitySystem
 {
@@ -32,7 +32,7 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
     [Dependency] private CFCompanionSystem _companions = default!;
     [Dependency] private MetaDataSystem _meta = default!;
 
-    /// <summary>Pathfinder Speed of 25 feet is the usual human walk.</summary>
+    /// <summary>Carpfinder Speed of 25 feet is the usual human walk.</summary>
     private const float BaselineSpeedFeet = 25f;
 
     [SubscribeLocalEvent]

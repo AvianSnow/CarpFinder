@@ -1,7 +1,7 @@
 - type: species
   id: Diona
   name: species-name-diona
-  roundStart: false # CarpFinder: no Pathfinder ancestry stats
+  roundStart: false # CarpFinder: no Carpfinder ancestry stats
   prototype: MobDiona
   defaultSkinTone: "#cdb369"
   dollPrototype: AppearanceDiona
@@ -11,10 +11,10 @@
   lastNames: NamesDionaLast
   naming: TheFirstofLast
   sexes:
-  - Unsexed
+    - Unsexed
   defaultSoundsBySex:
-  - UnisexDiona
-  - UnisexDiona
-  - UnisexDiona
+    - UnisexDiona
+    - UnisexDiona
+    - UnisexDiona
   voices:
-  - UnisexDiona
+    - UnisexDiona

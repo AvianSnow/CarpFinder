@@ -4,7 +4,7 @@ using Robust.Shared.GameStates;
 namespace Content.Shared.CF.Alchemy;
 
 /// <summary>
-/// Shared data for Pathfinder alchemical / brew consumables (elixirs, potions, etc.).
+/// Shared data for Carpfinder alchemical / brew consumables (elixirs, potions, etc.).
 /// Traits live on <c>Tag</c> (e.g. CFConsumable, CFHealing, CFPotion).
 /// Drink timing/sound mirrors SS14 <c>Edible</c> drinks (e.g. Space Cola).
 /// </summary>

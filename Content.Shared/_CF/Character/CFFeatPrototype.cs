@@ -11,7 +11,7 @@ public enum CFFeatAction
 }
 
 /// <summary>
-/// A Pathfinder feat. Ancestry feats through level 5 live under Resources/Prototypes/_CF/Character/Feats/Ancestry.
+/// A Carpfinder feat. Ancestry feats through level 5 live under Resources/Prototypes/_CF/Character/Feats/Ancestry.
 /// Descriptions are short mechanical notes. An activity the game cannot perform yet says so in the description.
 /// </summary>
 [Prototype("cfFeat")]

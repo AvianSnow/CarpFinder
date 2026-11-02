@@ -23,9 +23,9 @@
 ## Spawn
 
 - `Content.Server/_CF/Character/CFCharacterSpawnSystem` listens to `PlayerSpawnCompleteEvent` and applies the saved `CFBuild`. That build is stored on the character profile (`profile.cf_build`) and reloaded with the character. Weapons, armor, and gear bought in the builder are the role loadout and are equipped by the station spawner. A class feature or chosen feat that grants an animal companion or a familiar spawns that body beside the character, following them, with any chosen pet gear on the same tile. The species is the one saved on the pet tab.
-  - `CFAbilityScoreComponent` (modifiers)
-  - `CFCombatantComponent` (level, AC, HP, class/background ids, trained skill picks)
-  - Movement scaled from ancestry Speed (25 feet is the usual human pace). Darkvision adds night vision.
+    - `CFAbilityScoreComponent` (modifiers)
+    - `CFCombatantComponent` (level, AC, HP, class/background ids, trained skill picks)
+    - Movement scaled from ancestry Speed (25 feet is the usual human pace). Darkvision adds night vision.
 
 ## In-game character sheet
 
@@ -39,20 +39,20 @@
 - `CFStrikeSystem` handles `MeleeHitEvent` on CF weapons: cancels stock damage, rolls d20+mod vs AC, applies CF HP. Marking the hit handled skips the stock sounds. A melee hit plays `soundHit`. A melee miss plays `soundSwing` at the target. A CF weapon with no `soundHit` uses a slash or smash sound from its damage type. A swing that touches nothing still uses the stock swing sound.
 - Floating numbers (`CFDamageNumberSystem` / `CFCombatNumberEvent`): **HIT / MISS / CRIT HIT / CRIT MISS**, then damage amount on hits.
 - Entities:
-  - `CFLongsword` — d8 slashing martial weapon
-  - `CFLeatherArmor` — +1 AC, Dex cap 3, LightArmor
-  - `CFTrainingDummy` — AC 15, 20 HP (`spawn CFTrainingDummy`)
-  - `CFKoboldWarrior` — Monster Core kobold warrior, creature −1, on the kobold sprite (`spawn CFKoboldWarrior`). Copy that file for a new monster. Field guide: `monsters.md`.
+    - `CFLongsword` — d8 slashing martial weapon
+    - `CFLeatherArmor` — +1 AC, Dex cap 3, LightArmor
+    - `CFTrainingDummy` — AC 15, 20 HP (`spawn CFTrainingDummy`)
+    - `CFKoboldWarrior` — Monster Core kobold warrior, creature −1, on the kobold sprite (`spawn CFKoboldWarrior`). Copy that file for a new monster. Field guide: `monsters.md`.
 - Vanilla targets (`CFCombatBridgeSystem`):
-  - **Mobs** (have `MobState`): treated as PF2e **Commoner** (−1, AC 13, HP 10) on first Strike.
-  - **Objects**: inferred `cfMaterial` (hardness/HP) from `damageModifierSet` / `damageContainer`, or set `CFMaterial` explicitly. Hardness subtracted from damage; 0 HP breaks/destroys via Destructible.
-  - CF HP is the source of truth. `DamageableSystem.SetDamage` rewrites the SS14 bar as Blunt from missing CF HP, kept under the Critical threshold. Dying sets that bar to Critical; death sets it to Dead.
+    - **Mobs** (have `MobState`): treated as PF2e **Commoner** (−1, AC 13, HP 10) on first Strike.
+    - **Objects**: inferred `cfMaterial` (hardness/HP) from `damageModifierSet` / `damageContainer`, or set `CFMaterial` explicitly. Hardness subtracted from damage; 0 HP breaks/destroys via Destructible.
+    - CF HP is the source of truth. `DamageableSystem.SetDamage` rewrites the SS14 bar as Blunt from missing CF HP, kept under the Critical threshold. Dying sets that bar to Critical; death sets it to Dead.
 - **Unarmed**: empty hands (body or gloves `MeleeWeapon`) use PF2e fist Strike — 1d4 bludgeoning, `Unarmed` proficiency — instead of stock SS14 blunt.
 - **Ranged**: `CFRangedWeapon` on bows; on projectile collide (`BeforeProjectileHitEvent`) resolve Dex Strike (range increments, volley −2, deadly die). `CFLongbow` — 1d8 P, range 100 ft, deadly d10, volley 30 ft (wield to shoot, nock `CFArrow`).
 - **Dying (PF2e)**: at 0 HP → SS14 `Critical` + dying 1 (2 on crit knockout) + wounded. Recovery flat check every 6s (DC 10 + dying). Dying 4 → `Dead`. Strikes on downed raise dying (+2 on crit). Alt-click **Stabilize (Medicine)** (DC 5 + dying). Stabilize revives at 1 HP and clears bleed; `RestoreHitPoints` heals CF HP + `HealEvenly` across SS14 damage types. Stock rejuvenate restores CF HP to max and clears dying, then flanking is checked again.
 - **Alchemy / potions**: `CFAlchemicalItem` + optional `CFHealConsumable` under `Content.Shared/_CF/Alchemy/`. PF2e traits as Tags (`CFConsumable`, `CFHealing`, `CFMagical`, `CFPotion`, `CFVitality`, …) in `Resources/Prototypes/_CF/tags.yml`. `CFHealingPotionMinor` — 1d8 HP (`spawn CFHealingPotionMinor`).
 - **Flanking / off-guard**: `CFFlankingSystem`. Each combatant gets a non-solid reach sensor (`hard: false`, radius `CFFlanking.ReachInUnits`). Physics reports when that circle overlaps another body. `PreventCollideEvent` drops the contact unless the other body is a mob and hostile (`CFAlliance.Opposition` when both have a CF faction; otherwise not allies). Allies do not keep a sensor contact. When two allies both overlap the same foe, the line between their centers must pass within `CFFlanking.BodyRadius` (0.25) of the foe. The foe gains `CFOffGuardComponent`: −2 circumstance AC against those flankers' melee Strikes only. While that player is off-guard, the HUD shield keeps their normal AC struck through and draws the reduced AC in red. Dead and dying creatures never receive it. The line test runs for overlapped foes when someone moves or a contact starts or ends, not for every body on the map. The `CFFlankedIcon` status icon is drawn on the right. While debugging, `CFOffGuardLabelSystem` also draws green `OffGuard` text above any creature with the condition active.
-- **Time**: spell `durationSeconds` and condition timers already in code are wall-clock seconds. The world day is a separate clock (`CFWorldClock`, `time.md`). A Pathfinder duration is the book number, not a timer, until that feature has an adjusted wall-clock length.
+- **Time**: spell `durationSeconds` and condition timers already in code are wall-clock seconds. The world day is a separate clock (`CFWorldClock`, `time.md`). A Carpfinder duration is the book number, not a timer, until that feature has an adjusted wall-clock length.
 - **Actions and conditions**: every character gets Demoralize, Trip, Shove, Grapple, Feint, and Raise a Shield on the action wedge (`CFActivitySystem`, `Resources/Prototypes/_CF/Actions/activities.yml`). Raise a Shield needs `CFSteelShield` in the active hand. Frightened, grabbed, concealed, immobilized, blinded, charmed, calmed, and sanctuary live on `CFConditionComponent`. A full action pool is a new turn: frightened drops by 1, the shield lowers, and the reaction returns. Reactive Strike, Shield Block, Nimble Dodge, Reactive Shield, the champion's ally Strike, and You're Next spend that reaction.
 - **Experience**: medium advancement, 1000 XP to the next level (`CFExperienceComponent`). The character sheet bar shows XP toward that 1000. Characters spawn at level 1. Level 2 and 4 class feats and the level 5 ancestry feat are saved in the lobby and granted on level up, along with class hit points and the new proficiency. `/givexp Alpha 50` gives every member of that company 50 XP. `minor` (10), `moderate` (30), `major` (80), `adversary <relative>`, and `hazard <simple|complex> <relative>` use the medium award tables. A character below the company's highest level gains double. Skill increases, skill feats, and general feats are still not chosen.
 - **Class identity at level 1**: Sneak Attack, Rage, Reactive Strike, Shield Block, Flurry of Blows, Powerful Fist, Hunt Prey (precision edge), Panache and Confident Finisher, Spellstrike, Devise a Stratagem, Exploit Vulnerability, Inspire Courage, the champion reaction, Divine Font (extra rank 1 slots), and two minor healing potions for the alchemist. Chosen level 1–2 strike feats (Double Slice, Exacting Strike, Sudden Charge, Snagging Strike, Vicious Swing, Point-Blank Stance, Twin Feint, Tumble Behind) are granted with the feat. Seedpod, tusks, iron fists, saber teeth, and iruxi armaments replace the fist Strike.
