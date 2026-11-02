@@ -42,6 +42,7 @@
   - `CFLongsword` — d8 slashing martial weapon
   - `CFLeatherArmor` — +1 AC, Dex cap 3, LightArmor
   - `CFTrainingDummy` — AC 15, 20 HP (`spawn CFTrainingDummy`)
+  - `CFKoboldWarrior` — Monster Core kobold warrior, creature −1, on the kobold sprite (`spawn CFKoboldWarrior`). Copy that file for a new monster. Field guide: `monsters.md`.
 - Vanilla targets (`CFCombatBridgeSystem`):
   - **Mobs** (have `MobState`): treated as PF2e **Commoner** (−1, AC 13, HP 10) on first Strike.
   - **Objects**: inferred `cfMaterial` (hardness/HP) from `damageModifierSet` / `damageContainer`, or set `CFMaterial` explicitly. Hardness subtracted from damage; 0 HP breaks/destroys via Destructible.

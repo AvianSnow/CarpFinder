@@ -1,0 +1,33 @@
+# Simple spear. Melee Strike is 1d6 piercing plus Strength.
+# itemBonus closes the gap so a level −1 creature matches its printed attack. See monsters.md.
+
+- type: entity
+  parent: BaseItem
+  id: CFSpear
+  name: spear
+  description: A simple spear. 1d6 piercing.
+  components:
+  - type: Sprite
+    sprite: Objects/Weapons/Melee/spear.rsi
+    state: spear
+  - type: Item
+    size: Huge
+    sprite: Objects/Weapons/Melee/spear.rsi
+  - type: MeleeWeapon
+    wideAnimationRotation: -135
+    angle: 0
+    animation: WeaponArcThrust
+    attackRate: 1
+    soundHit:
+      path: /Audio/Weapons/bladeslice.ogg
+    damage:
+      types:
+        Piercing: 0
+  - type: CFMeleeWeapon
+    damageDie: 6
+    damageDice: 1
+    damageType: piercing
+    proficiency: SimpleWeapons
+    itemBonus: 1
+  - type: CFItemPrice
+    copper: 10

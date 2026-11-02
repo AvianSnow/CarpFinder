@@ -18,6 +18,8 @@ CarpFinder is an action-based RPG based on the Pathfinder 2e system. Use https:/
 
 Real time, Pathfinder time, adjusted combat timers, and the CarpFinder day are four clocks. See `time.md`.
 
+Monsters are YAML copies of the Kobold Warrior. See `monsters.md`.
+
 ## Building
 
 The project takes ~5 minutes for a full build.

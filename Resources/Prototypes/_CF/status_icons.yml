@@ -4,5 +4,5 @@
   locationPreference: Right
   isShaded: false
   icon:
-    sprite: /Textures/_CF/flanked.rsi
+    sprite: /Textures/_CF/Markers/flanked.rsi
     state: flanked
