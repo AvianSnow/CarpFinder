@@ -11,9 +11,9 @@
             <CheckBox Name="NPCThonk" Text="{Loc npc-debug-overlay-window-show-htn-tree-checkbox}"/>
         </BoxContainer>
         <controls:StripeBack>
-            <Label Text="{Loc npc-debug-overlay-window-section-pathfinder-label}" HorizontalAlignment="Center"/>
+            <Label Text="{Loc npc-debug-overlay-window-section-carpfinder-label}" HorizontalAlignment="Center"/>
         </controls:StripeBack>
-        <BoxContainer Name="PathfinderBox" Orientation="Vertical">
+        <BoxContainer Name="CarpfinderBox" Orientation="Vertical">
             <CheckBox Name="PathCrumbs" Text="{Loc npc-debug-overlay-window-path-breadcrumbs-checkbox}"/>
             <CheckBox Name="PathPolys" Text="{Loc npc-debug-overlay-window-path-polygons-checkbox}"/>
             <CheckBox Name="PathNeighbors" Text="{Loc npc-debug-overlay-window-path-neighbors-checkbox}"/>

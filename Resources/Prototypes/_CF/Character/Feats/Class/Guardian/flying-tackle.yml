@@ -1,5 +1,5 @@
 # CarpFinder: class feat through level 5. Short mechanical note, not source text.
-# source: Pathfinder Battlecry!
+# source: Carpfinder Battlecry!
 - type: cfFeat
   id: CFFlyingTackle
   name: "Flying Tackle"

@@ -6,7 +6,7 @@ using Robust.Shared.Prototypes;
 namespace Content.Client.CF.Combat;
 
 /// <summary>
-/// Draws floating Pathfinder combat numbers in screen space after the world.
+/// Draws floating Carpfinder combat numbers in screen space after the world.
 /// </summary>
 public sealed class CFDamageNumberOverlay : Overlay
 {

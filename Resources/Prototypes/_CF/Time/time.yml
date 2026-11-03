@@ -1,7 +1,7 @@
 # Four clocks. They are not one multiplier.
 #
 # Real: wall clock. The engine waits this long. Action regen and popup cooldowns are Real.
-# Pathfinder: the tabletop book. One round is 6 book seconds. A "1 minute" spell is 10 rounds.
+# Carpfinder: the tabletop book. One round is 6 book seconds. A "1 minute" spell is 10 rounds.
 #   That number is not a timer. Combat is real-time, so each feature picks its own duration.
 # Adjusted: wall-clock seconds chosen for that feature. Haste lasting 60 real seconds is Adjusted
 #   when the book said 1 minute and the world clock would have made those 60 seconds into 15.
@@ -15,11 +15,11 @@
 - type: entity
   id: CFWorldClock
   name: world clock
-  description: Rates for real time, Pathfinder time, adjusted combat timers, and the CarpFinder day.
+  description: Rates for real time, Carpfinder time, adjusted combat timers, and the CarpFinder day.
   components:
-  - type: CFTime
-    inGameSecondsPerRealSecond: 4
-    roundRealHours: 6
-    dayInGameHours: 14
-    nightInGameHours: 10
-    pathfinderRoundSeconds: 6
+    - type: CFTime
+      inGameSecondsPerRealSecond: 4
+      roundRealHours: 6
+      dayInGameHours: 14
+      nightInGameHours: 10
+      carpfinderRoundSeconds: 6

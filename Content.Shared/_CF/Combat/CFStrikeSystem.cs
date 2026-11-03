@@ -28,7 +28,7 @@ using Robust.Shared.Random;
 namespace Content.Shared.CF.Combat;
 
 /// <summary>
-/// Pathfinder 2e Strikes via stock SS14 melee and projectile hits.
+/// Carpfinder 2e Strikes via stock SS14 melee and projectile hits.
 /// </summary>
 public sealed partial class CFStrikeSystem : EntitySystem
 {

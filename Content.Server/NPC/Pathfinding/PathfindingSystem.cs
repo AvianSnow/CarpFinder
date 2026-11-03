@@ -26,7 +26,7 @@ using Robust.Shared.Utility;
 namespace Content.Server.NPC.Pathfinding
 {
     /// <summary>
-    /// This system handles pathfinding graph updates as well as dispatches to the pathfinder
+    /// This system handles pathfinding graph updates as well as dispatches to the carpfinder
     /// (90% of what it's doing is graph updates so not much point splitting the 2 roles)
     /// </summary>
     public sealed partial class PathfindingSystem : SharedPathfindingSystem

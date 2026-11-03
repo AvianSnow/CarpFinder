@@ -4,7 +4,7 @@ using Robust.Shared.Prototypes;
 namespace Content.Shared.CF.Character;
 
 /// <summary>
-/// A Pathfinder heritage. An empty <see cref="Ancestries"/> list is a versatile heritage and can be taken by anyone.
+/// A Carpfinder heritage. An empty <see cref="Ancestries"/> list is a versatile heritage and can be taken by anyone.
 /// </summary>
 [Prototype("cfHeritage")]
 public sealed partial class CFHeritagePrototype : IPrototype

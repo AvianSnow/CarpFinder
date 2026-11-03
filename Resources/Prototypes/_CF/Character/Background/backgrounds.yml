@@ -1,4 +1,4 @@
-# Pathfinder backgrounds other than Acrobat and Acolyte (those two files stay as-is).
+# Carpfinder backgrounds other than Acrobat and Acolyte (those two files stay as-is).
 # The attribute list is the restricted boost. The builder always adds one free boost.
 # A Lore subcategory uses the Lore skill. Skill feats are named here and are not granted.
 - type: cfBackground
@@ -870,7 +870,7 @@
 - type: cfBackground
   id: cf-background-early-explorer
   name: "Early Explorer"
-  description: "Trained in Survival. Lore: Pathfinder Lore. Skill feat: Forager."
+  description: "Trained in Survival. Lore: Carpfinder Lore. Skill feat: Forager."
   trainedSkills:
     - Survival
     - Lore
@@ -2203,9 +2203,9 @@
     - Constitution
 
 - type: cfBackground
-  id: cf-background-pathfinder-hopeful
-  name: "Pathfinder Hopeful"
-  description: "Trained in Society. Lore: Pathfinder Society Lore. Skill feat: Additional Lore."
+  id: cf-background-carpfinder-hopeful
+  name: "Carpfinder Hopeful"
+  description: "Trained in Society. Lore: Carpfinder Society Lore. Skill feat: Additional Lore."
   trainedSkills:
     - Society
     - Lore
@@ -2214,8 +2214,8 @@
     - Intelligence
 
 - type: cfBackground
-  id: cf-background-pathfinder-recruiter
-  name: "Pathfinder Recruiter"
+  id: cf-background-carpfinder-recruiter
+  name: "Carpfinder Recruiter"
   description: "Trained in Diplomacy. Lore: City Lore. Skill feat: Group Impression."
   trainedSkills:
     - Diplomacy

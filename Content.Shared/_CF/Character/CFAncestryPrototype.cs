@@ -20,7 +20,7 @@ public enum CFSize
 }
 
 /// <summary>
-/// Pathfinder ancestry rules for a playable species.
+/// Carpfinder ancestry rules for a playable species.
 /// </summary>
 [Prototype("cfAncestry")]
 public sealed partial class CFAncestryPrototype : IPrototype

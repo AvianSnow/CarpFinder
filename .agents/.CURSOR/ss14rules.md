@@ -24,7 +24,7 @@ A string range (`text[1..]`) and `char + string` both compile to `ReadOnlySpan<c
 
 `DamageableSystem.GetTotalDamage`, `GetAllDamage`, and `GetDamagePerGroup` are obsolete: do not treat damage as one number. `DamageableComponent.TotalDamage` and `Damage` are access-restricted to `DamageableSystem`.
 
-Pathfinder hit points are the source of truth. Write the SS14 bar with `DamageableSystem.SetDamage` (one `Blunt` value derived from CF HP and mob thresholds). Do not read the current total and add a delta.
+Carpfinder hit points are the source of truth. Write the SS14 bar with `DamageableSystem.SetDamage` (one `Blunt` value derived from CF HP and mob thresholds). Do not read the current total and add a delta.
 
 ## Do not dispose UI controls
 

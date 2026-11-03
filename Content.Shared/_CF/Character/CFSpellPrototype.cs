@@ -26,7 +26,7 @@ public enum CFSpellActionCost
 }
 
 /// <summary>
-/// One Pathfinder spell. Text fields are short mechanical notes, not source-book prose.
+/// One Carpfinder spell. Text fields are short mechanical notes, not source-book prose.
 /// </summary>
 [Prototype("cfSpell")]
 public sealed partial class CFSpellPrototype : IPrototype

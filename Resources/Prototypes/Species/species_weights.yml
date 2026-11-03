@@ -1,4 +1,4 @@
-# CarpFinder: random species stay on Pathfinder ancestries.
+# CarpFinder: random species stay on Carpfinder ancestries.
 - type: weightedRandomSpecies
   id: SpeciesWeights
   weights:

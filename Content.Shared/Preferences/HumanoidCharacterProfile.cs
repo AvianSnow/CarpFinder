@@ -133,7 +133,7 @@ namespace Content.Shared.Preferences
         public PreferenceUnavailableMode PreferenceUnavailable { get; private set; } =
             PreferenceUnavailableMode.SpawnAsOverflow;
 
-        // CarpFinder: Pathfinder 2e ancestry/background/class + boost assignments
+        // CarpFinder: Carpfinder 2e ancestry/background/class + boost assignments
         [DataField]
         public CFCharacterBuildData CFBuild { get; set; } = new();
         // CarpFinder end

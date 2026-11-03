@@ -7,7 +7,7 @@ using Robust.Shared.Prototypes;
 namespace Content.Shared.CF.Shop;
 
 /// <summary>
-/// Pathfinder coins. 10 copper become 1 silver, 10 silver become 1 gold, and 10 gold become 1 platinum.
+/// Carpfinder coins. 10 copper become 1 silver, 10 silver become 1 gold, and 10 gold become 1 platinum.
 /// The purse is stored as copper so a purchase can break a higher coin.
 /// </summary>
 public static class CFCoins

@@ -1,4 +1,4 @@
-# Pathfinder object materials (mid-range values from the hardness table).
+# Carpfinder object materials (mid-range values from the hardness table).
 
 - type: cfMaterial
   id: Cloth
@@ -7,8 +7,8 @@
   hitPoints: 2
   brokenThreshold: 1
   damageModifierSets:
-  - Cardboard
-  - Cloth
+    - Cardboard
+    - Cloth
   damageContainers: []
 
 - type: cfMaterial
@@ -18,12 +18,12 @@
   hitPoints: 10
   brokenThreshold: 5
   damageModifierSets:
-  - Glass
-  - GlassMod
-  - GlassReinforcedMod
-  - GlassPlasmaMod
-  - GlassReinforcedPlasmaMod
-  - WindowMod
+    - Glass
+    - GlassMod
+    - GlassReinforcedMod
+    - GlassPlasmaMod
+    - GlassReinforcedPlasmaMod
+    - WindowMod
 
 - type: cfMaterial
   id: Wood
@@ -32,11 +32,11 @@
   hitPoints: 18
   brokenThreshold: 9
   damageModifierSets:
-  - Wood
-  - WoodMod
-  - Wooden
+    - Wood
+    - WoodMod
+    - Wooden
   damageContainers:
-  - Inorganic
+    - Inorganic
 
 - type: cfMaterial
   id: Stone
@@ -45,9 +45,9 @@
   hitPoints: 28
   brokenThreshold: 14
   damageModifierSets:
-  - RockMod
-  - Rock
-  - Stone
+    - RockMod
+    - Rock
+    - Stone
 
 - type: cfMaterial
   id: IronSteel
@@ -56,13 +56,13 @@
   hitPoints: 36
   brokenThreshold: 18
   damageModifierSets:
-  - SteelMod
-  - SteelStaticMod
-  - Metallic
-  - Metal
+    - SteelMod
+    - SteelStaticMod
+    - Metallic
+    - Metal
   damageContainers:
-  - Silicon
-  - Shield
+    - Silicon
+    - Shield
 
 - type: cfMaterial
   id: StructureMetal
@@ -71,10 +71,10 @@
   hitPoints: 64
   brokenThreshold: 32
   damageModifierSets:
-  - PlasteelMod
-  - PlasteelStaticMod
-  - PlastitaniumMod
-  - StructuralMetallic
-  - StructuralMetallicStrong
+    - PlasteelMod
+    - PlasteelStaticMod
+    - PlastitaniumMod
+    - StructuralMetallic
+    - StructuralMetallicStrong
   damageContainers:
-  - StructuralInorganic
+    - StructuralInorganic

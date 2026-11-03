@@ -7,7 +7,7 @@ using Robust.Shared.Prototypes;
 namespace Content.Shared.CF.Character;
 
 /// <summary>
-/// Pathfinder 2e attribute / HP / AC / save calculation for character creation and spawn.
+/// Carpfinder 2e attribute / HP / AC / save calculation for character creation and spawn.
 /// Attribute modifiers start at +0; each boost is +1 and each flaw is -1.
 /// </summary>
 public static class CFAttributeMath

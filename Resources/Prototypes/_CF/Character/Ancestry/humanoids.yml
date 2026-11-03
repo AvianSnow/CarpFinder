@@ -1,5 +1,5 @@
 # Player Core ancestries that are not already a stock species.
-# Each one uses the humanoid doll. Pathfinder stats live on cfAncestry.
+# Each one uses the humanoid doll. Carpfinder stats live on cfAncestry.
 
 - type: species
   id: CF-Elf
@@ -59,21 +59,21 @@
   categories: [HideSpawnMenu]
   save: false
   components:
-  - type: HumanoidProfile
-    species: CF-Elf
+    - type: HumanoidProfile
+      species: CF-Elf
 
 - type: entity
   parent:
-  - CFAppearanceElf
-  - BaseSpeciesMobOrganic
+    - CFAppearanceElf
+    - BaseSpeciesMobOrganic
   id: CFMobElf
   name: elf
   components:
-  - type: HumanoidProfile
-    species: CF-Elf
-  - type: CF-Species
-    species: CF-Elf
-  - type: CFAtmosphereImmunity
+    - type: HumanoidProfile
+      species: CF-Elf
+    - type: CF-Species
+      species: CF-Elf
+    - type: CFAtmosphereImmunity
 
 - type: entity
   parent: AppearanceHuman
@@ -81,21 +81,21 @@
   categories: [HideSpawnMenu]
   save: false
   components:
-  - type: HumanoidProfile
-    species: CF-Gnome
+    - type: HumanoidProfile
+      species: CF-Gnome
 
 - type: entity
   parent:
-  - CFAppearanceGnome
-  - BaseSpeciesMobOrganic
+    - CFAppearanceGnome
+    - BaseSpeciesMobOrganic
   id: CFMobGnome
   name: gnome
   components:
-  - type: HumanoidProfile
-    species: CF-Gnome
-  - type: CF-Species
-    species: CF-Gnome
-  - type: CFAtmosphereImmunity
+    - type: HumanoidProfile
+      species: CF-Gnome
+    - type: CF-Species
+      species: CF-Gnome
+    - type: CFAtmosphereImmunity
 
 - type: entity
   parent: AppearanceHuman
@@ -103,21 +103,21 @@
   categories: [HideSpawnMenu]
   save: false
   components:
-  - type: HumanoidProfile
-    species: CF-Halfling
+    - type: HumanoidProfile
+      species: CF-Halfling
 
 - type: entity
   parent:
-  - CFAppearanceHalfling
-  - BaseSpeciesMobOrganic
+    - CFAppearanceHalfling
+    - BaseSpeciesMobOrganic
   id: CFMobHalfling
   name: halfling
   components:
-  - type: HumanoidProfile
-    species: CF-Halfling
-  - type: CF-Species
-    species: CF-Halfling
-  - type: CFAtmosphereImmunity
+    - type: HumanoidProfile
+      species: CF-Halfling
+    - type: CF-Species
+      species: CF-Halfling
+    - type: CFAtmosphereImmunity
 
 - type: entity
   parent: AppearanceHuman
@@ -125,21 +125,21 @@
   categories: [HideSpawnMenu]
   save: false
   components:
-  - type: HumanoidProfile
-    species: CF-Leshy
+    - type: HumanoidProfile
+      species: CF-Leshy
 
 - type: entity
   parent:
-  - CFAppearanceLeshy
-  - BaseSpeciesMobOrganic
+    - CFAppearanceLeshy
+    - BaseSpeciesMobOrganic
   id: CFMobLeshy
   name: leshy
   components:
-  - type: HumanoidProfile
-    species: CF-Leshy
-  - type: CF-Species
-    species: CF-Leshy
-  - type: CFAtmosphereImmunity
+    - type: HumanoidProfile
+      species: CF-Leshy
+    - type: CF-Species
+      species: CF-Leshy
+    - type: CFAtmosphereImmunity
 
 - type: entity
   parent: AppearanceHuman
@@ -147,18 +147,18 @@
   categories: [HideSpawnMenu]
   save: false
   components:
-  - type: HumanoidProfile
-    species: CF-Orc
+    - type: HumanoidProfile
+      species: CF-Orc
 
 - type: entity
   parent:
-  - CFAppearanceOrc
-  - BaseSpeciesMobOrganic
+    - CFAppearanceOrc
+    - BaseSpeciesMobOrganic
   id: CFMobOrc
   name: orc
   components:
-  - type: HumanoidProfile
-    species: CF-Orc
-  - type: CF-Species
-    species: CF-Orc
-  - type: CFAtmosphereImmunity
+    - type: HumanoidProfile
+      species: CF-Orc
+    - type: CF-Species
+      species: CF-Orc
+    - type: CFAtmosphereImmunity

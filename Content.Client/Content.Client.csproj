@@ -33,7 +33,7 @@
     <Compile Remove="Lobby\UI\HumanoidProfileEditor.FlavorText.cs" />
     <Compile Remove="Lobby\UI\HumanoidProfileEditor.Roles.cs" />
     <Compile Remove="Lobby\UI\HumanoidProfileEditor.Traits.cs" />
-    <!-- CF Pathfinder character sheet overlays the stock Character window. -->
+    <!-- CF Carpfinder character sheet overlays the stock Character window. -->
     <Compile Remove="UserInterface\Systems\Character\CharacterUIController.cs" />
     <Compile Remove="UserInterface\Systems\Character\Windows\CharacterWindow.xaml.cs" />
   </ItemGroup>

@@ -108,8 +108,8 @@ public sealed partial class PathfindingSystem
 
         // Now we need to pathfind between each node on the spline.
 
-        // TODO: Add rotation version or straight-line version for pathfinder config
-        // Move the worm pathfinder to here I think.
+        // TODO: Add rotation version or straight-line version for carpfinder config
+        // Move the worm carpfinder to here I think.
         var cameFrom = new Dictionary<Vector2i, Vector2i>();
 
         // TODO: Need to get rid of the branch bullshit.
@@ -153,7 +153,7 @@ public sealed partial class PathfindingSystem
     }
 
     /// <summary>
-    /// Does a simpler pathfinder over the nodes to prune unnecessary branches.
+    /// Does a simpler carpfinder over the nodes to prune unnecessary branches.
     /// </summary>
     public List<Vector2i> SimplifyPath(SimplifyPathArgs args)
     {

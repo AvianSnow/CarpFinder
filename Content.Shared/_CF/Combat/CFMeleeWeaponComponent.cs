@@ -3,7 +3,7 @@ using Robust.Shared.GameStates;
 namespace Content.Shared.CF.Combat;
 
 /// <summary>
-/// Pathfinder melee weapon stats used for Strikes instead of stock SS14 damage.
+/// Carpfinder melee weapon stats used for Strikes instead of stock SS14 damage.
 /// </summary>
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class CFMeleeWeaponComponent : Component
@@ -35,7 +35,7 @@ public sealed partial class CFMeleeWeaponComponent : Component
     public int ItemBonus;
 
     /// <summary>
-    /// Pathfinder reach in feet. 5 threatens adjacent tiles. 10 is the reach trait
+    /// Carpfinder reach in feet. 5 threatens adjacent tiles. 10 is the reach trait
     /// and also lengthens the SS14 swing so the weapon can Strike at that distance.
     /// </summary>
     [DataField, AutoNetworkedField]

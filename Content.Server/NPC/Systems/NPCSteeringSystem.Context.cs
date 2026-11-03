@@ -59,7 +59,7 @@ public sealed partial class NPCSteeringSystem
             return true;
         }
 
-        // TODO: Ideally for "FreeSpace" we check all entities on the tile and build flags dynamically (pathfinder refactor in future).
+        // TODO: Ideally for "FreeSpace" we check all entities on the tile and build flags dynamically (carpfinder refactor in future).
         var ents = _entSetPool.Get();
         _lookup.GetLocalEntitiesIntersecting(node.GraphUid, node.Box.Enlarged(-0.04f), ents, flags: LookupFlags.Static);
         var result = true;
@@ -282,7 +282,7 @@ public sealed partial class NPCSteeringSystem
 
             if (stuckTime.TotalSeconds > maxStuckTime)
             {
-                // TODO: Blacklist nodes (pathfinder factor wehn)
+                // TODO: Blacklist nodes (carpfinder factor wehn)
                 // TODO: This should be a warning but
                 // A) NPCs get stuck on non-anchored static bodies still (e.g. closets)
                 // B) NPCs still try to move in locked containers (e.g. cow, hamster)
@@ -741,12 +741,12 @@ public sealed partial class NPCSteeringSystem
     {
         /*
          * Future sloth notes:
-         * Pathfinder cleanup:
-            - Cleanup whatever the fuck is happening in pathfinder
+         * Carpfinder cleanup:
+            - Cleanup whatever the fuck is happening in carpfinder
             - Use Flee for melee behavior / actions and get the seek direction from that rather than bulldozing
             - Must always have a path
             - Path should return the full version + the snipped version
-            - Pathfinder needs to do diagonals
+            - Carpfinder needs to do diagonals
             - Next node is either <current node + 1> or <nearest node + 1> (on the full path)
             - If greater than <1.5m distance> repath
          */

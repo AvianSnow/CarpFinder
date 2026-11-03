@@ -5,7 +5,7 @@ using Robust.Shared.Random;
 namespace Content.Shared.CF.Combat;
 
 /// <summary>
-/// Pathfinder 2e melee Strike helpers (d20 vs AC, degrees of success, damage dice).
+/// Carpfinder 2e melee Strike helpers (d20 vs AC, degrees of success, damage dice).
 /// </summary>
 public static class CFMelee
 {

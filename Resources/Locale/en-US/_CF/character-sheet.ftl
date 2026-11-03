@@ -1,6 +1,6 @@
 cf-sheet-tab = Character Sheet
 cf-sheet-info-tab = Info
-cf-sheet-title = PATHFINDER 2E
+cf-sheet-title = CarpFinder 2E
 cf-sheet-name = Name:
 cf-sheet-ancestry = Ancestry:
 cf-sheet-background = Background:

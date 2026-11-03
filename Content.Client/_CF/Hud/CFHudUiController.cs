@@ -11,7 +11,7 @@ using Robust.Shared.Timing;
 namespace Content.Client.CF.Hud;
 
 /// <summary>
-/// Fills the health bottles and spell pips from the local creature's Pathfinder components.
+/// Fills the health bottles and spell pips from the local creature's Carpfinder components.
 /// </summary>
 [UsedImplicitly]
 public sealed class CFHudUiController : UIController
