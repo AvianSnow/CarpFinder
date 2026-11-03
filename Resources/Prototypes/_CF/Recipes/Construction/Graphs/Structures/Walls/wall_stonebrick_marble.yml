@@ -1,0 +1,49 @@
+- type: constructionGraph
+  id: CFWallMarbleBrick
+  start: start
+  graph:
+    - node: start
+      edges:
+        - to: CFWallFrameMarbleBrick
+          completed:
+            - !type:SnapToGrid
+              southRotation: true
+          steps:
+            - material: CP14MarbleStone
+              amount: 2
+              doAfter: 5
+
+    - node: CFWallFrameMarbleBrick
+      entity: CFWallFrameMarblebrick
+      edges:
+        - to: start
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFMarbleBlock1
+              amount: 2
+            - !type:DeleteEntity {}
+          steps:
+            - tool: Prying
+              doAfter: 4
+        - to: CFWallMarbleBrick
+          steps:
+            - material: CP14MarbleStone
+              amount: 2
+              doAfter: 5
+
+    - node: CFWallMarbleBrick
+      entity: CFWallMarbleBrick
+      edges:
+        - to: CP14WallFrameMarbleBrick
+          steps:
+            - tool: CFHammering
+              doAfter: 2
+            - tool: Prying
+              doAfter: 4
+            - tool: CFHammering
+              doAfter: 6
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFMarbleBlock1
+              amount: 2
+

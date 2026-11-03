@@ -1,0 +1,51 @@
+- type: construction
+  crystallPunkAllowed: true
+  id: CFWorkbench
+  graph: CFWorkbench
+  startNode: start
+  targetNode: CFWorkbench
+  category: construction-category-machines
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  crystallPunkAllowed: true
+  id: CFWorkbenchCooking
+  graph: CFWorkbenchCooking
+  startNode: start
+  targetNode: CFWorkbenchCooking
+  category: construction-category-machines
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  crystallPunkAllowed: true
+  id: CFWorkbenchSewing
+  graph: CFWorkbenchSewing
+  startNode: start
+  targetNode: CFWorkbenchSewing
+  category: construction-category-machines
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  crystallPunkAllowed: true
+  id: CFWorkbenchLeather
+  graph: CFWorkbenchLeather
+  startNode: start
+  targetNode: CFWorkbenchLeather
+  category: construction-category-machines
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked

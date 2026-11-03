@@ -1,0 +1,23 @@
+- type: constructionGraph
+  id: CFSnowdrift
+  start: start
+  graph:
+    - node: start
+      entity: CFSnowdrift
+      edges:
+        - to: CFSnowdrift
+          steps:
+            - tool: CFDigging
+              doAfter: 1
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFSnowball
+              amount: 3
+            - !type:SpawnPrototype
+              prototype: CFSnowEffect
+              amount: 1
+            - !type:PlaySound
+              sound: /Audio/_CP14/Effects/snowball.ogg
+            - !type:DeleteEntity {}
+    - node: CFSnowdrift
+

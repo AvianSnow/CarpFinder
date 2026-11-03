@@ -1,0 +1,39 @@
+- type: construction
+  crystallPunkAllowed: true
+  id: CFBonfire
+  graph: CFBonfire
+  startNode: start
+  targetNode: CFBonfire
+  category: construction-category-misc
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  crystallPunkAllowed: true
+  id: CFBaseTombstone
+  graph: CFBaseTombstone
+  startNode: start
+  targetNode: CFBaseTombstone
+  category: construction-category-misc
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  crystallPunkAllowed: true
+  id: CFWoodenPallet
+  graph: CFWoodenPallet
+  startNode: start
+  targetNode: CFWoodenPallet
+  category: construction-category-misc
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+

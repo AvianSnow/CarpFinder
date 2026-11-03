@@ -1,0 +1,454 @@
+- type: CP14Recipe
+  id: CP14WeaponShieldWooden
+  tag: CP14RecipeAnvil
+  category: Weapon
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14WoodenPlanks
+    count: 3
+  - !type:StackResource
+    stack: CP14IronBar
+    count: 2
+  result: CP14WeaponShieldWooden
+
+- type: CP14Recipe
+  id: CP14WeaponTowerShieldWooden
+  tag: CP14RecipeAnvil
+  category: Weapon
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14WoodenPlanks
+    count: 5
+  - !type:StackResource
+    stack: CP14IronBar
+    count: 4
+  result: CP14WeaponTowerShieldWooden
+
+- type: CP14Recipe
+  id: CP14BaseWrench
+  tag: CP14RecipeAnvil
+  category: Tools
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14IronBar
+    count: 1
+  result: CP14BaseWrench
+
+- type: CP14Recipe
+  id: CP14PlatePie
+  tag: CP14RecipeAnvil
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14IronBar # Physical Composition in item
+    count: 1
+  result: CP14PlatePie
+
+- type: CP14Recipe
+  id: CP14CrystalLampBlueEmpty
+  tag: CP14RecipeAnvil
+  category: Tools
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14CopperBar  # Physical Composition in item
+    count: 2
+  - !type:StackResource
+    stack: CP14IronBar
+    count: 1
+  result: CP14CrystalLampBlueEmpty
+
+- type: CP14Recipe
+  id: CP14Scissors
+  tag: CP14RecipeAnvil
+  category: Tools
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14IronBar
+    count: 1
+  result: CP14Scissors
+
+- type: CP14Recipe
+  id: CP14ClothingGlovesGirdles
+  tag: CP14RecipeAnvil
+  category: Armor
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14IronBar
+    count: 1
+  result: CP14ClothingGlovesGirdles
+
+- type: CP14Recipe
+  id: CP14CrossboltCopper
+  tag: CP14RecipeAnvil
+  category: Weapon
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14CopperBar
+    count: 1
+  result: CP14CrossboltCopper
+  resultCount: 5
+
+- type: CP14Recipe
+  id: CP14CrossboltIron
+  tag: CP14RecipeAnvil
+  category: Weapon
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14IronBar
+    count: 1
+  result: CP14CrossboltIron
+  resultCount: 5
+
+- type: CP14Recipe
+  id: CP14CrossboltGold
+  tag: CP14RecipeAnvil
+  category: Weapon
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14GoldBar
+    count: 1
+  result: CP14CrossboltGold
+  resultCount: 5
+
+- type: CP14Recipe
+  id: CP14CrossboltMithril
+  tag: CP14RecipeAnvil
+  category: Weapon
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14MithrilBar
+    count: 1
+  result: CP14CrossboltMithril
+  resultCount: 5
+
+- type: CP14Recipe
+  id: CP14BigCrossboltCopper
+  tag: CP14RecipeAnvil
+  category: Weapon
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14CopperBar
+    count: 1
+  result: CP14BigCrossboltCopper
+  resultCount: 2
+
+- type: CP14Recipe
+  id: CP14BigCrossboltIron
+  tag: CP14RecipeAnvil
+  category: Weapon
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14IronBar
+    count: 1
+  result: CP14BigCrossboltIron
+  resultCount: 2
+
+- type: CP14Recipe
+  id: CP14BigCrossboltGold
+  tag: CP14RecipeAnvil
+  category: Weapon
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14GoldBar
+    count: 1
+  result: CP14BigCrossboltGold
+  resultCount: 2
+
+- type: CP14Recipe
+  id: CP14BigCrossboltMithril
+  tag: CP14RecipeAnvil
+  category: Weapon
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14MithrilBar
+    count: 1
+  result: CP14BigCrossboltMithril
+  resultCount: 2
+
+- type: CP14Recipe
+  id: CP14BaseLockpick
+  tag: CP14RecipeAnvil
+  category: Tools
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14IronBar
+    count: 1
+  result: CP14BaseLockpick
+
+- type: CP14Recipe
+  id: CP14LockpickMithril
+  tag: CP14RecipeAnvil
+  category: Tools
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14MithrilBar
+    count: 1
+  result: CP14LockpickMithril
+
+- type: CP14Recipe
+  id: CP14BaseLightCrossbow
+  tag: CP14RecipeAnvil
+  category: Weapon
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14CopperBar
+    count: 1
+  - !type:StackResource
+    stack: CP14IronBar
+    count: 3
+  - !type:ProtoIdResource
+    protoId: CP14String
+    count: 1
+  result: CP14BaseLightCrossbow
+
+- type: CP14Recipe
+  id: CP14BaseCrossbow
+  tag: CP14RecipeAnvil
+  category: Weapon
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14IronBar
+    count: 5
+  - !type:ProtoIdResource
+    protoId: CP14String
+    count: 2
+  result: CP14BaseCrossbow
+
+- type: CP14Recipe
+  id: CP14ClothingMaskSteelMask
+  tag: CP14RecipeAnvil
+  category: Armor
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14IronBar
+    count: 2
+  result: CP14ClothingMaskSteelMask
+
+- type: CP14Recipe
+  id: CP14KeyCopperBlank
+  tag: CP14RecipeAnvil
+  category: Tools
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14CopperBar
+    count: 1
+  result: CP14KeyCopperBlank
+
+- type: CP14Recipe
+  id: CP14KeyIronBlank
+  tag: CP14RecipeAnvil
+  category: Tools
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14IronBar
+    count: 1
+  result: CP14KeyIronBlank
+
+- type: CP14Recipe
+  id: CP14KeyGoldBlank
+  tag: CP14RecipeAnvil
+  category: Tools
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14GoldBar
+    count: 1
+  result: CP14KeyGoldBlank
+
+- type: CP14Recipe
+  id: CP14KeyMithrilBlank
+  tag: CP14RecipeAnvil
+  category: Tools
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14MithrilBar
+    count: 1
+  result: CP14KeyMithrilBlank
+
+- type: CP14Recipe
+  id: CP14KeyFile
+  tag: CP14RecipeAnvil
+  category: Tools
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14IronBar
+    count: 1
+  result: CP14KeyFile
+
+- type: CP14Recipe
+  id: CP14LockCopper
+  tag: CP14RecipeAnvil
+  category: Tools
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14CopperBar
+    count: 1
+  result: CP14LockCopper
+
+- type: CP14Recipe
+  id: CP14LockIron
+  tag: CP14RecipeAnvil
+  category: Tools
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14IronBar
+    count: 1
+  result: CP14LockIron
+
+- type: CP14Recipe
+  id: CP14LockGold
+  tag: CP14RecipeAnvil
+  category: Tools
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14GoldBar
+    count: 1
+  result: CP14LockGold
+
+- type: CP14Recipe
+  id: CP14LockMithril
+  tag: CP14RecipeAnvil
+  category: Tools
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14MithrilBar
+    count: 1
+  result: CP14LockMithril
+
+- type: CP14Recipe
+  id: CP14EnergyCrystalMediumEmpty
+  tag: CP14RecipeAnvil
+  category: Tools
+  craftTime: 1
+  requirements:
+  - !type:ProtoIdResource
+    protoId: CP14CrystalShardQuartz
+    count: 1
+  - !type:StackResource
+    stack: CP14CopperBar
+    count: 1
+  result: CP14EnergyCrystalMediumEmpty
+
+- type: CP14Recipe
+  id: CP14Fork
+  tag: CP14RecipeAnvil
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14IronBar
+    count: 1
+  result: CP14Fork
+  resultCount: 3
+
+- type: CP14Recipe
+  id: CP14Spoon
+  tag: CP14RecipeAnvil
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14IronBar
+    count: 1
+  result: CP14Spoon
+  resultCount: 3
+
+- type: CP14Recipe
+  id: CP14SteelGobletCopper
+  tag: CP14RecipeAnvil
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14CopperBar
+    count: 1
+  result: CP14SteelGobletCopper
+
+- type: CP14Recipe
+  id: CP14SteelGobletIron
+  tag: CP14RecipeAnvil
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14IronBar
+    count: 1
+  result: CP14SteelGobletIron
+
+- type: CP14Recipe
+  id: CP14SteelGobletGold
+  tag: CP14RecipeAnvil
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14GoldBar
+    count: 1
+  result: CP14SteelGobletGold
+
+- type: CP14Recipe
+  id: CP14FryingPan
+  tag: CP14RecipeAnvil
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14IronBar
+    count: 2
+  - !type:StackResource
+    stack: CP14WoodenPlanks
+    count: 1
+  result: CP14FryingPan
+
+- type: CP14Recipe
+  id: CP14CookingPot
+  tag: CP14RecipeAnvil
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14IronBar
+    count: 3
+  result: CP14CookingPot
+
+- type: CP14Recipe
+  id: CP14IronBuckleRecipe
+  tag: CP14RecipeAnvil
+  craftTime: 1
+  requirements:
+  - !type:StackResource
+    stack: CP14IronBar
+    count: 1
+  result: CP14IronBuckle
+  resultCount: 5
+
+- type: CP14Recipe
+  id: CP14RatArmor
+  tag: CP14RecipeAnvil
+  category: Armor
+  craftTime: 4
+  requirements:
+  - !type:StackResource
+    stack: CP14IronBar
+    count: 6
+  result: CP14RatArmor
