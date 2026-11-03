@@ -3,79 +3,76 @@
 - type: entity
   id: CFWallFrameWooden
   name: wooden wall frame
-  parent:
-  - CFBaseWallFrame
+  parent: CFBaseWallFrame
 
   components:
-  - type: Sprite
-    sprite: _CP14/Structures/Walls/wooden_wall.rsi
-    state: frame
-  - type: Icon
-    sprite: _CP14/Structures/Walls/wooden_wall.rsi
-    state: frame
-  - type: Construction
-    graph: CFWallWooden
-    node: CFWallFrameWooden
-  - type: Damageable
-    damageContainer: StructuralInorganic
-    damageModifierSet: WoodMod
-  - type: Destructible
-    thresholds:
-    - trigger:
-        !type:DamageTrigger
-        damage: 50
-      behaviors:
-      - !type:SpawnEntitiesBehavior
-        spawn:
-          CFWoodenPlanks1:
-            min: 1
-            max: 2
-      - !type:PlaySoundBehavior
-        sound:
-          collection: WoodDestroy
-      - !type:DoActsBehavior
-        acts: [ "Destruction" ]
+    - type: Sprite
+      sprite: _CP14/Structures/Walls/wooden_wall.rsi
+      state: frame
+    - type: Icon
+      sprite: _CP14/Structures/Walls/wooden_wall.rsi
+      state: frame
+    - type: Construction
+      graph: CFWallWooden
+      node: CFWallFrameWooden
+    - type: Damageable
+      damageContainer: StructuralInorganic
+      damageModifierSet: WoodMod
+    - type: Destructible
+      thresholds:
+        - trigger: !type:DamageTrigger
+            damage: 50
+          behaviors:
+            - !type:SpawnEntitiesBehavior
+              spawn:
+                CFWoodenPlanks1:
+                  min: 1
+                  max: 2
+            - !type:PlaySoundBehavior
+              sound:
+                collection: WoodDestroy
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
 
 - type: entity
   id: CFWallWooden
   name: wooden wall
-  parent:
-  - CFBaseWall
-
+  parent: CFBaseWall
   components:
-  - type: Sprite
-    sprite: _CP14/Structures/Walls/wooden_wall.rsi
-  - type: Icon
-    sprite: _CP14/Structures/Walls/wooden_wall.rsi
-  - type: IconSmooth
-    states:
-    - !type:CornerSpriteSmoothing
-      mask: [ CFWall ]
-      base: wood
-  - type: Damageable
-    damageContainer: StructuralInorganic
-    damageModifierSet: WoodMod
-  - type: Destructible
-    thresholds:
-    - trigger:
-        !type:DamageTrigger
-        damage: 50
-      behaviors:
-      - !type:PlaySoundBehavior
-        sound:
-          collection: WoodDestroy
-      - !type:SpawnEntitiesBehavior
-        spawn:
-          CFWoodenPlanks1:
-            min: 1
-            max: 2
-      - !type:ChangeConstructionNodeBehavior
-        node: CFWallFrameWooden
-      - !type:DoActsBehavior
-        acts: [ "Destruction" ]
-  - type: Construction
-    graph: CFWallWooden
-    node: CFWallWooden
+    - type: Sprite
+      sprite: _CP14/Structures/Walls/wooden_wall.rsi
+    - type: IconSmooth
+      key: CFWall
+      states:
+        - !type:CornerSpriteSmoothing
+          mask: [CFWall]
+          base: wood
+    - type: Icon
+      sprite: _CP14/Structures/Walls/wooden_wall.rsi
+      state: full
+    - type: Damageable
+      damageContainer: StructuralInorganic
+      damageModifierSet: WoodMod
+    - type: Destructible
+      thresholds:
+        - trigger: !type:DamageTrigger
+            damage: 50
+          behaviors:
+            - !type:PlaySoundBehavior
+              sound:
+                collection: WoodDestroy
+            - !type:SpawnEntitiesBehavior
+              spawn:
+                CFWoodenPlanks1:
+                  min: 1
+                  max: 2
+            - !type:ChangeConstructionNodeBehavior
+              node: CFWallFrameWooden
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+    - type: Construction
+      graph: CFWallWooden
+      node: CFWallWooden
 
 # Wooden birch
 
@@ -83,59 +80,57 @@
   id: CFWallFrameWoodenBirch
   parent: CFWallFrameWooden
   components:
-  - type: Sprite
-    sprite: _CP14/Structures/Walls/wooden_wall_birch.rsi
-  - type: Icon
-    sprite: _CP14/Structures/Walls/wooden_wall_birch.rsi
-  - type: Construction
-    graph: CFWallWoodenBirch
-    node: CFWallFrameWoodenBirch
-  - type: Destructible
-    thresholds:
-    - trigger:
-        !type:DamageTrigger
-        damage: 50
-      behaviors:
-      - !type:SpawnEntitiesBehavior
-        spawn:
-          CFBirchWoodenPlanks1:
-            min: 1
-            max: 2
-      - !type:PlaySoundBehavior
-        sound:
-          collection: WoodDestroy
-      - !type:DoActsBehavior
-        acts: [ "Destruction" ]
+    - type: Sprite
+      sprite: _CP14/Structures/Walls/wooden_wall_birch.rsi
+    - type: Icon
+      sprite: _CP14/Structures/Walls/wooden_wall_birch.rsi
+    - type: Construction
+      graph: CFWallWoodenBirch
+      node: CFWallFrameWoodenBirch
+    - type: Destructible
+      thresholds:
+        - trigger: !type:DamageTrigger
+            damage: 50
+          behaviors:
+            - !type:SpawnEntitiesBehavior
+              spawn:
+                CFBirchWoodenPlanks1:
+                  min: 1
+                  max: 2
+            - !type:PlaySoundBehavior
+              sound:
+                collection: WoodDestroy
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
 
 - type: entity
   id: CFWallWoodenBirch
   parent: CFWallWooden
   components:
-  - type: Sprite
-    sprite: _CP14/Structures/Walls/wooden_wall_birch.rsi
-  - type: Icon
-    sprite: _CP14/Structures/Walls/wooden_wall_birch.rsi
-  - type: Construction
-    graph: CFWallWoodenBirch
-    node: CFWallWoodenBirch
-  - type: Destructible
-    thresholds:
-    - trigger:
-        !type:DamageTrigger
-        damage: 50
-      behaviors:
-      - !type:PlaySoundBehavior
-        sound:
-          collection: WoodDestroy
-      - !type:SpawnEntitiesBehavior
-        spawn:
-          CFBirchWoodenPlanks1:
-            min: 1
-            max: 2
-      - !type:ChangeConstructionNodeBehavior
-        node: CFWallFrameWoodenBirch
-      - !type:DoActsBehavior
-        acts: [ "Destruction" ]
+    - type: Sprite
+      sprite: _CP14/Structures/Walls/wooden_wall_birch.rsi
+    - type: Icon
+      sprite: _CP14/Structures/Walls/wooden_wall_birch.rsi
+    - type: Construction
+      graph: CFWallWoodenBirch
+      node: CFWallWoodenBirch
+    - type: Destructible
+      thresholds:
+        - trigger: !type:DamageTrigger
+            damage: 50
+          behaviors:
+            - !type:PlaySoundBehavior
+              sound:
+                collection: WoodDestroy
+            - !type:SpawnEntitiesBehavior
+              spawn:
+                CFBirchWoodenPlanks1:
+                  min: 1
+                  max: 2
+            - !type:ChangeConstructionNodeBehavior
+              node: CFWallFrameWoodenBirch
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
 
 # Wooden spruce
 
@@ -143,56 +138,54 @@
   id: CFWallFrameWoodenSpruce
   parent: CFWallFrameWooden
   components:
-  - type: Sprite
-    sprite: _CP14/Structures/Walls/wooden_wall_spruce.rsi
-  - type: Icon
-    sprite: _CP14/Structures/Walls/wooden_wall_spruce.rsi
-  - type: Construction
-    graph: CFWallWoodenSpruce
-    node: CFWallFrameWoodenSpruce
-  - type: Destructible
-    thresholds:
-    - trigger:
-        !type:DamageTrigger
-        damage: 50
-      behaviors:
-      - !type:SpawnEntitiesBehavior
-        spawn:
-          CP14SpruceWoodenPlanks1:
-            min: 1
-            max: 2
-      - !type:PlaySoundBehavior
-        sound:
-          collection: WoodDestroy
-      - !type:DoActsBehavior
-        acts: [ "Destruction" ]
+    - type: Sprite
+      sprite: _CP14/Structures/Walls/wooden_wall_spruce.rsi
+    - type: Icon
+      sprite: _CP14/Structures/Walls/wooden_wall_spruce.rsi
+    - type: Construction
+      graph: CFWallWoodenSpruce
+      node: CFWallFrameWoodenSpruce
+    - type: Destructible
+      thresholds:
+        - trigger: !type:DamageTrigger
+            damage: 50
+          behaviors:
+            - !type:SpawnEntitiesBehavior
+              spawn:
+                CP14SpruceWoodenPlanks1:
+                  min: 1
+                  max: 2
+            - !type:PlaySoundBehavior
+              sound:
+                collection: WoodDestroy
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
 
 - type: entity
   id: CFWallWoodenSpruce
   parent: CFWallWooden
   components:
-  - type: Sprite
-    sprite: _CP14/Structures/Walls/wooden_wall_spruce.rsi
-  - type: Icon
-    sprite: _CP14/Structures/Walls/wooden_wall_spruce.rsi
-  - type: Construction
-    graph: CFWallWoodenSpruce
-    node: CFWallWoodenSpruce
-  - type: Destructible
-    thresholds:
-    - trigger:
-        !type:DamageTrigger
-        damage: 50
-      behaviors:
-      - !type:PlaySoundBehavior
-        sound:
-          collection: WoodDestroy
-      - !type:SpawnEntitiesBehavior
-        spawn:
-          CP14SpruceWoodenPlanks1:
-            min: 1
-            max: 2
-      - !type:ChangeConstructionNodeBehavior
-        node: CFWallFrameWoodenSpruce
-      - !type:DoActsBehavior
-        acts: [ "Destruction" ]
+    - type: Sprite
+      sprite: _CP14/Structures/Walls/wooden_wall_spruce.rsi
+    - type: Icon
+      sprite: _CP14/Structures/Walls/wooden_wall_spruce.rsi
+    - type: Construction
+      graph: CFWallWoodenSpruce
+      node: CFWallWoodenSpruce
+    - type: Destructible
+      thresholds:
+        - trigger: !type:DamageTrigger
+            damage: 50
+          behaviors:
+            - !type:PlaySoundBehavior
+              sound:
+                collection: WoodDestroy
+            - !type:SpawnEntitiesBehavior
+              spawn:
+                CP14SpruceWoodenPlanks1:
+                  min: 1
+                  max: 2
+            - !type:ChangeConstructionNodeBehavior
+              node: CFWallFrameWoodenSpruce
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
