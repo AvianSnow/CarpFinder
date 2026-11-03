@@ -1,0 +1,14 @@
+# CarpFinder: ancestry feat through level 5. Short mechanical note, not source text.
+# source: Carpfinder Player Core 2
+- type: cfFeat
+  id: CFIruxiArmaments
+  name: "Iruxi Armaments"
+  description: "Your unarmed Strike deals 1d8 piercing."
+  ancestry: Lizardfolk
+  level: 1
+  traits:
+    - "Lizardfolk"
+  naturalDice: 1
+  naturalDie: 8
+  naturalDamage: piercing
+  naturalAgile: false

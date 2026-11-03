@@ -1,0 +1,10 @@
+# CarpFinder: class feat through level 5. Short mechanical note, not source text.
+# source: Carpfinder Player Core
+- type: cfFeat
+  id: CFTumbleBehindRogue
+  name: "Tumble Behind (Rogue)"
+  description: "Acrobatics against Reflex. Success makes the target off-guard to you."
+  class: Rogue
+  level: 1
+  traits:
+    - "Rogue"

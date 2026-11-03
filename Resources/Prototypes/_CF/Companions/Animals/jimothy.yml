@@ -1,0 +1,82 @@
+# Young Jimothy. Ancestry Hit Points 4. At 1st level that is 11 Hit Points.
+- type: cfPet
+  id: CFPetJimothy
+  name: Jimothy
+  kind: Companion
+  entity: CFCompanionJimothy
+  size: "Small"
+  strength: 1
+  dexterity: 3
+  constitution: 1
+  intelligence: -4
+  wisdom: 1
+  charisma: 2
+  hitPoints: 4
+  description: "A young jimothy companion. Advancement does not change his size. He can pick up an unattended object."
+  speeds:
+    - name: Speed
+      feet: 30
+  senses:
+    - "low-light vision"
+    - "scent (imprecise, 30 feet)"
+  attacks:
+    - name: "Jaws"
+      die: 6
+      damage: piercing
+      finesse: true
+  skills:
+    - name: Stealth
+      ability: Dexterity
+  support: "Choose yourself or an ally within 30 feet who can see him. Until your next turn, that creature has a +2 circumstance bonus to saves against emotion effects."
+  advanced: "Tumbling Swipe"
+
+- type: entity
+  parent: [ SimpleMobBase, CFCompanionBase ]
+  id: CFCompanionJimothy
+  name: jimothy companion
+  description: "A young jimothy companion. Advancement does not change his size. He can pick up an unattended object."
+  suffix: Companion
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: companion
+      sprite: _CF/Mobs/companion-default.rsi
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: companion
+      Critical:
+        Base: dead
+      Dead:
+        Base: dead
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 16
+    maxHp: 11
+    currentHp: 11
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 1
+      Dexterity: 3
+      Constitution: 1
+      Intelligence: -4
+      Wisdom: 1
+      Charisma: 2
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 6
+    naturalType: piercing
+    naturalFinesse: true
+    naturalAgile: false
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      11: Dead

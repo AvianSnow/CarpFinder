@@ -1,0 +1,1348 @@
+### RED
+
+- type: tile #Default
+  editorHidden: false
+  id: CFFloorRedWoodPlanks
+  name: cf-tiles-red-woodplanks
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_woodplanks.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  deconstructTools: [ Prying ]
+  itemDrop: CFWoodenPlanks1
+  isSubfloor: false
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CP14FloorWoodPlanksBurned
+
+- type: tile #Big
+  editorHidden: false
+  id: CFFloorRedWoodPlanksBig
+  name: cf-tiles-red-woodplanks-big
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_woodplanks_big.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  itemDrop: CFFloorWoodenPlanks1
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksBigBurned
+
+- type: tile #Cruci
+  editorHidden: false
+  id: CFFloorRedWoodPlanksCruciform
+  name: cf-tiles-red-woodplanks-cruciform
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_woodplanks_cruciform.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  itemDrop: CFFloorWoodenPlanks1
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksCruciformBurned
+
+- type: tile #Stairways
+  editorHidden: false
+  id: CFFloorRedWoodPlanksStairways
+  name: cf-tiles-red-woodplanks-stairways
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_woodplanks_stairways.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  itemDrop: CFFloorWoodenPlanks1
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksStairwaysBurned
+
+#broken
+
+- type: tile #Default
+  editorHidden: false
+  id: CFFloorRedWoodPlanksBroken
+  name: cf-tiles-red-woodplanks-broken
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_woodplanks_broken.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksBurned
+
+- type: tile #Big
+  editorHidden: false
+  id: CFFloorRedWoodPlanksBigBroken
+  name: cf-tiles-red-woodplanks-big-broken
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_woodplanks_big_broken.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksBigBurned
+
+- type: tile #Cruci
+  editorHidden: false
+  id: CFFloorRedWoodPlanksCruciformBroken
+  name: cf-tiles-red-woodplanks-cruciform-broken
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_woodplanks_cruciform_broken.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksCruciformBurned
+
+- type: tile #Stairways
+  editorHidden: false
+  id: CFFloorRedWoodPlanksStairwaysBroken
+  name: cf-tiles-red-woodplanks-stairways-broken
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_woodplanks_stairways_broken.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/RedWood/red_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksStairwaysBurned
+
+
+#/broken
+### /RED
+
+### BIRCH
+
+- type: tile #Default
+  editorHidden: false
+  id: CFFloorBirchWoodPlanks
+  name: cf-tiles-birch-woodplanks
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_woodplanks.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  itemDrop: CFFloorTileBirchWoodplanks
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksBurned
+
+- type: tile #Big
+  editorHidden: false
+  id: CFFloorBirchWoodPlanksBig
+  name: cf-tiles-birch-woodplanks-big
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_woodplanks_big.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  itemDrop: CFFloorTileBirchWoodplanksBig
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksBigBurned
+
+- type: tile #Cruci
+  editorHidden: false
+  id: CFFloorBirchWoodPlanksCruciform
+  name: cf-tiles-birch-woodplanks-cruciform
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_woodplanks_cruciform.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  itemDrop: CFFloorTileBirchWoodplanksCruciform
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksCruciformBurned
+
+- type: tile #Stairways
+  editorHidden: false
+  id: CFFloorBirchWoodPlanksStairways
+  name: cf-tiles-birch-woodplanks-stairways
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_woodplanks_stairways.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  itemDrop: CFFloorTileBirchWoodplanksStairs
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksStairwaysBurned
+
+#broken
+
+- type: tile #Default
+  editorHidden: false
+  id: CFFloorBirchWoodPlanksBroken
+  name: cf-tiles-birch-woodplanks-broken
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_woodplanks_broken.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksBurned
+
+- type: tile #Big
+  editorHidden: false
+  id: CFFloorBirchWoodPlanksBigBroken
+  name: cf-tiles-birch-woodplanks-big-broken
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_woodplanks_big_broken.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksBigBurned
+
+- type: tile #Cruci
+  editorHidden: false
+  id: CFFloorBirchWoodPlanksCruciformBroken
+  name: cf-tiles-birch-woodplanks-cruciform-broken
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_woodplanks_cruciform_broken.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksCruciformBurned
+
+- type: tile #Stairways
+  editorHidden: false
+  id: CFFloorBirchWoodPlanksStairwaysBroken
+  name: cf-tiles-birch-woodplanks-stairways-broken
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_woodplanks_stairways_broken.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/BirchWood/birch_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksStairwaysBurned
+
+
+#/broken
+### /BIRCH
+
+### OAK
+
+- type: tile #Default
+  editorHidden: false
+  id: CFFloorOakWoodPlanks
+  name: cf-tiles-oak-woodplanks
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_woodplanks.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  itemDrop: CFFloorTileOakWoodplanks
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksBurned
+
+- type: tile #Big
+  editorHidden: false
+  id: CFFloorOakWoodPlanksBig
+  name: cf-tiles-oak-woodplanks-big
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_woodplanks_big.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  itemDrop: CFFloorTileOakWoodplanksBig
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksBigBurned
+
+- type: tile #Cruci
+  editorHidden: false
+  id: CFFloorOakWoodPlanksCruciform
+  name: cf-tiles-oak-woodplanks-cruciform
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_woodplanks_cruciform.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  itemDrop: CFFloorTileOakWoodplanksCruciform
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksCruciformBurned
+
+- type: tile #Stairways
+  editorHidden: false
+  id: CFFloorOakWoodPlanksStairways
+  name: cf-tiles-oak-woodplanks-stairways
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_woodplanks_stairways.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  itemDrop: CFFloorTileOakWoodplanksStairs
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksStairwaysBurned
+
+#broken
+
+- type: tile #Default
+  editorHidden: false
+  id: CFFloorOakWoodPlanksBroken
+  name: cf-tiles-oak-woodplanks-broken
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_woodplanks_broken.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksBurned
+
+- type: tile #Big
+  editorHidden: false
+  id: CFFloorOakWoodPlanksBigBroken
+  name: cf-tiles-oak-woodplanks-big-broken
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_woodplanks_big_broken.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_W.png
+  baseTurf: CP14FloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CP14FloorWoodPlanksBigBurned
+
+- type: tile #Cruci
+  editorHidden: false
+  id: CFFloorOakWoodPlanksCruciformBroken
+  name: cf-tiles-oak-woodplanks-cruciform-broken
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_woodplanks_cruciform_broken.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksCruciformBurned
+
+- type: tile #Stairways
+  editorHidden: false
+  id: CFFloorOakWoodPlanksStairwaysBroken
+  name: cf-tiles-oak-woodplanks-stairways-broken
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_woodplanks_stairways_broken.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/OakWood/oak_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksStairwaysBurned
+
+
+#/broken
+### /OAK
+
+### DARK
+
+- type: tile #Default
+  editorHidden: false
+  id: CFFloorDarkWoodPlanks
+  name: cf-tiles-dark-woodplanks
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_woodplanks.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  itemDrop: CFWoodenPlanks1
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksBurned
+
+- type: tile #Big
+  editorHidden: false
+  id: CFloorDarkWoodPlanksBig
+  name: cf-tiles-dark-woodplanks-big
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_woodplanks_big.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  itemDrop: CFWoodenPlanks1
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksBigBurned
+
+- type: tile #Cruci
+  editorHidden: false
+  id: CFFloorDarkWoodPlanksCruciform
+  name: cf-tiles-dark-woodplanks-cruciform
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_woodplanks_cruciform.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_W.png
+  baseTurf: CFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  itemDrop: CFWoodenPlanks1
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksCruciformBurned
+
+- type: tile #Stairways
+  editorHidden: false
+  id: CFFloorDarkWoodPlanksStairways
+  name: cf-tiles-dark-woodplanks-stairways
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_woodplanks_stairways.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  itemDrop: CFWoodenPlanks1
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksStairwaysBurned
+
+#broken
+
+- type: tile #Default
+  editorHidden: false
+  id: CFFloorDarkWoodPlanksBroken
+  name: cf-tiles-dark-woodplanks-broken
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_woodplanks_broken.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksBurned
+
+- type: tile #Big
+  editorHidden: false
+  id: CFFloorDarkWoodPlanksBigBroken
+  name: cf-tiles-dark-woodplanks-big-broken
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_woodplanks_big_broken.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_W.png
+  baseTurf: CFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksBigBurned
+
+- type: tile #Cruci
+  editorHidden: false
+  id: CFFloorDarkWoodPlanksCruciformBroken
+  name: cf-tiles-dark-woodplanks-cruciform-broken
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_woodplanks_cruciform_broken.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksCruciformBurned
+
+- type: tile #Stairways
+  editorHidden: false
+  id: CFFloorDarkWoodPlanksStairwaysBroken
+  name: cf-tiles-dark-woodplanks-stairways-broken
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_woodplanks_stairways_broken.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/DarkWood/dark_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksStairwaysBurned
+
+
+#/broken
+### /DARK
+
+### BURNED
+- type: tile #Default
+  editorHidden: false
+  id: CFFloorWoodPlanksBurned
+  name: cf-tiles-woodplanks-burned
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/Burned/woodplanks_burned.png
+  edgeSpritePriority: 100
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/Burned/single_edge_burned_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/Burned/single_edge_burned_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/Burned/single_edge_burned_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/Burned/single_edge_burned_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/Burned/double_edge_burned_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/Burned/double_edge_burned_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/Burned/double_edge_burned_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/Burned/double_edge_burned_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+
+- type: tile #Big
+  editorHidden: false
+  id: CFFloorWoodPlanksBigBurned
+  name: cf-tiles-woodplanks-big-burned
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/Burned/woodplanks_big_burned.png
+  edgeSpritePriority: 100
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/Burned/single_edge_burned_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/Burned/single_edge_burned_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/Burned/single_edge_burned_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/Burned/single_edge_burned_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/Burned/double_edge_burned_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/Burned/double_edge_burned_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/Burned/double_edge_burned_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/Burned/double_edge_burned_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+
+- type: tile #Cruci
+  editorHidden: false
+  id: CFFloorWoodPlanksCruciformBurned
+  name: cf-tiles-woodplanks-cruciform-burned
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/Burned/woodplanks_cruciform_burned.png
+  edgeSpritePriority: 100
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/Burned/single_edge_burned_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/Burned/single_edge_burned_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/Burned/single_edge_burned_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/Burned/single_edge_burned_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/Burned/double_edge_burned_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/Burned/double_edge_burned_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/Burned/double_edge_burned_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/Burned/double_edge_burned_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+
+- type: tile #Stairways
+  editorHidden: false
+  id: CFFloorWoodPlanksStairwaysBurned
+  name: cf-tiles-woodplanks-stairways-burned
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/Burned/woodplanks_stairways_burned.png
+  edgeSpritePriority: 100
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/Burned/single_edge_burned_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/Burned/single_edge_burned_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/Burned/single_edge_burned_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/Burned/single_edge_burned_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/Burned/double_edge_burned_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/Burned/double_edge_burned_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/Burned/double_edge_burned_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/Burned/double_edge_burned_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+### /BURNED
+
+### LUCENS
+- type: tile #Default
+  editorHidden: false
+  id: CFFloorLucensWoodPlanks
+  name: cf-tiles-lucens-woodplanks
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_woodplanks.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  deconstructTools: [ Prying ]
+  itemDrop: CFFloorLucensWoodPlanks
+  isSubfloor: false
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksBurned
+
+- type: tile #Big
+  editorHidden: false
+  id: CFFloorLucensWoodPlanksBig
+  name: cf-tiles-lucens-woodplanks-big
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_woodplanks_big.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  itemDrop: CFFloorLucensWoodPlanks
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksBigBurned
+
+- type: tile #Cruci
+  editorHidden: false
+  id: CFFloorLucensWoodPlanksCruciform
+  name: cf-tiles-lucens-woodplanks-cruciform
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_woodplanks_cruciform.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  itemDrop: CFFloorLucensWoodPlanks
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksCruciformBurned
+
+- type: tile #Stairways
+  editorHidden: false
+  id: CFFloorLucensWoodPlanksStairways
+  name: cf-tiles-lucens-woodplanks-stairways
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_woodplanks_stairways.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  itemDrop: CFFloorLucensWoodPlanks
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksStairwaysBurned
+
+#broken
+
+- type: tile #Default
+  editorHidden: false
+  id: CFFloorLucensWoodPlanksBroken
+  name: cf-tiles-lucens-woodplanks-broken
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_woodplanks_broken.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksBurned
+
+- type: tile #Big
+  editorHidden: false
+  id: CFFloorLucensWoodPlanksBigBroken
+  name: cf-tiles-lucens-woodplanks-big-broken
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_woodplanks_big_broken.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksBigBurned
+
+- type: tile #Cruci
+  editorHidden: false
+  id: CFFloorLucensWoodPlanksCruciformBroken
+  name: cf-tiles-lucens-woodplanks-cruciform-broken
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_woodplanks_cruciform_broken.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksCruciformBurned
+
+- type: tile #Stairways
+  editorHidden: false
+  id: CFFloorLucensWoodPlanksStairwaysBroken
+  name: cf-tiles-lucens-woodplanks-stairways-broken
+  sprite: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_woodplanks_stairways_broken.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  edgeSpritePriority: 101
+  edgeSprites:
+    SouthEast: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_SE.png
+    NorthEast: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_NE.png
+    NorthWest: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_NW.png
+    SouthWest: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_single_edge_SW.png
+    South: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_S.png
+    East: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_E.png
+    North: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_N.png
+    West: /Textures/_CP14/Tiles/WoodPlanks/LucensWood/lucens_double_edge_W.png
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  deconstructTools: [ Prying ]
+  footstepSounds:
+    collection: FootstepWood
+  heatCapacity: 10000
+  weather: true
+  burnedTile: CFFloorWoodPlanksStairwaysBurned

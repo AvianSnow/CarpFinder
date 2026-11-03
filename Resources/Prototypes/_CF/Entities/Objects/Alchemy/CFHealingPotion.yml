@@ -24,6 +24,13 @@
     - CFMagical
     - CFPotion
     - CFVitality
+  - type: CFTrait
+    traits:
+    - Consumable
+    - Healing
+    - Magical
+    - Potion
+    - Vitality
   - type: CFAlchemicalItem
     itemLevel: 1
     priceGp: 4
@@ -43,3 +50,5 @@
     healBonus: 0
   - type: StaticPrice
     price: 40
+  - type: CFItemPrice
+    copper: 400 # 4 gp

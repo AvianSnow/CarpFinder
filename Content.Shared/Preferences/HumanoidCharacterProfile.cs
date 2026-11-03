@@ -2,6 +2,8 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Content.Shared.CCVar;
+using Content.Shared.CF.Character;
+using Content.Shared.CF.Companions;
 using Content.Shared.CF.Preferences;
 using Content.Shared.Chat.Prototypes;
 using Content.Shared.EntityEffects.Effects;
@@ -131,7 +133,7 @@ namespace Content.Shared.Preferences
         public PreferenceUnavailableMode PreferenceUnavailable { get; private set; } =
             PreferenceUnavailableMode.SpawnAsOverflow;
 
-        // CarpFinder: Pathfinder 2e ancestry/background/class + boost assignments
+        // CarpFinder: Carpfinder 2e ancestry/background/class + boost assignments
         [DataField]
         public CFCharacterBuildData CFBuild { get; set; } = new();
         // CarpFinder end
@@ -644,7 +646,9 @@ namespace Content.Shared.Preferences
             var configManager = collection.Resolve<IConfigurationManager>();
             var prototypeManager = collection.Resolve<IPrototypeManager>();
 
-            if (!prototypeManager.TryIndex(Species, out var speciesPrototype) || speciesPrototype.RoundStart == false)
+            // CarpFinder: a sprite body is roundStart false so it is not its own ancestry, but it is a valid saved species.
+            if (!prototypeManager.TryIndex(Species, out var speciesPrototype)
+                || (speciesPrototype.RoundStart == false && CFAttributeMath.FindAncestry(prototypeManager, Species) == null))
             {
                 Species = HumanoidCharacterProfile.DefaultSpecies;
                 speciesPrototype = prototypeManager.Index(Species);
@@ -824,6 +828,9 @@ namespace Content.Shared.Preferences
 
             if (CFBuild.Class is { } classId && !prototypeManager.HasIndex(classId))
                 CFBuild.Class = null;
+
+            if (!string.IsNullOrEmpty(CFBuild.PetId) && !prototypeManager.HasIndex<CFPetPrototype>(CFBuild.PetId))
+                CFBuild.PetId = "";
             // CarpFinder end
         }
 
@@ -910,6 +917,7 @@ namespace Content.Shared.Preferences
             hashCode.Add(Appearance);
             hashCode.Add((int)SpawnPriority);
             hashCode.Add((int)PreferenceUnavailable);
+            hashCode.Add(CFBuild);
             return hashCode.ToHashCode();
         }
 

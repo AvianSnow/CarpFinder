@@ -1,0 +1,91 @@
+# Young Riding Dragonet. Ancestry Hit Points 8. At 1st level that is 16 Hit Points.
+- type: cfPet
+  id: CFPetRidingDragonet
+  name: Riding Dragonet
+  kind: Companion
+  entity: CFCompanionRidingDragonet
+  size: "Small"
+  strength: 1
+  dexterity: 3
+  constitution: 2
+  intelligence: -4
+  wisdom: 1
+  charisma: 3
+  hitPoints: 8
+  description: "A young riding dragonet companion. It is built to be ridden."
+  mount: true
+  speeds:
+    - name: Speed
+      feet: 30
+  senses:
+    - "darkvision"
+  attacks:
+    - name: "Claw"
+      die: 8
+      damage: bludgeoning
+      finesse: true
+      traits:
+        - "magical"
+    - name: "Tail"
+      die: 6
+      damage: slashing
+      agile: true
+      finesse: true
+      traits:
+        - "magical"
+  skills:
+    - name: Diplomacy
+      ability: Charisma
+  support: "Until your next turn, each Strike you make while riding it that hits a creature in its reach deals an extra 1d4 bludgeoning."
+  advanced: "Enamoring Exhalation"
+
+- type: entity
+  parent: [ SimpleMobBase, CFCompanionBase ]
+  id: CFCompanionRidingDragonet
+  name: riding dragonet companion
+  description: "A young riding dragonet companion. It is built to be ridden."
+  suffix: Companion
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: companion
+      sprite: _CF/Mobs/companion-default.rsi
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: companion
+      Critical:
+        Base: dead
+      Dead:
+        Base: dead
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 16
+    maxHp: 16
+    currentHp: 16
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 1
+      Dexterity: 3
+      Constitution: 2
+      Intelligence: -4
+      Wisdom: 1
+      Charisma: 3
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 8
+    naturalType: bludgeoning
+    naturalFinesse: true
+    naturalAgile: false
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      16: Dead

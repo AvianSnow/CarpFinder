@@ -1,0 +1,21 @@
+﻿- type: entity
+  parent: CFSpellInstant
+  id: CFBlur
+  name: Blur
+  description: You are concealed. Attackers must pass a DC 5 flat check.
+  components:
+  - type: Sprite
+    sprite: Objects/Magic/magicactions.rsi
+    layers:
+    - state: spell_default
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 2
+  - type: CFSpell
+    spell: Blur
+    rank: 2
+    delivery: Instant
+    defense: None
+    flatCheckDc: 5
+    friendly: true
+    includeSelf: true

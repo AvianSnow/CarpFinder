@@ -300,7 +300,7 @@ public sealed partial class PathfindingSystem
     {
         EnsureComp<GridPathfindingComponent>(ev.EntityUid);
 
-        // Pathfinder refactor
+        // Carpfinder refactor
         var mapGrid = Comp<MapGridComponent>(ev.EntityUid);
 
         for (var x = Math.Floor(mapGrid.LocalAABB.Left); x <= Math.Ceiling(mapGrid.LocalAABB.Right + ChunkSize); x += ChunkSize)
@@ -548,7 +548,7 @@ public sealed partial class PathfindingSystem
                             }
                         }
 
-                        /*This is causing too many issues and I'd rather just ignore it until pathfinder refactor
+                        /*This is causing too many issues and I'd rather just ignore it until carpfinder refactor
                           to just get tiles at runtime.
                         if ((flags & PathfindingBreadcrumbFlag.Space) != 0x0)
                         {

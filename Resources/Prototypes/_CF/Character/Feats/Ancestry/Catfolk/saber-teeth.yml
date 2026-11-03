@@ -1,0 +1,14 @@
+# CarpFinder: ancestry feat through level 5. Short mechanical note, not source text.
+# source: Carpfinder Player Core 2
+- type: cfFeat
+  id: CFSaberTeeth
+  name: "Saber Teeth"
+  description: "Your unarmed Strike deals 1d6 piercing and is finesse."
+  ancestry: Catfolk
+  level: 1
+  traits:
+    - "Catfolk"
+  naturalDice: 1
+  naturalDie: 6
+  naturalDamage: piercing
+  naturalFinesse: true

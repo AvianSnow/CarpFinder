@@ -26,4 +26,9 @@
     damageDice: 1
     damageType: slashing
     proficiency: MartialWeapons
+  - type: CFTrait
+    traits:
+    - VersatileP
   - type: DisarmMalus
+  - type: CFItemPrice
+    copper: 100 # 1 gp

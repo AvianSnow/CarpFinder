@@ -21,7 +21,7 @@ using Robust.Shared.Timing;
 namespace Content.Shared.CF.Combat;
 
 /// <summary>
-/// Pathfinder 2e dying / wounded / recovery checks, mapped onto SS14 Critical / Dead.
+/// Carpfinder 2e dying / wounded / recovery checks, mapped onto SS14 Critical / Dead.
 /// </summary>
 public sealed partial class CFDyingSystem : EntitySystem
 {
@@ -62,7 +62,7 @@ public sealed partial class CFDyingSystem : EntitySystem
     }
 
     /// <summary>
-    /// Stock revive heals SS14 damage and sets the mob Alive, but leaves Pathfinder HP at 0.
+    /// Stock revive heals SS14 damage and sets the mob Alive, but leaves Carpfinder HP at 0.
     /// That kept the creature "down", so flanking never applied again.
     /// </summary>
     [SubscribeLocalEvent]
@@ -519,7 +519,7 @@ public sealed partial class CFDyingSystem : EntitySystem
 }
 
 /// <summary>
-/// Raised after a rejuvenate restores this creature's Pathfinder hit points.
+/// Raised after a rejuvenate restores this creature's Carpfinder hit points.
 /// </summary>
 [ByRefEvent]
 public readonly record struct CFCombatantRevivedEvent;

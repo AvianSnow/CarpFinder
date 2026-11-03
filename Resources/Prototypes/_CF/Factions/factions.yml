@@ -41,6 +41,16 @@
   - Beta
   - Charlie
 
+# Wild creatures. They hunt every adventure company and leave each other alone.
+- type: cfFaction
+  id: Monster
+  name: cf-faction-monster
+  opposition:
+  - Alpha
+  - Beta
+  - Charlie
+  - Delta
+
 - type: cfFaction
   id: Neutral
   name: cf-faction-neutral

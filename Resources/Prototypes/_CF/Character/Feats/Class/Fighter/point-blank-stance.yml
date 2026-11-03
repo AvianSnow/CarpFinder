@@ -1,0 +1,12 @@
+# CarpFinder: class feat through level 5. Short mechanical note, not source text.
+# source: Carpfinder Player Core
+- type: cfFeat
+  id: CFPointBlankStance
+  name: "Point Blank Stance"
+  description: "Ignore the volley penalty and gain +2 damage with ranged Strikes inside the first range increment."
+  class: Fighter
+  level: 1
+  traits:
+    - "Fighter"
+    - "Stance"
+  action: Action

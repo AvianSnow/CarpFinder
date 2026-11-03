@@ -1,0 +1,82 @@
+# Young Oozeform Chair. Ancestry Hit Points 6. At 1st level that is 15 Hit Points.
+- type: cfPet
+  id: CFPetOozeformChair
+  name: Oozeform Chair
+  kind: Companion
+  entity: CFCompanionOozeformChair
+  size: "Medium or Large"
+  strength: 3
+  dexterity: 2
+  constitution: 3
+  intelligence: -4
+  wisdom: 0
+  charisma: 0
+  hitPoints: 6
+  description: "A young oozeform chair companion. It is built to be ridden."
+  mount: true
+  speeds:
+    - name: Speed
+      feet: 20
+  senses:
+    - "motion sense (imprecise, 30 feet)"
+  attacks:
+    - name: "Pseudopod"
+      die: 6
+      damage: bludgeoning
+      agile: true
+  skills:
+    - name: Athletics
+      ability: Strength
+  support: "A pseudopod fetches an unattended object within 15 feet. If your hands are full, it drops the object in your space."
+  advanced: "Extend Pseudopod"
+
+- type: entity
+  parent: [ SimpleMobBase, CFCompanionBase ]
+  id: CFCompanionOozeformChair
+  name: oozeform chair companion
+  description: "A young oozeform chair companion. It is built to be ridden."
+  suffix: Companion
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: companion
+      sprite: _CF/Mobs/companion-default.rsi
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: companion
+      Critical:
+        Base: dead
+      Dead:
+        Base: dead
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 15
+    maxHp: 15
+    currentHp: 15
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 3
+      Dexterity: 2
+      Constitution: 3
+      Intelligence: -4
+      Wisdom: 0
+      Charisma: 0
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 6
+    naturalType: bludgeoning
+    naturalFinesse: false
+    naturalAgile: true
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      15: Dead

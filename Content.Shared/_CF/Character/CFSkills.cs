@@ -14,7 +14,7 @@ public enum CFProficiencyRank : byte
     Legendary = 8,
 }
 
-/// <summary>Skill / Perception check math for Pathfinder character sheets.</summary>
+/// <summary>Skill / Perception check math for Carpfinder character sheets.</summary>
 public static class CFSkills
 {
     /// <summary>
@@ -100,7 +100,47 @@ public static class CFSkills
     /// <summary>
     /// Background + free class skill picks for a build (class fixed skills stay on the class list).
     /// </summary>
-    public static List<string> CollectTrainedSkills(IPrototypeManager prototypes, CFCharacterBuildData build)
+    public static List<CFFeatPrototype> SelectedFeats(
+        IPrototypeManager prototypes,
+        CFCharacterBuildData build,
+        string? ancestryId,
+        string? classId,
+        int level)
+    {
+        var result = new List<CFFeatPrototype>();
+        if (level >= 1)
+        {
+            AddFeat(prototypes, result, build.AncestryFeat, feat => feat.Fits(ancestryId, 1));
+            AddFeat(prototypes, result, build.ClassFeat, feat => feat.FitsClass(classId, 1));
+        }
+
+        if (level >= 2)
+            AddFeat(prototypes, result, build.ClassFeatLevel2, feat => feat.FitsClass(classId, 2));
+        if (level >= 4)
+            AddFeat(prototypes, result, build.ClassFeatLevel4, feat => feat.FitsClass(classId, 4));
+        if (level >= 5)
+            AddFeat(prototypes, result, build.AncestryFeatLevel5, feat => feat.Fits(ancestryId, 5));
+        return result;
+    }
+
+    private static void AddFeat(
+        IPrototypeManager prototypes,
+        List<CFFeatPrototype> result,
+        ProtoId<CFFeatPrototype>? id,
+        Func<CFFeatPrototype, bool> fits)
+    {
+        if (id != null
+            && prototypes.TryIndex(id.Value, out CFFeatPrototype? feat)
+            && fits(feat))
+            result.Add(feat);
+    }
+
+    public static List<string> CollectTrainedSkills(
+        IPrototypeManager prototypes,
+        CFCharacterBuildData build,
+        string? ancestryId = null,
+        string? classId = null,
+        int level = 1)
     {
         var result = new List<string>();
 
@@ -118,6 +158,12 @@ public static class CFSkills
 
         foreach (var skill in build.ClassTrainedSkills)
             result.Add(skill.Id);
+
+        foreach (var feat in SelectedFeats(prototypes, build, ancestryId, classId, level))
+        {
+            foreach (var skill in feat.TrainedSkills)
+                result.Add(skill.Id);
+        }
 
         return result.Distinct(StringComparer.Ordinal).ToList();
     }

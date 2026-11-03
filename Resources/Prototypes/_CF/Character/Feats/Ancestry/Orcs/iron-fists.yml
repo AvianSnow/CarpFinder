@@ -1,0 +1,13 @@
+# CarpFinder: ancestry feat through level 5. Short mechanical note, not source text.
+# source: Carpfinder Player Core
+- type: cfFeat
+  id: CFIronFists
+  name: "Iron Fists"
+  description: "Your fist Strike deals 1d6 bludgeoning."
+  ancestry: Orc
+  level: 1
+  traits:
+    - "Orc"
+  naturalDice: 1
+  naturalDie: 6
+  naturalDamage: bludgeoning

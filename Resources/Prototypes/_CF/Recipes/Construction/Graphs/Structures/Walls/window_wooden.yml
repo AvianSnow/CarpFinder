@@ -1,0 +1,107 @@
+- type: constructionGraph
+  id: CFWindowWooden
+  start: start
+  graph:
+    - node: start
+      edges:
+        - to: CFWindowFrameWooden
+          completed:
+            - !type:SnapToGrid
+              southRotation: true
+          steps:
+            - material: CFWoodenPlanks
+              amount: 2
+              doAfter: 2
+        - to: CFWindowFrameWoodenBirch
+          completed:
+          - !type:SnapToGrid
+            southRotation: true
+          steps:
+          - material: CFBirchWoodenPlanks
+            amount: 2
+            doAfter: 2
+
+    - node: CFWindowFrameWooden
+      entity: CFWindowFrameWooden
+      edges:
+        - to: start
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFWoodenPlanks1
+              amount: 2
+            - !type:DeleteEntity {}
+          steps:
+            - tool: Prying
+              doAfter: 2
+        - to: CFWindowWooden
+          steps:
+            - material: CFGlassSheet
+              amount: 2
+              doAfter: 2
+
+    - node: CFWindowFrameWoodenBirch
+      entity: CFWindowFrameWoodenBirch
+      edges:
+        - to: start
+          completed:
+          - !type:SpawnPrototype
+            prototype: CFBirchWoodenPlanks1
+            amount: 2
+          - !type:DeleteEntity { }
+        - to: CFWindowWoodenBirch
+          steps:
+          - material: CFGlassSheet
+            amount: 2
+            doAfter: 2
+
+    - node: CFWindowWooden
+      entity: CFWindowWooden
+      edges:
+        - to: CFWindowFrameWooden
+          steps:
+            - tool: Screwing
+              doAfter: 1
+            - tool: Anchoring
+              doAfter: 2
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFGlassSheet1
+              amount: 2
+
+    - node: CFWindowWoodenBirch
+      entity: CFWindowWoodenBirch
+      edges:
+      - to: CFWindowFrameWoodenBirch
+        steps:
+        - tool: Screwing
+          doAfter: 1
+        - tool: Anchoring
+          doAfter: 2
+        completed:
+        - !type:SpawnPrototype
+          prototype: CFGlassSheet1
+          amount: 2
+
+    - node: CFWindowWoodenBroken
+      entity: CFWindowWoodenBroken
+      edges:
+        - to: CFWindowFrameWooden
+          steps:
+            - tool: Anchoring
+              doAfter: 2
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFGlassShard
+              amount: 1
+
+    - node: CFWindowWoodenBirchBroken
+      entity: CFWindowWoodenBirchBroken
+      edges:
+      - to: CFWindowFrameWoodenBirch
+        steps:
+        - tool: Anchoring
+          doAfter: 2
+        completed:
+        - !type:SpawnPrototype
+          prototype: CFGlassShard
+          amount: 1

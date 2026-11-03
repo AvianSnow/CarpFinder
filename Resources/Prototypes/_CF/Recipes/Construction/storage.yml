@@ -1,0 +1,121 @@
+- type: construction
+  crystallPunkAllowed: true
+  id: CFCrateDirtPitGrave
+  graph: CFCrateDirtPitGrave
+  startNode: start
+  targetNode: CFCrateDirtPitGrave
+  category: construction-category-storage
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+    - !type:TileType
+      targets:
+        - CFDirtFloor
+
+- type: construction
+  crystallPunkAllowed: true
+  id: CFWoodenChest
+  graph: CFWoodenChest
+  startNode: start
+  targetNode: CFWoodenChest
+  category: construction-category-storage
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  crystallPunkAllowed: true
+  id: CFGoldChest
+  graph: CFGoldChest
+  startNode: start
+  targetNode: CFGoldChest
+  category: construction-category-storage
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  crystallPunkAllowed: true
+  id: CFCrateSmallWooden
+  graph: CFCrateSmallWooden
+  startNode: start
+  targetNode: CFCrateSmallWooden
+  category: construction-category-storage
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  crystallPunkAllowed: true
+  id: CFCrateLargeWooden
+  graph: CFCrateLargeWooden
+  startNode: start
+  targetNode: CFCrateLargeWooden
+  category: construction-category-storage
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  crystallPunkAllowed: true
+  id: CFCrateCoffin
+  graph: CFCrateCoffin
+  startNode: start
+  targetNode: CFCrateCoffin
+  category: construction-category-storage
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  crystallPunkAllowed: true
+  id: CFCrateDirtPitGrave
+  graph: CFCrateDirtPitGrave
+  startNode: start
+  targetNode: CFCrateDirtPitGrave
+  category: construction-category-storage
+  objectType: Structure
+  placementMode: PlaceFree
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  crystallPunkAllowed: true
+  id: CFCraneBarrel
+  graph: CFCraneBarrel
+  startNode: start
+  targetNode: CFCraneBarrel
+  category: construction-category-storage
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canRotate: true
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  crystallPunkAllowed: true
+  id: CFCraneBarrelSmall
+  graph: CFCraneBarrelSmall
+  startNode: start
+  targetNode: CFCraneBarrelSmall
+  category: construction-category-storage
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canRotate: true
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked

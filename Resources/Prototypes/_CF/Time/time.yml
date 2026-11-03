@@ -1,0 +1,25 @@
+# Four clocks. They are not one multiplier.
+#
+# Real: wall clock. The engine waits this long. Action regen and popup cooldowns are Real.
+# Carpfinder: the tabletop book. One round is 6 book seconds. A "1 minute" spell is 10 rounds.
+#   That number is not a timer. Combat is real-time, so each feature picks its own duration.
+# Adjusted: wall-clock seconds chosen for that feature. Haste lasting 60 real seconds is Adjusted
+#   when the book said 1 minute and the world clock would have made those 60 seconds into 15.
+# CarpFinder: the world clock. Day, night, and the round. 1 real second = 4 world seconds.
+#
+# 1 real minute = 4 world minutes. 1 real hour = 4 world hours.
+# 6 real hours = 24 world hours, one day and one night.
+# Day (14 world hours) lasts 3 hours 30 minutes real. Night (10 world hours) lasts 2 hours 30 minutes real.
+# A round starts at dawn. Day runs first, then night.
+
+- type: entity
+  id: CFWorldClock
+  name: world clock
+  description: Rates for real time, Carpfinder time, adjusted combat timers, and the CarpFinder day.
+  components:
+    - type: CFTime
+      inGameSecondsPerRealSecond: 4
+      roundRealHours: 6
+      dayInGameHours: 14
+      nightInGameHours: 10
+      carpfinderRoundSeconds: 6

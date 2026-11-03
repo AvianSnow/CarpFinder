@@ -1,0 +1,71 @@
+# Young Iridescent Salamander. Ancestry Hit Points 6. At 1st level that is 14 Hit Points.
+- type: cfPet
+  id: CFPetIridescentSalamander
+  name: Iridescent Salamander
+  kind: Companion
+  entity: CFCompanionIridescentSalamander
+  size: "Small"
+  strength: 2
+  dexterity: 3
+  constitution: 2
+  intelligence: -4
+  wisdom: 1
+  charisma: 0
+  hitPoints: 6
+  description: "A young iridescent salamander companion."
+  speeds:
+    - name: Speed
+      feet: 20
+    - name: climb
+      feet: 20
+    - name: swim
+      feet: 20
+  senses:
+    - "darkvision"
+  attacks:
+    - name: "Jaws"
+      die: 6
+      damage: piercing
+      finesse: true
+  skills:
+    - name: Survival
+      ability: Wisdom
+  support: "Until your next turn, a creature adjacent to it that you damage is dazzled unless its level is higher than yours."
+  advanced: "Color Swirl"
+
+- type: entity
+  parent: [ MobLizard, CFCompanionBase ]
+  id: CFCompanionIridescentSalamander
+  name: iridescent salamander companion
+  description: "A young iridescent salamander companion."
+  suffix: Companion
+  components:
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 16
+    maxHp: 14
+    currentHp: 14
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 2
+      Dexterity: 3
+      Constitution: 2
+      Intelligence: -4
+      Wisdom: 1
+      Charisma: 0
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 6
+    naturalType: piercing
+    naturalFinesse: true
+    naturalAgile: false
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      14: Dead

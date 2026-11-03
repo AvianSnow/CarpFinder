@@ -12,6 +12,10 @@ public sealed partial class CharacterWindow : DefaultWindow
     {
         RobustXamlLoader.Load(this);
         Tabs.SetTabTitle(0, Loc.GetString("cf-sheet-tab"));
-        Tabs.SetTabTitle(1, Loc.GetString("cf-sheet-info-tab"));
+        Tabs.SetTabTitle(1, Loc.GetString("cf-sheet-spells-tab"));
+        Tabs.SetTabTitle(2, Loc.GetString("cf-sheet-info-tab"));
+        Tabs.SetTabTitle(3, Loc.GetString("cf-shop-tab"));
+        ShopTab.OnAccept += Close;
+        ShopTab.OnCancel += Close;
     }
 }

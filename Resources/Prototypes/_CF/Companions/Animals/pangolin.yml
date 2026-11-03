@@ -1,0 +1,84 @@
+# Young Pangolin. Ancestry Hit Points 8. At 1st level that is 16 Hit Points.
+- type: cfPet
+  id: CFPetPangolin
+  name: Pangolin
+  kind: Companion
+  entity: CFCompanionPangolin
+  size: "Medium"
+  strength: 3
+  dexterity: 2
+  constitution: 2
+  intelligence: -4
+  wisdom: 1
+  charisma: 0
+  hitPoints: 8
+  description: "A young pangolin companion."
+  speeds:
+    - name: Speed
+      feet: 25
+  senses:
+    - "low-light vision"
+  attacks:
+    - name: "Body"
+      die: 8
+      damage: bludgeoning
+    - name: "Claw"
+      die: 6
+      damage: slashing
+      agile: true
+  skills:
+    - name: Survival
+      ability: Wisdom
+  support: "Until your next turn, a damaging Strike against a creature in its reach also deals 1d6 persistent bleed, or 2d6 once it is nimble or savage."
+  advanced: "Defensive Curl"
+
+- type: entity
+  parent: [ SimpleMobBase, CFCompanionBase ]
+  id: CFCompanionPangolin
+  name: pangolin companion
+  description: "A young pangolin companion."
+  suffix: Companion
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: companion
+      sprite: _CF/Mobs/companion-default.rsi
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: companion
+      Critical:
+        Base: dead
+      Dead:
+        Base: dead
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 15
+    maxHp: 16
+    currentHp: 16
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 3
+      Dexterity: 2
+      Constitution: 2
+      Intelligence: -4
+      Wisdom: 1
+      Charisma: 0
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 8
+    naturalType: bludgeoning
+    naturalFinesse: false
+    naturalAgile: false
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      16: Dead

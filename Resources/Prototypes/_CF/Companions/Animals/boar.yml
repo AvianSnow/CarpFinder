@@ -1,0 +1,67 @@
+# Young Boar. Ancestry Hit Points 8. At 1st level that is 16 Hit Points.
+- type: cfPet
+  id: CFPetBoar
+  name: Boar
+  kind: Companion
+  entity: CFCompanionBoar
+  size: "Small"
+  strength: 3
+  dexterity: 1
+  constitution: 2
+  intelligence: -4
+  wisdom: 2
+  charisma: 0
+  hitPoints: 8
+  description: "A young boar companion."
+  speeds:
+    - name: Speed
+      feet: 35
+  senses:
+    - "low-light vision"
+    - "scent (imprecise, 30 feet)"
+  attacks:
+    - name: "Tusk"
+      die: 8
+      damage: piercing
+  skills:
+    - name: Survival
+      ability: Wisdom
+  support: "Until your next turn, a damaging Strike against a creature in its reach also deals 1d6 persistent bleed, or 2d6 once it is nimble or savage."
+  advanced: "Boar Charge"
+
+- type: entity
+  parent: [ MobPig, CFCompanionBase ]
+  id: CFCompanionBoar
+  name: boar companion
+  description: "A young boar companion."
+  suffix: Companion
+  components:
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 14
+    maxHp: 16
+    currentHp: 16
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 3
+      Dexterity: 1
+      Constitution: 2
+      Intelligence: -4
+      Wisdom: 2
+      Charisma: 0
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 8
+    naturalType: piercing
+    naturalFinesse: false
+    naturalAgile: false
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      16: Dead

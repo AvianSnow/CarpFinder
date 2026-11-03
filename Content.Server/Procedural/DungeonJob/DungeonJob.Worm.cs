@@ -81,7 +81,7 @@ public sealed partial class DungeonJob
         }
 
         // Now to ensure they all connect we'll pathfind each network to one another
-        // Simple BFS pathfinder
+        // Simple BFS carpfinder
         var main = networks[0];
 
         var frontier = new PriorityQueue<Vector2i, float>();

@@ -1,0 +1,52 @@
+- type: constructionGraph
+  id: CFWallWoodenSpruce
+  start: start
+  graph:
+    - node: start
+      edges:
+        - to: CFWallFrameWoodenSpruce
+          completed:
+            - !type:SnapToGrid
+              southRotation: true
+          steps:
+            - material: CFSpruceWoodenPlanks
+              amount: 2
+              doAfter: 2
+
+    - node: CFWallFrameWoodenSpruce
+      entity: CFWallFrameWoodenSpruce
+      edges:
+        - to: start
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFSpruceWoodenPlanks1
+              amount: 2
+            - !type:DeleteEntity {}
+          steps:
+            - tool: Prying
+              doAfter: 2
+        - to: CFWallWoodenSpruce
+          steps:
+            - material: CFSpruceWoodenPlanks
+              amount: 2
+              doAfter: 2
+        #- to: WindowWooden
+        #  steps:
+        #    - material: CFGlassSheet
+        #      amount: 2
+        #      doAfter: 2
+
+    - node: CFWallWoodenSpruce
+      entity: CFWallWoodenSpruce
+      edges:
+        - to: CFWallFrameWoodenSpruce
+          steps:
+            - tool: CFHammering
+              doAfter: 4
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFSpruceWoodenPlanks1
+              amount: 2
+
+    #- node: WindowWooden
+    #  entity: CFWindowWooden

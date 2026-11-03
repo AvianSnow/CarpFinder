@@ -1,0 +1,45 @@
+- type: constructionGraph
+  id: CFWallWooden
+  start: start
+  graph:
+    - node: start
+      edges:
+        - to: CFWallFrameWooden
+          completed:
+            - !type:SnapToGrid
+              southRotation: true
+          steps:
+            - material: CFWoodenPlanks
+              amount: 2
+              doAfter: 2
+
+    - node: CFWallFrameWooden
+      entity: CFWallFrameWooden
+      edges:
+        - to: start
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFWoodenPlanks1
+              amount: 2
+            - !type:DeleteEntity {}
+          steps:
+            - tool: Prying
+              doAfter: 2
+        - to: CFWallWooden
+          steps:
+            - material: CFWoodenPlanks
+              amount: 2
+              doAfter: 2
+
+    - node: CFWallWooden
+      entity: CFWallWooden
+      edges:
+        - to: CFWallFrameWooden
+          steps:
+            - tool: CFHammering
+              doAfter: 4
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFWoodenPlanks1
+              amount: 2
+

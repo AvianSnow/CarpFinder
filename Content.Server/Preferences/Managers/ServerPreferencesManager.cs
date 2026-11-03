@@ -12,6 +12,7 @@ using Content.Shared.Construction.Prototypes;
 using Content.Shared.Humanoid;
 using Content.Shared.Humanoid.Markings;
 using Content.Shared.Humanoid.Prototypes;
+using Content.Shared.CF.Preferences;
 using Content.Shared.Preferences;
 using Content.Shared.Preferences.Loadouts;
 using Content.Shared.Roles;
@@ -177,7 +178,7 @@ namespace Content.Server.Preferences.Managers
                 loadouts[role.RoleName] = loadout;
             }
 
-            return new HumanoidCharacterProfile(
+            var character = new HumanoidCharacterProfile(
                 profile.CharacterName,
                 profile.FlavorText,
                 species,
@@ -198,6 +199,21 @@ namespace Content.Server.Preferences.Managers
                 traits.ToHashSet(),
                 loadouts
             );
+            if (profile.CfBuild?.RootElement is { } buildElement)
+            {
+                try
+                {
+                    character.CFBuild = _serialization.Read<CFCharacterBuildData>(
+                        buildElement.ToDataNode(),
+                        notNullableOverride: true);
+                }
+                catch (Exception exception)
+                {
+                    _sawmill.Warning($"Could not read the Carpfinder build for {profile.CharacterName}: {exception.Message}");
+                }
+            }
+
+            return character;
         }
 
         private async void HandleSelectCharacterMessage(MsgSelectCharacter message)

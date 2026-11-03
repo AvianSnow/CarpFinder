@@ -1,0 +1,67 @@
+# Young Shark. Ancestry Hit Points 6. At 1st level that is 14 Hit Points.
+- type: cfPet
+  id: CFPetShark
+  name: Shark
+  kind: Companion
+  entity: CFCompanionShark
+  size: "Small"
+  strength: 3
+  dexterity: 2
+  constitution: 2
+  intelligence: -4
+  wisdom: 1
+  charisma: 0
+  hitPoints: 6
+  description: "A young shark companion. It is aquatic and can smell blood in the water up to a mile away."
+  speeds:
+    - name: swim
+      feet: 40
+  senses:
+    - "blood scent"
+    - "scent (imprecise, 60 feet)"
+  attacks:
+    - name: "Jaws"
+      die: 8
+      damage: piercing
+  skills:
+    - name: Stealth
+      ability: Dexterity
+  support: "Until your next turn, a Strike that hits a creature in its reach and deals slashing or piercing damage also deals 1d8 slashing."
+  advanced: "Shred"
+
+- type: entity
+  parent: [ MobShark, CFCompanionBase ]
+  id: CFCompanionShark
+  name: shark companion
+  description: "A young shark companion. It is aquatic and can smell blood in the water up to a mile away."
+  suffix: Companion
+  components:
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 15
+    maxHp: 14
+    currentHp: 14
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 3
+      Dexterity: 2
+      Constitution: 2
+      Intelligence: -4
+      Wisdom: 1
+      Charisma: 0
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 8
+    naturalType: piercing
+    naturalFinesse: false
+    naturalAgile: false
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      14: Dead

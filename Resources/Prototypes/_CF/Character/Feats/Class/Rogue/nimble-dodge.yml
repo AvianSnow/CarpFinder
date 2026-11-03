@@ -1,0 +1,11 @@
+# CarpFinder: class feat through level 5. Short mechanical note, not source text.
+# source: Carpfinder Player Core
+- type: cfFeat
+  id: CFNimbleDodge
+  name: "Nimble Dodge"
+  description: "Reaction. +2 circumstance bonus to AC against one attack."
+  class: Rogue
+  level: 1
+  traits:
+    - "Rogue"
+  action: Reaction

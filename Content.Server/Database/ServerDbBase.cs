@@ -291,6 +291,9 @@ namespace Content.Server.Database
                 profile.Loadouts.Add(dz);
             }
 
+            var buildNode = _serialization.WriteValue(humanoid.CFBuild, alwaysWrite: true, notNullableOverride: true);
+            profile.CfBuild = JsonSerializer.SerializeToDocument(buildNode.ToJsonNode());
+
             return profile;
         }
         #endregion

@@ -1,0 +1,84 @@
+# Young Riding Drake. Ancestry Hit Points 8. At 1st level that is 16 Hit Points.
+- type: cfPet
+  id: CFPetRidingDrake
+  name: Riding Drake
+  kind: Companion
+  entity: CFCompanionRidingDrake
+  size: "Large"
+  strength: 2
+  dexterity: 1
+  constitution: 2
+  intelligence: -4
+  wisdom: 1
+  charisma: 2
+  hitPoints: 8
+  description: "A young riding drake companion. It is built to be ridden."
+  mount: true
+  speeds:
+    - name: Speed
+      feet: 45
+  senses:
+    - "darkvision"
+  attacks:
+    - name: "Jaws"
+      die: 8
+      damage: piercing
+    - name: "Tail"
+      die: 6
+      damage: bludgeoning
+  skills:
+    - name: Intimidation
+      ability: Charisma
+  support: "Until your next turn, each Strike you make while riding it that hits a creature in its reach deals an extra 1d4 fire, or 2d4 once it is nimble or savage."
+  advanced: "Fire Breath"
+
+- type: entity
+  parent: [ SimpleMobBase, CFCompanionBase ]
+  id: CFCompanionRidingDrake
+  name: riding drake companion
+  description: "A young riding drake companion. It is built to be ridden."
+  suffix: Companion
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: companion
+      sprite: _CF/Mobs/companion-default.rsi
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: companion
+      Critical:
+        Base: dead
+      Dead:
+        Base: dead
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 14
+    maxHp: 16
+    currentHp: 16
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 2
+      Dexterity: 1
+      Constitution: 2
+      Intelligence: -4
+      Wisdom: 1
+      Charisma: 2
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 8
+    naturalType: piercing
+    naturalFinesse: false
+    naturalAgile: false
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      16: Dead

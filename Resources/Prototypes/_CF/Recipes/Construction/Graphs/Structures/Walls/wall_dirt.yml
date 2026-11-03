@@ -1,0 +1,17 @@
+- type: constructionGraph
+  id: CFWallDirt
+  start: start
+  graph:
+    - node: start
+      edges:
+        - to: WallDirt
+          completed:
+            - !type:SnapToGrid
+              southRotation: true
+          steps:
+            - material: CFDirt
+              amount: 5
+              doAfter: 2
+    - node: WallDirt
+      entity: CFWallDirt
+

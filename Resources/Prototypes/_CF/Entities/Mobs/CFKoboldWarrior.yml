@@ -1,0 +1,86 @@
+# Kobold Warrior. Creature −1. Small humanoid.
+# AC 16, HP 7, Speed 25 feet. Spear +3 (1d6+1 piercing). Sling +5 (1d4 bludgeoning, propulsive, 50 feet).
+# Perception +3, darkvision. Acrobatics +5, Crafting +2, Stealth +5.
+# Abilities Str +1, Dex +3, Con −1, Int +0, Wis +1, Cha +1. Fort +3, Ref +7, Will +3.
+# Sneak Attack and Scamper are on the book entry. Sneak Attack uses the game's precision dice.
+# Scamper is not a separate action yet.
+# Copy this file for a new monster. The field guide is .agents/.CURSOR/monsters.md.
+
+- type: startingGear
+  id: CFKoboldWarriorGear
+  inhand:
+  - CFSpear
+
+- type: entity
+  parent: MobBaseKobold
+  id: CFKoboldWarrior
+  name: kobold warrior
+  description: A small reptilian skirmisher in leather armor, armed with a spear. It strikes from the dark and keeps a sling ready.
+  suffix: Monster
+  components:
+  - type: InputMover
+  - type: MobMover
+  - type: HTN
+    rootTask:
+      task: SimpleHostileCompound
+  - type: NpcFactionMember
+    factions:
+    - SimpleHostile
+  - type: CFFaction
+    faction: Monster
+  - type: CombatMode
+  - type: Hands
+    startingHands:
+      hand_left:
+        location: Left
+      hand_right:
+        location: Right
+  - type: Loadout
+    prototypes: [ CFKoboldWarriorGear ]
+  - type: MovementSpeedModifier
+    baseWalkSpeed: 2.5
+    baseSprintSpeed: 4.5
+  - type: NightVision
+    enabled: true
+    prioritized: true
+    noiseAmount: 0
+    lightingColor: "#9BB6FF30"
+  - type: CFCombatant
+    level: -1
+    armorClass: 16
+    maxHp: 7
+    currentHp: 7
+    trainedSkills:
+    - Acrobatics
+    - Crafting
+    - Stealth
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 1
+      Dexterity: 3
+      Constitution: -1
+      Intelligence: 0
+      Wisdom: 1
+      Charisma: 1
+  - type: CFCombatOptions
+    sneakAttack: true
+  - type: MeleeWeapon
+    angle: 0
+    animation: WeaponArcThrust
+    attackRate: 1
+    soundHit:
+      path: /Audio/Weapons/bladeslice.ogg
+    damage:
+      types:
+        Piercing: 0
+  - type: CFMeleeWeapon
+    damageDie: 6
+    damageDice: 1
+    damageType: piercing
+    proficiency: SimpleWeapons
+    itemBonus: 1
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      6: Critical
+      7: Dead

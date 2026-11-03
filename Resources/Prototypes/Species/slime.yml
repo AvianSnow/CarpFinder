@@ -1,15 +1,15 @@
 - type: species
   id: SlimePerson
   name: species-name-slime
-  roundStart: true
+  roundStart: false # CarpFinder: no Carpfinder ancestry stats
   prototype: MobSlimePerson
   defaultSkinTone: "#b8b8b8"
   dollPrototype: AppearanceSlimePerson
   skinColoration: Hues
   defaultSoundsBySex:
-  - MaleSlime
-  - FemaleSlime
-  - MaleSlime
+    - MaleSlime
+    - FemaleSlime
+    - MaleSlime
   voices:
-  - MaleSlime
-  - FemaleSlime
+    - MaleSlime
+    - FemaleSlime

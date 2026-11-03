@@ -1,0 +1,71 @@
+# Young Goat. Ancestry Hit Points 8. At 1st level that is 16 Hit Points.
+- type: cfPet
+  id: CFPetGoat
+  name: Goat
+  kind: Companion
+  entity: CFCompanionGoat
+  size: "Medium"
+  strength: 3
+  dexterity: 2
+  constitution: 2
+  intelligence: -4
+  wisdom: 1
+  charisma: 0
+  hitPoints: 8
+  description: "A young goat companion. It is built to be ridden."
+  mount: true
+  speeds:
+    - name: Speed
+      feet: 35
+    - name: climb
+      feet: 15
+  senses:
+    - "scent (imprecise, 30 feet)"
+  attacks:
+    - name: "Headbutt"
+      die: 8
+      damage: bludgeoning
+      traits:
+        - "shove"
+  skills:
+    - name: Acrobatics
+      ability: Dexterity
+  support: "You Climb as if you had rolled a success."
+  advanced: "Knock Aside"
+
+- type: entity
+  parent: [ MobGoat, CFCompanionBase ]
+  id: CFCompanionGoat
+  name: goat companion
+  description: "A young goat companion. It is built to be ridden."
+  suffix: Companion
+  components:
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 15
+    maxHp: 16
+    currentHp: 16
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 3
+      Dexterity: 2
+      Constitution: 2
+      Intelligence: -4
+      Wisdom: 1
+      Charisma: 0
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 8
+    naturalType: bludgeoning
+    naturalFinesse: false
+    naturalAgile: false
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      16: Dead

@@ -1,0 +1,89 @@
+# Young Flying Squirrel. Ancestry Hit Points 6. At 1st level that is 13 Hit Points.
+- type: cfPet
+  id: CFPetFlyingSquirrel
+  name: Flying Squirrel
+  kind: Companion
+  entity: CFCompanionFlyingSquirrel
+  size: "Small"
+  strength: 2
+  dexterity: 3
+  constitution: 1
+  intelligence: -4
+  wisdom: 2
+  charisma: 0
+  hitPoints: 6
+  description: "A young flying squirrel companion. When it falls, it glides up to 25 feet and drops only 5 feet."
+  speeds:
+    - name: Speed
+      feet: 25
+    - name: climb
+      feet: 25
+  senses:
+    - "low-light vision"
+    - "scent (imprecise, 30 feet)"
+  attacks:
+    - name: "Jaws"
+      die: 6
+      damage: piercing
+      finesse: true
+    - name: "Claw"
+      die: 4
+      damage: slashing
+      agile: true
+      finesse: true
+  skills:
+    - name: Stealth
+      ability: Dexterity
+  support: "Until the end of your next turn, a creature in its reach that you damage takes a -10-foot circumstance penalty to its Speeds for 1 round."
+  advanced: "Death From Above"
+
+- type: entity
+  parent: [ SimpleMobBase, CFCompanionBase ]
+  id: CFCompanionFlyingSquirrel
+  name: flying squirrel companion
+  description: "A young flying squirrel companion. When it falls, it glides up to 25 feet and drops only 5 feet."
+  suffix: Companion
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: companion
+      sprite: _CF/Mobs/companion-default.rsi
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: companion
+      Critical:
+        Base: dead
+      Dead:
+        Base: dead
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 16
+    maxHp: 13
+    currentHp: 13
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 2
+      Dexterity: 3
+      Constitution: 1
+      Intelligence: -4
+      Wisdom: 2
+      Charisma: 0
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 6
+    naturalType: piercing
+    naturalFinesse: true
+    naturalAgile: false
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      13: Dead

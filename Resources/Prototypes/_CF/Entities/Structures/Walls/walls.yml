@@ -1,0 +1,97 @@
+- type: entity
+  abstract: true
+  parent: BaseWall
+  categories: [ ForkFiltered ]
+  id: CFBaseWall
+  name: wall
+  description: Sturdy enough to cover you from threats or cold winds.
+  placement:
+    mode: SnapgridCenter
+    snap:
+    - Wall
+  components:
+  - type: Transform
+    noRot: true
+  - type: Sprite
+    drawdepth: Mobs
+  - type: SpriteFade
+  - type: IconSmooth
+    key: CFWall
+  - type: Icon
+    state: full
+  - type: PlacementReplacement
+    key: walls
+
+- type: entity
+  id: CFBaseWallFrame
+  categories: [ ForkFiltered ]
+  parent: BaseStructure
+  abstract: true
+  description: This wall is now in an indeterminate state between existence and non-existence.
+  placement:
+    mode: SnapgridCenter
+    snap:
+    - Wall
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    snapCardinals: true
+  - type: PlacementReplacement
+    key: walls
+  - type: Transform
+    anchored: true
+    noRot: false
+  - type: SpriteFade
+  - type: Physics
+    bodyType: Static
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.5,-0.5,0.5,0.5"
+        mask:
+        - FullTileMask
+        layer:
+        - WallLayer
+        density: 1000
+
+- type: entity
+  id: CFWallWoodenPalisade
+  name: palisade
+  description: A wall of sharp logs. Not that it's a safe haven.
+  parent:
+  - CFBaseWall
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Walls/wooden_palisad.rsi
+  - type: Icon
+    sprite: _CP14/Structures/Walls/wooden_palisad.rsi
+  - type: IconSmooth
+    key: CFWall
+    states:
+    - !type:CornerSpriteSmoothing
+      mask: [ CFWall ]
+      base: wood
+  - type: Damageable
+    damageContainer: Inorganic
+    damageModifierSet: WoodMod
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 100
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: WoodDestroy
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: Tag
+  - type: Occluder
+    enabled: false
+  - type: Airtight
+    airBlocked: false
+  - type: Construction
+    graph: CFWallWoodenPalisade
+    node: CFWallWoodenPalisade

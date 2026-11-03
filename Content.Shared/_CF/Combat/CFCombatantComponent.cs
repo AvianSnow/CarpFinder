@@ -3,7 +3,7 @@ using Robust.Shared.GameStates;
 namespace Content.Shared.CF.Combat;
 
 /// <summary>
-/// Pathfinder combat stats (AC / HP) for player characters and mobs.
+/// Carpfinder combat stats (AC / HP) for player characters and mobs.
 /// </summary>
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class CFCombatantComponent : Component
@@ -32,6 +32,10 @@ public sealed partial class CFCombatantComponent : Component
     /// </summary>
     [DataField, AutoNetworkedField]
     public List<string> TrainedSkills = new();
+
+    /// <summary>Specific Lore names from the chosen ancestry feat, shown on the Lore row.</summary>
+    [DataField, AutoNetworkedField]
+    public List<string> LoreNames = new();
 
     [DataField, AutoNetworkedField]
     public int TemporaryHp;

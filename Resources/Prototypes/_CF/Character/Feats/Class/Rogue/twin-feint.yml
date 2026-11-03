@@ -1,0 +1,11 @@
+# CarpFinder: class feat through level 5. Short mechanical note, not source text.
+# source: Carpfinder Player Core
+- type: cfFeat
+  id: CFTwinFeint
+  name: "Twin Feint"
+  description: "Feint, then Strike. Costs 2 actions."
+  class: Rogue
+  level: 1
+  traits:
+    - "Rogue"
+  action: Action

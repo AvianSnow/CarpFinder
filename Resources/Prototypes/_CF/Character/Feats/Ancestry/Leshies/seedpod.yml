@@ -1,0 +1,13 @@
+# CarpFinder: ancestry feat through level 5. Short mechanical note, not source text.
+# source: Carpfinder Player Core
+- type: cfFeat
+  id: CFSeedpod
+  name: "Seedpod"
+  description: "Your unarmed Strike deals 1d4 bludgeoning."
+  ancestry: Leshy
+  level: 1
+  traits:
+    - "Leshy"
+  naturalDice: 1
+  naturalDie: 4
+  naturalDamage: bludgeoning

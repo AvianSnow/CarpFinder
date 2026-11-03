@@ -1,7 +1,7 @@
 npc-debug-overlay-window-title = NPC debug
 
 npc-debug-overlay-window-section-npc-label = NPC
-npc-debug-overlay-window-section-pathfinder-label = Pathfinder
+npc-debug-overlay-window-section-carpfinder-label = Carpfinder
 
 npc-debug-overlay-window-show-htn-tree-checkbox = Thonk
 npc-debug-overlay-window-path-breadcrumbs-checkbox = Breadcrumbs

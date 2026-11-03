@@ -1,0 +1,10 @@
+# CarpFinder: class feat through level 5. Short mechanical note, not source text.
+# source: Carpfinder Player Core 2
+- type: cfFeat
+  id: CFTumbleBehindSwashbuckler
+  name: "Tumble Behind (Swashbuckler)"
+  description: "Acrobatics against Reflex. Success makes the target off-guard to you."
+  class: Swashbuckler
+  level: 2
+  traits:
+    - "Swashbuckler"

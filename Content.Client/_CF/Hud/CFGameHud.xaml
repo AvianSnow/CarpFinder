@@ -12,6 +12,10 @@
     VerticalAlignment="Bottom">
     <BoxContainer Orientation="Horizontal" SeparationOverride="8" VerticalAlignment="Bottom">
         <BoxContainer Orientation="Vertical" SeparationOverride="4">
+            <inventory:ItemSlotButtonContainer Name="SuitStorage" SlotGroup="CFSuitStorage" MaxColumns="1" />
+            <inventory:ItemSlotButtonContainer Name="Id" SlotGroup="CFId" MaxColumns="1" />
+        </BoxContainer>
+        <BoxContainer Orientation="Vertical" SeparationOverride="4">
             <inventory:ItemSlotButtonContainer Name="Belt" SlotGroup="CFBelt" MaxColumns="1" />
             <inventory:ItemSlotButtonContainer Name="Bag" SlotGroup="CFBag" MaxColumns="1" />
         </BoxContainer>
@@ -24,9 +28,9 @@
     <PanelContainer Name="DividerLeft" MinSize="2 120" />
     <PanelContainer Name="ActionPanel" VerticalAlignment="Bottom">
         <BoxContainer Orientation="Vertical" SeparationOverride="4" Align="Center" Margin="6">
+            <hud:CFActionPips Name="ActionPips" Access="Public" HorizontalAlignment="Center" />
             <BoxContainer Orientation="Horizontal" SeparationOverride="6" HorizontalAlignment="Center">
                 <Button Name="ActionsFilter" ToggleMode="True" MinSize="88 26" Text="{Loc 'cf-hud-actions'}" ToolTip="{Loc 'cf-hud-actions-tooltip'}" />
-                <Button Name="ReactionsFilter" ToggleMode="True" MinSize="88 26" Text="{Loc 'cf-hud-reactions'}" ToolTip="{Loc 'cf-hud-reactions-tooltip'}" />
                 <Button Name="SpellsFilter" ToggleMode="True" MinSize="88 26" Text="{Loc 'cf-hud-spells'}" ToolTip="{Loc 'cf-hud-spells-tooltip'}" />
             </BoxContainer>
             <actions:ActionsBar />

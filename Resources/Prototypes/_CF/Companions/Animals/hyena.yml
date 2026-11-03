@@ -1,0 +1,68 @@
+# Young Hyena. Ancestry Hit Points 6. At 1st level that is 14 Hit Points.
+- type: cfPet
+  id: CFPetHyena
+  name: Hyena
+  kind: Companion
+  entity: CFCompanionHyena
+  size: "Small"
+  strength: 2
+  dexterity: 3
+  constitution: 2
+  intelligence: -4
+  wisdom: 1
+  charisma: 0
+  hitPoints: 6
+  description: "A young hyena companion."
+  speeds:
+    - name: Speed
+      feet: 40
+  senses:
+    - "low-light vision"
+    - "scent (imprecise, 30 feet)"
+  attacks:
+    - name: "Jaws"
+      die: 8
+      damage: piercing
+      finesse: true
+  skills:
+    - name: Intimidation
+      ability: Charisma
+  support: "Until your next turn, a creature in its reach that you hit becomes frightened 1."
+  advanced: "Gnaw"
+
+- type: entity
+  parent: [ MobFox, CFCompanionBase ]
+  id: CFCompanionHyena
+  name: hyena companion
+  description: "A young hyena companion."
+  suffix: Companion
+  components:
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 16
+    maxHp: 14
+    currentHp: 14
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 2
+      Dexterity: 3
+      Constitution: 2
+      Intelligence: -4
+      Wisdom: 1
+      Charisma: 0
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 8
+    naturalType: piercing
+    naturalFinesse: true
+    naturalAgile: false
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      14: Dead

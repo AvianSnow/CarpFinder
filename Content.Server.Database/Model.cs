@@ -350,6 +350,9 @@ namespace Content.Server.Database
 
         public List<ProfileRoleLoadout> Loadouts { get; } = new();
 
+        /// <summary>Carpfinder build: class, feats, spells, and the chosen companion.</summary>
+        [Column(TypeName = "jsonb")] public JsonDocument? CfBuild { get; set; }
+
         [Column("pref_unavailable")] public DbPreferenceUnavailableMode PreferenceUnavailable { get; set; }
 
         public int PreferenceId { get; set; }

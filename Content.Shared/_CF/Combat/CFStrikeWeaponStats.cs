@@ -13,7 +13,8 @@ public readonly record struct CFStrikeWeaponStats(
     bool Ranged = false,
     int? DeadlyDie = null,
     int RangeIncrementFeet = 0,
-    int VolleyFeet = 0)
+    int VolleyFeet = 0,
+    bool Agile = false)
 {
     public static CFStrikeWeaponStats FromMelee(CFMeleeWeaponComponent weapon)
     {
@@ -23,7 +24,8 @@ public readonly record struct CFStrikeWeaponStats(
             weapon.DamageType,
             weapon.Proficiency,
             weapon.Finesse,
-            weapon.ItemBonus);
+            weapon.ItemBonus,
+            Agile: weapon.Agile);
     }
 
     public static CFStrikeWeaponStats FromRanged(CFRangedWeaponComponent weapon)
@@ -34,11 +36,12 @@ public readonly record struct CFStrikeWeaponStats(
             weapon.DamageType,
             weapon.Proficiency,
             Finesse: false,
-            weapon.ItemBonus,
+            ItemBonus: weapon.ItemBonus,
             Ranged: true,
-            weapon.DeadlyDie > 0 ? weapon.DeadlyDie : null,
-            weapon.RangeIncrementFeet,
-            weapon.VolleyFeet);
+            DeadlyDie: weapon.DeadlyDie > 0 ? weapon.DeadlyDie : null,
+            RangeIncrementFeet: weapon.RangeIncrementFeet,
+            VolleyFeet: weapon.VolleyFeet,
+            Agile: weapon.Agile);
     }
 
     public static CFStrikeWeaponStats Unarmed()
@@ -49,6 +52,7 @@ public readonly record struct CFStrikeWeaponStats(
             CFMelee.UnarmedDamageType,
             CFMelee.UnarmedProficiency,
             Finesse: false,
-            ItemBonus: 0);
+            ItemBonus: 0,
+            Agile: true);
     }
 }

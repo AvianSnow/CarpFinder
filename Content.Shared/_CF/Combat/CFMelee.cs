@@ -5,7 +5,7 @@ using Robust.Shared.Random;
 namespace Content.Shared.CF.Combat;
 
 /// <summary>
-/// Pathfinder 2e melee Strike helpers (d20 vs AC, degrees of success, damage dice).
+/// Carpfinder 2e melee Strike helpers (d20 vs AC, degrees of success, damage dice).
 /// </summary>
 public static class CFMelee
 {
@@ -22,6 +22,19 @@ public static class CFMelee
 
     /// <summary>Approximate PF feet per SS14 tile (1 tile ≈ 1.5 m ≈ 5 ft grid square).</summary>
     public const float FeetPerTile = 5f;
+
+    /// <summary>
+    /// Multiple Attack Penalty for an attack roll. <paramref name="attacksAlreadyMade"/> is how many
+    /// attack rolls this creature has made since its action pool was last full.
+    /// </summary>
+    public static int MapPenalty(int attacksAlreadyMade, bool agile)
+    {
+        var step = Math.Clamp(attacksAlreadyMade, 0, 2);
+        if (agile)
+            return step == 0 ? 0 : step == 1 ? -4 : -8;
+
+        return step == 0 ? 0 : step == 1 ? -5 : -10;
+    }
 
     public static bool InReach(float distance) => distance <= MeleeRange;
 
@@ -126,7 +139,8 @@ public static class CFMelee
         CFCombatantComponent combatant,
         CFStrikeWeaponStats weapon,
         bool weaponTrained,
-        float distanceFeet = 0f)
+        float distanceFeet = 0f,
+        bool ignoreVolley = false)
     {
         var proficiency = CFAttributeMath.ProficiencyBonus(combatant.Level, weaponTrained);
         int ability;
@@ -139,7 +153,8 @@ public static class CFMelee
 
         var bonus = ability + proficiency + weapon.ItemBonus;
         bonus += RangeIncrementPenalty(distanceFeet, weapon.RangeIncrementFeet);
-        bonus += VolleyPenalty(distanceFeet, weapon.VolleyFeet);
+        if (!ignoreVolley)
+            bonus += VolleyPenalty(distanceFeet, weapon.VolleyFeet);
         return bonus;
     }
 

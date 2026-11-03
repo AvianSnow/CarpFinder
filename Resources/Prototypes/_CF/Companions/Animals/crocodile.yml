@@ -1,0 +1,72 @@
+# Young Crocodile. Ancestry Hit Points 6. At 1st level that is 14 Hit Points.
+- type: cfPet
+  id: CFPetCrocodile
+  name: Crocodile
+  kind: Companion
+  entity: CFCompanionCrocodile
+  size: "Small"
+  strength: 3
+  dexterity: 2
+  constitution: 2
+  intelligence: -4
+  wisdom: 1
+  charisma: 0
+  hitPoints: 6
+  description: "A young crocodile companion. It can hold its breath for about 2 hours."
+  speeds:
+    - name: Speed
+      feet: 20
+    - name: swim
+      feet: 25
+  senses:
+    - "low-light vision"
+  attacks:
+    - name: "Jaws"
+      die: 8
+      damage: piercing
+    - name: "Tail"
+      die: 6
+      damage: bludgeoning
+      finesse: true
+  skills:
+    - name: Stealth
+      ability: Dexterity
+  support: "Until your next turn, if you damage a creature in its reach, it can latch on and move with that creature."
+  advanced: "Death Roll"
+
+- type: entity
+  parent: [ MobLizard, CFCompanionBase ]
+  id: CFCompanionCrocodile
+  name: crocodile companion
+  description: "A young crocodile companion. It can hold its breath for about 2 hours."
+  suffix: Companion
+  components:
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 15
+    maxHp: 14
+    currentHp: 14
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 3
+      Dexterity: 2
+      Constitution: 2
+      Intelligence: -4
+      Wisdom: 1
+      Charisma: 0
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 8
+    naturalType: piercing
+    naturalFinesse: false
+    naturalAgile: false
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      14: Dead

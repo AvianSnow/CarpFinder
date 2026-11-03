@@ -1,4 +1,5 @@
 using System.Linq;
+using Content.Shared.CF.Character;
 using Content.Shared.Chat.Prototypes;
 using Content.Shared.Guidebook;
 using Content.Shared.Humanoid;
@@ -160,13 +161,16 @@ public sealed partial class HumanoidProfileEditor
     {
         if (Profile != null)
         {
-            var available = false;
-            foreach (var species in _prototypeManager.EnumeratePrototypes<SpeciesPrototype>())
+            var available = CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species) != null;
+            if (!available)
             {
-                if (species.RoundStart && species.ID == Profile.Species)
+                foreach (var species in _prototypeManager.EnumeratePrototypes<SpeciesPrototype>())
                 {
-                    available = true;
-                    break;
+                    if (species.RoundStart && species.ID == Profile.Species)
+                    {
+                        available = true;
+                        break;
+                    }
                 }
             }
 

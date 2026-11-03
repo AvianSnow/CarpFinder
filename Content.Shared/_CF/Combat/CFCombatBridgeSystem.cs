@@ -7,7 +7,7 @@ using Robust.Shared.Prototypes;
 namespace Content.Shared.CF.Combat;
 
 /// <summary>
-/// Resolves Pathfinder combat stats for any SS14 <see cref="DamageableComponent"/> entity:
+/// Resolves Carpfinder combat stats for any SS14 <see cref="DamageableComponent"/> entity:
 /// explicit <see cref="CFCombatantComponent"/>, vanilla mobs as Commoners, or objects via materials.
 /// </summary>
 public sealed partial class CFCombatBridgeSystem : EntitySystem

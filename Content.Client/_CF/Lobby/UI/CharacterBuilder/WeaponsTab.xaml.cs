@@ -31,4 +31,9 @@ public sealed partial class WeaponsTab : BoxContainer
     {
         _controller.Rebuild(profile, jobOverride, session, collection, prototypes, getProfile, onChanged);
     }
+
+    public void Apply(HumanoidCharacterProfile profile)
+    {
+        _controller.Apply(profile);
+    }
 }

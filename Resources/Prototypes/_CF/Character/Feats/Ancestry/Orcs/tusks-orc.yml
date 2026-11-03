@@ -1,0 +1,14 @@
+# CarpFinder: ancestry feat through level 5. Short mechanical note, not source text.
+# source: Carpfinder Player Core
+- type: cfFeat
+  id: CFTusksOrc
+  name: "Tusks (Orc)"
+  description: "Your unarmed Strike deals 1d6 piercing."
+  ancestry: Orc
+  level: 1
+  traits:
+    - "Orc"
+  naturalDice: 1
+  naturalDie: 6
+  naturalDamage: piercing
+  naturalAgile: false

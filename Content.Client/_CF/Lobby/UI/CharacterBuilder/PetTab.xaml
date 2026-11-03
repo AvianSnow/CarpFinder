@@ -1,0 +1,68 @@
+<BoxContainer Name="PetTabRoot" xmlns="https://spacestation14.io"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              x:Class="Content.Client.CF.Lobby.UI.CharacterBuilder.PetTab"
+              Orientation="Vertical"
+              HorizontalExpand="True"
+              VerticalExpand="True">
+    <ScrollContainer VerticalExpand="True" HorizontalExpand="True" HScrollEnabled="False">
+        <BoxContainer Orientation="Vertical" Margin="10" SeparationOverride="10" HorizontalExpand="True">
+            <BoxContainer Orientation="Horizontal" SeparationOverride="8">
+                <Button Name="TabCompanion" Text="{Loc 'cf-pet-companion'}" ToggleMode="True" MinWidth="120" />
+                <Button Name="TabFamiliar" Text="{Loc 'cf-pet-familiar'}" ToggleMode="True" MinWidth="120" />
+            </BoxContainer>
+            <GridContainer Columns="5" HorizontalExpand="True">
+                <Button Name="BtnEditPet" Text="{Loc 'cf-pet-edit'}" HorizontalExpand="True" />
+                <Button Name="BtnStatBlock" Text="{Loc 'cf-pet-stat-block'}" HorizontalExpand="True" />
+                <Button Name="BtnViewSkills" Text="{Loc 'cf-pet-skills'}" HorizontalExpand="True" />
+                <Button Name="BtnAddEquipment" Text="{Loc 'cf-pet-equipment'}" HorizontalExpand="True" />
+                <Button Name="BtnBarding" Text="{Loc 'cf-pet-barding'}" HorizontalExpand="True" />
+            </GridContainer>
+            <Label Name="PetTitle" StyleClasses="LabelHeading" />
+            <BoxContainer Orientation="Horizontal" SeparationOverride="10" HorizontalExpand="True">
+                <PanelContainer StyleClasses="PanelDark" HorizontalExpand="True">
+                    <BoxContainer Orientation="Horizontal" Margin="8" SeparationOverride="12" VerticalAlignment="Center">
+                        <PanelContainer StyleClasses="PanelDeep" MinSize="52 56">
+                            <BoxContainer Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <Label Text="{Loc 'cf-pet-ac'}" HorizontalAlignment="Center" />
+                                <Label Name="AcValue" Text="10" HorizontalAlignment="Center" FontColorOverride="#e6c15a" />
+                            </BoxContainer>
+                        </PanelContainer>
+                        <BoxContainer Orientation="Vertical" SeparationOverride="4" HorizontalExpand="True" VerticalAlignment="Center">
+                            <ProgressBar Name="HpBar" MinValue="0" MaxValue="1" Value="1" MinHeight="18" HorizontalExpand="True" />
+                            <Label Name="HpLabel" />
+                            <Label Name="ArmorLabel" FontColorOverride="#a9a9a9" />
+                        </BoxContainer>
+                    </BoxContainer>
+                </PanelContainer>
+                <PanelContainer StyleClasses="PanelDark" MinWidth="220">
+                    <GridContainer Columns="2" Margin="8">
+                        <Label Name="StrLabel" />
+                        <Label Name="DexLabel" />
+                        <Label Name="ConLabel" />
+                        <Label Name="IntLabel" />
+                        <Label Name="WisLabel" />
+                        <Label Name="ChaLabel" />
+                    </GridContainer>
+                </PanelContainer>
+            </BoxContainer>
+            <BoxContainer Name="AttackCards" Orientation="Vertical" SeparationOverride="6" HorizontalExpand="True" />
+            <PanelContainer StyleClasses="PanelDark" HorizontalExpand="True">
+                <GridContainer Columns="2" Margin="8" HorizontalExpand="True">
+                    <Label Name="FortLabel" />
+                    <Label Name="RefLabel" />
+                    <Label Name="WillLabel" />
+                    <Label Name="PerLabel" />
+                </GridContainer>
+            </PanelContainer>
+            <PanelContainer StyleClasses="PanelDark" HorizontalExpand="True">
+                <BoxContainer Orientation="Vertical" Margin="8" SeparationOverride="4">
+                    <Label Name="SpeedLabel" />
+                    <Label Name="SizeLabel" />
+                    <Label Name="SensesLabel" />
+                    <RichTextLabel Name="SupportLabel" />
+                    <RichTextLabel Name="AdvancedLabel" />
+                </BoxContainer>
+            </PanelContainer>
+        </BoxContainer>
+    </ScrollContainer>
+</BoxContainer>

@@ -6,7 +6,7 @@ using Robust.Shared.Serialization;
 namespace Content.Shared.CF.Preferences;
 
 /// <summary>
-/// Pathfinder 2e build choices stored on <see cref="Content.Shared.Preferences.HumanoidCharacterProfile"/>.
+/// Carpfinder 2e build choices stored on <see cref="Content.Shared.Preferences.HumanoidCharacterProfile"/>.
 /// Ancestry is implied by <c>Species</c>; this holds background, class, and free/choice boost assignments.
 /// </summary>
 [DataDefinition]
@@ -18,6 +18,30 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
 
     [DataField]
     public ProtoId<CFClassPrototype>? Class;
+
+    /// <summary>Chosen heritage. Must match the ancestry, unless it is versatile.</summary>
+    [DataField]
+    public ProtoId<CFHeritagePrototype>? Heritage;
+
+    /// <summary>Level 1 ancestry feat. Must match the ancestry and be no higher than <see cref="Level"/>.</summary>
+    [DataField]
+    public ProtoId<CFFeatPrototype>? AncestryFeat;
+
+    /// <summary>Level 1 class feat.</summary>
+    [DataField]
+    public ProtoId<CFFeatPrototype>? ClassFeat;
+
+    /// <summary>Level 2 class feat. It can be a class feat of level 2 or lower.</summary>
+    [DataField]
+    public ProtoId<CFFeatPrototype>? ClassFeatLevel2;
+
+    /// <summary>Level 4 class feat. It can be a class feat of level 4 or lower.</summary>
+    [DataField]
+    public ProtoId<CFFeatPrototype>? ClassFeatLevel4;
+
+    /// <summary>Level 5 ancestry feat. It can be an ancestry feat of level 5 or lower.</summary>
+    [DataField]
+    public ProtoId<CFFeatPrototype>? AncestryFeatLevel5;
 
     /// <summary>
     /// Free attribute boosts granted by ancestry (one entry per Free in the ancestry prototype).
@@ -64,12 +88,34 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
     [DataField]
     public List<CFSpellPick> Spells = new();
 
+    /// <summary>Chosen animal companion or familiar prototype. Empty until the pet tab saves one.</summary>
+    [DataField]
+    public string PetId = "";
+
+    /// <summary>Nickname shown on the pet tab. Empty uses the species name.</summary>
+    [DataField]
+    public string PetName = "";
+
+    /// <summary>Empty, light, or heavy. Familiars leave this empty.</summary>
+    [DataField]
+    public string PetBarding = "";
+
+    /// <summary>Companion gear prototype ids picked in the equipment popup.</summary>
+    [DataField]
+    public List<string> PetGear = new();
+
     public CFCharacterBuildData Clone()
     {
         return new CFCharacterBuildData
         {
             Background = Background,
             Class = Class,
+            Heritage = Heritage,
+            AncestryFeat = AncestryFeat,
+            ClassFeat = ClassFeat,
+            ClassFeatLevel2 = ClassFeatLevel2,
+            ClassFeatLevel4 = ClassFeatLevel4,
+            AncestryFeatLevel5 = AncestryFeatLevel5,
             AncestryFreeBoosts = AncestryFreeBoosts.ToList(),
             BackgroundBoost = BackgroundBoost,
             BackgroundFreeBoost = BackgroundFreeBoost,
@@ -78,6 +124,10 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
             ClassTrainedSkills = ClassTrainedSkills.ToList(),
             Level = Level,
             Spells = Spells.Select(spell => spell.Copy()).ToList(),
+            PetId = PetId,
+            PetName = PetName,
+            PetBarding = PetBarding,
+            PetGear = PetGear.ToList(),
         };
     }
 
@@ -88,6 +138,12 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
 
         return Background == other.Background
                && Class == other.Class
+               && Heritage == other.Heritage
+               && AncestryFeat == other.AncestryFeat
+               && ClassFeat == other.ClassFeat
+               && ClassFeatLevel2 == other.ClassFeatLevel2
+               && ClassFeatLevel4 == other.ClassFeatLevel4
+               && AncestryFeatLevel5 == other.AncestryFeatLevel5
                && Level == other.Level
                && BackgroundBoost == other.BackgroundBoost
                && BackgroundFreeBoost == other.BackgroundFreeBoost
@@ -95,7 +151,11 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
                && FreeBoosts.SequenceEqual(other.FreeBoosts)
                && BackgroundTrainedSkills.SequenceEqual(other.BackgroundTrainedSkills)
                && ClassTrainedSkills.SequenceEqual(other.ClassTrainedSkills)
-               && Spells.SequenceEqual(other.Spells);
+               && Spells.SequenceEqual(other.Spells)
+               && PetId == other.PetId
+               && PetName == other.PetName
+               && PetBarding == other.PetBarding
+               && PetGear.SequenceEqual(other.PetGear);
     }
 
     public override bool Equals(object? obj)
@@ -108,6 +168,12 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
         var hash = new HashCode();
         hash.Add(Background);
         hash.Add(Class);
+        hash.Add(Heritage);
+        hash.Add(AncestryFeat);
+        hash.Add(ClassFeat);
+        hash.Add(ClassFeatLevel2);
+        hash.Add(ClassFeatLevel4);
+        hash.Add(AncestryFeatLevel5);
         hash.Add(Level);
         hash.Add(BackgroundBoost);
         hash.Add(BackgroundFreeBoost);
@@ -121,6 +187,11 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
             hash.Add(skill);
         foreach (var spell in Spells)
             hash.Add(spell);
+        hash.Add(PetId);
+        hash.Add(PetName);
+        hash.Add(PetBarding);
+        foreach (var gear in PetGear)
+            hash.Add(gear);
         return hash.ToHashCode();
     }
 }
@@ -139,7 +210,7 @@ public sealed partial class CFSpellPick : IEquatable<CFSpellPick>
     [DataField]
     public ProtoId<CFSpellPrototype> Spell;
 
-    /// <summary>The Cast button on a ranked slot. Cantrips leave this false.</summary>
+    /// <summary>Unused. Kept so older saved profiles still load.</summary>
     [DataField]
     public bool Expended;
 

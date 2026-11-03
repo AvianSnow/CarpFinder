@@ -1,0 +1,83 @@
+# Young Horse. Ancestry Hit Points 8. At 1st level that is 16 Hit Points.
+- type: cfPet
+  id: CFPetHorse
+  name: Horse
+  kind: Companion
+  entity: CFCompanionHorse
+  size: "Medium or Large"
+  strength: 3
+  dexterity: 2
+  constitution: 2
+  intelligence: -4
+  wisdom: 1
+  charisma: 0
+  hitPoints: 8
+  description: "A young horse companion. It is built to be ridden."
+  mount: true
+  speeds:
+    - name: Speed
+      feet: 40
+  senses:
+    - "low-light vision"
+    - "scent (imprecise, 30 feet)"
+  attacks:
+    - name: "Hoof"
+      die: 6
+      damage: bludgeoning
+      agile: true
+  skills:
+    - name: Survival
+      ability: Wisdom
+  support: "While mounted, a melee Strike after you moved at least 10 feet deals extra damage equal to twice the weapon's damage dice. A jousting weapon adds 2 per die instead."
+  advanced: "Gallop"
+
+- type: entity
+  parent: [ SimpleMobBase, CFCompanionBase ]
+  id: CFCompanionHorse
+  name: horse companion
+  description: "A young horse companion. It is built to be ridden."
+  suffix: Companion
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: companion
+      sprite: _CF/Mobs/companion-default.rsi
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: companion
+      Critical:
+        Base: dead
+      Dead:
+        Base: dead
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 15
+    maxHp: 16
+    currentHp: 16
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 3
+      Dexterity: 2
+      Constitution: 2
+      Intelligence: -4
+      Wisdom: 1
+      Charisma: 0
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 6
+    naturalType: bludgeoning
+    naturalFinesse: false
+    naturalAgile: true
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      16: Dead

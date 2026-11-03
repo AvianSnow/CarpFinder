@@ -1,0 +1,25 @@
+- type: constructionGraph
+  id: CFWallWoodenPalisade
+  start: start
+  graph:
+    - node: start
+      edges:
+        - to: CFWallWoodenPalisade
+          completed:
+            - !type:SnapToGrid
+          steps:
+            - stackGroup: WoodenPlanks
+              amount: 4
+              doAfter: 2
+    - node: CFWallWoodenPalisade
+      entity: CFWallWoodenPalisade
+      edges:
+      - to: start
+        completed:
+        - !type:SpawnPrototype
+          prototype: CFWoodenPlanks1
+          amount: 4
+        - !type:DeleteEntity {}
+        steps:
+        - tool: Prying
+          doAfter: 6

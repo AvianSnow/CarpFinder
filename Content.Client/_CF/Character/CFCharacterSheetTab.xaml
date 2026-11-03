@@ -110,6 +110,13 @@
             </GridContainer>
 
             <PanelContainer StyleClasses="BackgroundDark">
+                <BoxContainer Orientation="Vertical" Margin="6" SeparationOverride="4">
+                    <Label Name="XpLabel" Text="{Loc 'cf-sheet-xp'}" HorizontalAlignment="Center" StyleClasses="LabelSubText"/>
+                    <ProgressBar Name="XpBar" MinValue="0" MaxValue="1000" Value="0" MinHeight="14" HorizontalExpand="True"/>
+                </BoxContainer>
+            </PanelContainer>
+
+            <PanelContainer StyleClasses="BackgroundDark">
                 <BoxContainer Orientation="Horizontal" Margin="6" SeparationOverride="16">
                     <BoxContainer Orientation="Horizontal" SeparationOverride="4">
                         <Label Text="{Loc 'cf-sheet-dying'}" StyleClasses="LabelSubText"/>

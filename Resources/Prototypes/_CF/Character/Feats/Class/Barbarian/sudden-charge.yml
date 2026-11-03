@@ -1,0 +1,13 @@
+# CarpFinder: class feat through level 5. Short mechanical note, not source text.
+# source: Carpfinder Player Core
+- type: cfFeat
+  id: CFSuddenChargeBarbarian
+  name: "Sudden Charge"
+  description: "Stride into reach and Strike. Costs 2 actions."
+  class: Barbarian
+  level: 1
+  traits:
+    - "Barbarian"
+    - "Fighter"
+    - "Flourish"
+  action: Action

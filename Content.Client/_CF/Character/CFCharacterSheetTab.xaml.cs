@@ -78,6 +78,7 @@ public sealed partial class CFCharacterSheetTab : BoxContainer
         SetAbility(CFAbility.Wisdom, WisScoreLabel, WisModLabel, abilities);
         SetAbility(CFAbility.Charisma, ChaScoreLabel, ChaModLabel, abilities);
 
+        UpdateXp(entity);
         ArmorClassLabel.Text = combatant.ArmorClass.ToString();
         CurrentHpLabel.Text = combatant.CurrentHp.ToString();
         MaxHpLabel.Text = combatant.MaxHp.ToString();
@@ -118,13 +119,36 @@ public sealed partial class CFCharacterSheetTab : BoxContainer
 
             var rank = CFSkills.GetSkillRank(cls, background, skillId, combatant.TrainedSkills);
             var mod = CFSkills.SkillModifier(abilities.AbilityModifiers, skill.Ability, combatant.Level, rank);
+            var skillName = Loc.GetString(skill.Name);
+            if (skillId == "Lore" && combatant.LoreNames.Count > 0)
+                skillName = Loc.GetString("cf-sheet-lore-named", ("lores", string.Join(", ", combatant.LoreNames)));
             row.Set(
                 skillId,
-                Loc.GetString(skill.Name),
+                skillName,
                 AbilityAbbr(skill.Ability),
                 rank,
                 mod);
         }
+    }
+
+    public void UpdateXp(EntityUid entity)
+    {
+        var xp = 0;
+        var level = 1;
+        if (_entities.EntityExists(entity))
+        {
+            if (_entities.TryGetComponent(entity, out CFExperienceComponent? experience))
+                xp = experience.Xp;
+            if (_entities.TryGetComponent(entity, out CFCombatantComponent? combatant))
+                level = combatant.Level;
+        }
+
+        var cap = CFExperienceComponent.XpPerLevel;
+        XpBar.MaxValue = cap;
+        XpBar.Value = Math.Min(xp, cap);
+        XpLabel.Text = level >= CFExperienceComponent.MaxLevel
+            ? Loc.GetString("cf-sheet-xp-max", ("xp", xp), ("level", level))
+            : Loc.GetString("cf-sheet-xp-value", ("xp", xp), ("max", cap));
     }
 
     private void BuildSkillColumns()

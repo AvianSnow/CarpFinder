@@ -1,0 +1,40 @@
+# Items placed beside a character who chose them on the pet sheet.
+
+- type: entity
+  parent: BaseItem
+  id: CFPetSaddlebagsItem
+  name: saddlebags
+  description: A pair of bags a companion can carry.
+  components:
+  - type: Sprite
+    sprite: Clothing/Back/Backpacks/backpack.rsi
+    state: icon
+  - type: Item
+    size: Normal
+    sprite: Clothing/Back/Backpacks/backpack.rsi
+
+- type: entity
+  parent: BaseItem
+  id: CFPetCollarItem
+  name: collar
+  description: A fitted collar with a name plate.
+  components:
+  - type: Sprite
+    sprite: Clothing/Neck/Ties/redtie.rsi
+    state: icon
+  - type: Item
+    size: Tiny
+    sprite: Clothing/Neck/Ties/redtie.rsi
+
+- type: entity
+  parent: BaseItem
+  id: CFPetHarnessItem
+  name: harness
+  description: Straps that keep a load on a companion.
+  components:
+  - type: Sprite
+    sprite: Clothing/Belt/champion.rsi
+    state: icon
+  - type: Item
+    size: Small
+    sprite: Clothing/Belt/champion.rsi

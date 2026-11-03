@@ -1,0 +1,73 @@
+# Young Antelope. Ancestry Hit Points 6. At 1st level that is 14 Hit Points.
+- type: cfPet
+  id: CFPetAntelope
+  name: Antelope
+  kind: Companion
+  entity: CFCompanionAntelope
+  size: "Medium or Large"
+  strength: 2
+  dexterity: 3
+  constitution: 2
+  intelligence: -4
+  wisdom: 1
+  charisma: 0
+  hitPoints: 6
+  description: "A young antelope companion. It is built to be ridden."
+  mount: true
+  speeds:
+    - name: Speed
+      feet: 40
+  senses:
+    - "low-light vision"
+  attacks:
+    - name: "Horns"
+      die: 6
+      damage: piercing
+      finesse: true
+    - name: "Hoof"
+      die: 4
+      damage: bludgeoning
+      agile: true
+      finesse: true
+  skills:
+    - name: Survival
+      ability: Wisdom
+  support: "While you ride it, a damaging Strike against a creature in its reach also deals 1d6 persistent bleed, or 2d6 once it is nimble or savage."
+  advanced: "Bounding Retreat"
+
+- type: entity
+  parent: [ MobReindeerBuck, CFCompanionBase ]
+  id: CFCompanionAntelope
+  name: antelope companion
+  description: "A young antelope companion. It is built to be ridden."
+  suffix: Companion
+  components:
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 16
+    maxHp: 14
+    currentHp: 14
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 2
+      Dexterity: 3
+      Constitution: 2
+      Intelligence: -4
+      Wisdom: 1
+      Charisma: 0
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 6
+    naturalType: piercing
+    naturalFinesse: true
+    naturalAgile: false
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      14: Dead

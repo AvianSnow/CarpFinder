@@ -1,0 +1,271 @@
+# Radial activities. Skill actions are granted to every character. Class and feat actions are granted when they apply.
+
+- type: entity
+  abstract: true
+  parent: BaseAction
+  id: CFActivityTarget
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Action
+    useDelay: 0.6
+    itemIconStyle: BigAction
+    raiseOnAction: true
+  - type: TargetAction
+    range: 1.5
+    checkCanAccess: false
+    targetingIndicator: true
+  - type: EntityTargetAction
+    canTargetSelf: false
+    whitelist:
+      components:
+      - MobState
+    event: !type:CFActivityTargetEvent
+  - type: Sprite
+    sprite: Objects/Magic/magicactions.rsi
+    layers:
+    - state: spell_default
+  - type: CFRadialSlot
+    group: Action
+    actions: 1
+
+- type: entity
+  abstract: true
+  parent: BaseAction
+  id: CFActivityInstant
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Action
+    useDelay: 0.6
+    itemIconStyle: BigAction
+    raiseOnAction: true
+  - type: InstantAction
+    event: !type:CFActivityInstantEvent
+  - type: Sprite
+    sprite: Objects/Magic/magicactions.rsi
+    layers:
+    - state: spell_default
+  - type: CFRadialSlot
+    group: Action
+    actions: 1
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActDemoralize
+  name: Demoralize
+  description: Intimidation against Will. Success frightens the target.
+  components:
+  - type: TargetAction
+    range: 6
+  - type: CFActivity
+    kind: Demoralize
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTrip
+  name: Trip
+  description: Athletics against Reflex. Success knocks the target prone.
+  components:
+  - type: CFActivity
+    kind: Trip
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActShove
+  name: Shove
+  description: Athletics against Fortitude. Success pushes the target.
+  components:
+  - type: CFActivity
+    kind: Shove
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActGrapple
+  name: Grapple
+  description: Athletics against Fortitude. Success grabs the target.
+  components:
+  - type: CFActivity
+    kind: Grapple
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActFeint
+  name: Feint
+  description: Deception against Perception. Success makes the target off-guard to you.
+  components:
+  - type: CFActivity
+    kind: Feint
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActRaiseShield
+  name: Raise a Shield
+  description: You gain a +2 circumstance bonus to AC until your next turn. Needs a shield in your active hand.
+  components:
+  - type: Sprite
+    sprite: Objects/Weapons/Melee/shields.rsi
+    layers:
+    - state: riot-icon
+  - type: CFActivity
+    kind: RaiseShield
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActRage
+  name: Rage
+  description: +2 damage and -1 AC until you end the rage. You cannot cast spells while raging.
+  components:
+  - type: CFActivity
+    kind: Rage
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActHuntPrey
+  name: Hunt Prey
+  description: Mark a creature. Your first hit against it each turn deals 1d8 extra precision damage.
+  components:
+  - type: TargetAction
+    range: 12
+  - type: CFActivity
+    kind: HuntPrey
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActFlurry
+  name: Flurry of Blows
+  description: Two unarmed Strikes. Costs 1 action.
+  components:
+  - type: CFActivity
+    kind: Flurry
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActSpellstrike
+  name: Spellstrike
+  description: A melee Strike that also deals force damage. Spends a rank 1 slot when you have one.
+  components:
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFActivity
+    kind: Spellstrike
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActStratagem
+  name: Devise a Stratagem
+  description: Roll a d20. Your next Strike against that creature uses it.
+  components:
+  - type: TargetAction
+    range: 12
+  - type: CFActivity
+    kind: Stratagem
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActExploit
+  name: Exploit Vulnerability
+  description: The creature is off-guard to you and your Strikes deal 2 extra damage.
+  components:
+  - type: TargetAction
+    range: 6
+  - type: CFActivity
+    kind: Exploit
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActInspire
+  name: Inspire Courage
+  description: You and nearby allies gain +1 to attacks and saves for a short while.
+  components:
+  - type: CFActivity
+    kind: Inspire
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActFinisher
+  name: Confident Finisher
+  description: A Strike that spends panache. A miss still deals 2 precision damage.
+  components:
+  - type: CFActivity
+    kind: Finisher
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActDoubleSlice
+  name: Double Slice
+  description: Two Strikes at your current multiple attack penalty. The second takes -2 if the weapon is not agile.
+  components:
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFActivity
+    kind: DoubleSlice
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActExactingStrike
+  name: Exacting Strike
+  description: A Strike. If you miss, it does not raise your multiple attack penalty.
+  components:
+  - type: CFActivity
+    kind: ExactingStrike
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActSuddenCharge
+  name: Sudden Charge
+  description: Stride into reach and Strike. Costs 2 actions.
+  components:
+  - type: TargetAction
+    range: 3
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFActivity
+    kind: SuddenCharge
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActSnaggingStrike
+  name: Snagging Strike
+  description: A Strike that leaves the target off-guard on a hit.
+  components:
+  - type: CFActivity
+    kind: SnaggingStrike
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActViciousSwing
+  name: Vicious Swing
+  description: A Strike with an extra damage die. Costs 2 actions.
+  components:
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFActivity
+    kind: ViciousSwing
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActPointBlank
+  name: Point-Blank Stance
+  description: Ignore volley and gain +2 damage with ranged Strikes inside the first range increment.
+  components:
+  - type: CFActivity
+    kind: PointBlank
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTwinFeint
+  name: Twin Feint
+  description: Feint, then Strike. Costs 2 actions.
+  components:
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFActivity
+    kind: TwinFeint
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTumbleBehind
+  name: Tumble Behind
+  description: Acrobatics against Reflex. Success makes the target off-guard to you.
+  components:
+  - type: CFActivity
+    kind: TumbleBehind

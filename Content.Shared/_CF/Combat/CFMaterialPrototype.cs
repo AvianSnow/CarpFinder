@@ -3,7 +3,7 @@ using Robust.Shared.Prototypes;
 namespace Content.Shared.CF.Combat;
 
 /// <summary>
-/// Pathfinder object material statistics (hardness / HP / broken threshold).
+/// Carpfinder object material statistics (hardness / HP / broken threshold).
 /// </summary>
 [Prototype("cfMaterial")]
 public sealed partial class CFMaterialPrototype : IPrototype

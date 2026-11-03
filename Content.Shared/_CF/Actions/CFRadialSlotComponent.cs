@@ -16,6 +16,13 @@ public sealed partial class CFRadialSlotComponent : Component
     /// </summary>
     [DataField, AutoNetworkedField]
     public int SpellRank;
+
+    /// <summary>
+    /// Actions this activity spends. 0 uses the default: 1 for an action, the spell's catalog cost for a spell.
+    /// Free activities and reactions stay at 0 and spend nothing.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public int Actions;
 }
 
 public enum CFRadialGroup : byte
@@ -23,6 +30,7 @@ public enum CFRadialGroup : byte
     /// <summary>An activity that costs one, two, or three actions.</summary>
     Action,
 
+    /// <summary>Not shown. Reactions resolve in code when their trigger happens.</summary>
     Reaction,
 
     Free,

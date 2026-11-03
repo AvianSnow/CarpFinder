@@ -1,0 +1,17 @@
+<DefaultWindow xmlns="https://spacestation14.io"
+               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+               x:Class="Content.Client.CF.Lobby.UI.CharacterBuilder.PetBardingPopup"
+               MinSize="420 240"
+               SetSize="480 280">
+    <BoxContainer Orientation="Vertical" HorizontalExpand="True" VerticalExpand="True" SeparationOverride="8" Margin="8">
+        <Button Name="NoneButton" Text="{Loc 'cf-pet-barding-none'}" ToggleMode="True" HorizontalExpand="True" />
+        <Button Name="LightButton" Text="{Loc 'cf-pet-barding-light'}" ToggleMode="True" HorizontalExpand="True" />
+        <Button Name="HeavyButton" Text="{Loc 'cf-pet-barding-heavy'}" ToggleMode="True" HorizontalExpand="True" />
+        <Label Name="DetailLabel" />
+        <Control VerticalExpand="True" />
+        <BoxContainer Orientation="Horizontal" HorizontalAlignment="Right" SeparationOverride="6">
+            <Button Name="FinishedButton" Text="{Loc 'cf-pet-finished'}" />
+            <Button Name="DismissButton" Text="{Loc 'cf-pet-close'}" />
+        </BoxContainer>
+    </BoxContainer>
+</DefaultWindow>

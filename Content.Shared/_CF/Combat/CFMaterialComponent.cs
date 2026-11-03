@@ -4,7 +4,7 @@ using Robust.Shared.Prototypes;
 namespace Content.Shared.CF.Combat;
 
 /// <summary>
-/// Explicit Pathfinder material on an entity. When absent, <see cref="CFCombatBridgeSystem"/> infers one.
+/// Explicit Carpfinder material on an entity. When absent, <see cref="CFCombatBridgeSystem"/> infers one.
 /// </summary>
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class CFMaterialComponent : Component

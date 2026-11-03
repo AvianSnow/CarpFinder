@@ -3,7 +3,7 @@ using System.Numerics;
 namespace Content.Shared.CF.Combat;
 
 /// <summary>
-/// Pathfinder 2e flanking on free movement.
+/// Carpfinder 2e flanking on free movement.
 /// Two allies flank when each is within reach and the line between them passes through the foe.
 /// </summary>
 public static class CFFlanking
@@ -14,14 +14,14 @@ public static class CFFlanking
     /// <summary>Normal melee reach. The reach trait is 10.</summary>
     public const int DefaultReachFeet = 5;
 
-    /// <summary>Lookup radius (tiles) when searching for flankers. Covers a long reach.</summary>
+    /// <summary>Largest lookup radius, in world units. Normal queries are much smaller than this.</summary>
     public const float SearchRange = 8f;
 
     /// <summary>
     /// The line between the allies must pass within this distance of the foe's position.
-    /// About half a tile, so it has to cross the creature rather than merely pass nearby.
+    /// About a quarter of a tile, so it has to cross the creature rather than merely pass nearby.
     /// </summary>
-    public const float BodyRadius = 0.5f;
+    public const float BodyRadius = 0.25f;
 
     public static int ReachInTiles(int reachFeet)
     {

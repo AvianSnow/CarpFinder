@@ -1,0 +1,23 @@
+﻿- type: entity
+  parent: CFSpellInstant
+  id: CFShield
+  name: Shield
+  description: +1 circumstance bonus to AC. The shield can block 5 damage once, then the spell ends.
+  components:
+  - type: Sprite
+    sprite: Objects/Magic/magicactions.rsi
+    layers:
+    - state: shield
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+  - type: CFSpell
+    spell: Shield
+    rank: 0
+    delivery: Instant
+    defense: None
+    acBonus: 1
+    shieldBlock: 5
+    durationSeconds: 12
+    friendly: true
+    includeSelf: true

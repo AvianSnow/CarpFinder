@@ -1,0 +1,72 @@
+# Young Draft Lizard. Ancestry Hit Points 8. At 1st level that is 16 Hit Points.
+- type: cfPet
+  id: CFPetDraftLizard
+  name: Draft Lizard
+  kind: Companion
+  entity: CFCompanionDraftLizard
+  size: "Medium"
+  strength: 3
+  dexterity: 2
+  constitution: 2
+  intelligence: -4
+  wisdom: 1
+  charisma: 0
+  hitPoints: 8
+  description: "A young draft lizard companion. It is built to be ridden."
+  mount: true
+  speeds:
+    - name: Speed
+      feet: 25
+  senses:
+    - "darkvision"
+    - "scent (imprecise, 30 feet)"
+  attacks:
+    - name: "Jaws"
+      die: 8
+      damage: piercing
+    - name: "Tail"
+      die: 6
+      damage: bludgeoning
+      finesse: true
+  skills:
+    - name: Athletics
+      ability: Strength
+  support: "Your next Strike against a foe in its reach gains a +1 circumstance bonus. The bonus ends when you use it or at the start of your next turn."
+  advanced: "Tail Swipe"
+
+- type: entity
+  parent: [ MobLizard, CFCompanionBase ]
+  id: CFCompanionDraftLizard
+  name: draft lizard companion
+  description: "A young draft lizard companion. It is built to be ridden."
+  suffix: Companion
+  components:
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 15
+    maxHp: 16
+    currentHp: 16
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 3
+      Dexterity: 2
+      Constitution: 2
+      Intelligence: -4
+      Wisdom: 1
+      Charisma: 0
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 8
+    naturalType: piercing
+    naturalFinesse: false
+    naturalAgile: false
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      16: Dead

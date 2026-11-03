@@ -1,0 +1,82 @@
+# Young Knurled Worm. Ancestry Hit Points 8. At 1st level that is 16 Hit Points.
+- type: cfPet
+  id: CFPetKnurledWorm
+  name: Knurled Worm
+  kind: Companion
+  entity: CFCompanionKnurledWorm
+  size: "Small"
+  strength: 3
+  dexterity: 1
+  constitution: 2
+  intelligence: -4
+  wisdom: 1
+  charisma: 1
+  hitPoints: 8
+  description: "A young knurled worm companion."
+  speeds:
+    - name: Speed
+      feet: 20
+  attacks:
+    - name: "Body"
+      die: 8
+      damage: bludgeoning
+    - name: "Jaws"
+      die: 6
+      damage: slashing
+      agile: true
+  skills:
+    - name: Survival
+      ability: Wisdom
+  support: "Until your next turn, the first square a damaged creature in its reach enters is difficult terrain."
+  advanced: "Regurgitate Soil"
+
+- type: entity
+  parent: [ SimpleMobBase, CFCompanionBase ]
+  id: CFCompanionKnurledWorm
+  name: knurled worm companion
+  description: "A young knurled worm companion."
+  suffix: Companion
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: companion
+      sprite: _CF/Mobs/companion-default.rsi
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: companion
+      Critical:
+        Base: dead
+      Dead:
+        Base: dead
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFCombatant
+    level: 1
+    armorClass: 14
+    maxHp: 16
+    currentHp: 16
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 3
+      Dexterity: 1
+      Constitution: 2
+      Intelligence: -4
+      Wisdom: 1
+      Charisma: 1
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 8
+    naturalType: bludgeoning
+    naturalFinesse: false
+    naturalAgile: false
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      16: Dead
