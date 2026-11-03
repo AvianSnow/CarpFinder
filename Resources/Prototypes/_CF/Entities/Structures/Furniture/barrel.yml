@@ -1,0 +1,271 @@
+- type: entity
+  id: CFBarrelSolution
+  abstract: true
+  components:
+    - type: InteractionOutline
+    - type: Appearance
+    - type: DrainableSolution
+      solution: barrel
+    - type: MixableSolution
+      solution: barrel
+    - type: RefillableSolution
+      solution: barrel
+    - type: DrawableSolution
+      solution: barrel
+    - type: Drink
+      solution: barrel
+
+- type: entity
+  id: CFBaseBarrel
+  parent:
+    - BaseStructureDynamic
+    - CFBarrelSolution
+    - CFBaseFlammable
+  name: wooden barrel
+  suffix: Empty
+  description: The simplest design for storing liquids.
+  categories: [ForkFiltered]
+  placement:
+    mode: PlaceFree
+  components:
+    - type: Openable
+      sound:
+        collection: bottleOpenSounds
+      closeable: true
+      closeSound:
+        collection: bottleCloseSounds
+    - type: GenericVisualizer
+      visuals:
+        enum.OpenableVisuals.Opened:
+          enum.OpenableVisuals.Layer:
+            True: { visible: false }
+            False: { visible: true }
+    - type: Sprite
+      drawdepth: Mobs
+      sprite: _CP14/Structures/Furniture/Barrels/barrel.rsi
+      noRot: true
+      layers:
+        - state: barrel_open
+        - state: liq1
+          map: ["enum.SolutionContainerLayers.Fill"]
+          visible: false
+        - state: barrel
+          map: ["enum.OpenableVisuals.Layer"]
+    - type: Transform
+      noRot: true
+    - type: Physics
+    - type: Construction
+      graph: CP14BaseBarrel
+      node: CP14BaseBarrel
+    - type: Fixtures
+      fixtures:
+        fix1:
+          shape: !type:PhysShapeAabb
+            bounds: "-0.3,-0.3,0.3,0.3"
+          density: 155
+          mask:
+            - MachineMask
+          layer:
+            - MachineLayer
+    - type: Damageable
+      damageContainer: Inorganic
+      damageModifierSet: CFWood
+    - type: Destructible
+      thresholds:
+        - trigger: !type:DamageTrigger
+            damage: 50
+          behaviors:
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+        - trigger: !type:DamageTypeTrigger
+            damageType: Heat
+            damage: 5
+          behaviors:
+            - !type:SolutionExplosionBehavior
+              solution: barrel
+        - trigger: !type:DamageTypeTrigger
+            damageType: Piercing
+            damage: 5
+          behaviors:
+            - !type:SolutionExplosionBehavior
+              solution: barrel
+        - trigger: !type:DamageTrigger
+            damage: 20
+          behaviors:
+            - !type:SpillBehavior
+              solution: barrel
+            - !type:PlaySoundBehavior
+              sound:
+                collection: WoodDestroy
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+    - type: SolutionContainerManager
+      solutions:
+        barrel:
+          maxVol: 300
+    - type: CFWeatherRefillable
+      solution: barrel
+    - type: SolutionContainerVisuals
+      maxFillLevels: 5
+      fillBaseName: liq
+    - type: ExaminableSolution
+      solution: barrel
+    - type: PhysicalComposition
+      materialComposition:
+        CFWoodenPlanks: 30
+
+- type: entity
+  id: CFBarrelWater
+  parent: CFBaseBarrel
+  suffix: Water
+  components:
+    - type: SolutionContainerManager
+      solutions:
+        barrel:
+          reagents:
+            - ReagentId: Water
+              Quantity: 300
+
+- type: entity
+  id: CFBarrelBlood
+  parent: CFBaseBarrel
+  suffix: Blood
+  components:
+    - type: SolutionContainerManager
+      solutions:
+        barrel:
+          reagents:
+            - ReagentId: CFBlood
+              Quantity: 300
+
+- type: entity
+  id: CFBarrelBloodTiefling
+  parent: CFBaseBarrel
+  suffix: Tiefling Blood
+  components:
+    - type: SolutionContainerManager
+      solutions:
+        barrel:
+          reagents:
+            - ReagentId: CFBloodTiefling
+              Quantity: 300
+
+- type: entity
+  id: CFBarrelBloodElf
+  parent: CFBaseBarrel
+  suffix: Elf Blood
+  components:
+    - type: SolutionContainerManager
+      solutions:
+        barrel:
+          reagents:
+            - ReagentId: CFBloodElf
+              Quantity: 300
+
+- type: entity
+  id: CFBarrelBloodGoblin
+  parent: CFBaseBarrel
+  suffix: Goblin Blood
+  components:
+    - type: SolutionContainerManager
+      solutions:
+        barrel:
+          reagents:
+            - ReagentId: CFBloodGoblin
+              Quantity: 300
+
+- type: entity
+  id: CFBarrelBloodFlowerSap
+  parent: CFBaseBarrel
+  suffix: Bloodflower sap
+  components:
+    - type: SolutionContainerManager
+      solutions:
+        barrel:
+          reagents:
+            - ReagentId: CFBloodFlowerSap
+              Quantity: 300
+
+- type: entity
+  id: CFBarrelAgaricMushroom
+  parent: CFBaseBarrel
+  suffix: Agaric mushroom
+  components:
+    - type: SolutionContainerManager
+      solutions:
+        barrel:
+          reagents:
+            - ReagentId: CFAgaricMushroom
+              Quantity: 300
+
+- type: entity
+  id: CFBarrelChromiumSlime
+  parent: CFBaseBarrel
+  suffix: Chromium Slime
+  components:
+    - type: SolutionContainerManager
+      solutions:
+        barrel:
+          reagents:
+            - ReagentId: CFCromiumSlime
+              Quantity: 300
+
+- type: entity
+  id: CFBarrelWildSageSap
+  parent: CFBaseBarrel
+  suffix: Wild Sage sap
+  components:
+    - type: SolutionContainerManager
+      solutions:
+        barrel:
+          reagents:
+            - ReagentId: CFWildSageSap
+              Quantity: 300
+
+- type: entity
+  id: CFBarrelGroundQuartz
+  parent: CFBaseBarrel
+  suffix: Ground Quartz
+  components:
+    - type: SolutionContainerManager
+      solutions:
+        barrel:
+          reagents:
+            - ReagentId: CFGroundQuartz
+              Quantity: 300
+
+- type: entity
+  id: CFBarrelLumiMushroom
+  parent: CFBaseBarrel
+  suffix: LumiShroom
+  components:
+    - type: SolutionContainerManager
+      solutions:
+        barrel:
+          reagents:
+            - ReagentId: CFLumiMushroom
+              Quantity: 300
+
+- type: entity
+  id: CFBarrelDayflin
+  parent: CFBaseBarrel
+  suffix: Dayflin
+  components:
+    - type: SolutionContainerManager
+      solutions:
+        barrel:
+          reagents:
+            - ReagentId: CFBloodDayflinPulp
+              Quantity: 300
+
+- type: entity
+  id: CFBarrelAirLily
+  parent: CFBaseBarrel
+  suffix: Air Lily
+  components:
+    - type: SolutionContainerManager
+      solutions:
+        barrel:
+          reagents:
+            - ReagentId: CFAirLily
+              Quantity: 300

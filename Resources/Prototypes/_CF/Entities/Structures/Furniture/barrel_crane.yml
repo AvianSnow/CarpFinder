@@ -1,0 +1,343 @@
+- type: entity
+  id: CFCraneBarrel
+  parent: [BaseStructure, CFBarrelSolution, CFBaseFlammable]
+  name: wooden crane barrel
+  description: Large lying barrel with tap, for storing valuable liquids.
+  suffix: Empty
+  categories: [ForkFiltered]
+  components:
+    - type: Sprite
+      drawdepth: Mobs
+      sprite: _CP14/Structures/Furniture/Barrels/crane_barrel.rsi
+      layers:
+        - state: barrel
+    - type: Damageable
+      damageContainer: Inorganic
+      damageModifierSet: CFWood
+    - type: Physics
+      bodyType: Static
+    - type: Transform
+    - type: Anchorable
+      delay: 3
+    - type: Destructible
+      thresholds:
+        - trigger: !type:DamageTrigger
+            damage: 80
+          behaviors:
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+        - trigger: !type:DamageTypeTrigger
+            damageType: Heat
+            damage: 5
+          behaviors:
+            - !type:SolutionExplosionBehavior
+              solution: barrel
+        - trigger: !type:DamageTypeTrigger
+            damageType: Piercing
+            damage: 5
+          behaviors:
+            - !type:SolutionExplosionBehavior
+              solution: barrel
+        - trigger: !type:DamageTrigger
+            damage: 25
+          behaviors:
+            - !type:SpillBehavior
+              solution: barrel
+            - !type:PlaySoundBehavior
+              sound:
+                collection: WoodDestroy
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+    - type: SolutionContainerManager
+      solutions:
+        barrel:
+          maxVol: 500
+    - type: Construction
+      graph: CFWoodenBarrel
+      node: CFWoodenBarrel
+    - type: PhysicalComposition
+      materialComposition:
+        CFWoodenPlanks: 50
+
+- type: entity
+  parent: CFCraneBarrel
+  id: CFCraneBarrelDwarfBeer
+  suffix: Beer. Dwarf
+  categories: [ForkFiltered]
+  components:
+    - type: SolutionContainerManager
+      solutions:
+        barrel:
+          reagents:
+            - ReagentId: CFDwarfBeer
+              Quantity: 500
+    - type: Label
+      currentLabel: cf-reagent-name-dwarfbeer
+
+- type: entity
+  parent: CFCraneBarrel
+  id: CFCraneBarrelBeerGerbil
+  suffix: Beer. Gerbil
+  categories: [ForkFiltered]
+  components:
+    - type: SolutionContainerManager
+      solutions:
+        barrel:
+          reagents:
+            - ReagentId: CFBeeerGerbil
+              Quantity: 500
+    - type: Label
+      currentLabel: cf-reagent-name-gerbil
+
+- type: entity
+  parent: CFCraneBarrel
+  id: CFCraneBarrelBeerBreeze
+  suffix: Beer. Breeze
+  categories: [ForkFiltered]
+  components:
+    - type: SolutionContainerManager
+      solutions:
+        barrel:
+          reagents:
+            - ReagentId: CFBeeerBreeze
+              Quantity: 500
+    - type: Label
+      currentLabel: cf-reagent-name-breeze
+
+- type: entity
+  parent: CFCraneBarrel
+  id: CFCraneBarrelBeerBlowLaw
+  suffix: Beer. BlowLaw
+  categories: [ForkFiltered]
+  components:
+    - type: SolutionContainerManager
+      solutions:
+        barrel:
+          reagents:
+            - ReagentId: CFBeeerBlowLaw
+              Quantity: 500
+    - type: Label
+      currentLabel: cf-reagent-name-blowlaw
+
+- type: entity
+  parent: CFCraneBarrel
+  id: CFCraneBarrelAleBloodyTear
+  suffix: Ale. BloodyTear
+  categories: [ForkFiltered]
+  components:
+    - type: SolutionContainerManager
+      solutions:
+        barrel:
+          reagents:
+            - ReagentId: CFAleBloodyTear
+              Quantity: 500
+    - type: Label
+      currentLabel: cf-reagent-name-bloody-tear
+
+- type: entity
+  parent: CFCraneBarrel
+  id: CFCraneBarrelAleBottomless
+  suffix: Ale. Bottomless
+  categories: [ForkFiltered]
+  components:
+    - type: SolutionContainerManager
+      solutions:
+        barrel:
+          reagents:
+            - ReagentId: CFAleBottomless
+              Quantity: 500
+    - type: Label
+      currentLabel: cf-reagent-name-bottomless
+
+- type: entity
+  parent: CFCraneBarrel
+  id: CFCraneBarrelWineZellasianPleasure
+  suffix: Wine. ZellasianPleasure
+  categories: [ForkFiltered]
+  components:
+    - type: SolutionContainerManager
+      solutions:
+        barrel:
+          reagents:
+            - ReagentId: CFWineZellasianPleasure
+              Quantity: 500
+    - type: Label
+      currentLabel: cf-reagent-name-zellasian-pleasure
+
+- type: entity
+  parent: CFCraneBarrel
+  id: CFCraneBarrelWineLeeks
+  suffix: Wine. Leeks
+  categories: [ForkFiltered]
+  components:
+    - type: SolutionContainerManager
+      solutions:
+        barrel:
+          reagents:
+            - ReagentId: CFWineLeeks
+              Quantity: 500
+    - type: Label
+      currentLabel: cf-reagent-name-leeks
+
+- type: entity
+  parent: CFCraneBarrel
+  id: CFCraneBarrelWineDurandate
+  suffix: Wine. Durandate
+  categories: [ForkFiltered]
+  components:
+    - type: SolutionContainerManager
+      solutions:
+        barrel:
+          reagents:
+            - ReagentId: CFWineDurandate
+              Quantity: 500
+    - type: Label
+      currentLabel: cf-reagent-name-durandate
+
+- type: entity
+  id: CFCraneBarrelSmall
+  parent: [BaseStructureDynamic, CFCraneBarrelSolution, CFBasеFlammable]
+  name: wooden small crane barrel
+  description: A small lying barrel with a tap to quickly pour liquid into mugs.
+  suffix: Empty
+  categories: [ForkFiltered]
+  placement:
+    mode: SnapgridCenter
+  components:
+    - type: Sprite
+      drawdepth: Mobs
+      sprite: _CP14/Structures/Furniture/Barrels/crane_barrel_small.rsi
+      layers:
+        - state: barrel
+    - type: Transform
+      anchored: true
+    - type: Pullable
+    - type: Physics
+      bodyType: Static
+    - type: Fixtures
+      fixtures:
+        fix1:
+          shape: !type:PhysShapeAabb
+            bounds: "-0.25,-0.25,0.25,0.25"
+          density: 200
+          mask:
+            - TabletopMachineMask
+          layer:
+            - TabletopMachineLayer
+    - type: Damageable
+      damageContainer: Inorganic
+      damageModifierSet: CFWood
+    - type: Destructible
+      thresholds:
+        - trigger: !type:DamageTrigger
+            damage: 50
+          behaviors:
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+        - trigger: !type:DamageTypeTrigger
+            damageType: Heat
+            damage: 5
+          behaviors:
+            - !type:SolutionExplosionBehavior
+              solution: barrel
+        - trigger: !type:DamageTypeTrigger
+            damageType: Piercing
+            damage: 5
+          behaviors:
+            - !type:SolutionExplosionBehavior
+              solution: barrel
+        - trigger: !type:DamageTrigger
+            damage: 15
+          behaviors:
+            - !type:SpillBehavior
+              solution: barrel
+            - !type:PlaySoundBehavior
+              sound:
+                collection: WoodDestroy
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+    - type: SolutionContainerManager
+      solutions:
+        barrel:
+          maxVol: 50
+    - type: Construction
+      graph: CFCraneBarrelSmall
+      node: CFCraneBarrelSmall
+
+- type: entity
+  parent: CFCraneBarrelSmall
+  id: CFCraneBarrelSmallDwarfBeer
+  suffix: Beer. Dwarf
+  categories: [ForkFiltered]
+  components:
+    - type: SolutionContainerManager
+      solutions:
+        barrel:
+          reagents:
+            - ReagentId: CFDwarfBeer
+              Quantity: 50
+
+- type: entity
+  parent: CFCraneBarrelSmall
+  id: CFCraneBarrelSmallBeerGerbil
+  suffix: Beer. Gerbil
+  categories: [ForkFiltered]
+  components:
+    - type: SolutionContainerManager
+      solutions:
+        barrel:
+          reagents:
+            - ReagentId: CFBeerGerbil
+              Quantity: 50
+
+- type: entity
+  parent: CFCraneBarrelSmall
+  id: CFCraneBarrelSmallBeerBreeze
+  suffix: Beer. Breeze
+  categories: [ForkFiltered]
+  components:
+    - type: SolutionContainerManager
+      solutions:
+        barrel:
+          reagents:
+            - ReagentId: CFBeerBreeze
+              Quantity: 50
+
+- type: entity
+  parent: CFCraneBarrelSmall
+  id: CFCraneBarrelSmallBeerBlowLaw
+  suffix: Beer. BlowLaw
+  categories: [ForkFiltered]
+  components:
+    - type: SolutionContainerManager
+      solutions:
+        barrel:
+          reagents:
+            - ReagentId: CFBeerBlowLaw
+              Quantity: 50
+
+- type: entity
+  parent: CFCraneBarrelSmall
+  id: CFCraneBarrelSmallAleBloodyTear
+  suffix: Ale. BloodyTear
+  categories: [ForkFiltered]
+  components:
+    - type: SolutionContainerManager
+      solutions:
+        barrel:
+          reagents:
+            - ReagentId: CFAleBloodyTear
+              Quantity: 50
+
+- type: entity
+  parent: CFCraneBarrelSmall
+  id: CFCraneBarrelSmallAleBottomless
+  suffix: Ale. Bottomless
+  categories: [ForkFiltered]
+  components:
+    - type: SolutionContainerManager
+      solutions:
+        barrel:
+          reagents:
+            - ReagentId: CFAleBottomless
+              Quantity: 50

@@ -1,0 +1,306 @@
+- type: entity
+  id: CFWoodLog
+  parent: BaseItem
+  name: wooden log
+  description: A piece of unprocessed wood. Good material for building, or starting a fire.
+  categories: [ForkFiltered]
+  components:
+    - type: Item
+      size: Normal
+      shape:
+        - 0,0,1,2 # 2x3
+    - type: Sprite
+      sprite: _CP14/Objects/Materials/wood.rsi
+      layers:
+        - state: log
+          map: ["random"]
+    - type: RandomSprite
+      available:
+        - random:
+            log: ""
+            log_2: ""
+            log_3: ""
+    - type: Tag
+      tags:
+        - CFFireplaceFuel
+        - Wooden
+    - type: Flammable
+      fireSpread: false
+      canResistFire: false
+      alwaysCombustible: true
+      canExtinguish: true
+      cFFireplaceFuel: 10
+      damage:
+        types:
+          Heat: 1
+    - type: Log
+      spawnedPrototype: CFWoodenPlanks1
+      spawnCount: 3
+    - type: Appearance
+    - type: Damageable
+      damageContainer: Inorganic
+      damageModifierSet: Wood
+    - type: Destructible
+      thresholds:
+        - trigger: !type:DamageTrigger
+            damage: 25
+          behaviors:
+            - !type:PlaySoundBehavior
+              sound:
+                collection: WoodDestroy
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+    - type: PhysicalComposition
+      materialComposition:
+        CFWoodenPlanks: 30
+
+- type: entity
+  id: CFWoodenPlanks1
+  parent: BaseItem
+  name: wooden planks
+  description: Treated and ready-to-use wood.
+  categories: [ForkFiltered]
+  suffix: 1
+  components:
+    - type: Item
+      size: Normal
+    - type: Sprite
+      sprite: _CP14/Objects/Materials/wood.rsi
+      layers:
+        - state: planks
+          map: ["base"]
+    - type: Tag
+      tags:
+        - CFFireplaceFuel
+        - Wooden
+    - type: Flammable
+      fireSpread: false
+      canResistFire: false
+      alwaysCombustible: true
+      canExtinguish: true
+      cFFireplaceFuel: 8
+      damage:
+        types:
+          Heat: 1
+    - type: Appearance
+    - type: Stack
+      stackType: CFWoodenPlanks
+      count: 1
+      baseLayer: base
+      layerStates:
+        - planks
+        - planks_2
+        - planks_3
+    - type: Material
+    - type: PhysicalComposition
+      materialComposition:
+        CFWoodenPlanks: 10
+    - type: Damageable
+      damageContainer: Inorganic
+      damageModifierSet: Wood
+    - type: Destructible
+      thresholds:
+        - trigger: !type:DamageTrigger
+            damage: 25
+          behaviors:
+            - !type:PlaySoundBehavior
+              sound:
+                collection: WoodDestroy
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+
+- type: entity
+  id: CFWoodenPlanks10
+  parent: CFWoodenPlanks1
+  suffix: 10
+  components:
+    - type: Stack
+      count: 10
+
+- type: entity
+  id: CFWoodenPlanks20
+  parent: CFWoodenPlanks1
+  suffix: 20
+  components:
+    - type: Stack
+      count: 20
+
+# Lucen
+
+- type: entity
+  id: CFLucensWoodLog
+  parent: CFWoodLog
+  name: lucens log
+  components:
+    - type: Sprite
+      sprite: _CP14/Objects/Materials/wood_lucens.rsi
+      layers:
+        - state: log
+          map: ["random"]
+    - type: RandomSprite
+      available:
+        - random:
+            log: ""
+            log_2: ""
+            log_3: ""
+    - type: Log
+      spawnedPrototype: CFLucensWoodenPlanks1
+      spawnCount: 3
+    - type: PhysicalComposition
+      materialComposition:
+        CFLucensWoodenPlanks: 30
+
+- type: entity
+  id: CFLucensWoodenPlanks1
+  parent: CFWoodenPlanks1
+  name: lucens planks
+  suffix: 1
+  components:
+    - type: Sprite
+      sprite: _CP14/Objects/Materials/wood_lucens.rsi
+      layers:
+        - state: planks
+          map: ["base"]
+    - type: Stack
+      stackType: CFLucensWoodenPlanks
+      count: 1
+      baseLayer: base
+      layerStates:
+        - planks
+        - planks_2
+        - planks_3
+    - type: PhysicalComposition
+      materialComposition:
+        CFLucensWoodenPlanks: 10
+
+- type: entity
+  id: CFLucensWoodenPlanks10
+  parent: CFLucensWoodenPlanks1
+  suffix: 10
+  components:
+    - type: Stack
+      count: 10
+
+- type: entity
+  id: CFLucensWoodenPlanks20
+  parent: CFLucensWoodenPlanks1
+  suffix: 20
+  components:
+    - type: Stack
+      count: 20
+
+#Birch
+
+- type: entity
+  id: CFBirchWoodLog
+  parent: CFWoodLog
+  name: birch log
+  components:
+    - type: Sprite
+      sprite: _CP14/Objects/Materials/wood_birch.rsi
+      layers:
+        - state: log
+          map: ["random"]
+    - type: RandomSprite
+      available:
+        - random:
+            log: ""
+            log_2: ""
+            log_3: ""
+    - type: Log
+      spawnedPrototype: CFBirchWoodenPlanks1
+      spawnCount: 3
+
+- type: entity
+  id: CFBirchWoodenPlanks1
+  parent: CFWoodenPlanks1
+  name: birch planks
+  suffix: 1
+  components:
+    - type: Sprite
+      sprite: _CP14/Objects/Materials/wood_birch.rsi
+      layers:
+        - state: planks
+          map: ["base"]
+    - type: Stack
+      stackType: CFBirchWoodenPlanks
+      count: 1
+      baseLayer: base
+      layerStates:
+        - planks
+        - planks_2
+        - planks_3
+
+- type: entity
+  id: CFBirchWoodenPlanks10
+  parent: CFBirchWoodenPlanks1
+  suffix: 10
+  components:
+    - type: Stack
+      count: 10
+
+- type: entity
+  id: CFBirchWoodenPlanks20
+  parent: CFBirchWoodenPlanks1
+  suffix: 20
+  components:
+    - type: Stack
+      count: 20
+
+#Spruce
+
+- type: entity
+  id: CFSpruceWoodLog
+  parent: CFWoodLog
+  name: spruce log
+  components:
+    - type: Sprite
+      sprite: _CP14/Objects/Materials/wood_spruce.rsi
+      layers:
+        - state: log
+          map: ["random"]
+    - type: RandomSprite
+      available:
+        - random:
+            log: ""
+            log_2: ""
+            log_3: ""
+    - type: Log
+      spawnedPrototype: CFSpruceWoodenPlanks1
+      spawnCount: 3
+
+- type: entity
+  id: CFSpruceWoodenPlanks1
+  parent: CFWoodenPlanks1
+  name: spruce planks
+  suffix: 1
+  components:
+    - type: Sprite
+      sprite: _CP14/Objects/Materials/wood_spruce.rsi
+      layers:
+        - state: planks
+          map: ["base"]
+    - type: Stack
+      stackType: CFSpruceWoodenPlanks
+      count: 1
+      baseLayer: base
+      layerStates:
+        - planks
+        - planks_2
+        - planks_3
+
+- type: entity
+  id: CFSpruceWoodenPlanks10
+  parent: CFSpruceWoodenPlanks1
+  suffix: 10
+  components:
+    - type: Stack
+      count: 10
+
+- type: entity
+  id: CFSpruceWoodenPlanks20
+  parent: CFSpruceWoodenPlanks1
+  suffix: 20
+  components:
+    - type: Stack
+      count: 20

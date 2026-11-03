@@ -1,0 +1,181 @@
+# Stone brick
+
+- type: entity
+  id: CFWallFrameStonebrick
+  name: stone brick wall base
+  parent: CFBaseWallFrame
+  components:
+    - type: Sprite
+      sprite: _CP14/Structures/Walls/bricks_stone_wall.rsi
+      state: frame
+    - type: Icon
+      sprite: _CP14/Structures/Walls/bricks_stone_wall.rsi
+      state: frame
+    - type: Construction
+      graph: CFWallStoneBrick
+      node: CFWallFrameStoneBrick
+    - type: Damageable
+      damageContainer: StructuralInorganic
+      damageModifierSet: CFRockStructural
+    - type: Destructible
+      thresholds:
+        - trigger: !type:DamageTrigger
+            damage: 50
+          behaviors:
+            - !type:SpawnEntitiesBehavior
+              spawn:
+                CFStoneBlock1:
+                  min: 1
+                  max: 2
+            - !type:PlaySoundBehavior
+              sound:
+                path: /Audio/Effects/break_stone.ogg
+                params:
+                  volume: -6
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+
+- type: entity
+  id: CFWallStonebrick
+  name: stone brick wall
+  parent: CFBaseWall
+  components:
+    - type: Sprite
+      sprite: _CP14/Structures/Walls/bricks_stone_wall.rsi
+    - type: Icon
+      sprite: _CP14/Structures/Walls/bricks_stone_wall.rsi
+    - type: IconSmooth
+      base: stonebricks
+    - type: Construction
+      graph: CFWallStoneBrick
+      node: CFWallStoneBrick
+    - type: Damageable
+      damageContainer: StructuralInorganic
+      damageModifierSet: CFRockStructural
+    - type: Destructible
+      thresholds:
+        - trigger: !type:DamageTrigger
+            damage: 100
+          behaviors:
+            - !type:SpawnEntitiesBehavior
+              spawn:
+                CFStoneBlock1:
+                  min: 1
+                  max: 2
+            - !type:ChangeConstructionNodeBehavior
+              node: CFWallFrameStoneBrick
+            - !type:PlaySoundBehavior
+              sound:
+                path: /Audio/Effects/break_stone.ogg
+                params:
+                  volume: -6
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+    - type: CFWallpaperHolder
+
+# Marble
+
+- type: entity
+  id: CFWallFrameMarblebrick
+  name: marble brick wall base
+  parent: CFBaseWallFrame
+  components:
+    - type: Sprite
+      sprite: _CP14/Structures/Walls/marblebricks_stone_wall.rsi
+      state: frame
+    - type: Icon
+      sprite: _CP14/Structures/Walls/marblebricks_stone_wall.rsi
+      state: frame
+    - type: Construction
+      graph: CFWallMarbleBrick
+      node: CFWallFrameMarbleBrick
+    - type: Damageable
+      damageContainer: StructuralInorganic
+      damageModifierSet: CFRockStructural
+    - type: Destructible
+      thresholds:
+        - trigger: !type:DamageTrigger
+            damage: 50
+          behaviors:
+            - !type:SpawnEntitiesBehavior
+              spawn:
+                CFMarbleBlock1:
+                  min: 1
+                  max: 2
+            - !type:PlaySoundBehavior
+              sound:
+                path: /Audio/Effects/break_stone.ogg
+                params:
+                  volume: -6
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+
+- type: entity
+  id: CFWallMarbleBrick
+  name: marble brick wall
+  parent: CFBaseWall
+  components:
+    - type: Sprite
+      sprite: _CP14/Structures/Walls/marblebricks_stone_wall.rsi
+    - type: Icon
+      sprite: _CP14/Structures/Walls/marblebricks_stone_wall.rsi
+    - type: IconSmooth
+      base: stonebricks
+    - type: Damageable
+      damageContainer: StructuralInorganic
+      damageModifierSet: CFRockStructural
+    - type: Destructible
+      thresholds:
+        - trigger: !type:DamageTrigger
+            damage: 100
+          behaviors:
+            - !type:PlaySoundBehavior
+              sound:
+                path: /Audio/Effects/break_stone.ogg
+                params:
+                  volume: -6
+            - !type:SpawnEntitiesBehavior
+              spawn:
+                CFMarbleBlock1:
+                  min: 1
+                  max: 2
+            - !type:ChangeConstructionNodeBehavior
+              node: CFWallFrameMarbleBrick
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+    - type: Construction
+      graph: CFWallMarbleBrick
+      node: CFWallMarbleBrick
+    - type: CFWallpaperHolder
+
+- type: entity
+  id: CFWallStonebrickOld
+  name: old stone brick wall
+  parent: CFBaseWall
+  components:
+    - type: Sprite
+      sprite: _CP14/Structures/Walls/brick_stone_old_wall.rsi
+    - type: Icon
+      sprite: _CP14/Structures/Walls/brick_stone_old_wall.rsi
+    - type: IconSmooth
+      base: stonebricks
+    - type: Damageable
+      damageContainer: StructuralInorganic
+      damageModifierSet: CFRockStructural
+    - type: Destructible
+      thresholds:
+        - trigger: !type:DamageTrigger
+            damage: 100
+          behaviors:
+            - !type:SpawnEntitiesBehavior
+              spawn:
+                CFStoneBlock1:
+                  min: 1
+                  max: 2
+            - !type:PlaySoundBehavior
+              sound:
+                path: /Audio/Effects/break_stone.ogg
+                params:
+                  volume: -6
+            - !type:DoActsBehavior
+              acts: ["Destruction"]

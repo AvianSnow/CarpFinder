@@ -1,0 +1,23 @@
+- type: damageContainer
+  id: CFBiological
+  supportedGroups:
+    - Brute
+    - Burn
+    - Toxin
+    - Genetic
+    - Airloss
+    - CFMagic
+
+- type: damageContainer
+  id: CFBiologicalAnaerobic
+  supportedGroups:
+    - Brute
+    - Burn
+    - Toxin
+    - Genetic
+    - CFMagic
+
+- type: damageContainer
+  id: CFSpectral
+  supportedGroups:
+    - CFMagic
