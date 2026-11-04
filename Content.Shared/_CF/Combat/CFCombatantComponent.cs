@@ -14,6 +14,26 @@ public sealed partial class CFCombatantComponent : Component
     [DataField, AutoNetworkedField]
     public int ArmorClass = 10;
 
+    /// <summary>
+    /// True for characters: AC is recomputed from worn armor whenever it changes.
+    /// False for creatures with a printed AC in their stat block (monsters, commoners), which keep it.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public bool ArmorFromEquipment;
+
+    /// <summary>
+    /// Land Speed in feet (25 for most ancestries). Armor and encumbrance penalties scale SS14 movement from this.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public int SpeedFeet = 25;
+
+    /// <summary>
+    /// Added to every Strike so a creature matches its printed stat block attack (a level −1 kobold's spear is +3).
+    /// Player characters leave this 0: their attacks come from abilities, proficiency, and runes.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public int StrikeAdjustment;
+
     [DataField, AutoNetworkedField]
     public int MaxHp = 10;
 

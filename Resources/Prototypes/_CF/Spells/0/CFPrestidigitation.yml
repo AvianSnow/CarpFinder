@@ -14,9 +14,35 @@
   - type: CFSpell
     spell: Prestidigitation
     rank: 0
-    delivery: Target
-    defense: None
-    friendly: true
-    includeSelf: true
+  - type: CFTargeting
     rangeFeet: 10
-    trickMenu: true
+    filter: All
+  - type: CFPrestidigitation
+  - type: CFModeChoice
+    modes:
+    - value: 1
+      name: cf-spell-trick-food
+      tooltip: cf-spell-trick-food-tip
+      objectWhitelist:
+        components:
+        - Edible
+    - value: 2
+      name: cf-spell-trick-lift
+      tooltip: cf-spell-trick-lift-tip
+      objectWhitelist:
+        components:
+        - Item
+      objectBlacklist:
+        components:
+        - MobState
+        - Stack
+    - value: 3
+      name: cf-spell-trick-make
+      tooltip: cf-spell-trick-make-tip
+      immediate: true
+    - value: 4
+      name: cf-spell-trick-tidy
+      tooltip: cf-spell-trick-tidy-tip
+      objectWhitelist:
+        components:
+        - Puddle

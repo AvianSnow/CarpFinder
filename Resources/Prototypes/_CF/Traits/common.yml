@@ -77,6 +77,7 @@
   id: Nonlethal
   name: Nonlethal
   category: Common
+  rule: Nonlethal
   summary: "Damage from this does not kill. It knocks the target out at 0 Hit Points."
 
 - type: cfTrait

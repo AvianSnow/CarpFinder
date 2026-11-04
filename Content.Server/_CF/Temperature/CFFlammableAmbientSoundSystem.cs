@@ -1,11 +1,11 @@
 using Content.Shared.Audio;
 using Content.Shared.Atmos;
 
-namespace Content.Server._CF.Temperature;
+namespace Content.Server.CF.Temperature;
 
-public sealed class CFFlammableAmbientSoundSystem : EntitySystem
+public sealed partial class CFFlammableAmbientSoundSystem : EntitySystem
 {
-    [Dependency] private readonly SharedAmbientSoundSystem _ambientSound = default!;
+    [Dependency] private SharedAmbientSoundSystem _ambientSound = default!;
 
     public override void Initialize()
     {

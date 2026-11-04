@@ -14,9 +14,12 @@
   - type: CFSpell
     spell: MysticArmor
     rank: 1
-    delivery: Instant
-    defense: None
-    acBonus: 1
-    durationSeconds: 600
-    friendly: true
-    includeSelf: true
+  - type: CFTargeting
+    filter: All
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: ArmorClass
+      type: Item
+      value: 1
+      durationSeconds: 600

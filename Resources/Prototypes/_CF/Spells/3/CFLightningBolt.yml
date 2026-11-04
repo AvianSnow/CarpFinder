@@ -14,11 +14,17 @@
   - type: CFSpell
     spell: LightningBolt
     rank: 3
-    delivery: Area
-    area: Line
-    areaFeet: 120
+  - type: CFAreaEffect
+    shape: Line
+    sizeFeet: 120
+  - type: CFCheck
     defense: Reflex
-    basicSave: true
-    diceCount: 4
-    diceSize: 12
-    damageType: electricity
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 4
+      die: 12
+      damageType: Electricity
+      heightenDice: 1
+  - type: CFHeighten
+    baseRank: 3

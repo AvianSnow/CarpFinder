@@ -40,6 +40,7 @@ public sealed partial class CFFlankingSystem : EntitySystem
     [Dependency] private CFDyingSystem _dying = default!;
     [Dependency] private SharedContainerSystem _container = default!;
     [Dependency] private SharedStatusIconSystem _statusIcons = default!;
+    [Dependency] private CFWeaponSystem _weapons = default!;
 
     /// <summary>Foe to the allies whose reach sensors currently overlap that foe.</summary>
     private readonly Dictionary<EntityUid, HashSet<EntityUid>> _inReach = new();
@@ -208,13 +209,14 @@ public sealed partial class CFFlankingSystem : EntitySystem
     [SubscribeLocalEvent]
     private void OnReachWeaponInit(Entity<CFMeleeWeaponComponent> ent, ref ComponentStartup args)
     {
-        if (ent.Comp.ReachFeet <= CFFlanking.DefaultReachFeet)
+        var reach = _weapons.ReachFeet(ent);
+        if (reach <= CFFlanking.DefaultReachFeet)
             return;
 
         if (!TryComp(ent.Owner, out MeleeWeaponComponent? melee))
             return;
 
-        var range = CFFlanking.Ss14SwingRange(ent.Comp.ReachFeet);
+        var range = CFFlanking.Ss14SwingRange(reach);
         if (melee.Range >= range)
             return;
 
@@ -464,8 +466,8 @@ public sealed partial class CFFlankingSystem : EntitySystem
         {
             foreach (var held in _hands.EnumerateHeld(uid))
             {
-                if (TryComp(held, out CFMeleeWeaponComponent? weapon))
-                    best = Math.Max(best, weapon.ReachFeet);
+                if (HasComp<CFMeleeWeaponComponent>(held))
+                    best = Math.Max(best, _weapons.ReachFeet(held));
                 else if (HasComp<MeleeWeaponComponent>(held) && !HasComp<CFRangedWeaponComponent>(held))
                     best = Math.Max(best, CFFlanking.DefaultReachFeet);
             }
@@ -473,9 +475,9 @@ public sealed partial class CFFlankingSystem : EntitySystem
             if (_hands.CountFreeHands(uid) > 0)
                 best = Math.Max(best, CFFlanking.DefaultReachFeet);
         }
-        else if (TryComp(uid, out CFMeleeWeaponComponent? body))
+        else if (HasComp<CFMeleeWeaponComponent>(uid))
         {
-            best = Math.Max(best, body.ReachFeet);
+            best = Math.Max(best, _weapons.ReachFeet(uid));
         }
         else if (HasComp<MeleeWeaponComponent>(uid))
         {

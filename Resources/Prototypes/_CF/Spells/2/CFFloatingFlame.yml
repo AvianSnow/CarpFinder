@@ -14,12 +14,19 @@
   - type: CFSpell
     spell: FloatingFlame
     rank: 2
-    delivery: Area
-    area: Burst
-    areaFeet: 5
+  - type: CFTargeting
     rangeFeet: 30
+  - type: CFAreaEffect
+    shape: Burst
+    sizeFeet: 5
+  - type: CFCheck
     defense: Reflex
-    basicSave: true
-    diceCount: 3
-    diceSize: 6
-    damageType: fire
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 3
+      die: 6
+      damageType: Fire
+      heightenDice: 1
+  - type: CFHeighten
+    baseRank: 2

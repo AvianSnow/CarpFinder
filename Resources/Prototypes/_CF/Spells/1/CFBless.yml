@@ -14,11 +14,18 @@
   - type: CFSpell
     spell: Bless
     rank: 1
-    delivery: Area
-    area: Emanation
-    areaFeet: 5
-    defense: None
-    attackBonus: 1
-    saveBonus: 1
-    friendly: true
+  - type: CFAreaEffect
+    shape: Emanation
+    sizeFeet: 5
     includeSelf: true
+    filter: Allies
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: AttackRoll
+      type: Status
+      value: 1
+    - !type:CFBonusEffect
+      stat: Saves
+      type: Status
+      value: 1

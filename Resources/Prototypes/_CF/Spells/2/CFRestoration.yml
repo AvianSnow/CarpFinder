@@ -14,12 +14,13 @@
   - type: CFSpell
     spell: Restoration
     rank: 2
-    delivery: Target
+  - type: CFTargeting
     rangeFeet: 5
-    defense: None
-    healDice: 2
-    healDie: 8
-    friendly: true
-    includeSelf: true
+    filter: All
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFHealEffect
+      dice: 2
+      die: 8
   - type: EntityTargetAction
     canTargetSelf: true

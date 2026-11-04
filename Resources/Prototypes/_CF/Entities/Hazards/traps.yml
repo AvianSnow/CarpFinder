@@ -1,0 +1,76 @@
+# Hidden hazards (CFHazard). Creatures within detectRadiusFeet roll Perception against stealthDc once.
+# Stepping into triggerSizeFeet sets the hazard off: its CFCheck and CFDegreeEffects resolve on that creature.
+# A CFFaction on the hazard makes it harmless and visible to that faction's allies (traps laid by monsters).
+# Object stats (AC, HP) are on CFCombatant; Hardness comes from the CFMaterial.
+
+- type: entity
+  abstract: true
+  id: CFBaseTrap
+  name: trap
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Sprite
+    sprite: _CF/Objects/Hazards/trap.rsi
+    state: trap
+    drawdepth: FloorObjects
+    # Hidden until the client decides this player can see it (CFHazardVisibilitySystem).
+    visible: false
+  - type: Clickable
+  - type: InteractionOutline
+  - type: Transform
+    anchored: true
+  - type: Physics
+    bodyType: Static
+  - type: Fixtures
+  - type: Damageable
+  - type: CFMaterial
+    material: SimpleHazard
+  - type: CFTrait
+    traits:
+    - Mechanical
+    - Trap
+
+# Spike trap (Beginner Box). Simple hazard 1. Stealth DC 10.
+# Disabling it gives the disarmer's company simple-hazard XP for level 1 against their party level.
+# AC 10, HP 10, Hardness 0. Disable: Thievery DC 15.
+# Whoever steps on its square takes 2d8 piercing damage (DC 17 basic Reflex save).
+- type: entity
+  parent: CFBaseTrap
+  id: CFSpikeTrap
+  name: spike trap
+  description: Sharpened spikes hidden under loose boards, set to spring when stepped on.
+  components:
+  - type: CFHazard
+    level: 1
+    stealthDc: 10
+    detectRadiusFeet: 30
+    triggerSizeFeet: 5
+    disarm:
+    - skill: Thievery
+      ability: Dexterity
+      dc: 15
+  - type: CFCombatant
+    level: 1
+    armorClass: 10
+    maxHp: 10
+    currentHp: 10
+  - type: CFCheck
+    defense: Reflex
+    basicSave: true
+    dcSource: Fixed
+    fixedDc: 17
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 2
+      die: 8
+      damageType: Piercing
+
+# The same trap laid by monsters (a kobold trapper): kobolds and other Monster allies see it and never set it off.
+- type: entity
+  parent: CFSpikeTrap
+  id: CFSpikeTrapMonster
+  suffix: Monster
+  components:
+  - type: CFFaction
+    faction: Monster

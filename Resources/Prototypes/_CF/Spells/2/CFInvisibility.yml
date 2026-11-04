@@ -14,12 +14,12 @@
   - type: CFSpell
     spell: Invisibility
     rank: 2
-    delivery: Target
+  - type: CFTargeting
     rangeFeet: 5
-    defense: None
-    flatCheckDc: 11
-    concealBreaks: true
-    friendly: true
-    includeSelf: true
+    filter: All
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFApplyConditionEffect
+      condition: Invisible
   - type: EntityTargetAction
     canTargetSelf: true

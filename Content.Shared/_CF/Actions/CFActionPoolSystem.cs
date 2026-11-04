@@ -1,6 +1,7 @@
 using Content.Shared.Actions.Events;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Combat;
+using Content.Shared.CF.Effects;
 using Content.Shared.CF.Spells;
 using Content.Shared.Interaction.Events;
 using Content.Shared.Mobs.Components;
@@ -19,25 +20,12 @@ namespace Content.Shared.CF.Actions;
 /// Spends action stamina on strikes, shots, and radial activities, then returns one point every 1.8 seconds.
 /// This is not <c>StaminaComponent</c>: that pool paralyzes a creature at the cap and is shared with stun weapons.
 /// </summary>
-public sealed class CFActionPoolSystem : EntitySystem
+public sealed partial class CFActionPoolSystem : EntitySystem
 {
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private INetManager _net = default!;
     [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
-
-    public override void Initialize()
-    {
-        base.Initialize();
-        SubscribeLocalEvent<CFActionPoolComponent, MapInitEvent>(OnMapInit);
-        SubscribeLocalEvent<CFCombatantComponent, MapInitEvent>(OnCombatantMapInit);
-        SubscribeLocalEvent<CFActionPoolComponent, AttackAttemptEvent>(OnAttackAttempt);
-        SubscribeLocalEvent<CFActionPoolComponent, MeleeAttackEvent>(OnMeleeAttack);
-        SubscribeLocalEvent<CFActionPoolComponent, ShotAttemptedEvent>(OnShotAttempt);
-        SubscribeLocalEvent<GunComponent, GunShotEvent>(OnGunShot);
-        SubscribeLocalEvent<CFRadialSlotComponent, ActionAttemptEvent>(OnActionAttempt);
-        SubscribeLocalEvent<CFRadialSlotComponent, ActionPerformedEvent>(OnActionPerformed);
-    }
 
     public override void Update(float frameTime)
     {
@@ -166,13 +154,9 @@ public sealed class CFActionPoolSystem : EntitySystem
     /// <summary>How many actions a radial activity costs. Free activities and reactions cost nothing.</summary>
     public int ActionCount(EntityUid action)
     {
-        if (TryComp(action, out CFSpellComponent? bolts) && bolts.MaxBolts > 1)
-        {
-            if (!bolts.PayThisShot)
-                return 0;
-
-            return Math.Clamp(bolts.ChosenBolts < 1 ? 1 : bolts.ChosenBolts, 1, bolts.MaxBolts);
-        }
+        // A volley costs one action per bolt, paid on the opening click.
+        if (TryComp(action, out CFProjectileDeliveryComponent? bolts) && bolts.IsVolley)
+            return bolts.PayThisShot ? bolts.ClampedBolts : 0;
 
         if (!TryComp(action, out CFRadialSlotComponent? slot))
             return 1;
@@ -191,6 +175,7 @@ public sealed class CFActionPoolSystem : EntitySystem
         return slot.Group == CFRadialGroup.Spell ? 2 : 1;
     }
 
+    [SubscribeLocalEvent]
     private void OnMapInit(Entity<CFActionPoolComponent> ent, ref MapInitEvent args)
     {
         if (ent.Comp.Stamina >= 0f)
@@ -200,6 +185,7 @@ public sealed class CFActionPoolSystem : EntitySystem
         Dirty(ent);
     }
 
+    [SubscribeLocalEvent]
     private void OnCombatantMapInit(Entity<CFCombatantComponent> ent, ref MapInitEvent args)
     {
         if (!HasComp<MobStateComponent>(ent) || HasComp<CFMaterialComponent>(ent))
@@ -208,6 +194,7 @@ public sealed class CFActionPoolSystem : EntitySystem
         Ensure(ent);
     }
 
+    [SubscribeLocalEvent]
     private void OnAttackAttempt(Entity<CFActionPoolComponent> ent, ref AttackAttemptEvent args)
     {
         // A check with no target and no weapon is not a swing. Flanking uses that form.
@@ -221,6 +208,7 @@ public sealed class CFActionPoolSystem : EntitySystem
         PopupEmpty(ent.Owner, ent.Comp);
     }
 
+    [SubscribeLocalEvent]
     private void OnMeleeAttack(Entity<CFActionPoolComponent> ent, ref MeleeAttackEvent args)
     {
         if (!_timing.IsFirstTimePredicted)
@@ -229,23 +217,32 @@ public sealed class CFActionPoolSystem : EntitySystem
         TrySpend(ent, ent.Comp, 1);
     }
 
+    [SubscribeLocalEvent]
     private void OnShotAttempt(Entity<CFActionPoolComponent> ent, ref ShotAttemptedEvent args)
     {
-        if (CanAfford(ent.Comp, 1))
+        if (CanAfford(ent.Comp, ShotCost(args.Used)))
             return;
 
         args.Cancel();
         PopupEmpty(ent.Owner, ent.Comp);
     }
 
+    [SubscribeLocalEvent]
     private void OnGunShot(Entity<GunComponent> weapon, ref GunShotEvent args)
     {
         if (!_timing.IsFirstTimePredicted || !TryComp(args.User, out CFActionPoolComponent? pool))
             return;
 
-        TrySpend(args.User, pool, 1);
+        TrySpend(args.User, pool, ShotCost(weapon));
     }
 
+    /// <summary>A shot is one Strike action plus the weapon's reload (crossbow 1, heavy crossbow 2).</summary>
+    private int ShotCost(EntityUid weapon)
+    {
+        return 1 + Math.Max(0, CompOrNull<CFRangedWeaponComponent>(weapon)?.Reload ?? 0);
+    }
+
+    [SubscribeLocalEvent]
     private void OnActionAttempt(Entity<CFRadialSlotComponent> ent, ref ActionAttemptEvent args)
     {
         if (!TryComp(args.User, out CFActionPoolComponent? pool))
@@ -259,12 +256,32 @@ public sealed class CFActionPoolSystem : EntitySystem
         args.Reason = Loc.GetString("cf-action-not-enough");
     }
 
+    [SubscribeLocalEvent]
     private void OnActionPerformed(Entity<CFRadialSlotComponent> ent, ref ActionPerformedEvent args)
     {
         if (!_timing.IsFirstTimePredicted || !TryComp(args.Performer, out CFActionPoolComponent? pool))
             return;
 
         TrySpend(args.Performer, pool, ActionCount(ent));
+    }
+
+    /// <summary>
+    /// Spends <paramref name="actions"/> for an activity that is not an action on the wheel (disabling a trap).
+    /// A creature without an action pool always can. Shows the usual popup when it cannot afford it.
+    /// </summary>
+    public bool TrySpendActions(EntityUid uid, int actions)
+    {
+        if (!TryComp(uid, out CFActionPoolComponent? pool))
+            return true;
+
+        if (!CanAfford(pool, actions))
+        {
+            PopupEmpty(uid, pool);
+            return false;
+        }
+
+        TrySpend(uid, pool, actions);
+        return true;
     }
 
     private bool CanAfford(CFActionPoolComponent pool, int actions)

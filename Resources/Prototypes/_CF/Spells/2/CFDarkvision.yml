@@ -14,11 +14,12 @@
   - type: CFSpell
     spell: Darkvision
     rank: 2
-    delivery: Target
+  - type: CFTargeting
     rangeFeet: 5
-    defense: None
-    darkvision: true
-    friendly: true
-    includeSelf: true
+    filter: All
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFApplyConditionEffect
+      condition: Darkvision
   - type: EntityTargetAction
     canTargetSelf: true

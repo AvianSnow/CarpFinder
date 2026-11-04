@@ -1,4 +1,4 @@
-namespace Content.Shared.CF.Spells;
+namespace Content.Shared.CF.Effects;
 
 /// <summary>
 /// Server-steered bolt. Each tick it flies toward the creature that was clicked,
@@ -11,11 +11,11 @@ public sealed partial class CFHomingProjectileComponent : Component
     public EntityUid Target;
 
     [DataField]
-    public EntityUid Caster;
+    public EntityUid User;
 
-    /// <summary>The spell action, so the hit can read <see cref="CFSpellComponent"/>.</summary>
+    /// <summary>The spell action or item whose effect components resolve on arrival.</summary>
     [DataField]
-    public EntityUid Action;
+    public EntityUid Source;
 
     [DataField]
     public bool Resolved;

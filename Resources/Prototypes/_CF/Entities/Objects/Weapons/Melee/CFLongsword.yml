@@ -21,14 +21,19 @@
         Slash: 1 # Placeholder — CFStrikeSystem replaces damage when both sides are CF combatants.
     soundHit:
       path: /Audio/Weapons/bladeslice.ogg
-  - type: CFMeleeWeapon
+  - type: CFWeapon
     damageDie: 8
-    damageDice: 1
-    damageType: slashing
-    proficiency: MartialWeapons
+    damageType: Slashing
+    category: Martial
+    group: Sword
+  - type: CFMeleeWeapon
   - type: CFTrait
     traits:
     - VersatileP
+  - type: CFItem
+    level: 0
+  - type: CFBulk
+    bulk: 1
   - type: DisarmMalus
   - type: CFItemPrice
     copper: 100 # 1 gp

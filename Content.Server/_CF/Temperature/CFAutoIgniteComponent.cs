@@ -1,4 +1,4 @@
-namespace Content.Server._CF.Temperature;
+namespace Content.Server.CF.Temperature;
 
 [RegisterComponent, AutoGenerateComponentPause, Access(typeof(CFFireSpreadSystem))]
 public sealed partial class CFAutoIgniteComponent : Component

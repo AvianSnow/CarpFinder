@@ -1,7 +1,7 @@
 using Content.Shared.Tools;
 using Robust.Shared.Prototypes;
 
-namespace Content.Server._CF.Materials;
+namespace Content.Server.CF.Materials;
 
 [RegisterComponent]
 public sealed partial class CFLogComponent : Component

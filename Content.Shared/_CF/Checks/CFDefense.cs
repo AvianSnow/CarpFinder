@@ -1,28 +1,35 @@
 using Content.Shared.CF.Character;
+using Content.Shared.CF.Combat;
 using Content.Shared.CF.Preferences;
-using Content.Shared.CF.Spells;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 
-namespace Content.Shared.CF.Combat;
+namespace Content.Shared.CF.Checks;
 
 /// <summary>
-/// Skill checks and defense DCs shared by activities and spells.
+/// Skill checks and defense DCs shared by activities, Strikes, and spells.
 /// </summary>
 public static class CFDefense
 {
+    /// <summary>
+    /// Saving throw modifier for <paramref name="defense"/>. Perception is routed to
+    /// <see cref="PerceptionModifier"/>; any non-save defense falls back to Fortitude.
+    /// </summary>
     public static int SaveModifier(
         IPrototypeManager prototypes,
         CFCombatantComponent? combat,
         CFAbilityScoreComponent? abilities,
-        CFSpellDefense defense,
+        CFDefenseType defense,
         int status = 0,
         int frightened = 0)
     {
+        if (defense == CFDefenseType.Perception)
+            return PerceptionModifier(prototypes, combat, abilities, status, frightened);
+
         var bonus = defense switch
         {
-            CFSpellDefense.Reflex => CFCommonerStats.Reflex,
-            CFSpellDefense.Will => CFCommonerStats.Will,
+            CFDefenseType.Reflex => CFCommonerStats.Reflex,
+            CFDefenseType.Will => CFCommonerStats.Will,
             _ => CFCommonerStats.Fortitude,
         };
 
@@ -31,13 +38,13 @@ public static class CFDefense
             && !string.IsNullOrEmpty(combat.ClassId)
             && prototypes.TryIndex(combat.ClassId, out CFClassPrototype? cls))
         {
-            var ability = defense switch
+            var (ability, saveName) = defense switch
             {
-                CFSpellDefense.Reflex => CFAbility.Dexterity,
-                CFSpellDefense.Will => CFAbility.Wisdom,
-                _ => CFAbility.Constitution,
+                CFDefenseType.Reflex => (CFAbility.Dexterity, "Reflex"),
+                CFDefenseType.Will => (CFAbility.Wisdom, "Will"),
+                _ => (CFAbility.Constitution, "Fortitude"),
             };
-            var trained = CFAttributeMath.IsSaveTrained(cls, defense.ToString());
+            var trained = CFAttributeMath.IsSaveTrained(cls, saveName);
             bonus = CFAttributeMath.ComputeSave(abilities.AbilityModifiers, ability, combat.Level, trained);
         }
 
@@ -84,8 +91,8 @@ public static class CFDefense
         return mod - Math.Max(0, frightened);
     }
 
-    public static CFStrikeDegree Roll(IRobustRandom random, int modifier, int dc)
+    public static CFDegree Roll(IRobustRandom random, int modifier, int dc)
     {
-        return CFMelee.DegreeOfSuccess(random.Next(1, 21), modifier, dc);
+        return CFDegrees.DegreeOfSuccess(random.Next(1, 21), modifier, dc);
     }
 }

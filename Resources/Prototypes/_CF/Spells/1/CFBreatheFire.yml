@@ -14,11 +14,17 @@
   - type: CFSpell
     spell: BreatheFire
     rank: 1
-    delivery: Area
-    area: Cone
-    areaFeet: 15
+  - type: CFAreaEffect
+    shape: Cone
+    sizeFeet: 15
+  - type: CFCheck
     defense: Reflex
-    basicSave: true
-    diceCount: 2
-    diceSize: 6
-    damageType: fire
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 2
+      die: 6
+      damageType: Fire
+      heightenDice: 1
+  - type: CFHeighten
+    baseRank: 1

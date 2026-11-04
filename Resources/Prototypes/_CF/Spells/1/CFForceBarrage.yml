@@ -16,12 +16,15 @@
   - type: CFSpell
     spell: ForceBarrage
     rank: 1
-    delivery: Projectile
+  - type: CFTargeting
     rangeFeet: 120
-    defense: None
-    diceCount: 1
-    diceSize: 4
-    flatDamage: 1
-    damageType: force
+  - type: CFProjectileDelivery
     boltPrototype: CFSpellBoltForce
     maxBolts: 3
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 4
+      flat: 1
+      damageType: Force

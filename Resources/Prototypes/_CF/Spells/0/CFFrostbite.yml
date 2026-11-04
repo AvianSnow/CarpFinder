@@ -14,11 +14,18 @@
   - type: CFSpell
     spell: Frostbite
     rank: 0
-    delivery: Target
+  - type: CFTargeting
     rangeFeet: 60
+  - type: CFCheck
     defense: Fortitude
-    basicSave: true
-    diceCount: 1
-    diceSize: 4
-    addSpellModifier: true
-    damageType: cold
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 4
+      damageType: Cold
+      addAbilityModifier: true
+      heightenDice: 1
+  - type: CFHeighten
+    baseRank: 1
+    interval: 2

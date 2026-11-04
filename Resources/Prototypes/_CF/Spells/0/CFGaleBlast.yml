@@ -14,13 +14,21 @@
   - type: CFSpell
     spell: GaleBlast
     rank: 0
-    delivery: Area
-    area: Emanation
-    areaFeet: 5
+  - type: CFAreaEffect
+    shape: Emanation
+    sizeFeet: 5
+  - type: CFCheck
     defense: Fortitude
-    basicSave: true
-    diceCount: 1
-    diceSize: 6
-    damageType: bludgeoning
-    rider: Push
-    pushFeet: 5
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 6
+      damageType: Bludgeoning
+      heightenDice: 1
+    landed:
+    - !type:CFForcedMovementEffect
+      feet: 5
+  - type: CFHeighten
+    baseRank: 1
+    interval: 2

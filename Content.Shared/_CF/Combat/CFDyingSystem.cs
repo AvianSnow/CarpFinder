@@ -1,6 +1,7 @@
 using Content.Shared.Body.Components;
 using Content.Shared.Body.Systems;
 using Content.Shared.CF.Character;
+using Content.Shared.CF.Checks;
 using Content.Shared.CF.Preferences;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Components;
@@ -120,6 +121,32 @@ public sealed partial class CFDyingSystem : EntitySystem
             return false;
 
         return true;
+    }
+
+    /// <summary>
+    /// The stabilize spell: dying drops to 0 and the creature stays unconscious at 0 HP. No check.
+    /// </summary>
+    public void Stabilize(EntityUid target)
+    {
+        if (TryComp(target, out CFCombatantComponent? combat))
+        {
+            combat.Dying = 0;
+            Dirty(target, combat);
+        }
+
+        RemComp<CFDyingTrackerComponent>(target);
+        _popup.PopupEntity(Loc.GetString("cf-spell-stabilize"), target);
+    }
+
+    /// <summary>
+    /// Nonlethal damage brought the creature to 0 HP: it stays unconscious but is not dying.
+    /// Call after <see cref="KnockOut"/>.
+    /// </summary>
+    public void KnockOutNonlethal(EntityUid target, CFCombatantComponent combatant)
+    {
+        combatant.Dying = 0;
+        Dirty(target, combatant);
+        RemComp<CFDyingTrackerComponent>(target);
     }
 
     /// <summary>
@@ -245,7 +272,7 @@ public sealed partial class CFDyingSystem : EntitySystem
         var bonus = CFSkills.SkillModifier(healerAbilities.AbilityModifiers, CFAbility.Wisdom, healerCombat.Level, rank);
         var dc = CFDyingTrackerComponent.BaseStabilizeDc + patient.Dying;
         var d20 = _random.Next(1, 21);
-        var degree = CFMelee.DegreeOfSuccess(d20, bonus, dc);
+        var degree = CFDegrees.DegreeOfSuccess(d20, bonus, dc);
         var total = d20 + bonus;
 
         _popup.PopupEntity(
@@ -257,7 +284,7 @@ public sealed partial class CFDyingSystem : EntitySystem
             healer,
             healer);
 
-        if (degree is CFStrikeDegree.Success or CFStrikeDegree.CriticalSuccess)
+        if (degree is CFDegree.Success or CFDegree.CriticalSuccess)
         {
             ReviveAtOneHitPoint(target, patient, healer);
             PopupPvs(Loc.GetString("cf-combat-stabilize-success"), target, PopupType.Medium);
@@ -297,14 +324,14 @@ public sealed partial class CFDyingSystem : EntitySystem
     {
         var dc = CFDyingTrackerComponent.BaseRecoveryDc + combatant.Dying;
         var d20 = _random.Next(1, 21);
-        var degree = CFMelee.DegreeOfSuccess(d20, 0, dc);
+        var degree = CFDegrees.DegreeOfSuccess(d20, 0, dc);
 
         var delta = degree switch
         {
-            CFStrikeDegree.CriticalSuccess => -2,
-            CFStrikeDegree.Success => -1,
-            CFStrikeDegree.Failure => 1,
-            CFStrikeDegree.CriticalFailure => 2,
+            CFDegree.CriticalSuccess => -2,
+            CFDegree.Success => -1,
+            CFDegree.Failure => 1,
+            CFDegree.CriticalFailure => 2,
             _ => 0,
         };
 
@@ -508,12 +535,12 @@ public sealed partial class CFDyingSystem : EntitySystem
         _damageable.SetDamage((target, damageable), spec);
     }
 
-    private static string DegreeKey(CFStrikeDegree degree) => degree switch
+    private static string DegreeKey(CFDegree degree) => degree switch
     {
-        CFStrikeDegree.CriticalSuccess => "crit-success",
-        CFStrikeDegree.Success => "success",
-        CFStrikeDegree.Failure => "failure",
-        CFStrikeDegree.CriticalFailure => "crit-failure",
+        CFDegree.CriticalSuccess => "crit-success",
+        CFDegree.Success => "success",
+        CFDegree.Failure => "failure",
+        CFDegree.CriticalFailure => "crit-failure",
         _ => "failure",
     };
 }

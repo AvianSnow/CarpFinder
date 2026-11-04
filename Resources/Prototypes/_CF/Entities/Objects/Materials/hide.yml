@@ -133,7 +133,7 @@
       - state: rugged_hide1
         map: ["base"]
   - type: Stack
-    stackType: CP14RuggedLeather
+    stackType: CFRuggedLeather
     count: 1
     baseLayer: base
     layerStates:

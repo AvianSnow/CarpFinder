@@ -1,6 +1,6 @@
 using Robust.Shared.Audio;
 
-namespace Content.Server._CF.Temperature;
+namespace Content.Server.CF.Temperature;
 
 [RegisterComponent, Access(typeof(CFFireplaceSystem))]
 public sealed partial class CFFireplaceComponent : Component

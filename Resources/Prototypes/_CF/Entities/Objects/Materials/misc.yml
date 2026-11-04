@@ -1,6 +1,6 @@
 - type: entity
   parent: BaseItem
-  id: CP14Ash1
+  id: CFAsh1
   name: ash # Possible reagent in the future
   description: It used to be something that could be interesting and useful, now it's not.
   suffix: 1
@@ -43,7 +43,7 @@
 
 - type: entity
   id: CFAsh3
-  parent: CP14Ash1
+  parent: CFAsh1
   suffix: 3
   components:
   - type: Stack

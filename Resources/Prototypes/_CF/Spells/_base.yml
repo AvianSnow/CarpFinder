@@ -1,4 +1,7 @@
-# Shared parents for CarpFinder remaster spells. Each spell file overrides CFSpell.
+# Shared parents for CarpFinder remaster spells.
+# Each parent sets the delivery (CFTargeting). A spell file adds CFSpell (id and rank) and the effect
+# components from Content.Shared/_CF/Effects: CFTargeting range, CFAreaEffect, CFCheck, CFDegreeEffects,
+# CFProjectileDelivery, CFModeChoice, CFHeighten. Component fields merge with the parent's.
 
 - type: entity
   abstract: true
@@ -13,6 +16,8 @@
     raiseOnAction: true
   - type: InstantAction
     event: !type:CFSpellCastInstantEvent
+  - type: CFTargeting
+    delivery: Self
   - type: Sprite
     sprite: Objects/Magic/magicactions.rsi
     layers:
@@ -38,6 +43,8 @@
       components:
       - MobState
     event: !type:CFSpellCastTargetEvent
+  - type: CFTargeting
+    delivery: Creature
   - type: Sprite
     sprite: Objects/Magic/magicactions.rsi
     layers:
@@ -60,6 +67,8 @@
   - type: EntityTargetAction
     canTargetSelf: false
     event: !type:CFSpellCastTargetEvent
+  - type: CFTargeting
+    delivery: Creature
   - type: Sprite
     sprite: Objects/Magic/magicactions.rsi
     layers:
@@ -71,8 +80,9 @@
   id: CFSpellProjectile
   categories: [ HideSpawnMenu ]
   components:
-  - type: CFSpell
+  - type: CFTargeting
     delivery: Projectile
+  - type: CFProjectileDelivery
 
 - type: entity
   abstract: true
@@ -90,6 +100,8 @@
     targetingIndicator: true
   - type: WorldTargetAction
     event: !type:CFSpellCastAreaEvent
+  - type: CFTargeting
+    delivery: Point
   - type: Sprite
     sprite: Objects/Magic/magicactions.rsi
     layers:

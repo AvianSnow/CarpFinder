@@ -78,3 +78,13 @@
     - StructuralMetallicStrong
   damageContainers:
     - StructuralInorganic
+
+# Simple mechanical hazards (spike trap): no Hardness. Hit points come from the hazard's CFCombatant.
+- type: cfMaterial
+  id: SimpleHazard
+  name: cf-material-hazard
+  hardness: 0
+  hitPoints: 10
+  brokenThreshold: 5
+  damageModifierSets: []
+  damageContainers: []

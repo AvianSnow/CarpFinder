@@ -14,8 +14,12 @@
   - type: CFSpell
     spell: Charm
     rank: 1
-    delivery: Target
+  - type: CFTargeting
     rangeFeet: 30
+  - type: CFCheck
     defense: Will
     basicSave: false
-    charm: true
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFApplyConditionEffect
+      condition: Charmed

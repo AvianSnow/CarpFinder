@@ -14,11 +14,18 @@
   - type: CFSpell
     spell: Thunderstrike
     rank: 1
-    delivery: Projectile
+  - type: CFTargeting
     rangeFeet: 120
+  - type: CFCheck
     defense: Reflex
-    basicSave: true
-    diceCount: 1
-    diceSize: 12
-    damageType: electricity
+  - type: CFProjectileDelivery
     boltPrototype: CFSpellBoltElectric
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 12
+      damageType: Electricity
+      heightenDice: 1
+  - type: CFHeighten
+    baseRank: 1

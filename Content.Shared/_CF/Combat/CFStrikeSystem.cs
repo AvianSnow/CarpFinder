@@ -1,9 +1,11 @@
 using System.Numerics;
 using Content.Shared.CF.Actions;
 using Content.Shared.CF.Character;
+using Content.Shared.CF.Checks;
+using Content.Shared.CF.DamageTypes;
 using Content.Shared.CF.Factions;
 using Content.Shared.CF.Preferences;
-using Content.Shared.CF.Spells;
+using Content.Shared.CF.Effects;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Components;
 using Content.Shared.Damage.Systems;
@@ -16,6 +18,7 @@ using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Popups;
 using Content.Shared.Projectiles;
+using Content.Shared.Throwing;
 using Content.Shared.Weapons.Melee;
 using Content.Shared.Weapons.Melee.Events;
 using Robust.Shared.Audio;
@@ -48,6 +51,10 @@ public sealed partial class CFStrikeSystem : EntitySystem
     [Dependency] private CFFactionSystem _factions = default!;
     [Dependency] private CFActionPoolSystem _actions = default!;
     [Dependency] private CFConditionSystem _conditions = default!;
+    [Dependency] private CFBonusSystem _bonuses = default!;
+    [Dependency] private CFWeaponSystem _weapons = default!;
+    [Dependency] private CFShieldSystem _shields = default!;
+    [Dependency] private CFEffectSystem _effects = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private SharedAudioSystem _audio = default!;
 
@@ -65,11 +72,13 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (!TryGetMeleeAttacker(args, out var combat, out var abilities))
             return;
 
+        if (!_weapons.TryStats(weapon, out var stats))
+            return;
+
         args.Handled = true;
         if (!_net.IsServer)
             return;
 
-        var stats = CFStrikeWeaponStats.FromMelee(weapon.Comp);
         if (args.HitEntities.Count == 0)
         {
             _actions.CountAttack(args.User);
@@ -118,7 +127,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
         }
 
         if (projectile.Comp.Weapon is not { } weaponUid
-            || !TryComp(weaponUid, out CFRangedWeaponComponent? ranged))
+            || !HasComp<CFRangedWeaponComponent>(weaponUid)
+            || !_weapons.TryStats(weaponUid, out var stats))
             return;
 
         if (shooter == null
@@ -132,7 +142,6 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (!_net.IsServer)
             return;
 
-        var stats = CFStrikeWeaponStats.FromRanged(ranged);
         var distanceFeet = GetDistanceFeet(shooter.Value, args.Target);
         var map = _actions.MapPenalty(shooter.Value, stats.Agile);
         _actions.CountAttack(shooter.Value);
@@ -143,12 +152,35 @@ public sealed partial class CFStrikeSystem : EntitySystem
             abilities,
             stats,
             distanceFeet,
-            ranged.Propulsive,
             weaponUid,
             melee: false,
             map);
         if (_strikeDepth == 0)
             ReactiveStrike(shooter.Value);
+    }
+
+    /// <summary>
+    /// A weapon with the thrown trait that hits a creature makes a ranged Strike with its thrown range increment.
+    /// Thrown Strikes add Strength to damage.
+    /// </summary>
+    [SubscribeLocalEvent]
+    private void OnThrownHit(Entity<CFWeaponComponent> weapon, ref ThrowDoHitEvent args)
+    {
+        if (!_net.IsServer || args.Component.Thrower is not { } thrower || thrower == args.Target)
+            return;
+
+        if (!TryComp(thrower, out CFCombatantComponent? combat) || !TryComp(thrower, out CFAbilityScoreComponent? abilities))
+            return;
+
+        if (!_weapons.TryStats(weapon, out var stats, thrown: true) || stats.RangeIncrementFeet <= 0)
+            return;
+
+        if (!HasComp<MobStateComponent>(args.Target))
+            return;
+
+        var map = _actions.MapPenalty(thrower, stats.Agile);
+        _actions.CountAttack(thrower);
+        ResolveStrike(thrower, args.Target, combat, abilities, stats, GetDistanceFeet(thrower, args.Target), weapon, melee: false, map);
     }
 
     private bool TryGetMeleeAttacker(
@@ -203,7 +235,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
                 counted = true;
             }
 
-            ResolveStrike(user, target, combat, abilities, stats, distanceFeet: 0f, propulsive: false, weaponUid, melee, map);
+            ResolveStrike(user, target, combat, abilities, stats, distanceFeet: 0f, weaponUid, melee, map);
         }
     }
 
@@ -243,7 +275,6 @@ public sealed partial class CFStrikeSystem : EntitySystem
                 abilities,
                 weapon,
                 distanceFeet: melee ? 0f : GetDistanceFeet(user, target),
-                propulsive: false,
                 weaponUid,
                 melee,
                 map,
@@ -289,37 +320,89 @@ public sealed partial class CFStrikeSystem : EntitySystem
         }
     }
 
+    /// <summary>
+    /// Fists (1d4 bludgeoning: agile, finesse, nonlethal, unarmed), or the creature's natural attack
+    /// from <see cref="CFCombatOptionsComponent"/>, which is lethal and has only the traits it lists.
+    /// </summary>
     public CFStrikeWeaponStats UnarmedStats(EntityUid user)
     {
-        if (TryComp(user, out CFCombatOptionsComponent? opt) && opt.NaturalDie > 0)
+        var proficiency = CFWeaponCategory.Unarmed.Proficiency();
+        TryComp(user, out CFCombatOptionsComponent? opt);
+        if (opt is { NaturalDie: > 0 })
         {
             var die = opt.PowerfulFist ? Math.Max(opt.NaturalDie, 6) : opt.NaturalDie;
             var dice = Math.Max(1, opt.NaturalDice);
             var type = string.IsNullOrEmpty(opt.NaturalType) ? CFMelee.UnarmedDamageType : opt.NaturalType;
-            return new CFStrikeWeaponStats(dice, die, type, CFMelee.UnarmedProficiency, opt.NaturalFinesse, 0, Agile: opt.NaturalAgile);
+            var traits = new CFWeaponTraits { Agile = opt.NaturalAgile, Finesse = opt.NaturalFinesse, Unarmed = true };
+            return new CFStrikeWeaponStats(dice, die, type, proficiency, traits);
         }
 
-        var fist = CFStrikeWeaponStats.Unarmed();
-        if (TryComp(user, out CFCombatOptionsComponent? monk) && monk.PowerfulFist)
-            return fist with { DamageDie = 6 };
+        // Powerful fist: d6 fists that are not nonlethal.
+        if (opt is { PowerfulFist: true })
+        {
+            var traits = CFWeaponTraits.Fist with { Nonlethal = false };
+            return new CFStrikeWeaponStats(CFMelee.UnarmedDamageDice, 6, CFMelee.UnarmedDamageType, proficiency, traits);
+        }
 
-        return fist;
+        return new CFStrikeWeaponStats(
+            CFMelee.UnarmedDamageDice,
+            CFMelee.UnarmedDamageDie,
+            CFMelee.UnarmedDamageType,
+            proficiency,
+            CFWeaponTraits.Fist);
     }
 
     public bool TryMeleeWeapon(EntityUid user, out CFStrikeWeaponStats stats, out EntityUid weaponUid)
     {
         if (_hands.TryGetActiveItem(user, out var held)
             && held != null
-            && TryComp(held.Value, out CFMeleeWeaponComponent? melee))
+            && HasComp<CFMeleeWeaponComponent>(held.Value)
+            && _weapons.TryStats(held.Value, out stats))
         {
-            stats = CFStrikeWeaponStats.FromMelee(melee);
             weaponUid = held.Value;
+            return true;
+        }
+
+        if (HasComp<CFMeleeWeaponComponent>(user) && _weapons.TryStats(user, out stats))
+        {
+            weaponUid = user;
             return true;
         }
 
         stats = UnarmedStats(user);
         weaponUid = user;
         return true;
+    }
+
+    /// <summary>
+    /// Versatile: the type the target is weakest to, or the weapon's own type when nothing is better.
+    /// </summary>
+    private string ChooseDamageType(EntityUid target, CFStrikeWeaponStats weapon)
+    {
+        var best = weapon.DamageType;
+        var bestDamage = _bonuses.ModifyDamage(target, best, 10);
+        foreach (var type in weapon.Traits.Versatile)
+        {
+            var damage = _bonuses.ModifyDamage(target, type, 10);
+            if (damage <= bestDamage)
+                continue;
+
+            best = type;
+            bestDamage = damage;
+        }
+
+        return best;
+    }
+
+    /// <summary>Attacks this creature had already made this turn, from its multiple attack penalty.</summary>
+    private static int AttacksBefore(int mapPenalty)
+    {
+        return mapPenalty switch
+        {
+            0 => 0,
+            >= -5 => 1,
+            _ => 2,
+        };
     }
 
     private bool ResolveStrike(
@@ -329,7 +412,6 @@ public sealed partial class CFStrikeSystem : EntitySystem
         CFAbilityScoreComponent attackerAbilities,
         CFStrikeWeaponStats weapon,
         float distanceFeet,
-        bool propulsive,
         EntityUid weaponUid,
         bool melee,
         int mapPenalty = 0,
@@ -368,11 +450,11 @@ public sealed partial class CFStrikeSystem : EntitySystem
                 _prototypes,
                 attackerCombat,
                 attackerAbilities,
-                CFSpellDefense.Will,
+                CFDefenseType.Will,
                 0,
                 _conditions.Frightened(user));
             var save = CFDefense.Roll(_random, will, wardCond.SanctuaryDc);
-            if (save is CFStrikeDegree.Failure or CFStrikeDegree.CriticalFailure)
+            if (save is CFDegree.Failure or CFDegree.CriticalFailure)
             {
                 _popup.PopupEntity(Loc.GetString("cf-cond-sanctuary-held"), user, user);
                 return false;
@@ -385,7 +467,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (!isObject && !_conditions.PassFlatCheck(user, target))
         {
             RaiseNetworkEvent(
-                new CFCombatNumberEvent(GetNetEntity(target), CFStrikeDegree.Failure, 0, weapon.DamageType),
+                new CFCombatNumberEvent(GetNetEntity(target), CFDegree.Failure, 0, weapon.DamageType),
                 Filter.Pvs(target));
             return false;
         }
@@ -412,12 +494,27 @@ public sealed partial class CFStrikeSystem : EntitySystem
             distanceFeet,
             ignoreVolley);
         attackBonus -= _conditions.Frightened(user);
+        if (weapon.Ranged)
+            attackBonus -= _conditions.Clumsy(user);
+
+        // Item bonuses do not stack: weapon potency or a spell's item bonus, whichever is higher.
+        var otherItem = _bonuses.TotalOfType(user, CFBonusStat.AttackRoll, CFBonusType.Item);
+        attackBonus += _bonuses.Total(user, CFBonusStat.AttackRoll) - otherItem + Math.Max(otherItem, weapon.Potency);
+
+        // Sweep: +1 circumstance when this turn's earlier attack went at a different creature.
+        var attacksBefore = AttacksBefore(mapPenalty);
+        TryComp(user, out CFActionPoolComponent? pool);
+        if (weapon.Traits.Sweep && attacksBefore > 0 && pool?.LastStrikeTarget is { } last && last != target)
+            attackBonus += 1;
+
+        if (pool != null)
+            pool.LastStrikeTarget = target;
 
         // Beyond sixth range increment: automatic miss.
         if (weapon.Ranged && attackBonus <= -900)
         {
             RaiseNetworkEvent(
-                new CFCombatNumberEvent(GetNetEntity(target), CFStrikeDegree.Failure, 0, weapon.DamageType),
+                new CFCombatNumberEvent(GetNetEntity(target), CFDegree.Failure, 0, weapon.DamageType),
                 Filter.Pvs(target));
             return false;
         }
@@ -429,36 +526,34 @@ public sealed partial class CFStrikeSystem : EntitySystem
         else if (melee && !isObject && (_flanking.IsOffGuardTo(target, user) || _conditions.IsOffGuardTo(target, user)))
             acPenalty = CFFlanking.OffGuardAcPenalty;
 
-        var targetAc = defender.ArmorClass - acPenalty - _conditions.Frightened(target);
-        if (TryComp(target, out CFSpellStatusComponent? ward))
-            targetAc += ward.AcBonus;
-
-        if (TryComp(target, out CFConditionComponent? targetCond) && targetCond.RaisedShield)
-            targetAc += 2;
+        var targetAc = defender.ArmorClass - acPenalty - _conditions.Frightened(target) - _conditions.Clumsy(target);
+        targetAc += _bonuses.Total(target, CFBonusStat.ArmorClass);
+        targetAc += _shields.RaisedBonus(target);
 
         if (TryComp(target, out CFCombatOptionsComponent? defenderStyle) && defenderStyle.Raging)
             targetAc -= 1;
 
-        var rolled = weapon;
+        var rolled = weapon with { DamageType = ChooseDamageType(target, weapon) };
         if (extraDice > 0)
             rolled = rolled with { DamageDice = rolled.DamageDice + extraDice };
 
-        if (TryComp(user, out CFSpellStatusComponent? rune) && rune.ExtraWeaponDie > 0)
-            rolled = rolled with { DamageDice = rolled.DamageDice + rune.ExtraWeaponDie };
+        // Runic weapon (a spell) and a striking rune do not stack: the higher number of extra dice applies.
+        var spellDice = _bonuses.Total(user, CFBonusStat.WeaponDice);
+        if (spellDice > weapon.Striking)
+            rolled = rolled with { DamageDice = rolled.DamageDice + spellDice - weapon.Striking, Striking = spellDice };
 
-        var damageMod = CFMelee.DamageBonus(attackerAbilities, rolled, propulsive) + pointBlank;
+        var damageMod = CFMelee.DamageBonus(attackerAbilities, rolled) + pointBlank;
+        damageMod += CFMelee.ForcefulBonus(rolled, attacksBefore);
         if (melee && style is { Raging: true })
             damageMod += 2;
 
-        if (melee && TryComp(user, out CFConditionComponent? grown))
-            damageMod += grown.EnlargeDamage;
+        if (melee)
+            damageMod += _bonuses.Total(user, CFBonusStat.MeleeDamage);
 
         if (style != null && style.Exploited == target)
             damageMod += 2;
 
         var d20 = _random.Next(1, 21);
-        if (TryComp(user, out CFSpellStatusComponent? boon))
-            attackBonus += boon.AttackBonus;
 
         if (style != null && style.StratagemTarget == target && style.StratagemRoll > 0)
         {
@@ -467,19 +562,18 @@ public sealed partial class CFStrikeSystem : EntitySystem
             style.StratagemTarget = null;
             Dirty(user, style);
         }
-        else if (boon is { TrueStrike: true })
+        else if (_bonuses.TryConsumeFortune(user))
         {
             d20 = Math.Max(d20, _random.Next(1, 21));
-            boon.TrueStrike = false;
         }
 
-        var degree = CFMelee.DegreeOfSuccess(d20, attackBonus, targetAc);
+        var degree = CFDegrees.DegreeOfSuccess(d20, attackBonus, targetAc);
         if (!isObject)
             degree = AdjustDefense(target, user, d20, attackBonus, ref targetAc, degree);
 
         var damage = 0;
-        var criticalHit = degree == CFStrikeDegree.CriticalSuccess;
-        var hit = degree is CFStrikeDegree.Success or CFStrikeDegree.CriticalSuccess;
+        var criticalHit = degree == CFDegree.CriticalSuccess;
+        var hit = degree is CFDegree.Success or CFDegree.CriticalSuccess;
 
         if (hit)
         {
@@ -490,15 +584,13 @@ public sealed partial class CFStrikeSystem : EntitySystem
             }
             else
             {
-                damage = CFMelee.RollStrikeDamage(
-                    _random,
-                    rolled,
-                    damageMod,
-                    criticalHit);
+                var extra = Precision(user, target, style, melee, isObject, criticalHit) + bonusDamage;
+                if (weapon.Traits.Backstabber && !isObject
+                    && (_flanking.IsOffGuardTo(target, user) || _conditions.IsOffGuardTo(target, user)))
+                    extra += weapon.Potency >= 3 ? 2 : 1;
 
-                damage += Precision(user, target, style, melee, isObject, criticalHit);
-                damage += bonusDamage;
-                damage = _conditions.Resist(target, rolled.DamageType, damage);
+                damage = CFMelee.RollStrikeDamage(_random, rolled, damageMod, criticalHit, extra);
+                damage = _bonuses.ModifyDamage(target, rolled.DamageType, damage);
                 damage = ApplyShieldBlock(target, damage);
 
                 if (isObject && hardness > 0)
@@ -515,6 +607,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
                 {
                     _popup.PopupEntity(Loc.GetString("cf-combat-strike-defeated"), target, user);
                     _dying.KnockOut(target, defender, criticalHit, user);
+                    if (weapon.Traits.Nonlethal)
+                        _dying.KnockOutNonlethal(target, defender);
                     YoureNext(user, target);
                 }
                 else if (isObject && defender.CurrentHp <= 0)
@@ -540,6 +634,9 @@ public sealed partial class CFStrikeSystem : EntitySystem
             }
         }
 
+        if (hit && !alreadyDown)
+            ApplyPropertyRunes(user, target, weaponUid, degree);
+
         if (hit && !isObject && !_inChampion)
             ChampionReact(user, target);
 
@@ -555,36 +652,34 @@ public sealed partial class CFStrikeSystem : EntitySystem
     /// Raises a shield, or dodges, when that would answer an attack that is about to land.
     /// Each spends the creature's one reaction.
     /// </summary>
-    private CFStrikeDegree AdjustDefense(
+    private CFDegree AdjustDefense(
         EntityUid target,
         EntityUid user,
         int d20,
         int attackBonus,
         ref int targetAc,
-        CFStrikeDegree degree)
+        CFDegree degree)
     {
         _ = user;
-        if (degree is not (CFStrikeDegree.Success or CFStrikeDegree.CriticalSuccess))
+        if (degree is not (CFDegree.Success or CFDegree.CriticalSuccess))
             return degree;
 
         if (TryComp(target, out CFConditionComponent? cond)
             && !cond.RaisedShield
-            && _hands.TryGetActiveItem(target, out var held)
-            && held != null
-            && HasComp<CFShieldComponent>(held.Value)
+            && _shields.CanRaise(target)
             && _conditions.TrySpendReaction(target, CFReactions.Raise))
         {
             _conditions.RaiseShield(target);
-            targetAc += 2;
-            degree = CFMelee.DegreeOfSuccess(d20, attackBonus, targetAc);
-            if (degree is not (CFStrikeDegree.Success or CFStrikeDegree.CriticalSuccess))
+            targetAc += _shields.RaisedBonus(target);
+            degree = CFDegrees.DegreeOfSuccess(d20, attackBonus, targetAc);
+            if (degree is not (CFDegree.Success or CFDegree.CriticalSuccess))
                 return degree;
         }
 
         if (_conditions.TrySpendReaction(target, CFReactions.Nimble))
         {
             targetAc += 2;
-            degree = CFMelee.DegreeOfSuccess(d20, attackBonus, targetAc);
+            degree = CFDegrees.DegreeOfSuccess(d20, attackBonus, targetAc);
         }
 
         return degree;
@@ -635,20 +730,40 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (cond == null || !cond.RaisedShield)
             return damage;
 
+        if (!_shields.TryGetHeldShield(target, out var shield) || shield.Comp.Broken)
+            return damage;
+
         if (!_conditions.TrySpendReaction(target, CFReactions.Block))
             return damage;
 
-        var hardness = 5;
-        if (_hands.TryGetActiveItem(target, out var held)
-            && held != null
-            && TryComp(held.Value, out CFShieldComponent? shield))
-            hardness = shield.Hardness;
+        return _shields.Block(target, shield, damage);
+    }
 
-        var blocked = Math.Min(damage, hardness);
-        if (blocked > 0)
-            _popup.PopupEntity(Loc.GetString("cf-act-shield-block", ("amount", blocked)), target);
+    /// <summary>
+    /// Property runes on the weapon run their effects on the target, with this Strike's degree,
+    /// so a damage effect doubles on a critical hit.
+    /// </summary>
+    private void ApplyPropertyRunes(EntityUid user, EntityUid target, EntityUid weaponUid, CFDegree degree)
+    {
+        if (!Exists(target) || weaponUid == user)
+            return;
 
-        return damage - blocked;
+        var args = new CFEffectArgs
+        {
+            User = user,
+            Source = weaponUid,
+            Target = target,
+            Position = Transform(target).Coordinates,
+            Degree = degree,
+            Defense = CFDefenseType.ArmorClass,
+        };
+
+        foreach (var rune in _weapons.PropertyRunes(weaponUid))
+        {
+            _effects.Run(rune.OnHit, args);
+            if (degree == CFDegree.CriticalSuccess)
+                _effects.Run(rune.OnCriticalHit, args);
+        }
     }
 
     private void ChampionReact(EntityUid attacker, EntityUid victim)
@@ -706,14 +821,14 @@ public sealed partial class CFStrikeSystem : EntitySystem
     /// A miss plays the weapon swing at the target, so it does not use the hit noise.
     /// A hit plays <c>soundHit</c>, or a slash/smash default when the weapon has none.
     /// </summary>
-    private void PlayStrikeImpact(EntityUid weaponUid, EntityUid target, CFStrikeDegree degree, string cfDamageType, bool melee)
+    private void PlayStrikeImpact(EntityUid weaponUid, EntityUid target, CFDegree degree, string cfDamageType, bool melee)
     {
         if (!melee || !TryComp(weaponUid, out MeleeWeaponComponent? weapon))
             return;
 
-        var sound = degree is CFStrikeDegree.Failure or CFStrikeDegree.CriticalFailure
+        var sound = degree is CFDegree.Failure or CFDegree.CriticalFailure
             ? weapon.SwingSound
-            : weapon.HitSound ?? CFMeleeAudio.HitSound(cfDamageType);
+            : weapon.HitSound ?? CFMeleeAudio.HitSound(_prototypes, cfDamageType);
 
         _audio.PlayPvs(sound, Transform(target).Coordinates, sound.Params.WithVariation(0.05f));
     }
@@ -777,14 +892,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
         }
     }
 
-    private static string ToSs14DamageType(string pf2eType)
+    private string ToSs14DamageType(string pf2eType)
     {
-        return pf2eType.ToLowerInvariant() switch
-        {
-            "slashing" or "slash" => "Slash",
-            "piercing" => "Piercing",
-            "bludgeoning" or "blunt" => "Blunt",
-            _ => "Blunt",
-        };
+        return CFDamageTypes.TryResolve(_prototypes, pf2eType, out var type) ? type.Ss14Type.Id : "Blunt";
     }
 }

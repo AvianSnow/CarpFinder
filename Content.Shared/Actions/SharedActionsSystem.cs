@@ -14,7 +14,7 @@ using Content.Shared.Mind;
 using Content.Shared.Popups;
 using Content.Shared.Rejuvenate;
 using Content.Shared.Whitelist;
-using Content.Shared.CF.Spells;
+using Content.Shared.CF.Effects;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.GameStates;
 using Robust.Shared.Map;
@@ -308,23 +308,9 @@ public abstract partial class SharedActionsSystem : EntitySystem
         if (IsCooldownActive(action, curTime))
             return false;
 
-        // CarpFinder: Force Barrage sends how many bolts this cast fires before the action cost is checked.
-        // Prestidigitation sends which trick this cast is, including 0 so a later spell does not keep the old trick.
-        if (TryComp(actionEnt, out CFSpellComponent? spellBolts))
-        {
-            if (spellBolts.MaxBolts > 1 && ev.SpellBolts > 0)
-            {
-                spellBolts.PayThisShot = !ev.SpellVolleyContinue;
-                if (spellBolts.PayThisShot)
-                    spellBolts.ChosenBolts = ev.SpellBolts;
-            }
-            else if (ev.SpellBolts > 0)
-            {
-                spellBolts.ChosenBolts = ev.SpellBolts;
-            }
-
-            spellBolts.ChosenTrick = ev.SpellTrick;
-        }
+        // CarpFinder: a volley (Force Barrage) sends how many bolts this cast fires before the action cost is checked.
+        // A mode choice (prestidigitation) sends its mode, including 0 so a later cast does not keep the old one.
+        CFCastRequest.Read(EntityManager, actionEnt, ev);
 
         var target = GetEntity(ev.EntityTarget);
 

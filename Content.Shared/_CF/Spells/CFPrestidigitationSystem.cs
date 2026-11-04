@@ -1,6 +1,4 @@
-using Content.Shared.Actions;
-using Content.Shared.Actions.Components;
-using Content.Shared.Actions.Events;
+using Content.Shared.CF.Effects;
 using Content.Shared.EntityTable;
 using Content.Shared.Fluids.Components;
 using Content.Shared.Hands.EntitySystems;
@@ -17,14 +15,13 @@ using Content.Shared.Temperature.Components;
 using Content.Shared.Temperature.Systems;
 using Robust.Shared.Network;
 using Robust.Shared.Prototypes;
-using Robust.Shared.Serialization;
 
 namespace Content.Shared.CF.Spells;
 
 /// <summary>
 /// Prestidigitation's four tricks. The click is checked here, not before the menu opens.
 /// </summary>
-public sealed class CFPrestidigitationSystem : EntitySystem
+public sealed partial class CFPrestidigitationSystem : EntitySystem
 {
     private const float CookTemperature = 420f;
 
@@ -35,20 +32,12 @@ public sealed class CFPrestidigitationSystem : EntitySystem
 
     [Dependency] private INetManager _net = default!;
     [Dependency] private IPrototypeManager _prototypes = default!;
-    [Dependency] private SharedActionsSystem _actions = default!;
     [Dependency] private SharedHandsSystem _hands = default!;
     [Dependency] private PullingSystem _pulling = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private SharedTemperatureSystem _temperature = default!;
     [Dependency] private TagSystem _tags = default!;
     [Dependency] private EntityTableSystem _tables = default!;
-
-    public override void Initialize()
-    {
-        base.Initialize();
-        SubscribeLocalEvent<CFSpellSeasoningComponent, FlavorProfileModificationEvent>(OnFlavor);
-        SubscribeAllEvent<CFPrestidigitationMakeEvent>(OnMake);
-    }
 
     public bool TryTrick(EntityUid user, EntityUid target, byte trick)
     {
@@ -142,6 +131,7 @@ public sealed class CFPrestidigitationSystem : EntitySystem
         return true;
     }
 
+    [SubscribeLocalEvent]
     private void OnFlavor(Entity<CFSpellSeasoningComponent> ent, ref FlavorProfileModificationEvent args)
     {
         if (!ent.Comp.Magical)
@@ -150,37 +140,20 @@ public sealed class CFPrestidigitationSystem : EntitySystem
         args.Flavors.Add(MagicalFlavor);
     }
 
-    private void OnMake(CFPrestidigitationMakeEvent ev, EntitySessionEventArgs args)
+    [SubscribeLocalEvent]
+    private void OnTrick(Entity<CFPrestidigitationComponent> ent, ref CFModeTargetEvent args)
     {
-        if (args.SenderSession.AttachedEntity is not { } user)
+        args.Handled = true;
+        args.Success = TryTrick(args.User, args.Target, args.Mode);
+    }
+
+    [SubscribeLocalEvent]
+    private void OnImmediate(Entity<CFPrestidigitationComponent> ent, ref CFModeImmediateCastEvent args)
+    {
+        if ((CFPrestidigitationTrick) args.Mode != CFPrestidigitationTrick.Make)
             return;
 
-        var action = GetEntity(ev.Action);
-        if (!TryComp(action, out CFSpellComponent? spell) || !spell.TrickMenu)
-            return;
-
-        if (!TryComp(action, out ActionComponent? actionComp) || actionComp.AttachedEntity != user)
-            return;
-
-        if (_actions.IsCooldownActive(actionComp))
-            return;
-
-        var attempt = new ActionAttemptEvent(user, null);
-        RaiseLocalEvent(action, ref attempt);
-        if (attempt.Cancelled)
-        {
-            if (_net.IsServer && attempt.Reason != null)
-                _popup.PopupEntity(attempt.Reason, user, user);
-
-            return;
-        }
-
-        if (_net.IsServer && !TrySpawnFun(user))
-            return;
-
-        _actions.StartUseDelay((action, actionComp));
-        var performed = new ActionPerformedEvent(user, null);
-        RaiseLocalEvent(action, ref performed);
+        args.Success = !_net.IsServer || TrySpawnFun(args.User);
     }
 
     private bool TrySpawnFun(EntityUid user)
@@ -208,13 +181,10 @@ public sealed class CFPrestidigitationSystem : EntitySystem
     }
 }
 
-[Serializable, NetSerializable]
-public sealed class CFPrestidigitationMakeEvent : EntityEventArgs
+/// <summary>
+/// Marks the prestidigitation action. Its <c>CFModeChoice</c> values are <see cref="CFPrestidigitationTrick"/>.
+/// </summary>
+[RegisterComponent]
+public sealed partial class CFPrestidigitationComponent : Component
 {
-    public NetEntity Action;
-
-    public CFPrestidigitationMakeEvent(NetEntity action)
-    {
-        Action = action;
-    }
 }

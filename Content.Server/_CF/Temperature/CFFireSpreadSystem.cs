@@ -10,19 +10,19 @@ using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
 
-namespace Content.Server._CF.Temperature;
+namespace Content.Server.CF.Temperature;
 
-public sealed class CFFireSpreadSystem : CFSharedFireSpreadSystem
+public sealed partial class CFFireSpreadSystem : CFSharedFireSpreadSystem
 {
-    [Dependency] private readonly FlammableSystem _flammable = default!;
-    [Dependency] private readonly IGameTiming _gameTiming = default!;
-    [Dependency] private readonly EntityLookupSystem _lookup = default!;
-    [Dependency] private readonly SharedTransformSystem _transform = default!;
-    [Dependency] private readonly IRobustRandom _random = default!;
-    [Dependency] private readonly SharedMapSystem _map = default!;
-    [Dependency] private readonly TileSystem _tile = default!;
-    [Dependency] private readonly ITileDefinitionManager _tileDef = default!;
-    [Dependency] private readonly TurfSystem _turf = default!;
+    [Dependency] private FlammableSystem _flammable = default!;
+    [Dependency] private IGameTiming _gameTiming = default!;
+    [Dependency] private EntityLookupSystem _lookup = default!;
+    [Dependency] private SharedTransformSystem _transform = default!;
+    [Dependency] private IRobustRandom _random = default!;
+    [Dependency] private SharedMapSystem _map = default!;
+    [Dependency] private TileSystem _tile = default!;
+    [Dependency] private ITileDefinitionManager _tileDef = default!;
+    [Dependency] private TurfSystem _turf = default!;
 
     private readonly HashSet<Entity<CFFireSpreadComponent>> _spreadEntities = new();
     private readonly EntProtoId _firePrototype = "CFFire";

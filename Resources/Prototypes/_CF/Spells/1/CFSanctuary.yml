@@ -14,11 +14,12 @@
   - type: CFSpell
     spell: Sanctuary
     rank: 1
-    delivery: Target
+  - type: CFTargeting
     rangeFeet: 5
-    defense: None
-    sanctuary: true
-    friendly: true
-    includeSelf: true
+    filter: All
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFApplyConditionEffect
+      condition: Sanctuary
   - type: EntityTargetAction
     canTargetSelf: true

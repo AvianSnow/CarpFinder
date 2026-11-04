@@ -14,10 +14,19 @@
   - type: CFSpell
     spell: VitalityLash
     rank: 0
-    delivery: Projectile
+  - type: CFTargeting
     rangeFeet: 30
-    defense: SpellAttack
-    diceCount: 1
-    diceSize: 6
-    damageType: vitality
+  - type: CFCheck
+    defense: ArmorClass
+  - type: CFProjectileDelivery
     boltPrototype: CFSpellBoltVitality
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 6
+      damageType: Vitality
+      heightenDice: 1
+  - type: CFHeighten
+    baseRank: 1
+    interval: 2

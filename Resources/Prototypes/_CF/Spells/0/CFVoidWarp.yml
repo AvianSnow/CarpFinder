@@ -14,10 +14,17 @@
   - type: CFSpell
     spell: VoidWarp
     rank: 0
-    delivery: Target
+  - type: CFTargeting
     rangeFeet: 30
+  - type: CFCheck
     defense: Fortitude
-    basicSave: true
-    diceCount: 2
-    diceSize: 4
-    damageType: void
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 2
+      die: 4
+      damageType: Void
+      heightenDice: 1
+  - type: CFHeighten
+    baseRank: 1
+    interval: 2

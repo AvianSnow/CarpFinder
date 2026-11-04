@@ -14,9 +14,13 @@
   - type: CFSpell
     spell: Slow
     rank: 3
-    delivery: Target
+  - type: CFTargeting
     rangeFeet: 30
+  - type: CFCheck
     defense: Fortitude
     basicSave: false
-    actionCap: 2
-    durationSeconds: 60
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFActionCapEffect
+      cap: 2
+      durationSeconds: 60

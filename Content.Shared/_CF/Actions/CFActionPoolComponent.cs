@@ -37,6 +37,9 @@ public sealed partial class CFActionPoolComponent : Component
     [DataField, AutoNetworkedField]
     public int MapAttacks;
 
+    /// <summary>The creature this one last Struck at, for the sweep trait. Only meaningful while <see cref="MapAttacks"/> is above 0.</summary>
+    public EntityUid? LastStrikeTarget;
+
     /// <summary>Time accumulated toward the next point. Not networked; the server owns regen.</summary>
     [DataField]
     public float RegenProgress;

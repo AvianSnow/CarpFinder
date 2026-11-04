@@ -1,0 +1,128 @@
+# Pathfinder 2e Remaster damage types (cfDamageType).
+# ss14Type is only written to stock SS14 objects (doors, crates). Carpfinder HP is the source of truth for creatures.
+# Lookups ignore case, so existing `damageType: slashing` strings resolve to Slashing.
+
+# Physical
+
+- type: cfDamageType
+  id: Bludgeoning
+  name: cf-damage-bludgeoning
+  category: Physical
+  ss14Type: Blunt
+  color: "#A0AAB2"
+  hitSound:
+    path: /Audio/Weapons/smash.ogg
+  aliases: [ blunt ]
+
+- type: cfDamageType
+  id: Piercing
+  name: cf-damage-piercing
+  category: Physical
+  ss14Type: Piercing
+  color: "#C82A2A"
+  hitSound:
+    path: /Audio/Weapons/bladeslice.ogg
+  aliases: [ pierce ]
+
+- type: cfDamageType
+  id: Slashing
+  name: cf-damage-slashing
+  category: Physical
+  ss14Type: Slash
+  color: "#FF3333"
+  hitSound:
+    path: /Audio/Weapons/bladeslice.ogg
+  aliases: [ slash ]
+
+# Energy
+
+- type: cfDamageType
+  id: Acid
+  name: cf-damage-acid
+  category: Energy
+  ss14Type: Caustic
+  color: "#32CD32"
+  aliases: [ caustic ]
+
+- type: cfDamageType
+  id: Cold
+  name: cf-damage-cold
+  category: Energy
+  ss14Type: Cold
+  color: "#00FFFF"
+
+- type: cfDamageType
+  id: Electricity
+  name: cf-damage-electricity
+  category: Energy
+  ss14Type: Shock
+  color: "#FFE600"
+  aliases: [ shock, lightning ]
+
+- type: cfDamageType
+  id: Fire
+  name: cf-damage-fire
+  category: Energy
+  ss14Type: Heat
+  color: "#FF7F00"
+  aliases: [ heat ]
+
+- type: cfDamageType
+  id: Force
+  name: cf-damage-force
+  category: Energy
+  ss14Type: Blunt
+  color: "#DA70D6"
+
+- type: cfDamageType
+  id: Sonic
+  name: cf-damage-sonic
+  category: Energy
+  ss14Type: Blunt
+  color: "#50A0FF"
+
+- type: cfDamageType
+  id: Vitality
+  name: cf-damage-vitality
+  category: Energy
+  ss14Type: Holy
+  color: "#FFDC50"
+  aliases: [ positive, healing ]
+
+- type: cfDamageType
+  id: Void
+  name: cf-damage-void
+  category: Energy
+  ss14Type: Cellular
+  color: "#5A288C"
+  aliases: [ negative ]
+
+# Other
+
+- type: cfDamageType
+  id: Mental
+  name: cf-damage-mental
+  category: Other
+  ss14Type: Blunt
+  color: "#FF69B4"
+
+- type: cfDamageType
+  id: Spirit
+  name: cf-damage-spirit
+  category: Other
+  ss14Type: Holy
+  color: "#E6E6FA"
+
+- type: cfDamageType
+  id: Poison
+  name: cf-damage-poison
+  category: Other
+  ss14Type: Poison
+  color: "#A020F0"
+
+- type: cfDamageType
+  id: Bleed
+  name: cf-damage-bleed
+  category: Other
+  ss14Type: Bloodloss
+  color: "#8B0000"

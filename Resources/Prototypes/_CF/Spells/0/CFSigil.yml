@@ -14,10 +14,12 @@
   - type: CFSpell
     spell: Sigil
     rank: 0
-    delivery: Target
+  - type: CFTargeting
     rangeFeet: 5
-    defense: None
-    friendly: true
-    includeSelf: true
+    filter: All
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFPopupEffect
+      text: cf-spell-affected
   - type: EntityTargetAction
     canTargetSelf: true

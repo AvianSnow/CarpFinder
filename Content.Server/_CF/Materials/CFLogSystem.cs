@@ -5,14 +5,14 @@ using Content.Shared.Random;
 using Content.Shared.Tools.Systems;
 using Robust.Shared.Containers;
 
-namespace Content.Server._CF.Materials;
+namespace Content.Server.CF.Materials;
 
-public sealed class CFLogSystem : EntitySystem
+public sealed partial class CFLogSystem : EntitySystem
 {
-    [Dependency] private readonly SharedHandsSystem _handsSystem = default!;
-    [Dependency] private readonly SharedContainerSystem _containerSystem = default!;
-    [Dependency] private readonly RandomHelperSystem _randomHelper = default!;
-    [Dependency] private readonly SharedToolSystem _toolSystem = default!;
+    [Dependency] private SharedHandsSystem _handsSystem = default!;
+    [Dependency] private SharedContainerSystem _containerSystem = default!;
+    [Dependency] private RandomHelperSystem _randomHelper = default!;
+    [Dependency] private SharedToolSystem _toolSystem = default!;
 
     public override void Initialize()
     {

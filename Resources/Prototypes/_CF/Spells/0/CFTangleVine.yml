@@ -14,10 +14,20 @@
   - type: CFSpell
     spell: TangleVine
     rank: 0
-    delivery: Projectile
+  - type: CFTargeting
     rangeFeet: 30
-    defense: SpellAttack
-    diceCount: 2
-    diceSize: 4
-    damageType: bludgeoning
-    immobilize: true
+  - type: CFCheck
+    defense: ArmorClass
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 2
+      die: 4
+      damageType: Bludgeoning
+      heightenDice: 1
+    landed:
+    - !type:CFApplyConditionEffect
+      condition: Immobilized
+  - type: CFHeighten
+    baseRank: 1
+    interval: 2

@@ -14,13 +14,14 @@
   - type: CFSpell
     spell: Soothe
     rank: 1
-    delivery: Target
+  - type: CFTargeting
     rangeFeet: 30
-    defense: None
-    healDice: 1
-    healDie: 10
-    healFlat: 8
-    friendly: true
-    includeSelf: true
+    filter: All
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFHealEffect
+      dice: 1
+      die: 10
+      flat: 8
   - type: EntityTargetAction
     canTargetSelf: true

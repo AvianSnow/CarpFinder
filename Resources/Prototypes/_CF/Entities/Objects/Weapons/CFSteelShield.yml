@@ -2,7 +2,7 @@
   parent: BaseItem
   id: CFSteelShield
   name: steel shield
-  description: A steel shield. Raise it for +2 AC. Shield Block stops 5 damage once each turn.
+  description: A steel shield. Raise it for +2 AC. Shield Block stops 5 damage. Hardness 5, HP 20, Broken Threshold 10.
   components:
   - type: Sprite
     sprite: Objects/Weapons/Melee/shields.rsi
@@ -14,5 +14,11 @@
   - type: CFShield
     acBonus: 2
     hardness: 5
+    maxHp: 20
+    brokenThreshold: 10
+  - type: CFItem
+    level: 0
+  - type: CFBulk
+    bulk: 1
   - type: CFItemPrice
     copper: 200

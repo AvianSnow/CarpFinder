@@ -1,0 +1,152 @@
+# Ported from crystall-punk-14 (Resources/Prototypes/_CP14). Ids renamed to CF; sprites stay under _CP14.
+
+- type: material
+  id: CFAsh
+  stackEntity: CFAsh1
+  name: cf-craft-material-ash
+  unit: cf-materials-unit-pile
+  icon: { sprite: _CP14/Objects/Materials/ash.rsi, state: ash_1 }
+  color: "#2d313c"
+  price: 0
+
+- type: material
+  id: CFBloodEssence
+  stackEntity: CFBloodEssence
+  name: cf-stack-blood-essence
+  unit: materials-unit-bar
+  icon: { sprite: _CP14/Objects/Materials/blood_essence.rsi, state: drop }
+  color: "#a78a63"
+  price: 8
+
+- type: material
+  id: CFBrass
+  stackEntity: CFIronBar1
+  name: cf-craft-material-brass
+  unit: materials-unit-bar
+  icon: { sprite: _CP14/Objects/Materials/brass_bar.rsi, state: bar_2 }
+  color: "#bb7547"
+  price: 2.5
+
+- type: material
+  id: CFCloth
+  stackEntity: CFCloth1
+  name: cf-craft-material-cloth
+  unit: materials-unit-roll
+  icon: { sprite: _CP14/Objects/Materials/cloth.rsi, state: cloth_3 }
+  color: "#d8e3e2"
+  price: 0.3
+
+- type: material
+  id: CFCopper
+  stackEntity: CFCopperBar1
+  name: cf-craft-material-copper
+  unit: materials-unit-bar
+  icon: { sprite: _CP14/Objects/Materials/copper_scrap.rsi, state: scrap }
+  color: "#9a5e22"
+  price: 1
+
+- type: material
+  id: CFDirt
+  stackEntity: CFDirtBlock1
+  name: cf-craft-material-dirt-block
+  unit: materials-unit-chunk
+  icon: { sprite: _CP14/Objects/Materials/dirt_block.rsi, state: dirt_2 }
+  color: "#5e3f31"
+  price: 0
+
+- type: material
+  id: CFFloraMaterial
+  stackEntity: CFFloraMaterial1
+  name: cf-craft-material-flora
+  unit: materials-unit-bunch
+  icon: { sprite: _CP14/Objects/Materials/flora.rsi, state: grass_material1 }
+  color: "#85903e"
+  price: 0.01
+
+- type: material
+  id: CFGlass
+  stackEntity: CFGlassSheet1
+  name: materials-glass
+  icon: { sprite: _CP14/Objects/Materials/glass.rsi, state: glass_2 }
+  color: "#555963"
+  price: 0.15
+
+- type: material
+  id: CFGold
+  stackEntity: CFGoldBar1
+  name: cf-craft-material-gold
+  unit: materials-unit-bar
+  icon: { sprite: _CP14/Objects/Materials/gold_scrap.rsi, state: scrap_3 }
+  color: "#FFD700"
+  price: 8
+
+- type: material
+  id: CFIron
+  stackEntity: CFIronBar1
+  name: cf-craft-material-iron
+  unit: materials-unit-bar
+  icon: { sprite: _CP14/Objects/Materials/iron_scrap.rsi, state: scrap_2 }
+  color: "#9093a1"
+  price: 2
+
+- type: material
+  id: CFLeather
+  stackEntity: CFLeather1
+  name: cf-craft-material-leather
+  unit: materials-unit-roll
+  icon: { sprite: _CP14/Objects/Ingredients/leather.rsi, state: leather }
+  color: "#a78a63"
+  price: 1.2
+
+- type: material
+  id: CFLucensWoodenPlanks
+  stackEntity: CFLucensWoodenPlanks1
+  name: cf-craft-material-lucens-planks
+  unit: materials-unit-bar
+  icon: { sprite: _CP14/Objects/Materials/wood_lucens.rsi, state: planks_2 }
+  color: "#1a1e22"
+  price: 1
+
+- type: material
+  id: CFMarbleStone
+  stackEntity: CFMarbleBlock1
+  name: cf-craft-material-stone-block #TODO
+  unit: materials-unit-chunk
+  icon: { sprite: _CP14/Objects/Materials/marble_block.rsi, state: stone_2 }
+  color: "#555963"
+  price: 0.15
+
+- type: material
+  id: CFMithril
+  stackEntity: CFMithrilBar1
+  name: cf-craft-material-mithril
+  unit: materials-unit-bar
+  icon: { sprite: _CP14/Objects/Materials/mithril_scrap.rsi, state: scrap }
+  color: "#006c83"
+  price: 5
+
+- type: material
+  id: CFOreCoal
+  stackEntity: CFOreCoal1
+  name: cf-craft-material-coal
+  icon: { sprite: _CP14/Objects/Materials/coal_ore.rsi, state: ore2 }
+  color: "#232526"
+  price: 0.8
+
+- type: material
+  id: CFStone
+  stackEntity: CFStoneBlock1
+  name: cf-craft-material-stone-block
+  unit: materials-unit-chunk
+  icon: { sprite: _CP14/Objects/Materials/stone_block.rsi, state: stone_2 }
+  color: "#555963"
+  price: 0.02
+
+- type: material
+  id: CFWoodenPlanks
+  stackEntity: CFWoodenPlanks1
+  name: cf-craft-material-wooden-planks
+  unit: materials-unit-plank
+  icon: { sprite: _CP14/Objects/Materials/wood.rsi, state: planks_2 }
+  color: "#874d3a"
+  price: 0.1

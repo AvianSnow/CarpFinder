@@ -98,7 +98,10 @@
             - !type:DoActsBehavior
               acts: ["Destruction"]
     - type: IconSmooth
-      base: wall
+      states:
+        - !type:CornerSpriteSmoothing
+          mask: [CFWall]
+          base: wall
     - type: StaticPrice
       price: 100
 
@@ -136,7 +139,10 @@
             - !type:DoActsBehavior
               acts: ["Destruction"]
     - type: IconSmooth
-      base: wall
+      states:
+        - !type:CornerSpriteSmoothing
+          mask: [CFWall]
+          base: wall
 
 - type: entity
   id: CFWallStoneCoalOre
@@ -171,4 +177,7 @@
             - !type:DoActsBehavior
               acts: ["Destruction"]
     - type: IconSmooth
-      base: wall
+      states:
+        - !type:CornerSpriteSmoothing
+          mask: [CFWall]
+          base: wall

@@ -1,12 +1,13 @@
 using System.Numerics;
+using Content.Shared.CF.Effects;
 
-namespace Content.Shared.CF.Spells;
+namespace Content.Shared.CF.Effects.Areas;
 
 /// <summary>
-/// Carpfinder 2e remaster areas on the map grid. One tile is 5 feet.
+/// Remaster areas on the map grid. One tile is 5 feet. Used by every area effect, not only spells.
 /// This is the real tile size, not the 1.25 melee reach used for Strikes.
 /// </summary>
-public static class CFSpellGrid
+public static class CFAreaGrid
 {
     public const float FeetPerTile = 5f;
 
@@ -17,8 +18,8 @@ public static class CFSpellGrid
     }
 
     public static HashSet<Vector2i> Collect(
-        CFSpellAreaKind area,
-        int areaFeet,
+        CFAreaShape shape,
+        int sizeFeet,
         Vector2 casterLocal,
         Vector2 aimLocal,
         float tileSize,
@@ -26,24 +27,24 @@ public static class CFSpellGrid
     {
         var size = tileSize <= 0f ? 1f : tileSize;
         var tiles = new HashSet<Vector2i>();
-        var radius = Math.Max(1, areaFeet / 5);
+        var radius = Math.Max(1, (int) (sizeFeet / FeetPerTile));
         var casterTile = ToTile(casterLocal, size);
 
-        switch (area)
+        switch (shape)
         {
-            case CFSpellAreaKind.Burst:
+            case CFAreaShape.Burst:
                 CollectBurst(tiles, aimLocal, size, radius);
                 break;
-            case CFSpellAreaKind.Cone:
+            case CFAreaShape.Cone:
                 CollectCone(tiles, casterTile, casterLocal, aimLocal, size, radius);
                 break;
-            case CFSpellAreaKind.Emanation:
+            case CFAreaShape.Emanation:
                 CollectEmanation(tiles, casterTile, radius, includeSelf);
                 break;
-            case CFSpellAreaKind.Line:
+            case CFAreaShape.Line:
                 CollectLine(tiles, casterTile, aimLocal - casterLocal, radius);
                 break;
-            case CFSpellAreaKind.Square:
+            case CFAreaShape.Square:
                 CollectSquare(tiles, aimLocal, size, radius);
                 break;
         }

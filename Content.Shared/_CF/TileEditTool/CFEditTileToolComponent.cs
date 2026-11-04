@@ -5,7 +5,7 @@ using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
 
-namespace Content.Shared._CF.TileEditTool;
+namespace Content.Shared.CF.TileEditTool;
 
 [RegisterComponent, Access(typeof(CFEditTileToolSystem))]
 public sealed partial class CFEditTileToolComponent : Component

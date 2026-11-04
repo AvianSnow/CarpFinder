@@ -5,24 +5,28 @@
   id: Bulwark
   name: Bulwark
   category: Armor
+  rule: Bulwark
   summary: "You can use this armor's bonus instead of your Dexterity on Reflex saves against damaging effects."
 
 - type: cfTrait
   id: Comfort
   name: Comfort
   category: Armor
+  rule: Comfort
   summary: "This armor does not make you fatigued when you sleep in it."
 
 - type: cfTrait
   id: Flexible
   name: Flexible
   category: Armor
+  rule: Flexible
   summary: "This armor is less restrictive. Its check penalty and Strength entry are easier."
 
 - type: cfTrait
   id: Noisy
   name: Noisy
   category: Armor
+  rule: Noisy
   summary: "This armor imposes a penalty on Stealth checks."
 
 - type: cfTrait

@@ -54,15 +54,6 @@ public sealed partial class CFConditionComponent : Component
     [DataField, AutoNetworkedField]
     public bool OffGuardAll;
 
-    [DataField, AutoNetworkedField]
-    public int EnlargeDamage;
-
-    [DataField, AutoNetworkedField]
-    public int ResistAmount;
-
-    [DataField, AutoNetworkedField]
-    public string ResistType = "";
-
     public EntityUid? Grabber;
 
     public EntityUid? Charmer;
@@ -85,9 +76,35 @@ public sealed partial class CFConditionComponent : Component
 
     public TimeSpan OffGuardAllUntil;
 
-    public TimeSpan EnlargeUntil;
-
-    public TimeSpan ResistUntil;
-
     public Dictionary<EntityUid, TimeSpan> OffGuardUntil = new();
+}
+
+/// <summary>Conditions an effect can apply through <see cref="CFConditionSystem.ApplyCondition"/>.</summary>
+public enum CFConditionKind : byte
+{
+    /// <summary>Value is the frightened value.</summary>
+    Frightened,
+    Prone,
+
+    /// <summary>Knocked down and unconscious for the duration (sleep).</summary>
+    Asleep,
+    Paralyzed,
+    Immobilized,
+
+    /// <summary>DC 5 flat check to target (blur).</summary>
+    Concealed,
+
+    /// <summary>DC 11 flat check to target. Ends when the creature attacks or casts (invisibility).</summary>
+    Invisible,
+
+    /// <summary>Attackers must pass a Will save against the effect's DC.</summary>
+    Sanctuary,
+    Charmed,
+    Calmed,
+    Blinded,
+    Darkvision,
+
+    /// <summary>Blocks damage once. Value is the hardness (shield cantrip).</summary>
+    SpellShield,
+    OffGuard,
 }

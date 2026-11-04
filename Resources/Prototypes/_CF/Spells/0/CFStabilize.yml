@@ -14,10 +14,11 @@
   - type: CFSpell
     spell: Stabilize
     rank: 0
-    delivery: Target
+  - type: CFTargeting
     rangeFeet: 30
-    defense: None
-    rider: Stabilize
-    friendly: true
+    filter: All
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFStabilizeEffect
   - type: EntityTargetAction
     canTargetSelf: true

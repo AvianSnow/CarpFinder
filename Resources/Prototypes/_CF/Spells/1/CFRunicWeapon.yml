@@ -14,11 +14,14 @@
   - type: CFSpell
     spell: RunicWeapon
     rank: 1
-    delivery: Target
+  - type: CFTargeting
     rangeFeet: 5
-    defense: None
-    extraWeaponDie: 1
-    friendly: true
-    includeSelf: true
+    filter: All
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: WeaponDice
+      type: Status
+      value: 1
   - type: EntityTargetAction
     canTargetSelf: true

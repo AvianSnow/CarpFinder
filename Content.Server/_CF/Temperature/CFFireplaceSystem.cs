@@ -7,14 +7,14 @@ using Robust.Server.Audio;
 using Robust.Server.Containers;
 using Robust.Shared.Timing;
 
-namespace Content.Server._CF.Temperature;
+namespace Content.Server.CF.Temperature;
 
-public sealed class CFFireplaceSystem : EntitySystem
+public sealed partial class CFFireplaceSystem : EntitySystem
 {
-    [Dependency] private readonly AudioSystem _audio = default!;
-    [Dependency] private readonly ContainerSystem _containerSystem = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly StackSystem _stackSystem = default!;
+    [Dependency] private AudioSystem _audio = default!;
+    [Dependency] private ContainerSystem _containerSystem = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private StackSystem _stackSystem = default!;
 
     public override void Initialize()
     {

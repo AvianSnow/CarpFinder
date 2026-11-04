@@ -1,6 +1,7 @@
 using System.Numerics;
 using Content.Client.UserInterface.Systems.Actions;
-using Content.Shared.CF.Spells;
+using Content.Shared.CF.Effects;
+using Content.Shared.CF.Effects.Areas;
 using Robust.Client.Graphics;
 using Robust.Client.Input;
 using Robust.Client.Player;
@@ -8,12 +9,13 @@ using Robust.Client.UserInterface;
 using Robust.Shared.Enums;
 using Robust.Shared.Map.Components;
 
-namespace Content.Client.CF.Spells;
+namespace Content.Client.CF.Effects;
 
 /// <summary>
-/// While an area spell is aimed, draws the tiles it will cover. The second click is the normal action target.
+/// While an action with <see cref="CFAreaEffectComponent"/> is aimed, draws the tiles it will cover.
+/// Green for areas that only help allies, orange for anything that can hit enemies.
 /// </summary>
-public sealed class CFSpellAreaOverlaySystem : EntitySystem
+public sealed partial class CFAreaOverlaySystem : EntitySystem
 {
     [Dependency] private IOverlayManager _overlays = default!;
     [Dependency] private IEyeManager _eye = default!;
@@ -40,17 +42,11 @@ public sealed class CFSpellAreaOverlaySystem : EntitySystem
 
     private void Draw(in OverlayDrawArgs args)
     {
-        if (_actions?.SelectingTargetFor is not { } action)
-            return;
-
-        if (!TryComp(action, out CFSpellComponent? spell) || spell.Delivery != CFSpellDelivery.Area || spell.Area == CFSpellAreaKind.None)
+        if (_actions?.SelectingTargetFor is not { } action || !TryComp(action, out CFAreaEffectComponent? area))
             return;
 
         var player = _player.LocalEntity;
-        if (player == null || !TryComp(player, out TransformComponent? xform) || xform.GridUid is not { } grid)
-            return;
-
-        if (!TryComp(grid, out MapGridComponent? gridComp))
+        if (player == null || !TryComp(player, out TransformComponent? xform))
             return;
 
         var mouse = _eye.PixelToMap(_input.MouseScreenPosition);
@@ -58,18 +54,18 @@ public sealed class CFSpellAreaOverlaySystem : EntitySystem
             return;
 
         var casterMap = _transform.GetMapCoordinates(player.Value, xform);
-        if (casterMap.MapId != mouse.MapId)
+        if (casterMap.MapId != mouse.MapId || !_maps.TryFindGridAt(casterMap, out var grid, out var gridComp))
             return;
 
-        var tiles = CFSpellGrid.Collect(
-            spell.Area,
-            spell.AreaFeet,
+        var tiles = CFAreaGrid.Collect(
+            area.Shape,
+            area.SizeFeet,
             _maps.WorldToLocal(grid, gridComp, casterMap.Position),
             _maps.WorldToLocal(grid, gridComp, mouse.Position),
             gridComp.TileSize,
-            spell.IncludeSelf);
+            area.IncludeSelf);
 
-        var color = spell.Friendly
+        var color = area.Filter == CFTargetFilter.Allies
             ? new Color(80, 220, 120, 220)
             : new Color(255, 120, 40, 220);
 
@@ -92,10 +88,10 @@ public sealed class CFSpellAreaOverlaySystem : EntitySystem
 
     private sealed class AreaOverlay : Overlay
     {
-        private readonly CFSpellAreaOverlaySystem _system;
+        private readonly CFAreaOverlaySystem _system;
         public override OverlaySpace Space => OverlaySpace.WorldSpaceBelowFOV;
 
-        public AreaOverlay(CFSpellAreaOverlaySystem system)
+        public AreaOverlay(CFAreaOverlaySystem system)
         {
             _system = system;
         }

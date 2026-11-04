@@ -9,7 +9,10 @@
     - type: Icon
       sprite: _CP14/Structures/Walls/Natural/cave_stone.rsi
     - type: IconSmooth
-      base: wall
+      states:
+        - !type:CornerSpriteSmoothing
+          mask: [CFWall]
+          base: wall
     - type: Damageable
       damageContainer: StructuralInorganic
       damageModifierSet: CFRockStructural
@@ -80,7 +83,10 @@
     - type: Icon
       sprite: _CP14/Structures/Walls/Natural/cave_stone_strong.rsi
     - type: IconSmooth
-      base: wall
+      states:
+        - !type:CornerSpriteSmoothing
+          mask: [CFWall]
+          base: wall
 
 - type: entity
   id: CFWallDirt
@@ -93,7 +99,10 @@
     - type: Icon
       sprite: _CP14/Structures/Walls/Natural/dirt_wall.rsi
     - type: IconSmooth
-      base: wall
+      states:
+        - !type:CornerSpriteSmoothing
+          mask: [CFWall]
+          base: wall
     - type: Damageable
       damageContainer: StructuralInorganic
       damageModifierSet: Rock # "Soft"
@@ -136,7 +145,10 @@
       sprite: _CP14/Structures/Walls/Natural/leaf.rsi
     - type: IconSmooth
       key: CFWallLeaf
-      base: wall
+      states:
+        - !type:CornerSpriteSmoothing
+          mask: [CFWallLeaf]
+          base: wall
     - type: Damageable
       damageContainer: Inorganic
       damageModifierSet: Wood
@@ -212,7 +224,10 @@
     - type: Icon
       sprite: _CP14/Structures/Walls/Natural/snow_wall.rsi
     - type: IconSmooth
-      base: wall
+      states:
+        - !type:CornerSpriteSmoothing
+          mask: [CFWall]
+          base: wall
     - type: Damageable
       damageContainer: Inorganic
       damageModifierSet: Rock
@@ -256,7 +271,10 @@
     - type: Icon
       sprite: _CP14/Structures/Walls/Natural/cave_dimensit.rsi
     - type: IconSmooth
-      base: wall
+      states:
+        - !type:CornerSpriteSmoothing
+          mask: [CFWall]
+          base: wall
     - type: Damageable
       damageContainer: Inorganic
       damageModifierSet: CFRock

@@ -1,9 +1,9 @@
 using System.IO;
 using System.Linq;
-using Content.Client.CF.Spells;
+using Content.Client.CF.Effects;
 using Content.Shared.Actions;
 using Content.Shared.Actions.Components;
-using Content.Shared.CF.Spells;
+using Content.Shared.CF.Effects;
 using Content.Shared.Mapping;
 using Content.Shared.Maps;
 using JetBrains.Annotations;
@@ -37,7 +37,7 @@ namespace Content.Client.Actions
         [Dependency] private ISerializationManager _serialization = default!;
         [Dependency] private SpriteSystem _sprite = default!;
         // CarpFinder: spell clicks use the outlined creature when the cursor hits the floor.
-        [Dependency] private CFSpellTargetingSystem _spellTargeting = default!;
+        [Dependency] private CFEffectTargetingSystem _spellTargeting = default!;
 
         public event Action<EntityUid>? OnActionAdded;
         public event Action<EntityUid>? OnActionRemoved;
@@ -421,20 +421,16 @@ namespace Content.Client.Actions
         // CarpFinder: a click on the map itself is the floor, not the puddle or item sitting on it.
         private bool IsTrickFloor(EntityUid action, EntityUid entity)
         {
-            if (!TryComp(action, out CFSpellComponent? spell) || spell.ChosenTrick == 0)
+            if (!CFCastRequest.TargetsObject(EntityManager, action))
                 return false;
 
             return HasComp<MapGridComponent>(entity) || HasComp<MapComponent>(entity);
         }
 
-        // CarpFinder: a multi-bolt spell puts the chosen count on the perform request.
-        // A trick spell puts Food, Lift, Make, or Tidy on it as well.
+        // CarpFinder: a volley puts the chosen bolt count on the perform request, and a mode choice its mode.
         private void StampSpell(RequestPerformActionEvent request, EntityUid action)
         {
-            if (!TryComp(action, out CFSpellComponent? spell))
-                return;
-
-            spell.WriteVolley(request);
+            CFCastRequest.Write(EntityManager, action, request);
         }
 
         public record struct SlotAssignment(byte Hotbar, byte Slot, EntityUid ActionId);

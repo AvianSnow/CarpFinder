@@ -14,8 +14,17 @@
   - type: CFSpell
     spell: Sleep
     rank: 1
-    delivery: Target
+  - type: CFTargeting
     rangeFeet: 30
+  - type: CFCheck
     defense: Will
     basicSave: false
-    rider: Sleep
+  - type: CFDegreeEffects
+    failure:
+    - !type:CFApplyConditionEffect
+      condition: Asleep
+      durationSeconds: 6
+    criticalFailure:
+    - !type:CFApplyConditionEffect
+      condition: Asleep
+      durationSeconds: 18

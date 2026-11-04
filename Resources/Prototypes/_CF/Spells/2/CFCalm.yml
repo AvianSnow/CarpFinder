@@ -14,10 +14,15 @@
   - type: CFSpell
     spell: Calm
     rank: 2
-    delivery: Area
-    area: Burst
-    areaFeet: 10
+  - type: CFTargeting
     rangeFeet: 120
+  - type: CFAreaEffect
+    shape: Burst
+    sizeFeet: 10
+  - type: CFCheck
     defense: Will
     basicSave: false
-    calm: true
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFApplyConditionEffect
+      condition: Calmed

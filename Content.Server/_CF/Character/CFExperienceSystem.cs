@@ -1,6 +1,7 @@
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Factions;
+using Content.Shared.CF.Hazards;
 using Content.Shared.CF.Preferences;
 using Content.Shared.Popups;
 using Robust.Shared.Prototypes;
@@ -70,6 +71,41 @@ public sealed partial class CFExperienceSystem : EntitySystem
         }
 
         return (members.Count, behind);
+    }
+
+    /// <summary>
+    /// XP for overcoming a hazard, by its level against the party level (the highest level in the company).
+    /// The whole company gets it. A creature with no company gets it alone. Hazards more than 4 levels
+    /// below the party are worth nothing.
+    /// </summary>
+    public int AwardHazard(EntityUid user, int hazardLevel, bool complex)
+    {
+        var factionId = CompOrNull<CFFactionComponent>(user)?.Faction.Id;
+        var partyLevel = CompOrNull<CFCombatantComponent>(user)?.Level ?? 1;
+        if (factionId != null)
+        {
+            var query = EntityQueryEnumerator<CFExperienceComponent, CFFactionComponent, CFCombatantComponent>();
+            while (query.MoveNext(out _, out _, out var faction, out var combat))
+            {
+                if (faction.Faction.Id == factionId)
+                    partyLevel = Math.Max(partyLevel, combat.Level);
+            }
+        }
+
+        if (!CFExperienceAwards.TryHazard(complex, hazardLevel - partyLevel, out var xp) || xp <= 0)
+            return 0;
+
+        if (factionId != null && AwardFaction(factionId, xp).Count > 0)
+            return xp;
+
+        AddXp(user, xp);
+        return xp;
+    }
+
+    [SubscribeLocalEvent]
+    private void OnHazardDisarmed(Entity<CFHazardComponent> ent, ref CFHazardDisarmedEvent args)
+    {
+        AwardHazard(args.User, args.Level, args.Complex);
     }
 
     public void AddXp(EntityUid mob, int amount)

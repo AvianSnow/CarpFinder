@@ -2,29 +2,28 @@ using System.Numerics;
 using Content.Client.Actions;
 using Content.Shared.Actions;
 using Content.Shared.Actions.Components;
-using Content.Shared.CF.Spells;
-using Content.Shared.Fluids.Components;
-using Content.Shared.Item;
+using Content.Shared.CF.Effects;
 using Content.Shared.Mobs.Components;
-using Content.Shared.Nutrition.Components;
 using Content.Shared.Popups;
-using Content.Shared.Stacks;
+using Content.Shared.Whitelist;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
 
-namespace Content.Client.CF.Spells;
+namespace Content.Client.CF.Effects;
 
 /// <summary>
 /// The green target outline includes every creature near the cursor. The click itself often hits the floor.
-/// Called from the one allowed <see cref="ActionTargetAttemptEvent"/> listener.
+/// Called from the one allowed <see cref="ActionTargetAttemptEvent"/> listener, for any action with
+/// <see cref="CFTargetingComponent"/>.
 /// </summary>
-public sealed class CFSpellTargetingSystem : EntitySystem
+public sealed partial class CFEffectTargetingSystem : EntitySystem
 {
     private const float OutlineReach = 1f;
 
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private EntityWhitelistSystem _whitelist = default!;
 
     private SharedActionsSystem? _actions;
 
@@ -33,16 +32,17 @@ public sealed class CFSpellTargetingSystem : EntitySystem
     /// </summary>
     public void TryUseOutlinedCreature(Entity<EntityTargetActionComponent> ent, ref ActionTargetAttemptEvent args)
     {
-        if (args.FoundTarget || !TryComp(ent.Owner, out CFSpellComponent? spell))
+        if (args.FoundTarget)
             return;
 
-        if (spell.ChosenTrick != 0)
+        if (TryComp(ent.Owner, out CFModeChoiceComponent? choice) && choice.ChosenOption() is { TargetsObject: true } mode)
         {
-            TryUseObject(ent, spell, ref args);
+            TryUseObject(ent, mode, ref args);
             return;
         }
 
-        if (spell.Delivery is not (CFSpellDelivery.Projectile or CFSpellDelivery.Target))
+        if (!TryComp(ent.Owner, out CFTargetingComponent? targeting)
+            || targeting.Delivery is not (CFDelivery.Projectile or CFDelivery.Creature))
             return;
 
         var user = args.User.Owner;
@@ -104,17 +104,16 @@ public sealed class CFSpellTargetingSystem : EntitySystem
         args.Handled = true;
         args.FoundTarget = true;
         var request = new RequestPerformActionEvent(GetNetEntity(action), GetNetEntity(target));
-        if (TryComp(action, out CFSpellComponent? spell))
-            spell.WriteVolley(request);
+        CFCastRequest.Write(EntityManager, action, request);
 
         RaisePredictiveEvent(request);
     }
 
     /// <summary>
-    /// Food, Lift, and Tidy use the entity under the cursor. They do not search for a creature.
+    /// Object modes (prestidigitation's Food, Lift, and Tidy) use the entity under the cursor, not a creature.
     /// A click on the floor looks at that spot, because a puddle often has no click of its own.
     /// </summary>
-    private void TryUseObject(Entity<EntityTargetActionComponent> ent, CFSpellComponent spell, ref ActionTargetAttemptEvent args)
+    private void TryUseObject(Entity<EntityTargetActionComponent> ent, CFModeOption mode, ref ActionTargetAttemptEvent args)
     {
         var user = args.User.Owner;
         if (args.Input.EntityUid is { Valid: true } clicked
@@ -141,7 +140,7 @@ public sealed class CFSpellTargetingSystem : EntitySystem
             if (uid == user || Transform(uid).Anchored)
                 continue;
 
-            if (!Matches(spell.ChosenTrick, uid) || !Actions.ValidateEntityTarget(user, uid, ent))
+            if (!Matches(mode, uid) || !Actions.ValidateEntityTarget(user, uid, ent))
                 continue;
 
             var distance = (_transform.GetWorldPosition(uid) - map.Position).LengthSquared();
@@ -161,17 +160,10 @@ public sealed class CFSpellTargetingSystem : EntitySystem
         Cast(ent.Owner, best, ref args);
     }
 
-    private bool Matches(byte trick, EntityUid uid)
+    private bool Matches(CFModeOption mode, EntityUid uid)
     {
-        return (CFPrestidigitationTrick) trick switch
-        {
-            CFPrestidigitationTrick.Food => HasComp<EdibleComponent>(uid),
-            CFPrestidigitationTrick.Tidy => HasComp<PuddleComponent>(uid),
-            CFPrestidigitationTrick.Lift => !HasComp<MobStateComponent>(uid)
-                && !HasComp<StackComponent>(uid)
-                && HasComp<ItemComponent>(uid),
-            _ => false,
-        };
+        return _whitelist.IsWhitelistPassOrNull(mode.ObjectWhitelist, uid)
+               && _whitelist.IsWhitelistFailOrNull(mode.ObjectBlacklist, uid);
     }
 
     private SharedActionsSystem Actions => _actions ??= EntityManager.System<SharedActionsSystem>();

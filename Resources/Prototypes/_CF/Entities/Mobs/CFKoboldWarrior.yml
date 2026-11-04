@@ -48,6 +48,8 @@
   - type: CFCombatant
     level: -1
     armorClass: 16
+    # Stat block attacks are spear +3 and sling +5; abilities and proficiency give +2 and +4.
+    strikeAdjustment: 1
     maxHp: 7
     currentHp: 7
     trainedSkills:
@@ -73,12 +75,12 @@
     damage:
       types:
         Piercing: 0
-  - type: CFMeleeWeapon
+  - type: CFWeapon
     damageDie: 6
-    damageDice: 1
-    damageType: piercing
-    proficiency: SimpleWeapons
-    itemBonus: 1
+    damageType: Piercing
+    category: Simple
+    group: Spear
+  - type: CFMeleeWeapon
   - type: MobThresholds
     thresholds:
       0: Alive

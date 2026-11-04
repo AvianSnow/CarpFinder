@@ -31,6 +31,7 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
     [Dependency] private MovementSpeedModifierSystem _speed = default!;
     [Dependency] private CFCompanionSystem _companions = default!;
     [Dependency] private MetaDataSystem _meta = default!;
+    [Dependency] private CFArmorSystem _armor = default!;
 
     /// <summary>Carpfinder Speed of 25 feet is the usual human walk.</summary>
     private const float BaselineSpeedFeet = 25f;
@@ -127,39 +128,14 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         abilities.AbilityModifiers = new Dictionary<CFAbility, int>(sheet.Modifiers);
         Dirty(mob, abilities);
 
-        var armorBonus = 0;
-        int? dexCap = null;
-        var armorProficiency = "Unarmored";
-        foreach (var item in _inventory.GetHandOrInventoryEntities(mob))
-        {
-            if (!TryComp(item, out CFArmorComponent? armor))
-                continue;
-
-            // Use the highest item bonus if multiple armor pieces somehow exist.
-            if (armor.ItemBonus < armorBonus)
-                continue;
-
-            armorBonus = armor.ItemBonus;
-            dexCap = armor.DexCap;
-            armorProficiency = armor.Proficiency;
-        }
-
-        var trainedArmor = armorProficiency == "Unarmored"
-            ? CFAttributeMath.IsUnarmoredTrained(sheet.Class)
-            : CFAttributeMath.IsArmorTrained(sheet.Class, armorProficiency);
-
         var combatant = EnsureComp<CFCombatantComponent>(mob);
         combatant.Level = 1;
-        combatant.ArmorClass = CFAttributeMath.ComputeAc(
-            sheet.Modifiers,
-            combatant.Level,
-            trainedArmor,
-            armorBonus,
-            dexCap);
+        combatant.ArmorFromEquipment = true;
         combatant.MaxHp = sheet.MaxHp;
         combatant.CurrentHp = sheet.MaxHp;
         combatant.ClassId = profile.CFBuild.Class?.Id;
         combatant.BackgroundId = profile.CFBuild.Background?.Id;
+        _armor.RefreshArmorClass(mob);
         var ancestryId = sheet.Ancestry?.ID;
         var classId = sheet.Class?.ID;
         var chosenFeats = CFSkills.SelectedFeats(_prototypes, profile.CFBuild, ancestryId, classId, 1);
@@ -205,6 +181,12 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
     private void ApplyAncestry(EntityUid mob, CFAncestryPrototype? ancestry, CFHeritagePrototype? heritage, int speedBonus)
     {
         var speed = CFAttributeMath.EffectiveSpeed(ancestry, heritage) + Math.Max(0, speedBonus);
+        if (speed > 0 && TryComp(mob, out CFCombatantComponent? combat))
+        {
+            combat.SpeedFeet = speed;
+            Dirty(mob, combat);
+        }
+
         if (speed > 0 && speed != (int) BaselineSpeedFeet)
         {
             var scale = speed / BaselineSpeedFeet;
@@ -372,6 +354,7 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
 
         if (adjustSpeed && feat.SpeedBonus > 0 && TryComp(mob, out MovementSpeedModifierComponent? movement))
         {
+            combat.SpeedFeet += feat.SpeedBonus;
             var scale = feat.SpeedBonus / BaselineSpeedFeet;
             _speed.ChangeBaseSpeed(
                 mob,
@@ -437,36 +420,7 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
     /// <summary>Armor class follows the new level. Hit points are changed by the level-up itself.</summary>
     public void RefreshArmorClass(EntityUid mob)
     {
-        if (!TryComp(mob, out CFCombatantComponent? combat) || !TryComp(mob, out CFAbilityScoreComponent? abilities))
-            return;
-
-        CFClassPrototype? cls = null;
-        if (combat.ClassId != null)
-            _prototypes.TryIndex(combat.ClassId, out cls);
-
-        var armorBonus = 0;
-        int? dexCap = null;
-        var armorProficiency = "Unarmored";
-        foreach (var item in _inventory.GetHandOrInventoryEntities(mob))
-        {
-            if (!TryComp(item, out CFArmorComponent? armor) || armor.ItemBonus < armorBonus)
-                continue;
-
-            armorBonus = armor.ItemBonus;
-            dexCap = armor.DexCap;
-            armorProficiency = armor.Proficiency;
-        }
-
-        var trainedArmor = armorProficiency == "Unarmored"
-            ? CFAttributeMath.IsUnarmoredTrained(cls)
-            : CFAttributeMath.IsArmorTrained(cls, armorProficiency);
-        combat.ArmorClass = CFAttributeMath.ComputeAc(
-            abilities.AbilityModifiers,
-            combat.Level,
-            trainedArmor,
-            armorBonus,
-            dexCap);
-        Dirty(mob, combat);
+        _armor.RefreshArmorClass(mob);
     }
 
     private static string? IdOf(ProtoId<CFFeatPrototype>? feat)
