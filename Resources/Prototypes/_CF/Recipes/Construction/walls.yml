@@ -128,16 +128,3 @@
   conditions:
     - !type:TileNotBlocked
 
-- type: construction
-  crystallPunkAllowed: true
-  id: CFWallmountLampEmpty
-  graph: CFWallmountLampEmpty
-  startNode: start
-  targetNode: CFWallmountLampEmpty
-  category: construction-category-structures
-  objectType: Structure
-  placementMode: SnapgridCenter
-  canBuildInImpassable: false
-  conditions:
-    - !type:TileNotBlocked
-

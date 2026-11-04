@@ -33,7 +33,7 @@
       damage:
         types:
           Heat: 1
-    - type: Log
+    - type: CFLog
       spawnedPrototype: CFWoodenPlanks1
       spawnCount: 3
     - type: Appearance
@@ -143,7 +143,7 @@
             log: ""
             log_2: ""
             log_3: ""
-    - type: Log
+    - type: CFLog
       spawnedPrototype: CFLucensWoodenPlanks1
       spawnCount: 3
     - type: PhysicalComposition
@@ -207,7 +207,7 @@
             log: ""
             log_2: ""
             log_3: ""
-    - type: Log
+    - type: CFLog
       spawnedPrototype: CFBirchWoodenPlanks1
       spawnCount: 3
 
@@ -265,7 +265,7 @@
             log: ""
             log_2: ""
             log_3: ""
-    - type: Log
+    - type: CFLog
       spawnedPrototype: CFSpruceWoodenPlanks1
       spawnCount: 3
 

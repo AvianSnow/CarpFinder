@@ -1,0 +1,118 @@
+- type: entity
+  id: CFBaseWallpaper
+  abstract: true
+  parent: BaseItem
+  description: Thin paper wallpaper. You can glue them on the walls from different sides, or peel them off with any sharp object.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Item
+    size: Normal
+  - type: Sprite
+    sprite: _CP14/Structures/Wallpaper/icons.rsi
+  - type: Stack
+    count: 30
+
+- type: entity
+  id: CFWallpaperBlack
+  parent: CFBaseWallpaper
+  name: wallpaper "inkwell black"
+  components:
+  - type: Sprite
+    state: black
+  - type: CFWallpaper
+    rsiPath: _CP14/Structures/Wallpaper/wallpaper_black.rsi
+  - type: Stack
+    stackType: CFWallpaperBlack
+  - type: PhysicalComposition
+    materialComposition:
+      CFCloth: 5
+
+- type: entity
+  id: CFWallpaperGreen
+  parent: CFBaseWallpaper
+  name: wallpaper "green orthogonality"
+  components:
+  - type: Sprite
+    state: green
+  - type: CFWallpaper
+    rsiPath: _CP14/Structures/Wallpaper/wallpaper_green.rsi
+  - type: Stack
+    stackType: CFWallpaperGreen
+  - type: PhysicalComposition
+    materialComposition:
+      CFCloth: 5
+
+- type: entity
+  id: CFWallpaperPurple
+  parent: CFBaseWallpaper
+  name: wallpaper "purple glory"
+  components:
+  - type: Sprite
+    state: purple
+  - type: CFWallpaper
+    rsiPath: _CP14/Structures/Wallpaper/wallpaper_purple.rsi
+  - type: Stack
+    stackType: CFWallpaperPurple
+  - type: PhysicalComposition
+    materialComposition:
+      CFCloth: 5
+
+- type: entity
+  id: CFWallpaperRed
+  parent: CFBaseWallpaper
+  name: wallpaper "burgundy"
+  components:
+  - type: Sprite
+    state: red
+  - type: CFWallpaper
+    rsiPath: _CP14/Structures/Wallpaper/wallpaper_red.rsi
+  - type: Stack
+    stackType: CFWallpaperRed
+  - type: PhysicalComposition
+    materialComposition:
+      CFCloth: 5
+
+- type: entity
+  id: CFWallpaperWhite
+  parent: CFBaseWallpaper
+  name: wallpaper "flowers on white"
+  components:
+  - type: Sprite
+    state: white
+  - type: CFWallpaper
+    rsiPath: _CP14/Structures/Wallpaper/wallpaper_white.rsi
+  - type: Stack
+    stackType: CFWallpaperWhite
+  - type: PhysicalComposition
+    materialComposition:
+      CFCloth: 5
+
+- type: entity
+  id: CFWallpaperWhite2
+  parent: CFBaseWallpaper
+  name: wallpaper "pure white"
+  components:
+  - type: Sprite
+    state: white2
+  - type: CFWallpaper
+    rsiPath: _CP14/Structures/Wallpaper/wallpaper_white2.rsi
+  - type: Stack
+    stackType: CFWallpaperWhite2
+  - type: PhysicalComposition
+    materialComposition:
+      CFCloth: 5
+
+- type: entity
+  id: CFWallpaperYellow
+  parent: CFBaseWallpaper
+  name: wallpaper "solar rhythm"
+  components:
+  - type: Sprite
+    state: yellow
+  - type: CFWallpaper
+    rsiPath: _CP14/Structures/Wallpaper/wallpaper_yellow.rsi
+  - type: Stack
+    stackType: CFWallpaperYellow
+  - type: PhysicalComposition
+    materialComposition:
+      CFCloth: 5

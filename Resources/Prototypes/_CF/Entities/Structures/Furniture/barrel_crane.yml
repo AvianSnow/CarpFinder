@@ -196,7 +196,7 @@
 
 - type: entity
   id: CFCraneBarrelSmall
-  parent: [BaseStructureDynamic, CFCraneBarrelSolution, CFBasеFlammable]
+  parent: [BaseStructureDynamic, CFBarrelSolution, CFBaseFlammable]
   name: wooden small crane barrel
   description: A small lying barrel with a tap to quickly pour liquid into mugs.
   suffix: Empty

@@ -6,7 +6,7 @@
     - Toxin
     - Genetic
     - Airloss
-    - CFMagic
+    - Metaphysical
 
 - type: damageContainer
   id: CFBiologicalAnaerobic
@@ -15,9 +15,9 @@
     - Burn
     - Toxin
     - Genetic
-    - CFMagic
+    - Metaphysical
 
 - type: damageContainer
   id: CFSpectral
   supportedGroups:
-    - CFMagic
+    - Metaphysical

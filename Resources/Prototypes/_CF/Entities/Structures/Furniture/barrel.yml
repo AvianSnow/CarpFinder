@@ -12,8 +12,10 @@
       solution: barrel
     - type: DrawableSolution
       solution: barrel
-    - type: Drink
+    - type: Edible
       solution: barrel
+      edible: Drink
+      destroyOnEmpty: false
 
 - type: entity
   id: CFBaseBarrel
@@ -103,8 +105,6 @@
       solutions:
         barrel:
           maxVol: 300
-    - type: CFWeatherRefillable
-      solution: barrel
     - type: SolutionContainerVisuals
       maxFillLevels: 5
       fillBaseName: liq

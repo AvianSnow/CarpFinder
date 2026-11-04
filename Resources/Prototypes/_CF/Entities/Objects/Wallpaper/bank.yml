@@ -1,0 +1,24 @@
+- type: entity
+  id: CFWallpaperBank
+  parent: CFBaseWallpaper
+  name: wallpaper "banker's integrity"
+  components:
+  - type: Sprite
+    state: bank
+  - type: CFWallpaper
+    rsiPath: _CP14/Structures/Wallpaper/wallpaper_bank.rsi
+  - type: Stack
+    stackType: CFWallpaperBank
+
+- type: entity
+  id: CFWallpaperBank2
+  parent: CFBaseWallpaper
+  name: wallpaper "banker's wealth"
+  components:
+  - type: Sprite
+    state: bank2
+  - type: CFWallpaper
+    rsiPath: _CP14/Structures/Wallpaper/wallpaper_bank2.rsi
+  - type: Stack
+    stackType: CFWallpaperBank2
+

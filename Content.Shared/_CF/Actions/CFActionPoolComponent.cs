@@ -27,7 +27,7 @@ public sealed partial class CFActionPoolComponent : Component
 
     /// <summary>Seconds to regain one point of stamina.</summary>
     [DataField, AutoNetworkedField]
-    public float RegenSeconds = 1.8f;
+    public float RegenSeconds = 1.45f;
 
     /// <summary>
     /// Strikes and spell attacks already made since this pool was last full.
