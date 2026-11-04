@@ -24,13 +24,13 @@
       components:
         - type: StationNameSetup
           mapNameTemplate: "Dev"
-        # CarpFinder: CF adventurer jobs (unlimited round-start + midround)
+        # CarpFinder: up to six players per adventure role, with no round-start minimum.
         - type: StationJobs
           availableJobs:
-            CFAlpha: [ -1, -1 ]
-            CFBeta: [ -1, -1 ]
-            CFCharlie: [ -1, -1 ]
-            CFDelta: [ -1, -1 ]
+            CFAlpha: [ 0, 6 ]
+            CFBeta: [ 0, 6 ]
+            CFCharlie: [ 0, 6 ]
+            CFDelta: [ 0, 6 ]
             CFMerchant: [ -1, -1 ]
             CFArcaneResearcher: [ -1, -1 ]
             CFArcaneArtificer: [ -1, -1 ]
