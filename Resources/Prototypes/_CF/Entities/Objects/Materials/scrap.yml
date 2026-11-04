@@ -1,0 +1,75 @@
+- type: entity
+  id: CFBaseScrap
+  parent: BaseItem
+  abstract: true
+  categories: [ ForkFiltered ]
+  components:
+  - type: Item
+    size: Tiny
+  - type: RandomSprite
+    available:
+      - random:
+          scrap: ""
+          scrap_2: ""
+          scrap_3: ""
+
+- type: entity
+  id: CFScrapCopper
+  parent: CFBaseScrap
+  name: copper scrap
+  description: Crooked pieces of copper. Useless. Only to be melted down.
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Materials/copper_scrap.rsi
+    layers:
+      - state: scrap
+        map: ["random"]
+  - type: PhysicalComposition
+    materialComposition:
+      CFCopper: 10
+
+- type: entity
+  id: CFScrapIron
+  parent: CFBaseScrap
+  name: iron scrap
+  description: Crooked pieces of iron. Useless. Only to be melted down.
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Materials/iron_scrap.rsi
+    layers:
+      - state: scrap
+        map: ["random"]
+  - type: PhysicalComposition
+    materialComposition:
+      CFIron: 10
+
+- type: entity
+  id: CFScrapGold
+  parent: CFBaseScrap
+  name: golden scrap
+  description: Crooked pieces of gold. Useless. Only to be melted down.
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Materials/gold_scrap.rsi
+    layers:
+      - state: scrap
+        map: ["random"]
+  - type: PhysicalComposition
+    materialComposition:
+      CFGold: 10
+
+- type: entity
+  id: CFScrapMithril
+  parent: CFBaseScrap
+  name: mithril scrap
+  description: Crooked pieces of mithril. Useless. Only to be melted down.
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Materials/mithril_scrap.rsi
+    layers:
+      - state: scrap
+        map: ["random"]
+  - type: PhysicalComposition
+    materialComposition:
+      CFMithril: 10
+

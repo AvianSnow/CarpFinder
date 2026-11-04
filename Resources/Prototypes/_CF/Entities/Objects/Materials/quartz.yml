@@ -1,0 +1,148 @@
+- type: entity
+  parent: BaseItem
+  id: CFCrystalShardQuartz
+  name: quartz shard
+  description: Natural quartz crystals that can absorb the magical energy of the world around them.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Tag
+    tags:
+    - CFFitInMortar
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: _CP14/Structures/Flora/Crystal/crystal_shard.rsi
+    layers:
+      - state: shard0
+        map: ["random"]
+  - type: RandomSprite
+    available:
+    - random:
+        shard0: ""
+        shard1: ""
+        shard2: ""
+        shard3: ""
+  - type: Extractable
+    juiceSolution:
+      reagents:
+      - ReagentId: CFCrystalShardQuartz
+        Quantity: 5
+  - type: PhysicalComposition
+    materialComposition:
+      CFGlass: 10
+
+# Basic 6
+
+- type: entity
+  parent: CFCrystalShardQuartz
+  id: CFCrystalShardQuartzEarth
+  name: terra shard
+  suffix: Earth
+  components:
+  - type: Sprite
+    color: "#1cea42"
+  - type: Extractable
+    juiceSolution:
+      reagents:
+      - ReagentId: CFGroundQuartz
+        Quantity: 5
+      - ReagentId: CFEssenceEarth
+        Quantity: 5
+
+- type: entity
+  parent: CFCrystalShardQuartz
+  id: CFCrystalShardQuartzFire
+  name: ignis shard
+  suffix: Fire
+  components:
+  - type: Sprite
+    color: "#d9741c"
+  - type: Extractable
+    juiceSolution:
+      reagents:
+      - ReagentId: CFGroundQuartz
+        Quantity: 5
+      - ReagentId: CFEssenceFire
+        Quantity: 5
+
+- type: entity
+  parent: CFCrystalShardQuartz
+  id: CFCrystalShardQuartzWater
+  name: aqua shard
+  suffix: Water
+  components:
+  - type: Sprite
+    color: "#1c94d9"
+  - type: Extractable
+    juiceSolution:
+      reagents:
+      - ReagentId: CFGroundQuartz
+        Quantity: 5
+      - ReagentId: CFEssenceWater
+        Quantity: 5
+
+- type: entity
+  parent: CFCrystalShardQuartz
+  id: CFCrystalShardQuartzAir
+  name: aer shard
+  suffix: Air
+  components:
+  - type: Sprite
+    color: "#fdfe86"
+  - type: Extractable
+    juiceSolution:
+      reagents:
+      - ReagentId: CFGroundQuartz
+        Quantity: 5
+      - ReagentId: CFEssenceAir
+        Quantity: 5
+
+- type: entity
+  parent: CFCrystalShardQuartz
+  id: CFCrystalShardQuartzOrder
+  name: ordo shard
+  suffix: Order
+  components:
+  - type: Sprite
+    color: "#d9d9d9"
+  - type: Extractable
+    juiceSolution:
+      reagents:
+      - ReagentId: CFGroundQuartz
+        Quantity: 5
+      - ReagentId: CFEssenceOrder
+        Quantity: 5
+
+- type: entity
+  parent: CFCrystalShardQuartz
+  id: CFCrystalShardQuartzChaos
+  name: perditio shard
+  suffix: Chaos
+  components:
+  - type: Sprite
+    color: "#4d4d4d"
+  - type: Extractable
+    juiceSolution:
+      reagents:
+      - ReagentId: CFGroundQuartz
+        Quantity: 5
+      - ReagentId: CFEssenceChaos
+        Quantity: 5
+
+# Complex tier 2
+
+- type: entity
+  parent: CFCrystalShardQuartz
+  id: CFCrystalShardQuartzMagic
+  name: praecantatio shard
+  suffix: Magic
+  components:
+  - type: Sprite
+    color: "#5497d6"
+  - type: Extractable
+    juiceSolution:
+      reagents:
+      - ReagentId: CFGroundQuartz
+        Quantity: 5
+      - ReagentId: CFEssenceMagic
+        Quantity: 5

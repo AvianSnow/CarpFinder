@@ -9,7 +9,7 @@
             - !type:SnapToGrid
               southRotation: true
           steps:
-            - material: CP14Stone
+            - material: CFStone
               amount: 2
               doAfter: 5
 
@@ -27,7 +27,7 @@
               doAfter: 4
         - to: CFWallStoneBrick
           steps:
-            - material: CP14Stone
+            - material: CFStone
               amount: 2
               doAfter: 5
 
@@ -46,4 +46,3 @@
             - !type:SpawnPrototype
               prototype: CFStoneBlock1
               amount: 2
-

@@ -1,0 +1,16 @@
+- type: entity
+  id: CFBaseMagicImpact
+  name: magic impact
+  description: Manifestation of magical energy in the physical plane.
+  abstract: true
+  components:
+  - type: TimedDespawn
+    lifetime: 1.6
+  - type: AnimationPlayer
+  - type: Tag
+    tags:
+    - HideContextMenu
+  - type: Sprite
+    drawdepth: Effects
+    sprite: _CP14/Effects/Magic/cast_impact.rsi
+    noRot: true

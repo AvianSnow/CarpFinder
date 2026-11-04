@@ -1,0 +1,126 @@
+- type: entity
+  id: CFDirtBlock1
+  parent: BaseItem
+  name: dirt block
+  description: A block of excellent black soil.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Item
+    size: Normal
+  - type: Sprite
+    noRot: true
+    sprite: _CP14/Objects/Materials/dirt_block.rsi
+    layers:
+      - state: dirt
+        map: ["base"]
+  - type: FloorTile
+    placeTileSound:
+      collection: CFDigging
+      params:
+        variation: 0.03
+        volume: 2
+    outputs:
+      - CFFloorDirt
+  - type: Appearance
+  - type: Stack
+    stackType: CFDirt
+    count: 1
+    baseLayer: base
+    layerStates:
+    - dirt
+    - dirt_2
+    - dirt_3
+  - type: Material
+  - type: PhysicalComposition
+    materialComposition:
+      CFDirt: 10
+
+- type: entity
+  id: CFDirtBlock10
+  parent: CFDirtBlock1
+  suffix: 10
+  components:
+  - type: Stack
+    count: 10
+
+- type: entity
+  id: CFStoneBlock1
+  parent: BaseItem
+  name: stone block
+  description: A block of cold stone.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Item
+    size: Normal
+  - type: Sprite
+    noRot: true
+    sprite: _CP14/Objects/Materials/stone_block.rsi
+    layers:
+      - state: stone
+        map: ["base"]
+  - type: Appearance
+  - type: Stack
+    stackType: CFStone
+    count: 1
+    baseLayer: base
+    layerStates:
+    - stone
+    - stone_2
+    - stone_3
+  - type: Material
+  - type: PhysicalComposition
+    materialComposition:
+      CFStone: 10
+  - type: FloorTile
+    placeTileSound:
+      collection: CFDigging #TODO
+      params:
+        variation: 0.03
+        volume: 2
+    outputs:
+      - CFFloorCobblestone
+
+- type: entity
+  id: CFStoneBlock10
+  parent: CFStoneBlock1
+  suffix: 10
+  components:
+  - type: Stack
+    count: 10
+
+- type: entity
+  id: CFMarbleBlock1
+  parent: BaseItem
+  name: marble block
+  description: A block of white marble.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Item
+    size: Normal
+  - type: Sprite
+    noRot: true
+    sprite: _CP14/Objects/Materials/marble_block.rsi
+    layers:
+      - state: stone
+        map: ["base"]
+  - type: Appearance
+  - type: Stack
+    stackType: CFMarbleStone
+    count: 1
+    baseLayer: base
+    layerStates:
+    - stone
+    - stone_2
+    - stone_3
+  - type: Material
+  - type: PhysicalComposition
+    materialComposition:
+      CFMarbleStone: 10
+
+- type: entity
+  id: CFMarbleBlock10
+  parent: CFMarbleBlock1
+  suffix: 10
+  components:
+  - type: Stack
+    count: 10

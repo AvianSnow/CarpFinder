@@ -2,6 +2,7 @@ using Content.Shared.DoAfter;
 using Content.Shared.IdentityManagement;
 using Content.Shared.Interaction;
 using Content.Shared.Popups;
+using Content.Shared.Atmos;
 using Content.Shared.Weapons.Melee.Events;
 using Robust.Shared.Serialization;
 using Robust.Shared.Timing;
@@ -18,30 +19,28 @@ public abstract partial class CFSharedFireSpreadSystem : EntitySystem
     {
         base.Initialize();
 
-        SubscribeLocalEvent<CFFireSpreadComponent, OnFireChangedEvent>(OnFireChangedSpread);
-        SubscribeLocalEvent<CFDespawnOnExtinguishComponent, OnFireChangedEvent>(OnFireChangedDespawn);
-        SubscribeLocalEvent<CFDelayedIgnitionSourceComponent, OnFireChangedEvent>(OnIgnitionSourceFireChanged);
+        SubscribeLocalEvent<CFFireSpreadComponent, IgnitedEvent>(OnFireStartedSpread);
+        SubscribeLocalEvent<CFFireSpreadComponent, ExtinguishedEvent>(OnFireStoppedSpread);
+        SubscribeLocalEvent<CFDespawnOnExtinguishComponent, ExtinguishedEvent>(OnFireChangedDespawn);
+        SubscribeLocalEvent<CFDelayedIgnitionSourceComponent, IgnitedEvent>(OnIgnitionSourceFireChanged);
+        SubscribeLocalEvent<CFDelayedIgnitionSourceComponent, ExtinguishedEvent>(OnIgnitionSourceFireChanged);
         SubscribeLocalEvent<CFDelayedIgnitionSourceComponent, AfterInteractEvent>(OnDelayedIgniteAttempt);
     }
 
-    private void OnFireChangedDespawn(Entity<CFDespawnOnExtinguishComponent> ent, ref OnFireChangedEvent args)
+    private void OnFireChangedDespawn(Entity<CFDespawnOnExtinguishComponent> ent, ref ExtinguishedEvent args)
     {
-        if (!args.OnFire)
-            QueueDel(ent);
+        QueueDel(ent);
     }
 
-    private void OnFireChangedSpread(Entity<CFFireSpreadComponent> ent, ref OnFireChangedEvent args)
+    private void OnFireStartedSpread(Entity<CFFireSpreadComponent> ent, ref IgnitedEvent args)
     {
-        if (args.OnFire)
-        {
-            EnsureComp<CFActiveFireSpreadingComponent>(ent);
-        }
-        else
-        {
-            if (HasComp<CFActiveFireSpreadingComponent>(ent))
-                RemCompDeferred<CFActiveFireSpreadingComponent>(ent);
-        }
+        EnsureComp<CFActiveFireSpreadingComponent>(ent);
+        ent.Comp.NextSpreadTime = _gameTiming.CurTime + TimeSpan.FromSeconds(ent.Comp.SpreadCooldownMax);
+    }
 
+    private void OnFireStoppedSpread(Entity<CFFireSpreadComponent> ent, ref ExtinguishedEvent args)
+    {
+        RemCompDeferred<CFActiveFireSpreadingComponent>(ent);
         ent.Comp.NextSpreadTime = _gameTiming.CurTime + TimeSpan.FromSeconds(ent.Comp.SpreadCooldownMax);
     }
 
@@ -90,20 +89,17 @@ public abstract partial class CFSharedFireSpreadSystem : EntitySystem
             caution ? PopupType.MediumCaution : PopupType.Small);
     }
 
-    private void OnIgnitionSourceFireChanged(Entity<CFDelayedIgnitionSourceComponent> ent, ref OnFireChangedEvent args)
+    private void OnIgnitionSourceFireChanged(Entity<CFDelayedIgnitionSourceComponent> ent, ref IgnitedEvent args)
     {
-        ent.Comp.Enabled = args.OnFire;
+        ent.Comp.Enabled = true;
         Dirty(ent);
     }
-}
 
-/// <summary>
-/// Raised whenever an FlammableComponent OnFire is Changed
-/// </summary>
-[ByRefEvent]
-public readonly record struct OnFireChangedEvent(bool OnFire)
-{
-    public readonly bool OnFire = OnFire;
+    private void OnIgnitionSourceFireChanged(Entity<CFDelayedIgnitionSourceComponent> ent, ref ExtinguishedEvent args)
+    {
+        ent.Comp.Enabled = false;
+        Dirty(ent);
+    }
 }
 
 [Serializable, NetSerializable]

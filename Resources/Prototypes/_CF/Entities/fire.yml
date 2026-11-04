@@ -50,9 +50,6 @@
         - Catwalk
   - type: TileEntityEffect
     effects:
-    - !type:FlammableReaction
-      multiplier: 1.75
-      multiplierOnExisting: 0.75
     - !type:Ignite
   - type: Transform
     anchored: true

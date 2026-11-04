@@ -29,10 +29,11 @@
       canResistFire: false
       alwaysCombustible: true
       canExtinguish: true
-      cFFireplaceFuel: 10
       damage:
         types:
           Heat: 1
+    - type: CFFireplaceFuel
+      fuel: 10
     - type: CFLog
       spawnedPrototype: CFWoodenPlanks1
       spawnCount: 3
@@ -78,10 +79,11 @@
       canResistFire: false
       alwaysCombustible: true
       canExtinguish: true
-      cFFireplaceFuel: 8
       damage:
         types:
           Heat: 1
+    - type: CFFireplaceFuel
+      fuel: 8
     - type: Appearance
     - type: Stack
       stackType: CFWoodenPlanks

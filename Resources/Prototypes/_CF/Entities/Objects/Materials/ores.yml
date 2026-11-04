@@ -1,0 +1,242 @@
+- type: entity
+  id: CFOreCopper1
+  parent: BaseItem
+  name: copper ore
+  description: A piece of pale, heavy copper.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Item
+    size: Normal
+  - type: Sprite
+    sprite: _CP14/Objects/Materials/copper_ore.rsi
+    layers:
+      - state: ore1
+        map: ["base"]
+  - type: Appearance
+  - type: Stack
+    stackType: CFOreCopper
+    count: 1
+    baseLayer: base
+    layerStates:
+    - ore1
+    - ore2
+    - ore3
+  - type: Material
+  - type: PhysicalComposition
+    materialComposition:
+      CFCopper: 2
+
+- type: entity
+  id: CFOreCopper5
+  parent: CFOreCopper1
+  suffix: 5
+  components:
+  - type: Stack
+    count: 5
+
+- type: entity
+  id: CFOreCopper10
+  parent: CFOreCopper1
+  suffix: 10
+  components:
+  - type: Stack
+    count: 10
+
+
+
+- type: entity
+  id: CFOreIron1
+  parent: BaseItem
+  name: iron ore
+  description: A piece of cold, heavy iron.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Item
+    size: Normal
+  - type: Sprite
+    sprite: _CP14/Objects/Materials/iron_ore.rsi
+    layers:
+      - state: ore1
+        map: ["base"]
+  - type: Appearance
+  - type: Stack
+    stackType: CFOreIron
+    count: 1
+    baseLayer: base
+    layerStates:
+    - ore1
+    - ore2
+    - ore3
+  - type: Material
+  - type: PhysicalComposition
+    materialComposition:
+      CFIron: 2
+
+- type: entity
+  id: CFOreIron5
+  parent: CFOreIron1
+  suffix: 5
+  components:
+  - type: Stack
+    count: 5
+
+- type: entity
+  id: CFOreIron10
+  parent: CFOreIron1
+  suffix: 10
+  components:
+  - type: Stack
+    count: 10
+
+
+
+- type: entity
+  id: CFOreGold1
+  parent: BaseItem
+  name: gold ore
+  description: A piece of soft, pure gold.
+  categories: [ ForkFiltered, DoNotMap ]
+  components:
+  - type: Item
+    size: Normal
+  - type: Sprite
+    sprite: _CP14/Objects/Materials/gold_ore.rsi
+    layers:
+      - state: ore1
+        map: ["base"]
+  - type: Appearance
+  - type: Stack
+    stackType: CFOreGold
+    count: 1
+    baseLayer: base
+    layerStates:
+    - ore1
+    - ore2
+    - ore3
+  - type: Material
+  - type: PhysicalComposition
+    materialComposition:
+      CFGold: 2
+
+- type: entity
+  id: CFOreGold5
+  parent: CFOreGold1
+  categories: [ DoNotMap ]
+  suffix: 5
+  components:
+  - type: Stack
+    count: 5
+
+- type: entity
+  id: CFOreGold10
+  parent: CFOreGold1
+  categories: [ DoNotMap ]
+  suffix: 10
+  components:
+  - type: Stack
+    count: 10
+
+
+
+- type: entity
+  id: CFOreMithril1
+  parent: BaseItem
+  name: mithril ore
+  description: A piece of enchanted, pure mithril.
+  categories: [ ForkFiltered, DoNotMap ]
+  components:
+  - type: Item
+    size: Normal
+  - type: Sprite
+    sprite: _CP14/Objects/Materials/mithril_ore.rsi
+    layers:
+      - state: ore1
+        map: ["base"]
+  - type: Appearance
+  - type: Stack
+    stackType: CFOreMithril
+    count: 1
+    baseLayer: base
+    layerStates:
+    - ore1
+    - ore2
+    - ore3
+  - type: Material
+  - type: PhysicalComposition
+    materialComposition:
+      CFMithril: 2
+
+- type: entity
+  id: CFOreMithril5
+  parent: CFOreMithril1
+  categories: [ DoNotMap ]
+  suffix: 5
+  components:
+  - type: Stack
+    count: 5
+
+- type: entity
+  id: CFOreMithril10
+  parent: CFOreMithril1
+  categories: [ DoNotMap ]
+  suffix: 10
+  components:
+  - type: Stack
+    count: 10
+
+- type: entity
+  id: CFOreCoal1
+  parent: BaseItem
+  name: coal
+  description: This is coal! It burns very well!
+  categories: [ ForkFiltered ]
+  components:
+  - type: Item
+    size: Normal
+  - type: Sprite
+    sprite: _CP14/Objects/Materials/coal_ore.rsi
+    layers:
+      - state: ore1
+        map: ["base"]
+  - type: Tag
+    tags:
+    - CFFireplaceFuel
+  - type: Flammable
+    fireSpread: false
+    canResistFire: false
+    alwaysCombustible: true
+    canExtinguish: true
+    damage:
+      types:
+        Heat: 2
+  - type: CFFireplaceFuel
+    fuel: 30
+  - type: Appearance
+  - type: Stack
+    stackType: CFOreCoal
+    count: 1
+    baseLayer: base
+    layerStates:
+    - ore1
+    - ore2
+    - ore3
+  - type: Material
+  - type: PhysicalComposition
+    materialComposition:
+      CFOreCoal: 2
+
+- type: entity
+  id: CFOreCoal5
+  parent: CFOreCoal1
+  suffix: 5
+  components:
+  - type: Stack
+    count: 5
+
+- type: entity
+  id: CFOreCoal10
+  parent: CFOreCoal1
+  suffix: 10
+  components:
+  - type: Stack
+    count: 10
