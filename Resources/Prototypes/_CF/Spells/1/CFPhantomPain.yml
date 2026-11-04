@@ -14,10 +14,16 @@
   - type: CFSpell
     spell: PhantomPain
     rank: 1
-    delivery: Target
+  - type: CFTargeting
     rangeFeet: 30
+  - type: CFCheck
     defense: Will
-    basicSave: true
-    diceCount: 2
-    diceSize: 4
-    damageType: mental
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 2
+      die: 4
+      damageType: Mental
+      heightenDice: 1
+  - type: CFHeighten
+    baseRank: 1

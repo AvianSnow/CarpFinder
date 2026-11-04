@@ -14,11 +14,15 @@
   - type: CFSpell
     spell: Enlarge
     rank: 2
-    delivery: Target
+  - type: CFTargeting
     rangeFeet: 30
-    defense: None
-    enlargeDamage: 2
-    friendly: true
-    includeSelf: true
+    filter: All
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: MeleeDamage
+      type: Status
+      value: 2
+      popup: cf-cond-enlarged
   - type: EntityTargetAction
     canTargetSelf: true

@@ -5,7 +5,8 @@ using Robust.Shared.Random;
 namespace Content.Shared.CF.Combat;
 
 /// <summary>
-/// Carpfinder 2e melee Strike helpers (d20 vs AC, degrees of success, damage dice).
+/// Carpfinder 2e Strike helpers: attack and damage modifiers, range penalties, damage dice.
+/// Degrees of success live in <see cref="Content.Shared.CF.Checks.CFDegrees"/>.
 /// </summary>
 public static class CFMelee
 {
@@ -14,10 +15,10 @@ public static class CFMelee
     /// </summary>
     public const float MeleeRange = 1.25f;
 
-    /// <summary>Default PC / commoner fist Strike (PF2e unarmed): 1d4 bludgeoning.</summary>
+    /// <summary>Default PC / commoner fist Strike (remaster unarmed): 1d4 bludgeoning, agile, finesse, nonlethal.</summary>
     public const int UnarmedDamageDice = 1;
     public const int UnarmedDamageDie = 4;
-    public const string UnarmedDamageType = "bludgeoning";
+    public const string UnarmedDamageType = "Bludgeoning";
     public const string UnarmedProficiency = "Unarmed";
 
     /// <summary>Approximate PF feet per SS14 tile (1 tile ≈ 1.5 m ≈ 5 ft grid square).</summary>
@@ -51,88 +52,22 @@ public static class CFMelee
         return ability + proficiencyBonus + itemBonus;
     }
 
-    public static int DamageModifier(int strengthMod, bool finesse, int dexterityMod)
-    {
-        // Finesse weapons still add Strength to damage unless they have a trait that says otherwise.
-        // For MVP, finesse only affects the attack roll; damage always uses Strength.
-        _ = finesse;
-        _ = dexterityMod;
-        return strengthMod;
-    }
-
-    public static CFStrikeDegree DegreeOfSuccess(int d20, int attackBonus, int targetAc)
-    {
-        var total = d20 + attackBonus;
-        var degree = total >= targetAc ? CFStrikeDegree.Success : CFStrikeDegree.Failure;
-
-        if (total >= targetAc + 10)
-            degree = CFStrikeDegree.CriticalSuccess;
-        else if (total <= targetAc - 10)
-            degree = CFStrikeDegree.CriticalFailure;
-
-        // Natural 20 / 1 adjust the degree by one step.
-        if (d20 == 20)
-            degree = Improve(degree);
-        else if (d20 == 1)
-            degree = Worsen(degree);
-
-        return degree;
-    }
-
+    /// <summary>Rolls dice + modifier. <paramref name="critical"/> doubles the dice only (spell code doubles totals itself).</summary>
     public static int RollDamage(IRobustRandom random, int diceCount, int dieFaces, int damageMod, bool critical)
     {
         var dice = critical ? diceCount * 2 : diceCount;
         var total = damageMod;
         for (var i = 0; i < dice; i++)
+        {
             total += random.Next(1, dieFaces + 1);
+        }
 
         return Math.Max(0, total);
     }
 
-    public static int AttackBonusFromSheet(CFCharacterSheet sheet, CFMeleeWeaponComponent weapon)
-    {
-        var trained = CFAttributeMath.IsWeaponTrained(sheet.Class, weapon.Proficiency);
-        var proficiency = CFAttributeMath.ProficiencyBonus(sheet.Level, trained);
-        return AttackModifier(
-            sheet.Modifiers[CFAbility.Strength],
-            sheet.Modifiers[CFAbility.Dexterity],
-            proficiency,
-            weapon.Finesse,
-            weapon.ItemBonus);
-    }
-
-    public static int AttackBonusFromCombatant(
-        CFAbilityScoreComponent abilities,
-        CFCombatantComponent combatant,
-        CFMeleeWeaponComponent weapon,
-        bool weaponTrained)
-    {
-        return AttackBonusFromCombatant(
-            abilities,
-            combatant,
-            weapon.Finesse,
-            weapon.ItemBonus,
-            weaponTrained);
-    }
-
-    public static int AttackBonusFromCombatant(
-        CFAbilityScoreComponent abilities,
-        CFCombatantComponent combatant,
-        bool finesse,
-        int itemBonus,
-        bool weaponTrained)
-    {
-        var proficiency = CFAttributeMath.ProficiencyBonus(combatant.Level, weaponTrained);
-        return AttackModifier(
-            abilities.GetModifier(CFAbility.Strength),
-            abilities.GetModifier(CFAbility.Dexterity),
-            proficiency,
-            finesse,
-            itemBonus);
-    }
-
     /// <summary>
-    /// Attack bonus for a Strike. Ranged always uses Dexterity; melee uses Str (or max Str/Dex if finesse).
+    /// Attack bonus for a Strike before item bonuses, conditions, and the multiple attack penalty.
+    /// Ranged and thrown use Dexterity. Melee uses Strength, or the better of Strength and Dexterity with finesse.
     /// </summary>
     public static int AttackBonus(
         CFAbilityScoreComponent abilities,
@@ -151,31 +86,38 @@ public static class CFMelee
         else
             ability = abilities.GetModifier(CFAbility.Strength);
 
-        var bonus = ability + proficiency + weapon.ItemBonus;
+        var bonus = ability + proficiency + combatant.StrikeAdjustment;
         bonus += RangeIncrementPenalty(distanceFeet, weapon.RangeIncrementFeet);
         if (!ignoreVolley)
-            bonus += VolleyPenalty(distanceFeet, weapon.VolleyFeet);
+            bonus += VolleyPenalty(distanceFeet, weapon.Traits.Volley);
         return bonus;
     }
 
-    public static int DamageBonus(
-        CFAbilityScoreComponent abilities,
-        CFStrikeWeaponStats weapon,
-        bool propulsive = false)
+    /// <summary>
+    /// Damage modifier. Melee and thrown add Strength. Propulsive adds half a positive Strength
+    /// (all of a negative one). Other ranged weapons add nothing.
+    /// </summary>
+    public static int DamageBonus(CFAbilityScoreComponent abilities, CFStrikeWeaponStats weapon)
     {
-        if (weapon.Ranged)
-        {
-            if (!propulsive)
-                return 0;
+        var str = abilities.GetModifier(CFAbility.Strength);
+        if (!weapon.Ranged || weapon.ThrownStrike)
+            return str;
 
-            var str = abilities.GetModifier(CFAbility.Strength);
-            return str < 0 ? str : str / 2;
-        }
+        if (!weapon.Traits.Propulsive)
+            return 0;
 
-        return DamageModifier(
-            abilities.GetModifier(CFAbility.Strength),
-            weapon.Finesse,
-            abilities.GetModifier(CFAbility.Dexterity));
+        return str < 0 ? str : str / 2;
+    }
+
+    /// <summary>
+    /// Forceful: +1 damage per weapon die on your second attack this turn, +2 per die on the third and later.
+    /// </summary>
+    public static int ForcefulBonus(CFStrikeWeaponStats weapon, int attacksAlreadyMade)
+    {
+        if (!weapon.Traits.Forceful || attacksAlreadyMade <= 0)
+            return 0;
+
+        return weapon.DamageDice * Math.Min(attacksAlreadyMade, 2);
     }
 
     /// <summary>−2 per range increment beyond the first. Attacks beyond 6 increments are impossible (−999).</summary>
@@ -204,46 +146,38 @@ public static class CFMelee
         return distanceFeet <= volleyFeet ? -2 : 0;
     }
 
+    /// <summary>
+    /// Weapon damage for a hit. A critical hit doubles everything rolled here, including
+    /// <paramref name="extraDamage"/> (precision, finisher). Deadly and fatal dice are added after doubling.
+    /// </summary>
     public static int RollStrikeDamage(
         IRobustRandom random,
         CFStrikeWeaponStats weapon,
         int damageMod,
-        bool critical)
+        bool critical,
+        int extraDamage = 0)
     {
-        var total = RollDamage(random, weapon.DamageDice, weapon.DamageDie, damageMod, critical);
-        if (critical && weapon.DeadlyDie is { } deadly and > 0)
-            total += random.Next(1, deadly + 1);
+        var die = critical && weapon.Traits.Fatal > 0 ? weapon.Traits.Fatal : weapon.DamageDie;
+        var total = RollDamage(random, weapon.DamageDice, die, damageMod, critical: false) + extraDamage;
+        if (!critical)
+            return Math.Max(0, total);
+
+        total *= 2;
+
+        // Fatal adds one more die of the fatal size.
+        if (weapon.Traits.Fatal > 0)
+            total += random.Next(1, weapon.Traits.Fatal + 1);
+
+        // Deadly adds one die, two with greater striking, three with major striking.
+        if (weapon.Traits.Deadly > 0)
+        {
+            var dice = Math.Max(1, weapon.Striking);
+            for (var i = 0; i < dice; i++)
+            {
+                total += random.Next(1, weapon.Traits.Deadly + 1);
+            }
+        }
 
         return Math.Max(0, total);
     }
-
-    private static CFStrikeDegree Improve(CFStrikeDegree degree)
-    {
-        return degree switch
-        {
-            CFStrikeDegree.CriticalFailure => CFStrikeDegree.Failure,
-            CFStrikeDegree.Failure => CFStrikeDegree.Success,
-            CFStrikeDegree.Success => CFStrikeDegree.CriticalSuccess,
-            _ => CFStrikeDegree.CriticalSuccess,
-        };
-    }
-
-    private static CFStrikeDegree Worsen(CFStrikeDegree degree)
-    {
-        return degree switch
-        {
-            CFStrikeDegree.CriticalSuccess => CFStrikeDegree.Success,
-            CFStrikeDegree.Success => CFStrikeDegree.Failure,
-            CFStrikeDegree.Failure => CFStrikeDegree.CriticalFailure,
-            _ => CFStrikeDegree.CriticalFailure,
-        };
-    }
-}
-
-public enum CFStrikeDegree : byte
-{
-    CriticalFailure,
-    Failure,
-    Success,
-    CriticalSuccess,
 }

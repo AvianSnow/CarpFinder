@@ -1,0 +1,71 @@
+- type: entity
+  id: CFFloraMaterial1
+  parent: BaseItem
+  name: flora material
+  description: An organic material used for medicinal or construction purposes.
+  suffix: 1
+  categories: [ ForkFiltered ]
+  components:
+  - type: Appearance
+  - type: Item
+    size: Normal
+  - type: Stack
+    stackType: CFFloraMaterial
+    count: 1
+    baseLayer: base
+    layerStates:
+    - grass_material1
+    - grass_material2
+    - grass_material3
+  - type: Sprite
+    sprite: _CP14/Objects/Materials/flora.rsi
+    layers:
+      - state: grass_material1
+        map: ["base"]
+  - type: Material
+  - type: PhysicalComposition
+    materialComposition:
+      CFFloraMaterial: 10
+
+- type: entity
+  id: CFFloraMaterial10
+  parent: CFFloraMaterial1
+  suffix: 10
+  components:
+    - type: Stack
+      count: 10
+
+- type: entity
+  id: CFCompostMaterial1
+  parent: BaseItem
+  name: compost
+  description: It was once a beautiful and vibrant plant, or food. Now it's a stinking pile of decaying organic matter.
+  suffix: 1
+  categories: [ ForkFiltered ]
+  components:
+  - type: Appearance
+  - type: Item
+    size: Normal
+  - type: Stack
+    stackType: CFCompost
+    count: 1
+    baseLayer: base
+    layerStates:
+    - compost1
+    - compost2
+    - compost3
+  - type: Sprite
+    sprite: _CP14/Objects/Materials/compost.rsi
+    layers:
+      - state: compost1
+        map: ["base"]
+  - type: Material
+
+- type: entity
+  id: CFCompostMaterial10
+  parent: CFCompostMaterial1
+  suffix: 10
+  components:
+    - type: Stack
+      count: 10
+

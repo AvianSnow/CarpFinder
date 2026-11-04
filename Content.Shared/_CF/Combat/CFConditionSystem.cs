@@ -1,8 +1,10 @@
 using System.Numerics;
 using Content.Shared.CF.Actions;
 using Content.Shared.CF.Character;
+using Content.Shared.CF.Checks;
+using Content.Shared.CF.Effects;
+using Content.Shared.CF.Items;
 using Content.Shared.CF.Preferences;
-using Content.Shared.CF.Spells;
 using Content.Shared.Movement.Systems;
 using Content.Shared.Overlays;
 using Content.Shared.Popups;
@@ -33,6 +35,9 @@ public sealed partial class CFConditionSystem : EntitySystem
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private MovementSpeedModifierSystem _speed = default!;
     [Dependency] private CFActionPoolSystem _actions = default!;
+    [Dependency] private CFBonusSystem _bonuses = default!;
+    [Dependency] private CFArmorSystem _armor = default!;
+    [Dependency] private CFEncumbranceSystem _encumbrance = default!;
 
     private const float TurnSeconds = 6f;
 
@@ -91,19 +96,6 @@ public sealed partial class CFConditionSystem : EntitySystem
             if (cond.OffGuardAll && now >= cond.OffGuardAllUntil)
             {
                 cond.OffGuardAll = false;
-                dirty = true;
-            }
-
-            if (cond.EnlargeDamage != 0 && now >= cond.EnlargeUntil)
-            {
-                cond.EnlargeDamage = 0;
-                dirty = true;
-            }
-
-            if (cond.ResistAmount != 0 && now >= cond.ResistUntil)
-            {
-                cond.ResistAmount = 0;
-                cond.ResistType = "";
                 dirty = true;
             }
 
@@ -264,25 +256,6 @@ public sealed partial class CFConditionSystem : EntitySystem
         _popup.PopupEntity(Loc.GetString("cf-cond-blinded"), target);
     }
 
-    public void ApplyEnlarge(EntityUid target, int damage, float seconds)
-    {
-        var cond = Ensure(target);
-        cond.EnlargeDamage = Math.Max(cond.EnlargeDamage, damage);
-        cond.EnlargeUntil = _timing.CurTime + TimeSpan.FromSeconds(seconds);
-        Dirty(target, cond);
-        _popup.PopupEntity(Loc.GetString("cf-cond-enlarged"), target);
-    }
-
-    public void ApplyResist(EntityUid target, string type, int amount, float seconds)
-    {
-        var cond = Ensure(target);
-        cond.ResistType = type;
-        cond.ResistAmount = amount;
-        cond.ResistUntil = _timing.CurTime + TimeSpan.FromSeconds(seconds);
-        Dirty(target, cond);
-        _popup.PopupEntity(Loc.GetString("cf-cond-resist", ("type", type), ("amount", amount)), target);
-    }
-
     public void ApplyDarkvision(EntityUid target)
     {
         var vision = EnsureComp<NightVisionComponent>(target);
@@ -394,17 +367,6 @@ public sealed partial class CFConditionSystem : EntitySystem
         _popup.PopupEntity(Loc.GetString("cf-act-shield-raised"), uid, uid);
     }
 
-    public int Resist(EntityUid target, string damageType, int damage)
-    {
-        if (damage <= 0 || !TryComp(target, out CFConditionComponent? cond) || cond.ResistAmount <= 0)
-            return damage;
-
-        if (!string.Equals(cond.ResistType, damageType, StringComparison.OrdinalIgnoreCase))
-            return damage;
-
-        return Math.Max(0, damage - cond.ResistAmount);
-    }
-
     /// <summary>
     /// Uses a shield spell's hardness once, then the spell's block is gone.
     /// Returns the damage that remains.
@@ -454,13 +416,13 @@ public sealed partial class CFConditionSystem : EntitySystem
             _prototypes,
             CompOrNull<CFCombatantComponent>(target),
             CompOrNull<CFAbilityScoreComponent>(target),
-            CFSpellDefense.Will,
+            CFDefenseType.Will,
             SaveStatus(target),
             cond.Frightened);
         var degree = CFDefense.Roll(_random, skill, dc);
-        if (degree is CFStrikeDegree.Success or CFStrikeDegree.CriticalSuccess)
+        if (degree is CFDegree.Success or CFDegree.CriticalSuccess)
         {
-            ApplyFrightened(target, degree == CFStrikeDegree.CriticalSuccess ? 2 : 1);
+            ApplyFrightened(target, degree == CFDegree.CriticalSuccess ? 2 : 1);
             if (TryComp(user, out CFCombatOptionsComponent? style) && style.PanacheStyle)
             {
                 style.Panache = true;
@@ -492,16 +454,16 @@ public sealed partial class CFConditionSystem : EntitySystem
             _prototypes,
             CompOrNull<CFCombatantComponent>(target),
             CompOrNull<CFAbilityScoreComponent>(target),
-            SaveStatus(target),
+            DefenseStatus(target, CFDefenseType.Perception),
             Frightened(target));
         var degree = CFDefense.Roll(_random, skill, dc);
-        if (degree is not (CFStrikeDegree.Success or CFStrikeDegree.CriticalSuccess))
+        if (degree is not (CFDegree.Success or CFDegree.CriticalSuccess))
         {
             _popup.PopupEntity(Loc.GetString("cf-act-feint-fail"), user, user);
             return false;
         }
 
-        if (degree == CFStrikeDegree.CriticalSuccess)
+        if (degree == CFDegree.CriticalSuccess)
             SetOffGuardAll(target, TurnSeconds);
         else
             SetOffGuardTo(target, user, TurnSeconds);
@@ -517,36 +479,78 @@ public sealed partial class CFConditionSystem : EntitySystem
         return true;
     }
 
-    public bool TrySkill(EntityUid user, EntityUid target, string skill, CFAbility ability, CFSpellDefense defense)
+    public bool TrySkill(EntityUid user, EntityUid target, string skill, CFAbility ability, CFDefenseType defense)
     {
-        if (!TryComp(user, out CFCombatantComponent? combat) || !TryComp(user, out CFAbilityScoreComponent? abilities))
-            return false;
-
-        var mod = CFDefense.SkillModifier(_prototypes, combat, abilities, skill, ability, 0, Frightened(user));
-        var dc = 10 + CFDefense.SaveModifier(
-            _prototypes,
-            CompOrNull<CFCombatantComponent>(target),
-            CompOrNull<CFAbilityScoreComponent>(target),
-            defense,
-            SaveStatus(target),
-            Frightened(target));
-        return CFDefense.Roll(_random, mod, dc) is CFStrikeDegree.Success or CFStrikeDegree.CriticalSuccess;
+        return RollSkill(user, target, skill, ability, defense).IsSuccess();
     }
 
-    public CFStrikeDegree RollSkill(EntityUid user, EntityUid target, string skill, CFAbility ability, CFSpellDefense defense)
+    /// <summary>
+    /// A skill check against a target's defense DC (10 + their save or Perception).
+    /// Worn armor's check penalty applies unless <paramref name="attackTrait"/> (Trip, Shove, Grapple, Disarm).
+    /// <paramref name="itemBonus"/> is a weapon's potency when it has the matching maneuver trait.
+    /// </summary>
+    public CFDegree RollSkill(
+        EntityUid user,
+        EntityUid target,
+        string skill,
+        CFAbility ability,
+        CFDefenseType defense,
+        bool attackTrait = false,
+        int itemBonus = 0)
     {
         if (!TryComp(user, out CFCombatantComponent? combat) || !TryComp(user, out CFAbilityScoreComponent? abilities))
-            return CFStrikeDegree.Failure;
+            return CFDegree.Failure;
 
-        var mod = CFDefense.SkillModifier(_prototypes, combat, abilities, skill, ability, 0, Frightened(user));
+        var mod = CFDefense.SkillModifier(_prototypes, combat, abilities, skill, ability, itemBonus, Frightened(user));
+        mod += _armor.CheckPenalty(user, skill, ability, attackTrait);
+        if (ability == CFAbility.Dexterity)
+            mod -= Clumsy(user);
+
         var dc = 10 + CFDefense.SaveModifier(
             _prototypes,
             CompOrNull<CFCombatantComponent>(target),
             CompOrNull<CFAbilityScoreComponent>(target),
             defense,
-            SaveStatus(target),
+            DefenseStatus(target, defense),
             Frightened(target));
         return CFDefense.Roll(_random, mod, dc);
+    }
+
+    /// <summary>
+    /// A skill check against a fixed DC (disabling a trap, picking a lock). Armor check penalty and clumsy apply.
+    /// <paramref name="total"/> is the d20 plus modifier, for the popup.
+    /// </summary>
+    public CFDegree RollSkillAgainst(
+        EntityUid user,
+        string skill,
+        CFAbility ability,
+        int dc,
+        out int total,
+        bool attackTrait = false,
+        int itemBonus = 0)
+    {
+        var mod = 0;
+        if (TryComp(user, out CFCombatantComponent? combat) && TryComp(user, out CFAbilityScoreComponent? abilities))
+            mod = CFDefense.SkillModifier(_prototypes, combat, abilities, skill, ability, itemBonus, Frightened(user));
+        else
+            mod -= Frightened(user);
+
+        mod += _armor.CheckPenalty(user, skill, ability, attackTrait);
+        if (ability == CFAbility.Dexterity)
+            mod -= Clumsy(user);
+
+        var d20 = _random.Next(1, 21);
+        total = d20 + mod;
+        return CFDegrees.DegreeOfSuccess(d20, mod, dc);
+    }
+
+    /// <summary>
+    /// Clumsy value: a penalty to AC, Reflex saves, ranged attack rolls, and Dexterity-based checks.
+    /// Encumbered creatures are clumsy 1.
+    /// </summary>
+    public int Clumsy(EntityUid uid)
+    {
+        return _encumbrance.IsEncumbered(uid) ? 1 : 0;
     }
 
     public void KnockProne(EntityUid target)
@@ -555,7 +559,8 @@ public sealed partial class CFConditionSystem : EntitySystem
         _popup.PopupEntity(Loc.GetString("cf-spell-prone"), target);
     }
 
-    public void Push(EntityUid origin, EntityUid target, int feet)
+    /// <summary>Shoves the target away from <paramref name="origin"/>, or toward it when <paramref name="pull"/>.</summary>
+    public void Push(EntityUid origin, EntityUid target, int feet, bool pull = false)
     {
         if (!TryComp(target, out PhysicsComponent? body) || body.BodyType == BodyType.Static)
             return;
@@ -566,117 +571,91 @@ public sealed partial class CFConditionSystem : EntitySystem
         else
             direction = Vector2.Normalize(direction);
 
+        if (pull)
+            direction = -direction;
+
         var speed = Math.Max(1, feet) / CFMelee.FeetPerTile * 6f;
         _physics.SetLinearVelocity(target, direction * speed, body: body);
     }
 
     /// <summary>
-    /// Riders that are not damage: fear, command, charm, haste, and the other hollow spells.
-    /// Returns true when something took hold.
+    /// The one entry point effects use to give a condition. <paramref name="dc"/> is the source's DC
+    /// (sanctuary's Will save). <paramref name="source"/> is the creature that caused it (charm).
     /// </summary>
-    public bool ApplySpellEffect(EntityUid caster, EntityUid target, CFSpellComponent spell, CFStrikeDegree degree, int spellDc)
+    public void ApplyCondition(EntityUid target, CFConditionKind kind, int value, float seconds, EntityUid source, int dc)
     {
-        var seconds = Math.Max(1f, spell.DurationSeconds);
-        var did = false;
-        if (spell.Frightened > 0)
+        seconds = Math.Max(1f, seconds);
+        switch (kind)
         {
-            var value = degree == CFStrikeDegree.CriticalFailure ? spell.Frightened + 1 : spell.Frightened;
-            ApplyFrightened(target, value);
-            did = true;
+            case CFConditionKind.Frightened:
+                ApplyFrightened(target, value);
+                break;
+            case CFConditionKind.Prone:
+                KnockProne(target);
+                break;
+            case CFConditionKind.Asleep:
+                KnockOutFor(target, seconds, "cf-spell-sleep");
+                break;
+            case CFConditionKind.Paralyzed:
+                KnockOutFor(target, seconds, "cf-spell-paralyze");
+                break;
+            case CFConditionKind.Immobilized:
+                ApplyImmobilized(target, seconds);
+                break;
+            case CFConditionKind.Concealed:
+                ApplyConcealed(target, 5, breaks: false, seconds);
+                break;
+            case CFConditionKind.Invisible:
+                ApplyConcealed(target, 11, breaks: true, seconds);
+                break;
+            case CFConditionKind.Sanctuary:
+                ApplySanctuary(target, dc, seconds);
+                break;
+            case CFConditionKind.Charmed:
+                ApplyCharm(target, source, seconds);
+                break;
+            case CFConditionKind.Calmed:
+                ApplyCalm(target, seconds);
+                break;
+            case CFConditionKind.Blinded:
+                ApplyBlind(target, seconds);
+                break;
+            case CFConditionKind.Darkvision:
+                ApplyDarkvision(target);
+                break;
+            case CFConditionKind.SpellShield:
+                GrantSpellShield(target, value);
+                break;
+            case CFConditionKind.OffGuard:
+                SetOffGuardAll(target, seconds);
+                break;
         }
-
-        if (spell.Command)
-        {
-            ApplyFrightened(target, 1);
-            KnockProne(target);
-            did = true;
-        }
-
-        if (spell.Charm)
-        {
-            ApplyCharm(target, caster, seconds);
-            did = true;
-        }
-
-        if (spell.Calm)
-        {
-            ApplyCalm(target, seconds);
-            did = true;
-        }
-
-        if (spell.Blind)
-        {
-            ApplyBlind(target, seconds);
-            did = true;
-        }
-
-        if (spell.FlatCheckDc > 0)
-        {
-            ApplyConcealed(target, spell.FlatCheckDc, spell.ConcealBreaks, seconds);
-            did = true;
-        }
-
-        if (spell.Sanctuary)
-        {
-            ApplySanctuary(target, spellDc, seconds);
-            did = true;
-        }
-
-        if (spell.ShieldBlock > 0)
-        {
-            GrantSpellShield(target, spell.ShieldBlock);
-            did = true;
-        }
-
-        if (spell.Immobilize)
-        {
-            ApplyImmobilized(target, seconds);
-            did = true;
-        }
-
-        if (spell.EnlargeDamage > 0)
-        {
-            ApplyEnlarge(target, spell.EnlargeDamage, seconds);
-            did = true;
-        }
-
-        if (spell.ResistAmount > 0 && !string.IsNullOrEmpty(spell.ResistType))
-        {
-            ApplyResist(target, spell.ResistType, spell.ResistAmount, seconds);
-            did = true;
-        }
-
-        if (spell.Darkvision)
-        {
-            ApplyDarkvision(target);
-            did = true;
-        }
-
-        if (spell.ActionCap > 0)
-        {
-            _actions.SetMaxActions(target, spell.ActionCap);
-            var status = EnsureComp<CFSpellStatusComponent>(target);
-            status.ActionCap = spell.ActionCap;
-            var expires = _timing.CurTime + TimeSpan.FromSeconds(seconds);
-            if (expires > status.Expires)
-                status.Expires = expires;
-            _popup.PopupEntity(
-                Loc.GetString(spell.ActionCap > 3 ? "cf-cond-quickened" : "cf-cond-slowed"),
-                target);
-            did = true;
-        }
-
-        return did;
     }
 
-    public void ClearActionCap(EntityUid uid)
+    private void KnockOutFor(EntityUid target, float seconds, string message)
     {
-        _actions.SetMaxActions(uid, 3);
+        _stun.TryKnockdown(
+            target,
+            TimeSpan.FromSeconds(seconds),
+            refresh: true,
+            autoStand: false,
+            drop: true,
+            force: true);
+        _popup.PopupEntity(Loc.GetString(message), target);
     }
 
     private int SaveStatus(EntityUid uid)
     {
-        return TryComp(uid, out CFSpellStatusComponent? status) ? status.SaveBonus : 0;
+        return _bonuses.Total(uid, CFBonusStat.Saves);
+    }
+
+    private int DefenseStatus(EntityUid uid, CFDefenseType defense)
+    {
+        var status = defense == CFDefenseType.Perception
+            ? _bonuses.Total(uid, CFBonusStat.Perception)
+            : SaveStatus(uid);
+
+        return defense == CFDefenseType.Reflex ? status - Clumsy(uid) : status;
     }
 
     private static void DropExpired(Dictionary<EntityUid, TimeSpan> times, HashSet<EntityUid>? also, TimeSpan now)

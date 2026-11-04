@@ -14,11 +14,12 @@
   - type: CFSpell
     spell: Light
     rank: 0
-    delivery: Target
+  - type: CFTargeting
     rangeFeet: 120
-    defense: None
-    rider: Light
-    friendly: true
-    includeSelf: true
+    filter: All
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFPopupEffect
+      text: cf-spell-light
   - type: EntityTargetAction
     canTargetSelf: true

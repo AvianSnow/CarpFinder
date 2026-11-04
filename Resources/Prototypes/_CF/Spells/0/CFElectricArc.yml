@@ -14,12 +14,19 @@
   - type: CFSpell
     spell: ElectricArc
     rank: 0
-    delivery: Target
+  - type: CFTargeting
     rangeFeet: 30
-    defense: Reflex
-    basicSave: true
-    diceCount: 1
-    diceSize: 4
-    addSpellModifier: true
-    damageType: electricity
     extraTargets: 1
+  - type: CFCheck
+    defense: Reflex
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 4
+      damageType: Electricity
+      addAbilityModifier: true
+      heightenDice: 1
+  - type: CFHeighten
+    baseRank: 1
+    interval: 2

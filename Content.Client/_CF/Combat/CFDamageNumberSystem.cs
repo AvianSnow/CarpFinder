@@ -1,11 +1,14 @@
 using System.Numerics;
+using Content.Shared.CF.Checks;
 using Content.Shared.CF.Combat;
+using Content.Shared.CF.DamageTypes;
 using Robust.Client.Graphics;
 using Robust.Client.ResourceManagement;
 using Robust.Client.UserInterface;
 using Robust.Shared;
 using Robust.Shared.Configuration;
 using Robust.Shared.Map;
+using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 
 namespace Content.Client.CF.Combat;
@@ -23,6 +26,7 @@ public sealed partial class CFDamageNumberSystem : EntitySystem
     [Dependency] private IConfigurationManager _config = default!;
     [Dependency] private IUserInterfaceManager _ui = default!;
     [Dependency] private IRobustRandom _random = default!;
+    [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
 
     private readonly List<FloatingNumber> _numbers = new();
@@ -60,7 +64,7 @@ public sealed partial class CFDamageNumberSystem : EntitySystem
             return;
 
         var origin = _transform.GetMapCoordinates(target, transform);
-        var critical = ev.Degree is CFStrikeDegree.CriticalSuccess or CFStrikeDegree.CriticalFailure;
+        var critical = ev.Degree is CFDegree.CriticalSuccess or CFDegree.CriticalFailure;
         var horizontal = _random.Next(-16, 17);
 
         _numbers.Add(new FloatingNumber
@@ -75,10 +79,10 @@ public sealed partial class CFDamageNumberSystem : EntitySystem
             Stack = 0,
         });
 
-        if (ev.Degree is CFStrikeDegree.Success or CFStrikeDegree.CriticalSuccess)
+        if (ev.Degree is CFDegree.Success or CFDegree.CriticalSuccess)
         {
             var blocked = ev.Amount <= 0;
-            var criticalHit = ev.Degree == CFStrikeDegree.CriticalSuccess;
+            var criticalHit = ev.Degree == CFDegree.CriticalSuccess;
             _numbers.Add(new FloatingNumber
             {
                 Map = origin,
@@ -128,26 +132,26 @@ public sealed partial class CFDamageNumberSystem : EntitySystem
         return scale == 0f ? _ui.DefaultUIScale : scale;
     }
 
-    private string DegreeLabel(CFStrikeDegree degree)
+    private string DegreeLabel(CFDegree degree)
     {
         return degree switch
         {
-            CFStrikeDegree.CriticalSuccess => Loc.GetString("cf-combat-number-crit-hit"),
-            CFStrikeDegree.Success => Loc.GetString("cf-combat-number-hit"),
-            CFStrikeDegree.Failure => Loc.GetString("cf-combat-number-miss"),
-            CFStrikeDegree.CriticalFailure => Loc.GetString("cf-combat-number-crit-miss"),
+            CFDegree.CriticalSuccess => Loc.GetString("cf-combat-number-crit-hit"),
+            CFDegree.Success => Loc.GetString("cf-combat-number-hit"),
+            CFDegree.Failure => Loc.GetString("cf-combat-number-miss"),
+            CFDegree.CriticalFailure => Loc.GetString("cf-combat-number-crit-miss"),
             _ => Loc.GetString("cf-combat-number-miss"),
         };
     }
 
-    private static Color DegreeColor(CFStrikeDegree degree)
+    private static Color DegreeColor(CFDegree degree)
     {
         return degree switch
         {
-            CFStrikeDegree.CriticalSuccess => new Color(255, 196, 64),
-            CFStrikeDegree.Success => new Color(255, 236, 160),
-            CFStrikeDegree.Failure => new Color(180, 190, 200),
-            CFStrikeDegree.CriticalFailure => new Color(140, 150, 165),
+            CFDegree.CriticalSuccess => new Color(255, 196, 64),
+            CFDegree.Success => new Color(255, 236, 160),
+            CFDegree.Failure => new Color(180, 190, 200),
+            CFDegree.CriticalFailure => new Color(140, 150, 165),
             _ => Color.White,
         };
     }
@@ -162,29 +166,11 @@ public sealed partial class CFDamageNumberSystem : EntitySystem
         return Math.Clamp(scale, 0.9f, 2.6f);
     }
 
-    private static Color ColorForDamage(string type)
+    private Color ColorForDamage(string type)
     {
-        return type.ToLowerInvariant() switch
-        {
-            "bludgeoning" or "blunt" => new Color(160, 170, 178),
-            "piercing" => new Color(200, 42, 42),
-            "slashing" or "slash" => new Color(255, 51, 51),
-            "acid" or "caustic" => new Color(50, 205, 50),
-            "cold" => new Color(0, 255, 255),
-            "fire" or "heat" => new Color(255, 127, 0),
-            "force" => new Color(218, 112, 214),
-            "lightning" or "shock" or "electricity" => new Color(255, 230, 0),
-            "void" => new Color(90, 40, 140),
-            "vitality" or "healing" => new Color(255, 220, 80),
-            "mental" => new Color(255, 105, 180),
-            "sonic" => new Color(80, 160, 255),
-            "necrotic" => new Color(75, 83, 32),
-            "poison" => new Color(160, 32, 240),
-            "psychic" => new Color(255, 20, 147),
-            "radiant" or "holy" => new Color(255, 215, 0),
-            "thunder" => new Color(30, 144, 255),
-            _ => new Color(255, 236, 160),
-        };
+        return CFDamageTypes.TryResolve(_prototypes, type, out var damageType)
+            ? damageType.Color
+            : new Color(255, 236, 160);
     }
 
     private sealed class FloatingNumber

@@ -23,6 +23,7 @@ cf-combat-stabilize-failure = Failed to stabilize.
 cf-combat-stabilize-dead = They're dead. Stabilize won't help — you need Raise Dead or Resurrect.
 
 cf-material-cloth = Cloth / Paper
+cf-material-hazard = Simple hazard
 cf-material-thin-glass = Thin Wood / Glass
 cf-material-wood = Wood / Leather
 cf-material-stone = Stone
@@ -49,6 +50,7 @@ cf-cond-calmed = Calmed
 cf-cond-blinded = Blinded
 cf-cond-enlarged = Enlarged
 cf-cond-resist = Resist { $amount } { $type }
+cf-cond-weakness = Weakness { $amount } { $type }
 cf-cond-darkvision = Darkvision
 cf-cond-quickened = Quickened
 cf-cond-slowed = Slowed

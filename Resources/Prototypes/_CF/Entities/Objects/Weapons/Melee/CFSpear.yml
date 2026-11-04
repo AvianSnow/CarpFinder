@@ -1,0 +1,39 @@
+# Simple spear: 1d6 piercing, thrown 20 feet. Melee Strike adds Strength.
+
+- type: entity
+  parent: BaseItem
+  id: CFSpear
+  name: spear
+  description: A simple spear. 1d6 piercing, thrown 20 feet.
+  components:
+  - type: Sprite
+    sprite: Objects/Weapons/Melee/spear.rsi
+    state: spear
+  - type: Item
+    size: Huge
+    sprite: Objects/Weapons/Melee/spear.rsi
+  - type: MeleeWeapon
+    wideAnimationRotation: -135
+    angle: 0
+    animation: WeaponArcThrust
+    attackRate: 1
+    soundHit:
+      path: /Audio/Weapons/bladeslice.ogg
+    damage:
+      types:
+        Piercing: 0
+  - type: CFWeapon
+    damageDie: 6
+    damageType: Piercing
+    category: Simple
+    group: Spear
+  - type: CFMeleeWeapon
+  - type: CFTrait
+    traits:
+    - Thrown20
+  - type: CFItem
+    level: 0
+  - type: CFBulk
+    bulk: 1
+  - type: CFItemPrice
+    copper: 10

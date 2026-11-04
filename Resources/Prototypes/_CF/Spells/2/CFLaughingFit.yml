@@ -14,8 +14,12 @@
   - type: CFSpell
     spell: LaughingFit
     rank: 2
-    delivery: Target
+  - type: CFTargeting
     rangeFeet: 30
+  - type: CFCheck
     defense: Will
     basicSave: false
-    rider: Prone
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFApplyConditionEffect
+      condition: Prone

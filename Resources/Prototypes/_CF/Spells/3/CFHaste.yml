@@ -14,12 +14,13 @@
   - type: CFSpell
     spell: Haste
     rank: 3
-    delivery: Target
+  - type: CFTargeting
     rangeFeet: 30
-    defense: None
-    actionCap: 4
-    durationSeconds: 60
-    friendly: true
-    includeSelf: true
+    filter: All
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFActionCapEffect
+      cap: 4
+      durationSeconds: 60
   - type: EntityTargetAction
     canTargetSelf: true

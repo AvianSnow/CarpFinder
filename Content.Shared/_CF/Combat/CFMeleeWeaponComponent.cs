@@ -3,40 +3,15 @@ using Robust.Shared.GameStates;
 namespace Content.Shared.CF.Combat;
 
 /// <summary>
-/// Carpfinder melee weapon stats used for Strikes instead of stock SS14 damage.
+/// A <see cref="CFWeaponComponent"/> used for melee Strikes instead of stock SS14 damage.
+/// On a creature itself, it is the creature's natural weapon (jaws, claws, a kobold's thrust).
 /// </summary>
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class CFMeleeWeaponComponent : Component
 {
-    /// <summary>Damage die faces (e.g. 8 for a d8 longsword).</summary>
-    [DataField, AutoNetworkedField]
-    public int DamageDie = 8;
-
-    /// <summary>Number of damage dice (usually 1).</summary>
-    [DataField, AutoNetworkedField]
-    public int DamageDice = 1;
-
-    [DataField, AutoNetworkedField]
-    public string DamageType = "slashing";
-
-    /// <summary>Weapon proficiency category matching class Attacks lists (e.g. MartialWeapons).</summary>
-    [DataField, AutoNetworkedField]
-    public string Proficiency = "MartialWeapons";
-
-    /// <summary>If true, attack/damage can use Dexterity when higher than Strength.</summary>
-    [DataField, AutoNetworkedField]
-    public bool Finesse;
-
-    /// <summary>Agile trait. The second attack is −4 and later attacks are −8, instead of −5/−10.</summary>
-    [DataField, AutoNetworkedField]
-    public bool Agile;
-
-    [DataField, AutoNetworkedField]
-    public int ItemBonus;
-
     /// <summary>
-    /// Carpfinder reach in feet. 5 threatens adjacent tiles. 10 is the reach trait
-    /// and also lengthens the SS14 swing so the weapon can Strike at that distance.
+    /// Reach in feet without traits. 5 threatens adjacent tiles. The reach trait raises it to its value,
+    /// and the longer reach also lengthens the SS14 swing so the weapon can Strike at that distance.
     /// </summary>
     [DataField, AutoNetworkedField]
     public int ReachFeet = CFFlanking.DefaultReachFeet;

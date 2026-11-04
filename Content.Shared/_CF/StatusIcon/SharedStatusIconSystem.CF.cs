@@ -5,7 +5,7 @@ namespace Content.Shared.StatusIcon;
 public abstract partial class SharedStatusIconSystem
 {
     /// <summary>
-    /// Gives a creature a status-icon anchor so the flanked mark can render.
+    /// Gives a creature a status-icon anchor so the mark can render.
     /// Returns true only when this call added the component.
     /// </summary>
     public bool CFTryAddStatusIcon(EntityUid uid)

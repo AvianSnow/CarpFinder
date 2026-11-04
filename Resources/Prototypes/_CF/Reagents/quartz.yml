@@ -1,0 +1,89 @@
+- type: reagent
+  id: CFCrystalShardQuartz
+  name: cf-reagent-name-crystal-shard-quartz
+  desc: cf-reagent-desc-crystal-shard-quartz
+  group: Special
+  flavor: chalky
+  physicalDesc: reagent-physical-desc-crystalline
+  color: "#9aa6ad"
+  pricePerUnit: 0.15
+
+- type: reagent
+  id: CFGroundQuartz
+  name: cf-reagent-name-ground-quartz
+  desc: cf-reagent-desc-ground-quartz
+  group: Special
+  flavor: chalky
+  physicalDesc: reagent-physical-desc-colorless
+  color: "#9aa6ad"
+  pricePerUnit: 0.15
+
+- type: reagent
+  id: CFEssenceEarth
+  name: cf-reagent-name-essence-earth
+  desc: cf-reagent-desc-essence-earth
+  group: Special
+  flavor: cfMagical
+  physicalDesc: reagent-physical-desc-sparkling
+  color: "#1cea42"
+  pricePerUnit: 0.25
+
+- type: reagent
+  id: CFEssenceFire
+  name: cf-reagent-name-essence-fire
+  desc: cf-reagent-desc-essence-fire
+  group: Special
+  flavor: cfMagical
+  physicalDesc: reagent-physical-desc-sparkling
+  color: "#d9741c"
+  pricePerUnit: 0.25
+
+- type: reagent
+  id: CFEssenceWater
+  name: cf-reagent-name-essence-water
+  desc: cf-reagent-desc-essence-water
+  group: Special
+  flavor: cfMagical
+  physicalDesc: reagent-physical-desc-sparkling
+  color: "#1c94d9"
+  pricePerUnit: 0.25
+
+- type: reagent
+  id: CFEssenceAir
+  name: cf-reagent-name-essence-air
+  desc: cf-reagent-desc-essence-air
+  group: Special
+  flavor: cfMagical
+  physicalDesc: reagent-physical-desc-sparkling
+  color: "#fdfe86"
+  pricePerUnit: 0.25
+
+- type: reagent
+  id: CFEssenceOrder
+  name: cf-reagent-name-essence-order
+  desc: cf-reagent-desc-essence-order
+  group: Special
+  flavor: cfMagical
+  physicalDesc: reagent-physical-desc-sparkling
+  color: "#d9d9d9"
+  pricePerUnit: 0.25
+
+- type: reagent
+  id: CFEssenceChaos
+  name: cf-reagent-name-essence-chaos
+  desc: cf-reagent-desc-essence-chaos
+  group: Special
+  flavor: cfMagical
+  physicalDesc: reagent-physical-desc-sparkling
+  color: "#5c5c5c"
+  pricePerUnit: 0.25
+
+- type: reagent
+  id: CFEssenceMagic
+  name: cf-reagent-name-essence-magic
+  desc: cf-reagent-desc-essence-magic
+  group: Special
+  flavor: cfMagical
+  physicalDesc: reagent-physical-desc-sparkling
+  color: "#5497d6"
+  pricePerUnit: 0.40

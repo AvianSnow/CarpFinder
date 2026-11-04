@@ -86,14 +86,14 @@ public sealed class RequestPerformActionEvent : EntityEventArgs
     public readonly NetEntity? EntityTarget;
     public readonly NetCoordinates? EntityCoordinatesTarget;
 
-    /// <summary>CarpFinder: bolts chosen for a variable spell such as Force Barrage. 0 keeps the spell's own count.</summary>
-    public byte SpellBolts;
+    /// <summary>CarpFinder: bolts chosen for a volley such as Force Barrage (CFProjectileDelivery). 0 keeps the source's own count.</summary>
+    public byte CFBolts;
 
-    /// <summary>CarpFinder: prestidigitation trick. 0 is not a trick cast.</summary>
-    public byte SpellTrick;
+    /// <summary>CarpFinder: mode picked from CFModeChoice, such as a prestidigitation trick. 0 is no mode.</summary>
+    public byte CFMode;
 
-    /// <summary>CarpFinder: this Force Barrage click fires one stored bolt. The opening click pays for the whole volley.</summary>
-    public bool SpellVolleyContinue;
+    /// <summary>CarpFinder: this volley click fires one stored bolt. The opening click pays for the whole volley.</summary>
+    public bool CFVolleyContinue;
 
     public RequestPerformActionEvent(NetEntity action)
     {

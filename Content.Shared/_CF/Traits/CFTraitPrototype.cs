@@ -1,3 +1,4 @@
+using Content.Shared.CF.DamageTypes;
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared.CF.Traits;
@@ -20,6 +21,54 @@ public sealed partial class CFTraitPrototype : IPrototype
 
     [DataField]
     public string Summary { get; private set; } = "";
+
+    /// <summary>
+    /// What the game does with this trait. <see cref="CFTraitRule.None"/> traits are labels only.
+    /// Weapon rules are applied by <c>CFStrikeSystem</c>, armor rules by <c>CFArmorSystem</c>.
+    /// </summary>
+    [DataField]
+    public CFTraitRule Rule = CFTraitRule.None;
+
+    /// <summary>The number in the trait: deadly d10 is 10, reach 10 is 10, thrown 20 is 20, volley 30 is 30.</summary>
+    [DataField]
+    public int Value;
+
+    /// <summary>The damage type a versatile trait switches to.</summary>
+    [DataField]
+    public ProtoId<CFDamageTypePrototype>? DamageType;
+}
+
+/// <summary>Traits with a game rule. Values come from <see cref="CFTraitPrototype.Value"/>.</summary>
+public enum CFTraitRule : byte
+{
+    None,
+
+    // Weapons
+    Agile,
+    Finesse,
+    Forceful,
+    Sweep,
+    Backstabber,
+    Propulsive,
+    Nonlethal,
+    Unarmed,
+    Reach,
+    Thrown,
+    Volley,
+    Deadly,
+    Fatal,
+    TwoHand,
+    Versatile,
+    Trip,
+    Shove,
+    Disarm,
+    Grapple,
+
+    // Armor
+    Bulwark,
+    Comfort,
+    Flexible,
+    Noisy,
 }
 
 public enum CFTraitCategory

@@ -1,0 +1,299 @@
+- type: entity
+  id: CFWallStone
+  name: rock
+  parent: CFBaseWall
+  description: A solid stone natural wall. It has a cave-like coldness to it.
+  components:
+    - type: Sprite
+      sprite: _CP14/Structures/Walls/Natural/cave_stone.rsi
+    - type: Icon
+      sprite: _CP14/Structures/Walls/Natural/cave_stone.rsi
+    - type: IconSmooth
+      states:
+        - !type:CornerSpriteSmoothing
+          mask: [CFWall]
+          base: wall
+    - type: Damageable
+      damageContainer: StructuralInorganic
+      damageModifierSet: CFRockStructural
+    - type: Destructible
+      thresholds:
+        - trigger: !type:DamageTrigger
+            damage: 150
+          behaviors:
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+        - trigger: !type:DamageTrigger
+            damage: 50
+          behaviors:
+            - !type:PlaySoundBehavior
+              sound:
+                path: /Audio/Effects/break_stone.ogg
+                params:
+                  volume: -6
+            - !type:SpawnEntitiesBehavior
+              spawn:
+                CFStoneBlock1:
+                  min: 5
+                  max: 7
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+
+- type: entity
+  id: CFWallMarbleStone
+  name: marble
+  parent: CFWallStone
+  components:
+    - type: Sprite
+      sprite: _CP14/Structures/Walls/Natural/marble_stone.rsi
+    - type: Icon
+      sprite: _CP14/Structures/Walls/Natural/marble_stone.rsi
+    - type: Destructible
+      thresholds:
+        - trigger: !type:DamageTrigger
+            damage: 150
+          behaviors:
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+        - trigger: !type:DamageTrigger
+            damage: 50
+          behaviors:
+            - !type:PlaySoundBehavior
+              sound:
+                path: /Audio/Effects/break_stone.ogg
+                params:
+                  volume: -6
+            - !type:SpawnEntitiesBehavior
+              spawn:
+                CFMarbleBlock1:
+                  min: 5
+                  max: 7
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+
+- type: entity
+  id: CFWallStoneIndestructable
+  name: dense rock
+  parent: CFBaseWall
+  suffix: Undestructable
+  description: An extremely durable stone. Your tools don't seem to be enough to break through it.
+  components:
+    - type: Sprite
+      sprite: _CP14/Structures/Walls/Natural/cave_stone_strong.rsi
+    - type: Icon
+      sprite: _CP14/Structures/Walls/Natural/cave_stone_strong.rsi
+    - type: IconSmooth
+      states:
+        - !type:CornerSpriteSmoothing
+          mask: [CFWall]
+          base: wall
+
+- type: entity
+  id: CFWallDirt
+  name: earth wall
+  parent: CFBaseWall
+  description: A tall pile of dirt. Can a house be built from it?
+  components:
+    - type: Sprite
+      sprite: _CP14/Structures/Walls/Natural/dirt_wall.rsi
+    - type: Icon
+      sprite: _CP14/Structures/Walls/Natural/dirt_wall.rsi
+    - type: IconSmooth
+      states:
+        - !type:CornerSpriteSmoothing
+          mask: [CFWall]
+          base: wall
+    - type: Damageable
+      damageContainer: StructuralInorganic
+      damageModifierSet: Rock # "Soft"
+    - type: Destructible
+      thresholds:
+        - trigger: !type:DamageTrigger
+            damage: 150
+          behaviors:
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+        - trigger: !type:DamageTrigger
+            damage: 30
+          behaviors:
+            - !type:PlaySoundBehavior
+              sound:
+                path: /Audio/Effects/break_stone.ogg #TODO
+                params:
+                  volume: -6
+            - !type:SpawnEntitiesBehavior
+              spawn:
+                CFWallDirtBlock1:
+                  min: 3
+                  max: 5
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+    - type: Construction
+      graph: CFWallDirt
+      node: WallDirt
+
+- type: entity
+  id: CFWallLeaf
+  parent:
+    - CFBaseWall
+  name: leaf wall
+  description: Dense, marginal bushes. You can climb through them, but watch out for thorny branches!
+  components:
+    - type: Sprite
+      sprite: _CP14/Structures/Walls/Natural/leaf.rsi
+    - type: Icon
+      sprite: _CP14/Structures/Walls/Natural/leaf.rsi
+    - type: IconSmooth
+      key: CFWallLeaf
+      states:
+        - !type:CornerSpriteSmoothing
+          mask: [CFWallLeaf]
+          base: wall
+    - type: Damageable
+      damageContainer: Inorganic
+      damageModifierSet: Wood
+    - type: MeleeSound
+      soundGroups:
+        Brute:
+          collection: CFGrassGathering
+          params:
+            variation: 0.05
+    - type: Fixtures
+      fixtures:
+        fix1:
+          hard: false
+          shape: !type:PhysShapeAabb
+            bounds: "-0.45,-0.45,0.45,0.45"
+          density: 1000
+          mask:
+            - FullTileMask
+          layer:
+            - WallLayer
+        fix2: #For melee or laser
+          hard: true
+          shape: !type:PhysShapeAabb
+            bounds: "-0.35,-0.35,0.35,0.35"
+          mask:
+            - FullTileMask
+          layer:
+            - Opaque
+    - type: Destructible
+      thresholds:
+        - trigger: !type:DamageTrigger
+            damage: 100
+          behaviors:
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+        - trigger: !type:DamageTrigger
+            damage: 30
+          behaviors:
+            - !type:PlaySoundBehavior
+              sound:
+                collection: CFGrassGathering
+                params:
+                  volume: 5
+                  variation: 0.05
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+            - !type:SpawnEntitiesBehavior
+              spawn:
+                CFWallFloraMaterial1:
+                  min: 1
+                  max: 3
+    - type: SpeedModifierContacts
+      walkSpeedModifier: 0.25
+      sprintSpeedModifier: 0.25
+    - type: EmitSoundOnTrigger
+      sound:
+        params:
+          volume: -8
+        collection: CFGrassGathering
+    - type: TriggerOnCollide
+      fixtureID: fix1
+    - type: Airtight
+      airBlocked: false
+
+- type: entity
+  id: CFWallSnow
+  name: snow wall
+  parent: CFBaseWall
+  description: A tall pile of snow. Can a house be built from it?
+  components:
+    - type: Sprite
+      sprite: _CP14/Structures/Walls/Natural/snow_wall.rsi
+    - type: Icon
+      sprite: _CP14/Structures/Walls/Natural/snow_wall.rsi
+    - type: IconSmooth
+      states:
+        - !type:CornerSpriteSmoothing
+          mask: [CFWall]
+          base: wall
+    - type: Damageable
+      damageContainer: Inorganic
+      damageModifierSet: Rock
+    - type: Destructible
+      thresholds:
+        - trigger: !type:DamageTrigger
+            damage: 150
+          behaviors:
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+        - trigger: !type:DamageTrigger
+            damage: 30
+          behaviors:
+            - !type:PlaySoundBehavior
+              sound:
+                path: /Audio/_CP14/Effects/snowball.ogg
+                params:
+                  variation: 0.250
+                  volume: 15
+            - !type:SpawnEntitiesBehavior
+              spawn:
+                CFWallSnowball:
+                  min: 3
+                  max: 5
+            - !type:SpawnEntitiesBehavior
+              spawn:
+                CFWallSnowEffect:
+                  min: 2
+                  max: 3
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+
+- type: entity
+  id: CFWallDimensit
+  parent: CFBaseWall
+  name: dimensit wall
+  description: The solid form of the interdimensional continuum.
+  components:
+    - type: Sprite
+      sprite: _CP14/Structures/Walls/Natural/cave_dimensit.rsi
+    - type: Icon
+      sprite: _CP14/Structures/Walls/Natural/cave_dimensit.rsi
+    - type: IconSmooth
+      states:
+        - !type:CornerSpriteSmoothing
+          mask: [CFWall]
+          base: wall
+    - type: Damageable
+      damageContainer: Inorganic
+      damageModifierSet: CFRock
+    - type: MeleeSound
+      soundGroups:
+        Brute:
+          collection: GlassSmash
+    - type: Destructible
+      thresholds:
+        - trigger: !type:DamageTrigger
+            damage: 150
+          behaviors:
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+        - trigger: !type:DamageTrigger
+            damage: 30
+          behaviors:
+            - !type:PlaySoundBehavior
+              sound:
+                collection: GlassBreak
+            - !type:DoActsBehavior
+              acts: ["Destruction"]

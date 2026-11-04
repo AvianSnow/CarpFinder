@@ -14,11 +14,18 @@
   - type: CFSpell
     spell: Harm
     rank: 1
-    delivery: Target
+  - type: CFTargeting
     rangeFeet: 30
+  - type: CFCheck
     defense: Fortitude
-    basicSave: true
-    diceCount: 1
-    diceSize: 8
-    flatDamage: 8
-    damageType: void
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 8
+      flat: 8
+      damageType: Void
+      heightenDice: 1
+      heightenFlat: 8
+  - type: CFHeighten
+    baseRank: 1

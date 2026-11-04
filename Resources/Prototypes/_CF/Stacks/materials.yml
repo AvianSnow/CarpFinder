@@ -1,0 +1,253 @@
+# Ported from crystall-punk-14 (Resources/Prototypes/_CP14). Ids renamed to CF; sprites stay under _CP14.
+
+- type: stack
+  id: CFAsh
+  name: cf-stack-ash-pile
+  icon: { sprite: "_CP14/Objects/Materials/ash.rsi", state: ash_1 }
+  spawn: CFAsh1
+  maxCount: 10
+
+- type: stack
+  id: CFBirchWoodenPlanks
+  name: cf-stack-wood-planks-birch
+  spawn: CFBirchWoodenPlanks1
+  icon: { sprite: _CP14/Objects/Materials/wood_birch.rsi, state: planks_2 }
+  maxCount: 20
+
+- type: stack
+  id: CFBloodEssence
+  name: cf-stack-blood-essence
+  icon: { sprite: "_CP14/Objects/Materials/blood_essence.rsi", state: drop }
+  spawn: CFBloodEssence
+  maxCount: 10
+
+- type: stack
+  id: CFBone
+  name: cf-stack-bones-pile
+  icon: { sprite: _CP14/Objects/Materials/bones.rsi, state: bone_1 }
+  spawn: CFBone1
+  maxCount: 10
+
+- type: stack
+  id: CFBrassBar
+  name: cf-stack-brass-bars
+  spawn: CFBrassBar1
+  icon: { sprite: _CP14/Objects/Materials/brass_bar.rsi, state: bar_2 }
+  maxCount: 10
+
+- type: stack
+  id: CFCloth
+  name: cf-stack-cloth
+  spawn: CFCloth1
+  icon: { sprite: _CP14/Objects/Materials/cloth.rsi, state: cloth_3 }
+  maxCount: 10
+
+- type: stack
+  id: CFCompost
+  name: cf-stack-compost
+  icon: { sprite: "_CP14/Objects/Materials/compost.rsi", state: compost2 }
+  spawn: CFCompostMaterial1
+  maxCount: 10
+
+- type: stack
+  id: CFCopperBar
+  name: cf-stack-copper-bars
+  spawn: CFCopperBar1
+  icon: { sprite: _CP14/Objects/Materials/copper_bar.rsi, state: bar_2 }
+  maxCount: 10
+
+- type: stack
+  id: CFDirt
+  name: cf-stack-dirt-block
+  spawn: CFDirtBlock1
+  icon: { sprite: _CP14/Objects/Materials/dirt_block.rsi, state: dirt_2 }
+  maxCount: 10
+
+- type: stack
+  id: CFFloraMaterial
+  name: cf-stack-flora
+  icon: { sprite: "_CP14/Objects/Materials/flora.rsi", state: grass_material1 }
+  spawn: CFFloraMaterial1
+  maxCount: 10
+
+- type: stack
+  id: CFGlassSheet
+  name: cf-stack-glass-sheet
+  spawn: CFGlassSheet1
+  icon: { sprite: _CP14/Objects/Materials/glass.rsi, state: glass_2 }
+  maxCount: 10
+
+- type: stack
+  id: CFGoldBar
+  name: cf-stack-gold-bars
+  spawn: CFGoldBar1
+  icon: { sprite: _CP14/Objects/Materials/gold_bar.rsi, state: bar_2 }
+  maxCount: 10
+
+- type: stack
+  id: CFIronBar
+  name: cf-stack-iron-bars
+  spawn: CFIronBar1
+  icon: { sprite: _CP14/Objects/Materials/iron_bar.rsi, state: bar_2 }
+  maxCount: 10
+
+- type: stack
+  id: CFLeather
+  name: cf-stack-hide
+  icon: { sprite: "_CP14/Objects/Ingredients/hide.rsi", state: hide1 }
+  spawn: CFLeather1
+  maxCount: 5
+
+- type: stack
+  id: CFLucensWoodenPlanks
+  name: cf-material-lucens-planks
+  spawn: CFLucensWoodenPlanks1
+  icon: { sprite: _CP14/Objects/Materials/wood_lucens.rsi, state: planks_2 }
+  maxCount: 20
+
+- type: stack
+  id: CFMarbleStone
+  name: cf-stack-marble-block
+  spawn: CFMarbleBlock1
+  icon: { sprite: _CP14/Objects/Materials/marble_block.rsi, state: stone_2 }
+  maxCount: 10
+
+- type: stack
+  id: CFMithrilBar
+  name: cf-stack-mithril-bars
+  spawn: CFMithrilBar1
+  icon: { sprite: _CP14/Objects/Materials/mithril_bar.rsi, state: bar_2 }
+  maxCount: 10
+
+- type: stack
+  id: CFOreCoal
+  name: cf-stack-coal-ore
+  spawn: CFOreCoal1
+  icon: { sprite: _CP14/Objects/Materials/coal_ore.rsi, state: ore3 }
+  maxCount: 10
+
+- type: stack
+  id: CFOreCopper
+  name: cf-stack-copper-ore
+  spawn: CFOreCopper1
+  icon: { sprite: _CP14/Objects/Materials/copper_ore.rsi, state: ore3 }
+  maxCount: 10
+
+- type: stack
+  id: CFOreGold
+  name: cf-stack-gold-ore
+  spawn: CFOreGold1
+  icon: { sprite: _CP14/Objects/Materials/gold_ore.rsi, state: ore3 }
+  maxCount: 10
+
+- type: stack
+  id: CFOreIron
+  name: cf-stack-iron-ore
+  spawn: CFOreIron1
+  icon: { sprite: _CP14/Objects/Materials/iron_ore.rsi, state: ore3 }
+  maxCount: 10
+
+- type: stack
+  id: CFOreMithril
+  name: cf-stack-mithril-ore
+  spawn: CFOreMithril1
+  icon: { sprite: _CP14/Objects/Materials/mithril_ore.rsi, state: ore3 }
+  maxCount: 10
+
+- type: stack
+  id: CFRuggedLeather
+  name: cf-stack-hide-rugged
+  icon: { sprite: "_CP14/Objects/Ingredients/hide.rsi", state: rugged_hide1 }
+  spawn: CFRuggedLeather1
+  maxCount: 5
+
+- type: stack
+  id: CFSpruceWoodenPlanks
+  name: cf-material-spruce-planks
+  spawn: CFSpruceWoodenPlanks1
+  icon: { sprite: _CP14/Objects/Materials/wood_spruce.rsi, state: planks_2 }
+  maxCount: 20
+
+- type: stack
+  id: CFStone
+  name: cf-stack-stone-block
+  spawn: CFStoneBlock1
+  icon: { sprite: _CP14/Objects/Materials/stone_block.rsi, state: stone_2 }
+  maxCount: 10
+
+- type: stack
+  id: CFThinLeather
+  name: cf-stack-hide-thin
+  icon: { sprite: "_CP14/Objects/Ingredients/hide.rsi", state: thin_hide1 }
+  spawn: CFThinLeather1
+  maxCount: 5
+
+- type: stack
+  id: CFWallpaperBank
+  name: cf-stack-wallpaper
+  spawn: CFWallpaperBank
+  icon: { sprite: _CP14/Structures/Wallpaper/icons.rsi, state: bank }
+  maxCount: 30
+
+- type: stack
+  id: CFWallpaperBank2
+  name: cf-stack-wallpaper
+  spawn: CFWallpaperBank2
+  icon: { sprite: _CP14/Structures/Wallpaper/icons.rsi, state: bank2 }
+  maxCount: 30
+
+- type: stack
+  id: CFWallpaperBlack
+  name: cf-stack-wallpaper
+  spawn: CFWallpaperBlack
+  icon: { sprite: _CP14/Structures/Wallpaper/icons.rsi, state: black }
+  maxCount: 30
+
+- type: stack
+  id: CFWallpaperGreen
+  name: cf-stack-wallpaper
+  spawn: CFWallpaperGreen
+  icon: { sprite: _CP14/Structures/Wallpaper/icons.rsi, state: green }
+  maxCount: 30
+
+- type: stack
+  id: CFWallpaperPurple
+  name: cf-stack-wallpaper
+  spawn: CFWallpaperPurple
+  icon: { sprite: _CP14/Structures/Wallpaper/icons.rsi, state: purple }
+  maxCount: 30
+
+- type: stack
+  id: CFWallpaperRed
+  name: cf-stack-wallpaper
+  spawn: CFWallpaperRed
+  icon: { sprite: _CP14/Structures/Wallpaper/icons.rsi, state: red }
+  maxCount: 30
+
+- type: stack
+  id: CFWallpaperWhite
+  name: cf-stack-wallpaper
+  spawn: CFWallpaperWhite
+  icon: { sprite: _CP14/Structures/Wallpaper/icons.rsi, state: white }
+  maxCount: 30
+
+- type: stack
+  id: CFWallpaperWhite2
+  name: cf-stack-wallpaper
+  spawn: CFWallpaperWhite2
+  icon: { sprite: _CP14/Structures/Wallpaper/icons.rsi, state: white2 }
+  maxCount: 30
+
+- type: stack
+  id: CFWallpaperYellow
+  name: cf-stack-wallpaper
+  spawn: CFWallpaperYellow
+  icon: { sprite: _CP14/Structures/Wallpaper/icons.rsi, state: yellow }
+  maxCount: 30
+
+- type: stack
+  id: CFWoodenPlanks
+  name: cf-stack-wood-planks
+  spawn: CFWoodenPlanks1
+  icon: { sprite: _CP14/Objects/Materials/wood.rsi, state: planks_2 }
+  maxCount: 20

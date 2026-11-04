@@ -1,0 +1,17 @@
+- type: damageType
+  id: CFBiological
+  name: cf-biological
+  armorCoefficientPrice: 5
+  armorFlatPrice: 20
+
+- type: damageType
+  id: CFBiologicalAnaerobic
+  name: cf-biological-anaerobic
+  armorCoefficientPrice: 5
+  armorFlatPrice: 20
+
+- type: damageType
+  id: CFSpectral
+  name: cf-spectral
+  armorCoefficientPrice: 5
+  armorFlatPrice: 20

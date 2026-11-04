@@ -14,10 +14,15 @@
   - type: CFSpell
     spell: Shield
     rank: 0
-    delivery: Instant
-    defense: None
-    acBonus: 1
-    shieldBlock: 5
-    durationSeconds: 12
-    friendly: true
-    includeSelf: true
+  - type: CFTargeting
+    filter: All
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: ArmorClass
+      type: Circumstance
+      value: 1
+      durationSeconds: 12
+    - !type:CFApplyConditionEffect
+      condition: SpellShield
+      value: 5

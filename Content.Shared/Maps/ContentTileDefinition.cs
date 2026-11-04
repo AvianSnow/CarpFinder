@@ -42,6 +42,9 @@ public sealed partial class ContentTileDefinition : IPrototype, IInheritingProto
     [DataField]
     public ProtoId<ContentTileDefinition>? BaseTurf { get; private set; }
 
+    [DataField]
+    public ProtoId<ContentTileDefinition>? BurnedTile { get; private set; }
+
     /// <summary>
     /// On what tiles this tile can be placed on. BaseTurf is already included.
     /// </summary>

@@ -14,10 +14,19 @@
   - type: CFSpell
     spell: Ignition
     rank: 0
-    delivery: Projectile
+  - type: CFTargeting
     rangeFeet: 30
-    defense: SpellAttack
-    diceCount: 2
-    diceSize: 6
-    damageType: fire
+  - type: CFCheck
+    defense: ArmorClass
+  - type: CFProjectileDelivery
     boltPrototype: CFSpellBoltFire
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 2
+      die: 6
+      damageType: Fire
+      heightenDice: 1
+  - type: CFHeighten
+    baseRank: 1
+    interval: 2

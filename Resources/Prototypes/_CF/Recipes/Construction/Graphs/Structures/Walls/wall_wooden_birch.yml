@@ -27,7 +27,7 @@
               doAfter: 2
         - to: CFWallWoodenBirch
           steps:
-            - material: CP14BirchWoodenPlanks
+            - material: CFBirchWoodenPlanks
               amount: 2
               doAfter: 2
         #- to: WindowWooden
@@ -50,4 +50,3 @@
 
     #- node: WindowWooden
     #  entity: CFWindowWooden
-

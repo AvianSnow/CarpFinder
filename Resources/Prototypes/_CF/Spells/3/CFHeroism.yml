@@ -14,13 +14,20 @@
   - type: CFSpell
     spell: Heroism
     rank: 3
-    delivery: Target
+  - type: CFTargeting
     rangeFeet: 5
-    defense: None
-    attackBonus: 1
-    saveBonus: 1
-    durationSeconds: 600
-    friendly: true
-    includeSelf: true
+    filter: All
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: AttackRoll
+      type: Status
+      value: 1
+      durationSeconds: 600
+    - !type:CFBonusEffect
+      stat: Saves
+      type: Status
+      value: 1
+      durationSeconds: 600
   - type: EntityTargetAction
     canTargetSelf: true

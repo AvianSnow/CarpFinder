@@ -14,8 +14,12 @@
   - type: CFSpell
     spell: Blindness
     rank: 3
-    delivery: Target
+  - type: CFTargeting
     rangeFeet: 30
+  - type: CFCheck
     defense: Fortitude
     basicSave: false
-    blind: true
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFApplyConditionEffect
+      condition: Blinded

@@ -188,6 +188,8 @@
   parent: [OrganBaseArmLeft, OrganCFHumanEdgeExternal]
   id: OrganCFHumanEdgeArmLeft
   components:
+    - type: Sprite
+      state: l_arm_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: l_arm_m
@@ -197,6 +199,8 @@
   parent: [OrganBaseArmRight, OrganCFHumanEdgeExternal]
   id: OrganCFHumanEdgeArmRight
   components:
+    - type: Sprite
+      state: r_arm_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: r_arm_m
@@ -206,6 +210,8 @@
   parent: [OrganBaseHandLeft, OrganCFHumanEdgeExternal]
   id: OrganCFHumanEdgeHandLeft
   components:
+    - type: Sprite
+      state: l_hand_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: l_hand_m
@@ -215,6 +221,8 @@
   parent: [OrganBaseHandRight, OrganCFHumanEdgeExternal]
   id: OrganCFHumanEdgeHandRight
   components:
+    - type: Sprite
+      state: r_hand_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: r_hand_m
@@ -224,6 +232,8 @@
   parent: [OrganBaseLegLeft, OrganCFHumanEdgeExternal]
   id: OrganCFHumanEdgeLegLeft
   components:
+    - type: Sprite
+      state: l_leg_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: l_leg_m
@@ -233,6 +243,8 @@
   parent: [OrganBaseLegRight, OrganCFHumanEdgeExternal]
   id: OrganCFHumanEdgeLegRight
   components:
+    - type: Sprite
+      state: r_leg_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: r_leg_m
@@ -242,6 +254,8 @@
   parent: [OrganBaseFootLeft, OrganCFHumanEdgeExternal]
   id: OrganCFHumanEdgeFootLeft
   components:
+    - type: Sprite
+      state: l_foot_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: l_foot_m
@@ -251,6 +265,8 @@
   parent: [OrganBaseFootRight, OrganCFHumanEdgeExternal]
   id: OrganCFHumanEdgeFootRight
   components:
+    - type: Sprite
+      state: r_foot_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: r_foot_m
@@ -641,6 +657,8 @@
   parent: [OrganBaseArmLeft, OrganCFElfEdgeExternal]
   id: OrganCFElfEdgeArmLeft
   components:
+    - type: Sprite
+      state: l_arm_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: l_arm_m
@@ -650,6 +668,8 @@
   parent: [OrganBaseArmRight, OrganCFElfEdgeExternal]
   id: OrganCFElfEdgeArmRight
   components:
+    - type: Sprite
+      state: r_arm_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: r_arm_m
@@ -659,6 +679,8 @@
   parent: [OrganBaseHandLeft, OrganCFElfEdgeExternal]
   id: OrganCFElfEdgeHandLeft
   components:
+    - type: Sprite
+      state: l_hand_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: l_hand_m
@@ -668,6 +690,8 @@
   parent: [OrganBaseHandRight, OrganCFElfEdgeExternal]
   id: OrganCFElfEdgeHandRight
   components:
+    - type: Sprite
+      state: r_hand_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: r_hand_m
@@ -677,6 +701,8 @@
   parent: [OrganBaseLegLeft, OrganCFElfEdgeExternal]
   id: OrganCFElfEdgeLegLeft
   components:
+    - type: Sprite
+      state: l_leg_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: l_leg_m
@@ -686,6 +712,8 @@
   parent: [OrganBaseLegRight, OrganCFElfEdgeExternal]
   id: OrganCFElfEdgeLegRight
   components:
+    - type: Sprite
+      state: r_leg_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: r_leg_m
@@ -695,6 +723,8 @@
   parent: [OrganBaseFootLeft, OrganCFElfEdgeExternal]
   id: OrganCFElfEdgeFootLeft
   components:
+    - type: Sprite
+      state: l_foot_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: l_foot_m
@@ -704,6 +734,8 @@
   parent: [OrganBaseFootRight, OrganCFElfEdgeExternal]
   id: OrganCFElfEdgeFootRight
   components:
+    - type: Sprite
+      state: r_foot_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: r_foot_m
@@ -1581,6 +1613,8 @@
   parent: [OrganBaseArmLeft, OrganCFSilvaExternal]
   id: OrganCFSilvaArmLeft
   components:
+    - type: Sprite
+      state: l_arm_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: l_arm_m
@@ -1590,6 +1624,8 @@
   parent: [OrganBaseArmRight, OrganCFSilvaExternal]
   id: OrganCFSilvaArmRight
   components:
+    - type: Sprite
+      state: r_arm_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: r_arm_m
@@ -1599,6 +1635,8 @@
   parent: [OrganBaseHandLeft, OrganCFSilvaExternal]
   id: OrganCFSilvaHandLeft
   components:
+    - type: Sprite
+      state: l_hand_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: l_hand_m
@@ -1608,6 +1646,8 @@
   parent: [OrganBaseHandRight, OrganCFSilvaExternal]
   id: OrganCFSilvaHandRight
   components:
+    - type: Sprite
+      state: r_hand_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: r_hand_m
@@ -1617,6 +1657,8 @@
   parent: [OrganBaseLegLeft, OrganCFSilvaExternal]
   id: OrganCFSilvaLegLeft
   components:
+    - type: Sprite
+      state: l_leg_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: l_leg_m
@@ -1626,6 +1668,8 @@
   parent: [OrganBaseLegRight, OrganCFSilvaExternal]
   id: OrganCFSilvaLegRight
   components:
+    - type: Sprite
+      state: r_leg_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: r_leg_m
@@ -1635,6 +1679,8 @@
   parent: [OrganBaseFootLeft, OrganCFSilvaExternal]
   id: OrganCFSilvaFootLeft
   components:
+    - type: Sprite
+      state: l_foot_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: l_foot_m
@@ -1644,6 +1690,8 @@
   parent: [OrganBaseFootRight, OrganCFSilvaExternal]
   id: OrganCFSilvaFootRight
   components:
+    - type: Sprite
+      state: r_foot_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: r_foot_m
@@ -1745,38 +1793,65 @@
 - type: entity
   parent: [OrganBaseHead, OrganCFKoboldAnimalExternal]
   id: OrganCFKoboldAnimalHead
+  components:
+    - type: Sprite
+      state: kobold
 
 - type: entity
   parent: [OrganBaseArmLeft, OrganCFKoboldAnimalExternal]
   id: OrganCFKoboldAnimalArmLeft
+  components:
+    - type: Sprite
+      state: kobold
 
 - type: entity
   parent: [OrganBaseArmRight, OrganCFKoboldAnimalExternal]
   id: OrganCFKoboldAnimalArmRight
+  components:
+    - type: Sprite
+      state: kobold
 
 - type: entity
   parent: [OrganBaseHandLeft, OrganCFKoboldAnimalExternal]
   id: OrganCFKoboldAnimalHandLeft
+  components:
+    - type: Sprite
+      state: kobold
 
 - type: entity
   parent: [OrganBaseHandRight, OrganCFKoboldAnimalExternal]
   id: OrganCFKoboldAnimalHandRight
+  components:
+    - type: Sprite
+      state: kobold
 
 - type: entity
   parent: [OrganBaseLegLeft, OrganCFKoboldAnimalExternal]
   id: OrganCFKoboldAnimalLegLeft
+  components:
+    - type: Sprite
+      state: kobold
 
 - type: entity
   parent: [OrganBaseLegRight, OrganCFKoboldAnimalExternal]
   id: OrganCFKoboldAnimalLegRight
+  components:
+    - type: Sprite
+      state: kobold
 
 - type: entity
   parent: [OrganBaseFootLeft, OrganCFKoboldAnimalExternal]
   id: OrganCFKoboldAnimalFootLeft
+  components:
+    - type: Sprite
+      state: kobold
 
 - type: entity
   parent: [OrganBaseFootRight, OrganCFKoboldAnimalExternal]
   id: OrganCFKoboldAnimalFootRight
+  components:
+    - type: Sprite
+      state: kobold
 
 # Crystall Edge renamed its Tiefling sheet to Infernal. One body, one species id per ancestry.
 # The picker shows it only while the Nephilim heritage is selected.
@@ -2040,6 +2115,8 @@
   parent: [OrganBaseArmLeft, OrganCFInfernalExternal]
   id: OrganCFInfernalArmLeft
   components:
+    - type: Sprite
+      state: l_arm_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: l_arm_m
@@ -2049,6 +2126,8 @@
   parent: [OrganBaseArmRight, OrganCFInfernalExternal]
   id: OrganCFInfernalArmRight
   components:
+    - type: Sprite
+      state: r_arm_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: r_arm_m
@@ -2058,6 +2137,8 @@
   parent: [OrganBaseHandLeft, OrganCFInfernalExternal]
   id: OrganCFInfernalHandLeft
   components:
+    - type: Sprite
+      state: l_hand_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: l_hand_m
@@ -2067,6 +2148,8 @@
   parent: [OrganBaseHandRight, OrganCFInfernalExternal]
   id: OrganCFInfernalHandRight
   components:
+    - type: Sprite
+      state: r_hand_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: r_hand_m
@@ -2076,6 +2159,8 @@
   parent: [OrganBaseLegLeft, OrganCFInfernalExternal]
   id: OrganCFInfernalLegLeft
   components:
+    - type: Sprite
+      state: l_leg_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: l_leg_m
@@ -2085,6 +2170,8 @@
   parent: [OrganBaseLegRight, OrganCFInfernalExternal]
   id: OrganCFInfernalLegRight
   components:
+    - type: Sprite
+      state: r_leg_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: r_leg_m
@@ -2094,6 +2181,8 @@
   parent: [OrganBaseFootLeft, OrganCFInfernalExternal]
   id: OrganCFInfernalFootLeft
   components:
+    - type: Sprite
+      state: l_foot_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: l_foot_m
@@ -2103,6 +2192,8 @@
   parent: [OrganBaseFootRight, OrganCFInfernalExternal]
   id: OrganCFInfernalFootRight
   components:
+    - type: Sprite
+      state: r_foot_m
     - type: VisualOrgan
       sexStateOverrides:
         Male: r_foot_m

@@ -5,24 +5,28 @@
   id: Agile
   name: Agile
   category: Weapon
+  rule: Agile
   summary: "The multiple attack penalty with this weapon is one step smaller, to a floor of 0."
 
 - type: cfTrait
   id: Finesse
   name: Finesse
   category: Weapon
+  rule: Finesse
   summary: "You can use Dexterity instead of Strength on the attack roll with this melee weapon."
 
 - type: cfTrait
   id: Forceful
   name: Forceful
   category: Weapon
+  rule: Forceful
   summary: "The second hit with this weapon on your turn adds one damage die, and later hits add two."
 
 - type: cfTrait
   id: Sweep
   name: Sweep
   category: Weapon
+  rule: Sweep
   summary: "You gain a circumstance bonus to the attack if you already attacked a different creature with this weapon this turn."
 
 - type: cfTrait
@@ -35,150 +39,199 @@
   id: Propulsive
   name: Propulsive
   category: Weapon
+  rule: Propulsive
   summary: "On a ranged Strike, add half your Strength modifier to damage. A negative modifier applies in full."
 
 - type: cfTrait
   id: Reach
   name: Reach
   category: Weapon
+  rule: Reach
+  value: 10
   summary: "This melee weapon can Strike a creature 10 feet away."
 
 - type: cfTrait
   id: Thrown
   name: Thrown
   category: Weapon
+  rule: Thrown
+  value: 10
   summary: "You can throw this weapon."
 
 - type: cfTrait
   id: Thrown10
   name: Thrown 10 ft
   category: Weapon
+  rule: Thrown
+  value: 10
   summary: "You can throw this weapon. Its range increment is 10 feet."
 
 - type: cfTrait
   id: Thrown15
   name: Thrown 15 ft
   category: Weapon
+  rule: Thrown
+  value: 15
   summary: "You can throw this weapon. Its range increment is 15 feet."
 
 - type: cfTrait
   id: Thrown20
   name: Thrown 20 ft
   category: Weapon
+  rule: Thrown
+  value: 20
   summary: "You can throw this weapon. Its range increment is 20 feet."
 
 - type: cfTrait
   id: Thrown30
   name: Thrown 30 ft
   category: Weapon
+  rule: Thrown
+  value: 30
   summary: "You can throw this weapon. Its range increment is 30 feet."
 
 - type: cfTrait
   id: Thrown40
   name: Thrown 40 ft
   category: Weapon
+  rule: Thrown
+  value: 40
   summary: "You can throw this weapon. Its range increment is 40 feet."
 
 - type: cfTrait
   id: Thrown50
   name: Thrown 50 ft
   category: Weapon
+  rule: Thrown
+  value: 50
   summary: "You can throw this weapon. Its range increment is 50 feet."
 
 - type: cfTrait
   id: Thrown60
   name: Thrown 60 ft
   category: Weapon
+  rule: Thrown
+  value: 60
   summary: "You can throw this weapon. Its range increment is 60 feet."
 
 - type: cfTrait
   id: Thrown80
   name: Thrown 80 ft
   category: Weapon
+  rule: Thrown
+  value: 80
   summary: "You can throw this weapon. Its range increment is 80 feet."
 
 - type: cfTrait
   id: Thrown100
   name: Thrown 100 ft
   category: Weapon
+  rule: Thrown
+  value: 100
   summary: "You can throw this weapon. Its range increment is 100 feet."
 
 - type: cfTrait
   id: Thrown200
   name: Thrown 200 ft
   category: Weapon
+  rule: Thrown
+  value: 200
   summary: "You can throw this weapon. Its range increment is 200 feet."
 
 - type: cfTrait
   id: Volley20
   name: Volley 20 ft
   category: Weapon
+  rule: Volley
+  value: 20
   summary: "Strikes against targets closer than 20 feet take a penalty."
 
 - type: cfTrait
   id: Volley30
   name: Volley 30 ft
   category: Weapon
+  rule: Volley
+  value: 30
   summary: "Strikes against targets closer than 30 feet take a penalty."
 
 - type: cfTrait
   id: Volley50
   name: Volley 50 ft
   category: Weapon
+  rule: Volley
+  value: 50
   summary: "Strikes against targets closer than 50 feet take a penalty."
 
 - type: cfTrait
   id: Volley60
   name: Volley 60 ft
   category: Weapon
+  rule: Volley
+  value: 60
   summary: "Strikes against targets closer than 60 feet take a penalty."
 
 - type: cfTrait
   id: DeadlyD4
   name: Deadly d4
   category: Weapon
+  rule: Deadly
+  value: 4
   summary: "On a critical hit, add one extra damage die of this size."
 
 - type: cfTrait
   id: DeadlyD6
   name: Deadly d6
   category: Weapon
+  rule: Deadly
+  value: 6
   summary: "On a critical hit, add one extra damage die of this size."
 
 - type: cfTrait
   id: DeadlyD8
   name: Deadly d8
   category: Weapon
+  rule: Deadly
+  value: 8
   summary: "On a critical hit, add one extra damage die of this size."
 
 - type: cfTrait
   id: DeadlyD10
   name: Deadly d10
   category: Weapon
+  rule: Deadly
+  value: 10
   summary: "On a critical hit, add one extra damage die of this size."
 
 - type: cfTrait
   id: DeadlyD12
   name: Deadly d12
   category: Weapon
+  rule: Deadly
+  value: 12
   summary: "On a critical hit, add one extra damage die of this size."
 
 - type: cfTrait
   id: FatalD8
   name: Fatal d8
   category: Weapon
+  rule: Fatal
+  value: 8
   summary: "On a critical hit, the weapon die becomes this size and you add one extra die of that size."
 
 - type: cfTrait
   id: FatalD10
   name: Fatal d10
   category: Weapon
+  rule: Fatal
+  value: 10
   summary: "On a critical hit, the weapon die becomes this size and you add one extra die of that size."
 
 - type: cfTrait
   id: FatalD12
   name: Fatal d12
   category: Weapon
+  rule: Fatal
+  value: 12
   summary: "On a critical hit, the weapon die becomes this size and you add one extra die of that size."
 
 - type: cfTrait
@@ -197,108 +250,144 @@
   id: TwoHandD6
   name: Two-Hand d6
   category: Weapon
+  rule: TwoHand
+  value: 6
   summary: "This weapon uses this damage die while you wield it in two hands."
 
 - type: cfTrait
   id: TwoHandD8
   name: Two-Hand d8
   category: Weapon
+  rule: TwoHand
+  value: 8
   summary: "This weapon uses this damage die while you wield it in two hands."
 
 - type: cfTrait
   id: TwoHandD10
   name: Two-Hand d10
   category: Weapon
+  rule: TwoHand
+  value: 10
   summary: "This weapon uses this damage die while you wield it in two hands."
 
 - type: cfTrait
   id: TwoHandD12
   name: Two-Hand d12
   category: Weapon
+  rule: TwoHand
+  value: 12
   summary: "This weapon uses this damage die while you wield it in two hands."
 
 - type: cfTrait
   id: VersatileB
   name: Versatile B
   category: Weapon
+  rule: Versatile
+  damageType: Bludgeoning
   summary: "You can deal bludgeoning damage with this weapon instead of its usual type."
 
 - type: cfTrait
   id: VersatileP
   name: Versatile P
   category: Weapon
+  rule: Versatile
+  damageType: Piercing
   summary: "You can deal piercing damage with this weapon instead of its usual type."
 
 - type: cfTrait
   id: VersatileS
   name: Versatile S
   category: Weapon
+  rule: Versatile
+  damageType: Slashing
   summary: "You can deal slashing damage with this weapon instead of its usual type."
 
 - type: cfTrait
   id: VersatileAcid
   name: Versatile acid
   category: Weapon
+  rule: Versatile
+  damageType: Acid
   summary: "You can deal acid damage with this weapon instead of its usual type."
 
 - type: cfTrait
   id: VersatileCold
   name: Versatile cold
   category: Weapon
+  rule: Versatile
+  damageType: Cold
   summary: "You can deal cold damage with this weapon instead of its usual type."
 
 - type: cfTrait
   id: VersatileElectricity
   name: Versatile electricity
   category: Weapon
+  rule: Versatile
+  damageType: Electricity
   summary: "You can deal electricity damage with this weapon instead of its usual type."
 
 - type: cfTrait
   id: VersatileFire
   name: Versatile fire
   category: Weapon
+  rule: Versatile
+  damageType: Fire
   summary: "You can deal fire damage with this weapon instead of its usual type."
 
 - type: cfTrait
   id: VersatileForce
   name: Versatile force
   category: Weapon
+  rule: Versatile
+  damageType: Force
   summary: "You can deal force damage with this weapon instead of its usual type."
 
 - type: cfTrait
   id: VersatileSonic
   name: Versatile sonic
   category: Weapon
+  rule: Versatile
+  damageType: Sonic
   summary: "You can deal sonic damage with this weapon instead of its usual type."
 
 - type: cfTrait
   id: VersatilePoison
   name: Versatile poison
   category: Weapon
+  rule: Versatile
+  damageType: Poison
   summary: "You can deal poison damage with this weapon instead of its usual type."
 
 - type: cfTrait
   id: VersatileSpirit
   name: Versatile spirit
   category: Weapon
+  rule: Versatile
+  damageType: Spirit
   summary: "You can deal spirit damage with this weapon instead of its usual type."
 
 - type: cfTrait
   id: VersatileVitality
   name: Versatile vitality
   category: Weapon
+  rule: Versatile
+  damageType: Vitality
   summary: "You can deal vitality damage with this weapon instead of its usual type."
 
 - type: cfTrait
   id: VersatileVoid
   name: Versatile void
   category: Weapon
+  rule: Versatile
+  damageType: Void
   summary: "You can deal void damage with this weapon instead of its usual type."
 
 - type: cfTrait
   id: VersatileMental
   name: Versatile mental
   category: Weapon
+  rule: Versatile
+  damageType: Mental
   summary: "You can deal mental damage with this weapon instead of its usual type."
 
 - type: cfTrait
@@ -359,24 +448,28 @@
   id: Disarm
   name: Disarm
   category: Weapon
+  rule: Disarm
   summary: "You can use this weapon to Disarm."
 
 - type: cfTrait
   id: Grapple
   name: Grapple
   category: Weapon
+  rule: Grapple
   summary: "You can use this weapon to Grapple."
 
 - type: cfTrait
   id: Trip
   name: Trip
   category: Weapon
+  rule: Trip
   summary: "You can use this weapon to Trip."
 
 - type: cfTrait
   id: Shove
   name: Shove
   category: Weapon
+  rule: Shove
   summary: "You can use this weapon to Shove."
 
 - type: cfTrait
@@ -395,6 +488,7 @@
   id: Unarmed
   name: Unarmed
   category: Weapon
+  rule: Unarmed
   summary: "This is an unarmed attack. It does not count as a held weapon."
 
 - type: cfTrait
@@ -521,6 +615,7 @@
   id: Backstabber
   name: Backstabber
   category: Weapon
+  rule: Backstabber
   summary: "This weapon deals extra precision damage when the target is off-guard."
 
 - type: cfTrait

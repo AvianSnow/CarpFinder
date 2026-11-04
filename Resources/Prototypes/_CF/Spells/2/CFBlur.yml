@@ -14,8 +14,9 @@
   - type: CFSpell
     spell: Blur
     rank: 2
-    delivery: Instant
-    defense: None
-    flatCheckDc: 5
-    friendly: true
-    includeSelf: true
+  - type: CFTargeting
+    filter: All
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFApplyConditionEffect
+      condition: Concealed

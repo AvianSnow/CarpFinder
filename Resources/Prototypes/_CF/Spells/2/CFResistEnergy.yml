@@ -14,12 +14,17 @@
   - type: CFSpell
     spell: ResistEnergy
     rank: 2
-    delivery: Target
+  - type: CFTargeting
     rangeFeet: 5
-    defense: None
-    resistType: fire
-    resistAmount: 5
-    friendly: true
-    includeSelf: true
+    filter: All
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFResistanceEffect
+      damageType: Fire
+      amount: 5
+      heightenAmount: 5
+  - type: CFHeighten
+    baseRank: 2
+    interval: 2
   - type: EntityTargetAction
     canTargetSelf: true

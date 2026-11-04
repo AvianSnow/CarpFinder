@@ -1,3 +1,4 @@
+using Content.Shared.CF.Checks;
 using Robust.Shared.Serialization;
 
 namespace Content.Shared.CF.Combat;
@@ -9,11 +10,11 @@ namespace Content.Shared.CF.Combat;
 public sealed class CFCombatNumberEvent : EntityEventArgs
 {
     public NetEntity Target;
-    public CFStrikeDegree Degree;
+    public CFDegree Degree;
     public int Amount;
     public string DamageType = string.Empty;
 
-    public CFCombatNumberEvent(NetEntity target, CFStrikeDegree degree, int amount, string damageType)
+    public CFCombatNumberEvent(NetEntity target, CFDegree degree, int amount, string damageType)
     {
         Target = target;
         Degree = degree;

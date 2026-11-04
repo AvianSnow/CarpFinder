@@ -1,6 +1,8 @@
 using Content.Shared.Actions.Events;
 using Content.Shared.CF.Character;
+using Content.Shared.CF.Checks;
 using Content.Shared.CF.Combat;
+using Content.Shared.CF.Effects;
 using Content.Shared.CF.Factions;
 using Content.Shared.CF.Preferences;
 using Content.Shared.CF.Spells;
@@ -9,7 +11,6 @@ using Content.Shared.Mobs.Components;
 using Content.Shared.Popups;
 using Robust.Shared.Network;
 using Robust.Shared.Random;
-using Robust.Shared.Timing;
 
 namespace Content.Shared.CF.Actions;
 
@@ -19,7 +20,6 @@ namespace Content.Shared.CF.Actions;
 /// </summary>
 public sealed partial class CFActivitySystem : EntitySystem
 {
-    [Dependency] private IGameTiming _timing = default!;
     [Dependency] private INetManager _net = default!;
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
@@ -27,19 +27,13 @@ public sealed partial class CFActivitySystem : EntitySystem
     [Dependency] private CFConditionSystem _conditions = default!;
     [Dependency] private CFStrikeSystem _strikes = default!;
     [Dependency] private CFActionPoolSystem _actions = default!;
+    [Dependency] private CFBonusSystem _bonuses = default!;
+    [Dependency] private CFShieldSystem _shields = default!;
     [Dependency] private CFFactionSystem _factions = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
 
-    public override void Initialize()
-    {
-        base.Initialize();
-        SubscribeLocalEvent<CFActivityComponent, CFActivityInstantEvent>(OnInstant);
-        SubscribeLocalEvent<CFActivityComponent, CFActivityTargetEvent>(OnTarget);
-        SubscribeLocalEvent<CFActivityComponent, ActionAttemptEvent>(OnAttempt);
-        SubscribeLocalEvent<CFSpellComponent, ActionAttemptEvent>(OnSpellAttempt);
-    }
-
+    [SubscribeLocalEvent]
     private void OnSpellAttempt(Entity<CFSpellComponent> spell, ref ActionAttemptEvent args)
     {
         if (!TryComp(args.User, out CFCombatOptionsComponent? opt) || !opt.Raging)
@@ -49,6 +43,7 @@ public sealed partial class CFActivitySystem : EntitySystem
         args.Reason = Loc.GetString("cf-act-rage-concentrate");
     }
 
+    [SubscribeLocalEvent]
     private void OnAttempt(Entity<CFActivityComponent> ent, ref ActionAttemptEvent args)
     {
         switch (ent.Comp.Kind)
@@ -70,6 +65,7 @@ public sealed partial class CFActivitySystem : EntitySystem
         }
     }
 
+    [SubscribeLocalEvent]
     private void OnInstant(Entity<CFActivityComponent> ent, ref CFActivityInstantEvent args)
     {
         if (args.Handled)
@@ -97,6 +93,7 @@ public sealed partial class CFActivitySystem : EntitySystem
         }
     }
 
+    [SubscribeLocalEvent]
     private void OnTarget(Entity<CFActivityComponent> ent, ref CFActivityTargetEvent args)
     {
         if (args.Handled)
@@ -174,36 +171,38 @@ public sealed partial class CFActivitySystem : EntitySystem
 
     private void Trip(EntityUid user, EntityUid target)
     {
-        var degree = _conditions.RollSkill(user, target, "Athletics", CFAbility.Strength, CFSpellDefense.Reflex);
-        if (degree is CFStrikeDegree.CriticalFailure)
+        var bonus = ManeuverBonus(user, t => t.Trip);
+        var degree = _conditions.RollSkill(user, target, "Athletics", CFAbility.Strength, CFDefenseType.Reflex, attackTrait: true, bonus);
+        if (degree is CFDegree.CriticalFailure)
         {
             _conditions.KnockProne(user);
             return;
         }
 
-        if (degree is not (CFStrikeDegree.Success or CFStrikeDegree.CriticalSuccess))
+        if (degree is not (CFDegree.Success or CFDegree.CriticalSuccess))
         {
             _popup.PopupEntity(Loc.GetString("cf-act-trip-fail"), user, user);
             return;
         }
 
         _conditions.KnockProne(target);
-        if (degree == CFStrikeDegree.CriticalSuccess)
+        if (degree == CFDegree.CriticalSuccess)
             _conditions.SetOffGuardAll(target, 6f);
     }
 
     private void Shove(EntityUid user, EntityUid target)
     {
-        var degree = _conditions.RollSkill(user, target, "Athletics", CFAbility.Strength, CFSpellDefense.Fortitude);
-        if (degree is not (CFStrikeDegree.Success or CFStrikeDegree.CriticalSuccess))
+        var bonus = ManeuverBonus(user, t => t.Shove);
+        var degree = _conditions.RollSkill(user, target, "Athletics", CFAbility.Strength, CFDefenseType.Fortitude, attackTrait: true, bonus);
+        if (degree is not (CFDegree.Success or CFDegree.CriticalSuccess))
         {
             _popup.PopupEntity(Loc.GetString("cf-act-shove-fail"), user, user);
             return;
         }
 
         _conditions.ReleaseGrab(target);
-        _conditions.Push(user, target, degree == CFStrikeDegree.CriticalSuccess ? 10 : 5);
-        if (degree == CFStrikeDegree.CriticalSuccess)
+        _conditions.Push(user, target, degree == CFDegree.CriticalSuccess ? 10 : 5);
+        if (degree == CFDegree.CriticalSuccess)
             _conditions.KnockProne(target);
         else
             _popup.PopupEntity(Loc.GetString("cf-act-shove"), target);
@@ -211,14 +210,15 @@ public sealed partial class CFActivitySystem : EntitySystem
 
     private void Grapple(EntityUid user, EntityUid target)
     {
-        var degree = _conditions.RollSkill(user, target, "Athletics", CFAbility.Strength, CFSpellDefense.Fortitude);
-        if (degree == CFStrikeDegree.CriticalFailure)
+        var bonus = ManeuverBonus(user, t => t.Grapple);
+        var degree = _conditions.RollSkill(user, target, "Athletics", CFAbility.Strength, CFDefenseType.Fortitude, attackTrait: true, bonus);
+        if (degree == CFDegree.CriticalFailure)
         {
             _conditions.ApplyGrabbed(user, target);
             return;
         }
 
-        if (degree is not (CFStrikeDegree.Success or CFStrikeDegree.CriticalSuccess))
+        if (degree is not (CFDegree.Success or CFDegree.CriticalSuccess))
         {
             _popup.PopupEntity(Loc.GetString("cf-act-grapple-fail"), user, user);
             return;
@@ -361,8 +361,8 @@ public sealed partial class CFActivitySystem : EntitySystem
 
     private void Tumble(EntityUid user, EntityUid target)
     {
-        var degree = _conditions.RollSkill(user, target, "Acrobatics", CFAbility.Dexterity, CFSpellDefense.Reflex);
-        if (degree is not (CFStrikeDegree.Success or CFStrikeDegree.CriticalSuccess))
+        var degree = _conditions.RollSkill(user, target, "Acrobatics", CFAbility.Dexterity, CFDefenseType.Reflex);
+        if (degree is not (CFDegree.Success or CFDegree.CriticalSuccess))
         {
             _popup.PopupEntity(Loc.GetString("cf-act-tumble-fail"), user, user);
             return;
@@ -389,19 +389,30 @@ public sealed partial class CFActivitySystem : EntitySystem
 
     private void Buff(EntityUid ally)
     {
-        var status = EnsureComp<CFSpellStatusComponent>(ally);
-        status.AttackBonus = Math.Max(status.AttackBonus, 1);
-        status.SaveBonus = Math.Max(status.SaveBonus, 1);
-        var expires = _timing.CurTime + TimeSpan.FromSeconds(12);
-        if (expires > status.Expires)
-            status.Expires = expires;
+        _bonuses.AddBonus(ally, CFBonusStat.AttackRoll, CFBonusType.Status, 1, 12f);
+        _bonuses.AddBonus(ally, CFBonusStat.Saves, CFBonusType.Status, 1, 12f);
     }
 
+    /// <summary>A held shield that is not broken can be raised.</summary>
     private bool TryShield(EntityUid user, out CFShieldComponent? shield)
     {
         shield = null;
-        return _hands.TryGetActiveItem(user, out var held)
-               && held != null
-               && TryComp(held.Value, out shield);
+        if (!_shields.TryGetHeldShield(user, out var held) || held.Comp.Broken)
+            return false;
+
+        shield = held.Comp;
+        return true;
+    }
+
+    /// <summary>
+    /// The item bonus a maneuver gets from the held weapon: its potency, when it has the matching trait
+    /// (trip, shove, grapple, disarm). Fists have none.
+    /// </summary>
+    private int ManeuverBonus(EntityUid user, Func<CFWeaponTraits, bool> hasTrait)
+    {
+        if (!_strikes.TryMeleeWeapon(user, out var weapon, out var weaponUid) || weaponUid == user)
+            return 0;
+
+        return hasTrait(weapon.Traits) ? weapon.Potency : 0;
     }
 }

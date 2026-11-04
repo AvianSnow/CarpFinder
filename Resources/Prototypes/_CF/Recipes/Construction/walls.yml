@@ -3,7 +3,7 @@
   id: CFWoodenWall
   graph: CFWallWooden
   startNode: start
-  targetNode: CP14WallWooden
+  targetNode: CFWallWooden
   category: construction-category-structures
   objectType: Structure
   placementMode: SnapgridCenter
@@ -14,7 +14,7 @@
 - type: construction
   crystallPunkAllowed: true
   id: CFWoodenWallBirch
-  graph: CF4WallWoodenBirch
+  graph: CFWallWoodenBirch
   startNode: start
   targetNode: CFWallWoodenBirch
   category: construction-category-structures
@@ -52,32 +52,6 @@
 
 - type: construction
   crystallPunkAllowed: true
-  id: CFWindowWooden
-  graph: CFWindowWooden
-  startNode: start
-  targetNode: CFWindowWooden
-  category: construction-category-structures
-  objectType: Structure
-  placementMode: SnapgridCenter
-  canBuildInImpassable: false
-  conditions:
-    - !type:TileNotBlocked
-
-- type: construction
-  crystallPunkAllowed: true
-  id: CFWindowWoodenBirch
-  graph: CFWindowWooden
-  startNode: start
-  targetNode: CFWindowWoodenBirch
-  category: construction-category-structures
-  objectType: Structure
-  placementMode: SnapgridCenter
-  canBuildInImpassable: false
-  conditions:
-  - !type:TileNotBlocked
-
-- type: construction
-  crystallPunkAllowed: true
   id: CFWallDirt
   graph: CFWallDirt
   startNode: start
@@ -104,19 +78,6 @@
 
 - type: construction
   crystallPunkAllowed: true
-  id: CFWindowStoneBrick
-  graph: CFWindowStoneBrick
-  startNode: start
-  targetNode: CFWindowStoneBrick
-  category: construction-category-structures
-  objectType: Structure
-  placementMode: SnapgridCenter
-  canBuildInImpassable: false
-  conditions:
-    - !type:TileNotBlocked
-
-- type: construction
-  crystallPunkAllowed: true
   id: CFWallMarbleBrick
   graph: CFWallMarbleBrick
   startNode: start
@@ -127,17 +88,3 @@
   canBuildInImpassable: false
   conditions:
     - !type:TileNotBlocked
-
-- type: construction
-  crystallPunkAllowed: true
-  id: CFWallmountLampEmpty
-  graph: CFWallmountLampEmpty
-  startNode: start
-  targetNode: CFWallmountLampEmpty
-  category: construction-category-structures
-  objectType: Structure
-  placementMode: SnapgridCenter
-  canBuildInImpassable: false
-  conditions:
-    - !type:TileNotBlocked
-

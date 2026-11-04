@@ -2,6 +2,7 @@ using System.Linq;
 using Content.Shared.CF.Alchemy;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Combat;
+using Content.Shared.CF.Items;
 using Content.Shared.CF.Shop;
 using Content.Shared.CF.Traits;
 using Content.Shared.Item;
@@ -491,7 +492,9 @@ public sealed partial class CFShopView : BoxContainer
         if (proto.TryGetComponent<CFArmorComponent>(out var armorComp))
             AddArmorTag(armor, armorComp.Proficiency);
 
-        if (proto.TryGetComponent<CFAlchemicalItemComponent>(out var brew))
+        if (proto.TryGetComponent<CFItemComponent>(out var item))
+            level = item.Level;
+        else if (proto.TryGetComponent<CFAlchemicalItemComponent>(out var brew))
             level = brew.ItemLevel;
 
         var cost = CFCoins.EntityPrice(proto);
@@ -533,7 +536,10 @@ public sealed partial class CFShopView : BoxContainer
         if (proto.TryGetComponent<CFArmorComponent>(out _))
             return CFShopCategory.Armor;
 
-        if (proto.TryGetComponent<CFMeleeWeaponComponent>(out _) || proto.TryGetComponent<CFRangedWeaponComponent>(out _))
+        if (proto.TryGetComponent<CFShieldComponent>(out _))
+            return CFShopCategory.Shield;
+
+        if (proto.TryGetComponent<CFWeaponComponent>(out _))
             return CFShopCategory.Weapon;
 
         if (proto.TryGetComponent<CFAlchemicalItemComponent>(out var brew) && brew.Consumable)

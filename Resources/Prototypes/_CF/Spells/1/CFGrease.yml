@@ -14,10 +14,15 @@
   - type: CFSpell
     spell: Grease
     rank: 1
-    delivery: Area
-    area: Square
-    areaFeet: 10
+  - type: CFTargeting
     rangeFeet: 30
+  - type: CFAreaEffect
+    shape: Square
+    sizeFeet: 10
+  - type: CFCheck
     defense: Reflex
     basicSave: false
-    rider: Prone
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFApplyConditionEffect
+      condition: Prone

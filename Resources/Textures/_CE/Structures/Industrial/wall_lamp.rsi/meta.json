@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "license": "CC-BY-SA-3.0",
+  "copyright": "Created by TheShuEd (github)",
+  "size": {
+    "x": 34,
+    "y": 96
+  },
+  "states": [
+    {
+      "name": "base",
+      "directions": 4
+    },
+    {
+      "name": "glow",
+      "directions": 4
+    }
+  ]
+}

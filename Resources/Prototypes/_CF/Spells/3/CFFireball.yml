@@ -14,12 +14,19 @@
   - type: CFSpell
     spell: Fireball
     rank: 3
-    delivery: Area
-    area: Burst
-    areaFeet: 20
+  - type: CFTargeting
     rangeFeet: 500
+  - type: CFAreaEffect
+    shape: Burst
+    sizeFeet: 20
+  - type: CFCheck
     defense: Reflex
-    basicSave: true
-    diceCount: 6
-    diceSize: 6
-    damageType: fire
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 6
+      die: 6
+      damageType: Fire
+      heightenDice: 2
+  - type: CFHeighten
+    baseRank: 3

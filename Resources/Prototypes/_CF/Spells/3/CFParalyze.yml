@@ -14,8 +14,17 @@
   - type: CFSpell
     spell: Paralyze
     rank: 3
-    delivery: Target
+  - type: CFTargeting
     rangeFeet: 30
+  - type: CFCheck
     defense: Will
     basicSave: false
-    rider: Paralyze
+  - type: CFDegreeEffects
+    failure:
+    - !type:CFApplyConditionEffect
+      condition: Paralyzed
+      durationSeconds: 6
+    criticalFailure:
+    - !type:CFApplyConditionEffect
+      condition: Paralyzed
+      durationSeconds: 24

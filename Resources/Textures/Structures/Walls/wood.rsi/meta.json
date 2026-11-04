@@ -9,7 +9,7 @@
     },
     "states": [
         {
-            "name": "wood0",
+            "name": "wood3",
             "directions": 4
         },
         {
@@ -17,11 +17,11 @@
             "directions": 4
         },
         {
-            "name": "wood2",
+            "name": "wood5",
             "directions": 4
         },
         {
-            "name": "wood3",
+            "name": "wood0",
             "directions": 4
         },
         {
@@ -29,7 +29,7 @@
             "directions": 4
         },
         {
-            "name": "wood5",
+            "name": "wood2",
             "directions": 4
         },
         {

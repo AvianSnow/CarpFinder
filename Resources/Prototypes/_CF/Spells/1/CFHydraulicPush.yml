@@ -14,12 +14,21 @@
   - type: CFSpell
     spell: HydraulicPush
     rank: 1
-    delivery: Projectile
+  - type: CFTargeting
     rangeFeet: 60
-    defense: SpellAttack
-    diceCount: 3
-    diceSize: 6
-    damageType: bludgeoning
-    rider: Push
-    pushFeet: 5
+  - type: CFCheck
+    defense: ArmorClass
+  - type: CFProjectileDelivery
     boltPrototype: CFSpellBoltVitality
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 3
+      die: 6
+      damageType: Bludgeoning
+      heightenDice: 1
+    landed:
+    - !type:CFForcedMovementEffect
+      feet: 5
+  - type: CFHeighten
+    baseRank: 1

@@ -14,11 +14,14 @@
   - type: CFSpell
     spell: Guidance
     rank: 0
-    delivery: Target
+  - type: CFTargeting
     rangeFeet: 30
-    defense: None
-    attackBonus: 1
-    friendly: true
-    includeSelf: true
+    filter: All
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: AttackRoll
+      type: Status
+      value: 1
   - type: EntityTargetAction
     canTargetSelf: true

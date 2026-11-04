@@ -14,11 +14,19 @@
   - type: CFSpell
     spell: PhaseBolt
     rank: 0
-    delivery: Projectile
+  - type: CFTargeting
     rangeFeet: 60
-    defense: SpellAttack
-    diceCount: 3
-    diceSize: 4
-    damageType: piercing
+  - type: CFCheck
+    defense: ArmorClass
     targetAcPenalty: 2
+  - type: CFProjectileDelivery
     boltPrototype: CFSpellBoltForce
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 3
+      die: 4
+      damageType: Piercing
+      heightenDice: 1
+  - type: CFHeighten
+    baseRank: 1

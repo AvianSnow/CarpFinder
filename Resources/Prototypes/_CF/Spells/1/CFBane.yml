@@ -14,10 +14,19 @@
   - type: CFSpell
     spell: Bane
     rank: 1
-    delivery: Area
-    area: Emanation
-    areaFeet: 5
+  - type: CFAreaEffect
+    shape: Emanation
+    sizeFeet: 5
+  - type: CFCheck
     defense: Will
     basicSave: false
-    attackBonus: -1
-    saveBonus: -1
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: AttackRoll
+      type: Status
+      value: -1
+    - !type:CFBonusEffect
+      stat: Saves
+      type: Status
+      value: -1

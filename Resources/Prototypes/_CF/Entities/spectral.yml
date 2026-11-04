@@ -1,0 +1,19 @@
+- type: entity
+  id: CFSpectralBase
+  abstract: true
+  categories: [ForkFiltered]
+  components:
+  - type: Damageable
+    damageContainer: CFSpectral
+  - type: Destructible
+    thresholds:
+    - trigger: !type:DamageTrigger
+        damage: 10
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          path: /Audio/Effects/eye_close.ogg
+          params:
+            volume: 6
+      - !type:DoActsBehavior
+        acts: ["Destruction"]

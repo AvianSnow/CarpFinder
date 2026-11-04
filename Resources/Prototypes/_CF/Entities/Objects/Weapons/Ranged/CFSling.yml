@@ -1,0 +1,25 @@
+# Sling. Ranged Strike is 1d4 bludgeoning, propulsive, range increment 50 feet, reload 1.
+# Shoots with the bow pipeline (wield it, nock an arrow) until it has its own sprite.
+
+- type: entity
+  parent: CFLongbow
+  id: CFSling
+  name: sling
+  description: A leather sling. 1d4 bludgeoning, propulsive, range increment 50 feet, reload 1.
+  components:
+  - type: CFWeapon
+    damageDie: 4
+    damageType: Bludgeoning
+    category: Simple
+    group: Sling
+  - type: CFRangedWeapon
+    rangeIncrementFeet: 50
+    reload: 1
+  # Replaces the longbow's traits (lists are not merged with the parent's).
+  - type: CFTrait
+    traits:
+    - Propulsive
+  - type: CFBulk
+    bulk: 0.1
+  - type: CFItemPrice
+    copper: 0

@@ -14,8 +14,17 @@
   - type: CFSpell
     spell: Fear
     rank: 1
-    delivery: Target
+  - type: CFTargeting
     rangeFeet: 30
+  - type: CFCheck
     defense: Will
     basicSave: false
-    frightened: 1
+  - type: CFDegreeEffects
+    failure:
+    - !type:CFApplyConditionEffect
+      condition: Frightened
+      value: 1
+    criticalFailure:
+    - !type:CFApplyConditionEffect
+      condition: Frightened
+      value: 2

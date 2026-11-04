@@ -14,9 +14,9 @@
   - type: CFSpell
     spell: SureStrike
     rank: 1
-    delivery: Instant
-    defense: None
-    rider: TrueStrike
-    durationSeconds: 12
-    friendly: true
-    includeSelf: true
+  - type: CFTargeting
+    filter: All
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFFortuneEffect
+      durationSeconds: 12

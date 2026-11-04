@@ -14,9 +14,12 @@
   - type: CFSpell
     spell: DispelMagic
     rank: 2
-    delivery: Target
+  - type: CFTargeting
     rangeFeet: 120
-    defense: None
-    friendly: true
+    filter: All
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFPopupEffect
+      text: cf-spell-affected
   - type: EntityTargetAction
     canTargetSelf: true

@@ -1,0 +1,183 @@
+- type: entity
+  id: CFWallStoneCopperOre
+  suffix: copper ore
+  parent: CFWallStone
+  description: A solid stone natural wall. You can see the sharp flecks of copper in it.
+  components:
+    - type: Sprite
+      sprite: _CP14/Structures/Walls/Natural/cave_stone_copper.rsi
+    - type: Icon
+      sprite: _CP14/Structures/Walls/Natural/cave_stone_copper.rsi
+    - type: Destructible
+      thresholds:
+        - trigger: !type:DamageTrigger
+            damage: 150
+          behaviors:
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+        - trigger: !type:DamageTrigger
+            damage: 50
+          behaviors:
+            - !type:PlaySoundBehavior
+              sound:
+                path: /Audio/Effects/break_stone.ogg
+                params:
+                  volume: -6
+            - !type:SpawnEntitiesBehavior
+              spawn:
+                CP14OreCopper1:
+                  min: 4
+                  max: 7
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+
+- type: entity
+  id: CFWallStoneIronOre
+  suffix: iron ore
+  parent: CFWallStone
+  description: A solid stone natural wall. You can see the sharp flecks of iron in it.
+  components:
+    - type: Sprite
+      sprite: _CP14/Structures/Walls/Natural/cave_stone_iron.rsi
+    - type: Icon
+      sprite: _CP14/Structures/Walls/Natural/cave_stone_iron.rsi
+    - type: Destructible
+      thresholds:
+        - trigger: !type:DamageTrigger
+            damage: 150
+          behaviors:
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+        - trigger: !type:DamageTrigger
+            damage: 50
+          behaviors:
+            - !type:PlaySoundBehavior
+              sound:
+                path: /Audio/Effects/break_stone.ogg
+                params:
+                  volume: -6
+            - !type:SpawnEntitiesBehavior
+              spawn:
+                CP14OreIron1:
+                  min: 4
+                  max: 6
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+
+- type: entity
+  id: CFWallStoneGoldOre
+  suffix: gold ore
+  parent: CFWallStone
+  categories: [DoNotMap]
+  description: A solid stone natural wall. You see the tantalizing particles of gold in it.
+  components:
+    - type: Sprite
+      sprite: _CP14/Structures/Walls/Natural/cave_stone_gold.rsi
+    - type: Icon
+      sprite: _CP14/Structures/Walls/Natural/cave_stone_gold.rsi
+    - type: Destructible
+      thresholds:
+        - trigger: !type:DamageTrigger
+            damage: 150
+          behaviors:
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+        - trigger: !type:DamageTrigger
+            damage: 50
+          behaviors:
+            - !type:PlaySoundBehavior
+              sound:
+                path: /Audio/Effects/break_stone.ogg
+                params:
+                  volume: -6
+            - !type:SpawnEntitiesBehavior
+              spawn:
+                CP14OreGold1:
+                  min: 3
+                  max: 6
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+    - type: IconSmooth
+      states:
+        - !type:CornerSpriteSmoothing
+          mask: [CFWall]
+          base: wall
+    - type: StaticPrice
+      price: 100
+
+- type: entity
+  id: CFWallStoneMithrilOre
+  suffix: mithril ore
+  parent: CFWallStone
+  categories: [DoNotMap]
+  description: A solid stone natural wall. You see the tantalizing particles of mithril in it.
+  components:
+    - type: Sprite
+      sprite: _CP14/Structures/Walls/Natural/cave_stone_mithril.rsi
+    - type: Icon
+      sprite: _CP14/Structures/Walls/Natural/cave_stone_mithril.rsi
+    - type: Destructible
+      thresholds:
+        - trigger: !type:DamageTrigger
+            damage: 150
+          behaviors:
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+        - trigger: !type:DamageTrigger
+            damage: 50
+          behaviors:
+            - !type:PlaySoundBehavior
+              sound:
+                path: /Audio/Effects/break_stone.ogg
+                params:
+                  volume: -6
+            - !type:SpawnEntitiesBehavior
+              spawn:
+                CP14OreMithril1:
+                  min: 3
+                  max: 6
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+    - type: IconSmooth
+      states:
+        - !type:CornerSpriteSmoothing
+          mask: [CFWall]
+          base: wall
+
+- type: entity
+  id: CFWallStoneCoalOre
+  suffix: coal ore
+  parent: CFWallStone
+  description: A solid stone natural wall. You see the tantalizing particles of coal in it.
+  components:
+    - type: Sprite
+      sprite: _CP14/Structures/Walls/Natural/cave_stone_coal.rsi
+    - type: Icon
+      sprite: _CP14/Structures/Walls/Natural/cave_stone_coal.rsi
+    - type: Destructible
+      thresholds:
+        - trigger: !type:DamageTrigger
+            damage: 150
+          behaviors:
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+        - trigger: !type:DamageTrigger
+            damage: 50
+          behaviors:
+            - !type:PlaySoundBehavior
+              sound:
+                path: /Audio/Effects/break_stone.ogg
+                params:
+                  volume: -6
+            - !type:SpawnEntitiesBehavior
+              spawn:
+                CP14OreCoal1:
+                  min: 3
+                  max: 5
+            - !type:DoActsBehavior
+              acts: ["Destruction"]
+    - type: IconSmooth
+      states:
+        - !type:CornerSpriteSmoothing
+          mask: [CFWall]
+          base: wall

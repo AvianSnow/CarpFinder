@@ -14,8 +14,15 @@
   - type: CFSpell
     spell: Command
     rank: 1
-    delivery: Target
+  - type: CFTargeting
     rangeFeet: 30
+  - type: CFCheck
     defense: Will
     basicSave: false
-    command: true
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFApplyConditionEffect
+      condition: Frightened
+      value: 1
+    - !type:CFApplyConditionEffect
+      condition: Prone

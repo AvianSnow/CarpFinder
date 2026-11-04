@@ -14,9 +14,12 @@
   - type: CFSpell
     spell: Daze
     rank: 0
-    delivery: Target
+  - type: CFTargeting
     rangeFeet: 60
+  - type: CFCheck
     defense: Will
-    basicSave: true
-    addSpellModifier: true
-    damageType: mental
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      damageType: Mental
+      addAbilityModifier: true

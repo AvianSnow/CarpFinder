@@ -1,0 +1,15 @@
+cf-damage-bludgeoning = bludgeoning
+cf-damage-piercing = piercing
+cf-damage-slashing = slashing
+cf-damage-acid = acid
+cf-damage-cold = cold
+cf-damage-electricity = electricity
+cf-damage-fire = fire
+cf-damage-force = force
+cf-damage-sonic = sonic
+cf-damage-vitality = vitality
+cf-damage-void = void
+cf-damage-mental = mental
+cf-damage-spirit = spirit
+cf-damage-poison = poison
+cf-damage-bleed = bleed

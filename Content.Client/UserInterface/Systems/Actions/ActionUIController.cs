@@ -1,7 +1,7 @@
 using System.Linq;
 using System.Numerics;
 using Content.Client.Actions;
-using Content.Client.CF.Spells;
+using Content.Client.CF.Effects;
 using Content.Client.Construction;
 using Content.Client.Gameplay;
 using Content.Client.Hands;
@@ -14,7 +14,8 @@ using Content.Client.UserInterface.Systems.Actions.Windows;
 using Content.Client.UserInterface.Systems.Gameplay;
 using Content.Shared.Actions;
 using Content.Shared.Actions.Components;
-using Content.Shared.CF.Spells;
+using Content.Shared.CF.Effects;
+using Content.Shared.CF.Effects.Areas;
 using Content.Shared.Charges.Systems;
 using Content.Shared.Input;
 using Robust.Client.GameObjects;
@@ -191,8 +192,8 @@ public sealed partial class ActionUIController : UIController, IOnStateChanged<G
 
         // A stored volley stays aimed until each bolt has been clicked. Other actions stop after one use.
         var volleyOpen = ev.FoundTarget
-            && EntityManager.TryGetComponent(actionId, out CFSpellComponent? volley)
-            && volley.MaxBolts > 1
+            && EntityManager.TryGetComponent(actionId, out CFProjectileDeliveryComponent? volley)
+            && volley.IsVolley
             && volley.VolleyLeft > 0;
         if (!volleyOpen && (ev.FoundTarget ? !target.Repeat : target.DeselectOnMiss))
             StopTargeting();
@@ -258,11 +259,11 @@ public sealed partial class ActionUIController : UIController, IOnStateChanged<G
             return;
         }
 
-        // CarpFinder: Prestidigitation asks which trick, then Force Barrage asks how many bolts.
-        if (EntityManager.System<CFSpellTrickMenuSystem>().TryOffer(action, () => ActivateAction(action)))
+        // CarpFinder: a mode choice (prestidigitation) asks which mode, then a volley (Force Barrage) asks how many bolts.
+        if (EntityManager.System<CFModeMenuSystem>().TryOffer(action, () => ActivateAction(action)))
             return;
 
-        if (EntityManager.System<CFSpellBoltMenuSystem>().TryOffer(action, () => ActivateAction(action)))
+        if (EntityManager.System<CFVolleyMenuSystem>().TryOffer(action, () => ActivateAction(action)))
             return;
 
         ActivateAction(action);
@@ -878,11 +879,11 @@ public sealed partial class ActionUIController : UIController, IOnStateChanged<G
             predicate = e => e != attachedEnt;
 
         float? range = target.CheckCanAccess || target.Range > 0 ? target.Range : null;
-        if (EntityManager.TryGetComponent(uid, out CFSpellComponent? spell) && spell.RangeFeet > 0)
-            range = spell.RangeFeet / CFSpellGrid.FeetPerTile;
+        if (EntityManager.TryGetComponent(uid, out CFTargetingComponent? targeting) && targeting.RangeFeet > 0)
+            range = targeting.RangeFeet / CFAreaGrid.FeetPerTile;
 
         // 90 feet. Farther creatures, and anything behind a wall, are not outlined.
-        var highlightLimit = 90f / CFSpellGrid.FeetPerTile;
+        var highlightLimit = 90f / CFAreaGrid.FeetPerTile;
 
         _interactionOutline?.SetEnabled(false);
         _targetOutline?.Enable(range, target.CheckCanAccess, predicate, entity.Whitelist, entity.Blacklist, null, highlightLimit, true);

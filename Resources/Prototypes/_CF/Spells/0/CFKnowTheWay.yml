@@ -14,7 +14,9 @@
   - type: CFSpell
     spell: KnowTheWay
     rank: 0
-    delivery: Instant
-    defense: None
-    friendly: true
-    includeSelf: true
+  - type: CFTargeting
+    filter: All
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFPopupEffect
+      text: cf-spell-affected

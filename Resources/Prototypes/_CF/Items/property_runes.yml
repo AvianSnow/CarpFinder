@@ -1,0 +1,69 @@
+# Weapon property runes (remaster). Each runs its effects on the target after a hit with the weapon,
+# using the Strike's degree: damage in onHit doubles on a critical hit like any other weapon damage.
+# A weapon holds as many property runes as its potency rune. Prices are in copper (1 gp = 100).
+
+- type: cfPropertyRune
+  id: Flaming
+  name: Flaming
+  level: 8
+  price: 50000
+  summary: "1d6 fire damage on a hit. On a critical hit, also 1d10 persistent fire damage."
+  onHit:
+  - !type:CFDamageEffect
+    dice: 1
+    die: 6
+    damageType: Fire
+  onCriticalHit:
+  - !type:CFDamageEffect
+    damageType: Fire
+    scaleByDegree: false
+    persistentDice: 1
+    persistentDie: 10
+
+- type: cfPropertyRune
+  id: Frost
+  name: Frost
+  level: 8
+  price: 50000
+  summary: "1d6 cold damage on a hit."
+  onHit:
+  - !type:CFDamageEffect
+    dice: 1
+    die: 6
+    damageType: Cold
+
+- type: cfPropertyRune
+  id: Shock
+  name: Shock
+  level: 8
+  price: 50000
+  summary: "1d6 electricity damage on a hit."
+  onHit:
+  - !type:CFDamageEffect
+    dice: 1
+    die: 6
+    damageType: Electricity
+
+- type: cfPropertyRune
+  id: Corrosive
+  name: Corrosive
+  level: 8
+  price: 50000
+  summary: "1d6 acid damage on a hit."
+  onHit:
+  - !type:CFDamageEffect
+    dice: 1
+    die: 6
+    damageType: Acid
+
+- type: cfPropertyRune
+  id: Thundering
+  name: Thundering
+  level: 8
+  price: 50000
+  summary: "1d6 sonic damage on a hit."
+  onHit:
+  - !type:CFDamageEffect
+    dice: 1
+    die: 6
+    damageType: Sonic

@@ -14,13 +14,20 @@
   - type: CFSpell
     spell: GustOfWind
     rank: 1
-    delivery: Area
-    area: Line
-    areaFeet: 60
+  - type: CFAreaEffect
+    shape: Line
+    sizeFeet: 60
+  - type: CFCheck
     defense: Fortitude
-    basicSave: true
-    diceCount: 2
-    diceSize: 6
-    damageType: bludgeoning
-    rider: Push
-    pushFeet: 5
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 2
+      die: 6
+      damageType: Bludgeoning
+      heightenDice: 1
+    landed:
+    - !type:CFForcedMovementEffect
+      feet: 5
+  - type: CFHeighten
+    baseRank: 1
