@@ -1,0 +1,14 @@
+cf-narrate-wrap = [italic]{ $text }[/italic]
+cf-skillcheck-roll = Roll a check
+cf-skillcheck-roll-success = { $name }: rolled { $skill } { $total } — Success
+cf-skillcheck-roll-failure = { $name }: rolled { $skill } { $total } — Failed
+cf-port-narated = Narrated
+cf-port-narated-desc = Fires each time a player is told this scene.
+cf-port-skill-critical-success = Critical success
+cf-port-skill-critical-success-desc = Fires on a critical success.
+cf-port-skill-success = Success
+cf-port-skill-success-desc = Fires on a success.
+cf-port-skill-failure = Failure
+cf-port-skill-failure-desc = Fires on a failure.
+cf-port-skill-critical-failure = Critical failure
+cf-port-skill-critical-failure-desc = Fires on a critical failure.

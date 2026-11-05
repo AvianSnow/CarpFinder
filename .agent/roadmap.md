@@ -328,6 +328,15 @@ If you can't tell which side something falls on, add it to "Decided" below as an
   - The everburning torch entry found is the legacy Core Rulebook one. Check its numbers if a remaster entry turns up.
   - Tests: `Content.IntegrationTests/Tests/_CF/Magic/CFMagicSenseTest.cs`.
 
+## DM scene tools (done)
+
+- `CFNarateTrigger` (`CFNarate`) tells each player its text once when they come within `radiusFeet` (default 15 feet, 3 tiles). Only living bodies with a player count. It is a hidden marker: use `showmarkers` to see it.
+- `CFSkillCheckTrigger` (`CFSkillCheck`) offers each skill in `skills` on right-click, rolls against `dc`, and shows the message for that degree. It has to stay visible, because players cannot right-click what they cannot see. Add `CFSkillCheck` to any object to put the check on that instead.
+- Both are edited live with VV and save with the map. `skills` is one comma-separated line, because VV cannot add to a list. Perception works as a skill. `oncePerPlayer` (default true) limits each player to one roll. Who has heard or rolled is not saved, so a loaded map starts fresh.
+- Signals: the ports `CFNarated`, `CFSkillCriticalSuccess`, `CFSkillSuccess`, `CFSkillFailure` and `CFSkillCriticalFailure` link to anything with a sink, such as doors. Code can listen to `CFNaratedEvent` and `CFSkillCheckRolledEvent` instead. Traps and monster spawners have no sink yet.
+- Code: `Content.Server/_CF/Scene/CFSceneSystem`. Tests: `Content.IntegrationTests/Tests/_CF/Scene/CFSceneTest.cs`.
+- The dev map cannot be saved cleanly: a stock `PackageDelivery` entity points at a missing entity.
+
 ## Phase 4 — Z-levels (verticality)
 
 CP14 implements Z-levels as separate maps stacked in a station, linked by portals. No engine change is needed.

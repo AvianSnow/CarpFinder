@@ -41,6 +41,7 @@ Everything below is under `Content.Shared/_CF/`.
 | `Farming/` | Plant, seed and harvest data. The logic is server-side. | `CFFarmingSystem` |
 | `Adventure/` | Site prototypes, encounter and treasure tables. Generation is server-side. | `CFEncounterRules`, `CFAdventureSiteSystem` |
 | `Magic/` | Light, Detect Magic, Read Aura, and what counts as magical | `CFMagicSenseSystem` |
+| `Scene/` | DM narration and player-started skill checks. The logic is server-side. | `CFSceneSystem` |
 | `Crafting/` | Recipes, formulas, Craft DCs. The workbench logic is server-side. | `CFCraftingRules`, `CFWorkbenchSystem` |
 | `Preferences/` | The build stored on `HumanoidCharacterProfile` | `CFCharacterBuildData` |
 | `Shop/` | Coins, prices, the merchant counter UI. Selling and coin logic are server-side. | `CFCoins`, `CFMerchantSystem`, `CFCoinSystem` |

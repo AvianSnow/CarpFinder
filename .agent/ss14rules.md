@@ -121,6 +121,12 @@ A prototype that fails to read is logged once and dropped: `Reading ...EntityPro
 
 To catch this, run `EntityTest.SpawnAndDirtyAllEntities`: it spawns every prototype on server and client and reports unknown prototypes.
 
+## VV cannot add to a list
+
+The VV menu edits strings, numbers, booleans and enums, but it has no way to add an item to a `List` or `HashSet`. A field a DM must extend live has to be plain text, such as comma-separated names. Prototype data is copied per entity on spawn, so editing one entity never changes another.
+
+`EntityQueryEnumerator` skips paused entities, and a map just loaded is paused. Use `AllEntityQueryEnumerator` in tests that read one.
+
 ## Fixtures added in code
 
 An entity spawned with an empty `Fixtures` component has `CanCollide` turned off. Creating fixtures later with `FixtureSystem.TryCreateFixture` does not turn it back on, so sensors never report contacts. After adding fixtures, call `SharedPhysicsSystem.SetCanCollide(uid, true)` (see `CFHazardSystem`).

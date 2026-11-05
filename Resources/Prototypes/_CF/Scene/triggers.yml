@@ -1,0 +1,70 @@
+# DM tools. Place them, then edit their CFNarate or CFSkillCheck with the VV menu. Text saves with the map.
+# Narrate triggers are hidden from players like other markers: use showmarkers to see them.
+# Link their signals to doors, traps and the like with a multitool.
+
+- type: entity
+  parent: MarkerBase
+  id: CFNarateTrigger
+  name: narrate trigger
+  description: Tells each player a piece of the scene when they walk near it.
+  suffix: DM
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    sprite: _CF/Markers/scene_triggers.rsi
+    state: Narate
+  - type: CFNarate
+  - type: DeviceLinkSource
+    ports:
+    - CFNarated
+
+- type: entity
+  id: CFSkillCheckTrigger
+  name: something to inspect
+  description: Something here is worth a closer look.
+  suffix: DM
+  categories: [ ForkFiltered ]
+  placement:
+    mode: SnapgridCenter
+  components:
+  - type: Transform
+    anchored: true
+  - type: Clickable
+  - type: InteractionOutline
+  - type: Sprite
+    drawdepth: Overdoors
+    sprite: _CF/Markers/scene_triggers.rsi
+    state: skillcheck
+  - type: CFSkillCheck
+  - type: DeviceLinkSource
+    ports:
+    - CFSkillCriticalSuccess
+    - CFSkillSuccess
+    - CFSkillFailure
+    - CFSkillCriticalFailure
+
+- type: sourcePort
+  id: CFNarated
+  name: cf-port-narated
+  description: cf-port-narated-desc
+  defaultLinks: [ Open, Trigger, Toggle ]
+
+- type: sourcePort
+  id: CFSkillCriticalSuccess
+  name: cf-port-skill-critical-success
+  description: cf-port-skill-critical-success-desc
+
+- type: sourcePort
+  id: CFSkillSuccess
+  name: cf-port-skill-success
+  description: cf-port-skill-success-desc
+
+- type: sourcePort
+  id: CFSkillFailure
+  name: cf-port-skill-failure
+  description: cf-port-skill-failure-desc
+
+- type: sourcePort
+  id: CFSkillCriticalFailure
+  name: cf-port-skill-critical-failure
+  description: cf-port-skill-critical-failure-desc
