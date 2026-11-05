@@ -12,6 +12,8 @@ Read and follow everything in this folder before making CF or upstream-touching 
 
 Character builder + PF2e spawn/combat MVP notes: `character-builder.md`.
 
+Where mappers place AI hints: `investigation-nodes.md`.
+
 Map of the codebase: `codebase.md`. Start there to find something.
 
 The ordered feature plan is `roadmap.md`. Check it before starting a feature and tick items off when they land.
@@ -54,7 +56,7 @@ dotnet run --project Content.Client -c Tools
 
 ## Testing
 
-Integration tests that need a world load the dev map (`/Maps/Test/dev_map.yml`, gameMap `Dev` in `Resources/Prototypes/Maps/debug.yml`) with `MapLoaderSystem.TryLoadMap`. Do not build grids by hand in tests. Use `Tests/_CF/CFDevMap.Load(Pair, footprint)` to load it and find open floor. Pass `avoidStructures: true` when a creature has to stand up there; the default only avoids creatures, because the map has no structure-free room for the large area spell footprints.
+Integration tests that need a world load the meteor arena (`/Maps/Nonstations/meteor-arena.yml`). Do not build grids by hand in tests. Use `Tests/_CF/CFDevMap.Load(Pair, footprint)` to load it and find open floor. It prefers floor with no structures, and only settles for a spot with some when the footprint is too big, as the area spells' is. Keep a footprint as small as the test needs. Pass `avoidStructures: true` to fail rather than settle.
 
 Reuse the Tools build and target the tests you need; without `-c Tools --no-build` the test run rebuilds everything in Debug (~5 min):
 
@@ -122,6 +124,8 @@ Class examples: `CFMySystem`, `CFMyServerSystem`, `CFMyClientSystem`, `CFExample
 | Worn armor, check penalty, Speed penalty, AC refresh | `CFArmorSystem` (`TryGetWornArmor`, `CheckPenalty`, `SpeedPenalty`, `RefreshArmorClass`) |
 | Shields | `CFShieldSystem` (`TryGetRaisedShield`, `TryGetUsableShield`, `SetRaised`, `RaisedBonus`, `Block`). Raised is `CFShieldComponent.Raised` on the item. |
 | Bulk and encumbrance | `CFBulk`, `CFEncumbranceSystem`; clumsy from `CFConditionSystem.Clumsy` |
+| A group that fights together | An `encounter` prototype in `Resources/Prototypes/_CF/NPC/encounters.yml`, placed with `CFEncounterSpawner`. It gives any mob the brain at spawn, so mobs do not need their own GOAP prototype |
+| An advanced NPC (mini boss, special encounter) | Add `CFGoapBrain` as a second parent. Do not use it for ordinary mobs: stock HTN stays their AI. Set `CFGoap.profile` to a `cfGoapProfile` |
 | Actions for code with no player | `CFManeuverSystem.CanUse` and `TryUse` with a `CFBasicAction`, `CFStrikeSystem.TryFeatStrike` |
 | Whether a creature can see another | `CFStealthSystem.Detection`, `IsUnseenBy`, `Reveal`. Spending actions reveals a creature unless `TrySpendActions` is told `stealthy` |
 | Traps and hazards | `CFHazard` (Stealth DC, detect radius, trigger size, disarm checks) plus `CFCheck` and `CFDegreeEffects` for what it does. `CFHazardSystem` handles noticing, triggering, and disarming. A `CFFaction` on the hazard protects its allies. Disabling it raises `CFHazardDisarmedEvent`; `CFExperienceSystem.AwardHazard` gives the disarmer's company XP for the hazard's `level` (simple or `complex`). See `Resources/Prototypes/_CF/Entities/Hazards/traps.yml`. |

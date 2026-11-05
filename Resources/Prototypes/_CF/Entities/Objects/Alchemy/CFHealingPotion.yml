@@ -44,6 +44,8 @@
       params:
         volume: -2
         variation: 0.25
+  - type: CFItemUse
+    uses: Heals
   - type: CFHealConsumable
     healDice: 1
     healDie: 8

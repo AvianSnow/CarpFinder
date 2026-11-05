@@ -1,0 +1,98 @@
+# Encounters. Place a CFEncounterSpawner and pick one with its encounter field. As an aghost, use VV on the
+# spawner: "mobs" takes entity ids separated by commas and replaces the list here, and "armed" spawns it again.
+
+- type: entity
+  parent: MarkerBase
+  id: CFEncounterSpawner
+  name: encounter spawner
+  description: Spawns an encounter when an adventurer comes within 30 feet.
+  suffix: DM
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    layers:
+    - state: green
+  - type: CFEncounterSpawner
+  - type: DeviceLinkSource
+
+- type: sourcePort
+  id: CFEncounterMemberDied
+  name: cf-port-encounter-died
+  description: cf-port-encounter-died-desc
+
+- type: sourcePort
+  id: CFEncounterRouted
+  name: cf-port-encounter-routed
+  description: cf-port-encounter-routed-desc
+
+- type: sourcePort
+  id: CFEncounterCleared
+  name: cf-port-encounter-cleared
+  description: cf-port-encounter-cleared-desc
+
+# Four that work together to flank, and break and hide when half are down.
+- type: encounter
+  id: SmallGroup
+  mobs:
+  - CFKoboldWarrior
+  count: 4
+  routAt: 0.5
+  goals:
+  - RunAway
+  - GoToGround
+  - StayHidden
+  actions:
+  - TakeFlank
+  - StrikeFlanked
+  - HideAway
+  - WaitHidden
+
+# Pack goals and actions.
+
+- type: cfGoapGoal
+  id: RunAway
+  wants: [ Safe ]
+  priority: 20
+  onlyWhen: [ Routed, TargetVisible ]
+
+- type: cfGoapGoal
+  id: GoToGround
+  wants: [ Hiding ]
+  priority: 19
+  onlyWhen: [ Routed ]
+  notWhen: [ TargetVisible, Hiding ]
+
+- type: cfGoapGoal
+  id: StayHidden
+  wants: [ Waited ]
+  priority: 18
+  onlyWhen: [ Routed, Hiding ]
+  notWhen: [ TargetVisible ]
+
+- type: cfGoapAction
+  id: TakeFlank
+  step: Flank
+  needs: [ TargetVisible, AlliesNearby ]
+  gives: [ AtFlank ]
+  cost: 0.4
+
+# Together these cost less than Close and Strike, so a creature with allies goes to its side first.
+# With no ally near, TakeFlank cannot run and it walks straight in.
+- type: cfGoapAction
+  id: StrikeFlanked
+  step: Strike
+  needs: [ TargetVisible, AtFlank, HasWeapon ]
+  gives: [ TargetHurt ]
+  cost: 0.4
+
+- type: cfGoapAction
+  id: HideAway
+  step: Maneuver
+  maneuver: Hide
+  needsNot: [ TargetVisible ]
+  gives: [ Hiding ]
+
+- type: cfGoapAction
+  id: WaitHidden
+  step: Wait
+  gives: [ Waited ]

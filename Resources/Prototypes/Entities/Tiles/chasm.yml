@@ -7,6 +7,7 @@
     snap:
     - Wall
   components:
+  - type: CFDangerousTile # CarpFinder: advanced NPCs avoid this
   - type: Chasm
   - type: StepTrigger
     requiredTriggeredSpeed: 0

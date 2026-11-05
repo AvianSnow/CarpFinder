@@ -109,7 +109,8 @@ public sealed class CFEffectPipelineTest : GameTest
     [Test]
     public async Task ForceBarrageVolleySpendsOneSlot()
     {
-        await CreateFloor();
+        // The bolts need a clear line, which the area spells' big footprint cannot promise.
+        _map = await CFDevMap.Load(Pair, new Box2i(-1, -1, 5, 2));
         EntityUid caster = default;
         EntityUid target = default;
         EntityUid spell = default;

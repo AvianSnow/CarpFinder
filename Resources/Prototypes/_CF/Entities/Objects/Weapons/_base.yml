@@ -6,6 +6,8 @@
   id: CFBaseWeapon
   categories: [ ForkFiltered ]
   components:
+  - type: CFItemUse
+    uses: Weapon
   - type: MeleeWeapon
     wideAnimationRotation: -135
     attackRate: 1

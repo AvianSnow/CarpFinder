@@ -7,6 +7,7 @@
     snap:
     - Wall
   components:
+  - type: CFDangerousTile # CarpFinder: advanced NPCs avoid this
   - type: TileEmission
     color: "#c906f3"
   - type: StepTrigger

@@ -236,6 +236,15 @@ public sealed partial class CFFlankingSystem : EntitySystem
     /// <summary>
     /// True when <paramref name="attacker"/> is flanking <paramref name="target"/> with an ally.
     /// </summary>
+    /// <summary>
+    /// The hostile creatures inside this one's reach sensor. The physics engine keeps this up to date,
+    /// so it costs nothing to read. Server only.
+    /// </summary>
+    public IReadOnlyCollection<EntityUid> EnemiesInReach(EntityUid uid)
+    {
+        return _overlapping.TryGetValue(uid, out var enemies) ? enemies : Array.Empty<EntityUid>();
+    }
+
     public bool IsOffGuardTo(EntityUid target, EntityUid attacker)
     {
         if (!_net.IsServer)

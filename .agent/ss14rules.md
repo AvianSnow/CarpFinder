@@ -63,6 +63,17 @@ One directed component + event pair. A second subscriber throws `Duplicate Subsc
 - Alt+Z runs the first `AlternativeVerb` on the held item. Set a high `Priority` to come first.
 - An `Entity<T>` handler must take the event by `ref`, whether or not the event is `[ByRefEvent]`. A broadcast handler for a plain class event is by value.
 - In test output, `Skipped` can be a failure from the same run. Run the test alone to see it.
+- A test with no game (plain math) goes in a plain class, not a `GameTest`. Mixed in, it can fail the tests around it with no message.
+- `NPCSteeringSystem.Register` with new coordinates cancels the path, so call it once. `new EntityCoordinates(target, Vector2.Zero)` follows a moving target.
+- Stock gives up on a path for good after three failures, and `SteeringStatus.NoPath` then stops all steering until the NPC is unregistered. HTN's move operator gets replanned. Code that moves an NPC itself has to retry.
+- Lava and chasms are not hard, so stock paths cross them. `IntersectRay` also ignores non-hard fixtures: a ray that must touch them needs `RayCastSystem.CastRayClosest` with `QueryFlags.Sensors`. `LookupFlags.Static` does not find them either. Add `LookupFlags.Sensors`.
+- `SharedTransformSystem.ToCoordinates(mapCoordinates)` parents to the map, and pathfinding only works on grids, so the path fails. Pass the grid: `ToCoordinates(grid, mapCoordinates)`. A path to something in line of sight can hide this.
+- A steering safety radius must stay under 0.5 tiles. The middle of a one-tile doorway is 0.5 from each side, so anything larger overrides the way forward and holds the NPC there.
+- `Vector2.Normalize(Vector2.Zero)` is NaN. In `NPCSteeringComponent.Interest` or `Danger`, stock's blend keeps a NaN forever and the NPC stands still with no error. Check before normalizing.
+- The path graph takes a few seconds to build after a map loads. An NPC test that needs a real path should run ticks first.
+- A map with no `MapAtmosphere` kills low-HP mobs in seconds, with full CF HP: a kobold's bar is only 7. Every map mobs stand on needs the block in `meteor-arena.yml`.
+- An occasional test failure in `SetUp` with `Value cannot be null. (Parameter 'key')` from `PrototypeManager.Freeze` is an engine race. Rerun the test.
+- Prototype kinds go in Shared, even when only the server reads them. The client also reads every prototype file and throws on a kind it does not know. A bare `[Prototype]` names the kind from the class: `CFGoapGoalPrototype` would be `cFGoapGoal`, so name it.
 
 ## Do not use obsolete APIs
 

@@ -595,9 +595,9 @@ Needed by the AI (6b), which has to do everything a player does without clicking
 - [ ] Reactive Strike does not fire on movement, so Step does nothing yet.
 - [ ] The spin, sprite hiding, instrument, Hide verb, Alt+Z and pointing inputs have only been tested through code, not played in a real client.
 
-## Phase 6 — AI: GOAP on top of SS14 HTN
+## Phase 6 — AI: GOAP on top of SS14 HTN (done)
 
-SS14 NPCs run on HTN (`HTNComponent`, compound/primitive tasks, operators, `NPCBlackboard`), with `NPCSteeringSystem` doing context steering (interest/danger directions) over the pathfinder. We **extend, not replace**: existing NPCs keep working, CarpFinder NPCs opt in. All of this is server-only, under `Content.Server/_CF/NPC/`.
+SS14 NPCs run on HTN (`HTNComponent`, compound/primitive tasks, operators, `NPCBlackboard`), with `NPCSteeringSystem` doing context steering (interest/danger directions) over the pathfinder. We **extend, not replace**. Stock HTN stays the AI for simple enemies, including most CF mobs. GOAP is opt-in per prototype, for advanced enemies: mini bosses and special encounters. Do not put it on ordinary CF mobs. All of this is server-only, under `Content.Server/_CF/NPC/`.
 
 Depends on the Phase 5d entry points and on `CFItemUseComponent` (6b). Steering (6a) and influence maps (6c) depend on neither and can start early.
 
@@ -605,65 +605,67 @@ Depends on the Phase 5d entry points and on `CFItemUseComponent` (6b). Steering 
 
 Implement as contributors to SS14's context steering (interest/danger maps, hooked through the steering event) instead of a second movement system, so collisions, doors and pathing keep working.
 
-- [ ] `CFSteeringComponent`: list of weighted `CFSteeringBehavior` data entries, swapped by GOAP actions.
-- [ ] Behaviours: **Seek**, **Flee**, **Arrive** (slow inside radius), **Wander** (jittered circle target), **Pursuit** (seek predicted position from target velocity), **Evade** (flee predicted position), **Cohesion** (toward faction-mates' centre; separation as its negative), **Obstacle Avoidance** (feeler rays into the danger map; reuse what SS14 already does, add only what's missing).
-- [ ] **Vector Field Follow** (used by 6c): interest toward the strongest neighbouring influence cell.
-- [ ] Debug overlay (admin command) drawing interest/danger and active behaviours.
-- [ ] Test: pursuit intercepts a moving dummy faster than seek; flee never ends inside a wall.
+- [x] `CFSteeringComponent`: list of weighted `CFSteeringBehavior` data entries, swapped by GOAP actions.
+- [x] Behaviours: **Seek**, **Flee**, **Arrive** (slow inside radius), **Wander** (jittered circle target), **Pursuit** (seek predicted position from target velocity), **Evade** (flee predicted position), **Cohesion** (toward faction-mates' centre; separation as its negative), **Obstacle Avoidance** (feeler rays into the danger map; reuse what SS14 already does, add only what's missing).
+- [x] **Vector Field Follow** (used by 6c): interest toward the strongest neighbouring influence cell.
+- [ ] Debug overlay for active behaviours. Stock's steering debug already draws interest and danger.
+- [x] Test: pursuit intercepts a moving dummy faster than seek; flee never ends inside a wall.
 
 ### 6b. GOAP planner
 
-- [ ] **AI item tags**: `CFItemUseComponent` describing what an item does in planner terms (`Heals`, `Weapon`, `Ranged`, `Light`, `Key`, `Thrown`, `Consumable`) plus the action that uses it.
-- [ ] **World state**: compact fact set (bitflags + a few numbers) built each think tick by **sensors**: `HealthFraction` (from HP/dying/wounded, the "health tag"), `HasWeapon`, `HasRangedWeapon`, `HasHealingItem`, `TargetVisible`, `TargetInReach`, `KnowsLKP`, `AtLKP`, `ScentNearby`, `AlliesNearby`, `ActionsLeft`, conditions (frightened, off-guard, prone).
-- [ ] **Goals** (`cfGoapGoal` prototypes) with priority from a utility curve over world state: `KillTarget`, `StayAlive` (rises as health falls), `Heal`, `ArmSelf`, `HuntTarget` (lost contact), `Investigate`, `Regroup`, `Idle`.
-- [ ] **Actions** (`cfGoapAction` prototypes): preconditions, effects, cost, and an executor. Executors are either a player action through the 5d entry points (Strike, Raise a Shield, Demoralize, cast a spell, drink potion) or a movement/utility step (`FindItem`, `PickUp`, `UseItem`, `MoveTo`, `FollowScent`, `GoToLKP`, `CheckNode`, `Flee`, `Wander`). The 5d `CanUse` checks become extra preconditions automatically.
-- [ ] **Planner**: backward A* from the goal, depth and node limits, run as a job like SS14's HTN planning so it never blocks a tick. Replan on: goal priority change, plan step failure, or a watched fact flipping (target seen, health threshold crossed).
-- [ ] **HTN bridge**: `CFGoapOperator` (HTN primitive operator) that owns plan → execute → replan. A CarpFinder NPC's root compound task can be "GOAP" alone, or HTN with GOAP inside one branch (e.g. HTN handles idle/patrol, GOAP takes over in combat).
-- [ ] **Item behaviours**: `FindItem(tag)` queries nearby entities with `CFItemUseComponent`, scored by distance and usefulness; `UseItem` runs the item's action.
-- [ ] **Personality** via weights, not code: `cfGoapProfile` scales goal priorities and action costs and overrides steering parameters (see 6f).
+- [x] **AI item tags**: `CFItemUseComponent` describing what an item does in planner terms (`Heals`, `Weapon`, `Ranged`, `Light`, `Key`, `Thrown`, `Consumable`) plus the action that uses it.
+- [x] **World state**: compact fact set (bitflags + a few numbers) built each think tick by **sensors**: `HealthFraction` (from HP/dying/wounded, the "health tag"), `HasWeapon`, `HasRangedWeapon`, `HasHealingItem`, `TargetVisible`, `TargetInReach`, `KnowsLKP`, `AtLKP`, `ScentNearby`, `AlliesNearby`, `ActionsLeft`, conditions (frightened, off-guard, prone).
+- [x] **Goals** (`cfGoapGoal` prototypes) with priority from a utility curve over world state: `KillTarget`, `StayAlive` (rises as health falls), `Heal`, `ArmSelf`, `HuntTarget` (lost contact), `Investigate`, `Regroup`, `Idle`.
+- [x] **Actions** (`cfGoapAction` prototypes): preconditions, effects, cost, and an executor. Executors are either a player action through the 5d entry points (Strike, Raise a Shield, Demoralize, cast a spell, drink potion) or a movement/utility step (`FindItem`, `PickUp`, `UseItem`, `MoveTo`, `FollowScent`, `GoToLKP`, `CheckNode`, `Flee`, `Wander`). The 5d `CanUse` checks become extra preconditions automatically.
+- [x] **Planner**: backward A* from the goal, depth and node limits. It runs inline, not as a job: GOAP NPCs are rare and a plan is small, so a job is not worth it. See the timing test. Replan on: goal priority change, plan step failure, or a watched fact flipping (target seen, health threshold crossed).
+- [x] **HTN bridge**: `CFGoapOperator` (HTN primitive operator) that owns plan → execute → replan. A CarpFinder NPC's root compound task can be "GOAP" alone, or HTN with GOAP inside one branch (e.g. HTN handles idle/patrol, GOAP takes over in combat).
+- [x] **Item behaviours**: `FindItem(tag)` queries nearby entities with `CFItemUseComponent`, scored by distance and usefulness; `UseItem` runs the item's action.
+- [x] **Personality** via weights, not code: `cfGoapProfile` scales goal priorities and action costs and overrides steering parameters (see 6f).
 - [ ] NPCs that cannot stand crawl away (see Known bugs).
-- [ ] NPC detection reads the stealth states from 5b: `TargetVisible` is Observed, `KnowsLKP` covers Hidden, and NPCs use Seek. NPCs can Sneak and Hide through the 5d entry points. This replaces the `ApplyHostileQuery` filter.
-- [ ] Tests: low-health NPC with a potion drinks it; unarmed NPC picks up a nearby weapon before attacking; coward flees at 30% HP.
+- [x] NPC detection reads the stealth states from 5b: `TargetVisible` is Observed, `KnowsLKP` covers Hidden, and NPCs use Seek. NPCs can Sneak and Hide through the 5d entry points. This replaces the `ApplyHostileQuery` filter.
+- [x] Tests: low-health NPC with a potion drinks it; unarmed NPC picks up a nearby weapon before attacking; coward flees at 30% HP.
 
 ### 6c. Influence maps (heatmaps)
 
 Players and other tracked entities "paint" values onto an invisible grid as they move. The tracking AI doesn't pathfind to them: it uses Vector Field Follow, turning toward the highest neighbouring intensity until it reaches the epicentre.
 
-- [ ] `CFInfluenceMapComponent` on each grid (one per map, so Z-levels stay separate). Cell = 1 tile (one 5-ft square). Stored in chunks (e.g. 8×8, like SS14 pathfinding/atmos chunks), allocated only where something has painted.
-- [ ] `CFScentEmitterComponent`: layer (scent, noise, light, threat), strength, radius. Sneak/Hide and conditions scale it (invisible ≠ scentless).
-- [ ] Layers: `Scent` (trail), `Noise` (one-shot spikes from combat, spells, doors), `Threat` (danger for fleeing NPCs), `Ally` (cohesion), `Light` (painted by light sources; stealthy NPCs avoid it, `Shadow` nodes read it).
-- [ ] `CFInfluenceMapSystem`: paint on movement, decay over time, optional cheap diffusion, updated at a fixed rate (e.g. 4 Hz), and only in chunks near awake NPCs. Data lives on the component; the system holds no state.
-- [ ] Paint only walkable cells, so following the gradient naturally goes around walls the way the target did.
-- [ ] Scent entering a portal continues on the linked level.
+- [x] `CFInfluenceMapComponent` on each grid (one per map, so Z-levels stay separate). Cell = 1 tile (one 5-ft square). Stored in chunks (e.g. 8×8, like SS14 pathfinding/atmos chunks), allocated only where something has painted.
+- [x] `CFScentEmitterComponent`: layer (scent, noise, light, threat), strength, radius. Sneak/Hide and conditions scale it (invisible ≠ scentless).
+- [x] Layers: `Scent` (trail), `Noise` (one-shot spikes from melee, shots and speech), `Ally`, `Threat`.
+- [ ] Nothing paints `Threat` yet. Spells and doors make no noise yet.
+- [ ] `Light` layer: not built. Stealthy NPCs cannot avoid light, `Shadow` nodes are placed by mappers only, and darkness is not concealment.
+- [x] `CFInfluenceMapSystem`: paint on movement, decay over time, optional cheap diffusion, updated at a fixed rate (e.g. 4 Hz), and only in chunks near awake NPCs. Data lives on the component; the system holds no state.
+- [x] Paint only walkable cells, so following the gradient naturally goes around walls the way the target did.
+- [ ] Scent entering a portal continues on the linked level. Each level paints its own map, but an NPC does not cross a portal to follow it.
 - [ ] Debug overlay to view layers.
 
 ### 6d. Temporal scent vectors
 
 Each cell (breadcrumb) also stores **when** the target was there and **which way it was heading**.
 
-- [ ] Cell data: `Intensity`, `LastVisit` (`TimeSpan`), `Heading` (normalised velocity), `Emitter` (entity or faction id).
-- [ ] On reaching any cell with scent, the NPC steers along `Heading` (blended with the gradient) instead of crawling the trail backward or toward older crumbs.
-- [ ] Freshness rule: prefer cells with newer `LastVisit` over higher intensity when they disagree, so it never follows an old loop.
+- [x] Cell data: `Intensity`, `LastVisit` (`TimeSpan`), `Heading` (normalised velocity), `Emitter` (entity or faction id).
+- [x] On reaching any cell with scent, the NPC steers along `Heading` (blended with the gradient) instead of crawling the trail backward or toward older crumbs.
+- [x] Freshness rule: prefer cells with newer `LastVisit` over higher intensity when they disagree, so it never follows an old loop.
 - [ ] Survival/Track interaction later: trackers read older or fainter scent; Cover Tracks lowers intensity.
 
 ### 6e. Wayfinding / topological hint nodes
 
 Mappers place hidden **Investigation Nodes** near corners, hiding spots and doorways. When the AI reaches the LKP (last known position) and loses the target, it checks nearby nodes.
 
-- [ ] `CFInvestigationNodeComponent` marker entity (invisible in game, visible in mapping mode): `Weight`, tags (`Closet`, `Corner`, `Doorway`, `Corridor`, `Vent`, `Stairs`, `Shadow`), optional linked nodes (graph edges). `Shadow` can be placed by mappers or auto-flagged when the `Light` layer is low at the node.
-- [ ] LKP stored on the blackboard when sight is lost, with the target's last heading (from 6d).
-- [ ] Node query from LKP: candidates within range and reachable, score = base weight × distance falloff × direction match with last heading × scent bonus × "not checked recently" (per-NPC and per-pack memory). Pick by **weighted random** (`IRobustRandom`) so it isn't predictable.
-- [ ] `CheckNode` GOAP action: go there, Seek (Perception vs Stealth DC), open containers/closets tagged `Closet`, mark the node checked, then pick the next node (graph edge or new query). Give up after N nodes → `Idle` / return to patrol.
-- [ ] Packs split nodes between members instead of all checking the same closet.
-- [ ] Stairs/hole nodes link to the matching node on the next Z-level (Phase 4), so pursuit can continue between floors.
-- [ ] Mapping guide in `.agent/` on where to place nodes.
+- [x] `CFInvestigationNodeComponent` marker entity (invisible in game, visible in mapping mode): `Weight`, tags (`Closet`, `Corner`, `Doorway`, `Corridor`, `Vent`, `Stairs`, `Shadow`), optional linked nodes (graph edges). `Shadow` can be placed by mappers or auto-flagged when the `Light` layer is low at the node.
+- [x] LKP stored on the blackboard when sight is lost, with the target's last heading (from 6d).
+- [x] Node query from LKP: candidates within range and reachable, score = base weight × distance falloff × direction match with last heading × scent bonus × "not checked recently" (per-NPC and per-pack memory). Pick by **weighted random** (`IRobustRandom`) so it isn't predictable.
+- [x] `CheckNode` GOAP action: go there, Seek (Perception vs Stealth DC), open containers/closets tagged `Closet`, mark the node checked, then pick the next node (graph edge or new query). Give up after N nodes → `Idle` / return to patrol.
+- [x] Packs split nodes between members instead of all checking the same closet.
+- [ ] Stairs/hole nodes link to the next Z-level. `linked` exists, but nothing follows it yet, so pursuit stops at the stairs.
+- [x] Mapping guide in `.agent/` on where to place nodes.
 
 ### 6f. Personalities
 
 A personality is one `cfGoapProfile` prototype. It changes numbers (steering parameters, behaviour weights, goal priorities, node scoring) and adds a few **reflex rules** (trigger → behaviour swap). No personality gets its own system or code path.
 
-- [ ] `cfGoapProfile` fields: `MaxSpeed` multiplier, per-behaviour weights and parameters (Arrive deceleration radius, Wander jitter/radius, avoidance spacing, separation, wall-follow), LKP dwell time, LKP keep-out radius, node tag multipliers, goal priority multipliers, reflex list.
-- [ ] `CFSteeringReflex` data: trigger (`NoiseNearby` from the Noise layer, `AllyDown`, `HealthBelow`, `TargetSeen`, `LightOn`) → action (swap behaviour A for B, add weight, force a goal) with a duration.
+- [x] `cfGoapProfile` fields: `MaxSpeed` multiplier, per-behaviour weights and parameters (Arrive deceleration radius, Wander jitter/radius, avoidance spacing, separation, wall-follow), LKP dwell time, LKP keep-out radius, node tag multipliers, goal priority multipliers, reflex list.
+- [x] `CFSteeringReflex` data: trigger (`NoiseNearby` from the Noise layer, `AllyDown`, `HealthBelow`, `TargetSeen`, `LightOn`) → action (swap behaviour A for B, add weight, force a goal) with a duration.
 
 | Personality | Hunting (6c–6e) | Steering | Reflexes / goals |
 |---|---|---|---|
@@ -671,20 +673,38 @@ A personality is one `cfGoapProfile` prototype. It changes numbers (steering par
 | **Stealthy** | Prefers nodes tagged `Shadow`; avoids crossing high-`Light` cells; approaches the LKP along edges | Low `MaxSpeed`; high wall-hugging weight (keeps to walls and edges) | Uses Sneak/Hide actions while moving; may wait at a `Shadow` node to ambush |
 | **Cowardly** | Keeps a large keep-out radius around the LKP (watches it from a distance instead of standing on it) | High Wander jitter (erratic movement) | `NoiseNearby` flips Arrive to Flee for a few seconds; `StayAlive` scaled up; flees at a higher health threshold |
 
-- [ ] Note on "wall hugging": classic Separation pushes away from neighbouring agents. Hugging walls is a separate **wall-follow / edge-attraction** term (interest toward the nearest wall direction, kept at a small offset). Stealthy uses high wall-follow; Separation can still be used to keep a stealthy pack spread out.
-- [ ] Brave's zero avoidance spacing applies to objects and agents, not walls (otherwise it gets stuck on geometry). Collision still stops it; it just doesn't steer away early.
-- [ ] Profiles can be combined with a base creature profile (e.g. "wolf" + "brave"); multipliers stack.
-- [ ] Tests: on the same scent trail, brave reaches the hidden player first; cowardly never enters the LKP keep-out radius and flees from a thrown noise; stealthy's path stays within N tiles of walls and picks the `Shadow` node over an equally close lit one.
+- [x] Note on "wall hugging": classic Separation pushes away from neighbouring agents. Hugging walls is a separate **wall-follow / edge-attraction** term (interest toward the nearest wall direction, kept at a small offset). Stealthy uses high wall-follow; Separation can still be used to keep a stealthy pack spread out.
+- [x] Brave's zero avoidance spacing applies to objects and agents, not walls (otherwise it gets stuck on geometry). Collision still stops it; it just doesn't steer away early.
+- [x] Profiles can be combined with a base creature profile (e.g. "wolf" + "brave"); multipliers stack.
+- [x] Tests: brave prefers the trail, cowardly stays out of its keep-out radius and flees a noise, stealthy prefers the `Shadow` node.
+- [ ] Not tested: a real race on one trail, and a stealthy path measured against the walls.
 
 ### 6g. Verify
 
-- [ ] Scenario test map: player runs a corridor, ducks into a side room and hides in a closet. Expected: NPC follows scent with the right heading, reaches LKP, ranks the side-room closet node highly, Seeks, finds the player. Run it once per personality (6f).
-- [ ] Perf check: 30 NPCs + 10 emitters on a full station, tick cost logged.
+- [x] Scenario test on the dev map, per personality: the target goes undetected, and the NPC goes to the LKP, checks the node, Seeks, and finds them. Cowardly is tested on its keep-out radius instead.
+- [ ] A purpose-built test map with a corridor, side room and closet.
+
+### 6h. Encounters
+
+- [x] `CFEncounterSpawner`: spawns an `encounter` when a player's character comes within `triggerFeet`. As an aghost, VV `encounter`, `mobs` (ids separated by commas), `count`, `triggerFeet`, and `armed` to spawn again.
+- [x] The encounter gives any mob the GOAP brain at spawn, so plain kobolds elsewhere stay on stock HTN.
+- [x] `SmallGroup`: 4 kobolds on one target, in paired slots on opposite sides. `routAt: 0.5` breaks them at half, and they run, then Hide once they cannot see an adventurer.
+- [x] Signals on the spawner, for the multitool: `CFEncounterMemberDied`, `CFEncounterRouted`, `CFEncounterCleared`.
+- [ ] A routed creature only flees directly away. It does not look for cover or a node to hide at.
+- [x] Advanced NPCs move by feelers instead of A*: a three-ray fan along their heading, cast out to `feelerSight` (12 tiles), with obstacles counting inside `feelerLength` (2.5) for the center ray and `feelerSideLength` (1.75) for the side rays at ±30°. Rays touch walls, anything with `CFDangerousTile` (lava, liquid plasma, chasms), and enemies they can detect. An enemy adds interest when chasing and danger when fleeing. Stock pathing is unchanged, and simple mobs still use it.
+- [x] Safety circle (`panicRadius`, 0.42 tiles, and wider when closing on a dangerous tile at speed): a wall, dangerous tile or mob inside it overrides all other steering and snaps the NPC away, with no easing. The current target and enemies being chased do not count. It covers what rays miss, such as sliding alongside lava.
+- [x] The flanking reach sensor feeds the same vectors through `CFFlankingSystem.EnemiesInReach`, covering enemies beside and behind the fan.
+- [x] Feeler safeguards: blocked straight ahead, it turns to the freer side, or right if they balance, so a flat wall cannot freeze it. Danger eases over a few frames so it does not shake along a wall, and snaps at once when something is close. Length scales with speed against `feelerFullSpeed`, so a fast creature sees further, down to `feelerMinLength`.
+- [x] Cooperative steering with flow fields. While a ray to the goal is clear, an NPC heads straight there. When it is blocked, the group's navigator (its first living member, or a lone NPC itself) builds a `CFFlowField`: arrows on each tile out to 20 tiles, with walls and `CFDangerousTile` blocked. Every member reads the arrow under its feet and blends it with its feelers. There is no path to fall behind on, and GOAP no longer uses A* at all.
+- [ ] Doors count as blocked in a field, and nothing opens them. Stock did that from its path code.
+- [ ] A field is built in one go. 20 tiles is a few hundred at most, but a much larger `FieldReach` would want spreading over ticks.
+- [ ] Group memory lives on the spawner, so deleting the spawner mid-fight stops the group sharing a target.
+- [x] Perf check: 30 NPCs + 10 emitters thinking once, on the dev map, cost logged by `ThinkingStaysCheapWithAFullEncounter`.
 
 ## Known bugs
 
 - `GuideEntryPrototypeTests.Validate("Chemicals")` fails with `Hit style update limit. Queued: 1073` from `RecipesContainer`. The guide now has so many recipes that the UI warns while building it, and the test treats that warning as an error. Not investigated further.
-- `CFProneTest.NpcWithNoRoomKeepsTryingToStand` fails now and then. The same error also hit `NpcStandsOnceItHasAnAction`: an NPC's stand-up attempt adds a `StatusEffectContainerComponent` to a mob that is already being deleted, and the assert surfaces in the next test's setup. Left alone on purpose. The planned GOAP AI replaces this behaviour, and NPCs that cannot stand will crawl away instead.
+- `CFProneTest.NpcWithNoRoomKeepsTryingToStand` fails now and then. The same error also hit `NpcStandsOnceItHasAnAction`: an NPC's stand-up attempt adds a `StatusEffectContainerComponent` to a mob that is already being deleted, and the assert surfaces in the next test's setup. Left alone on purpose. It only affects stock NPCs now. GOAP NPCs are the only ones planned to crawl away, and that is not built.
 
 ## Later (after these phases)
 
