@@ -59,6 +59,41 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public bool PointBlank;
 
+    /// <summary>A healer's toolkit used in hand in combat mode heals for one action.</summary>
+    [DataField, AutoNetworkedField]
+    public bool BattleMedicine;
+
+    /// <summary>A successful Tumble Through leaves the enemy off-guard to the tumbler.</summary>
+    [DataField, AutoNetworkedField]
+    public bool TumbleBehind;
+
+    /// <summary>Playing a held instrument performs Courageous Anthem.</summary>
+    [DataField, AutoNetworkedField]
+    public bool Anthem;
+
+    /// <summary>Server-only. When a Bard still playing pays for the next anthem.</summary>
+    public TimeSpan NextAnthem;
+
+    /// <summary>A hit with a hand free leaves the target off-guard.</summary>
+    [DataField, AutoNetworkedField]
+    public bool SnaggingStrike;
+
+    /// <summary>A plain miss with a multiple attack penalty does not add to it.</summary>
+    [DataField, AutoNetworkedField]
+    public bool ExactingStrike;
+
+    /// <summary>A wide swing at one creature with a weapon in each hand Strikes with both.</summary>
+    [DataField, AutoNetworkedField]
+    public bool DoubleSlice;
+
+    /// <summary>A wide swing at one creature with a weapon in each hand Strikes with both, and the second finds it off-guard.</summary>
+    [DataField, AutoNetworkedField]
+    public bool TwinFeint;
+
+    /// <summary>A wide swing at one creature adds a weapon die.</summary>
+    [DataField, AutoNetworkedField]
+    public bool ViciousSwing;
+
     /// <summary>What pointing at an enemy does: a Ranger's prey, a Thaumaturge's or Investigator's mark.</summary>
     [DataField, AutoNetworkedField]
     public CFPointMark PointMark;

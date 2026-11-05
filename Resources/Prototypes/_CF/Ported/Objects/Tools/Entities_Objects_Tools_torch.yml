@@ -22,6 +22,15 @@
   - type: FireVisuals
     sprite: _CP14/Objects/Tools/torch.rsi
     normalState: lit-overlay
+  - type: ToggleableVisuals
+    spriteLayer: null
+    inhandVisuals:
+      left:
+      - state: lit-inhand-left
+        shader: unshaded
+      right:
+      - state: lit-inhand-right
+        shader: unshaded
   - type: GenericVisualizer
     visuals:
       enum.FireplaceFuelVisuals.Status:

@@ -1,10 +1,10 @@
 import sys,glob,os,shutil
-sys.path.insert(0,'/tmp/claude-1000/-home-pontus-projects-CarpFinder/11f1431d-47d0-4779-9f94-ee67937f4092/scratchpad'); import port as P
+sys.path.insert(0,os.path.dirname(os.path.abspath(__file__))); import port as P
 D='Resources/Prototypes/_CF/Entities/Structures/Ported'
 shutil.rmtree(D,ignore_errors=True)
 known=P.known_components(); ids=P.existing_ids()
 print('known',len(known),'Sprite' in known,'PointLight' in known,'Icon' in known)
-B='/home/pontus/projects/crystall-punk-14/Resources/Prototypes/_CP14/'
+B=P.CP14+'/Resources/Prototypes/_CP14/'
 tot=[0,0]
 for d in ['Furniture','Storage','Decorations','Fence','Roof','Windows','Doors','Flora','Walls']:
     for f in sorted(glob.glob(B+'Entities/Structures/'+d+'/**/*.yml',recursive=True)):

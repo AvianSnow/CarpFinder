@@ -10,6 +10,8 @@ Source of rules: https://2e.aonprd.com/ (Remaster). Source of structure and asse
 2. **Item rules before item ports.** If weapons and armor are ported before traits, Bulk and runes exist, every ported prototype has to be edited twice.
 3. **Z-levels last, but independent.** They touch maps and transforms, not combat. They can start any time someone is free. Falling damage uses the Phase 1 damage effect.
 4. **The rest of CP14 comes over too, under PF2e rules (Phase 3b).** Mapping furniture and props can start any time. Items you carry wait for Bulk and price from Phase 2. Nothing is ported that adds a game system PF2e does not have.
+5. **Stock mechanics over HUD buttons (Phase 5).** The custom HUD stays, but anything SS14 already has a mechanic for moves onto it. The AI uses the same entry points, so this comes before it.
+6. **AI last (Phase 6).** GOAP goals like "find a weapon" or "drink a healing potion" need actions it can call and items that say what they are. Steering and influence maps (6a, 6c) depend on neither and can start early. The AI respects Z-levels: one influence grid per map.
 
 ## Rebuild status (read this first)
 
@@ -30,12 +32,12 @@ The other machine's unpushed work was lost, so the items it had were re-imported
 - Build: succeeded after the last C# change.
 - YAML linter: 0 errors apart from "No localization". About 2,300 of those remain, nearly all feats and backgrounds.
 - `CFPortedLockTest` 3 of 3, `CFAfflictionTest` 7 of 7. The other `CFLockTest` tests passed before the last lock data changes.
-- `SpawnAndDirtyAllEntities` still fails, but only on the kobold and `_CE` species sprites, as it did before this work. It last ran before the locks and afflictions landed.
-- **The full CF suite has not been run since the bulk port.** Run it first: `--filter "FullyQualifiedName~Tests.CF"`. Run `SpawnAndDirtyAllEntities` again too.
+- `SpawnAndDirtyAllEntities` passes (5 November 2026, after Phase 5).
+- Full CF suite, `SpawnAndDirtyAllEntities` and the guidebook tests, 5 November 2026: 420 of 422 passed. `RainWatersExposedCrops` showed as skipped and passes alone. `GuideEntryPrototypeTests.Validate("Chemicals")` failed (see Known bugs).
 
 ### Still to do, in order
 
-1. Run the two checks above and fix what they find.
+1. Fix the `Chemicals` guide failure under Known bugs.
 2. Recipes: `python3 .agent/port-scripts/recipes.py` makes 59 more recipes with formulas. The output was removed before the push because it was never linted, so generate it, lint it, then run `CFCraftingTest`. Known limits: stack groups use the plain material, so birch planks do not count. Cooking recipes wait for a station. 73 results are not ported (clothing, backpacks, vials, CP14's key and lock items). 4 need an unported ingredient: Screwdriver, ElfPlushie, AgaricPlushie, SkeletonPlushie.
 3. The Phase 3 weapons mostly have no recipe, because CP14 made them from modular parts. They need recipes of our own.
 4. `Sharp` was dropped from 2 items (the component was renamed upstream). `ToggleableLightVisuals` was dropped from 1. Find the replacements.
@@ -407,8 +409,282 @@ Levels are separate maps in a stack, linked by stairs, ladders and holes. No eng
 - Only creatures fall through holes, not dropped items.
 - Saved `CFStationZLevels.Maps` is runtime data: it is rebuilt on load, not saved.
 
+## Phase 5 — Move actions off the HUD onto stock mechanics (done)
+
+Goal: the custom HUD (`CFGameHud`, `CFRadialMenu`) stays, but holds as little as possible. Anything SS14 already has a mechanic for uses that mechanic, the way empty-hand right-click in combat mode is Shove or Disarm. The wheel is left with spells and the few activities that have no natural stock input. This carries on from Phase 2b, which moved the first set.
+
+Rules for a move:
+
+- Hook the stock event and resolve the PF2e check there (`CFManeuverSystem.OnDisarmAttempt` is the pattern). Stock mobs keep stock behaviour.
+- Never charge a cost or roll in a "could I?" event. See `ss14rules.md`.
+- No new key functions. Alt+Z stays reserved for Swashbuckler finishers.
+- If no stock mechanic fits, use the verb menu. If that is clumsy in a fight, it stays on the wheel.
+- Update the input table in `codebase.md` with each move.
+
+`CFActionPool`, `CFActivity` and `CFRadialSlot` own the action economy. No new action component or budget system replaces them. Reactions stay automatic, resolved in code when triggered.
+
+### 5a. Move these off the wheel
+
+All agreed. Details are in 5b.
+
+| Activity | Mechanic | Notes |
+|---|---|---|
+| Snagging Strike | Rider on a normal Strike | Fighters with the feat, when the other hand is free and the target is in reach |
+| Exacting Strike | Rider on a normal Strike | Fighters with the feat, when the Strike has MAP. A plain miss does not add to MAP |
+| Double Slice | Right-click with a melee weapon in each hand | One target in the arc. Two or more is a normal wide swing |
+| Twin Feint | The same input, for Rogues | |
+| Vicious Swing | Right-click wide swing with one target in the arc | Fighters with the feat. Two or more targets is a normal wide swing |
+| Demoralize | Scream emote in combat mode | Targets the enemy closest to your aim |
+| Feint | Point at an enemy in melee reach in combat mode | Class marks: the first point marks, the second Feints |
+| Confident Finisher | Alt+Z | Already reserved |
+| Inspire Courage | Start playing a held instrument | 1 action, repeating every 12 seconds. Stays on the wheel for a Bard without one |
+| Tumble Behind | Rider on a successful Tumble Through | The enemy is off-guard afterwards. Needs Tumble Through first |
+
+- [x] Move each activity and delete its `CFActivityKind` entry.
+- [x] Remove `CFRadialSlot` from anything moved.
+
+Staying on the wheel: spells, Rage, Flurry of Blows, Spellstrike, Sudden Charge, Point-Blank Stance, Leap, and Courageous Anthem for a Bard with no instrument.
+
+### 5b. Agreed designs
+
+Check Feint, Reposition, Aid, Battle Medicine and Courageous Anthem against Archives of Nethys before building them. Their details below are from memory.
+
+**Fixes to existing activities**
+
+- [x] Exacting Strike: the code also refunds MAP on a critical failure. The rule only refunds a plain failure.
+- [x] Double Slice: the code strikes twice with one weapon. Use one weapon from each hand, combine the damage, apply resistances and precision once, and count it as two attacks for MAP.
+- [x] Twin Feint: the code rolls a Feint and then one Strike. The rule is one Strike with each weapon, with the target automatically off-guard against the second.
+- [x] Inspire Courage: the remaster name is Courageous Anthem. Check the numbers.
+
+**Pointing in combat mode**
+
+- An enemy in melee reach: Feint (1 action).
+- An enemy further away: the class mark.
+- A class with a mark pointing at an enemy in reach: the first point marks, the second Feints.
+- The ground: Seek (1 action).
+- Outside combat mode, pointing at anything but a markable enemy stays a free gesture. Companion orders keep working.
+
+**Vicious Swing** (Fighters with the feat)
+
+- One target in the arc of a right-click wide swing: Vicious Swing. 2 actions, one extra weapon die, counts as two attacks for MAP. `HeavyAttackEvent` carries the targets.
+- Two or more targets: a normal wide swing, so nobody loses it.
+- Fewer than 2 actions, or the flourish already used: a normal wide swing.
+- Any melee weapon works. The feat has no two-handed requirement.
+- A weapon with `Shove` or `Disarm` and no `Sweep` keeps its maneuver, so it cannot use Vicious Swing. This is accepted.
+
+**Demoralize**
+
+- Scream in combat mode. Combat mode turns the character to the cursor, so facing is the aim.
+- Target: the enemy closest to the aim line, within a cone of about 45° and 30 feet, with line of sight. Skip enemies this character demoralized in the last 60 seconds.
+- No valid target: a normal scream that costs nothing. Outside combat mode it is always a normal scream.
+- Only the emote menu triggers it (`PlayEmoteMessage`), so typed roleplay and automatic pain screams never spend an action.
+
+**Tumble Through**
+
+- Keep pushing into an enemy for about half a second while running. It costs 1 action and rolls Acrobatics against their Reflex DC.
+- Success: mob pushing is off for 1.5 seconds, so the creature slides through. Mobs only push each other, so this applies to every creature it meets, not just the target. Tumble Behind applies its rider here.
+- Failure: the creature stops dead, and the action is spent.
+- Walking never tumbles. Retries wait 1 second, as Escape does.
+- Visual cue: the sprite spins a full 360 degrees when the action is performed, so it looks like a tumble and everyone nearby can see it happened.
+
+**Double Slice and Twin Feint**
+
+- Right-click with a melee weapon in each hand. Double Slice for Fighters, Twin Feint for Rogues.
+- One target in the arc triggers it, as with Vicious Swing. Two or more targets is a normal wide swing.
+- A Fighter with both Double Slice and Vicious Swing gets Double Slice while dual wielding.
+
+**Inspire Courage**
+
+- Starting a held instrument (`InstrumentStartMidiEvent`) costs 1 action, and it repeats every 12 seconds while the Bard plays.
+- Stock instruments use a MIDI window, which is awkward in a fight. If that feels bad in play, this stays on the wheel.
+
+**Leap**
+
+- A stock throw (`ThrowingSystem`), as the stock jump does, on a new `CFActLeap` wheel action. `JumpAbilityComponent` is locked to its own system and could not follow Speed.
+- Distance from Speed: 2 tiles at 15 feet or more, 3 tiles at 30 feet or more, no jump below 15 feet.
+- It stays on the wheel, because a jump needs its own input and we add no keys.
+- The vertical part of Leap is roughly covered by the stock climb onto tables, so it needs nothing new.
+- A creature in the air clears a `CFZLevelHole`, and falls if it lands in one.
+
+**Stealth states** (remaster rules)
+
+- A new component on the sneaker holds Observed, Hidden or Undetected for each creature. GOAP reads the same data later.
+- Other players: hide the sprite per viewer on the client. A modified client could reveal hidden players, and that is accepted.
+- A cover calculation is needed, since none exists. Darkness as concealment can wait for the `Light` layer (6c).
+- Build now: the states, player Sneak and Hide, and a filter in `ApplyHostileQuery` so NPCs ignore undetected targets.
+- Wait for GOAP: NPCs searching, following scent and using Seek (6b, 6e). Until then NPCs simply lose an undetected player.
+
+**Sneak**
+
+- Walk while hidden from or undetected by at least one creature.
+- One Sneak every `RegenSeconds` of walking, costing 1 action. The pool refills at that rate, so a creature can keep sneaking but has nothing to spare. Stock walking is already about half the run speed.
+- At the end of each stretch, a secret Stealth check against the Perception DC of each creature it was hidden from or undetected by at the start.
+- Success: undetected. Failure: hidden. Critical failure: observed, but an invisible creature that was hidden stays hidden.
+- No cover or concealment from a creature at the end: automatically observed by it, with no roll. Cover throughout gives +2, greater cover +4. Take Cover does not count.
+- Anything except Hide, Sneak or Step makes it observed, including running. A Strike keeps the target off-guard for that attack first. Speaking or a loud noise drops undetected to hidden.
+
+**Hide**
+
+- A verb on a wall, crate or other cover: 1 action, a secret Stealth check against each observer's Perception DC. Cover gives +2, greater cover +4.
+- Stepping into a closet counts as hiding, which fits the closet search in 6e.
+
+**Treat Wounds and Battle Medicine**
+
+- A new healer's toolkit, because stock `HealingComponent` heals SS14 damage and not CF HP.
+- Outside combat mode: Treat Wounds, with a do-after of about 30 seconds instead of 10 minutes. DC 15, or 20, 30 and 40 at higher Medicine ranks.
+- In combat mode with the feat, use it in hand: Battle Medicine on the nearest hurt ally, for 1 action. A combat-mode click is always a swing, so it cannot be a click. Eight backgrounds grant the feat (`battleMedicine: true`).
+
+**Seek**
+
+- Point at the ground in combat mode: 1 action, a secret Perception check in a 30-foot area.
+- Against Stealth DCs: on a success undetected becomes hidden and hidden becomes observed. On a critical success both become observed. It also finds hazards.
+- Plain examine is free and constant, so it cannot cost an action.
+- This took one marked upstream line in `SharedPointingSystem`.
+
+**Other actions**
+
+- Reposition: stock `MovePulledObject` (Ctrl+right-click) on a grabbed enemy rolls Athletics and costs 1 action. On a critical failure the target shoves the user 5 feet.
+- Recall Knowledge: 1 action, a secret roll, and the result appears in the examine text. It uses the character's best of Arcana, Nature, Occultism, Religion and Society, because creatures have no trait data yet. One try per creature.
+- Aid: spend the action now, and it resolves on the ally's next check within 6 seconds. It rolls the helper's Perception against DC 15, since nothing says which skill fits.
+- Create a Diversion: built like Demoralize. One Deception check against nearby enemies, 4 harder for a minute after any attempt on them. The character is hidden from those it beats for 6 seconds, unless it Hides or Sneaks.
+- Step: nothing to build yet, because Reactive Strike only fires on ranged shots and spells, not movement. Walking counts as Step for stealth.
+
+### 5c. New actions, built on stock mechanics from the start
+
+All agreed. None of these exist yet. Details are in 5b.
+
+| Action | Mechanic |
+|---|---|
+| Sneak | Walk while hidden or undetected |
+| Step | Walking. Nothing to build yet |
+| Reposition | Stock Ctrl+right-click on a grabbed enemy |
+| Treat Wounds, Battle Medicine | Use a new healer's toolkit on a creature |
+| Recall Knowledge | Examine tab on a creature (`GetVerbsEvent<ExamineVerb>`) |
+| Seek | Point at the ground in combat mode |
+| Hide | Verb on cover, or step into a closet |
+| Aid | Verb on an ally |
+| Create a Diversion | Whistle emote in combat mode |
+| Tumble Through | Run into an enemy and keep pushing, then spin the sprite 360 degrees (5b) |
+| Leap | Stock jump, on the wheel (5b) |
+
+Ready is cut: it has no meaning without turns.
+
+- [x] Build each action.
+
+### 5d. Shared entry points
+
+Needed by the AI (6b), which has to do everything a player does without clicking.
+
+- [x] One `CanUse` path per action, for the AI planner and the wheel (`CFManeuverSystem.CanUse` with a `CFBasicAction`). Wheel actions still use `ActionAttemptEvent`, and only Leap reads `CanUse` so far.
+- [x] A way to call each moved action directly, so an NPC does not need a fake input event (`TryUse`, `CFStrikeSystem.TryFeatStrike`).
+
+### 5e. Finish
+
+- [x] Players can find the moved actions, since the wheel no longer lists them: the guidebook page `CFActions`.
+- [x] Integration tests: `CFFeatSwingTest`, `CFSocialActionTest`, `CFTumbleTest`, `CFStealthTest`, `CFSupportActionTest`, and the leap cases in `CFZLevelTest`.
+- [x] Update `ss14.md` (HUD section) and the input table in `codebase.md`.
+
+### Left over from Phase 5
+
+- [ ] Double Slice applies resistances to each Strike. The rule combines the damage first.
+- [ ] Courageous Anthem gives +1 to attacks and melee damage. Ranged damage and saves against fear have no bonus to hook into.
+- [ ] Reposition moves as far as stock allows, up to 10 feet. The rule is 5 feet, 10 on a critical success.
+- [ ] Aid's critical success is always +2. The rule gives more at master and legendary.
+- [ ] Darkness does not count as concealment yet. It waits for the `Light` layer (6c).
+- [ ] Recall Knowledge picks a skill by trait once creatures have trait data.
+- [ ] Treat Wounds always uses the highest DC the healer's rank allows. The rule lets them choose.
+- [ ] Reactive Strike does not fire on movement, so Step does nothing yet.
+- [ ] The spin, sprite hiding, instrument, Hide verb, Alt+Z and pointing inputs have only been tested through code, not played in a real client.
+
+## Phase 6 — AI: GOAP on top of SS14 HTN
+
+SS14 NPCs run on HTN (`HTNComponent`, compound/primitive tasks, operators, `NPCBlackboard`), with `NPCSteeringSystem` doing context steering (interest/danger directions) over the pathfinder. We **extend, not replace**: existing NPCs keep working, CarpFinder NPCs opt in. All of this is server-only, under `Content.Server/_CF/NPC/`.
+
+Depends on the Phase 5d entry points and on `CFItemUseComponent` (6b). Steering (6a) and influence maps (6c) depend on neither and can start early.
+
+### 6a. Steering behaviours (can start now)
+
+Implement as contributors to SS14's context steering (interest/danger maps, hooked through the steering event) instead of a second movement system, so collisions, doors and pathing keep working.
+
+- [ ] `CFSteeringComponent`: list of weighted `CFSteeringBehavior` data entries, swapped by GOAP actions.
+- [ ] Behaviours: **Seek**, **Flee**, **Arrive** (slow inside radius), **Wander** (jittered circle target), **Pursuit** (seek predicted position from target velocity), **Evade** (flee predicted position), **Cohesion** (toward faction-mates' centre; separation as its negative), **Obstacle Avoidance** (feeler rays into the danger map; reuse what SS14 already does, add only what's missing).
+- [ ] **Vector Field Follow** (used by 6c): interest toward the strongest neighbouring influence cell.
+- [ ] Debug overlay (admin command) drawing interest/danger and active behaviours.
+- [ ] Test: pursuit intercepts a moving dummy faster than seek; flee never ends inside a wall.
+
+### 6b. GOAP planner
+
+- [ ] **AI item tags**: `CFItemUseComponent` describing what an item does in planner terms (`Heals`, `Weapon`, `Ranged`, `Light`, `Key`, `Thrown`, `Consumable`) plus the action that uses it.
+- [ ] **World state**: compact fact set (bitflags + a few numbers) built each think tick by **sensors**: `HealthFraction` (from HP/dying/wounded, the "health tag"), `HasWeapon`, `HasRangedWeapon`, `HasHealingItem`, `TargetVisible`, `TargetInReach`, `KnowsLKP`, `AtLKP`, `ScentNearby`, `AlliesNearby`, `ActionsLeft`, conditions (frightened, off-guard, prone).
+- [ ] **Goals** (`cfGoapGoal` prototypes) with priority from a utility curve over world state: `KillTarget`, `StayAlive` (rises as health falls), `Heal`, `ArmSelf`, `HuntTarget` (lost contact), `Investigate`, `Regroup`, `Idle`.
+- [ ] **Actions** (`cfGoapAction` prototypes): preconditions, effects, cost, and an executor. Executors are either a player action through the 5d entry points (Strike, Raise a Shield, Demoralize, cast a spell, drink potion) or a movement/utility step (`FindItem`, `PickUp`, `UseItem`, `MoveTo`, `FollowScent`, `GoToLKP`, `CheckNode`, `Flee`, `Wander`). The 5d `CanUse` checks become extra preconditions automatically.
+- [ ] **Planner**: backward A* from the goal, depth and node limits, run as a job like SS14's HTN planning so it never blocks a tick. Replan on: goal priority change, plan step failure, or a watched fact flipping (target seen, health threshold crossed).
+- [ ] **HTN bridge**: `CFGoapOperator` (HTN primitive operator) that owns plan → execute → replan. A CarpFinder NPC's root compound task can be "GOAP" alone, or HTN with GOAP inside one branch (e.g. HTN handles idle/patrol, GOAP takes over in combat).
+- [ ] **Item behaviours**: `FindItem(tag)` queries nearby entities with `CFItemUseComponent`, scored by distance and usefulness; `UseItem` runs the item's action.
+- [ ] **Personality** via weights, not code: `cfGoapProfile` scales goal priorities and action costs and overrides steering parameters (see 6f).
+- [ ] NPCs that cannot stand crawl away (see Known bugs).
+- [ ] NPC detection reads the stealth states from 5b: `TargetVisible` is Observed, `KnowsLKP` covers Hidden, and NPCs use Seek. NPCs can Sneak and Hide through the 5d entry points. This replaces the `ApplyHostileQuery` filter.
+- [ ] Tests: low-health NPC with a potion drinks it; unarmed NPC picks up a nearby weapon before attacking; coward flees at 30% HP.
+
+### 6c. Influence maps (heatmaps)
+
+Players and other tracked entities "paint" values onto an invisible grid as they move. The tracking AI doesn't pathfind to them: it uses Vector Field Follow, turning toward the highest neighbouring intensity until it reaches the epicentre.
+
+- [ ] `CFInfluenceMapComponent` on each grid (one per map, so Z-levels stay separate). Cell = 1 tile (one 5-ft square). Stored in chunks (e.g. 8×8, like SS14 pathfinding/atmos chunks), allocated only where something has painted.
+- [ ] `CFScentEmitterComponent`: layer (scent, noise, light, threat), strength, radius. Sneak/Hide and conditions scale it (invisible ≠ scentless).
+- [ ] Layers: `Scent` (trail), `Noise` (one-shot spikes from combat, spells, doors), `Threat` (danger for fleeing NPCs), `Ally` (cohesion), `Light` (painted by light sources; stealthy NPCs avoid it, `Shadow` nodes read it).
+- [ ] `CFInfluenceMapSystem`: paint on movement, decay over time, optional cheap diffusion, updated at a fixed rate (e.g. 4 Hz), and only in chunks near awake NPCs. Data lives on the component; the system holds no state.
+- [ ] Paint only walkable cells, so following the gradient naturally goes around walls the way the target did.
+- [ ] Scent entering a portal continues on the linked level.
+- [ ] Debug overlay to view layers.
+
+### 6d. Temporal scent vectors
+
+Each cell (breadcrumb) also stores **when** the target was there and **which way it was heading**.
+
+- [ ] Cell data: `Intensity`, `LastVisit` (`TimeSpan`), `Heading` (normalised velocity), `Emitter` (entity or faction id).
+- [ ] On reaching any cell with scent, the NPC steers along `Heading` (blended with the gradient) instead of crawling the trail backward or toward older crumbs.
+- [ ] Freshness rule: prefer cells with newer `LastVisit` over higher intensity when they disagree, so it never follows an old loop.
+- [ ] Survival/Track interaction later: trackers read older or fainter scent; Cover Tracks lowers intensity.
+
+### 6e. Wayfinding / topological hint nodes
+
+Mappers place hidden **Investigation Nodes** near corners, hiding spots and doorways. When the AI reaches the LKP (last known position) and loses the target, it checks nearby nodes.
+
+- [ ] `CFInvestigationNodeComponent` marker entity (invisible in game, visible in mapping mode): `Weight`, tags (`Closet`, `Corner`, `Doorway`, `Corridor`, `Vent`, `Stairs`, `Shadow`), optional linked nodes (graph edges). `Shadow` can be placed by mappers or auto-flagged when the `Light` layer is low at the node.
+- [ ] LKP stored on the blackboard when sight is lost, with the target's last heading (from 6d).
+- [ ] Node query from LKP: candidates within range and reachable, score = base weight × distance falloff × direction match with last heading × scent bonus × "not checked recently" (per-NPC and per-pack memory). Pick by **weighted random** (`IRobustRandom`) so it isn't predictable.
+- [ ] `CheckNode` GOAP action: go there, Seek (Perception vs Stealth DC), open containers/closets tagged `Closet`, mark the node checked, then pick the next node (graph edge or new query). Give up after N nodes → `Idle` / return to patrol.
+- [ ] Packs split nodes between members instead of all checking the same closet.
+- [ ] Stairs/hole nodes link to the matching node on the next Z-level (Phase 4), so pursuit can continue between floors.
+- [ ] Mapping guide in `.agent/` on where to place nodes.
+
+### 6f. Personalities
+
+A personality is one `cfGoapProfile` prototype. It changes numbers (steering parameters, behaviour weights, goal priorities, node scoring) and adds a few **reflex rules** (trigger → behaviour swap). No personality gets its own system or code path.
+
+- [ ] `cfGoapProfile` fields: `MaxSpeed` multiplier, per-behaviour weights and parameters (Arrive deceleration radius, Wander jitter/radius, avoidance spacing, separation, wall-follow), LKP dwell time, LKP keep-out radius, node tag multipliers, goal priority multipliers, reflex list.
+- [ ] `CFSteeringReflex` data: trigger (`NoiseNearby` from the Noise layer, `AllyDown`, `HealthBelow`, `TargetSeen`, `LightOn`) → action (swap behaviour A for B, add weight, force a goal) with a duration.
+
+| Personality | Hunting (6c–6e) | Steering | Reflexes / goals |
+|---|---|---|---|
+| **Brave** | Checks the LKP briefly (short dwell), then pushes forward along the scent trail using the stored heading. Node search is a fallback only | High `MaxSpeed`; low deceleration on Arrive (barely slows before contact); zero obstacle-avoidance spacing (pushes past objects and through crowds) | `StayAlive` priority scaled down; `HuntTarget` and `KillTarget` scaled up |
+| **Stealthy** | Prefers nodes tagged `Shadow`; avoids crossing high-`Light` cells; approaches the LKP along edges | Low `MaxSpeed`; high wall-hugging weight (keeps to walls and edges) | Uses Sneak/Hide actions while moving; may wait at a `Shadow` node to ambush |
+| **Cowardly** | Keeps a large keep-out radius around the LKP (watches it from a distance instead of standing on it) | High Wander jitter (erratic movement) | `NoiseNearby` flips Arrive to Flee for a few seconds; `StayAlive` scaled up; flees at a higher health threshold |
+
+- [ ] Note on "wall hugging": classic Separation pushes away from neighbouring agents. Hugging walls is a separate **wall-follow / edge-attraction** term (interest toward the nearest wall direction, kept at a small offset). Stealthy uses high wall-follow; Separation can still be used to keep a stealthy pack spread out.
+- [ ] Brave's zero avoidance spacing applies to objects and agents, not walls (otherwise it gets stuck on geometry). Collision still stops it; it just doesn't steer away early.
+- [ ] Profiles can be combined with a base creature profile (e.g. "wolf" + "brave"); multipliers stack.
+- [ ] Tests: on the same scent trail, brave reaches the hidden player first; cowardly never enters the LKP keep-out radius and flees from a thrown noise; stealthy's path stays within N tiles of walls and picks the `Shadow` node over an equally close lit one.
+
+### 6g. Verify
+
+- [ ] Scenario test map: player runs a corridor, ducks into a side room and hides in a closet. Expected: NPC follows scent with the right heading, reaches LKP, ranks the side-room closet node highly, Seeks, finds the player. Run it once per personality (6f).
+- [ ] Perf check: 30 NPCs + 10 emitters on a full station, tick cost logged.
+
 ## Known bugs
 
+- `GuideEntryPrototypeTests.Validate("Chemicals")` fails with `Hit style update limit. Queued: 1073` from `RecipesContainer`. The guide now has so many recipes that the UI warns while building it, and the test treats that warning as an error. Not investigated further.
 - `CFProneTest.NpcWithNoRoomKeepsTryingToStand` fails now and then. The same error also hit `NpcStandsOnceItHasAnAction`: an NPC's stand-up attempt adds a `StatusEffectContainerComponent` to a mob that is already being deleted, and the assert surfaces in the next test's setup. Left alone on purpose. The planned GOAP AI replaces this behaviour, and NPCs that cannot stand will crawl away instead.
 
 ## Later (after these phases)
@@ -419,9 +695,13 @@ Levels are separate maps in a stack, linked by stairs, ladders and holes. No eng
 - Auras and emanations for class features (champion, bard compositions).
 - Class features and feats marked `TBA` turned into effect lists.
 - Persistent damage and resistances/weaknesses everywhere damage is dealt.
+- AI avoids known traps through the `Threat` layer (6c).
+- GOAP for companions and animal companions taking player commands (Command an Animal).
 
 ## Working notes
 
 - Every phase ends with a full build (`dotnet build -c Tools`, errors only) and targeted integration tests.
+- No new key functions and no edits to core input code. If something cannot be reached with stock controls, it goes in the verb menu or on the wheel.
+- AI systems never cheat with omniscience: tracking uses sight, the influence maps, LKP and nodes only.
 - Before subscribing a component and event pair, check `ss14rules.md`: `ProjectileComponent` + `BeforeProjectileHitEvent` already belongs to `CFStrikeSystem`.
 - Imported CP14 code keeps its logic but takes CF names, namespaces and `_CF` folders. Credit CP14 in a header comment where a file is mostly theirs.

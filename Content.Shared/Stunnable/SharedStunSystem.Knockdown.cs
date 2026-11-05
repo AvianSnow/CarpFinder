@@ -110,6 +110,11 @@ public abstract partial class SharedStunSystem
     {
         // hate. let me tell you how much i hate...
         // this may have unforseen consequences. blame scar
+        // CarpFinder: a prone creature being deleted must not stand, or stamina adds a status effect to the dying entity
+        if (TerminatingOrDeleted(entity))
+            return;
+        // CarpFinder end
+
         ForceStandUp((entity.Owner, null), true);
     }
 

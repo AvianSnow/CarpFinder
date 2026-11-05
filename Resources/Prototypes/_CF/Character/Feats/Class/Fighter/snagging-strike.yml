@@ -3,7 +3,7 @@
 - type: cfFeat
   id: CFSnaggingStrike
   name: "Snagging Strike"
-  description: "A Strike. On a hit the target is off-guard until your next turn."
+  description: "Automatic. A Strike that hits while you have a hand free leaves a target in reach of that hand off-guard until your next turn."
   class: Fighter
   level: 1
   traits:

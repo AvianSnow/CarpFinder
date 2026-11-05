@@ -1,0 +1,181 @@
+# One formula per recipe in Crafting/recipes_weapons.yml.
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaDagger
+  name: formula (dagger)
+  components:
+  - type: CFFormula
+    recipes:
+    - Dagger
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaSickle
+  name: formula (sickle)
+  components:
+  - type: CFFormula
+    recipes:
+    - Sickle
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaHatchet
+  name: formula (hatchet)
+  components:
+  - type: CFFormula
+    recipes:
+    - Hatchet
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaLightHammer
+  name: formula (light hammer)
+  components:
+  - type: CFFormula
+    recipes:
+    - LightHammer
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaShovel
+  name: formula (shovel)
+  components:
+  - type: CFFormula
+    recipes:
+    - Shovel
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaSpear
+  name: formula (spear)
+  components:
+  - type: CFFormula
+    recipes:
+    - Spear
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaPick
+  name: formula (pick)
+  components:
+  - type: CFFormula
+    recipes:
+    - Pick
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaScimitar
+  name: formula (scimitar)
+  components:
+  - type: CFFormula
+    recipes:
+    - Scimitar
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaLongsword
+  name: formula (longsword)
+  components:
+  - type: CFFormula
+    recipes:
+    - Longsword
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaRapier
+  name: formula (rapier)
+  components:
+  - type: CFFormula
+    recipes:
+    - Rapier
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaBattleAxe
+  name: formula (battle axe)
+  components:
+  - type: CFFormula
+    recipes:
+    - BattleAxe
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaWarhammer
+  name: formula (warhammer)
+  components:
+  - type: CFFormula
+    recipes:
+    - Warhammer
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaGreatsword
+  name: formula (greatsword)
+  components:
+  - type: CFFormula
+    recipes:
+    - Greatsword
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaBuckler
+  name: formula (buckler)
+  components:
+  - type: CFFormula
+    recipes:
+    - Buckler
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaSteelShield
+  name: formula (steel shield)
+  components:
+  - type: CFFormula
+    recipes:
+    - SteelShield
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaDart
+  name: formula (dart)
+  components:
+  - type: CFFormula
+    recipes:
+    - Dart
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaStaff
+  name: formula (staff)
+  components:
+  - type: CFFormula
+    recipes:
+    - Staff
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaLongbow
+  name: formula (longbow)
+  components:
+  - type: CFFormula
+    recipes:
+    - Longbow
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaArrow
+  name: formula (arrow)
+  components:
+  - type: CFFormula
+    recipes:
+    - Arrow
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaSling
+  name: formula (sling)
+  components:
+  - type: CFFormula
+    recipes:
+    - Sling

@@ -34,7 +34,7 @@ public enum CFManeuver : byte
 
 /// <summary>
 /// Maneuvers done with the hands instead of the action wheel: right-click Shove and Disarm, pulling to Grapple,
-/// moving to Escape, pointing to mark, and the cost of standing up.
+/// moving to Escape, pointing to mark or Feint, and the cost of standing up.
 /// </summary>
 public sealed partial class CFManeuverSystem : EntitySystem
 {
@@ -252,6 +252,8 @@ public sealed partial class CFManeuverSystem : EntitySystem
         if (!_net.IsServer)
             return;
 
+        UpdateTumble();
+
         // NPC steering raises no move input, so grabbed creatures without a player try once in a while.
         var now = _timing.CurTime;
         var grabbed = EntityQueryEnumerator<CFConditionComponent>();
@@ -317,7 +319,7 @@ public sealed partial class CFManeuverSystem : EntitySystem
     private void OnPointedAt(Entity<CFCombatOptionsComponent> ent, ref AfterPointedAtEvent args)
     {
         if (_net.IsServer)
-            TryMark(ent, args.Pointed);
+            PointAt(ent, args.Pointed);
     }
 
     public bool TryMark(Entity<CFCombatOptionsComponent> ent, EntityUid target)

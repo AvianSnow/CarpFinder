@@ -5,6 +5,7 @@ using Content.Server.CF.ZLevels;
 using Content.Shared.GameTicking;
 using Content.Server.Maps;
 using Content.Shared.Atmos.Components;
+using Content.Shared.CF.Actions;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Effects;
@@ -156,6 +157,34 @@ public sealed class CFZLevelTest : GameTest
             Assert.That(MapOf(hero), Is.EqualTo(low));
             Assert.That(Health(hero), Is.EqualTo(Hp - 5), "A 10-foot fall deals 5.");
             Assert.That(SEntMan.HasComponent<KnockedDownComponent>(hero), "Taking fall damage leaves you prone.");
+        });
+    }
+
+    [TestCase(1, true)]
+    [TestCase(2, false)]
+    public async Task ALeapClearsAHoleUnlessItLandsInIt(int holeX, bool clears)
+    {
+        MapId low = default;
+        MapId high = default;
+        EntityUid hero = default;
+        await Server.WaitPost(() =>
+        {
+            low = Level();
+            high = Level();
+            Levels.Combine(new[] { low, high });
+            SEntMan.SpawnAtPosition("CFZLevelHole", At(high, holeX, 0));
+            hero = Hero(high, 0, 0);
+            var transform = SEntMan.System<SharedTransformSystem>();
+            transform.SetWorldRotation(hero, new Vector2(1f, 0f).ToWorldAngle());
+            SEntMan.System<SharedPhysicsSystem>().WakeBody(hero);
+            SEntMan.System<CFActivitySystem>().Leap(hero);
+        });
+
+        await Pair.RunTicksSync(60);
+
+        await Server.WaitAssertion(() =>
+        {
+            Assert.That(MapOf(hero), Is.EqualTo(clears ? high : low));
         });
     }
 

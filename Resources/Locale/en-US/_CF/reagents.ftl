@@ -16,3 +16,6 @@ cf-reagent-name-essence-chaos = essence of chaos
 cf-reagent-desc-essence-chaos = The elemental essence of chaos.
 cf-reagent-name-essence-magic = essence of magic
 cf-reagent-desc-essence-magic = A concentrated essence of magical energy.
+reagent-physical-desc-colorless = colorless
+reagent-physical-desc-sparkling = sparkling
+cp14-flavor-base-salt = salty

@@ -3,6 +3,7 @@ using Content.Shared.CF.Actions;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.DamageTypes;
+using Content.Shared.CF.Detection;
 using Content.Shared.CF.Factions;
 using Content.Shared.CF.Preferences;
 using Content.Shared.CF.Effects;
@@ -54,12 +55,16 @@ public sealed partial class CFStrikeSystem : EntitySystem
     [Dependency] private CFBonusSystem _bonuses = default!;
     [Dependency] private CFWeaponSystem _weapons = default!;
     [Dependency] private CFShieldSystem _shields = default!;
+    [Dependency] private CFStealthSystem _stealth = default!;
     [Dependency] private CFEffectSystem _effects = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private SharedAudioSystem _audio = default!;
 
     /// <summary>Unconscious / dying creatures are off-guard (−4 AC status, simplified).</summary>
     private const int DownedAcPenalty = 4;
+
+    /// <summary>Only has to outlast the Strike that gives the attacker away.</summary>
+    private const float UnseenOffGuardSeconds = 1f;
 
     /// <summary>Stops a reaction Strike from starting another reaction Strike.</summary>
     private int _strikeDepth;
@@ -84,6 +89,9 @@ public sealed partial class CFStrikeSystem : EntitySystem
             _actions.CountAttack(args.User);
             return;
         }
+
+        if (TryFeatSwing(args, stats, weapon.Owner))
+            return;
 
         BeginMeleeStrikes(args.User, args.HitEntities, combat, abilities, stats, weapon.Owner, melee: true);
     }
@@ -110,7 +118,11 @@ public sealed partial class CFStrikeSystem : EntitySystem
             return;
         }
 
-        BeginMeleeStrikes(args.User, args.HitEntities, combat, abilities, UnarmedStats(args.User), weapon.Owner, melee: true);
+        var fist = UnarmedStats(args.User);
+        if (TryFeatSwing(args, fist, weapon.Owner))
+            return;
+
+        BeginMeleeStrikes(args.User, args.HitEntities, combat, abilities, fist, weapon.Owner, melee: true);
     }
 
     /// <summary>
@@ -223,6 +235,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
         // One swing is one attack, even when the arc touches more than one creature.
         var map = _actions.MapPenalty(user, stats.Agile);
         var counted = false;
+        var exacting = targets.Count == 1;
         foreach (var target in targets)
         {
             // Party members never reach AC, the d20, or damage.
@@ -235,7 +248,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
                 counted = true;
             }
 
-            ResolveStrike(user, target, combat, abilities, stats, distanceFeet: 0f, weaponUid, melee, map);
+            ResolveStrike(user, target, combat, abilities, stats, distanceFeet: 0f, weaponUid, melee, map, riders: true, exacting: exacting);
         }
     }
 
@@ -253,7 +266,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
         bool finisher = false,
         int bonusDamage = 0,
         bool countMap = true,
-        int? fixedMap = null)
+        int? fixedMap = null,
+        bool skipPrecision = false)
     {
         if (_strikeDepth > 2)
             return false;
@@ -281,7 +295,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
                 attackPenalty,
                 extraDice,
                 finisher,
-                bonusDamage);
+                bonusDamage,
+                skipPrecision: skipPrecision);
         }
         finally
         {
@@ -418,7 +433,10 @@ public sealed partial class CFStrikeSystem : EntitySystem
         int attackPenalty = 0,
         int extraDice = 0,
         bool finisher = false,
-        int bonusDamage = 0)
+        int bonusDamage = 0,
+        bool riders = false,
+        bool exacting = false,
+        bool skipPrecision = false)
     {
         if (!_factions.CanHarm(user, target))
             return false;
@@ -444,6 +462,14 @@ public sealed partial class CFStrikeSystem : EntitySystem
             return false;
 
         _conditions.NoteAttack(user);
+
+        // A creature that cannot see its attacker is off-guard to this attack. Then everyone sees the attacker.
+        var unseen = !isObject && _stealth.IsUnseenBy(user, target);
+        if (unseen)
+            _conditions.SetOffGuardTo(target, user, UnseenOffGuardSeconds);
+
+        _stealth.Reveal(user);
+
         if (!isObject && TryComp(target, out CFConditionComponent? wardCond) && wardCond.Sanctuary)
         {
             var will = CFDefense.SaveModifier(
@@ -494,7 +520,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
             distanceFeet,
             ignoreVolley);
         attackBonus -= _conditions.Frightened(user);
-        attackBonus += _conditions.ProneAttackPenalty(user);
+        attackBonus += _conditions.ProneAttackPenalty(user) + _conditions.TakeAid(user);
         if (weapon.Ranged)
             attackBonus -= _conditions.Clumsy(user);
 
@@ -526,7 +552,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
             acPenalty = DownedAcPenalty;
         else if (!isObject && _conditions.IsProne(target))
             acPenalty = CFFlanking.OffGuardAcPenalty;
-        else if (melee && !isObject && (_flanking.IsOffGuardTo(target, user) || _conditions.IsOffGuardTo(target, user)))
+        else if ((melee || unseen) && !isObject && (_flanking.IsOffGuardTo(target, user) || _conditions.IsOffGuardTo(target, user)))
             acPenalty = CFFlanking.OffGuardAcPenalty;
 
         var targetAc = defender.ArmorClass - acPenalty - _conditions.Frightened(target) - _conditions.Clumsy(target);
@@ -587,7 +613,10 @@ public sealed partial class CFStrikeSystem : EntitySystem
             }
             else
             {
-                var extra = Precision(user, target, style, melee, isObject, criticalHit) + bonusDamage;
+                var extra = bonusDamage;
+                if (!skipPrecision)
+                    extra += Precision(user, target, style, melee, isObject, criticalHit);
+
                 if (weapon.Traits.Backstabber && !isObject
                     && (_flanking.IsOffGuardTo(target, user) || _conditions.IsOffGuardTo(target, user)))
                     extra += weapon.Potency >= 3 ? 2 : 1;
@@ -639,6 +668,9 @@ public sealed partial class CFStrikeSystem : EntitySystem
 
         if (hit && !alreadyDown)
             ApplyPropertyRunes(user, target, weaponUid, degree);
+
+        if (riders)
+            ApplyRiders(user, target, style, degree, mapPenalty, weaponUid, isObject, exacting);
 
         if (hit && !isObject && !_inChampion)
             ChampionReact(user, target);

@@ -1,5 +1,10 @@
 """CP14 -> CF prototype converter. Applies the rules in .agent/ss14rules.md."""
-import re,sys
+import re,sys,os,glob
+# crystall-punk-14 sits beside this repo on every machine. Set CP14_ROOT if it does not.
+CP14=os.environ.get('CP14_ROOT') or os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)),'..','..','..','crystall-punk-14')).replace(chr(92),'/')
+# Windows glob returns backslashes, and the scripts match paths with forward slashes.
+_glob=glob.glob
+glob.glob=lambda *a,**k:[p.replace(chr(92),'/') for p in _glob(*a,**k)]
 DROP=set('''CP14MeleeSelfDamage CP14SharpeningStone CP14Sharpened CP14ModularCraftStartPoint CP14ModularCraftPart CP14SpellStorage CP14MagicEnergyContainer
 CP14MagicEnergyDraw CP14MagicManacostModify CP14MagicUnsafeDamage CP14MagicUnsafeSleep CP14DoorInteractionPopup CP14WaveShader CP14BonusDistanceMeleeDamage
 CP14MeleeWeaponStaminaCost CP14WeaponChemical CP14Mana CP14MagicEnergyCrystalSlot CP14MagicEnergyExaminable CP14MagicEnergyPhotosynthesis CP14SkillPointConsumable
@@ -128,7 +133,7 @@ def set_parents(b,ps):
     return b2.replace('@@P@@',new)
 def close_parents(ported_dir,deps_file,known):
     """Bring in parents from CP14, and drop parents that cannot exist."""
-    cp=all_entities('/home/pontus/projects/crystall-punk-14/Resources/Prototypes/_CP14')
+    cp=all_entities(CP14+'/Resources/Prototypes/_CP14')
     for _ in range(12):
         have=set(all_entities('Resources/Prototypes'))
         added=[];missing=set()

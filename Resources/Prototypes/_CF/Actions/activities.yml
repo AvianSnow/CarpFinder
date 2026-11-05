@@ -49,26 +49,6 @@
     actions: 1
 
 - type: entity
-  parent: CFActivityTarget
-  id: CFActDemoralize
-  name: Demoralize
-  description: Intimidation against Will. Success frightens the target.
-  components:
-  - type: TargetAction
-    range: 6
-  - type: CFActivity
-    kind: Demoralize
-
-- type: entity
-  parent: CFActivityTarget
-  id: CFActFeint
-  name: Feint
-  description: Deception against Perception. Success makes the target off-guard to you.
-  components:
-  - type: CFActivity
-    kind: Feint
-
-- type: entity
   parent: CFActivityInstant
   id: CFActRage
   name: Rage
@@ -99,41 +79,12 @@
 
 - type: entity
   parent: CFActivityInstant
-  id: CFActInspire
-  name: Inspire Courage
-  description: You and nearby allies gain +1 to attacks and saves for a short while.
+  id: CFActAnthem
+  name: Courageous Anthem
+  description: You and allies within 60 feet gain +1 to attacks and melee damage. Playing a held instrument does the same.
   components:
   - type: CFActivity
-    kind: Inspire
-
-- type: entity
-  parent: CFActivityTarget
-  id: CFActFinisher
-  name: Confident Finisher
-  description: A Strike that spends panache. A miss still deals 2 precision damage.
-  components:
-  - type: CFActivity
-    kind: Finisher
-
-- type: entity
-  parent: CFActivityTarget
-  id: CFActDoubleSlice
-  name: Double Slice
-  description: Two Strikes at your current multiple attack penalty. The second takes -2 if the weapon is not agile.
-  components:
-  - type: CFRadialSlot
-    actions: 2
-  - type: CFActivity
-    kind: DoubleSlice
-
-- type: entity
-  parent: CFActivityTarget
-  id: CFActExactingStrike
-  name: Exacting Strike
-  description: A Strike. If you miss, it does not raise your multiple attack penalty.
-  components:
-  - type: CFActivity
-    kind: ExactingStrike
+    kind: Anthem
 
 - type: entity
   parent: CFActivityTarget
@@ -149,26 +100,6 @@
     kind: SuddenCharge
 
 - type: entity
-  parent: CFActivityTarget
-  id: CFActSnaggingStrike
-  name: Snagging Strike
-  description: A Strike that leaves the target off-guard on a hit.
-  components:
-  - type: CFActivity
-    kind: SnaggingStrike
-
-- type: entity
-  parent: CFActivityTarget
-  id: CFActViciousSwing
-  name: Vicious Swing
-  description: A Strike with an extra damage die. Costs 2 actions.
-  components:
-  - type: CFRadialSlot
-    actions: 2
-  - type: CFActivity
-    kind: ViciousSwing
-
-- type: entity
   parent: CFActivityInstant
   id: CFActPointBlank
   name: Point-Blank Stance
@@ -178,21 +109,14 @@
     kind: PointBlank
 
 - type: entity
-  parent: CFActivityTarget
-  id: CFActTwinFeint
-  name: Twin Feint
-  description: Feint, then Strike. Costs 2 actions.
+  parent: CFActivityInstant
+  id: CFActLeap
+  name: Leap
+  description: Jump the way you are facing. 10 feet, or 15 feet with a Speed of 30 or more.
   components:
-  - type: CFRadialSlot
-    actions: 2
+  - type: Sprite
+    sprite: Interface/Actions/jump.rsi
+    layers:
+    - state: icon
   - type: CFActivity
-    kind: TwinFeint
-
-- type: entity
-  parent: CFActivityTarget
-  id: CFActTumbleBehind
-  name: Tumble Behind
-  description: Acrobatics against Reflex. Success makes the target off-guard to you.
-  components:
-  - type: CFActivity
-    kind: TumbleBehind
+    kind: Leap

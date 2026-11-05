@@ -50,3 +50,24 @@
     level: 3
   - type: CFItemPrice
     copper: 2000 # 20 gp
+
+- type: entity
+  parent: BaseItem
+  id: CFHealersToolkit
+  name: healer's toolkit
+  description: Bandages, herbs and tools. Click a creature to Treat Wounds. With Battle Medicine, use it in hand in combat mode.
+  components:
+  - type: Item
+    size: Normal
+    sprite: Objects/Specific/Medical/firstaidkits.rsi
+    heldPrefix: firstaid
+  - type: Sprite
+    sprite: Objects/Specific/Medical/firstaidkits.rsi
+    state: firstaid
+  - type: CFHealersToolkit
+  - type: CFItem
+    level: 0
+  - type: CFBulk
+    bulk: 1
+  - type: CFItemPrice
+    copper: 500 # 5 gp

@@ -1,6 +1,7 @@
 using Content.Shared.Actions.Events;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Combat;
+using Content.Shared.CF.Detection;
 using Content.Shared.CF.Effects;
 using Content.Shared.CF.Spells;
 using Content.Shared.Interaction.Events;
@@ -23,6 +24,7 @@ namespace Content.Shared.CF.Actions;
 public sealed partial class CFActionPoolSystem : EntitySystem
 {
     [Dependency] private CFShieldSystem _shields = default!;
+    [Dependency] private CFStealthSystem _stealth = default!;
 
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private INetManager _net = default!;
@@ -43,9 +45,10 @@ public sealed partial class CFActionPoolSystem : EntitySystem
             {
                 pool.RegenProgress = 0f;
                 // A full pool is a new turn. MAP does not clear on a partial refill.
-                if (pool.Stamina >= max && pool.MapAttacks != 0)
+                if (pool.Stamina >= max && (pool.MapAttacks != 0 || pool.Flourished))
                 {
                     pool.MapAttacks = 0;
+                    pool.Flourished = false;
                     Dirty(uid, pool);
                     RaiseLocalEvent(uid, new CFTurnRefilledEvent());
                 }
@@ -62,7 +65,11 @@ public sealed partial class CFActionPoolSystem : EntitySystem
             pool.Stamina = Math.Min(max, pool.Stamina + gained);
             var refilled = pool.Stamina >= max;
             if (refilled)
+            {
                 pool.MapAttacks = 0;
+                pool.Flourished = false;
+            }
+
             Dirty(uid, pool);
             if (refilled)
                 RaiseLocalEvent(uid, new CFTurnRefilledEvent());
@@ -143,6 +150,21 @@ public sealed partial class CFActionPoolSystem : EntitySystem
         Dirty(uid, pool);
     }
 
+    /// <summary>Whether a flourish is still available. A creature with no pool always can.</summary>
+    public bool CanFlourish(EntityUid uid)
+    {
+        return !TryComp(uid, out CFActionPoolComponent? pool) || !pool.Flourished;
+    }
+
+    public void MarkFlourish(EntityUid uid)
+    {
+        if (!_net.IsServer || !TryComp(uid, out CFActionPoolComponent? pool))
+            return;
+
+        pool.Flourished = true;
+        Dirty(uid, pool);
+    }
+
     public int ReadyCount(EntityUid uid, CFActionPoolComponent? pool = null)
     {
         if (!Resolve(uid, ref pool, false))
@@ -218,6 +240,7 @@ public sealed partial class CFActionPoolSystem : EntitySystem
             return;
 
         TrySpend(ent, ent.Comp, 1);
+        _stealth.Reveal(ent);
     }
 
     [SubscribeLocalEvent]
@@ -237,6 +260,7 @@ public sealed partial class CFActionPoolSystem : EntitySystem
             return;
 
         TrySpend(args.User, pool, ShotCost(weapon));
+        _stealth.RevealAfterShot(args.User);
     }
 
     /// <summary>A shot is one Strike action plus the weapon's reload (crossbow 1, heavy crossbow 2).</summary>
@@ -266,13 +290,15 @@ public sealed partial class CFActionPoolSystem : EntitySystem
             return;
 
         TrySpend(args.Performer, pool, ActionCount(ent));
+        _stealth.Reveal(args.Performer);
     }
 
     /// <summary>
     /// Spends <paramref name="actions"/> for an activity that is not an action on the wheel (disabling a trap).
     /// A creature without an action pool always can. Shows the usual popup when it cannot afford it.
+    /// Spending gives away a hidden creature, unless <paramref name="stealthy"/> says this is Hide or Sneak.
     /// </summary>
-    public bool TrySpendActions(EntityUid uid, int actions)
+    public bool TrySpendActions(EntityUid uid, int actions, bool stealthy = false)
     {
         if (!TryComp(uid, out CFActionPoolComponent? pool))
             return true;
@@ -284,6 +310,9 @@ public sealed partial class CFActionPoolSystem : EntitySystem
         }
 
         TrySpend(uid, pool, actions);
+        if (!stealthy)
+            _stealth.Reveal(uid);
+
         return true;
     }
 

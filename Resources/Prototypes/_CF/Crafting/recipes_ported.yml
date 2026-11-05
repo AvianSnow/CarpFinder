@@ -1,0 +1,762 @@
+# CP14 workbench recipes. Materials and craft times are CP14's. Stack groups use the plain material.
+
+- type: craftingRecipe
+  id: WeaponShieldWooden
+  tag: CFRecipeAnvil
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 3
+  - !type:CFStackRequirement
+    stack: CFIronBar
+    count: 2
+  result: CFWoodenShield
+
+- type: craftingRecipe
+  id: WeaponTowerShieldWooden
+  tag: CFRecipeAnvil
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 5
+  - !type:CFStackRequirement
+    stack: CFIronBar
+    count: 4
+  result: CFTowerShield
+
+- type: craftingRecipe
+  id: Scissors
+  tag: CFRecipeAnvil
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFIronBar
+    count: 1
+  result: CFScissors
+
+- type: craftingRecipe
+  id: CrossboltIron
+  tag: CFRecipeAnvil
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFIronBar
+    count: 1
+  result: CFBolt
+  resultCount: 5
+
+- type: craftingRecipe
+  id: BaseLightCrossbow
+  tag: CFRecipeAnvil
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFCopperBar
+    count: 1
+  - !type:CFStackRequirement
+    stack: CFIronBar
+    count: 3
+  - !type:CFItemRequirement
+    protoId: CFString
+    count: 1
+  result: CFCrossbow
+
+- type: craftingRecipe
+  id: BaseCrossbow
+  tag: CFRecipeAnvil
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFIronBar
+    count: 5
+  - !type:CFItemRequirement
+    protoId: CFString
+    count: 2
+  result: CFHeavyCrossbow
+
+- type: craftingRecipe
+  id: Fork
+  tag: CFRecipeAnvil
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFIronBar
+    count: 1
+  result: CFFork
+  resultCount: 3
+
+- type: craftingRecipe
+  id: Spoon
+  tag: CFRecipeAnvil
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFIronBar
+    count: 1
+  result: CFSpoon
+  resultCount: 3
+
+- type: craftingRecipe
+  id: SteelGobletCopper
+  tag: CFRecipeAnvil
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFCopperBar
+    count: 1
+  result: CFSteelGobletCopper
+
+- type: craftingRecipe
+  id: SteelGobletIron
+  tag: CFRecipeAnvil
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFIronBar
+    count: 1
+  result: CFSteelGobletIron
+
+- type: craftingRecipe
+  id: SteelGobletGold
+  tag: CFRecipeAnvil
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFGoldBar
+    count: 1
+  result: CFSteelGobletGold
+
+- type: craftingRecipe
+  id: Bucket
+  tag: CFRecipeWorkbench
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 3
+  - !type:CFItemRequirement
+    protoId: CFRope
+    count: 1
+  result: CFBucket
+
+- type: craftingRecipe
+  id: BucketLucens
+  tag: CFRecipeWorkbench
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFLucensWoodenPlanks
+    count: 3
+  - !type:CFItemRequirement
+    protoId: CFRope
+    count: 1
+  result: CFBucketLucens
+
+- type: craftingRecipe
+  id: HandLabeler
+  tag: CFRecipeWorkbench
+  craftTime: 3
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 2
+  - !type:CFItemRequirement
+    protoId: CFCrayonWhite
+    count: 1
+  - !type:CFItemRequirement
+    protoId: CFCrayonBlack
+    count: 1
+  - !type:CFItemRequirement
+    protoId: CFString
+    count: 1
+  - !type:CFItemRequirement
+    protoId: CFPenFeather
+    count: 1
+  result: CFHandLabeler
+
+- type: craftingRecipe
+  id: WoodenBeerMug
+  tag: CFRecipeWorkbench
+  craftTime: 3
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 2
+  result: CFWoodenBeerMug
+
+- type: craftingRecipe
+  id: PlateWooden
+  tag: CFRecipeWorkbench
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 2
+  result: CFPlateWooden
+
+- type: craftingRecipe
+  id: BowlWooden
+  tag: CFRecipeWorkbench
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 2
+  result: CFBowlWooden
+
+- type: craftingRecipe
+  id: Bow
+  tag: CFRecipeWorkbench
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 4
+  - !type:CFItemRequirement
+    protoId: CFString
+    count: 1
+  result: CFShortbow
+
+- type: craftingRecipe
+  id: CrayonWhite
+  tag: CFRecipeWorkbench
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 1
+  - !type:CFItemRequirement
+    protoId: CFCrystalShardQuartz
+    count: 1
+  result: CFCrayonWhite
+
+- type: craftingRecipe
+  id: CrayonRed
+  tag: CFRecipeWorkbench
+  craftTime: 1
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFCrayonWhite
+    count: 1
+  - !type:CFItemRequirement
+    protoId: CFDyeRed
+    count: 1
+  result: CFCrayonRed
+
+- type: craftingRecipe
+  id: CrayonBlue
+  tag: CFRecipeWorkbench
+  craftTime: 1
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFCrayonWhite
+    count: 1
+  - !type:CFItemRequirement
+    protoId: CFDyeBlue
+    count: 1
+  result: CFCrayonBlue
+
+- type: craftingRecipe
+  id: CrayonYellow
+  tag: CFRecipeWorkbench
+  craftTime: 1
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFCrayonWhite
+    count: 1
+  - !type:CFItemRequirement
+    protoId: CFDyeYellow
+    count: 1
+  result: CFCrayonYellow
+
+- type: craftingRecipe
+  id: CrayonGreen
+  tag: CFRecipeWorkbench
+  craftTime: 1
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFCrayonWhite
+    count: 1
+  - !type:CFItemRequirement
+    protoId: CFDyeGreen
+    count: 1
+  result: CFCrayonGreen
+
+- type: craftingRecipe
+  id: CrayonPurple
+  tag: CFRecipeWorkbench
+  craftTime: 1
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFCrayonWhite
+    count: 1
+  - !type:CFItemRequirement
+    protoId: CFDyePurple
+    count: 1
+  result: CFCrayonPurple
+
+- type: craftingRecipe
+  id: FluteInstrument
+  tag: CFRecipeWorkbench
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 1
+  result: CFFluteInstrument
+
+- type: craftingRecipe
+  id: LyraInstrument
+  tag: CFRecipeWorkbench
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 3
+  - !type:CFItemRequirement
+    protoId: CFString
+    count: 2
+  result: CFLyraInstrument
+
+- type: craftingRecipe
+  id: LuteInstrument
+  tag: CFRecipeWorkbench
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 4
+  - !type:CFItemRequirement
+    protoId: CFString
+    count: 1
+  result: CFLuteInstrument
+
+- type: craftingRecipe
+  id: OpenSign
+  tag: CFRecipeWorkbench
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 2
+  result: CFOpenSign
+
+- type: craftingRecipe
+  id: RopeFromCloth
+  tag: CFRecipeWorkbench
+  craftTime: 4
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFCloth
+    count: 2
+  result: CFRope
+
+- type: craftingRecipe
+  id: FloorTileFoundation
+  tag: CFRecipeWorkbench
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFStone
+    count: 1
+  result: CFFloorTileFoundation
+  resultCount: 4
+
+- type: craftingRecipe
+  id: FloorTileMarbleBrick
+  tag: CFRecipeWorkbench
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFMarbleStone
+    count: 1
+  result: CFFloorTileMarbleBrick
+  resultCount: 4
+
+- type: craftingRecipe
+  id: FloorTileMarbleSmallbricks
+  tag: CFRecipeWorkbench
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFMarbleStone
+    count: 1
+  result: CFFloorTileMarbleSmallbricks
+  resultCount: 4
+
+- type: craftingRecipe
+  id: FloorTileStonebricks
+  tag: CFRecipeWorkbench
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFStone
+    count: 1
+  result: CFFloorTileStonebricks
+  resultCount: 4
+
+- type: craftingRecipe
+  id: FloorTileStonebricksSmallCarved
+  tag: CFRecipeWorkbench
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFStone
+    count: 1
+  result: CFFloorTileStonebricksSmallCarved
+  resultCount: 4
+
+- type: craftingRecipe
+  id: FloorTileStonebricksSmallCarved2
+  tag: CFRecipeWorkbench
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFStone
+    count: 1
+  result: CFFloorTileStonebricksSmallCarved2
+  resultCount: 4
+
+- type: craftingRecipe
+  id: FloorTileStonebricksSquareCarved
+  tag: CFRecipeWorkbench
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFStone
+    count: 1
+  result: CFFloorTileStonebricksSquareCarved
+  resultCount: 4
+
+- type: craftingRecipe
+  id: FloorTileOakWoodplanks
+  tag: CFRecipeWorkbench
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 1
+  result: CFFloorTileOakWoodplanks
+  resultCount: 4
+
+- type: craftingRecipe
+  id: FloorTileOakWoodplanksBig
+  tag: CFRecipeWorkbench
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 1
+  result: CFFloorTileOakWoodplanksBig
+  resultCount: 4
+
+- type: craftingRecipe
+  id: FloorTileOakWoodplanksCruciform
+  tag: CFRecipeWorkbench
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 1
+  result: CFFloorTileOakWoodplanksCruciform
+  resultCount: 4
+
+- type: craftingRecipe
+  id: FloorTileOakWoodplanksStairs
+  tag: CFRecipeWorkbench
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 1
+  result: CFFloorTileOakWoodplanksStairs
+  resultCount: 4
+
+- type: craftingRecipe
+  id: FloorTileBirchWoodplanks
+  tag: CFRecipeWorkbench
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFBirchWoodenPlanks
+    count: 1
+  result: CFFloorTileBirchWoodplanks
+  resultCount: 4
+
+- type: craftingRecipe
+  id: FloorTileBirchWoodplanksBig
+  tag: CFRecipeWorkbench
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFBirchWoodenPlanks
+    count: 1
+  result: CFFloorTileBirchWoodplanksBig
+  resultCount: 4
+
+- type: craftingRecipe
+  id: FloorTileBirchWoodplanksCruciform
+  tag: CFRecipeWorkbench
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFBirchWoodenPlanks
+    count: 1
+  result: CFFloorTileBirchWoodplanksCruciform
+  resultCount: 4
+
+- type: craftingRecipe
+  id: FloorTileBirchWoodplanksStairs
+  tag: CFRecipeWorkbench
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFBirchWoodenPlanks
+    count: 1
+  result: CFFloorTileBirchWoodplanksStairs
+  resultCount: 4
+
+- type: craftingRecipe
+  id: HumanPlushie
+  tag: CFRecipeSewing
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFCloth
+    count: 2
+  - !type:CFItemRequirement
+    protoId: CFCotton
+    count: 2
+  result: CFHumanPlushie
+
+- type: craftingRecipe
+  id: DwarfPlushie
+  tag: CFRecipeSewing
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFCloth
+    count: 2
+  - !type:CFItemRequirement
+    protoId: CFCotton
+    count: 1
+  - !type:CFStackRequirement
+    stack: CFStone
+    count: 3
+  result: CFDwarfPlushie
+
+- type: craftingRecipe
+  id: GoblinPlushie
+  tag: CFRecipeSewing
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFCloth
+    count: 2
+  - !type:CFItemRequirement
+    protoId: CFCotton
+    count: 1
+  - !type:CFStackRequirement
+    stack: CFCopperCoin
+    count: 5
+  result: CFGoblinPlushie
+
+- type: craftingRecipe
+  id: TieflingPlushie
+  tag: CFRecipeSewing
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFCloth
+    count: 2
+  - !type:CFItemRequirement
+    protoId: CFCotton
+    count: 1
+  - !type:CFStackRequirement
+    stack: CFAsh
+    count: 3
+  result: CFTieflingPlushie
+
+- type: craftingRecipe
+  id: SilvaPlushie
+  tag: CFRecipeSewing
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFCloth
+    count: 2
+  - !type:CFItemRequirement
+    protoId: CFCotton
+    count: 1
+  - !type:CFStackRequirement
+    stack: CFFloraMaterial
+    count: 3
+  result: CFSilvaPlushie
+
+- type: craftingRecipe
+  id: CarcatPlushie
+  tag: CFRecipeSewing
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFCloth
+    count: 2
+  - !type:CFItemRequirement
+    protoId: CFCotton
+    count: 1
+  - !type:CFItemRequirement
+    protoId: CFWildSage
+    count: 2
+  result: CFCarcatPlushie
+
+- type: craftingRecipe
+  id: FrogPlushie
+  tag: CFRecipeSewing
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFCloth
+    count: 1
+  - !type:CFItemRequirement
+    protoId: CFCotton
+    count: 1
+  - !type:CFItemRequirement
+    protoId: CFDyeGreen
+    count: 1
+  result: CFFrogPlushie
+
+- type: craftingRecipe
+  id: FloorCarpetItemBlue10
+  tag: CFRecipeSewing
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFCloth
+    count: 10
+  - !type:CFItemRequirement
+    protoId: CFString
+    count: 1
+  - !type:CFItemRequirement
+    protoId: CFDyeBlue
+    count: 1
+  result: CFFloorCarpetItemBlue10
+
+- type: craftingRecipe
+  id: FloorCarpetItemRed10
+  tag: CFRecipeSewing
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFCloth
+    count: 10
+  - !type:CFItemRequirement
+    protoId: CFString
+    count: 1
+  - !type:CFItemRequirement
+    protoId: CFDyeRed
+    count: 1
+  result: CFFloorCarpetItemRed10
+
+- type: craftingRecipe
+  id: FloorCarpetItemCyan10
+  tag: CFRecipeSewing
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFCloth
+    count: 10
+  - !type:CFItemRequirement
+    protoId: CFString
+    count: 1
+  - !type:CFItemRequirement
+    protoId: CFDyeBlue
+    count: 1
+  - !type:CFItemRequirement
+    protoId: CFDyeGreen
+    count: 1
+  result: CFFloorCarpetItemCyan10
+
+- type: craftingRecipe
+  id: FloorCarpetItemGreen10
+  tag: CFRecipeSewing
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFCloth
+    count: 10
+  - !type:CFItemRequirement
+    protoId: CFString
+    count: 1
+  - !type:CFItemRequirement
+    protoId: CFDyeGreen
+    count: 1
+  result: CFFloorCarpetItemGreen10
+
+- type: craftingRecipe
+  id: FloorCarpetItemOrange10
+  tag: CFRecipeSewing
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFCloth
+    count: 10
+  - !type:CFItemRequirement
+    protoId: CFString
+    count: 1
+  - !type:CFItemRequirement
+    protoId: CFDyeRed
+    count: 1
+  - !type:CFItemRequirement
+    protoId: CFDyeYellow
+    count: 1
+  result: CFFloorCarpetItemOrange10
+
+- type: craftingRecipe
+  id: FloorCarpetItemPurple10
+  tag: CFRecipeSewing
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFCloth
+    count: 10
+  - !type:CFItemRequirement
+    protoId: CFString
+    count: 1
+  - !type:CFItemRequirement
+    protoId: CFDyePurple
+    count: 1
+  result: CFFloorCarpetItemPurple10
+
+- type: craftingRecipe
+  id: FloorCarpetItemBlack10
+  tag: CFRecipeSewing
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFCloth
+    count: 10
+  - !type:CFItemRequirement
+    protoId: CFString
+    count: 1
+  - !type:CFItemRequirement
+    protoId: CFDyeBlack
+    count: 1
+  result: CFFloorCarpetItemBlack10
+
+- type: craftingRecipe
+  id: FloorCarpetItemYellow10
+  tag: CFRecipeSewing
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFCloth
+    count: 10
+  - !type:CFItemRequirement
+    protoId: CFString
+    count: 1
+  - !type:CFItemRequirement
+    protoId: CFDyeYellow
+    count: 1
+  result: CFFloorCarpetItemYellow10

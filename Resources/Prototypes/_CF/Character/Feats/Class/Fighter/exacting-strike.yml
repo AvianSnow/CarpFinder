@@ -3,7 +3,7 @@
 - type: cfFeat
   id: CFExactingStrike
   name: "Exacting Strike"
-  description: "A Strike. A miss does not raise your multiple attack penalty."
+  description: "Automatic. When you already have a multiple attack penalty, a Strike that misses does not raise it. A critical miss still does."
   class: Fighter
   level: 1
   traits:

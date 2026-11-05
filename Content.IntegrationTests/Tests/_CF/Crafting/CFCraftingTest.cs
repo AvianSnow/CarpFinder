@@ -26,6 +26,14 @@ namespace Content.IntegrationTests.Tests.CF.Crafting;
 [TestOf(typeof(CFWorkbenchSystem))]
 public sealed class CFCraftingTest : GameTest
 {
+    private static readonly string[] Weapons =
+    {
+        "CFDagger", "CFSickle", "CFHatchet", "CFLightHammer", "CFShovel", "CFSpear", "CFPick", "CFScimitar",
+        "CFLongsword", "CFRapier", "CFBattleAxe", "CFWarhammer", "CFGreatsword", "CFBuckler", "CFSteelShield",
+        "CFWoodenShield", "CFTowerShield", "CFDart", "CFStaff", "CFLongbow", "CFShortbow", "CFCrossbow",
+        "CFHeavyCrossbow", "CFSling", "CFArrow", "CFBolt",
+    };
+
     private const int Extreme = 60;
     private const int Tries = 20;
 
@@ -123,6 +131,30 @@ public sealed class CFCraftingTest : GameTest
             Assert.That(CFCraftingRules.RuinedUnits(1), Is.EqualTo(1));
             Assert.That(CFCraftingRules.RuinedUnits(10), Is.EqualTo(1));
             Assert.That(CFCraftingRules.RuinedUnits(11), Is.EqualTo(2));
+        });
+    }
+
+    [Test]
+    public void EveryWeaponHasARecipeAndEveryRecipeAFormula()
+    {
+        var protos = Server.ResolveDependency<IPrototypeManager>();
+        var results = new HashSet<string>();
+        Assert.Multiple(() =>
+        {
+            foreach (var recipe in protos.EnumeratePrototypes<CFCraftingRecipePrototype>())
+            {
+                results.Add(recipe.Result);
+                Assert.That(protos.HasIndex<EntityPrototype>(recipe.Result), $"{recipe.ID} makes an unknown item.");
+
+                // Recipes from this fixture's test prototypes teach through their own test formulas.
+                if (!recipe.ID.StartsWith("CFCraftTest"))
+                    Assert.That(protos.HasIndex<EntityPrototype>($"CFFormula{recipe.ID}"), $"{recipe.ID} has no formula.");
+            }
+
+            foreach (var weapon in Weapons)
+            {
+                Assert.That(results, Does.Contain(weapon));
+            }
         });
     }
 

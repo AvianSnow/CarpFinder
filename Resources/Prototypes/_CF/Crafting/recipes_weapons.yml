@@ -1,0 +1,249 @@
+# Recipes of our own for weapons. CP14 built these from modular parts, so there is no count to copy.
+# Counts follow CP14's anvil shields: bars for the metal, planks for the haft. Level comes from each result's CFItem.
+
+- type: craftingRecipe
+  id: Dagger
+  tag: CFRecipeAnvil
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFIronBar
+    count: 1
+  result: CFDagger
+
+- type: craftingRecipe
+  id: Sickle
+  tag: CFRecipeAnvil
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFIronBar
+    count: 1
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 1
+  result: CFSickle
+
+- type: craftingRecipe
+  id: Hatchet
+  tag: CFRecipeAnvil
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFIronBar
+    count: 1
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 1
+  result: CFHatchet
+
+- type: craftingRecipe
+  id: LightHammer
+  tag: CFRecipeAnvil
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFIronBar
+    count: 1
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 1
+  result: CFLightHammer
+
+- type: craftingRecipe
+  id: Shovel
+  tag: CFRecipeAnvil
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFIronBar
+    count: 1
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 2
+  result: CFShovel
+
+- type: craftingRecipe
+  id: Spear
+  tag: CFRecipeAnvil
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFIronBar
+    count: 1
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 2
+  result: CFSpear
+
+- type: craftingRecipe
+  id: Pick
+  tag: CFRecipeAnvil
+  craftTime: 3
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFIronBar
+    count: 2
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 2
+  result: CFPick
+
+- type: craftingRecipe
+  id: Scimitar
+  tag: CFRecipeAnvil
+  craftTime: 3
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFIronBar
+    count: 2
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 1
+  result: CFScimitar
+
+- type: craftingRecipe
+  id: Longsword
+  tag: CFRecipeAnvil
+  craftTime: 3
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFIronBar
+    count: 2
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 1
+  result: CFLongsword
+
+- type: craftingRecipe
+  id: Rapier
+  tag: CFRecipeAnvil
+  craftTime: 3
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFIronBar
+    count: 2
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 1
+  result: CFRapier
+
+- type: craftingRecipe
+  id: BattleAxe
+  tag: CFRecipeAnvil
+  craftTime: 3
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFIronBar
+    count: 2
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 2
+  result: CFBattleAxe
+
+- type: craftingRecipe
+  id: Warhammer
+  tag: CFRecipeAnvil
+  craftTime: 3
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFIronBar
+    count: 2
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 2
+  result: CFWarhammer
+
+- type: craftingRecipe
+  id: Greatsword
+  tag: CFRecipeAnvil
+  craftTime: 4
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFIronBar
+    count: 4
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 1
+  result: CFGreatsword
+
+- type: craftingRecipe
+  id: Buckler
+  tag: CFRecipeAnvil
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFIronBar
+    count: 1
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 1
+  result: CFBuckler
+
+- type: craftingRecipe
+  id: SteelShield
+  tag: CFRecipeAnvil
+  craftTime: 3
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFIronBar
+    count: 3
+  result: CFSteelShield
+
+- type: craftingRecipe
+  id: Dart
+  tag: CFRecipeAnvil
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFIronBar
+    count: 1
+  result: CFDart
+  resultCount: 5
+
+- type: craftingRecipe
+  id: Staff
+  tag: CFRecipeWorkbench
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 2
+  result: CFStaff
+
+- type: craftingRecipe
+  id: Longbow
+  tag: CFRecipeWorkbench
+  craftTime: 3
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 3
+  - !type:CFItemRequirement
+    protoId: CFString
+    count: 1
+  result: CFLongbow
+
+- type: craftingRecipe
+  id: Arrow
+  tag: CFRecipeWorkbench
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 1
+  result: CFArrow
+  resultCount: 5
+
+- type: craftingRecipe
+  id: Sling
+  tag: CFRecipeLeatherWorking
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFLeather
+    count: 1
+  - !type:CFItemRequirement
+    protoId: CFString
+    count: 1
+  result: CFSling

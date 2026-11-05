@@ -1,0 +1,532 @@
+# One formula per recipe in Crafting/recipes_ported.yml.
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaWeaponShieldWooden
+  name: formula (wooden shield)
+  components:
+  - type: CFFormula
+    recipes:
+    - WeaponShieldWooden
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaWeaponTowerShieldWooden
+  name: formula (tower shield)
+  components:
+  - type: CFFormula
+    recipes:
+    - WeaponTowerShieldWooden
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaScissors
+  name: formula (scissors)
+  components:
+  - type: CFFormula
+    recipes:
+    - Scissors
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaCrossboltIron
+  name: formula (bolt)
+  components:
+  - type: CFFormula
+    recipes:
+    - CrossboltIron
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaBaseLightCrossbow
+  name: formula (crossbow)
+  components:
+  - type: CFFormula
+    recipes:
+    - BaseLightCrossbow
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaBaseCrossbow
+  name: formula (heavy crossbow)
+  components:
+  - type: CFFormula
+    recipes:
+    - BaseCrossbow
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFork
+  name: formula (fork)
+  components:
+  - type: CFFormula
+    recipes:
+    - Fork
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaSpoon
+  name: formula (spoon)
+  components:
+  - type: CFFormula
+    recipes:
+    - Spoon
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaSteelGobletCopper
+  name: formula (copper goblet)
+  components:
+  - type: CFFormula
+    recipes:
+    - SteelGobletCopper
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaSteelGobletIron
+  name: formula (iron goblet)
+  components:
+  - type: CFFormula
+    recipes:
+    - SteelGobletIron
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaSteelGobletGold
+  name: formula (gold goblet)
+  components:
+  - type: CFFormula
+    recipes:
+    - SteelGobletGold
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaBucket
+  name: formula (bucket)
+  components:
+  - type: CFFormula
+    recipes:
+    - Bucket
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaBucketLucens
+  name: formula (lucens bucket)
+  components:
+  - type: CFFormula
+    recipes:
+    - BucketLucens
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaHandLabeler
+  name: formula (hand labeler)
+  components:
+  - type: CFFormula
+    recipes:
+    - HandLabeler
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaWoodenBeerMug
+  name: formula (wooden mug)
+  components:
+  - type: CFFormula
+    recipes:
+    - WoodenBeerMug
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaPlateWooden
+  name: formula (wooden plate)
+  components:
+  - type: CFFormula
+    recipes:
+    - PlateWooden
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaBowlWooden
+  name: formula (wooden bowl)
+  components:
+  - type: CFFormula
+    recipes:
+    - BowlWooden
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaBow
+  name: formula (shortbow)
+  components:
+  - type: CFFormula
+    recipes:
+    - Bow
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaCrayonWhite
+  name: formula (white crayon)
+  components:
+  - type: CFFormula
+    recipes:
+    - CrayonWhite
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaCrayonRed
+  name: formula (red crayon)
+  components:
+  - type: CFFormula
+    recipes:
+    - CrayonRed
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaCrayonBlue
+  name: formula (blue crayon)
+  components:
+  - type: CFFormula
+    recipes:
+    - CrayonBlue
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaCrayonYellow
+  name: formula (yellow crayon)
+  components:
+  - type: CFFormula
+    recipes:
+    - CrayonYellow
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaCrayonGreen
+  name: formula (green crayon)
+  components:
+  - type: CFFormula
+    recipes:
+    - CrayonGreen
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaCrayonPurple
+  name: formula (purple crayon)
+  components:
+  - type: CFFormula
+    recipes:
+    - CrayonPurple
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFluteInstrument
+  name: formula (flute)
+  components:
+  - type: CFFormula
+    recipes:
+    - FluteInstrument
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaLyraInstrument
+  name: formula (lyra)
+  components:
+  - type: CFFormula
+    recipes:
+    - LyraInstrument
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaLuteInstrument
+  name: formula (lute)
+  components:
+  - type: CFFormula
+    recipes:
+    - LuteInstrument
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaOpenSign
+  name: formula (flip sign "Open)
+  components:
+  - type: CFFormula
+    recipes:
+    - OpenSign
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaRopeFromCloth
+  name: formula (rope)
+  components:
+  - type: CFFormula
+    recipes:
+    - RopeFromCloth
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFloorTileFoundation
+  name: formula (foundation floor tile)
+  components:
+  - type: CFFormula
+    recipes:
+    - FloorTileFoundation
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFloorTileMarbleBrick
+  name: formula (marble brick)
+  components:
+  - type: CFFormula
+    recipes:
+    - FloorTileMarbleBrick
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFloorTileMarbleSmallbricks
+  name: formula (marble small brick)
+  components:
+  - type: CFFormula
+    recipes:
+    - FloorTileMarbleSmallbricks
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFloorTileStonebricks
+  name: formula (stonebrick)
+  components:
+  - type: CFFormula
+    recipes:
+    - FloorTileStonebricks
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFloorTileStonebricksSmallCarved
+  name: formula (small carved stonebricks)
+  components:
+  - type: CFFormula
+    recipes:
+    - FloorTileStonebricksSmallCarved
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFloorTileStonebricksSmallCarved2
+  name: formula (small carved stonebricks 2)
+  components:
+  - type: CFFormula
+    recipes:
+    - FloorTileStonebricksSmallCarved2
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFloorTileStonebricksSquareCarved
+  name: formula (square carved stonebricks)
+  components:
+  - type: CFFormula
+    recipes:
+    - FloorTileStonebricksSquareCarved
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFloorTileOakWoodplanks
+  name: formula (oak woodplanks)
+  components:
+  - type: CFFormula
+    recipes:
+    - FloorTileOakWoodplanks
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFloorTileOakWoodplanksBig
+  name: formula (oak big woodplanks)
+  components:
+  - type: CFFormula
+    recipes:
+    - FloorTileOakWoodplanksBig
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFloorTileOakWoodplanksCruciform
+  name: formula (oak cruciform woodplanks)
+  components:
+  - type: CFFormula
+    recipes:
+    - FloorTileOakWoodplanksCruciform
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFloorTileOakWoodplanksStairs
+  name: formula (oak stairs woodplanks)
+  components:
+  - type: CFFormula
+    recipes:
+    - FloorTileOakWoodplanksStairs
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFloorTileBirchWoodplanks
+  name: formula (birch woodplanks)
+  components:
+  - type: CFFormula
+    recipes:
+    - FloorTileBirchWoodplanks
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFloorTileBirchWoodplanksBig
+  name: formula (birch big woodplanks)
+  components:
+  - type: CFFormula
+    recipes:
+    - FloorTileBirchWoodplanksBig
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFloorTileBirchWoodplanksCruciform
+  name: formula (birch cruciform woodplanks)
+  components:
+  - type: CFFormula
+    recipes:
+    - FloorTileBirchWoodplanksCruciform
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFloorTileBirchWoodplanksStairs
+  name: formula (birch stairs woodplanks)
+  components:
+  - type: CFFormula
+    recipes:
+    - FloorTileBirchWoodplanksStairs
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaHumanPlushie
+  name: formula (human plushie)
+  components:
+  - type: CFFormula
+    recipes:
+    - HumanPlushie
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaDwarfPlushie
+  name: formula (dwarf plushie)
+  components:
+  - type: CFFormula
+    recipes:
+    - DwarfPlushie
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaGoblinPlushie
+  name: formula (goblin plushie)
+  components:
+  - type: CFFormula
+    recipes:
+    - GoblinPlushie
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaTieflingPlushie
+  name: formula (tiefling plushie)
+  components:
+  - type: CFFormula
+    recipes:
+    - TieflingPlushie
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaSilvaPlushie
+  name: formula (silva plushie)
+  components:
+  - type: CFFormula
+    recipes:
+    - SilvaPlushie
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaCarcatPlushie
+  name: formula (carcat plushie)
+  components:
+  - type: CFFormula
+    recipes:
+    - CarcatPlushie
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFrogPlushie
+  name: formula (frog plushie)
+  components:
+  - type: CFFormula
+    recipes:
+    - FrogPlushie
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFloorCarpetItemBlue10
+  name: formula (blue carpet)
+  components:
+  - type: CFFormula
+    recipes:
+    - FloorCarpetItemBlue10
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFloorCarpetItemRed10
+  name: formula (red carpet)
+  components:
+  - type: CFFormula
+    recipes:
+    - FloorCarpetItemRed10
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFloorCarpetItemCyan10
+  name: formula (cyan carpet)
+  components:
+  - type: CFFormula
+    recipes:
+    - FloorCarpetItemCyan10
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFloorCarpetItemGreen10
+  name: formula (green carpet)
+  components:
+  - type: CFFormula
+    recipes:
+    - FloorCarpetItemGreen10
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFloorCarpetItemOrange10
+  name: formula (orange carpet)
+  components:
+  - type: CFFormula
+    recipes:
+    - FloorCarpetItemOrange10
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFloorCarpetItemPurple10
+  name: formula (purpule carpet)
+  components:
+  - type: CFFormula
+    recipes:
+    - FloorCarpetItemPurple10
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFloorCarpetItemBlack10
+  name: formula (black carpet)
+  components:
+  - type: CFFormula
+    recipes:
+    - FloorCarpetItemBlack10
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFloorCarpetItemYellow10
+  name: formula (yellow carpet)
+  components:
+  - type: CFFormula
+    recipes:
+    - FloorCarpetItemYellow10

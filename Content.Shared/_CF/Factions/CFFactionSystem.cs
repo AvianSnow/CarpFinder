@@ -1,3 +1,4 @@
+using Content.Shared.CF.Detection;
 using Content.Shared.Examine;
 using Content.Shared.Interaction.Events;
 using Content.Shared.Mobs;
@@ -13,6 +14,7 @@ public sealed partial class CFFactionSystem : EntitySystem
 {
     [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
+    [Dependency] private CFStealthSystem _stealth = default!;
 
     private readonly Dictionary<string, string> _jobFactions = new();
     private readonly List<EntityUid> _hostileRemove = new();
@@ -129,7 +131,7 @@ public sealed partial class CFFactionSystem : EntitySystem
             if (!HasComp<CFFactionComponent>(target))
                 continue;
 
-            if (GetAlliance(owner, target) != CFAlliance.Opposition)
+            if (GetAlliance(owner, target) != CFAlliance.Opposition || IsUndetected(target, owner))
                 _hostileRemove.Add(target);
         }
 
@@ -147,8 +149,14 @@ public sealed partial class CFFactionSystem : EntitySystem
             if (TryComp(other.Owner, out MobStateComponent? state) && state.CurrentState == MobState.Dead)
                 continue;
 
-            if (GetAlliance(owner, other.Owner) == CFAlliance.Opposition)
+            if (GetAlliance(owner, other.Owner) == CFAlliance.Opposition && !IsUndetected(other.Owner, owner))
                 entities.Add(other.Owner);
         }
+    }
+
+    /// <summary>An NPC has to find a creature that is undetected by it before it can target it. See 6b in the roadmap.</summary>
+    private bool IsUndetected(EntityUid target, EntityUid observer)
+    {
+        return _stealth.Detection(target, observer) == CFDetection.Undetected;
     }
 }

@@ -3,7 +3,7 @@
 - type: cfFeat
   id: CFTumbleBehindRogue
   name: "Tumble Behind (Rogue)"
-  description: "Acrobatics against Reflex. Success makes the target off-guard to you."
+  description: "Automatic. When you Tumble Through an enemy by running into it, it is off-guard to you afterwards."
   class: Rogue
   level: 1
   traits:

@@ -3,7 +3,7 @@
 - type: cfFeat
   id: CFViciousSwing
   name: "Vicious Swing"
-  description: "A Strike with one extra damage die. Costs 2 actions."
+  description: "Right-click one creature for a Strike with one extra damage die, two at 10th level and three at 18th. Counts as two attacks. Costs 2 actions. Flourish."
   class: Fighter
   level: 1
   traits:

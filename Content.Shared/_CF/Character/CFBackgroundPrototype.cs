@@ -26,4 +26,8 @@ public sealed partial class CFBackgroundPrototype : IPrototype
 
     [DataField]
     public CFRarity Rarity = CFRarity.Common;
+
+    /// <summary>The one skill feat that does something so far. Others are only named in the description.</summary>
+    [DataField]
+    public bool BattleMedicine;
 }

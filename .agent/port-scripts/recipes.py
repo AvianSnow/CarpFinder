@@ -1,6 +1,7 @@
 """CP14 workbench recipes that resolve here -> craftingRecipe plus a CFFormula item. Prints every skip with its reason."""
 import re,glob,collections,sys,os
-C='/home/pontus/projects/crystall-punk-14/Resources/Prototypes/_CP14'
+sys.path.insert(0,os.path.dirname(os.path.abspath(__file__))); import port as P
+C=P.CP14+'/Resources/Prototypes/_CP14'
 D='Resources/Prototypes/_CF'
 OUT=D+'/Crafting/recipes_ported.yml'; FOUT=D+'/Entities/Objects/Formulas/formulas_ported.yml'
 for f in (OUT,FOUT):

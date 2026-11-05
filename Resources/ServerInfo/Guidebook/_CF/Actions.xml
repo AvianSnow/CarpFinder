@@ -1,0 +1,41 @@
+<Document>
+# Actions and controls
+Most actions use the controls you already have. They are not on the wheel, so this page lists them. Each one costs 1 action unless it says otherwise.
+
+## Fighting
+- [bold]Left-click in combat mode:[/bold] Strike.
+- [bold]Right-click in combat mode:[/bold] a wide swing. With an empty hand, a shield, or a weapon with the shove or disarm trait, it Shoves or Disarms instead. Three shoves in a row knock a target prone.
+- [bold]Pull a living enemy:[/bold] Grapple. Press a move key while grabbed to Escape.
+- [bold]Ctrl and right-click while grabbing an enemy:[/bold] Reposition it.
+- [bold]Run into an enemy and keep pushing:[/bold] Tumble Through. It uses Acrobatics against their Reflex. Walking never tumbles.
+
+## Pointing in combat mode
+- [bold]At an enemy in reach:[/bold] Feint. You need to be trained in Deception. If your class marks enemies, the first point marks and the second Feints.
+- [bold]At an enemy further away:[/bold] your class mark, if you have one.
+- [bold]At the ground:[/bold] Seek. You search a 30-foot area for hidden creatures and traps.
+
+## Emotes in combat mode
+Pick these from the emote wheel. Typing them is only roleplay.
+- [bold]Scream:[/bold] Demoralize the enemy you are aiming at, within 30 feet.
+- [bold]Whistle:[/bold] Create a Diversion. Nearby enemies you fool lose sight of you.
+
+## Staying out of sight
+- [bold]Right-click cover, then Hide:[/bold] you need cover from an enemy to hide from it. Shutting yourself in a closet also works, and costs no action.
+- [bold]Walk while hidden:[/bold] Sneak. It spends an action every couple of seconds, and the result is secret. Running, or doing anything else, gives you away.
+
+## Helping
+- [bold]Click a creature with a healer's toolkit:[/bold] Treat Wounds. It takes 30 seconds and needs training in Medicine.
+- [bold]Use a healer's toolkit in hand in combat mode:[/bold] Battle Medicine on the nearest hurt ally, if you have the feat.
+- [bold]Right-click an ally, then Aid:[/bold] help with their next check.
+- [bold]Examine a creature, then the information icon:[/bold] Recall Knowledge. You get one try per creature.
+
+## Feats that use these controls
+- [bold]Double Slice, Twin Feint:[/bold] right-click one creature with a melee weapon in each hand. 2 actions.
+- [bold]Vicious Swing:[/bold] right-click one creature. 2 actions. With two or more creatures in the arc, it stays a wide swing.
+- [bold]Snagging Strike, Exacting Strike, Tumble Behind:[/bold] these happen on their own.
+- [bold]Confident Finisher:[/bold] Alt and Z with your weapon in hand, aimed at an enemy in reach.
+- [bold]Courageous Anthem:[/bold] play a held instrument, or use the wheel.
+
+## Still on the wheel
+Spells, Leap, Rage, Flurry of Blows, Spellstrike, Sudden Charge, and Point-Blank Stance.
+</Document>

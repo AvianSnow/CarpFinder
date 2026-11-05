@@ -2,7 +2,7 @@
 import re,os,glob,sys,shutil
 sys.path.insert(0,os.path.dirname(__file__))
 import port as P
-CP='/home/pontus/projects/crystall-punk-14/Resources'
+CP=P.CP14+'/Resources'
 C=CP+'/Prototypes/_CP14'
 D='Resources/Prototypes/_CF'
 S=D+'/Entities/Structures/Ported'
@@ -69,6 +69,28 @@ for f in gen():
     if t!=o: open(f,'w').write(t)
 sub('Ported/Objects/Misc/Entities_Objects_Misc_crayons.yml','  - type: Crayon\n    capacity: 15\n','  - type: Crayon\n    selectedState: like\n  - type: LimitedCharges\n    maxCharges: 15\n')
 sub('Ported/Reagents/Reagents_Consumable_Drink_alcohol.yml',r'^    Alcohol:$','    Digestion:',regex=True)
+
+# CP14's ToggleableLightVisuals is the stock ToggleableVisuals. FlammableSystem sets its Enabled data.
+sub('Ported/Objects/Tools/Entities_Objects_Tools_torch.yml','    normalState: lit-overlay'+chr(10),'''    normalState: lit-overlay
+  - type: ToggleableVisuals
+    spriteLayer: null
+    inhandVisuals:
+      left:
+      - state: lit-inhand-left
+        shader: unshaded
+      right:
+      - state: lit-inhand-right
+        shader: unshaded
+''')
+
+# Stock MagicMirror has a required organs list. Without it the scissors fail to read and vanish.
+sub('Ported/Objects/Tools/Entities_Objects_Tools_scissors.yml','  - type: MagicMirror'+chr(10),'''  - type: MagicMirror
+    organs:
+    - Head
+    layers:
+    - Hair
+    - FacialHair
+''')
 
 # Every drink is an exposure to the Alcohol affliction. Stock slurred speech stays as flavour.
 A='      - !type:CFExposeAffliction\n        affliction: Alcohol\n      - !type:Drunk\n        boozePower: 2\n'

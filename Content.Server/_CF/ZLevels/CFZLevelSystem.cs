@@ -16,9 +16,11 @@ using Content.Shared.Station.Components;
 using Content.Shared.Station.Systems;
 using Content.Shared.Teleportation.Components;
 using Content.Shared.Teleportation.Systems;
+using Content.Shared.Throwing;
 using Robust.Shared.EntitySerialization.Systems;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
+using Robust.Shared.Physics.Components;
 using Robust.Shared.Physics.Events;
 
 namespace Content.Server.CF.ZLevels;
@@ -29,9 +31,13 @@ namespace Content.Server.CF.ZLevels;
 /// </summary>
 public sealed partial class CFZLevelSystem : EntitySystem
 {
+    /// <summary>How close to a hole's center a landing has to be to drop in.</summary>
+    private const float HoleLandRange = 0.5f;
+
     [Dependency] private CFActionPoolSystem _actionPool = default!;
     [Dependency] private CFConditionSystem _conditions = default!;
     [Dependency] private CFEffectSystem _effects = default!;
+    [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private LinkedEntitySystem _links = default!;
     [Dependency] private MapLoaderSystem _loader = default!;
     [Dependency] private SharedActionsSystem _actions = default!;
@@ -160,8 +166,17 @@ public sealed partial class CFZLevelSystem : EntitySystem
     [SubscribeLocalEvent]
     private void OnHoleCollide(Entity<CFZLevelHoleComponent> ent, ref StartCollideEvent args)
     {
-        if (HasComp<MobStateComponent>(args.OtherEntity))
+        // A creature in the air clears it. Landing in one is below.
+        if (HasComp<MobStateComponent>(args.OtherEntity) && args.OtherBody.BodyStatus != BodyStatus.InAir)
             Fall(args.OtherEntity);
+    }
+
+    /// <summary>Contact started while it was in the air, so nothing else would drop a creature landing in a hole.</summary>
+    [SubscribeLocalEvent]
+    private void OnCreatureLand(Entity<CFCombatantComponent> ent, ref LandEvent args)
+    {
+        if (_lookup.GetEntitiesInRange<CFZLevelHoleComponent>(_transform.GetMapCoordinates(ent), HoleLandRange).Count > 0)
+            Fall(ent);
     }
 
     /// <summary>

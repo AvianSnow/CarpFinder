@@ -7,6 +7,7 @@ using System.Numerics;
 using Content.Shared.CF.Actions;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Checks;
+using Content.Shared.CF.Detection;
 using Content.Shared.CF.Effects;
 using Content.Shared.CF.Items;
 using Content.Shared.CF.Preferences;
@@ -47,8 +48,12 @@ public sealed partial class CFConditionSystem : EntitySystem
     [Dependency] private CFBonusSystem _bonuses = default!;
     [Dependency] private CFArmorSystem _armor = default!;
     [Dependency] private CFEncumbranceSystem _encumbrance = default!;
+    [Dependency] private CFStealthSystem _stealth = default!;
 
     private const float TurnSeconds = 6f;
+
+    /// <summary>The flat check to affect a hidden creature.</summary>
+    public const int HiddenFlatCheck = 11;
 
     public override void Update(float frameTime)
     {
@@ -344,6 +349,9 @@ public sealed partial class CFConditionSystem : EntitySystem
         if (TryComp(target, out CFConditionComponent? cond) && cond.Concealed)
             dc = Math.Max(dc, cond.FlatCheckDc);
 
+        if (_stealth.IsUnseenBy(target, attacker))
+            dc = Math.Max(dc, HiddenFlatCheck);
+
         if (dc <= 0)
             return true;
 
@@ -437,6 +445,76 @@ public sealed partial class CFConditionSystem : EntitySystem
         Dirty(target, cond);
     }
 
+    /// <summary>Holds help for this creature's next check. It fades after a turn if nothing uses it.</summary>
+    public void SetAid(EntityUid uid, int bonus)
+    {
+        var cond = Ensure(uid);
+        cond.AidBonus = bonus;
+        cond.AidUntil = _timing.CurTime + TimeSpan.FromSeconds(TurnSeconds);
+    }
+
+    /// <summary>Uses up any help waiting for this creature, and returns the bonus for this check.</summary>
+    public int TakeAid(EntityUid uid)
+    {
+        if (!TryComp(uid, out CFConditionComponent? cond) || cond.AidBonus == 0)
+            return 0;
+
+        var bonus = _timing.CurTime < cond.AidUntil ? cond.AidBonus : 0;
+        cond.AidBonus = 0;
+        return bonus;
+    }
+
+    public bool CanRecall(EntityUid user, EntityUid target)
+    {
+        return !TryComp(user, out CFConditionComponent? cond) || !cond.Recalled.Contains(target);
+    }
+
+    public void NoteRecall(EntityUid user, EntityUid target)
+    {
+        Ensure(user).Recalled.Add(target);
+    }
+
+    public bool IsGrabbing(EntityUid user, EntityUid target)
+    {
+        return TryComp(target, out CFConditionComponent? cond)
+               && cond.Grabbed
+               && TryComp(target, out PullableComponent? pullable)
+               && pullable.Puller == user;
+    }
+
+    public int PerceptionModifier(EntityUid uid)
+    {
+        return CFDefense.PerceptionModifier(
+            _prototypes,
+            CompOrNull<CFCombatantComponent>(uid),
+            CompOrNull<CFAbilityScoreComponent>(uid),
+            DefenseStatus(uid, CFDefenseType.Perception),
+            Frightened(uid));
+    }
+
+    public int PerceptionDc(EntityUid uid)
+    {
+        return 10 + PerceptionModifier(uid);
+    }
+
+    /// <summary>10 plus the creature's Stealth, for anyone looking for it.</summary>
+    public int StealthDc(EntityUid uid)
+    {
+        if (!TryComp(uid, out CFCombatantComponent? combat) || !TryComp(uid, out CFAbilityScoreComponent? abilities))
+            return 10;
+
+        var mod = CFDefense.SkillModifier(_prototypes, combat, abilities, "Stealth", CFAbility.Dexterity, 0, Frightened(uid));
+        return 10 + mod + _armor.CheckPenalty(uid, "Stealth", CFAbility.Dexterity, false) - Clumsy(uid);
+    }
+
+    /// <summary>Whether this creature has already faced down the user within the last minute.</summary>
+    public bool CanDemoralize(EntityUid user, EntityUid target)
+    {
+        return !TryComp(target, out CFConditionComponent? cond)
+               || !cond.DemoralizedUntil.TryGetValue(user, out var until)
+               || until <= _timing.CurTime;
+    }
+
     public bool TryDemoralize(EntityUid user, EntityUid target, int circumstance = 0)
     {
         if (!TryComp(user, out CFCombatantComponent? combat) || !TryComp(user, out CFAbilityScoreComponent? abilities))
@@ -505,6 +583,9 @@ public sealed partial class CFConditionSystem : EntitySystem
         var degree = CFDefense.Roll(_random, skill, dc);
         if (degree is not (CFDegree.Success or CFDegree.CriticalSuccess))
         {
+            if (degree == CFDegree.CriticalFailure)
+                SetOffGuardTo(user, target, TurnSeconds);
+
             _popup.PopupEntity(Loc.GetString("cf-act-feint-fail"), user, user);
             return false;
         }
@@ -548,7 +629,7 @@ public sealed partial class CFConditionSystem : EntitySystem
             return CFDegree.Failure;
 
         var mod = CFDefense.SkillModifier(_prototypes, combat, abilities, skill, ability, itemBonus, Frightened(user));
-        mod += _armor.CheckPenalty(user, skill, ability, attackTrait);
+        mod += _armor.CheckPenalty(user, skill, ability, attackTrait) + TakeAid(user);
         if (ability == CFAbility.Dexterity)
             mod -= Clumsy(user);
 
@@ -581,7 +662,7 @@ public sealed partial class CFConditionSystem : EntitySystem
         else
             mod -= Frightened(user);
 
-        mod += _armor.CheckPenalty(user, skill, ability, attackTrait);
+        mod += _armor.CheckPenalty(user, skill, ability, attackTrait) + TakeAid(user);
         if (ability == CFAbility.Dexterity)
             mod -= Clumsy(user);
 

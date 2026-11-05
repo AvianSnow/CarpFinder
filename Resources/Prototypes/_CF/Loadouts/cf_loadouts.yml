@@ -33,6 +33,11 @@
     - CFThievesToolkit
 
 - type: loadout
+  id: CFLoadoutHealersToolkit
+  inhand:
+    - CFHealersToolkit
+
+- type: loadout
   id: CFLoadoutCrowbar
   inhand:
     - CFCrowbar
@@ -227,6 +232,7 @@
   loadouts:
     - CFLoadoutHealingPotion
     - CFLoadoutThievesToolkit
+    - CFLoadoutHealersToolkit
     - CFLoadoutCrowbar
     - CFLoadoutCrowbarLevered
     - CFLoadoutBasicCraftersBook

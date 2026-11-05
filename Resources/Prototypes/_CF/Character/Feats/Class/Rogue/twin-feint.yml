@@ -3,7 +3,7 @@
 - type: cfFeat
   id: CFTwinFeint
   name: "Twin Feint"
-  description: "Feint, then Strike. Costs 2 actions."
+  description: "Right-click one creature with a melee weapon in each hand: one Strike with each. The target is off-guard against the second. Costs 2 actions."
   class: Rogue
   level: 1
   traits:

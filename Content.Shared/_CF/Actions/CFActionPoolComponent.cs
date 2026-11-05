@@ -37,6 +37,10 @@ public sealed partial class CFActionPoolComponent : Component
     [DataField, AutoNetworkedField]
     public int MapAttacks;
 
+    /// <summary>A flourish action was used since this pool was last full. Only one is allowed.</summary>
+    [DataField, AutoNetworkedField]
+    public bool Flourished;
+
     /// <summary>The creature this one last Struck at, for the sweep trait. Only meaningful while <see cref="MapAttacks"/> is above 0.</summary>
     public EntityUid? LastStrikeTarget;
 

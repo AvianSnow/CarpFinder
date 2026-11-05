@@ -1,9 +1,9 @@
 import sys,glob,os,shutil,re
-sys.path.insert(0,'/tmp/claude-1000/-home-pontus-projects-CarpFinder/11f1431d-47d0-4779-9f94-ee67937f4092/scratchpad'); import port as P
+sys.path.insert(0,os.path.dirname(os.path.abspath(__file__))); import port as P
 D='Resources/Prototypes/_CF/Ported'
 shutil.rmtree(D,ignore_errors=True)
 known=P.known_components(); keys=P.existing_keys()
-B='/home/pontus/projects/crystall-punk-14/Resources/Prototypes/_CP14/'
+B=P.CP14+'/Resources/Prototypes/_CP14/'
 def food_fix(b):
     b=P.drop_component(b,'SliceableFood')
     b=P.drop_component(b,'FoodSequenceElement')
@@ -42,7 +42,7 @@ tot=[0,0]
 def run(pattern,dst,skip=(),extra=None):
     for f in sorted(glob.glob(B+pattern,recursive=True)):
         if any(s in f for s in skip): continue
-        k,x=P.port_file2(f,D+'/'+dst+'/'+os.path.relpath(f,B).replace('/','_'),known,keys,extra); tot[0]+=k; tot[1]+=x
+        k,x=P.port_file2(f,D+'/'+dst+'/'+f[len(B):].replace('/','_'),known,keys,extra); tot[0]+=k; tot[1]+=x
 run('Stacks/*.yml','Stacks',('coins','stack_groups','medical'))
 run('Materials/*.yml','Materials')
 run('Flavors/*.yml','Flavors')

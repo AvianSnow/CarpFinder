@@ -13,3 +13,6 @@ cf-damage-mental = mental
 cf-damage-spirit = spirit
 cf-damage-poison = poison
 cf-damage-bleed = bleed
+cf-biological = biological
+cf-biological-anaerobic = anaerobic biological
+cf-spectral = spectral

@@ -22,7 +22,7 @@
 - type: adventureSite
   id: Cave
   layout: CFLayoutCave
-  wall: CFSiteWallStone
+  wall: CFWallStone
   encounters:
   - Low
   - Moderate
@@ -40,16 +40,6 @@
   hazards:
   - CFSpikeTrapMonster
   hazardCount: 3
-
-# Uses a stock damage set: CFRockStructural is part of the materials port on another branch.
-# Once that lands, the site can use CFWallStone directly.
-- type: entity
-  parent: CFWallStone
-  id: CFSiteWallStone
-  suffix: Adventure site
-  components:
-  - type: Damageable
-    damageModifierSet: Rock
 
 - type: entity
   parent: PortalBlue

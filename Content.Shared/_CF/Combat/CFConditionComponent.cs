@@ -21,6 +21,14 @@ public sealed partial class CFConditionComponent : Component
     [DataField, AutoNetworkedField]
     public bool Concealed;
 
+    /// <summary>Waiting for this creature's next check. Negative when the help went wrong.</summary>
+    public int AidBonus;
+
+    public TimeSpan AidUntil;
+
+    /// <summary>Creatures this one has tried to Recall Knowledge on.</summary>
+    public HashSet<EntityUid> Recalled = new();
+
     /// <summary>Flat check a creature must pass to affect this one. 5 is concealed. 11 is hidden.</summary>
     [DataField, AutoNetworkedField]
     public int FlatCheckDc;

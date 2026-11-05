@@ -260,4 +260,49 @@ public sealed class CFManeuverTest : GameTest
             Assert.That(Conditions.ProneAttackPenalty(hero), Is.Zero, "Circumstance penalties do not stack.");
         });
     }
+
+    [Test]
+    public async Task StandingCostsOneActionAndWaitsForIt()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint, avoidStructures: true);
+        EntityUid rested = default;
+        EntityUid spent = default;
+        await Server.WaitAssertion(() =>
+        {
+            rested = ProneWith(0, 3f);
+            spent = ProneWith(4, 0f);
+        });
+
+        // KnockProne locks a creature down for 3 seconds, and stock takes 2 more to get up.
+        await Pair.RunSeconds(7);
+
+        await Server.WaitAssertion(() =>
+        {
+            Assert.That(Conditions.IsProne(rested), Is.False);
+            Assert.That(SEntMan.GetComponent<CFActionPoolComponent>(rested).Stamina, Is.EqualTo(2f));
+            Assert.That(Conditions.IsProne(spent), "With no action left, the stand waits.");
+        });
+    }
+
+    [Test]
+    public async Task DeletingAProneCreatureLogsNoError()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            var hero = Mob("CFManeuverHero", 0);
+            Conditions.KnockProne(hero);
+            SEntMan.DeleteEntity(hero);
+        });
+    }
+
+    private EntityUid ProneWith(int x, float stamina)
+    {
+        var mob = Mob("CFManeuverHero", x);
+        var pool = SEntMan.EnsureComponent<CFActionPoolComponent>(mob);
+        pool.Stamina = stamina;
+        pool.RegenSeconds = 1000f;
+        Conditions.KnockProne(mob);
+        return mob;
+    }
 }

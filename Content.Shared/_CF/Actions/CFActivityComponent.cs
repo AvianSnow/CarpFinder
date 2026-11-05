@@ -5,21 +5,13 @@ namespace Content.Shared.CF.Actions;
 
 public enum CFActivityKind : byte
 {
-    Demoralize,
-    Feint,
     Rage,
     Flurry,
     Spellstrike,
-    Inspire,
-    Finisher,
-    DoubleSlice,
-    ExactingStrike,
+    Anthem,
     SuddenCharge,
-    SnaggingStrike,
-    ViciousSwing,
     PointBlank,
-    TwinFeint,
-    TumbleBehind,
+    Leap,
 }
 
 /// <summary>

@@ -28,6 +28,7 @@
   id: cf-background-acupuncturist
   name: "Acupuncturist"
   description: "Trained in Medicine. Lore: Acupuncture Lore. Skill feat: Battle Medicine."
+  battleMedicine: true
   rarity: Uncommon
   trainedSkills:
     - Medicine
@@ -1049,6 +1050,7 @@
   id: cf-background-field-medic
   name: "Field Medic"
   description: "Trained in Medicine. Lore: Warfare Lore. Skill feat: Battle Medicine."
+  battleMedicine: true
   trainedSkills:
     - Medicine
     - Lore
@@ -1633,6 +1635,7 @@
   id: cf-background-lastwall-survivor
   name: "Lastwall Survivor"
   description: "Trained in Medicine. Lore: Undead Lore. Skill feat: Battle Medicine."
+  battleMedicine: true
   trainedSkills:
     - Medicine
     - Lore
@@ -2045,6 +2048,7 @@
   id: cf-background-once-bitten
   name: "Once Bitten"
   description: "Trained in Medicine. Lore: Undead. Skill feat: Battle Medicine."
+  battleMedicine: true
   trainedSkills:
     - Medicine
     - Lore
@@ -2637,6 +2641,7 @@
   id: cf-background-sarkorian-reclaimer
   name: "Sarkorian Reclaimer"
   description: "Trained in Medicine. Lore: Abyssal Lore. Skill feat: Battle Medicine."
+  battleMedicine: true
   trainedSkills:
     - Medicine
     - Lore
@@ -2725,6 +2730,7 @@
   id: cf-background-school-medic
   name: "School Medic"
   description: "Trained in Medicine. Lore: Academia Lore. Skill feat: Battle Medicine."
+  battleMedicine: true
   rarity: Uncommon
   trainedSkills:
     - Medicine
@@ -2760,6 +2766,7 @@
   id: cf-background-secular-medic
   name: "Secular Medic"
   description: "Trained in Medicine. Lore: Anatomy Lore. Skill feat: Battle Medicine."
+  battleMedicine: true
   trainedSkills:
     - Medicine
     - Lore
@@ -3156,6 +3163,7 @@
   id: cf-background-tech-reliant
   name: "Tech-Reliant"
   description: "Trained in Crafting and Medicine. Skill feat: Battle Medicine."
+  battleMedicine: true
   rarity: Rare
   trainedSkills:
     - Crafting

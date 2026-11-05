@@ -269,10 +269,11 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         CFClassPrototype? cls,
         List<CFFeatPrototype> feats)
     {
-        _ = profile;
         var options = EnsureComp<CFCombatOptionsComponent>(mob);
-        Grant(mob, "CFActDemoralize");
-        Grant(mob, "CFActFeint");
+        Grant(mob, "CFActLeap");
+
+        if (_prototypes.Resolve(profile.CFBuild.Background, out var background) && background.BattleMedicine)
+            options.BattleMedicine = true;
 
         switch (cls?.ID)
         {
@@ -297,7 +298,6 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
                 break;
             case "Swashbuckler":
                 options.PanacheStyle = true;
-                Grant(mob, "CFActFinisher");
                 break;
             case "Magus":
                 options.Spellstrike = true;
@@ -312,7 +312,8 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
                 options.PointMark = CFPointMark.Exploit;
                 break;
             case "Bard":
-                Grant(mob, "CFActInspire");
+                options.Anthem = true;
+                Grant(mob, "CFActAnthem");
                 break;
             case "Champion":
                 options.Champion = true;
@@ -371,20 +372,20 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         switch (feat.ID)
         {
             case "CFDoubleSlice":
-                Grant(mob, "CFActDoubleSlice");
+                options.DoubleSlice = true;
                 break;
             case "CFExactingStrike":
-                Grant(mob, "CFActExactingStrike");
+                options.ExactingStrike = true;
                 break;
             case "CFSuddenChargeFighter":
             case "CFSuddenChargeBarbarian":
                 Grant(mob, "CFActSuddenCharge");
                 break;
             case "CFSnaggingStrike":
-                Grant(mob, "CFActSnaggingStrike");
+                options.SnaggingStrike = true;
                 break;
             case "CFViciousSwing":
-                Grant(mob, "CFActViciousSwing");
+                options.ViciousSwing = true;
                 break;
             case "CFPointBlankStance":
                 Grant(mob, "CFActPointBlank");
@@ -394,7 +395,7 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
                 options.ReactiveShield = true;
                 break;
             case "CFTwinFeint":
-                Grant(mob, "CFActTwinFeint");
+                options.TwinFeint = true;
                 break;
             case "CFYoureNextRogue":
             case "CFYoureNextSwashbuckler":
@@ -405,7 +406,7 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
                 break;
             case "CFTumbleBehindRogue":
             case "CFTumbleBehindSwashbuckler":
-                Grant(mob, "CFActTumbleBehind");
+                options.TumbleBehind = true;
                 break;
         }
 

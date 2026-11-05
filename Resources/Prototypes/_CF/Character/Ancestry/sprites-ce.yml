@@ -191,6 +191,9 @@
     - type: Sprite
       state: l_arm_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Human/parts.rsi
+        state: l_arm_m
       sexStateOverrides:
         Male: l_arm_m
         Female: l_arm_f
@@ -202,6 +205,9 @@
     - type: Sprite
       state: r_arm_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Human/parts.rsi
+        state: r_arm_m
       sexStateOverrides:
         Male: r_arm_m
         Female: r_arm_f
@@ -213,6 +219,9 @@
     - type: Sprite
       state: l_hand_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Human/parts.rsi
+        state: l_hand_m
       sexStateOverrides:
         Male: l_hand_m
         Female: l_hand_f
@@ -224,6 +233,9 @@
     - type: Sprite
       state: r_hand_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Human/parts.rsi
+        state: r_hand_m
       sexStateOverrides:
         Male: r_hand_m
         Female: r_hand_f
@@ -235,6 +247,9 @@
     - type: Sprite
       state: l_leg_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Human/parts.rsi
+        state: l_leg_m
       sexStateOverrides:
         Male: l_leg_m
         Female: l_leg_f
@@ -246,6 +261,9 @@
     - type: Sprite
       state: r_leg_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Human/parts.rsi
+        state: r_leg_m
       sexStateOverrides:
         Male: r_leg_m
         Female: r_leg_f
@@ -257,6 +275,9 @@
     - type: Sprite
       state: l_foot_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Human/parts.rsi
+        state: l_foot_m
       sexStateOverrides:
         Male: l_foot_m
         Female: l_foot_f
@@ -268,6 +289,9 @@
     - type: Sprite
       state: r_foot_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Human/parts.rsi
+        state: r_foot_m
       sexStateOverrides:
         Male: r_foot_m
         Female: r_foot_f
@@ -660,6 +684,9 @@
     - type: Sprite
       state: l_arm_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Elf/parts.rsi
+        state: l_arm_m
       sexStateOverrides:
         Male: l_arm_m
         Female: l_arm_f
@@ -671,6 +698,9 @@
     - type: Sprite
       state: r_arm_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Elf/parts.rsi
+        state: r_arm_m
       sexStateOverrides:
         Male: r_arm_m
         Female: r_arm_f
@@ -682,6 +712,9 @@
     - type: Sprite
       state: l_hand_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Elf/parts.rsi
+        state: l_hand_m
       sexStateOverrides:
         Male: l_hand_m
         Female: l_hand_f
@@ -693,6 +726,9 @@
     - type: Sprite
       state: r_hand_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Elf/parts.rsi
+        state: r_hand_m
       sexStateOverrides:
         Male: r_hand_m
         Female: r_hand_f
@@ -704,6 +740,9 @@
     - type: Sprite
       state: l_leg_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Elf/parts.rsi
+        state: l_leg_m
       sexStateOverrides:
         Male: l_leg_m
         Female: l_leg_f
@@ -715,6 +754,9 @@
     - type: Sprite
       state: r_leg_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Elf/parts.rsi
+        state: r_leg_m
       sexStateOverrides:
         Male: r_leg_m
         Female: r_leg_f
@@ -726,6 +768,9 @@
     - type: Sprite
       state: l_foot_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Elf/parts.rsi
+        state: l_foot_m
       sexStateOverrides:
         Male: l_foot_m
         Female: l_foot_f
@@ -737,6 +782,9 @@
     - type: Sprite
       state: r_foot_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Elf/parts.rsi
+        state: r_foot_m
       sexStateOverrides:
         Male: r_foot_m
         Female: r_foot_f
@@ -1616,6 +1664,9 @@
     - type: Sprite
       state: l_arm_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Silva/parts.rsi
+        state: l_arm_m
       sexStateOverrides:
         Male: l_arm_m
         Female: l_arm_f
@@ -1627,6 +1678,9 @@
     - type: Sprite
       state: r_arm_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Silva/parts.rsi
+        state: r_arm_m
       sexStateOverrides:
         Male: r_arm_m
         Female: r_arm_f
@@ -1638,6 +1692,9 @@
     - type: Sprite
       state: l_hand_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Silva/parts.rsi
+        state: l_hand_m
       sexStateOverrides:
         Male: l_hand_m
         Female: l_hand_f
@@ -1649,6 +1706,9 @@
     - type: Sprite
       state: r_hand_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Silva/parts.rsi
+        state: r_hand_m
       sexStateOverrides:
         Male: r_hand_m
         Female: r_hand_f
@@ -1660,6 +1720,9 @@
     - type: Sprite
       state: l_leg_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Silva/parts.rsi
+        state: l_leg_m
       sexStateOverrides:
         Male: l_leg_m
         Female: l_leg_f
@@ -1671,6 +1734,9 @@
     - type: Sprite
       state: r_leg_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Silva/parts.rsi
+        state: r_leg_m
       sexStateOverrides:
         Male: r_leg_m
         Female: r_leg_f
@@ -1682,6 +1748,9 @@
     - type: Sprite
       state: l_foot_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Silva/parts.rsi
+        state: l_foot_m
       sexStateOverrides:
         Male: l_foot_m
         Female: l_foot_f
@@ -1693,6 +1762,9 @@
     - type: Sprite
       state: r_foot_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Silva/parts.rsi
+        state: r_foot_m
       sexStateOverrides:
         Male: r_foot_m
         Female: r_foot_f
@@ -1796,6 +1868,11 @@
   components:
     - type: Sprite
       state: kobold
+    - type: VisualOrgan
+      data:
+        sprite: Mobs/Animals/Ancestors/kobold.rsi
+        state: kobold
+        visible: false
 
 - type: entity
   parent: [OrganBaseArmLeft, OrganCFKoboldAnimalExternal]
@@ -1803,6 +1880,11 @@
   components:
     - type: Sprite
       state: kobold
+    - type: VisualOrgan
+      data:
+        sprite: Mobs/Animals/Ancestors/kobold.rsi
+        state: kobold
+        visible: false
 
 - type: entity
   parent: [OrganBaseArmRight, OrganCFKoboldAnimalExternal]
@@ -1810,6 +1892,11 @@
   components:
     - type: Sprite
       state: kobold
+    - type: VisualOrgan
+      data:
+        sprite: Mobs/Animals/Ancestors/kobold.rsi
+        state: kobold
+        visible: false
 
 - type: entity
   parent: [OrganBaseHandLeft, OrganCFKoboldAnimalExternal]
@@ -1817,6 +1904,11 @@
   components:
     - type: Sprite
       state: kobold
+    - type: VisualOrgan
+      data:
+        sprite: Mobs/Animals/Ancestors/kobold.rsi
+        state: kobold
+        visible: false
 
 - type: entity
   parent: [OrganBaseHandRight, OrganCFKoboldAnimalExternal]
@@ -1824,6 +1916,11 @@
   components:
     - type: Sprite
       state: kobold
+    - type: VisualOrgan
+      data:
+        sprite: Mobs/Animals/Ancestors/kobold.rsi
+        state: kobold
+        visible: false
 
 - type: entity
   parent: [OrganBaseLegLeft, OrganCFKoboldAnimalExternal]
@@ -1831,6 +1928,11 @@
   components:
     - type: Sprite
       state: kobold
+    - type: VisualOrgan
+      data:
+        sprite: Mobs/Animals/Ancestors/kobold.rsi
+        state: kobold
+        visible: false
 
 - type: entity
   parent: [OrganBaseLegRight, OrganCFKoboldAnimalExternal]
@@ -1838,6 +1940,11 @@
   components:
     - type: Sprite
       state: kobold
+    - type: VisualOrgan
+      data:
+        sprite: Mobs/Animals/Ancestors/kobold.rsi
+        state: kobold
+        visible: false
 
 - type: entity
   parent: [OrganBaseFootLeft, OrganCFKoboldAnimalExternal]
@@ -1845,6 +1952,11 @@
   components:
     - type: Sprite
       state: kobold
+    - type: VisualOrgan
+      data:
+        sprite: Mobs/Animals/Ancestors/kobold.rsi
+        state: kobold
+        visible: false
 
 - type: entity
   parent: [OrganBaseFootRight, OrganCFKoboldAnimalExternal]
@@ -1855,6 +1967,12 @@
 
 # Crystall Edge renamed its Tiefling sheet to Infernal. One body, one species id per ancestry.
 # The picker shows it only while the Nephilim heritage is selected.
+    - type: VisualOrgan
+      data:
+        sprite: Mobs/Animals/Ancestors/kobold.rsi
+        state: kobold
+        visible: false
+
 - type: species
   id: CF-Human-Infernal
   name: cf-sprite-ce-infernal
@@ -2118,6 +2236,9 @@
     - type: Sprite
       state: l_arm_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Infernal/parts.rsi
+        state: l_arm_m
       sexStateOverrides:
         Male: l_arm_m
         Female: l_arm_f
@@ -2129,6 +2250,9 @@
     - type: Sprite
       state: r_arm_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Infernal/parts.rsi
+        state: r_arm_m
       sexStateOverrides:
         Male: r_arm_m
         Female: r_arm_f
@@ -2140,6 +2264,9 @@
     - type: Sprite
       state: l_hand_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Infernal/parts.rsi
+        state: l_hand_m
       sexStateOverrides:
         Male: l_hand_m
         Female: l_hand_f
@@ -2151,6 +2278,9 @@
     - type: Sprite
       state: r_hand_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Infernal/parts.rsi
+        state: r_hand_m
       sexStateOverrides:
         Male: r_hand_m
         Female: r_hand_f
@@ -2162,6 +2292,9 @@
     - type: Sprite
       state: l_leg_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Infernal/parts.rsi
+        state: l_leg_m
       sexStateOverrides:
         Male: l_leg_m
         Female: l_leg_f
@@ -2173,6 +2306,9 @@
     - type: Sprite
       state: r_leg_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Infernal/parts.rsi
+        state: r_leg_m
       sexStateOverrides:
         Male: r_leg_m
         Female: r_leg_f
@@ -2184,6 +2320,9 @@
     - type: Sprite
       state: l_foot_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Infernal/parts.rsi
+        state: l_foot_m
       sexStateOverrides:
         Male: l_foot_m
         Female: l_foot_f
@@ -2195,6 +2334,9 @@
     - type: Sprite
       state: r_foot_m
     - type: VisualOrgan
+      data:
+        sprite: _CE/Mobs/Species/Infernal/parts.rsi
+        state: r_foot_m
       sexStateOverrides:
         Male: r_foot_m
         Female: r_foot_f

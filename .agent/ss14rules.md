@@ -53,6 +53,17 @@ One directed component + event pair. A second subscriber throws `Duplicate Subsc
 - `StandUpAttemptEvent` runs for "could it stand?" checks and several times per stand. Never charge a cost there. A finished stand is `TryStandDoAfterEvent`.
 - `CanPull` and `BeingPulledAttemptEvent` run for every verb menu. Anything with a cost or a roll goes on `PullAttemptEvent`, which only `TryStartPull` raises.
 
+## Stock behaviour that surprises
+
+- Mobs do not collide. `MobLayer` is not in `MobMask`, so they overlap and push through `MobCollisionComponent`. `PreventCollideEvent` changes nothing between two mobs. Cancel `AttemptMobCollideEvent` and `AttemptMobTargetCollideEvent` instead. Neither event says who the other mob is.
+- A click in combat mode is a swing, even with a non-weapon in hand. `AfterInteractEvent` does not run. Use `UseInHandEvent` for anything that has to work in a fight.
+- `MeleeHitEvent.Direction` is null for a click and set for a wide swing.
+- `OpenStorage` empties a closet before it raises `StorageAfterOpenEvent`, so the contents are already gone. Watch `EntGotRemovedFromContainerMessage` on the creature.
+- `PlayEmoteMessage` is only sent by the emote menu. `EmoteEvent` also fires for typed emotes and for automatic ones such as pain screams.
+- Alt+Z runs the first `AlternativeVerb` on the held item. Set a high `Priority` to come first.
+- An `Entity<T>` handler must take the event by `ref`, whether or not the event is `[ByRefEvent]`. A broadcast handler for a plain class event is by value.
+- In test output, `Skipped` can be a failure from the same run. Run the test alone to see it.
+
 ## Do not use obsolete APIs
 
 `CS0618` means the API will go away, and code written against it breaks on a later upstream merge. `_CF` code builds with no `CS0618`, `CS0612`, or `RA` warnings. Keep it that way, and fix ported CP14 code as it arrives, because it often uses the old calls.
@@ -117,15 +128,28 @@ This engine differs from CP14's fork in more places. A ported prototype needs th
 - `SolutionContainerManager` is the obsolete form and can leave an entity with no usable solution, with no error. Use a `Solution` parent plus `type: Solution` with `id:` and `solution:` (see `Entities/Objects/base_solution.yml`). `FoodBase` already gives `Edible` and a `food` solution. Test that a ported entity really holds its reagents.
 - `Injector` has no `injectOnly`, `transferAmounts` or `toggleState`. `Temperature` has no `currentTemperature`. `InternalTemperature` has no `thickness`, `area` or `conductivity`.
 
-A prototype that fails to read is logged once and dropped: `Reading ...EntityPrototype(id) threw the following exception`. The first symptom is often an unrelated "invalid id" error from something that refers to it.
+- `MagicMirror` needs an `organs` list. Stock barber scissors use `Head`.
+- `IconSmooth.key` is required. A missing one drops the entity on the client only.
+- `Crayon` needs `selectedState`. `Injector` needs `activeModeProtoId` and `allowedModes`. `Occluder` takes `polygon`, not `boundingBox`.
+- `ToggleableLightVisuals` is `ToggleableVisuals`. `FlammableSystem` sets its data, so burning items need nothing else.
+- `Sharp` is gone with no replacement: butchering goes through the kitchen spike. `Tool` with `Slicing` stays.
+- CP14 files can start with a BOM. Read them as `utf-8-sig`, or the first prototype is lost with no error.
 
-To catch this, run `EntityTest.SpawnAndDirtyAllEntities`: it spawns every prototype on server and client and reports unknown prototypes.
+A prototype that fails to read is logged once and dropped: `Reading ...EntityPrototype(id) threw the following exception`. The first symptom is often an unrelated "invalid id" error from something that refers to it. Neither the linter nor `SpawnAndDirtyAllEntities` reports it: `CFScissors` sat broken behind a clean lint until a recipe asked for it. To check, run any test with `--logger "console;verbosity=detailed"` and grep for `threw the following`.
+
+The linter also skips abstract entities, so a bad field there only shows up in the spawn test.
+
+To catch this, spawn the entity in a focused test for that system. `EntityTest.SpawnAndDirtyAllEntities` spawns every prototype on server and client, but it takes far too long: do not run it, and do not filter on `EntityTest`, which includes it.
 
 ## VV cannot add to a list
 
 The VV menu edits strings, numbers, booleans and enums, but it has no way to add an item to a `List` or `HashSet`. A field a DM must extend live has to be plain text, such as comma-separated names. Prototype data is copied per entity on spawn, so editing one entity never changes another.
 
 `EntityQueryEnumerator` skips paused entities, and a map just loaded is paused. Use `AllEntityQueryEnumerator` in tests that read one.
+
+## Limb sprites need their own state
+
+Stock limb organs set `VisualOrgan.data.state` to `l_arm` and so on. A body whose RSI has only sexed states (`l_arm_m`, `l_arm_f`), or one full-body state, logs `State 'l_arm' not found` even with `sexStateOverrides`. Give each limb organ its own `data` with `sprite` and `state`. See `sprites-ce.yml`.
 
 ## Fixtures added in code
 

@@ -8,6 +8,7 @@ using Robust.Shared.GameObjects;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Maths;
+using Robust.Shared.Physics.Components;
 using Robust.Shared.Utility;
 
 namespace Content.IntegrationTests.Tests.CF;
@@ -30,8 +31,10 @@ public sealed class CFDevMap
     /// <summary>
     /// Loads the map and picks floor where every tile of <paramref name="footprint"/> (relative to the origin,
     /// right and top exclusive) exists on the largest grid and has no creature on it.
+    /// Pass <paramref name="avoidStructures"/> when a creature has to stand up there. It is off by default,
+    /// because the map has no structure-free room for the large area spell footprints.
     /// </summary>
-    public static async Task<CFDevMap> Load(TestPair pair, Box2i footprint)
+    public static async Task<CFDevMap> Load(TestPair pair, Box2i footprint, bool avoidStructures = false)
     {
         var result = new CFDevMap();
         var entities = pair.Server.EntMan;
@@ -63,6 +66,14 @@ public sealed class CFDevMap
                 lookup.GetLocalEntitiesIntersecting(grid.Owner, area, mobs);
                 if (mobs.Count != 0)
                     continue;
+
+                if (avoidStructures)
+                {
+                    var solids = new HashSet<Entity<PhysicsComponent>>();
+                    lookup.GetLocalEntitiesIntersecting(grid.Owner, area, solids, LookupFlags.Static);
+                    if (solids.Any(s => s.Comp.CanCollide && s.Comp.Hard))
+                        continue;
+                }
 
                 result.Origin = candidate;
                 return;
