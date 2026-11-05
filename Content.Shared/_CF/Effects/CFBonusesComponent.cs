@@ -66,6 +66,12 @@ public enum CFBonusStat : byte
 
     /// <summary>Extra weapon damage dice on Strikes (runic weapon). Not a typed bonus: the highest applies.</summary>
     WeaponDice,
+
+    /// <summary>Every damage roll: melee, ranged and spells. Counts as one stat with <see cref="MeleeDamage"/> for stacking.</summary>
+    Damage,
+
+    /// <summary>Saves against fear effects only. Counts as one stat with <see cref="Saves"/> for stacking.</summary>
+    SavesVsFear,
 }
 
 /// <summary>Bonuses of the same type do not stack: the highest bonus and the worst penalty of each type apply.</summary>

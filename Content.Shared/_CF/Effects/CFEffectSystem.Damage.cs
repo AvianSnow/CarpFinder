@@ -20,6 +20,12 @@ public sealed partial class CFEffectSystem
         return CFMelee.RollDamage(random, dice, die, flat, critical);
     }
 
+    /// <summary>What the user adds to a damage roll that is not a Strike.</summary>
+    public int DamageBonus(EntityUid user)
+    {
+        return _bonuses.Total(user, CFBonusStat.Damage);
+    }
+
     public int Roll(int dice, int die, int flat)
     {
         return Roll(_random, dice, die, flat, critical: false);

@@ -81,7 +81,7 @@
   parent: CFActivityInstant
   id: CFActAnthem
   name: Courageous Anthem
-  description: You and allies within 60 feet gain +1 to attacks and melee damage. Playing a held instrument does the same.
+  description: You and allies within 60 feet gain +1 to attacks, damage, and saves against fear. Playing a held instrument does the same.
   components:
   - type: CFActivity
     kind: Anthem

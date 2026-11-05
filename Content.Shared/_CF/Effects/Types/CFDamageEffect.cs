@@ -70,7 +70,7 @@ public sealed partial class CFDamageEffect : CFEffect
         // An effect that only adds persistent damage (a flaming rune's critical) deals nothing up front.
         if (dice > 0 || flat > 0)
         {
-            var rolled = system.Roll(dice, Die, flat);
+            var rolled = system.Roll(dice, Die, flat + system.DamageBonus(args.User));
             var amount = multiplier < 1f ? (int) (rolled * multiplier) : rolled * (int) multiplier;
             system.DealDamage(args.User, target, amount, DamageType, critical);
         }

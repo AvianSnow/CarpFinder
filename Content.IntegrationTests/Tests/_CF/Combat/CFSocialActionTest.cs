@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Numerics;
 using Content.IntegrationTests.Fixtures;
 using Content.IntegrationTests.Tests.CF;
@@ -185,6 +186,77 @@ public sealed class CFSocialActionTest : GameTest
     }
 
     [Test]
+    public async Task TheAnthemAddsToRangedDamage()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            var bard = Hero();
+            var foe = Foe(3);
+            var combat = SEntMan.GetComponent<CFCombatantComponent>(foe);
+            combat.ArmorClass = -100;
+            combat.MaxHp = combat.CurrentHp = 100000;
+
+            // A one-sided die makes the damage exact: 1, doubled on a critical hit.
+            var stats = new CFStrikeWeaponStats(1, 1, "Bludgeoning", CFWeaponCategory.Unarmed.Proficiency(), new CFWeaponTraits());
+            var strikes = SEntMan.System<CFStrikeSystem>();
+            var seen = new HashSet<int>();
+            void Strikes()
+            {
+                seen.Clear();
+                for (var i = 0; i < 100; i++)
+                {
+                    var before = combat.CurrentHp;
+                    strikes.PerformStrike(bard, foe, stats, bard, melee: false, countMap: false);
+                    seen.Add(before - combat.CurrentHp);
+                }
+            }
+
+            Strikes();
+            Assert.That(seen, Is.SubsetOf(new[] { 1, 2 }));
+
+            SEntMan.System<CFActivitySystem>().Anthem(bard);
+            Strikes();
+            Assert.That(seen, Is.SubsetOf(new[] { 2, 4 }));
+        });
+    }
+
+    [Test]
+    public async Task DamageBonusesOfOneTypeDoNotStack()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            var bard = Hero();
+            SEntMan.System<CFActivitySystem>().Anthem(bard);
+            Bonuses.AddBonus(bard, CFBonusStat.MeleeDamage, CFBonusType.Status, 2, 10f);
+
+            Assert.That(Bonuses.Total(bard, CFBonusStat.Damage, CFBonusStat.MeleeDamage), Is.EqualTo(2), "Only the highest status bonus counts.");
+            Assert.That(Bonuses.Total(bard, CFBonusStat.Damage), Is.EqualTo(1), "The enlarge-style bonus stays melee only.");
+        });
+    }
+
+    [Test]
+    public async Task TheAnthemOnlyHelpsSavesAgainstFear()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            var effects = SEntMan.System<CFEffectSystem>();
+            var bard = Hero();
+            var fear = SEntMan.SpawnEntity("CFFear", _map.Local(0, 0));
+            var other = SEntMan.SpawnEntity("CFBless", _map.Local(0, 0));
+
+            SEntMan.System<CFActivitySystem>().Anthem(bard);
+
+            Assert.That(effects.IsFear(fear));
+            Assert.That(effects.SaveBonus(bard, fear), Is.EqualTo(1));
+            Assert.That(effects.SaveBonus(bard, other), Is.Zero);
+            Assert.That(effects.SaveBonus(bard, null), Is.Zero);
+        });
+    }
+
+    [Test]
     public async Task AFinisherNeedsPanacheAndAnEnemyInReach()
     {
         _map = await CFDevMap.Load(Pair, Footprint);
@@ -227,7 +299,8 @@ public sealed class CFSocialActionTest : GameTest
             foreach (var mob in new[] { bard, ally })
             {
                 Assert.That(Bonuses.Total(mob, CFBonusStat.AttackRoll), Is.EqualTo(1));
-                Assert.That(Bonuses.Total(mob, CFBonusStat.MeleeDamage), Is.EqualTo(1));
+                Assert.That(Bonuses.Total(mob, CFBonusStat.Damage), Is.EqualTo(1));
+                Assert.That(Bonuses.Total(mob, CFBonusStat.SavesVsFear), Is.EqualTo(1));
             }
 
             Assert.That(Bonuses.Total(foe, CFBonusStat.AttackRoll), Is.Zero);

@@ -587,7 +587,6 @@ Needed by the AI (6b), which has to do everything a player does without clicking
 ### Left over from Phase 5
 
 - [ ] Double Slice applies resistances to each Strike. The rule combines the damage first.
-- [ ] Courageous Anthem gives +1 to attacks and melee damage. Ranged damage and saves against fear have no bonus to hook into.
 - [ ] Reposition moves as far as stock allows, up to 10 feet. The rule is 5 feet, 10 on a critical success.
 - [ ] Aid's critical success is always +2. The rule gives more at master and legendary.
 - [ ] Darkness does not count as concealment yet. It waits for the `Light` layer (6c).

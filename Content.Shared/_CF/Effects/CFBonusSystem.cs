@@ -113,15 +113,19 @@ public sealed partial class CFBonusSystem : EntitySystem
     /// The total modifier for a stat. Per type, the highest bonus and the worst penalty apply.
     /// Untyped values all stack. Weapon dice take the highest value.
     /// </summary>
-    public int Total(EntityUid uid, CFBonusStat stat)
+    public int Total(EntityUid uid, CFBonusStat stat, CFBonusStat? also = null)
     {
         if (!TryComp(uid, out CFBonusesComponent? comp) || comp.Bonuses.Count == 0)
             return 0;
 
-        return Total(comp.Bonuses, stat);
+        return Total(comp.Bonuses, stat, also);
     }
 
-    public static int Total(IReadOnlyList<CFActiveBonus> bonuses, CFBonusStat stat)
+    /// <summary>
+    /// <paramref name="also"/> is a narrower stat that applies to this roll too. The two are totalled together,
+    /// so a status bonus to one does not stack with a status bonus to the other.
+    /// </summary>
+    public static int Total(IReadOnlyList<CFActiveBonus> bonuses, CFBonusStat stat, CFBonusStat? also = null)
     {
         // Plain locals per type: stackalloc/Span fails the client sandbox's IL verification.
         int status = 0, statusPenalty = 0;
@@ -131,7 +135,7 @@ public sealed partial class CFBonusSystem : EntitySystem
         var weaponDice = 0;
         foreach (var bonus in bonuses)
         {
-            if (bonus.Stat != stat)
+            if (bonus.Stat != stat && bonus.Stat != also)
                 continue;
 
             if (stat == CFBonusStat.WeaponDice)

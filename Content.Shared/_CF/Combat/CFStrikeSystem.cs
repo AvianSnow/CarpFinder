@@ -576,8 +576,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (melee && style is { Raging: true })
             damageMod += 2;
 
-        if (melee)
-            damageMod += _bonuses.Total(user, CFBonusStat.MeleeDamage);
+        damageMod += _bonuses.Total(user, CFBonusStat.Damage, melee ? CFBonusStat.MeleeDamage : null);
 
         if (style != null && style.Exploited == target)
             damageMod += 2;

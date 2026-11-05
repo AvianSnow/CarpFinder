@@ -254,10 +254,7 @@ public sealed partial class CFActivitySystem : EntitySystem
         _throwing.TryThrow(user, landing, LeapThrowSpeed, doSpin: false);
     }
 
-    /// <summary>
-    /// +1 status to attack and melee damage for the Bard and nearby allies. Printed, it also covers ranged damage
-    /// and saves against fear, which have no bonus to hook into yet.
-    /// </summary>
+    /// <summary>+1 status to attack rolls, damage rolls, and saves against fear for the Bard and nearby allies.</summary>
     public void Anthem(EntityUid user)
     {
         Buff(user);
@@ -276,7 +273,8 @@ public sealed partial class CFActivitySystem : EntitySystem
     private void Buff(EntityUid ally)
     {
         _bonuses.AddBonus(ally, CFBonusStat.AttackRoll, CFBonusType.Status, 1, AnthemSeconds);
-        _bonuses.AddBonus(ally, CFBonusStat.MeleeDamage, CFBonusType.Status, 1, AnthemSeconds);
+        _bonuses.AddBonus(ally, CFBonusStat.Damage, CFBonusType.Status, 1, AnthemSeconds);
+        _bonuses.AddBonus(ally, CFBonusStat.SavesVsFear, CFBonusType.Status, 1, AnthemSeconds);
     }
 
     /// <summary>
