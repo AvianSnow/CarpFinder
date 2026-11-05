@@ -1,6 +1,19 @@
 # Ported from CP14 by the CF converter.
 
 - type: entity
+  parent: CFDrinkBaseMug
+  id: CFDrinkBaseGoblet
+  name: goblet
+  description: A metal goblet for those who want to drink exquisitely.
+  abstract: true
+  categories: [ ForkFiltered ]
+  components:
+  - type: SolutionContainerVisuals
+    maxFillLevels: 5
+    fillBaseName: fill-
+
+- type: entity
+  parent: CFDrinkBaseGoblet
   id: CFSteelGobletIron
   name: iron goblet
   categories: [ ForkFiltered ]
@@ -17,6 +30,7 @@
       CFIron: 10
 
 - type: entity
+  parent: CFDrinkBaseGoblet
   id: CFSteelGobletCopper
   name: copper goblet
   categories: [ ForkFiltered ]
@@ -33,6 +47,7 @@
       CFCopper: 10
 
 - type: entity
+  parent: CFDrinkBaseGoblet
   id: CFSteelGobletGold
   name: gold goblet
   description: A goblet made of solid gold to show how rich its owner is.
@@ -50,6 +65,7 @@
       CFGold: 10
 
 - type: entity
+  parent: CFDrinkBaseGoblet
   id: CFSteelGobletBottomless
   name: bottomless goblet
   description: A jeweled goblet enchanted to have no bottom, fit for a never ending king's banquet.

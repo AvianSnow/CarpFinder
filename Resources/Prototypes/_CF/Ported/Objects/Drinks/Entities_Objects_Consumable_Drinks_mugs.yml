@@ -1,6 +1,69 @@
 # Ported from CP14 by the CF converter.
 
 - type: entity
+  parent: BaseItem
+  id: CFDrinkBaseMug
+  abstract: true
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    sprite: Objects/Consumable/Drinks/mug.rsi
+    layers:
+      - state: icon-0
+      - map: ["enum.SolutionContainerLayers.Fill"]
+        state: icon-3
+        visible: false
+  - type: MeleeWeapon
+    soundNoDamage:
+      path: "/Audio/Effects/Fluids/splat.ogg"
+    damage:
+      types:
+        Blunt: 0
+  - type: SolutionContainerManager
+    solutions:
+      mug:
+        maxVol: 10
+  - type: MixableSolution
+    solution: mug
+  - type: FitsInDispenser
+    solution: mug
+  - type: RefillableSolution
+    solution: mug
+  - type: DrainableSolution
+    solution: mug
+  - type: ExaminableSolution
+    solution: mug
+  - type: DrawableSolution
+    solution: mug
+  - type: InjectableSolution
+    solution: mug
+  - type: SolutionItemStatus
+    solution: mug
+  - type: TrashOnSolutionEmpty
+    solution: mug
+  - type: UserInterface
+    interfaces:
+      enum.TransferAmountUiKey.Key:
+        type: TransferAmountBoundUserInterface
+  - type: Spillable
+    solution: mug
+  - type: Edible
+    edible: Drink
+    solution: mug
+  - type: Appearance
+  - type: Injector
+    solutionName: mug
+    ignoreMobs: true
+    activeModeProtoId: CFPourDrawMode
+    allowedModes:
+    - CFPourDrawMode
+    - CFPourInjectMode
+  - type: SolutionContainerVisuals
+    maxFillLevels: 3
+    fillBaseName: icon-
+
+- type: entity
+  parent: CFDrinkBaseMug
   id: CFMetalBeerMug
   name: metal mug
   categories: [ ForkFiltered ]
@@ -18,6 +81,7 @@
         Blunt: 2
 
 - type: entity
+  parent: CFDrinkBaseMug
   id: CFWoodenBeerMug
   name: wooden mug
   categories: [ ForkFiltered ]
@@ -30,6 +94,7 @@
       CFWoodenPlanks: 20
 
 - type: entity
+  parent: CFDrinkBaseMug
   id: CFSteelBeerMug
   name: beer mug
   categories: [ ForkFiltered ]
@@ -39,6 +104,7 @@
     sprite: _CP14/Objects/Consumable/Drinks/beer_mug_2.rsi
 
 - type: entity
+  parent: CFDrinkBaseMug
   id: CFSteelWoodBeerMug
   name: beer mug
   categories: [ ForkFiltered ]

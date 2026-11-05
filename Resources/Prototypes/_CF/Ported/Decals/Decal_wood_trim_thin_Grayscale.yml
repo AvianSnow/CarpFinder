@@ -1,6 +1,14 @@
 # Ported from CP14 by the CF converter.
 
 - type: decal
+  id: WoodTrimThinGrayScaleBox
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: _CP14/Decals/wood_trim_Grayscale.rsi
+    state: thin_box
+
+- type: decal
   id: WoodTrimThinGrayScaleCornerNe
   defaultSnap: true
   showMenu: true

@@ -80,6 +80,9 @@
     sprite: _CP14/Objects/keys.rsi
   - type: CFBulk
     bulk: 0
+  - type: Tag
+    tags:
+    - CFKey
 
 - type: entity
   parent: CFBaseKey

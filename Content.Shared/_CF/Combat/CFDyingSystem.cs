@@ -402,6 +402,13 @@ public sealed partial class CFDyingSystem : EntitySystem
         RemCompDeferred<CFDyingTrackerComponent>(target);
     }
 
+    /// <summary>Kills outright, with no dying track. For effects that say "death".</summary>
+    public void Kill(EntityUid target, EntityUid? origin = null)
+    {
+        if (TryComp(target, out CFCombatantComponent? combatant))
+            Die(target, combatant, origin);
+    }
+
     private void Die(EntityUid target, CFCombatantComponent combatant, EntityUid? origin)
     {
         // Clear dying — the creature is dead, not dying. Stabilize must not apply.

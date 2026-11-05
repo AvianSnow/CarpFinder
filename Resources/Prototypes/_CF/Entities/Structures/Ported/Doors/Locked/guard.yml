@@ -1,28 +1,37 @@
 # Ported from CP14 by the CF converter.
 
 - type: entity
-  parent: CFIronDoor
+  parent: [ CFIronDoor, CFLockGood ]
   id: CFIronDoorGuardBarracks
   suffix: Guard Barracks
   components:
+  - type: CFLock
+    forceDc: 30
+    keyId: GuardBarracks
   - type: Lock
     locked: true
 
 - type: entity
-  parent: CFIronDoor
+  parent: [ CFIronDoor, CFLockGood ]
   id: CFIronDoorGuardCommandantRoom
   suffix: Guard Commander
   components:
+  - type: CFLock
+    forceDc: 30
+    keyId: GuardCommander
   - type: Lock
     locked: true
 
 # Iron windowed
 
 - type: entity
-  parent: CFIronDoorWindowed
+  parent: [ CFIronDoorWindowed, CFLockGood ]
   id: CFIronDoorWindowedCityGate
   suffix: Guard Barracks
   components:
+  - type: CFLock
+    forceDc: 30
+    keyId: GuardBarracks
   - type: Lock
     locked: true
 
@@ -36,17 +45,23 @@
 # Grill Gate
 
 - type: entity
-  parent: CFFenceGateBigIron
+  parent: [ CFFenceGateBigIron, CFLockGood ]
   id: CFFenceGateBigIronGuardBarracks
   suffix: Guard Barracks
   components:
+  - type: CFLock
+    forceDc: 30
+    keyId: GuardBarracks
   - type: Lock
     locked: true
 
 - type: entity
-  parent: CFFenceGateBigIron
+  parent: [ CFFenceGateBigIron, CFLockGood ]
   id: CFFenceGateBigIronCityGate
   suffix: City Gate
   components:
+  - type: CFLock
+    forceDc: 30
+    keyId: CityGate
   - type: Lock
     locked: false #City gate opened by default

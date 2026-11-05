@@ -1,18 +1,24 @@
 # Ported from CP14 by the CF converter.
 
 - type: entity
-  parent: CFIronDoor
+  parent: [ CFIronDoor, CFLockGood ]
   id: CFIronDoorGuardGuildmaster
   suffix: Guildmaster
   components:
+  - type: CFLock
+    forceDc: 30
+    keyId: Guildmaster
   - type: Lock
     locked: true
 
 - type: entity
-  parent: CFWoodenDoor
+  parent: [ CFWoodenDoor, CFLockSimple ]
   id: CFWoodenDoorAdventureGuild
   suffix: Adventure guild
   components:
+  - type: CFLock
+    forceDc: 20
+    keyId: AdventureGuild
   - type: Lock
     locked: true
 

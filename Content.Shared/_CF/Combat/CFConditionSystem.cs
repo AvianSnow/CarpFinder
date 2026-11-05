@@ -68,6 +68,18 @@ public sealed partial class CFConditionSystem : EntitySystem
                 _speed.RefreshMovementSpeedModifiers(uid);
             }
 
+            if (cond.ClumsyValue > 0 && now >= cond.ClumsyUntil)
+            {
+                cond.ClumsyValue = 0;
+                dirty = true;
+            }
+
+            if (cond.StupefiedValue > 0 && now >= cond.StupefiedUntil)
+            {
+                cond.StupefiedValue = 0;
+                dirty = true;
+            }
+
             if (cond.Concealed && now >= cond.ConcealedUntil)
             {
                 cond.Concealed = false;
@@ -584,7 +596,55 @@ public sealed partial class CFConditionSystem : EntitySystem
     /// </summary>
     public int Clumsy(EntityUid uid)
     {
-        return _encumbrance.IsEncumbered(uid) ? 1 : 0;
+        var timed = TryComp(uid, out CFConditionComponent? cond) ? cond.ClumsyValue : 0;
+        return Math.Max(timed, _encumbrance.IsEncumbered(uid) ? 1 : 0);
+    }
+
+    /// <summary>Rolls a save or Perception against a DC. <paramref name="total"/> is the d20 plus modifier.</summary>
+    public CFDegree RollDefense(EntityUid uid, CFDefenseType defense, int dc, out int total)
+    {
+        var mod = CFDefense.SaveModifier(
+            _prototypes,
+            CompOrNull<CFCombatantComponent>(uid),
+            CompOrNull<CFAbilityScoreComponent>(uid),
+            defense,
+            DefenseStatus(uid, defense),
+            Frightened(uid));
+
+        var d20 = _random.Next(1, 21);
+        total = d20 + mod;
+        return CFDegrees.DegreeOfSuccess(d20, mod, dc);
+    }
+
+    /// <summary>Stupefied value: a penalty to Will saves and Perception.</summary>
+    public int Stupefied(EntityUid uid)
+    {
+        return TryComp(uid, out CFConditionComponent? cond) ? cond.StupefiedValue : 0;
+    }
+
+    private void ApplyClumsy(EntityUid target, int value, float seconds)
+    {
+        var cond = EnsureComp<CFConditionComponent>(target);
+        cond.ClumsyValue = Math.Max(cond.ClumsyValue, value);
+        cond.ClumsyUntil = _timing.CurTime + TimeSpan.FromSeconds(seconds);
+        Dirty(target, cond);
+    }
+
+    private void ApplyStupefied(EntityUid target, int value, float seconds)
+    {
+        var cond = EnsureComp<CFConditionComponent>(target);
+        cond.StupefiedValue = Math.Max(cond.StupefiedValue, value);
+        cond.StupefiedUntil = _timing.CurTime + TimeSpan.FromSeconds(seconds);
+        Dirty(target, cond);
+    }
+
+    private void ApplySickened(EntityUid target, int value, float seconds)
+    {
+        _bonuses.AddBonus(target, CFBonusStat.ArmorClass, CFBonusType.Status, -value, seconds);
+        _bonuses.AddBonus(target, CFBonusStat.AttackRoll, CFBonusType.Status, -value, seconds);
+        _bonuses.AddBonus(target, CFBonusStat.Saves, CFBonusType.Status, -value, seconds);
+        _bonuses.AddBonus(target, CFBonusStat.Perception, CFBonusType.Status, -value, seconds);
+        _bonuses.AddBonus(target, CFBonusStat.SkillChecks, CFBonusType.Status, -value, seconds);
     }
 
     public void KnockProne(EntityUid target)
@@ -664,6 +724,15 @@ public sealed partial class CFConditionSystem : EntitySystem
             case CFConditionKind.OffGuard:
                 SetOffGuardAll(target, seconds);
                 break;
+            case CFConditionKind.Clumsy:
+                ApplyClumsy(target, value, seconds);
+                break;
+            case CFConditionKind.Stupefied:
+                ApplyStupefied(target, value, seconds);
+                break;
+            case CFConditionKind.Sickened:
+                ApplySickened(target, value, seconds);
+                break;
         }
     }
 
@@ -690,7 +759,12 @@ public sealed partial class CFConditionSystem : EntitySystem
             ? _bonuses.Total(uid, CFBonusStat.Perception)
             : SaveStatus(uid);
 
-        return defense == CFDefenseType.Reflex ? status - Clumsy(uid) : status;
+        return defense switch
+        {
+            CFDefenseType.Reflex => status - Clumsy(uid),
+            CFDefenseType.Will or CFDefenseType.Perception => status - Stupefied(uid),
+            _ => status,
+        };
     }
 
     private static void DropExpired(Dictionary<EntityUid, TimeSpan> times, HashSet<EntityUid>? also, TimeSpan now)

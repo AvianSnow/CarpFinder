@@ -12,6 +12,7 @@ using Content.Shared.Interaction;
 using Content.Shared.Inventory;
 using Content.Shared.Lock;
 using Content.Shared.Popups;
+using Content.Shared.Storage;
 using Content.Shared.Storage.Components;
 using Content.Shared.Verbs;
 using Robust.Shared.Network;
@@ -66,11 +67,40 @@ public sealed partial class CFLockSystem : EntitySystem
     [SubscribeLocalEvent]
     private void OnInteractUsing(Entity<CFLockComponent> ent, ref InteractUsingEvent args)
     {
-        if (args.Handled || !TryComp(args.Used, out CFKeyComponent? key))
+        if (args.Handled)
+            return;
+
+        if (HasComp<CFKeyRingComponent>(args.Used))
+        {
+            args.Handled = true;
+            TryUseKeyRing(ent, args.User, args.Used);
+            return;
+        }
+
+        if (!TryComp(args.Used, out CFKeyComponent? key))
             return;
 
         args.Handled = true;
         TryUseKey(ent, args.User, key);
+    }
+
+    /// <summary>Tries the key on the ring that fits this lock.</summary>
+    public bool TryUseKeyRing(Entity<CFLockComponent> ent, EntityUid user, EntityUid ring)
+    {
+        if (!_net.IsServer)
+            return false;
+
+        if (TryComp(ring, out StorageComponent? storage))
+        {
+            foreach (var held in storage.Container.ContainedEntities)
+            {
+                if (TryComp(held, out CFKeyComponent? key) && key.KeyId == ent.Comp.KeyId)
+                    return TryUseKey(ent, user, key);
+            }
+        }
+
+        _popup.PopupEntity(Loc.GetString("cf-lock-key-no-fit"), ent, user);
+        return false;
     }
 
     /// <summary>Turns a key in the lock: unlocks it, or locks it again. A door or chest must be shut first.</summary>

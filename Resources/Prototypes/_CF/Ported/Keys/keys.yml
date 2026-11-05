@@ -1,0 +1,519 @@
+# Ported from CP14 by the CF converter. A key matches a lock on keyId.
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyAlchemy1
+  suffix: Alchemy 1
+  components:
+  - type: Sprite
+    state: key_iron
+  - type: CFKey
+    keyId: Alchemy1
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyAlchemy2
+  suffix: Alchemy 2
+  components:
+  - type: Sprite
+    state: key_iron
+  - type: CFKey
+    keyId: Alchemy2
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyBlacksmith1
+  suffix: Blacksmith 1
+  components:
+  - type: Sprite
+    state: key_iron
+  - type: CFKey
+    keyId: Blacksmith1
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyBlacksmith2
+  suffix: Blacksmith 2
+  components:
+  - type: Sprite
+    state: key_iron
+  - type: CFKey
+    keyId: Blacksmith2
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyCityGate
+  suffix: City Gate
+  components:
+  - type: Sprite
+    state: key_iron
+  - type: CFKey
+    keyId: CityGate
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyGuardBarracks
+  suffix: Guard Barracks
+  components:
+  - type: Sprite
+    state: key_iron
+  - type: CFKey
+    keyId: GuardBarracks
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyGuardCommander
+  suffix: Guard Commander
+  components:
+  - type: Sprite
+    state: key_mithril
+  - type: CFKey
+    keyId: GuardCommander
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyGuildmaster
+  suffix: Guildmaster
+  components:
+  - type: Sprite
+    state: key_gold
+  - type: CFKey
+    keyId: Guildmaster
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyAdventureGuild
+  suffix: Adventure Guild
+  components:
+  - type: Sprite
+    state: key_gold
+  - type: CFKey
+    keyId: AdventureGuild
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyMerchantShopPublic
+  suffix: Merchant public shop
+  components:
+  - type: Sprite
+    state: key_copper
+  - type: CFKey
+    keyId: ShopPublic
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyMerchantShop1
+  suffix: Merchant shop 1
+  components:
+  - type: Sprite
+    state: key_iron
+  - type: CFKey
+    keyId: Shop1
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyMerchantShop2
+  suffix: Merchant shop 2
+  components:
+  - type: Sprite
+    state: key_iron
+  - type: CFKey
+    keyId: Shop2
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyMerchantShop3
+  suffix: Merchant shop 3
+  components:
+  - type: Sprite
+    state: key_iron
+  - type: CFKey
+    keyId: Shop3
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyPersonalHouse1
+  suffix: PersonalHouse1
+  components:
+  - type: Sprite
+    state: key_copper
+  - type: CFKey
+    keyId: PersonalHouse1
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyPersonalHouse2
+  suffix: PersonalHouse2
+  components:
+  - type: Sprite
+    state: key_copper
+  - type: CFKey
+    keyId: PersonalHouse2
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyPersonalHouse3
+  suffix: PersonalHouse3
+  components:
+  - type: Sprite
+    state: key_copper
+  - type: CFKey
+    keyId: PersonalHouse3
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyPersonalHouse4
+  suffix: PersonalHouse4
+  components:
+  - type: Sprite
+    state: key_copper
+  - type: CFKey
+    keyId: PersonalHouse4
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyPersonalHouse5
+  suffix: PersonalHouse5
+  components:
+  - type: Sprite
+    state: key_copper
+  - type: CFKey
+    keyId: PersonalHouse5
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyPersonalHouse6
+  suffix: PersonalHouse6
+  components:
+  - type: Sprite
+    state: key_copper
+  - type: CFKey
+    keyId: PersonalHouse6
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyPersonalHouse7
+  suffix: PersonalHouse7
+  components:
+  - type: Sprite
+    state: key_copper
+  - type: CFKey
+    keyId: PersonalHouse7
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyPersonalHouse8
+  suffix: PersonalHouse8
+  components:
+  - type: Sprite
+    state: key_copper
+  - type: CFKey
+    keyId: PersonalHouse8
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyPersonalHouse9
+  suffix: PersonalHouse9
+  components:
+  - type: Sprite
+    state: key_copper
+  - type: CFKey
+    keyId: PersonalHouse9
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyPersonalHouse10
+  suffix: PersonalHouse10
+  components:
+  - type: Sprite
+    state: key_copper
+  - type: CFKey
+    keyId: PersonalHouse10
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyPersonalHouse11
+  suffix: PersonalHouse11
+  components:
+  - type: Sprite
+    state: key_copper
+  - type: CFKey
+    keyId: PersonalHouse11
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyPersonalHouse12
+  suffix: PersonalHouse12
+  components:
+  - type: Sprite
+    state: key_copper
+  - type: CFKey
+    keyId: PersonalHouse12
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyPersonalHouse13
+  suffix: PersonalHouse13
+  components:
+  - type: Sprite
+    state: key_copper
+  - type: CFKey
+    keyId: PersonalHouse13
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyPersonalHouse14
+  suffix: PersonalHouse14
+  components:
+  - type: Sprite
+    state: key_copper
+  - type: CFKey
+    keyId: PersonalHouse14
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyPersonalHouse15
+  suffix: PersonalHouse15
+  components:
+  - type: Sprite
+    state: key_copper
+  - type: CFKey
+    keyId: PersonalHouse15
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyPersonalHouse16
+  suffix: PersonalHouse16
+  components:
+  - type: Sprite
+    state: key_copper
+  - type: CFKey
+    keyId: PersonalHouse16
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyTavernHall
+  suffix: Tavern Hall
+  components:
+  - type: Sprite
+    state: key_copper
+  - type: CFKey
+    keyId: TavernHall
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyTavernStaff
+  suffix: Tavern Staff
+  components:
+  - type: Sprite
+    state: key_copper
+  - type: CFKey
+    keyId: TavernStaff
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyTavernDorms1
+  suffix: Tavern Dorms 1
+  components:
+  - type: Sprite
+    state: key_copper
+  - type: CFKey
+    keyId: TavernDorms1
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyTavernDorms2
+  suffix: Tavern Dorms 2
+  components:
+  - type: Sprite
+    state: key_copper
+  - type: CFKey
+    keyId: TavernDorms2
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyTavernDorms3
+  suffix: Tavern Dorms 3
+  components:
+  - type: Sprite
+    state: key_copper
+  - type: CFKey
+    keyId: TavernDorms3
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyTavernDorms4
+  suffix: Tavern Dorms 4
+  components:
+  - type: Sprite
+    state: key_copper
+  - type: CFKey
+    keyId: TavernDorms4
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyTavernDorms5
+  suffix: Tavern Dorms 5
+  components:
+  - type: Sprite
+    state: key_copper
+  - type: CFKey
+    keyId: TavernDorms5
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyBlacksmith3
+  suffix: Blacksmith3
+  components:
+  - type: Sprite
+    state: key_iron
+  - type: CFKey
+    keyId: Blacksmith3
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyAlchemy3
+  suffix: Alchemy3
+  components:
+  - type: Sprite
+    state: key_copper
+  - type: CFKey
+    keyId: Alchemy3
+
+- type: entity
+  parent: BaseItem
+  id: CFBaseKeyRing
+  suffix: Empty
+  name: key ring
+  description: Allows you to comfortably store a large number of keys in one place.
+  categories: [ ForkFiltered ]
+  components:
+  - type: CFKeyRing
+  - type: Sprite
+    sprite: _CP14/Objects/keys.rsi
+    layers:
+    - state: keyring
+    - state: ring-0
+      map: ["enum.StorageFillLayers.Fill"]
+  - type: Appearance
+  - type: EmitSoundOnLand
+    sound:
+      path: /Audio/_CP14/Items/key_drop.ogg
+      params:
+        variation: 0.05
+  - type: StorageFillVisualizer
+    maxFillLevels: 4
+    fillBaseName: ring
+  - type: Storage
+    grid:
+    - 0,0,5,1
+    maxItemSize: Small
+    whitelist:
+      tags:
+        - CFKey
+  - type: UserInterface
+    interfaces:
+      enum.StorageUiKey.Key:
+        type: StorageBoundUserInterface
+  - type: ContainerContainer
+    containers:
+      storagebase: !type:Container
+  - type: Clothing
+    quickEquip: false
+    slots:
+    - belt
+  - type: PhysicalComposition
+    materialComposition:
+      CFIron: 5
+
+- type: entity
+  parent: CFBaseKeyRing
+  id: CFKeyRingInnkeeper
+  suffix: Innkeeper
+  components:
+  - type: StorageFill
+    contents:
+    - id: CFKeyTavernHall
+    - id: CFKeyTavernStaff
+    - id: CFKeyTavernDorms1
+    - id: CFKeyTavernDorms2
+    - id: CFKeyTavernDorms3
+    - id: CFKeyTavernDorms4
+    - id: CFKeyTavernDorms5
+
+- type: entity
+  parent: CFBaseKeyRing
+  id: CFKeyRingBlacksmith
+  suffix: Blacksmith
+  components:
+  - type: StorageFill
+    contents:
+    - id: CFKeyBlacksmith1
+
+- type: entity
+  parent: CFBaseKeyRing
+  id: CFKeyRingPersonalHouse
+  suffix: Personal House
+  components:
+  - type: StorageFill
+    contents:
+    - id: CFKeyPersonalHouse1
+
+- type: entity
+  parent: CFBaseKeyRing
+  id: CFKeyRingAlchemist
+  suffix: Alchemist
+  components:
+  - type: StorageFill
+    contents:
+    - id: CFKeyAlchemy1
+
+- type: entity
+  parent: CFBaseKeyRing
+  id: CFKeyRingMerchant
+  suffix: Merchant
+  components:
+  - type: StorageFill
+    contents:
+    - id: CFKeyMerchantShopPublic
+    - id: CFKeyMerchantShop1
+
+- type: entity
+  parent: CFBaseKeyRing
+  id: CFKeyRingGuard
+  suffix: Guardian
+  components:
+  - type: StorageFill
+    contents:
+    - id: CFKeyCityGate
+    - id: CFKeyGuardBarracks
+
+- type: entity
+  parent: CFBaseKeyRing
+  id: CFKeyRingGuardCommander
+  suffix: Guard Commander
+  components:
+  - type: StorageFill
+    contents:
+    - id: CFKeyCityGate
+    - id: CFKeyGuardBarracks
+    - id: CFKeyGuardCommander
+
+- type: entity
+  parent: CFBaseKeyRing
+  id: CFKeyRingGuildmaster
+  suffix: Guildmaster
+  components:
+  - type: StorageFill
+    contents:
+    - id: CFKeyGuildmaster
+    - id: CFKeyAdventureGuild
+
+- type: entity
+  parent: CFBaseKeyRing
+  id: CFKeyRingGuildworker
+  suffix: Guildworker
+  components:
+  - type: StorageFill
+    contents:
+    - id: CFKeyAdventureGuild

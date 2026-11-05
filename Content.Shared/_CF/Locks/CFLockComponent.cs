@@ -51,6 +51,12 @@ public sealed partial class CFKeyComponent : Component
     public string KeyId = string.Empty;
 }
 
+/// <summary>Holds keys. Using the ring on a lock tries the key that fits.</summary>
+[RegisterComponent, NetworkedComponent]
+public sealed partial class CFKeyRingComponent : Component
+{
+}
+
 /// <summary>Needed to Pick a Lock, held or worn. A critical failure breaks it.</summary>
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class CFThievesToolkitComponent : Component

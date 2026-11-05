@@ -1,10 +1,13 @@
 # Ported from CP14 by the CF converter.
 
 - type: entity
-  parent: CFIronDoor
+  parent: [ CFIronDoor, CFLockAverage ]
   id: CFIronDoorBlacksmith1
   suffix: Blacksmith 1
   components:
+  - type: CFLock
+    forceDc: 30
+    keyId: Blacksmith1
   - type: Lock
     locked: true
 
@@ -16,10 +19,13 @@
   suffix: Blacksmith 1, Mirrored
 
 - type: entity
-  parent: CFIronDoor
+  parent: [ CFIronDoor, CFLockAverage ]
   id: CFIronDoorBlacksmith2
   suffix: Blacksmith 2
   components:
+  - type: CFLock
+    forceDc: 30
+    keyId: Blacksmith2
   - type: Lock
     locked: true
 
@@ -31,10 +37,13 @@
   suffix: Blacksmith 2, Mirrored
 
 - type: entity
-  parent: CFIronDoor
+  parent: [ CFIronDoor, CFLockAverage ]
   id: CFIronDoorBlacksmith3
   suffix: Blacksmith 3
   components:
+  - type: CFLock
+    forceDc: 30
+    keyId: Blacksmith3
   - type: Lock
     locked: true
 

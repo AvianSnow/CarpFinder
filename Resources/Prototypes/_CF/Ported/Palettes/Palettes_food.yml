@@ -1,0 +1,7 @@
+# Ported from CP14 by the CF converter.
+
+- type: palette
+  id: CFcookedMeat
+  name: CFCookedMeat
+  colors:
+    meat: "#c98367"

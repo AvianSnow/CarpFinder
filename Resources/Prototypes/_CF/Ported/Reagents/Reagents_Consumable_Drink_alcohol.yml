@@ -14,6 +14,10 @@
   metabolisms:
     Digestion:
       effects:
+      - !type:CFExposeAffliction
+        affliction: Alcohol
+      - !type:Drunk
+        boozePower: 2
       # dwarves take less toxin damage and heal a marginal amount of brute
       - !type:Vomit
         probability: 0.04
@@ -30,6 +34,13 @@
   recognizable: true
   fizziness: 0.6
   pricePerUnit: 0.23
+  metabolisms:
+    Digestion:
+      effects:
+      - !type:CFExposeAffliction
+        affliction: Alcohol
+      - !type:Drunk
+        boozePower: 2
 
 - type: reagent
   id: CFBeerGerbil
@@ -41,6 +52,10 @@
   metabolisms:
     Digestion:
       effects:
+      - !type:CFExposeAffliction
+        affliction: Alcohol
+      - !type:Drunk
+        boozePower: 2
       - !type:Satiate
         satiationType: Thirst
         factor: 2
@@ -56,6 +71,10 @@
   metabolisms:
     Digestion:
       effects:
+      - !type:CFExposeAffliction
+        affliction: Alcohol
+      - !type:Drunk
+        boozePower: 2
       - !type:Satiate
         satiationType: Thirst
         factor: 2
@@ -71,6 +90,10 @@
   metabolisms:
     Digestion:
       effects:
+      - !type:CFExposeAffliction
+        affliction: Alcohol
+      - !type:Drunk
+        boozePower: 2
       - !type:Satiate
         satiationType: Thirst
         factor: 2
@@ -85,6 +108,13 @@
   color: "#7E4043"
   recognizable: true
   pricePerUnit: 0.5
+  metabolisms:
+    Digestion:
+      effects:
+      - !type:CFExposeAffliction
+        affliction: Alcohol
+      - !type:Drunk
+        boozePower: 2
 
 - type: reagent
   id: CFWineZellasianPleasure
@@ -97,6 +127,10 @@
   metabolisms:
     Digestion:
       effects:
+      - !type:CFExposeAffliction
+        affliction: Alcohol
+      - !type:Drunk
+        boozePower: 2
       - !type:Satiate
         satiationType: Thirst
         factor: 2
@@ -112,6 +146,10 @@
   metabolisms:
     Digestion:
       effects:
+      - !type:CFExposeAffliction
+        affliction: Alcohol
+      - !type:Drunk
+        boozePower: 2
       - !type:Satiate
         satiationType: Thirst
         factor: 2
@@ -128,6 +166,10 @@
   metabolisms:
     Digestion:
       effects:
+      - !type:CFExposeAffliction
+        affliction: Alcohol
+      - !type:Drunk
+        boozePower: 2
       - !type:Satiate
         satiationType: Thirst
         factor: 2
@@ -143,6 +185,13 @@
   recognizable: true
   fizziness: 0.6
   pricePerUnit: 0.1
+  metabolisms:
+    Digestion:
+      effects:
+      - !type:CFExposeAffliction
+        affliction: Alcohol
+      - !type:Drunk
+        boozePower: 2
 
 - type: reagent
   id: CFAleBloodyTear
@@ -154,6 +203,10 @@
   metabolisms:
     Digestion:
       effects:
+      - !type:CFExposeAffliction
+        affliction: Alcohol
+      - !type:Drunk
+        boozePower: 2
       - !type:Satiate
         satiationType: Thirst
         factor: 2
@@ -170,6 +223,10 @@
   metabolisms:
     Digestion:
       effects:
+      - !type:CFExposeAffliction
+        affliction: Alcohol
+      - !type:Drunk
+        boozePower: 2
       - !type:Satiate
         satiationType: Thirst
         factor: 2
@@ -188,6 +245,10 @@
   metabolisms:
     Digestion:
       effects:
+      - !type:CFExposeAffliction
+        affliction: Alcohol
+      - !type:Drunk
+        boozePower: 2
       - !type:Satiate
         satiationType: Thirst
         factor: 2

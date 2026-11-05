@@ -1,6 +1,14 @@
 # Ported from CP14 by the CF converter.
 
 - type: decal
+  id: CFBrickTileStoneBox
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: _CP14/Decals/Stone.rsi
+    state: stone_box
+
+- type: decal
   id: CFBrickTileStoneCornerNe
   defaultSnap: true
   showMenu: true

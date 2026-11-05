@@ -2,11 +2,13 @@
 
 - type: entity
   id: CFClosetGlassShowcase
-  parent: CFClosetBase
+  parent: [ CFClosetBase, CFLockSimple ]
   name: glass showcase
   description: Something of value can be placed here without fear of it being discreetly stolen!
   abstract: true
   components:
+  - type: CFLock
+    forceDc: 20
   - type: Sprite
     drawdepth: Mobs
     snapCardinals: true
@@ -77,18 +79,37 @@
   parent: CFClosetGlassShowcase
   id: CFClosetGlassShowcaseGuildmaster
   name: guildmaster showcase
+  components:
+  - type: CFLock
+    forceDc: 20
+    keyId: Guildmaster
+    dc: 30
+    successesNeeded: 5
 
 - type: entity
   parent: CFClosetGlassShowcase
   id: CFClosetGlassShowcaseMerchant1
   name: merchant shop 1 showcase
+  components:
+  - type: CFLock
+    forceDc: 20
+    keyId: Shop1
 
 - type: entity
   parent: CFClosetGlassShowcase
   id: CFClosetGlassShowcaseMerchant2
   name: merchant shop 2 showcase
+  components:
+  - type: CFLock
+    forceDc: 20
+    keyId: Shop2
 
 - type: entity
   parent: CFClosetGlassShowcase
   id: CFClosetGlassShowcaseMerchant3
   name: merchant shop 3 showcase
+  components:
+  - type: CFLock
+    forceDc: 20
+    keyId: Shop3
+

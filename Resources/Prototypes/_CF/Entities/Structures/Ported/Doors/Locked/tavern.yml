@@ -1,10 +1,13 @@
 # Ported from CP14 by the CF converter.
 
 - type: entity
-  parent: CFWoodenDoor
+  parent: [ CFWoodenDoor, CFLockSimple ]
   id: CFWoodenDoorTavernStaff
   suffix: Tavern Staff
   components:
+  - type: CFLock
+    forceDc: 20
+    keyId: TavernStaff
   - type: Lock
     locked: true
 
@@ -16,52 +19,70 @@
   suffix: Tavern Staff, Mirrored
 
 - type: entity
-  parent: CFWoodenDoor
+  parent: [ CFWoodenDoor, CFLockSimple ]
   id: CFWoodenDoorTavernDorms1
   suffix: Tavern Dorms 1
   components:
+  - type: CFLock
+    forceDc: 20
+    keyId: TavernDorms1
   - type: Lock
     locked: true
 
 - type: entity
-  parent: CFWoodenDoor
+  parent: [ CFWoodenDoor, CFLockSimple ]
   id: CFWoodenDoorTavernDorms2
   suffix: Tavern Dorms 2
   components:
+  - type: CFLock
+    forceDc: 20
+    keyId: TavernDorms2
   - type: Lock
     locked: true
 
 - type: entity
-  parent: CFWoodenDoor
+  parent: [ CFWoodenDoor, CFLockSimple ]
   id: CFWoodenDoorTavernDorms3
   suffix: Tavern Dorms 3
   components:
+  - type: CFLock
+    forceDc: 20
+    keyId: TavernDorms3
   - type: Lock
     locked: true
 
 - type: entity
-  parent: CFWoodenDoor
+  parent: [ CFWoodenDoor, CFLockSimple ]
   id: CFWoodenDoorTavernDorms4
   suffix: Tavern Dorms 4
   components:
+  - type: CFLock
+    forceDc: 20
+    keyId: TavernDorms4
   - type: Lock
     locked: true
 
 - type: entity
-  parent: CFWoodenDoor
+  parent: [ CFWoodenDoor, CFLockSimple ]
   id: CFWoodenDoorTavernDorms5
   suffix: Tavern Dorms 5
   components:
+  - type: CFLock
+    forceDc: 20
+    keyId: TavernDorms5
   - type: Lock
     locked: true
 
 # Wooden windowed
 
 - type: entity
-  parent: CFWoodenDoorWindowed
+  parent: [ CFWoodenDoorWindowed, CFLockSimple ]
   id: CFWoodenDoorWindowedTavernHall
   suffix: Tavern Hall
   components:
+  - type: CFLock
+    forceDc: 20
+    keyId: TavernHall
   - type: Lock
     locked: true
 

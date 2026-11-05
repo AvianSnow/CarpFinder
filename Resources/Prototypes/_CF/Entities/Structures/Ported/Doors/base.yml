@@ -17,8 +17,6 @@
     openTimeTwo: 0
     closedDrawDepth: Mobs
     openDrawDepth: Mobs
-  - type: Lock
-    locked: false
   - type: PlacementReplacement
     key: walls
   - type: Fixtures

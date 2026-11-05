@@ -1,129 +1,177 @@
 # Ported from CP14 by the CF converter.
 
 - type: entity
-  parent: CFWoodenDoor
+  parent: [ CFWoodenDoor, CFLockSimple ]
   id: CFWoodenDoorPersonalHouse1
   suffix: PersonalHouse1
   components:
+  - type: CFLock
+    forceDc: 20
+    keyId: PersonalHouse1
   - type: Lock
     locked: true
 
 - type: entity
-  parent: CFWoodenDoor
+  parent: [ CFWoodenDoor, CFLockSimple ]
   id: CFWoodenDoorPersonalHouse2
   suffix: PersonalHouse2
   components:
+  - type: CFLock
+    forceDc: 20
+    keyId: PersonalHouse2
   - type: Lock
     locked: true
 
 - type: entity
-  parent: CFWoodenDoor
+  parent: [ CFWoodenDoor, CFLockSimple ]
   id: CFWoodenDoorPersonalHouse3
   suffix: PersonalHouse3
   components:
+  - type: CFLock
+    forceDc: 20
+    keyId: PersonalHouse3
   - type: Lock
     locked: true
 
 - type: entity
-  parent: CFWoodenDoor
+  parent: [ CFWoodenDoor, CFLockSimple ]
   id: CFWoodenDoorPersonalHouse4
   suffix: PersonalHouse4
   components:
+  - type: CFLock
+    forceDc: 20
+    keyId: PersonalHouse4
   - type: Lock
     locked: true
 
 - type: entity
-  parent: CFWoodenDoor
+  parent: [ CFWoodenDoor, CFLockSimple ]
   id: CFWoodenDoorPersonalHouse5
   suffix: PersonalHouse5
   components:
+  - type: CFLock
+    forceDc: 20
+    keyId: PersonalHouse5
   - type: Lock
     locked: true
 
 - type: entity
-  parent: CFWoodenDoor
+  parent: [ CFWoodenDoor, CFLockSimple ]
   id: CFWoodenDoorPersonalHouse6
   suffix: PersonalHouse6
   components:
+  - type: CFLock
+    forceDc: 20
+    keyId: PersonalHouse6
   - type: Lock
     locked: true
 
 - type: entity
-  parent: CFWoodenDoor
+  parent: [ CFWoodenDoor, CFLockSimple ]
   id: CFWoodenDoorPersonalHouse7
   suffix: PersonalHouse7
   components:
+  - type: CFLock
+    forceDc: 20
+    keyId: PersonalHouse7
   - type: Lock
     locked: true
 
 - type: entity
-  parent: CFWoodenDoor
+  parent: [ CFWoodenDoor, CFLockSimple ]
   id: CFWoodenDoorPersonalHouse8
   suffix: PersonalHouse8
   components:
+  - type: CFLock
+    forceDc: 20
+    keyId: PersonalHouse8
   - type: Lock
     locked: true
 
 - type: entity
-  parent: CFWoodenDoor
+  parent: [ CFWoodenDoor, CFLockSimple ]
   id: CFWoodenDoorPersonalHouse9
   suffix: PersonalHouse9
   components:
+  - type: CFLock
+    forceDc: 20
+    keyId: PersonalHouse9
   - type: Lock
     locked: true
 
 - type: entity
-  parent: CFWoodenDoor
+  parent: [ CFWoodenDoor, CFLockSimple ]
   id: CFWoodenDoorPersonalHouse10
   suffix: PersonalHouse10
   components:
+  - type: CFLock
+    forceDc: 20
+    keyId: PersonalHouse10
   - type: Lock
     locked: true
 
 - type: entity
-  parent: CFWoodenDoor
+  parent: [ CFWoodenDoor, CFLockSimple ]
   id: CFWoodenDoorPersonalHouse11
   suffix: PersonalHouse11
   components:
+  - type: CFLock
+    forceDc: 20
+    keyId: PersonalHouse11
   - type: Lock
     locked: true
 
 - type: entity
-  parent: CFWoodenDoor
+  parent: [ CFWoodenDoor, CFLockSimple ]
   id: CFWoodenDoorPersonalHouse12
   suffix: PersonalHouse12
   components:
+  - type: CFLock
+    forceDc: 20
+    keyId: PersonalHouse12
   - type: Lock
     locked: true
 
 - type: entity
-  parent: CFWoodenDoor
+  parent: [ CFWoodenDoor, CFLockSimple ]
   id: CFWoodenDoorPersonalHouse13
   suffix: PersonalHouse13
   components:
+  - type: CFLock
+    forceDc: 20
+    keyId: PersonalHouse13
   - type: Lock
     locked: true
 
 - type: entity
-  parent: CFWoodenDoor
+  parent: [ CFWoodenDoor, CFLockSimple ]
   id: CFWoodenDoorPersonalHouse14
   suffix: PersonalHouse14
   components:
+  - type: CFLock
+    forceDc: 20
+    keyId: PersonalHouse14
   - type: Lock
     locked: true
 
 - type: entity
-  parent: CFWoodenDoor
+  parent: [ CFWoodenDoor, CFLockSimple ]
   id: CFWoodenDoorPersonalHouse15
   suffix: PersonalHouse15
   components:
+  - type: CFLock
+    forceDc: 20
+    keyId: PersonalHouse15
   - type: Lock
     locked: true
 
 - type: entity
-  parent: CFWoodenDoor
+  parent: [ CFWoodenDoor, CFLockSimple ]
   id: CFWoodenDoorPersonalHouse16
   suffix: PersonalHouse16
   components:
+  - type: CFLock
+    forceDc: 20
+    keyId: PersonalHouse16
   - type: Lock
     locked: true

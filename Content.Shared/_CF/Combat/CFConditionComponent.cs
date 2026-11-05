@@ -71,6 +71,18 @@ public sealed partial class CFConditionComponent : Component
 
     public TimeSpan ImmobilizedUntil;
 
+    /// <summary>Timed clumsy value, on top of encumbrance. The higher of the two counts.</summary>
+    [DataField, AutoNetworkedField]
+    public int ClumsyValue;
+
+    public TimeSpan ClumsyUntil;
+
+    /// <summary>Stupefied value: a penalty to Will saves and Perception.</summary>
+    [DataField, AutoNetworkedField]
+    public int StupefiedValue;
+
+    public TimeSpan StupefiedUntil;
+
     public TimeSpan ConcealedUntil;
 
     public TimeSpan SanctuaryUntil;
@@ -110,6 +122,15 @@ public enum CFConditionKind : byte
     Calmed,
     Blinded,
     Darkvision,
+
+    /// <summary>Value is the clumsy value.</summary>
+    Clumsy,
+
+    /// <summary>Value is the stupefied value.</summary>
+    Stupefied,
+
+    /// <summary>Value is the sickened value: a status penalty to every check and DC.</summary>
+    Sickened,
 
     /// <summary>Blocks damage once. Value is the hardness (shield cantrip).</summary>
     SpellShield,

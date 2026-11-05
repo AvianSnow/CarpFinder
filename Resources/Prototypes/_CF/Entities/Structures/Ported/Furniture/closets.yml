@@ -50,8 +50,6 @@
   - type: Rotatable
   - type: Transform
     anchored: true
-  - type: Lock
-    locked: false
 
 - type: entity
   parent:

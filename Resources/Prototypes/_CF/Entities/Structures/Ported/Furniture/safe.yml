@@ -4,10 +4,13 @@
   name: safe
   parent:
   - CFClosetBase
+  - CFLockAverage
   id: CFSafe
   abstract: true
   description: A giant iron box for storing your most precious possessions. Extremely heavy and extremely strong.
   components:
+  - type: CFLock
+    forceDc: 30
   - type: Sprite
     sprite: _CP14/Structures/Storage/Dressers/vault.rsi
     state: base
@@ -52,13 +55,26 @@
   parent: CFSafe
   id: CFSafeMerchant1
   name: merchant shop 1 safe
+  components:
+  - type: CFLock
+    forceDc: 30
+    keyId: Shop1
 
 - type: entity
   parent: CFSafe
   id: CFSafeMerchant2
   name: merchant shop 2 safe
+  components:
+  - type: CFLock
+    forceDc: 30
+    keyId: Shop2
 
 - type: entity
   parent: CFSafe
   id: CFSafeMerchant3
   name: merchant shop 3 safe
+  components:
+  - type: CFLock
+    forceDc: 30
+    keyId: Shop3
+

@@ -11,6 +11,59 @@ Source of rules: https://2e.aonprd.com/ (Remaster). Source of structure and asse
 3. **Z-levels last, but independent.** They touch maps and transforms, not combat. They can start any time someone is free. Falling damage uses the Phase 1 damage effect.
 4. **The rest of CP14 comes over too, under PF2e rules (Phase 3b).** Mapping furniture and props can start any time. Items you carry wait for Bulk and price from Phase 2. Nothing is ported that adds a game system PF2e does not have.
 
+## Rebuild status (read this first)
+
+The other machine's unpushed work was lost, so the items it had were re-imported from `crystall-punk-14` on this machine. The `[x]` ticks and "How it landed" notes below were written on that machine. Where this section disagrees with them, this section is right.
+
+### Rebuilt here
+
+- Foundation: CP14 audio (now with `Voice`), damage modifier sets, tools, sound collections, tags.
+- Phase 2b maneuvers (`CFManeuverSystem`, shields, prone, grapple, pointing marks) and Phase 3 gear. Tested by `CFManeuverTest`, `CFGearPortTest`, `CFItemRulesTest`.
+- Mapping props, world items, reagents, stacks, materials and construction graphs: about 820 prototypes under `Resources/Prototypes/_CF/Entities/Structures/Ported/` and `_CF/Ported/`.
+- 127 `cp14-` locale strings in `Resources/Locale/en-US/_CF/ported.ftl`. They keep their `cp14-` keys.
+- Roofs (`CFRoof`, client `CFRoofSystem`, `cf_toggleroof`) and wallmounts (`CFWallmount`, `CFWallRequired`, `CFNoRoofInTile`). Neither has its own test yet.
+- Locks: every ported door, gate, safe and showcase has a grade and `keyId`. 38 keys, keyrings (`CFKeyRing`), and `CFPourDrawMode` / `CFPourInjectMode` for buckets and bottles. Tested by `CFPortedLockTest`.
+- Afflictions: `cfAffliction`, `CFAfflictionSystem`, `!type:CFExposeAffliction`, `CFKillEffect`, printed Alcohol (`_CF/Afflictions/alcohol.yml`), timed clumsy, stupefied and sickened. Tested by `CFAfflictionTest`.
+
+### Last check results
+
+- Build: succeeded after the last C# change.
+- YAML linter: 0 errors apart from "No localization". About 2,300 of those remain, nearly all feats and backgrounds.
+- `CFPortedLockTest` 3 of 3, `CFAfflictionTest` 7 of 7. The other `CFLockTest` tests passed before the last lock data changes.
+- `SpawnAndDirtyAllEntities` still fails, but only on the kobold and `_CE` species sprites, as it did before this work. It last ran before the locks and afflictions landed.
+- **The full CF suite has not been run since the bulk port.** Run it first: `--filter "FullyQualifiedName~Tests.CF"`. Run `SpawnAndDirtyAllEntities` again too.
+
+### Still to do, in order
+
+1. Run the two checks above and fix what they find.
+2. Recipes: `python3 .agent/port-scripts/recipes.py` makes 59 more recipes with formulas. The output was removed before the push because it was never linted, so generate it, lint it, then run `CFCraftingTest`. Known limits: stack groups use the plain material, so birch planks do not count. Cooking recipes wait for a station. 73 results are not ported (clothing, backpacks, vials, CP14's key and lock items). 4 need an unported ingredient: Screwdriver, ElfPlushie, AgaricPlushie, SkeletonPlushie.
+3. The Phase 3 weapons mostly have no recipe, because CP14 made them from modular parts. They need recipes of our own.
+4. `Sharp` was dropped from 2 items (the component was renamed upstream). `ToggleableLightVisuals` was dropped from 1. Find the replacements.
+5. Swap `CFSiteWallStone` back to `CFWallStone`. Add a test for the cost of standing up.
+6. Add the 7 missing non-feat strings: `cf-material-lucens-planks`, `cf-material-spruce-planks`, `reagent-physical-desc-sparkling`, `reagent-physical-desc-colorless`, `cf-spectral`, `cf-biological`, `cf-biological-anaerobic`. Also `cp14-flavor-base-salt`.
+7. Update `codebase.md` and `ss14rules.md` with the new folders and the engine differences below.
+
+### Check before trusting
+
+- Weapon stats: armor, shields and 4 weapons were confirmed on Archives of Nethys. The other weapons came from the old table and memory. The buckler and chain shirt are unverified.
+- Lock grades and Force Open DCs on ported doors are our choice: wood is Simple, iron and safes are Average, guard and guildmaster are Good. Force Open is 20 for wood and 30 for iron.
+- Alcohol: the entry is legacy Gamemastery Guide content. Exposure has a 60 second cooldown, which is our rule so one drink counts once. The +1 against fear only shows a popup. Sickened cannot be cured early because nothing cures it yet, and it does not stop eating. Stupefied affects Will and Perception only, not spell attacks, spell DCs, or skill checks.
+- Rings: CP14 dealt out keys at random at round start. Here each ring always holds the same keys, so every blacksmith, merchant and house ring gets the first key of its set.
+- CP14 had no key for the Blacksmith 3 and Alchemy 3 doors, so `CFKeyBlacksmith3` and `CFKeyAlchemy3` are ours.
+- Graves drop bones and copper instead of CP14 body parts and crate loot. Web cocoons drop copper instead of demiplane loot. `CFWallmountLamp` is gone; `CFWallLamp` replaces it. The lobby music entries were removed, so `CFLobbyMusic` only has the stock track.
+
+### Port scripts
+
+`.agent/port-scripts/` holds the converters. Run from the repo root in this order: `props.py`, `world.py`, `finish.py`, then `recipes.py`. **They rewrite the `Ported` folders, so hand edits there are lost; put fixes in `finish.py`.** They were written for a temp folder: `lint.sh` has that path hard-coded and needs editing.
+
+Traps found while porting:
+
+- `IconSmooth.key` is required, and a missing one drops the entity on the client only.
+- CP14 files can start with a BOM, so read them as `utf-8-sig`, or the first prototype is lost with no error.
+- The linter skips abstract entities, so a bad field there only shows up in the spawn test.
+- `Crayon` needs `selectedState`. `Injector` needs `activeModeProtoId` and `allowedModes`. `Occluder` takes `polygon`, not `boundingBox`.
+- Do not run `grep -r` over `Content.*`. It hangs.
+
 ## Phase 0 — Housekeeping (done)
 
 - [x] Fix doc paths. `carpfinder.mdc` now points at `.agent/`. The missing `hot-reload.md` and `CURSOR.md` references are gone; their content is in `Projectinstructions.md`.

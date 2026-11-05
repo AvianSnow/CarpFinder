@@ -89,6 +89,16 @@ public sealed partial class CFSoundEffect : CFEffect
     }
 }
 
+/// <summary>Kills the target outright, as the last stage of a poison.</summary>
+public sealed partial class CFKillEffect : CFEffect
+{
+    public override void Apply(IEntityManager entities, CFEffectArgs args)
+    {
+        if (args.Target is { } target)
+            entities.System<CFDyingSystem>().Kill(target, args.User == target ? null : args.User);
+    }
+}
+
 /// <summary>A line of text over the target or the user.</summary>
 public sealed partial class CFPopupEffect : CFEffect
 {
