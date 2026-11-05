@@ -1,0 +1,131 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  parent:
+  - CFChestGeneric
+  - CFBaseFlammable
+  id: CFWoodenChest
+  name: wooden chest
+  description: A simple wooden chest for easy storage of junk.
+  components:
+  - type: Icon
+    sprite: _CP14/Structures/Storage/Crates/chest.rsi
+    state: icon
+  - type: Sprite
+    sprite: _CP14/Structures/Storage/Crates/chest.rsi
+    layers:
+    - state: base
+      map: ["enum.StorageVisualLayers.Base"]
+    - state: closed
+      map: ["enum.StorageVisualLayers.Door"]
+  - type: Damageable
+    damageModifierSet: CFWoodStructural
+  - type: Injurable
+    damageContainer: StructuralInorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 50
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFWoodenPlanks1:
+            min: 3
+            max: 5
+      - !type:PlaySoundBehavior
+        sound:
+          collection: WoodDestroy
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: Construction
+    graph: CFWoodenChest
+    node: CFWoodenChest
+    containers:
+    - entity_storage
+  - type: PhysicalComposition
+    materialComposition:
+      CFWoodenPlanks: 50
+      CFIron: 10
+
+- type: entity
+  parent: CFWoodenChest
+  id: CFWoodenChestOld
+  name: old wooden chest
+  description: An old chest. It has seen a lot.
+  components:
+  - type: Icon
+    sprite: _CP14/Structures/Storage/Crates/chest_old.rsi
+    state: icon
+  - type: Sprite
+    sprite: _CP14/Structures/Storage/Crates/chest_old.rsi
+    layers:
+    - state: base
+      map: ["enum.StorageVisualLayers.Base"]
+    - state: closed
+      map: ["enum.StorageVisualLayers.Door"]
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 30
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFWoodenPlanks1:
+            min: 3
+            max: 5
+      - !type:PlaySoundBehavior
+        sound:
+          collection: WoodDestroy
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+
+- type: entity
+  parent:
+  - CFChestGeneric
+  - CFBaseFlammable
+  id: CFGoldChest
+  name: gold chest
+  description: Someone spent a lot of money and effort to decorate this chest with gold. It didn't make the chest more functional, but it did make it beautiful.
+  components:
+  - type: Icon
+    sprite: _CP14/Structures/Storage/Crates/chest_gold.rsi
+    state: icon
+  - type: Sprite
+    sprite: _CP14/Structures/Storage/Crates/chest_gold.rsi
+    layers:
+    - state: base
+      map: ["enum.StorageVisualLayers.Base"]
+    - state: closed
+      map: ["enum.StorageVisualLayers.Door"]
+  - type: Damageable
+    damageModifierSet: CFWoodStructural
+  - type: Injurable
+    damageContainer: StructuralInorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 50
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFWoodenPlanks1:
+            min: 3
+            max: 5
+      - !type:PlaySoundBehavior
+        sound:
+          collection: WoodDestroy
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: Construction
+    graph: CFGoldChest
+    node: CFGoldChest
+    containers:
+    - entity_storage
+  - type: PhysicalComposition
+    materialComposition:
+      CFWoodenPlanks: 50
+      CFIron: 10
+      CFGold: 10

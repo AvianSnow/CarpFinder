@@ -1,0 +1,41 @@
+# Ported from CP14 by the CF converter.
+
+- type: construction
+  id: CFWallmountTorch
+  graph: CFWallmountTorch
+  startNode: start
+  targetNode: CFWallmountTorch
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  canRotate: true
+  conditions:
+    - !type:TileNotBlocked
+    - !type:CFWallRequired
+
+- type: construction
+  id: CFFloorTorch
+  graph: CFFloorTorch
+  startNode: start
+  targetNode: CFFloorTorch
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFWallmountBarShelfA
+  graph: CFWallmountBarShelfA
+  startNode: start
+  targetNode: CFWallmountBarShelfA
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  canRotate: true
+  conditions:
+    - !type:TileNotBlocked
+    - !type:CFWallRequired

@@ -1,0 +1,57 @@
+# Ported from CP14 by the CF converter.
+
+- type: constructionGraph
+  id: CFWoodenCabinet
+  start: start
+  graph:
+    - node: start
+      actions:
+      - !type:DestroyEntity {}
+      edges:
+        - to: CFWoodenCabinet
+          completed:
+            - !type:SnapToGrid
+          steps:
+            - material: CFWoodenPlanks
+              amount: 3
+              doAfter: 2
+    - node: CFWoodenCabinet
+      entity: CFWoodenCabinet
+      edges:
+      - to: start
+        steps:
+        - tool: Prying
+          doAfter: 2
+        completed:
+        - !type:SpawnPrototype
+          prototype: CFWoodenPlanks1
+          amount: 3
+
+- type: constructionGraph
+  id: CFIronCabinet
+  start: start
+  graph:
+    - node: start
+      actions:
+      - !type:DestroyEntity {}
+      edges:
+        - to: CFIronCabinet
+          completed:
+            - !type:SnapToGrid
+          steps:
+            - material: CFIronBar
+              amount: 3
+              doAfter: 4
+    - node: CFIronCabinet
+      entity: CFIronCabinet
+      edges:
+      - to: start
+        steps:
+        - tool: Screwing
+          doAfter: 2
+        - tool: Prying
+          doAfter: 4
+        completed:
+        - !type:SpawnPrototype
+          prototype: CFIronBar1
+          amount: 3

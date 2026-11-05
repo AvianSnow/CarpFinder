@@ -1,0 +1,90 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  id: CFBowlBase
+  parent: BaseItem
+  description: This is your bowl for a delicious soups!
+  categories: [ ForkFiltered ]
+  abstract: true
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Consumable/Food/Soups/bowls.rsi
+  - type: Item
+    shape:
+    - 0,0,1,0
+  - type: SolutionContainerManager
+    solutions:
+      food:
+        maxVol: 30
+  - type: Appearance
+  - type: SolutionContainerVisuals
+  - type: Edible
+    edible: Drink
+    utensil: Spoon
+    transferAmount: 2.5
+  - type: Spillable
+    solution: food
+
+- type: entity
+  id: CFBowlWooden
+  parent: CFBowlBase
+  name: wooden bowl
+  components:
+  - type: Sprite
+    layers:
+    - state: wooden
+    - map: ["cp14_foodLayers"]
+  - type: PhysicalComposition
+    materialComposition:
+      CFWoodenPlanks: 20
+  - type: Edible
+    trash: 
+    - CFBowlWooden
+
+- type: entity
+  id: CFBowlIron
+  parent: CFBowlBase
+  name: iron bowl
+  components:
+  - type: Sprite
+    layers:
+    - state: iron
+    - map: ["cp14_foodLayers"]
+  - type: PhysicalComposition
+    materialComposition:
+      CFIron: 20
+  - type: Edible
+    trash: 
+    - CFBowlIron
+
+- type: entity
+  id: CFBowlGold
+  parent: CFBowlBase
+  name: gold bowl
+  components:
+  - type: Sprite
+    layers:
+    - state: gold
+    - map: ["cp14_foodLayers"]
+  - type: PhysicalComposition
+    materialComposition:
+      CFGold: 20
+  - type: Edible
+    trash: 
+    - CFBowlGold
+
+- type: entity
+  id: CFBowlCopper
+  parent: CFBowlBase
+  name: copper bowl
+  components:
+  - type: Sprite
+    layers:
+    - state: copper
+    - map: ["cp14_foodLayers"]
+  - type: PhysicalComposition
+    materialComposition:
+      CFCopper: 20
+  - type: Edible
+    trash: 
+    - CFBowlCopper

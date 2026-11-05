@@ -1,0 +1,185 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  parent: BaseItem
+  abstract: true
+  id: CFCandleBase
+  categories: [ ForkFiltered ]
+  components:
+  - type: Tag
+    tags:
+    - Candle
+  - type: Appearance
+  - type: Reactive
+    groups:
+      Flammable: [ Touch ]
+      Extinguish: [ Touch ]
+  - type: ExtinguishOnInteract
+    extinguishAttemptSound:
+      path: /Audio/Items/candle_blowing.ogg
+      params:
+        variation: 0.05
+        volume: 10
+  - type: UseDelay
+  - type: CFDelayedIgnitionSource
+  - type: CFIgnitionModifier
+    ignitionTimeModifier: 0.5
+    hideCaution: true
+  - type: Flammable
+    fireSpread: false
+    canResistFire: false
+    alwaysCombustible: true
+    canExtinguish: true
+    firestacksOnIgnite: 15.0
+    firestackFade: -0
+    damage:
+      types:
+        Heat: 0
+
+- type: entity
+  id: CFCandle
+  parent: CFCandleBase
+  name: candle
+  description: A thin wick threaded through fat.
+  components:
+  - type: Sprite
+    noRot: true
+    drawdepth: Mobs
+    sprite: _CP14/Objects/Misc/candles.rsi
+    layers:
+      - state: small1
+        map: ["random"]
+  - type: RandomSprite
+    available:
+    - random:
+        small1: ""
+        small2: ""
+        small3: ""
+  - type: Item
+    size: Small
+  - type: FireVisuals
+    sprite: _CP14/Objects/Misc/candles.rsi
+    normalState: small_fire
+  #- type: ToggleableLightVisuals #TODO inhands
+  #  spriteLayer: null
+  #  inhandVisuals:
+  #    left:
+  #    - state: inhand-left-flame
+  #      shader: unshaded
+  #    right:
+  #    - state: inhand-right-flame
+  #      shader: unshaded
+  - type: Damageable
+    damageModifierSet: Wood
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 20
+      behaviors:
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: Flammable
+    firestacksOnIgnite: 2
+
+- type: entity
+  parent: CFCandle
+  id: CFCandleIgnited
+  suffix: Ignited
+  components:
+  - type: CFAutoIgnite
+    startStack: 2
+
+#Candelabra
+
+- type: entity
+  id: CFCandelabra
+  parent: CFCandleBase
+  name: candelabra
+  description: Several candles, beautifully placed on a metal support.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    noRot: true
+    offset: 0,0.2
+    drawdepth: Mobs
+    sprite: _CP14/Objects/Misc/candelabra.rsi
+    layers:
+      - state: triple
+  - type: Item
+    size: Normal
+  - type: FireVisuals
+    sprite: _CP14/Objects/Misc/candelabra.rsi
+    normalState: triple_fire
+  - type: Damageable
+    damageModifierSet: CFMetallic
+  #- type: ToggleableLightVisuals #TODO inhands
+  #  spriteLayer: null
+  #  inhandVisuals:
+  #    left:
+  #    - state: inhand-left-flame
+  #      shader: unshaded
+  #    right:
+  #    - state: inhand-right-flame
+  #      shader: unshaded
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 50
+      behaviors:
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFScrapIron:
+            min: 1
+            max: 1
+  - type: PhysicalComposition
+    materialComposition:
+      CFIron: 10 # 1 iron bar
+  - type: Flammable
+    firestacksOnIgnite: 4
+
+- type: entity
+  parent: CFCandelabra
+  id: CFCandelabraIgnited
+  suffix: Ignited
+  components:
+  - type: CFAutoIgnite
+    startStack: 4
+
+- type: entity
+  parent: CFCandelabraIgnited
+  id: CFCandelabraBloodIgnited
+  suffix: Vampire, DO NOT MAP
+  categories: [ ForkFiltered, DoNotMap ]
+  name: candelabra of crimson candles
+  components:
+  - type: Sprite
+    layers:
+      - state: blood
+  - type: FireVisuals
+    lightColor: "#ff1100"
+    normalState: blood_fire
+
+- type: entity
+  parent: CFCandleIgnited
+  id: CFCandleBloodIgnited
+  suffix: Vampire, DO NOT MAP
+  categories: [ ForkFiltered, DoNotMap ]
+  name: crimson candle
+  components:
+  - type: Sprite
+    layers:
+      - state: blood1
+        map: ["random"]
+  - type: FireVisuals
+    lightColor: "#ff1100"
+    normalState: blood_fire
+  - type: RandomSprite
+    available:
+    - random:
+        blood1: ""
+        blood2: ""
+        blood3: ""

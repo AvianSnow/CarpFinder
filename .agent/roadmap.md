@@ -337,28 +337,22 @@ If you can't tell which side something falls on, add it to "Decided" below as an
 - Code: `Content.Server/_CF/Scene/CFSceneSystem`. Tests: `Content.IntegrationTests/Tests/_CF/Scene/CFSceneTest.cs`.
 - The dev map cannot be saved cleanly: a stock `PackageDelivery` entity points at a missing entity.
 
-## Phase 4 — Z-levels (verticality)
+## Phase 4 — Z-levels (verticality) (done)
 
-CP14 implements Z-levels as separate maps stacked in a station, linked by portals. No engine change is needed.
+Levels are separate maps in a stack, linked by stairs, ladders and holes. No engine change was needed.
 
-### Port (server)
-
-- [ ] `CP14StationZLevelsComponent` → `Content.Server/_CF/ZLevels/CFStationZLevelsComponent` (levels list with a map path per level, default level).
-- [ ] `CP14StationZLevelsSystem` (+ `.Portals`, `.Actions`) → `CFStationZLevelsSystem`: loads the level maps on `StationPostInitEvent`, `GetMapOffset`, auto-portals linked through `LinkedEntitySystem`.
-- [ ] `CP14ZLevelAutoPortalComponent` → `CFZLevelAutoPortalComponent`.
-- [ ] `CP14CombineMapsIntoZLevelsCommand` → `cf-combineMapsIntoZLevels` admin command.
-
-### Port (shared and prototypes)
-
-- [ ] `CP14ZLevelMoverComponent` and `ZLevelActions` → `CFZLevelMover`, for ghosts and admins.
-- [ ] Find and port the stairs, ladder, hole and trapdoor portal prototypes and their actions (search `Resources/Prototypes/_CP14` for `CP14ZLevelAutoPortal` and `CP14ActionZLevel`).
-- [ ] A test station: two or three small maps (cellar, ground, upper floor) in a `gameMap` with `CFStationZLevels`.
-
-### PF2e hooks
-
-- [ ] Falling through a hole: bludgeoning equal to half the distance in feet, land prone. Uses the Phase 1 `Damage` effect.
-- [ ] Ladders and steep stairs: Climb (Athletics) check option, or a plain move action.
-- [ ] Confirm area effects, flanking sensors and NPC targeting stay on one level (separate maps should guarantee it; add a test).
+- [x] `CFStationZLevels` (`Content.Server/_CF/ZLevels`) on a station: `defaultLevel`, `levels` (level number to map path), `levelHeightFeet` (10). `CFZLevelSystem` loads them on `StationPostInitEvent`.
+- [x] `CFZLevelAutoPortal`: place an `AutoLink` stair or ladder and it builds the other end at the same position on the next level.
+- [x] `cf_combinezlevels <map> <map> ...` (bottom up) stacks maps that are already loaded.
+- [x] `CFZLevelMover`: ghosts and admins get Move up and Move down actions. It is one marked line in stock `observer.yml`.
+- [x] Stairs (stone, wood, marble) are stock portals you walk through. `CFLadderDownAutoLink` and `CFLadderUpAutoLink` are clicked to Climb. `CFZLevelHole` is a drop. CP14 has no trapdoor, so there is none.
+- [x] Test station: `forcemap CFZLevelTest` loads `Resources/Maps/_CF/ZLevels/ground.yml` and `cellar.yml`, with stairs, a ladder and a hole.
+- [x] Falling: `CFFallRules` is Player Core: half the distance over 5 feet, up to 750, prone if it hurt. A fall carries on through levels with no floor below. Falling onto a creature, soft landings and Grab an Edge are not in.
+- [x] Climb: one action and two free hands. `CFZLevelClimb.dc` 0 is a plain move, which the book allows for a trivial climb. With a DC it is Athletics; a failure stays put, and a critical failure falls on the way down or leaves you prone on the way up. The critical success bonus and being off-guard while climbing are not in.
+- [x] Levels are separate maps, so area effects cannot cross (tested). Flanking sensors and NPC targeting use physics and lookups on one map, so they should stay on a level too, but they have no test of their own.
+- `CFStationBasic` is a minimal CF station: jobs and spawning, with no Nanotrasen shuttles, cargo or evacuation. Use it for CF maps; `StandardNanotrasenStation` makes the stock map test try to dock an emergency shuttle. `CFSpawnPoint<Job>` markers are in `Roles/spawn_points.yml`, and every job on a map needs one.
+- Only creatures fall through holes, not dropped items.
+- Saved `CFStationZLevels.Maps` is runtime data: it is rebuilt on load, not saved.
 
 ## Known bugs
 

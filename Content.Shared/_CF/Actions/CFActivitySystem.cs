@@ -28,7 +28,6 @@ public sealed partial class CFActivitySystem : EntitySystem
     [Dependency] private CFStrikeSystem _strikes = default!;
     [Dependency] private CFActionPoolSystem _actions = default!;
     [Dependency] private CFBonusSystem _bonuses = default!;
-    [Dependency] private CFShieldSystem _shields = default!;
     [Dependency] private CFFactionSystem _factions = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
@@ -48,10 +47,6 @@ public sealed partial class CFActivitySystem : EntitySystem
     {
         switch (ent.Comp.Kind)
         {
-            case CFActivityKind.RaiseShield when !TryShield(args.User, out _):
-                args.Cancelled = true;
-                args.Reason = Loc.GetString("cf-act-no-shield");
-                break;
             case CFActivityKind.Finisher
                 when !TryComp(args.User, out CFCombatOptionsComponent? style) || !style.Panache:
                 args.Cancelled = true;
@@ -77,10 +72,6 @@ public sealed partial class CFActivitySystem : EntitySystem
 
         switch (ent.Comp.Kind)
         {
-            case CFActivityKind.RaiseShield:
-                if (TryShield(args.Performer, out _))
-                    _conditions.RaiseShield(args.Performer);
-                break;
             case CFActivityKind.Rage:
                 ToggleRage(args.Performer);
                 break;
@@ -115,26 +106,8 @@ public sealed partial class CFActivitySystem : EntitySystem
             case CFActivityKind.Demoralize:
                 _conditions.TryDemoralize(args.Performer, args.Target);
                 break;
-            case CFActivityKind.Trip:
-                Trip(args.Performer, args.Target);
-                break;
-            case CFActivityKind.Shove:
-                Shove(args.Performer, args.Target);
-                break;
-            case CFActivityKind.Grapple:
-                Grapple(args.Performer, args.Target);
-                break;
             case CFActivityKind.Feint:
                 _conditions.TryFeint(args.Performer, args.Target);
-                break;
-            case CFActivityKind.HuntPrey:
-                Mark(args.Performer, args.Target, prey: true);
-                break;
-            case CFActivityKind.Exploit:
-                Mark(args.Performer, args.Target, prey: false);
-                break;
-            case CFActivityKind.Stratagem:
-                Stratagem(args.Performer, args.Target);
                 break;
             case CFActivityKind.Flurry:
                 Flurry(args.Performer, args.Target);
@@ -169,64 +142,6 @@ public sealed partial class CFActivitySystem : EntitySystem
         }
     }
 
-    private void Trip(EntityUid user, EntityUid target)
-    {
-        var bonus = ManeuverBonus(user, t => t.Trip);
-        var degree = _conditions.RollSkill(user, target, "Athletics", CFAbility.Strength, CFDefenseType.Reflex, attackTrait: true, bonus);
-        if (degree is CFDegree.CriticalFailure)
-        {
-            _conditions.KnockProne(user);
-            return;
-        }
-
-        if (degree is not (CFDegree.Success or CFDegree.CriticalSuccess))
-        {
-            _popup.PopupEntity(Loc.GetString("cf-act-trip-fail"), user, user);
-            return;
-        }
-
-        _conditions.KnockProne(target);
-        if (degree == CFDegree.CriticalSuccess)
-            _conditions.SetOffGuardAll(target, 6f);
-    }
-
-    private void Shove(EntityUid user, EntityUid target)
-    {
-        var bonus = ManeuverBonus(user, t => t.Shove);
-        var degree = _conditions.RollSkill(user, target, "Athletics", CFAbility.Strength, CFDefenseType.Fortitude, attackTrait: true, bonus);
-        if (degree is not (CFDegree.Success or CFDegree.CriticalSuccess))
-        {
-            _popup.PopupEntity(Loc.GetString("cf-act-shove-fail"), user, user);
-            return;
-        }
-
-        _conditions.ReleaseGrab(target);
-        _conditions.Push(user, target, degree == CFDegree.CriticalSuccess ? 10 : 5);
-        if (degree == CFDegree.CriticalSuccess)
-            _conditions.KnockProne(target);
-        else
-            _popup.PopupEntity(Loc.GetString("cf-act-shove"), target);
-    }
-
-    private void Grapple(EntityUid user, EntityUid target)
-    {
-        var bonus = ManeuverBonus(user, t => t.Grapple);
-        var degree = _conditions.RollSkill(user, target, "Athletics", CFAbility.Strength, CFDefenseType.Fortitude, attackTrait: true, bonus);
-        if (degree == CFDegree.CriticalFailure)
-        {
-            _conditions.ApplyGrabbed(user, target);
-            return;
-        }
-
-        if (degree is not (CFDegree.Success or CFDegree.CriticalSuccess))
-        {
-            _popup.PopupEntity(Loc.GetString("cf-act-grapple-fail"), user, user);
-            return;
-        }
-
-        _conditions.ApplyGrabbed(target, user);
-    }
-
     private void ToggleRage(EntityUid user)
     {
         if (!TryComp(user, out CFCombatOptionsComponent? opt) || !opt.CanRage)
@@ -245,7 +160,7 @@ public sealed partial class CFActivitySystem : EntitySystem
         _popup.PopupEntity(Loc.GetString(opt.PointBlank ? "cf-act-point-blank" : "cf-act-point-blank-end"), user, user);
     }
 
-    private void Mark(EntityUid user, EntityUid target, bool prey)
+    public void Mark(EntityUid user, EntityUid target, bool prey)
     {
         var opt = EnsureComp<CFCombatOptionsComponent>(user);
         if (prey)
@@ -264,7 +179,7 @@ public sealed partial class CFActivitySystem : EntitySystem
         Dirty(user, opt);
     }
 
-    private void Stratagem(EntityUid user, EntityUid target)
+    public void Stratagem(EntityUid user, EntityUid target)
     {
         var opt = EnsureComp<CFCombatOptionsComponent>(user);
         opt.StratagemRoll = _random.Next(1, 21);
@@ -393,22 +308,11 @@ public sealed partial class CFActivitySystem : EntitySystem
         _bonuses.AddBonus(ally, CFBonusStat.Saves, CFBonusType.Status, 1, 12f);
     }
 
-    /// <summary>A held shield that is not broken can be raised.</summary>
-    private bool TryShield(EntityUid user, out CFShieldComponent? shield)
-    {
-        shield = null;
-        if (!_shields.TryGetHeldShield(user, out var held) || held.Comp.Broken)
-            return false;
-
-        shield = held.Comp;
-        return true;
-    }
-
     /// <summary>
     /// The item bonus a maneuver gets from the held weapon: its potency, when it has the matching trait
     /// (trip, shove, grapple, disarm). Fists have none.
     /// </summary>
-    private int ManeuverBonus(EntityUid user, Func<CFWeaponTraits, bool> hasTrait)
+    public int ManeuverBonus(EntityUid user, Func<CFWeaponTraits, bool> hasTrait)
     {
         if (!_strikes.TryMeleeWeapon(user, out var weapon, out var weaponUid) || weaponUid == user)
             return 0;

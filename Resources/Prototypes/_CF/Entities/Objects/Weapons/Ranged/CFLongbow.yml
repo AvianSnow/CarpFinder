@@ -8,6 +8,7 @@
   description: A 5-foot elm longbow. 1d8 piercing, range 100 feet, deadly d10, volley 30 feet.
   components:
     - type: Sprite
+      sprite: _CP14/Objects/Weapons/Ranged/bow.rsi
       layers:
         - state: unwielded
           map: [base]
@@ -16,6 +17,12 @@
           visible: false
     - type: Item
       size: Large
+      sprite: _CP14/Objects/Weapons/Ranged/bow.rsi
+    - type: Clothing
+      sprite: _CP14/Objects/Weapons/Ranged/bow.rsi
+      quickEquip: false
+      slots:
+      - neck
     - type: Appearance
     - type: ItemMapper
       spriteLayers:

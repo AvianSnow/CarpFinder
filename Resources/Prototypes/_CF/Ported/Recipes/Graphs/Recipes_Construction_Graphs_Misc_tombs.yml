@@ -1,0 +1,26 @@
+# Ported from CP14 by the CF converter.
+
+- type: constructionGraph
+  id: CFBaseTombstone
+  start: start
+  graph:
+    - node: start
+      actions:
+        - !type:DestroyEntity {}
+      edges:
+        - to: CFBaseTombstone
+          steps:
+            - material: CFStone
+              amount: 5
+              doAfter: 2
+    - node: CFBaseTombstone
+      entity: CFBaseTombstone
+      edges:
+      - to: start
+        steps:
+        - tool: CFHammering
+          doAfter: 10
+        completed:
+        - !type:SpawnPrototype
+          prototype: CFStoneBlock1
+          amount: 5

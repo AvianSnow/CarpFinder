@@ -1,0 +1,39 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  parent: CFIronDoor
+  id: CFIronDoorGuardGuildmaster
+  suffix: Guildmaster
+  components:
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent: CFWoodenDoor
+  id: CFWoodenDoorAdventureGuild
+  suffix: Adventure guild
+  components:
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent: CFWoodenDoorAdventureGuild
+  id: CFWoodenDoorAdventureGuildOpen
+  suffix: Adventure guild Open
+  components:
+  - type: Lock
+    locked: false
+
+- type: entity
+  parent:
+  - CFWoodenDoorAdventureGuild
+  - CFWoodenDoorMirrored
+  id: CFWoodenDoorAdventureGuildMirrored
+  suffix: Adventure guild, Mirrored
+
+- type: entity
+  parent:
+  - CFWoodenDoorAdventureGuildOpen
+  - CFWoodenDoorMirrored
+  id: CFWoodenDoorAdventureGuildMirroredOpen
+  suffix: Adventure guild, Mirrored, Open

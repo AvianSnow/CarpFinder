@@ -1,0 +1,27 @@
+# Ported from CP14 by the CF converter.
+
+- type: constructionGraph
+  id: CFOrderBoard
+  start: start
+  graph:
+    - node: start
+      actions:
+        - !type:DestroyEntity {}
+      edges:
+        - to: CFOrderBoard
+          steps:
+            - material: CFWoodenPlanks
+              amount: 3
+              doAfter: 3
+
+    - node: CFOrderBoard
+      entity: CFOrderBoard
+      edges:
+      - to: start
+        steps:
+        - tool: Prying
+          doAfter: 2
+        completed:
+        - !type:SpawnPrototype
+          prototype: CFWoodenPlanks1
+          amount: 3

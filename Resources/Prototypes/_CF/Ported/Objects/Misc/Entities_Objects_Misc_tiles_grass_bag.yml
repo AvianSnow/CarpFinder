@@ -1,0 +1,68 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  parent: CFFloorTileBase
+  id: CFFloorTileGrassBagBase
+  description: A bag of grass seed. A pinch of natural magic and the dirt is covered with a beautiful lawn in the blink of an eye!
+  abstract: true
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Specific/Farming/grass_seeds.rsi
+  - type: Item
+    sprite: _CP14/Objects/Tile/tile.rsi
+    size: Tiny
+  - type: Stack
+    count: 1
+  - type: FloorTile
+    placeTileSound:
+      collection: CFGrassGathering
+      params:
+        variation: 0.05
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 10
+      behaviors:
+        - !type:DoActsBehavior
+          acts: [ "Destruction" ]
+
+- type: entity
+  parent: CFFloorTileGrassBagBase
+  id: CFFloorTileGrassBag
+  name: grass bag
+  components:
+  - type: Sprite
+    state: grass2
+  - type: FloorTile
+    outputs:
+      - CFFloorGrass
+  - type: Stack
+    stackType: CFFloorTileGrassBag
+
+- type: entity
+  parent: CFFloorTileGrassBagBase
+  id: CFFloorTileGrassBagLight
+  name: light grass bag
+  components:
+  - type: Sprite
+    state: grass
+  - type: FloorTile
+    outputs:
+      - CFFloorGrassLight
+  - type: Stack
+    stackType: CFFloorTileGrassBagLight
+
+- type: entity
+  parent: CFFloorTileGrassBagBase
+  id: CFFloorTileGrassBagTall
+  name: tall grass bag
+  components:
+  - type: Sprite
+    state: grass3
+  - type: FloorTile
+    outputs:
+      - CFFloorGrassTall
+  - type: Stack
+    stackType: CFFloorTileGrassBagTall

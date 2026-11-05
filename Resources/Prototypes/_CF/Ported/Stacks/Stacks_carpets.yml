@@ -1,0 +1,49 @@
+# Ported from CP14 by the CF converter.
+
+- type: stack
+  id: CFFloorCarpetRed
+  name: cp14-stack-red-carpet
+  spawn: CFFloorCarpetItemRed1
+  maxCount: 30
+
+- type: stack
+  id: CFFloorCarpetBlue
+  name: cp14-stack-blue-carpet
+  spawn: CFFloorCarpetItemBlue1
+  maxCount: 30
+
+- type: stack
+  id: CFFloorCarpetCyan
+  name: cp14-stack-cyan-carpet
+  spawn: CFFloorCarpetItemCyan1
+  maxCount: 30
+
+- type: stack
+  id: CFFloorCarpetGreen
+  name: cp14-stack-green-carpet
+  spawn: CFFloorCarpetItemGreen1
+  maxCount: 30
+
+- type: stack
+  id: CFFloorCarpetOrange
+  name: cp14-stack-orange-carpet
+  spawn: CFFloorCarpetItemOrange1
+  maxCount: 30
+
+- type: stack
+  id: CFFloorCarpetPurple
+  name: cp14-stack-purple-carpet
+  spawn: CFFloorCarpetItemPurple1
+  maxCount: 30
+
+- type: stack
+  id: CFFloorCarpetBlack
+  name: cp14-stack-black-carpet
+  spawn: CFFloorCarpetItemBlack1
+  maxCount: 30
+
+- type: stack
+  id: CFFloorCarpetYellow
+  name: cp14-stack-yellow-carpet
+  spawn: CFFloorCarpetItemYellow1
+  maxCount: 30

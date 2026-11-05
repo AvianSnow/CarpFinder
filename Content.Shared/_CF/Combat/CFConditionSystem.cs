@@ -1,3 +1,8 @@
+using System.Linq;
+using Content.Shared.Movement.Pulling.Components;
+using Content.Shared.Movement.Pulling.Systems;
+using Content.Shared.Stunnable;
+using Robust.Shared.Player;
 using System.Numerics;
 using Content.Shared.CF.Actions;
 using Content.Shared.CF.Character;
@@ -25,6 +30,10 @@ namespace Content.Shared.CF.Combat;
 /// </summary>
 public sealed partial class CFConditionSystem : EntitySystem
 {
+    private const int ShovesToProne = 3;
+    private static readonly TimeSpan ShoveWindow = TimeSpan.FromSeconds(6);
+
+    [Dependency] private PullingSystem _pulling = default!;
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private INetManager _net = default!;
     [Dependency] private IPrototypeManager _prototypes = default!;
@@ -137,11 +146,6 @@ public sealed partial class CFConditionSystem : EntitySystem
                 Dirty(uid, cond);
             }
 
-            if (cond.RaisedShield)
-            {
-                cond.RaisedShield = false;
-                Dirty(uid, cond);
-            }
         }
 
         if (!TryComp(uid, out CFCombatOptionsComponent? opt))
@@ -195,6 +199,10 @@ public sealed partial class CFConditionSystem : EntitySystem
         cond.Immobilized = false;
         Dirty(target, cond);
         _speed.RefreshMovementSpeedModifiers(target);
+
+        // The grab and its pull end together.
+        if (TryComp(target, out PullableComponent? pullable) && pullable.BeingPulled)
+            _pulling.TryStopPull(target, pullable);
     }
 
     public void ApplyImmobilized(EntityUid target, float seconds)
@@ -359,12 +367,38 @@ public sealed partial class CFConditionSystem : EntitySystem
         return true;
     }
 
-    public void RaiseShield(EntityUid uid)
+    public bool IsProne(EntityUid uid)
     {
-        var cond = Ensure(uid);
-        cond.RaisedShield = true;
-        Dirty(uid, cond);
-        _popup.PopupEntity(Loc.GetString("cf-act-shield-raised"), uid, uid);
+        return HasComp<KnockedDownComponent>(uid);
+    }
+
+    /// <summary>
+    /// −2 circumstance to attack rolls while prone. It does not stack with another circumstance penalty,
+    /// such as a loosened grip, so only the part beyond that one counts.
+    /// </summary>
+    public int ProneAttackPenalty(EntityUid uid)
+    {
+        if (!IsProne(uid))
+            return 0;
+
+        var other = TryComp(uid, out CFBonusesComponent? bonuses)
+            ? bonuses.Bonuses.Where(b => b.Stat == CFBonusStat.AttackRoll && b.Type == CFBonusType.Circumstance).Select(b => b.Value).DefaultIfEmpty(0).Min()
+            : 0;
+        return Math.Min(0, -2 - other);
+    }
+
+    /// <summary>Three successful shoves in a row knock the target prone, each within 6 seconds of the last.</summary>
+    public void NoteShove(EntityUid target)
+    {
+        var cond = Ensure(target);
+        var now = _timing.CurTime;
+        cond.Shoves = now - cond.LastShove <= ShoveWindow ? cond.Shoves + 1 : 1;
+        cond.LastShove = now;
+        if (cond.Shoves < ShovesToProne)
+            return;
+
+        cond.Shoves = 0;
+        KnockProne(target);
     }
 
     /// <summary>
@@ -555,7 +589,8 @@ public sealed partial class CFConditionSystem : EntitySystem
 
     public void KnockProne(EntityUid target)
     {
-        _stun.TryKnockdown(target, TimeSpan.FromSeconds(3), refresh: true, autoStand: true, drop: false, force: true);
+        // Players stand up themselves, which costs an action. Anyone else keeps stock auto-stand.
+        _stun.TryKnockdown(target, TimeSpan.FromSeconds(3), refresh: true, autoStand: !HasComp<ActorComponent>(target), drop: false, force: true);
         _popup.PopupEntity(Loc.GetString("cf-spell-prone"), target);
     }
 

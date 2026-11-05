@@ -1,0 +1,41 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  parent: CFWoodenDoor
+  id: CFWoodenDoorRandomLocked
+  suffix: Random Locked (Complex 3)
+  components:
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent: CFWoodenDoorWindowed
+  id: CFWoodenDoorWindowedRandomLocked
+  suffix: Random Locked (Complex 3)
+  components:
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent: CFIronDoor
+  id: CFIronDoorRandomLocked
+  suffix: Random Locked (Complex 5)
+  components:
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent: CFIronDoorWindowed
+  id: CFIronDoorWindowedRandomLocked
+  suffix: Random Locked (Complex 5)
+  components:
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent: CFFenceGateBigIron
+  id: CFFenceGateBigIronRandomLocked
+  suffix: Random Locked (Complex 5)
+  components:
+  - type: Lock
+    locked: true

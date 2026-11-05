@@ -25,7 +25,7 @@
                   volume: -6
             - !type:SpawnEntitiesBehavior
               spawn:
-                CP14OreCopper1:
+                CFOreCopper1:
                   min: 4
                   max: 7
             - !type:DoActsBehavior
@@ -58,7 +58,7 @@
                   volume: -6
             - !type:SpawnEntitiesBehavior
               spawn:
-                CP14OreIron1:
+                CFOreIron1:
                   min: 4
                   max: 6
             - !type:DoActsBehavior
@@ -92,7 +92,7 @@
                   volume: -6
             - !type:SpawnEntitiesBehavior
               spawn:
-                CP14OreGold1:
+                CFOreGold1:
                   min: 3
                   max: 6
             - !type:DoActsBehavior
@@ -133,7 +133,7 @@
                   volume: -6
             - !type:SpawnEntitiesBehavior
               spawn:
-                CP14OreMithril1:
+                CFOreMithril1:
                   min: 3
                   max: 6
             - !type:DoActsBehavior
@@ -171,7 +171,7 @@
                   volume: -6
             - !type:SpawnEntitiesBehavior
               spawn:
-                CP14OreCoal1:
+                CFOreCoal1:
                   min: 3
                   max: 5
             - !type:DoActsBehavior

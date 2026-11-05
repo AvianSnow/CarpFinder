@@ -1,0 +1,95 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  parent: BaseStructure
+  id: CFBaseFence
+  abstract: true
+  categories: [ ForkFiltered ]
+  name: fence
+  description: A low fence restricting movement in a purely nominal way.
+  placement:
+    mode: SnapgridCenter
+    snap:
+    - Wall
+  components:
+  - type: Transform
+    anchored: true
+  - type: Physics
+    bodyType: Static
+  - type: Sprite
+    drawdepth: Mobs
+  - type: Icon
+    state: full
+  - type: PlacementReplacement
+    key: walls
+  - type: MeleeSound
+    soundGroups:
+      Brute:
+        path:
+          "/Audio/Weapons/boxingpunch1.ogg"
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.3,-0.3,0.3,0.3"
+        density: 1000
+        layer:
+        - LowImpassable
+        - MidImpassable
+  - type: IconSmooth
+    key: CFfence
+    states:
+    - !type:CornerSpriteSmoothing
+      mask: [ CFfence, CFwall ]
+      base: fence
+  - type: Climbable
+    delay: 2.5
+
+- type: entity
+  parent:
+  - CFBaseFence
+  - CFBaseFlammableSpreading
+  id: CFFenceWooden
+  suffix: Wooden
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Fence/wooden.rsi
+  - type: Icon
+    sprite: _CP14/Structures/Fence/wooden.rsi
+  - type: Damageable
+    damageModifierSet: Wood
+  - type: Injurable
+    damageContainer: Inorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 75
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: WoodDestroy
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFWoodenPlanks1:
+            min: 1
+            max: 2
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: Construction
+    graph: CFFenceWooden
+    node: CFFenceWooden
+
+- type: entity
+  parent: CFFenceWooden
+  id: CFFenceWoodenBirch
+  suffix: Wooden Birch
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Fence/wooden_birch.rsi
+  - type: Icon
+    sprite: _CP14/Structures/Fence/wooden_birch.rsi
+  - type: Construction
+    graph: CFFenceWoodenBirch
+    node: CFFenceWoodenBirch

@@ -1,0 +1,147 @@
+# Player Core armor on CP14 sprites.
+
+- type: entity
+  parent: ClothingOuterBase
+  id: CFChainShirt
+  name: chain shirt
+  description: A suit of chain shirt.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    sprite: _CP14/Clothing/OuterClothing/chainmail.rsi
+    state: icon
+  - type: Clothing
+    sprite: _CP14/Clothing/OuterClothing/chainmail.rsi
+  - type: CFArmor
+    category: Light
+    group: Chain
+    acBonus: 2
+    dexCap: 3
+    checkPenalty: -1
+    speedPenalty: 0
+    strength: 1
+  - type: CFTrait
+    traits:
+    - Flexible
+    - Noisy
+  - type: CFItem
+    level: 0
+  - type: CFBulk
+    bulk: 1
+  - type: CFItemPrice
+    copper: 500
+
+- type: entity
+  parent: ClothingOuterBase
+  id: CFHideArmor
+  name: hide armor
+  description: A suit of hide armor.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    sprite: _CP14/Clothing/OuterClothing/bone_armor.rsi
+    state: icon
+  - type: Clothing
+    sprite: _CP14/Clothing/OuterClothing/bone_armor.rsi
+  - type: CFArmor
+    category: Medium
+    group: Leather
+    acBonus: 3
+    dexCap: 2
+    checkPenalty: -2
+    speedPenalty: -5
+    strength: 2
+  - type: CFItem
+    level: 0
+  - type: CFBulk
+    bulk: 2
+  - type: CFItemPrice
+    copper: 200
+
+- type: entity
+  parent: ClothingOuterBase
+  id: CFChainMail
+  name: chain mail
+  description: A suit of chain mail.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    sprite: _CP14/Clothing/OuterClothing/chainmail.rsi
+    state: icon
+  - type: Clothing
+    sprite: _CP14/Clothing/OuterClothing/chainmail.rsi
+  - type: CFArmor
+    category: Medium
+    group: Chain
+    acBonus: 4
+    dexCap: 1
+    checkPenalty: -2
+    speedPenalty: -5
+    strength: 3
+  - type: CFTrait
+    traits:
+    - Flexible
+    - Noisy
+  - type: CFItem
+    level: 0
+  - type: CFBulk
+    bulk: 2
+  - type: CFItemPrice
+    copper: 600
+
+- type: entity
+  parent: ClothingOuterBase
+  id: CFBreastplate
+  name: breastplate
+  description: A suit of breastplate.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    sprite: _CP14/Clothing/OuterClothing/cuirass.rsi
+    state: icon
+  - type: Clothing
+    sprite: _CP14/Clothing/OuterClothing/cuirass.rsi
+  - type: CFArmor
+    category: Medium
+    group: Plate
+    acBonus: 4
+    dexCap: 1
+    checkPenalty: -2
+    speedPenalty: -5
+    strength: 3
+  - type: CFItem
+    level: 0
+  - type: CFBulk
+    bulk: 2
+  - type: CFItemPrice
+    copper: 800
+
+- type: entity
+  parent: ClothingOuterBase
+  id: CFHalfPlate
+  name: half plate
+  description: A suit of half plate.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    sprite: _CP14/Clothing/OuterClothing/infantry_cuirass.rsi
+    state: icon
+  - type: Clothing
+    sprite: _CP14/Clothing/OuterClothing/infantry_cuirass.rsi
+  - type: CFArmor
+    category: Heavy
+    group: Plate
+    acBonus: 5
+    dexCap: 1
+    checkPenalty: -3
+    speedPenalty: -10
+    strength: 3
+  - type: CFTrait
+    traits:
+    - Bulwark
+  - type: CFItem
+    level: 0
+  - type: CFBulk
+    bulk: 3
+  - type: CFItemPrice
+    copper: 1800

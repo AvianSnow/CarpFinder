@@ -1,0 +1,79 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  id: CFSteelGobletIron
+  name: iron goblet
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Consumable/Drinks/goblet.rsi
+    layers:
+      - state: iron_goblet
+      - map: ["enum.SolutionContainerLayers.Fill"]
+        state: fill-5
+        visible: false
+  - type: PhysicalComposition
+    materialComposition:
+      CFIron: 10
+
+- type: entity
+  id: CFSteelGobletCopper
+  name: copper goblet
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Consumable/Drinks/goblet.rsi
+    layers:
+      - state: copper_goblet
+      - map: ["enum.SolutionContainerLayers.Fill"]
+        state: fill-5
+        visible: false
+  - type: PhysicalComposition
+    materialComposition:
+      CFCopper: 10
+
+- type: entity
+  id: CFSteelGobletGold
+  name: gold goblet
+  description: A goblet made of solid gold to show how rich its owner is.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Consumable/Drinks/goblet.rsi
+    layers:
+      - state: gold_goblet
+      - map: ["enum.SolutionContainerLayers.Fill"]
+        state: fill-5
+        visible: false
+  - type: PhysicalComposition
+    materialComposition:
+      CFGold: 10
+
+- type: entity
+  id: CFSteelGobletBottomless
+  name: bottomless goblet
+  description: A jeweled goblet enchanted to have no bottom, fit for a never ending king's banquet.
+  categories: [ DoNotMap ]
+  suffix: Artifact
+  components:
+  - type: SolutionContainerVisuals
+    maxFillLevels: 2
+    fillBaseName: bottomless-fill-
+  - type: Sprite
+    sprite: _CP14/Objects/Consumable/Drinks/goblet.rsi
+    layers:
+      - state: bottomless_goblet
+      - map: [ "enum.SolutionContainerLayers.Fill" ]
+        state: bottomless-fill-2
+        visible: false
+  - type: SolutionContainerManager
+    solutions:
+      mug:
+        maxVol: 1000
+  - type: Injector
+    solutionName: mug
+    ignoreMobs: true
+    activeModeProtoId: CFPourDrawMode
+    allowedModes:
+    - CFPourDrawMode
+    - CFPourInjectMode

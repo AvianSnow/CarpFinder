@@ -1,0 +1,194 @@
+# Ported from CP14 by the CF converter.
+
+- type: reagent
+  id: CFDwarfBeer
+  name: cp14-reagent-name-dwarfbeer
+  desc: cp14-reagent-desc-beer
+  slipData:
+    requiredSlipSpeed: 3.5
+  physicalDesc: reagent-physical-desc-strong-smelling
+  flavor: CFdwarfbeer
+  color: "#4b3620"
+  boilingPoint: 78.2
+  meltingPoint: -114.1
+  metabolisms:
+    Digestion:
+      effects:
+      # dwarves take less toxin damage and heal a marginal amount of brute
+      - !type:Vomit
+        probability: 0.04
+  fizziness: 0.8
+  pricePerUnit: 4
+
+- type: reagent
+  id: CFBeer
+  name: cp14-reagent-name-beer
+  desc: cp14-reagent-desc-beer
+  physicalDesc: reagent-physical-desc-bubbly
+  flavor: CFbeer
+  color: "#e3e77b"
+  recognizable: true
+  fizziness: 0.6
+  pricePerUnit: 0.23
+
+- type: reagent
+  id: CFBeerGerbil
+  name: cp14-reagent-name-gerbil
+  desc: cp14-reagent-desc-beer
+  physicalDesc: reagent-physical-desc-bubbly
+  flavor: CFgerbil
+  color: "#3c1e14"
+  metabolisms:
+    Digestion:
+      effects:
+      - !type:Satiate
+        satiationType: Thirst
+        factor: 2
+  pricePerUnit: 0.26
+
+- type: reagent
+  id: CFBeerBreeze
+  name: cp14-reagent-name-breeze
+  desc: cp14-reagent-desc-beer
+  physicalDesc: reagent-physical-desc-bubbly
+  flavor: CFbreeze
+  color: "#ffdc64"
+  metabolisms:
+    Digestion:
+      effects:
+      - !type:Satiate
+        satiationType: Thirst
+        factor: 2
+  pricePerUnit: 0.15
+
+- type: reagent
+  id: CFBeerBlowLaw
+  name: cp14-reagent-name-blowlaw
+  desc: cp14-reagent-desc-beer
+  physicalDesc: reagent-physical-desc-bubbly
+  flavor: CFblowLaw
+  color: "#f0d778"
+  metabolisms:
+    Digestion:
+      effects:
+      - !type:Satiate
+        satiationType: Thirst
+        factor: 2
+  pricePerUnit: 0.35
+
+- type: reagent
+  id: CFWine
+  name: cp14-reagent-name-wine
+  desc: cp14-reagent-desc-wine
+  physicalDesc: reagent-physical-desc-translucent
+  flavor: CFwine
+  color: "#7E4043"
+  recognizable: true
+  pricePerUnit: 0.5
+
+- type: reagent
+  id: CFWineZellasianPleasure
+  name: cp14-reagent-name-zellasian-pleasure
+  desc: cp14-reagent-desc-wine
+  physicalDesc: reagent-physical-desc-translucent
+  flavor: CFzellasianPleasure
+  color: "#5a1e1e"
+  recognizable: true
+  metabolisms:
+    Digestion:
+      effects:
+      - !type:Satiate
+        satiationType: Thirst
+        factor: 2
+  pricePerUnit: 1.5
+
+- type: reagent
+  id: CFWineLeeks
+  name: cp14-reagent-name-leeks
+  desc: cp14-reagent-desc-wine
+  physicalDesc: reagent-physical-desc-translucent
+  flavor: CFleeks
+  color: "#961e32"
+  metabolisms:
+    Digestion:
+      effects:
+      - !type:Satiate
+        satiationType: Thirst
+        factor: 2
+  pricePerUnit: 0.2
+
+- type: reagent
+  id: CFWineDurandate
+  name: cp14-reagent-name-durandate
+  desc: cp14-reagent-desc-wine
+  physicalDesc: reagent-physical-desc-translucent
+  flavor: CFdurandate
+  color: "#8c3c32"
+  recognizable: true
+  metabolisms:
+    Digestion:
+      effects:
+      - !type:Satiate
+        satiationType: Thirst
+        factor: 2
+  pricePerUnit: 1
+
+- type: reagent
+  id: CFAle
+  name: cp14-reagent-name-ale
+  desc: cp14-reagent-desc-ale
+  physicalDesc: reagent-physical-desc-bubbly
+  flavor: CFale
+  color: "#663100"
+  recognizable: true
+  fizziness: 0.6
+  pricePerUnit: 0.1
+
+- type: reagent
+  id: CFAleBloodyTear
+  name: cp14-reagent-name-bloody-tear
+  desc: cp14-reagent-desc-ale
+  physicalDesc: reagent-physical-desc-bubbly
+  flavor: CFbloodyTear
+  color: "#993333"
+  metabolisms:
+    Digestion:
+      effects:
+      - !type:Satiate
+        satiationType: Thirst
+        factor: 2
+  pricePerUnit: 0.2
+
+- type: reagent
+  id: CFAleBottomless
+  name: cp14-reagent-name-bottomless
+  desc: cp14-reagent-desc-ale
+  physicalDesc: reagent-physical-desc-bubbly
+  flavor: CFbottomless
+  color: "#2d1914"
+  recognizable: true
+  metabolisms:
+    Digestion:
+      effects:
+      - !type:Satiate
+        satiationType: Thirst
+        factor: 2
+  pricePerUnit: 0.35
+
+# Magic beer from spell, cost nothing
+
+- type: reagent
+  id: CFMagicBeer
+  name: cp14-reagent-name-bottomless
+  desc: cp14-reagent-desc-ale
+  physicalDesc: reagent-physical-desc-bubbly
+  flavor: CFbottomless
+  color: "#2d1914"
+  recognizable: true
+  metabolisms:
+    Digestion:
+      effects:
+      - !type:Satiate
+        satiationType: Thirst
+        factor: 2
+  pricePerUnit: 0

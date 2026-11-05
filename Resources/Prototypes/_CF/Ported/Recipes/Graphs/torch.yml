@@ -1,0 +1,18 @@
+# Ported from CP14 by the CF converter.
+
+- type: constructionGraph
+  id: CFTorch
+  start: start
+  graph:
+  - node: start
+    edges:
+    - to: cp14torch
+      steps:
+      - material: CFWoodenPlanks
+        amount: 1
+      - material: CFCloth
+        amount: 1
+        doAfter: 4
+
+  - node: cp14torch
+    entity: CFTorch

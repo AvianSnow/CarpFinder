@@ -494,6 +494,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
             distanceFeet,
             ignoreVolley);
         attackBonus -= _conditions.Frightened(user);
+        attackBonus += _conditions.ProneAttackPenalty(user);
         if (weapon.Ranged)
             attackBonus -= _conditions.Clumsy(user);
 
@@ -523,6 +524,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
         var acPenalty = 0;
         if (alreadyDown)
             acPenalty = DownedAcPenalty;
+        else if (!isObject && _conditions.IsProne(target))
+            acPenalty = CFFlanking.OffGuardAcPenalty;
         else if (melee && !isObject && (_flanking.IsOffGuardTo(target, user) || _conditions.IsOffGuardTo(target, user)))
             acPenalty = CFFlanking.OffGuardAcPenalty;
 
@@ -664,12 +667,11 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (degree is not (CFDegree.Success or CFDegree.CriticalSuccess))
             return degree;
 
-        if (TryComp(target, out CFConditionComponent? cond)
-            && !cond.RaisedShield
-            && _shields.CanRaise(target)
+        if (!_shields.TryGetRaisedShield(target, out _)
+            && _shields.TryGetUsableShield(target, out var unraised)
             && _conditions.TrySpendReaction(target, CFReactions.Raise))
         {
-            _conditions.RaiseShield(target);
+            _shields.SetRaised(unraised, true);
             targetAc += _shields.RaisedBonus(target);
             degree = CFDegrees.DegreeOfSuccess(d20, attackBonus, targetAc);
             if (degree is not (CFDegree.Success or CFDegree.CriticalSuccess))
@@ -727,10 +729,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (damage <= 0 || spellShield)
             return Math.Max(0, damage);
 
-        if (cond == null || !cond.RaisedShield)
-            return damage;
-
-        if (!_shields.TryGetHeldShield(target, out var shield) || shield.Comp.Broken)
+        if (!_shields.TryGetRaisedShield(target, out var shield))
             return damage;
 
         if (!_conditions.TrySpendReaction(target, CFReactions.Block))

@@ -1,0 +1,94 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  id: CFClosetGlassShowcase
+  parent: CFClosetBase
+  name: glass showcase
+  description: Something of value can be placed here without fear of it being discreetly stolen!
+  abstract: true
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    snapCardinals: true
+    sprite: _CP14/Structures/Storage/glass_showcase.rsi
+    state: base
+  - type: EntityStorage
+    isCollidableWhenOpen: true
+    enteringOffset: 0, 0
+    capacity: 5
+    showContents: true
+    occludesLight: false
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.4,-0.4,0.4,0.4"
+        density: 75
+        mask:
+        - MachineMask
+        layer:
+        - MachineLayer
+  - type: MeleeSound
+    soundGroups:
+      Brute:
+        collection: GlassSmack
+  - type: Damageable
+    damageModifierSet: Glass
+  - type: Injurable
+    damageContainer: Inorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 150 #excess damage (nuke?). avoid computational cost of spawning entities.
+      behaviors:
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+      - !type:PlaySoundBehavior
+        sound:
+          collection: WindowShatter
+    - trigger:
+        !type:DamageTrigger
+        damage: 50
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: WindowShatter
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFGlassShard:
+            min: 1
+            max: 2
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: ContainerContainer
+    containers:
+      entity_storage: !type:Container
+        showEnts: True
+        occludes: False
+      paper_label: !type:ContainerSlot
+        showEnts: False
+        occludes: True
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent: CFClosetGlassShowcase
+  id: CFClosetGlassShowcaseGuildmaster
+  name: guildmaster showcase
+
+- type: entity
+  parent: CFClosetGlassShowcase
+  id: CFClosetGlassShowcaseMerchant1
+  name: merchant shop 1 showcase
+
+- type: entity
+  parent: CFClosetGlassShowcase
+  id: CFClosetGlassShowcaseMerchant2
+  name: merchant shop 2 showcase
+
+- type: entity
+  parent: CFClosetGlassShowcase
+  id: CFClosetGlassShowcaseMerchant3
+  name: merchant shop 3 showcase

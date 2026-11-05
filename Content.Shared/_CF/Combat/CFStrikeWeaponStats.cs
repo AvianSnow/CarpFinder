@@ -19,7 +19,8 @@ public readonly record struct CFStrikeWeaponStats(
     int Potency = 0,
     int Striking = 0,
     int Reload = 0,
-    bool ThrownStrike = false)
+    bool ThrownStrike = false,
+    bool Improvised = false)
 {
     public bool Agile => Traits.Agile;
     public bool Finesse => Traits.Finesse;

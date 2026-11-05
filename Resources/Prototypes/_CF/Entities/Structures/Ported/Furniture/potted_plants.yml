@@ -1,0 +1,90 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  id: CFPottedPlantBase
+  parent: BaseStructureDynamic
+  name: potted plant
+  description: A domesticated plant in a clay pot, more plants.
+  abstract: true
+  categories: [ ForkFiltered ]
+  components:
+  - type: SpriteFade
+  - type: Transform
+    noRot: true
+  - type: InteractionOutline
+  - type: Physics
+    bodyType: Dynamic
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeCircle
+          radius: 0.1
+        density: 120
+        mask:
+        - HighImpassable
+  - type: Sprite
+    drawdepth: Mobs
+    offset: "0.0,0.3"
+    noRot: true
+    sprite: _CP14/Structures/Furniture/flowerpots.rsi
+  - type: Speech
+    speechVerb: Plant
+  - type: SecretStash
+    tryInsertItemSound: /Audio/Effects/plant_rustle.ogg
+    tryRemoveItemSound: /Audio/Effects/plant_rustle.ogg
+    secretStashName: secret-stash-plant
+  - type: ContainerContainer
+    containers:
+      stash: !type:ContainerSlot {}
+  - type: Pullable
+  - type: Damageable
+  - type: Injurable
+    damageContainer: StructuralInorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 50
+      behaviors:
+      - !type:DoActsBehavior
+        acts: ["Destruction"]
+      - !type:PlaySoundBehavior
+        sound:
+          path: /Audio/Effects/plant_rustle.ogg
+
+- type: entity
+  id: CFPottedPlant1
+  parent: CFPottedPlantBase
+  components:
+  - type: Sprite
+    layers:
+      - state: pot
+      - state: plant1
+
+- type: entity
+  id: CFPottedPlant2
+  parent: CFPottedPlantBase
+  components:
+  - type: Sprite
+    layers:
+      - state: pot
+      - state: plant2
+
+- type: entity
+  id: CFPottedPlant3
+  parent: CFPottedPlantBase
+  components:
+  - type: Sprite
+    layers:
+      - state: pot
+      - state: plant3
+
+- type: entity
+  id: CFPottedPlant4
+  parent: CFPottedPlantBase
+  components:
+  - type: Sprite
+    layers:
+      - state: pot
+      - state: plant4

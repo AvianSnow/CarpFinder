@@ -22,6 +22,8 @@ namespace Content.Shared.CF.Actions;
 /// </summary>
 public sealed partial class CFActionPoolSystem : EntitySystem
 {
+    [Dependency] private CFShieldSystem _shields = default!;
+
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private INetManager _net = default!;
     [Dependency] private IPrototypeManager _prototypes = default!;
@@ -123,6 +125,7 @@ public sealed partial class CFActionPoolSystem : EntitySystem
     /// <summary>Counts one attack roll. Misses count. Actions that do not roll an attack do not.</summary>
     public void CountAttack(EntityUid uid, CFActionPoolComponent? pool = null)
     {
+        _shields.EndCover(uid);
         if (!_net.IsServer || !Resolve(uid, ref pool, false))
             return;
 
@@ -282,6 +285,12 @@ public sealed partial class CFActionPoolSystem : EntitySystem
 
         TrySpend(uid, pool, actions);
         return true;
+    }
+
+    /// <summary>Whether the creature could pay now, without spending anything.</summary>
+    public bool CanAffordActions(EntityUid uid, int actions)
+    {
+        return !TryComp(uid, out CFActionPoolComponent? pool) || CanAfford(pool, actions);
     }
 
     private bool CanAfford(CFActionPoolComponent pool, int actions)

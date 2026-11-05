@@ -105,7 +105,7 @@ public sealed partial class CFSeedComponent : Component
     public TimeSpan PlantingTime = TimeSpan.FromSeconds(1);
 
     [DataField]
-    public HashSet<ProtoId<ContentTileDefinition>> SoilTile = new() { "CFloorDirtSeedbed" };
+    public HashSet<ProtoId<ContentTileDefinition>> SoilTile = new() { "CFFloorDirtSeedbed" };
 }
 
 public enum CFPlantVisualLayers : byte

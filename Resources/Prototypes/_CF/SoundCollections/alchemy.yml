@@ -1,0 +1,21 @@
+- type: soundCollection
+  id: CFPestle
+  files:
+    - /Audio/_CP14/Items/Pestle/pestle1.ogg
+    - /Audio/_CP14/Items/Pestle/pestle2.ogg
+    - /Audio/_CP14/Items/Pestle/pestle3.ogg
+    - /Audio/_CP14/Items/Pestle/pestle4.ogg
+    - /Audio/_CP14/Items/Pestle/pestle5.ogg
+
+- type: soundCollection
+  id: CFBubbles
+  files:
+    - /Audio/Effects/Chemistry/bubbles.ogg
+    - /Audio/_CP14/Effects/bubbles.ogg
+
+- type: soundCollection
+  id: CFGrassGathering
+  files:
+    - /Audio/_CP14/Items/grass_gather.ogg
+    - /Audio/_CP14/Items/grass_gather2.ogg
+    - /Audio/_CP14/Items/grass_gather3.ogg

@@ -1,0 +1,80 @@
+# Ported from CP14 by the CF converter.
+
+- type: constructionGraph
+  id: CFBaseBarrel
+  start: start
+  graph:
+    - node: start
+      actions:
+        - !type:DestroyEntity {}
+      edges:
+        - to: CFBaseBarrel
+          steps:
+            - material: CFWoodenPlanks
+              amount: 3
+              doAfter: 3
+    - node: CFBaseBarrel
+      entity: CFBaseBarrel
+      edges:
+      - to: start
+        steps:
+        - tool: Prying
+          doAfter: 2
+        completed:
+        - !type:SpawnPrototype
+          prototype: CFWoodenPlanks1
+          amount: 3
+
+- type: constructionGraph
+  id: CFCraneBarrel
+  start: start
+  graph:
+    - node: start
+      actions:
+        - !type:DestroyEntity {}
+      edges:
+        - to: CFCraneBarrel
+          steps:
+            - material: CFWoodenPlanks
+              amount: 5
+              doAfter: 3
+    - node: CFCraneBarrel
+      entity: CFCraneBarrel
+      edges:
+      - to: start
+        steps:
+        - tool: Screwing
+          doAfter: 2
+        - tool: Prying
+          doAfter: 5
+        completed:
+        - !type:SpawnPrototype
+          prototype: CFWoodenPlanks1
+          amount: 5
+
+- type: constructionGraph
+  id: CFCraneBarrelSmall
+  start: start
+  graph:
+    - node: start
+      actions:
+        - !type:DestroyEntity {}
+      edges:
+        - to: CFCraneBarrelSmall
+          steps:
+            - material: CFWoodenPlanks
+              amount: 3
+              doAfter: 3
+    - node: CFCraneBarrelSmall
+      entity: CFCraneBarrelSmall
+      edges:
+      - to: start
+        steps:
+        - tool: Screwing
+          doAfter: 1
+        - tool: Prying
+          doAfter: 2
+        completed:
+        - !type:SpawnPrototype
+          prototype: CFWoodenPlanks1
+          amount: 3

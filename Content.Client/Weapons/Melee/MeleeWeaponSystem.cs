@@ -135,7 +135,7 @@ public sealed partial class MeleeWeaponSystem : SharedMeleeWeaponSystem
         if (altDown == BoundKeyState.Down)
         {
             // If it's an unarmed attack then do a disarm
-            if (weapon.AltDisarm && weaponUid == entity)
+            if (weapon.AltDisarm && weaponUid == entity || EntityManager.System<Content.Shared.CF.Combat.CFWeaponSystem>().ManeuverOnRightClick(weaponUid)) // CarpFinder: shields and shove or disarm weapons maneuver on right-click
             {
                 ClientDisarm(entity, mousePos, coordinates);
                 return;

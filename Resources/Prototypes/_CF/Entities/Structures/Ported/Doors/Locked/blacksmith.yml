@@ -1,0 +1,46 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  parent: CFIronDoor
+  id: CFIronDoorBlacksmith1
+  suffix: Blacksmith 1
+  components:
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent:
+  - CFIronDoorBlacksmith1
+  - CFIronDoorMirrored
+  id: CFIronDoorMirroredBlacksmith1
+  suffix: Blacksmith 1, Mirrored
+
+- type: entity
+  parent: CFIronDoor
+  id: CFIronDoorBlacksmith2
+  suffix: Blacksmith 2
+  components:
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent:
+  - CFIronDoorBlacksmith2
+  - CFIronDoorMirrored
+  id: CFIronDoorMirroredBlacksmith2
+  suffix: Blacksmith 2, Mirrored
+
+- type: entity
+  parent: CFIronDoor
+  id: CFIronDoorBlacksmith3
+  suffix: Blacksmith 3
+  components:
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent:
+  - CFIronDoorBlacksmith3
+  - CFIronDoorMirrored
+  id: CFIronDoorMirroredBlacksmith3
+  suffix: Blacksmith 3, Mirrored

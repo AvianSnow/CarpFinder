@@ -1,0 +1,97 @@
+# Ported from CP14 by the CF converter.
+
+- type: construction
+  id: CFFenceBigWooden
+  graph: CFFenceBigWooden
+  startNode: start
+  targetNode: CFFenceBigWooden
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFFenceBigWoodenBirch
+  graph: CFFenceBigWoodenBirch
+  startNode: start
+  targetNode: CFFenceBigWoodenBirch
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFFenceGateBigWooden
+  graph: CFFenceGateBigWooden
+  startNode: start
+  targetNode: CFFenceGateBigWooden
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFFenceGateBigWoodenBirch
+  graph: CFFenceGateBigWoodenBirch
+  startNode: start
+  targetNode: CFFenceGateBigWoodenBirch
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFFenceWooden
+  graph: CFFenceWooden
+  startNode: start
+  targetNode: CFFenceWooden
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFFenceWoodenBirch
+  graph: CFFenceWoodenBirch
+  startNode: start
+  targetNode: CFFenceWoodenBirch
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFFenceGateWooden
+  graph: CFFenceGateWooden
+  startNode: start
+  targetNode: CFFenceGateWooden
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFFenceGateWoodenBirch
+  graph: CFFenceGateWoodenBirch
+  startNode: start
+  targetNode: CFFenceGateWoodenBirch
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked

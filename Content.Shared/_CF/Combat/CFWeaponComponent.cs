@@ -29,6 +29,10 @@ public sealed partial class CFWeaponComponent : Component
 
     [DataField, AutoNetworkedField]
     public CFWeaponHands Hands = CFWeaponHands.One;
+
+    /// <summary>Not meant as a weapon: −2 item penalty to attack, as a shovel swung at someone.</summary>
+    [DataField, AutoNetworkedField]
+    public bool Improvised;
 }
 
 public enum CFWeaponCategory : byte

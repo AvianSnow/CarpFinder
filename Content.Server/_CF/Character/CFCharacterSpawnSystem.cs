@@ -272,11 +272,7 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         _ = profile;
         var options = EnsureComp<CFCombatOptionsComponent>(mob);
         Grant(mob, "CFActDemoralize");
-        Grant(mob, "CFActTrip");
-        Grant(mob, "CFActShove");
-        Grant(mob, "CFActGrapple");
         Grant(mob, "CFActFeint");
-        Grant(mob, "CFActRaiseShield");
 
         switch (cls?.ID)
         {
@@ -297,7 +293,7 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
                 Grant(mob, "CFActFlurry");
                 break;
             case "Ranger":
-                Grant(mob, "CFActHuntPrey");
+                options.PointMark = CFPointMark.Prey;
                 break;
             case "Swashbuckler":
                 options.PanacheStyle = true;
@@ -309,11 +305,11 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
                 break;
             case "Investigator":
                 options.Devise = true;
-                Grant(mob, "CFActStratagem");
+                options.PointMark = CFPointMark.Stratagem;
                 break;
             case "Thaumaturge":
                 options.Exploit = true;
-                Grant(mob, "CFActExploit");
+                options.PointMark = CFPointMark.Exploit;
                 break;
             case "Bard":
                 Grant(mob, "CFActInspire");

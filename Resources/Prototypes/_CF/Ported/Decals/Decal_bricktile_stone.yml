@@ -1,0 +1,129 @@
+# Ported from CP14 by the CF converter.
+
+- type: decal
+  id: CFBrickTileStoneCornerNe
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: _CP14/Decals/Stone.rsi
+    state: stone_corner_ne
+
+- type: decal
+  id: CFBrickTileStoneCornerSe
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: _CP14/Decals/Stone.rsi
+    state: stone_corner_se
+
+- type: decal
+  id: CFBrickTileStoneCornerNw
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: _CP14/Decals/Stone.rsi
+    state: stone_corner_nw
+
+- type: decal
+  id: CFBrickTileStoneCornerSw
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: _CP14/Decals/Stone.rsi
+    state: stone_corner_sw
+
+- type: decal
+  id: CFBrickTileStoneInnerNe
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: _CP14/Decals/Stone.rsi
+    state: stone_inner_ne
+
+- type: decal
+  id: CFBrickTileStoneInnerSe
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: _CP14/Decals/Stone.rsi
+    state: stone_inner_se
+
+- type: decal
+  id: CFBrickTileStoneInnerNw
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: _CP14/Decals/Stone.rsi
+    state: stone_inner_nw
+
+- type: decal
+  id: CFBrickTileStoneInnerSw
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: _CP14/Decals/Stone.rsi
+    state: stone_inner_sw
+
+- type: decal
+  id: CFBrickTileStoneEndN
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: _CP14/Decals/Stone.rsi
+    state: stone_end_n
+
+- type: decal
+  id: CFBrickTileStoneEndE
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: _CP14/Decals/Stone.rsi
+    state: stone_end_e
+
+- type: decal
+  id: CFBrickTileStoneEndS
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: _CP14/Decals/Stone.rsi
+    state: stone_end_s
+
+- type: decal
+  id: CFBrickTileStoneEndW
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: _CP14/Decals/Stone.rsi
+    state: stone_end_w
+
+- type: decal
+  id: CFBrickTileStoneLineN
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: _CP14/Decals/Stone.rsi
+    state: stone_line_n
+
+- type: decal
+  id: CFBrickTileStoneLineE
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: _CP14/Decals/Stone.rsi
+    state: stone_line_e
+
+- type: decal
+  id: CFBrickTileStoneLineS
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: _CP14/Decals/Stone.rsi
+    state: stone_line_s
+
+- type: decal
+  id: CFBrickTileStoneLineW
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: _CP14/Decals/Stone.rsi
+    state: stone_line_w

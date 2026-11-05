@@ -6,17 +6,10 @@ namespace Content.Shared.CF.Actions;
 public enum CFActivityKind : byte
 {
     Demoralize,
-    Trip,
-    Shove,
-    Grapple,
     Feint,
-    RaiseShield,
     Rage,
-    HuntPrey,
     Flurry,
     Spellstrike,
-    Stratagem,
-    Exploit,
     Inspire,
     Finisher,
     DoubleSlice,

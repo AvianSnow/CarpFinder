@@ -216,7 +216,7 @@
     West: /Textures/_CP14/Tiles/Sand/double_edge_W.png
   baseTurf: CFFloorBase
   deconstructTools: [ CFDigging ]
-  itemDrop: CFRandomDirtEffect #TODO sand variant
+  itemDrop: CFDirtEffect #TODO sand variant
   isSubfloor: true
   footstepSounds:
     collection: FootstepSnow #TODO

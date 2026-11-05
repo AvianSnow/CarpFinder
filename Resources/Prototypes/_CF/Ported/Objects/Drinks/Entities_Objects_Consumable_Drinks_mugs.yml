@@ -1,0 +1,48 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  id: CFMetalBeerMug
+  name: metal mug
+  categories: [ ForkFiltered ]
+  description: The most common metal mug.
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Consumable/Drinks/beer_mug_4.rsi
+  - type: DamageOnLand
+    damage:
+      types:
+        Blunt: 2
+  - type: DamageOtherOnHit
+    damage:
+      types:
+        Blunt: 2
+
+- type: entity
+  id: CFWoodenBeerMug
+  name: wooden mug
+  categories: [ ForkFiltered ]
+  description: Wooden mug for beer.
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Consumable/Drinks/beer_mug_1.rsi
+  - type: PhysicalComposition
+    materialComposition:
+      CFWoodenPlanks: 20
+
+- type: entity
+  id: CFSteelBeerMug
+  name: beer mug
+  categories: [ ForkFiltered ]
+  description: Wooden mug with iron inclusions.
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Consumable/Drinks/beer_mug_2.rsi
+
+- type: entity
+  id: CFSteelWoodBeerMug
+  name: beer mug
+  categories: [ ForkFiltered ]
+  description: Wooden mug with iron inclusions.
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Consumable/Drinks/beer_mug_3.rsi

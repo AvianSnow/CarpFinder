@@ -1,4 +1,5 @@
 using Robust.Shared.GameStates;
+using Robust.Shared.Map;
 
 namespace Content.Shared.CF.Combat;
 
@@ -25,6 +26,22 @@ public sealed partial class CFShieldComponent : Component
 
     [DataField, AutoNetworkedField]
     public int BrokenThreshold = 10;
+
+    /// <summary>Raised on the shield itself: it stays up in either hand until lowered, let go of, or broken.</summary>
+    [DataField, AutoNetworkedField]
+    public bool Raised;
+
+    /// <summary>Feet of Speed lost while held. Strength does not reduce it. Negative.</summary>
+    [DataField, AutoNetworkedField]
+    public int SpeedPenalty;
+
+    /// <summary>A raised shield with this offers Take Cover: 1 action, and this AC bonus instead of the usual one.</summary>
+    [DataField, AutoNetworkedField]
+    public int TakeCoverBonus;
+
+    /// <summary>Where the holder took cover. Leaving this spot ends it.</summary>
+    [DataField, AutoNetworkedField]
+    public EntityCoordinates? CoverPosition;
 
     public int CurrentHp => Hp < 0 ? MaxHp : Hp;
 

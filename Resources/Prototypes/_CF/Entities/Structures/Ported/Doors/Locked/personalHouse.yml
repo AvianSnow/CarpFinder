@@ -1,0 +1,129 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  parent: CFWoodenDoor
+  id: CFWoodenDoorPersonalHouse1
+  suffix: PersonalHouse1
+  components:
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent: CFWoodenDoor
+  id: CFWoodenDoorPersonalHouse2
+  suffix: PersonalHouse2
+  components:
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent: CFWoodenDoor
+  id: CFWoodenDoorPersonalHouse3
+  suffix: PersonalHouse3
+  components:
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent: CFWoodenDoor
+  id: CFWoodenDoorPersonalHouse4
+  suffix: PersonalHouse4
+  components:
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent: CFWoodenDoor
+  id: CFWoodenDoorPersonalHouse5
+  suffix: PersonalHouse5
+  components:
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent: CFWoodenDoor
+  id: CFWoodenDoorPersonalHouse6
+  suffix: PersonalHouse6
+  components:
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent: CFWoodenDoor
+  id: CFWoodenDoorPersonalHouse7
+  suffix: PersonalHouse7
+  components:
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent: CFWoodenDoor
+  id: CFWoodenDoorPersonalHouse8
+  suffix: PersonalHouse8
+  components:
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent: CFWoodenDoor
+  id: CFWoodenDoorPersonalHouse9
+  suffix: PersonalHouse9
+  components:
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent: CFWoodenDoor
+  id: CFWoodenDoorPersonalHouse10
+  suffix: PersonalHouse10
+  components:
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent: CFWoodenDoor
+  id: CFWoodenDoorPersonalHouse11
+  suffix: PersonalHouse11
+  components:
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent: CFWoodenDoor
+  id: CFWoodenDoorPersonalHouse12
+  suffix: PersonalHouse12
+  components:
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent: CFWoodenDoor
+  id: CFWoodenDoorPersonalHouse13
+  suffix: PersonalHouse13
+  components:
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent: CFWoodenDoor
+  id: CFWoodenDoorPersonalHouse14
+  suffix: PersonalHouse14
+  components:
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent: CFWoodenDoor
+  id: CFWoodenDoorPersonalHouse15
+  suffix: PersonalHouse15
+  components:
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent: CFWoodenDoor
+  id: CFWoodenDoorPersonalHouse16
+  suffix: PersonalHouse16
+  components:
+  - type: Lock
+    locked: true

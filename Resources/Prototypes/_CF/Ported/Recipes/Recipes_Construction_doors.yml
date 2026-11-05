@@ -1,0 +1,157 @@
+# Ported from CP14 by the CF converter.
+
+- type: construction
+  id: CFWoodenDoor
+  graph: CFWoodenDoor
+  startNode: start
+  targetNode: CFWoodenDoor
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canRotate: true
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFWoodenDoorMirrored
+  graph: CFWoodenDoor
+  startNode: start
+  targetNode: CFWoodenDoorMirrored
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canRotate: true
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFWoodenDoorWindowed
+  graph: CFWoodenDoor
+  startNode: start
+  targetNode: CFWoodenDoorWindowed
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canRotate: true
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFWoodenDoorWindowedMirrored
+  graph: CFWoodenDoor
+  startNode: start
+  targetNode: CFWoodenDoorWindowedMirrored
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canRotate: true
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFWoodenBirchDoor
+  graph: CFWoodenBirchDoor
+  startNode: start
+  targetNode: CFWoodenBirchDoor
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canRotate: true
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFWoodenBirchDoorMirrored
+  graph: CFWoodenBirchDoor
+  startNode: start
+  targetNode: CFWoodenBirchDoorMirrored
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canRotate: true
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFWoodenBirchDoorWindowed
+  graph: CFWoodenBirchDoor
+  startNode: start
+  targetNode: CFWoodenBirchDoorWindowed
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canRotate: true
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFWoodenBirchDoorWindowedMirrored
+  graph: CFWoodenBirchDoor
+  startNode: start
+  targetNode: CFWoodenBirchDoorWindowedMirrored
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canRotate: true
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFIronDoor
+  graph: CFIronDoor
+  startNode: start
+  targetNode: CFIronDoor
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canRotate: true
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFIronDoorMirrored
+  graph: CFIronDoor
+  startNode: start
+  targetNode: CFIronDoorMirrored
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canRotate: true
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFIronDoorWindowed
+  graph: CFIronDoor
+  startNode: start
+  targetNode: CFIronDoorWindowed
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canRotate: true
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFIronDoorWindowedMirrored
+  graph: CFIronDoor
+  startNode: start
+  targetNode: CFIronDoorWindowedMirrored
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canRotate: true
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked

@@ -1,6 +1,10 @@
+using Content.Shared.CF.Actions;
 using Content.Shared.Examine;
+using Content.Shared.Hands;
 using Content.Shared.Hands.EntitySystems;
+using Content.Shared.Interaction.Events;
 using Content.Shared.Popups;
+using Content.Shared.Verbs;
 using Robust.Shared.Network;
 
 namespace Content.Shared.CF.Combat;
@@ -13,34 +17,135 @@ public sealed partial class CFShieldSystem : EntitySystem
     [Dependency] private INetManager _net = default!;
     [Dependency] private SharedHandsSystem _hands = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private CFActionPoolSystem _actions = default!;
+    [Dependency] private Content.Shared.Movement.Systems.MovementSpeedModifierSystem _speed = default!;
 
-    /// <summary>The shield in the active hand, if any.</summary>
-    public bool TryGetHeldShield(EntityUid user, out Entity<CFShieldComponent> shield)
+    /// <summary>A shield in either hand that is not broken.</summary>
+    public bool TryGetUsableShield(EntityUid user, out Entity<CFShieldComponent> shield)
     {
+        foreach (var held in _hands.EnumerateHeld(user))
+        {
+            if (!TryComp(held, out CFShieldComponent? comp) || comp.Broken)
+                continue;
+
+            shield = (held, comp);
+            return true;
+        }
+
         shield = default;
-        if (!_hands.TryGetActiveItem(user, out var held) || held == null)
-            return false;
-
-        if (!TryComp(held.Value, out CFShieldComponent? comp))
-            return false;
-
-        shield = (held.Value, comp);
-        return true;
+        return false;
     }
 
-    /// <summary>A shield that can be raised: held and not broken.</summary>
-    public bool CanRaise(EntityUid user)
+    /// <summary>The raised shield in either hand, if any. The one check for "is their shield up".</summary>
+    public bool TryGetRaisedShield(EntityUid user, out Entity<CFShieldComponent> shield)
     {
-        return TryGetHeldShield(user, out var shield) && !shield.Comp.Broken;
+        foreach (var held in _hands.EnumerateHeld(user))
+        {
+            if (!TryComp(held, out CFShieldComponent? comp) || !comp.Raised || comp.Broken)
+                continue;
+
+            shield = (held, comp);
+            return true;
+        }
+
+        shield = default;
+        return false;
     }
 
-    /// <summary>The circumstance bonus to AC a raised shield gives right now.</summary>
+    public void SetRaised(Entity<CFShieldComponent> shield, bool raised)
+    {
+        if (shield.Comp.Raised == raised)
+            return;
+
+        shield.Comp.Raised = raised;
+        if (!raised)
+            shield.Comp.CoverPosition = null;
+
+        Dirty(shield);
+    }
+
+    /// <summary>The circumstance bonus to AC the raised shield gives right now.</summary>
     public int RaisedBonus(EntityUid user)
     {
-        if (!TryComp(user, out CFConditionComponent? cond) || !cond.RaisedShield)
+        if (!TryGetRaisedShield(user, out var shield))
             return 0;
 
-        return TryGetHeldShield(user, out var shield) && !shield.Comp.Broken ? shield.Comp.AcBonus : 0;
+        return InCover(user, shield) ? shield.Comp.TakeCoverBonus : shield.Comp.AcBonus;
+    }
+
+    private bool InCover(EntityUid user, Entity<CFShieldComponent> shield)
+    {
+        return shield.Comp.CoverPosition is { } spot
+               && spot.TryDistance(EntityManager, Transform(user).Coordinates, out var distance)
+               && distance < 0.5f;
+    }
+
+    /// <summary>Any attack roll ends Take Cover.</summary>
+    public void EndCover(EntityUid user)
+    {
+        if (TryGetRaisedShield(user, out var shield) && shield.Comp.CoverPosition != null)
+        {
+            shield.Comp.CoverPosition = null;
+            Dirty(shield);
+        }
+    }
+
+    [SubscribeLocalEvent]
+    private void OnUseInHand(Entity<CFShieldComponent> ent, ref UseInHandEvent args)
+    {
+        if (args.Handled)
+            return;
+
+        args.Handled = true;
+        if (ent.Comp.Raised)
+        {
+            SetRaised(ent, false);
+            _popup.PopupEntity(Loc.GetString("cf-act-shield-lowered"), args.User, args.User);
+            return;
+        }
+
+        if (ent.Comp.Broken || !_actions.TrySpendActions(args.User, 1))
+            return;
+
+        SetRaised(ent, true);
+        _popup.PopupEntity(Loc.GetString("cf-act-shield-raised"), args.User, args.User);
+    }
+
+    [SubscribeLocalEvent]
+    private void OnUnequipped(Entity<CFShieldComponent> ent, ref GotUnequippedHandEvent args)
+    {
+        SetRaised(ent, false);
+        _speed.RefreshMovementSpeedModifiers(args.User);
+    }
+
+    [SubscribeLocalEvent]
+    private void OnEquipped(Entity<CFShieldComponent> ent, ref GotEquippedHandEvent args)
+    {
+        _speed.RefreshMovementSpeedModifiers(args.User);
+    }
+
+    [SubscribeLocalEvent]
+    private void OnGetVerbs(Entity<CFShieldComponent> ent, ref GetVerbsEvent<Verb> args)
+    {
+        if (ent.Comp.TakeCoverBonus <= 0 || !ent.Comp.Raised || ent.Comp.CoverPosition != null || !_hands.IsHolding(args.User, ent.Owner))
+            return;
+
+        var user = args.User;
+        args.Verbs.Add(new Verb
+        {
+            Text = Loc.GetString("cf-shield-take-cover"),
+            Act = () => TakeCover(ent, user),
+        });
+    }
+
+    public bool TakeCover(Entity<CFShieldComponent> shield, EntityUid user)
+    {
+        if (!shield.Comp.Raised || !_actions.TrySpendActions(user, 1))
+            return false;
+
+        shield.Comp.CoverPosition = Transform(user).Coordinates;
+        Dirty(shield);
+        return true;
     }
 
     /// <summary>
@@ -78,7 +183,10 @@ public sealed partial class CFShieldSystem : EntitySystem
         }
 
         if (!wasBroken && shield.Comp.Broken)
+        {
+            SetRaised(shield, false);
             _popup.PopupEntity(Loc.GetString("cf-shield-broken", ("shield", shield.Owner)), user);
+        }
     }
 
     [SubscribeLocalEvent]

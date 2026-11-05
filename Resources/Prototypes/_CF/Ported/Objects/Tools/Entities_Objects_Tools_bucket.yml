@@ -1,0 +1,109 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  parent: BaseItem
+  id: CFBucket
+  name: bucket
+  description: It's a boring old bucket.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Edible
+    edible: Drink
+    solution: bucket
+  - type: Sprite
+    sprite: _CP14/Objects/Tools/wooden_bucket.rsi
+    layers:
+    - state: icon
+    - map: ["enum.SolutionContainerLayers.Fill"]
+      state: fill-1
+      visible: false
+  - type: Item
+    size: Ginormous
+  - type: Clothing
+    sprite: _CP14/Objects/Tools/wooden_bucket.rsi
+    clothingVisuals:
+      head:
+      - state: equipped-HELMET
+    equipDelay: 0.25
+    unequipDelay: 0.25
+    quickEquip: false
+    slots:
+    - head
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.98
+        Slash: 0.96
+  - type: ClothingSpeedModifier
+    walkModifier: 0.96
+    sprintModifier: 0.80
+  - type: SolutionContainerManager
+    solutions:
+      bucket:
+        maxVol: 50
+  - type: Injector
+    solutionName: bucket
+    ignoreMobs: true
+    ignoreClosed: false
+    currentTransferAmount: 50
+    activeModeProtoId: CFPourDrawMode
+    allowedModes:
+    - CFPourDrawMode
+    - CFPourInjectMode
+  - type: UserInterface
+    interfaces:
+      enum.TransferAmountUiKey.Key:
+        type: TransferAmountBoundUserInterface
+  - type: MeleeWeapon
+    soundNoDamage:
+      path: "/Audio/Effects/Fluids/splat.ogg"
+    damage:
+      types:
+        Blunt: 0
+  - type: Spillable
+    solution: bucket
+  - type: SpillWhenWorn
+    solution: bucket
+  - type: MixableSolution
+    solution: bucket
+  - type: RefillableSolution
+    solution: bucket
+  - type: DrainableSolution
+    solution: bucket
+  - type: SolutionItemStatus
+    solution: bucket
+  - type: Appearance
+  - type: SolutionContainerVisuals
+    maxFillLevels: 3
+    fillBaseName: fill-
+  - type: ExaminableSolution
+    solution: bucket
+  - type: Tag
+    tags:
+      - Bucket
+  - type: PhysicalComposition
+    materialComposition:
+      CFWoodenPlanks: 30
+      CFCloth: 20
+
+- type: entity
+  parent: CFBucket
+  id: CFBucketLucens
+  name: lucens bucket
+  description: It's a boring old bucket, made less boring by being blue.
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Tools/lucens_bucket.rsi
+  - type: Clothing
+    sprite: _CP14/Objects/Tools/lucens_bucket.rsi
+  - type: Armor
+    modifiers:
+      coefficients:
+        Blunt: 0.94
+        Slash: 0.93
+  - type: ClothingSpeedModifier
+    walkModifier: 0.98
+  - type: PhysicalComposition
+    materialComposition:
+      CFLucensWoodenPlanks: 30
+      CFCloth: 20

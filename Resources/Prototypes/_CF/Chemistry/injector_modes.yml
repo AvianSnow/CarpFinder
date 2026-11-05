@@ -1,0 +1,11 @@
+# Pouring by hand: buckets, bottles and goblets. Stock modes are needles and droppers.
+
+- type: injectorMode
+  parent: BaseDrawMode
+  id: CFPourDrawMode
+  transferAmounts: [ 1, 5, 10, 15, 25, 50 ]
+
+- type: injectorMode
+  parent: BaseInjectMode
+  id: CFPourInjectMode
+  transferAmounts: [ 1, 5, 10, 15, 25, 50 ]

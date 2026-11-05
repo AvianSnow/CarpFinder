@@ -1,0 +1,186 @@
+
+- type: entity
+  parent: CFBaseVial
+  id: CFBaseVialFragile
+  abstract: true
+  components:
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 5
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: GlassBreak
+          params:
+            volume: -4
+      - !type:SpillBehavior
+        solution: vial
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFGlassShard:
+            min: 1
+            max: 1
+        transferForensics: true
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: DamageOnLand
+    damage:
+      types:
+        Blunt: 10 # glass resistance set reduces damage. Need to land twice (w/o hitting wall)
+  - type: DamageOtherOnHit
+    damage:
+      types:
+        Blunt: 5
+  - type: DamageOnHighSpeedImpact
+    minimumSpeed: 2
+    damage:
+      types:
+        Blunt: 5
+
+# Vials
+
+- type: entity
+  abstract: true
+  id: CFBaseWeaponChemical
+  categories: [ HideSpawnMenu, ForkFiltered ]
+  components:
+  - type: SolutionContainerManager
+    solutions:
+      melee:
+        maxVol: 4
+  - type: MeleeChemicalInjector
+    solution: melee
+  - type: RefillableSolution
+    solution: melee
+  - type: InjectableSolution
+    solution: melee
+  - type: SolutionInjectOnEmbed
+    transferAmount: 2
+    solution: melee
+  - type: SolutionTransfer
+    maxTransferAmount: 2
+
+- type: entity
+  abstract: true
+  id: CFBaseWeaponDestructible
+  categories: [ HideSpawnMenu, ForkFiltered ]
+  components:
+  - type: ExaminableDamage
+    messages: CFWeaponMessages
+  - type: Damageable
+  - type: Injurable
+    damageContainer: Inorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 80
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: MetalBreak
+      - !type:DoActsBehavior
+        acts: ["Destruction"]
+
+- type: entity
+  abstract: true
+  id: CFBaseWeaponSelfDamage
+  categories: [ HideSpawnMenu, ForkFiltered ]
+
+- type: entity
+  abstract: true
+  id: CFBaseWeaponSharp
+  categories: [ HideSpawnMenu, ForkFiltered ]
+  components:
+  - type: UseDelay
+  - type: Tool
+    qualities:
+      - Slicing
+    useSound:
+      path: /Audio/Items/Culinary/chop.ogg
+  - type: Utensil
+    types:
+      - Knife
+  - type: Execution
+
+- type: entity
+  parent: BaseItem
+  id: CFBaseVial
+  abstract: true
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    noRot: true
+  - type: MeleeWeapon
+    soundNoDamage:
+      path: "/Audio/Effects/Fluids/splat.ogg"
+    damage:
+      types:
+        Blunt: 0
+  - type: SolutionContainerManager
+    solutions:
+      vial:
+        maxVol: 1
+  - type: MixableSolution
+    solution: vial
+  - type: FitsInDispenser
+    solution: vial
+  - type: RefillableSolution
+    solution: vial
+  - type: DrainableSolution
+    solution: vial
+  - type: ExaminableSolution
+    solution: vial
+  - type: DrawableSolution
+    solution: vial
+  - type: InjectableSolution
+    solution: vial
+  - type: SolutionItemStatus
+    solution: vial
+  - type: UserInterface
+    interfaces:
+      enum.TransferAmountUiKey.Key:
+        type: TransferAmountBoundUserInterface
+  - type: Edible
+    edible: Drink
+    solution: vial
+  - type: Spillable
+    solution: vial
+  - type: Appearance
+  - type: Damageable
+    damageModifierSet: Glass
+  - type: Injurable
+    damageContainer: Inorganic
+  - type: Injector
+    solutionName: vial
+    ignoreMobs: true
+    currentTransferAmount: 5
+    activeModeProtoId: CFPourDrawMode
+    allowedModes:
+    - CFPourDrawMode
+    - CFPourInjectMode
+  - type: Tag
+    tags:
+    - CFVial
+  - type: PaperLabel
+    labelSlot:
+      insertVerbText: comp-paper-label-insert
+      ejectVerbText: comp-paper-label-eject
+      whitelist:
+        components:
+        - Paper
+      blacklist:
+        tags:
+        - Book
+  - type: GenericVisualizer
+    visuals:
+      enum.PaperLabelVisuals.HasLabel:
+        enum.PaperLabelVisuals.Layer:
+          True: {visible: true}
+          False: {visible: false}
+  - type: ContainerContainer
+    containers:
+      paper_label: !type:ContainerSlot
+  - type: ItemSlots

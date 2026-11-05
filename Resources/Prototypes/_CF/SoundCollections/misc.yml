@@ -1,0 +1,50 @@
+- type: soundCollection
+  id: CFLobbyMusic
+  files:
+    - /Audio/Lobby/absconditus.ogg
+
+- type: soundCollection
+  id: CFDemiplaneIntro
+  files:
+    - /Audio/_CP14/Ambience/Demiplane/intro1.ogg
+    - /Audio/_CP14/Ambience/Demiplane/intro2.ogg
+    - /Audio/_CP14/Ambience/Demiplane/intro3.ogg
+    - /Audio/_CP14/Ambience/Demiplane/intro4.ogg
+
+- type: soundCollection
+  id: CFLearnSkill
+  files:
+    - /Audio/_CP14/Effects/skill_up1.ogg
+    - /Audio/_CP14/Effects/skill_up2.ogg
+    - /Audio/_CP14/Effects/skill_up3.ogg
+    - /Audio/_CP14/Effects/skill_up4.ogg
+
+- type: soundCollection
+  id: CFLightningFar
+  files:
+    - /Audio/_CP14/Ambience/Lightning/lightning_far1.ogg
+    - /Audio/_CP14/Ambience/Lightning/lightning_far2.ogg
+    - /Audio/_CP14/Ambience/Lightning/lightning_far3.ogg
+
+- type: soundCollection
+  id: CFLurkerRitual
+  files:
+    - /Audio/_CP14/Effects/Lurker/ritual1.ogg
+    - /Audio/_CP14/Effects/Lurker/ritual2.ogg
+    - /Audio/_CP14/Effects/Lurker/ritual3.ogg
+
+- type: soundCollection
+  id: CFCoinImpact
+  files:
+    - /Audio/_CP14/Effects/coin_impact1.ogg
+    - /Audio/_CP14/Effects/coin_impact2.ogg
+    - /Audio/_CP14/Effects/coin_impact3.ogg
+
+- type: soundCollection
+  id: CFMoonStrike
+  files:
+    - /Audio/_CP14/Effects/moon_strike1.ogg
+    - /Audio/_CP14/Effects/moon_strike2.ogg
+    - /Audio/_CP14/Effects/moon_strike3.ogg
+    - /Audio/_CP14/Effects/moon_strike4.ogg
+

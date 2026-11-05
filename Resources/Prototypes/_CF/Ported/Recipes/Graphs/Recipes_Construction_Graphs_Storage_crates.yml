@@ -1,0 +1,53 @@
+# Ported from CP14 by the CF converter.
+
+- type: constructionGraph
+  id: CFSmallWoodenCrate
+  start: start
+  graph:
+    - node: start
+      actions:
+        - !type:DestroyEntity {}
+      edges:
+        - to: CFSmallWoodenCrate
+          completed:
+            - !type:SnapToGrid
+          steps:
+            - material: CFWoodenPlanks
+              amount: 1
+    - node: CFSmallWoodenCrate
+      entity: CFSmallWoodenCrate
+      edges:
+        - to: start
+          steps:
+            - tool: Prying
+              doAfter: 2
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFWoodenPlanks1
+              amount: 1
+
+- type: constructionGraph
+  id: CFLargeWoodenCrate
+  start: start
+  graph:
+    - node: start
+      actions:
+        - !type:DestroyEntity {}
+      edges:
+        - to: CFLargeWoodenCrate
+          completed:
+            - !type:SnapToGrid
+          steps:
+            - material: CFWoodenPlanks
+              amount: 2
+    - node: CFLargeWoodenCrate
+      entity: CFLargeWoodenCrate
+      edges:
+        - to: start
+          steps:
+            - tool: Prying
+              doAfter: 2
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFWoodenPlanks1
+              amount: 2

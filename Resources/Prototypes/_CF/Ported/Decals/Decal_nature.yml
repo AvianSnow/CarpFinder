@@ -1,0 +1,256 @@
+# Ported from CP14 by the CF converter.
+
+- type: decal
+  id: CFGrassBushes1
+  snapCardinals: true
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: /Textures/_CP14/Decals/Flora/Grass.rsi
+    state: grass_bushes1
+
+- type: decal
+  id: CFGrassBushes2
+  snapCardinals: true
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: /Textures/_CP14/Decals/Flora/Grass.rsi
+    state: grass_bushes2
+
+- type: decal
+  id: CFGrassBushes3
+  snapCardinals: true
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: /Textures/_CP14/Decals/Flora/Grass.rsi
+    state: grass_bushes3
+
+- type: decal
+  id: CFGrassBushes4
+  snapCardinals: true
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: /Textures/_CP14/Decals/Flora/Grass.rsi
+    state: grass_bushes4
+
+- type: decal
+  id: CFGrassBushes5
+  snapCardinals: true
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: /Textures/_CP14/Decals/Flora/Grass.rsi
+    state: grass_bushes5
+
+- type: decal
+  id: CFGrassBushes6
+  snapCardinals: true
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: /Textures/_CP14/Decals/Flora/Grass.rsi
+    state: grass_bushes6
+
+- type: decal
+  id: CFGrassBushes7
+  snapCardinals: true
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: /Textures/_CP14/Decals/Flora/Grass.rsi
+    state: grass_bushes7
+
+- type: decal
+  id: CFGrassBushes8
+  snapCardinals: true
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: /Textures/_CP14/Decals/Flora/Grass.rsi
+    state: grass_bushes8
+
+- type: decal
+  id: CFGrassBushes9
+  snapCardinals: true
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: /Textures/_CP14/Decals/Flora/Grass.rsi
+    state: grass_bushes9
+
+# Grass
+
+- type: decal
+  id: CFFloraGrass1
+  snapCardinals: true
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: /Textures/_CP14/Decals/Flora/Grass.rsi
+    state: grass_short1
+
+- type: decal
+  id: CFFloraGrass2
+  snapCardinals: true
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: /Textures/_CP14/Decals/Flora/Grass.rsi
+    state: grass_short2
+
+- type: decal
+  id: CFFloraGrass3
+  snapCardinals: true
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: /Textures/_CP14/Decals/Flora/Grass.rsi
+    state: grass_short3
+
+- type: decal
+  id: CFFloraGrass4
+  snapCardinals: true
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: /Textures/_CP14/Decals/Flora/Grass.rsi
+    state: grass_short4
+
+- type: decal
+  id: CFFloraGrass5
+  snapCardinals: true
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: /Textures/_CP14/Decals/Flora/Grass.rsi
+    state: grass_short5
+
+- type: decal
+  id: CFFloraGrass6
+  snapCardinals: true
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: /Textures/_CP14/Decals/Flora/Grass.rsi
+    state: grass_short6
+
+- type: decal
+  id: CFFloraGrass7
+  snapCardinals: true
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: /Textures/_CP14/Decals/Flora/Grass.rsi
+    state: grass_short7
+
+- type: decal
+  id: CFFloraGrass8
+  snapCardinals: true
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: /Textures/_CP14/Decals/Flora/Grass.rsi
+    state: grass_short8
+
+- type: decal
+  id: CFFloraGrass9
+  snapCardinals: true
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: /Textures/_CP14/Decals/Flora/Grass.rsi
+    state: grass_short9
+
+- type: decal
+  id: CFFloraGrass10
+  snapCardinals: true
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: /Textures/_CP14/Decals/Flora/Grass.rsi
+    state: grass_short10
+
+- type: decal
+  id: CFFloraGrass11
+  snapCardinals: true
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: /Textures/_CP14/Decals/Flora/Grass.rsi
+    state: grass_short11
+
+- type: decal
+  id: CFFloraGrass12
+  snapCardinals: true
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: /Textures/_CP14/Decals/Flora/Grass.rsi
+    state: grass_short12
+
+- type: decal
+  id: CFFloraGrass13
+  snapCardinals: true
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: /Textures/_CP14/Decals/Flora/Grass.rsi
+    state: grass_short13
+
+- type: decal
+  id: CFFloraGrass14
+  snapCardinals: true
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: /Textures/_CP14/Decals/Flora/Grass.rsi
+    state: grass_short14
+# Rocks
+
+- type: decal
+  id: CFFloraRock01
+  snapCardinals: true
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: /Textures/Decals/Flora/flora_rocks.rsi
+    state: rock01
+
+- type: decal
+  id: CFFloraRock02
+  snapCardinals: true
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: /Textures/Decals/Flora/flora_rocks.rsi
+    state: rock02
+
+- type: decal
+  id: CFFloraRock03
+  snapCardinals: true
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: /Textures/Decals/Flora/flora_rocks.rsi
+    state: rock03
+
+- type: decal
+  id: CFFloraRock04
+  snapCardinals: true
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: /Textures/Decals/Flora/flora_rocks.rsi
+    state: rock04
+
+- type: decal
+  id: CFFloraRock05
+  snapCardinals: true
+  defaultSnap: true
+  showMenu: true
+  sprite:
+    sprite: /Textures/Decals/Flora/flora_rocks.rsi
+    state: rock05

@@ -1,0 +1,81 @@
+# Ported from CP14 by the CF converter.
+
+- type: constructionGraph
+  id: CFWoodenChest
+  start: start
+  graph:
+    - node: start
+      actions:
+        - !type:DestroyEntity {}
+      edges:
+        - to: CFWoodenChest
+          steps:
+            - material: CFWoodenPlanks
+              amount: 5
+              doAfter: 2
+            - material: CFIronBar
+              amount: 1
+              doAfter: 2
+
+    - node: CFWoodenChest
+      entity: CFWoodenChest
+      edges:
+        - to: start
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFWoodenPlanks1
+              amount: 2
+            - !type:SpawnPrototype
+              prototype: CFIronBar1
+              amount: 1
+          conditions:
+          - !type:Locked
+            locked: false
+          steps:
+            - tool: Screwing
+              doAfter: 1
+            - tool: Prying
+              doAfter: 3
+
+- type: constructionGraph
+  id: CFGoldChest
+  start: start
+  graph:
+    - node: start
+      actions:
+        - !type:DestroyEntity {}
+      edges:
+        - to: CFGoldChest
+          steps:
+            - material: CFWoodenPlanks
+              amount: 5
+              doAfter: 2
+            - material: CFIronBar
+              amount: 1
+              doAfter: 2
+            - material: CFGoldBar
+              amount: 1
+              doAfter: 2
+
+    - node: CFGoldChest
+      entity: CFGoldChest
+      edges:
+        - to: start
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFWoodenPlanks1
+              amount: 2
+            - !type:SpawnPrototype
+              prototype: CFIronBar1
+              amount: 1
+            - !type:SpawnPrototype
+              prototype: CFGoldBar1
+              amount: 1
+          conditions:
+          - !type:Locked
+            locked: false
+          steps:
+            - tool: Screwing
+              doAfter: 1
+            - tool: Prying
+              doAfter: 5

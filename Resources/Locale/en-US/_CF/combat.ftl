@@ -82,4 +82,11 @@ cf-act-stratagem = Stratagem { $roll }
 cf-act-inspire = Inspire Courage
 cf-act-tumble = You slip behind them.
 cf-act-tumble-fail = You fail to tumble past.
-
+cf-act-nothing-to-disarm = There is nothing to disarm.
+cf-act-disarm = Their grip loosens!
+cf-act-disarm-drop = They drop what they are holding!
+cf-act-disarm-fail = You fail to disarm them.
+cf-act-escape = They break free!
+cf-act-escape-fail = You fail to break free.
+cf-act-shield-lowered = You lower your shield.
+cf-shield-take-cover = Take Cover

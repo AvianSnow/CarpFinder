@@ -59,6 +59,10 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public bool PointBlank;
 
+    /// <summary>What pointing at an enemy does: a Ranger's prey, a Thaumaturge's or Investigator's mark.</summary>
+    [DataField, AutoNetworkedField]
+    public CFPointMark PointMark;
+
     /// <summary>Non-zero after this creature has used its reaction. Cleared when the pool refills.</summary>
     [DataField, AutoNetworkedField]
     public int ReactionSpent;
@@ -114,4 +118,12 @@ public static class CFReactions
             _ => false,
         };
     }
+}
+
+public enum CFPointMark : byte
+{
+    None,
+    Prey,
+    Exploit,
+    Stratagem,
 }

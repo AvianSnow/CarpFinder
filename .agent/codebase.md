@@ -42,6 +42,7 @@ Everything below is under `Content.Shared/_CF/`.
 | `Adventure/` | Site prototypes, encounter and treasure tables. Generation is server-side. | `CFEncounterRules`, `CFAdventureSiteSystem` |
 | `Magic/` | Light, Detect Magic, Read Aura, and what counts as magical | `CFMagicSenseSystem` |
 | `Scene/` | DM narration and player-started skill checks. The logic is server-side. | `CFSceneSystem` |
+| `ZLevels/` | Stairs, ladders, holes, falling rules. The stacking logic is server-side. | `CFFallRules`, `CFZLevelSystem` |
 | `Crafting/` | Recipes, formulas, Craft DCs. The workbench logic is server-side. | `CFCraftingRules`, `CFWorkbenchSystem` |
 | `Preferences/` | The build stored on `HumanoidCharacterProfile` | `CFCharacterBuildData` |
 | `Shop/` | Coins, prices, the merchant counter UI. Selling and coin logic are server-side. | `CFCoins`, `CFMerchantSystem`, `CFCoinSystem` |
@@ -185,6 +186,7 @@ All edits carry `// CarpFinder` markers, so `grep -rn CarpFinder Content.Client 
 | NPCs | `Content.Server/NPC/Systems/NPCUtilitySystem.cs` | Faction hostility |
 | Temperature | `TemperatureSystem.cs`, `SharedTemperatureSystem.cs` | Cooking heats the surface first |
 | Icons | `SharedStatusIconSystem.cs` | Partial for the flanked icon |
+| Ghosts | `Resources/Prototypes/Entities/Mobs/Player/observer.yml` | Z-level Move up and Move down actions |
 
 The character editor and character window are swapped with csproj `Compile Remove` rules instead (`Content.Client/Content.Client.csproj`, `lobby-overlay.md`).
 

@@ -12,8 +12,9 @@
       layers:
         - state: barrel
     - type: Damageable
-      damageContainer: Inorganic
       damageModifierSet: CFWood
+    - type: Injurable
+      damageContainer: Inorganic
     - type: Physics
       bodyType: Static
     - type: Transform
@@ -53,7 +54,7 @@
         barrel:
           maxVol: 500
     - type: Construction
-      graph: CFWoodenBarrel
+      graph: CFCraneBarrel
       node: CFWoodenBarrel
     - type: PhysicalComposition
       materialComposition:
@@ -84,7 +85,7 @@
       solutions:
         barrel:
           reagents:
-            - ReagentId: CFBeeerGerbil
+            - ReagentId: CFBeerGerbil
               Quantity: 500
     - type: Label
       currentLabel: cf-reagent-name-gerbil
@@ -99,7 +100,7 @@
       solutions:
         barrel:
           reagents:
-            - ReagentId: CFBeeerBreeze
+            - ReagentId: CFBeerBreeze
               Quantity: 500
     - type: Label
       currentLabel: cf-reagent-name-breeze
@@ -114,7 +115,7 @@
       solutions:
         barrel:
           reagents:
-            - ReagentId: CFBeeerBlowLaw
+            - ReagentId: CFBeerBlowLaw
               Quantity: 500
     - type: Label
       currentLabel: cf-reagent-name-blowlaw
@@ -225,8 +226,9 @@
           layer:
             - TabletopMachineLayer
     - type: Damageable
-      damageContainer: Inorganic
       damageModifierSet: CFWood
+    - type: Injurable
+      damageContainer: Inorganic
     - type: Destructible
       thresholds:
         - trigger: !type:DamageTrigger

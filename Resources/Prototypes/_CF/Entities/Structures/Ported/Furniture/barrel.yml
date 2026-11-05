@@ -1,0 +1,25 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  id: CFBarrelChromiumSlime
+  parent: CFBaseBarrel
+  suffix: Chromium Slime
+  components:
+  - type: SolutionContainerManager
+    solutions:
+      barrel:
+        reagents:
+        - ReagentId: CFChromiumSlime
+          Quantity: 300
+
+- type: entity
+  id: CFBarrelDayflin
+  parent: CFBaseBarrel
+  suffix: Dayflin
+  components:
+  - type: SolutionContainerManager
+    solutions:
+      barrel:
+        reagents:
+        - ReagentId: CFYellowDayflinPulp
+          Quantity: 300

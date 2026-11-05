@@ -1,0 +1,52 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  id: CFIronDoorWindowed
+  parent:
+  - CFBaseDoor
+  name: iron windowed door
+  description: a solid iron door with a small window. You can look through it, of course, but it's hard to put your hand through.
+  suffix: Opened
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Doors/iron_windowed_door.rsi
+    layers:
+    - state: closed
+      map: ["enum.DoorVisualLayers.Base"]
+  - type: Occluder
+    enabled: false
+  - type: Door
+    occludes: false
+    openSound:
+      path: /Audio/Effects/door_open.ogg
+    closeSound:
+      path: /Audio/Effects/door_close.ogg
+  - type: Damageable
+    damageModifierSet: CFMetallicStructural
+  - type: Injurable
+    damageContainer: Inorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 75
+      behaviors:
+      - !type:DoActsBehavior
+        acts: ["Destruction"]
+      - !type:ChangeConstructionNodeBehavior
+        node: CFIronDoorFrame
+  - type: Construction
+    graph: CFIronDoor
+    node: CFIronDoor
+
+- type: entity
+  id: CFIronDoorWindowedMirrored
+  parent: CFIronDoorWindowed
+  suffix: Opened, Mirrored
+  components:
+  - type: Door
+    openSpriteState: open_mirrored
+    closedSpriteState: closed_mirrored
+  - type: Construction
+    graph: CFIronDoor
+    node: CFIronDoorMirrored

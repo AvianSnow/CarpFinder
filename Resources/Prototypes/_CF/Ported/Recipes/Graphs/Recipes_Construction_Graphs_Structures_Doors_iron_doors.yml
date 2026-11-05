@@ -1,0 +1,132 @@
+# Ported from CP14 by the CF converter.
+
+- type: constructionGraph
+  id: CFIronDoor
+  start: start
+  graph:
+    - node: start
+      actions:
+        - !type:DestroyEntity {}
+      edges:
+        - to: CFIronDoorFrame
+          steps:
+            - material: CFIronBar
+              amount: 2
+              doAfter: 2
+
+    - node: CFIronDoorFrame
+      entity: CFIronDoorFrame
+      edges:
+        - to: start
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFScrapIron
+              amount: 2
+            - !type:DeleteEntity {}
+          steps:
+            - tool: Prying
+              doAfter: 5
+        - to: CFIronDoorFrameMirrored
+          steps:
+            - tool: CFHammering
+              doAfter: 1
+        - to: CFIronDoor
+          steps:
+            - material: CFIronBar
+              amount: 2
+              doAfter: 2
+        - to: CFIronDoorWindowed
+          steps:
+            - material: CFIronBar
+              amount: 2
+              doAfter: 2
+
+    - node: CFIronDoorFrameMirrored
+      entity: CFIronDoorFrameMirrored
+      edges:
+        - to: start
+          conditions:
+          - !type:Locked
+            locked: false
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFScrapIron
+              amount: 2
+            - !type:DeleteEntity {}
+          steps:
+            - tool: Prying
+              doAfter: 5
+        - to: CFIronDoorFrame
+          steps:
+            - tool: CFHammering
+              doAfter: 1
+        - to: CFIronDoorMirrored
+          steps:
+            - material: CFIronBar
+              amount: 2
+              doAfter: 2
+        - to: CFIronDoorWindowedMirrored
+          steps:
+            - material: CFIronBar
+              amount: 2
+              doAfter: 2
+
+    - node: CFIronDoor
+      entity: CFIronDoor
+      edges:
+        - to: CFIronDoorFrame
+          conditions:
+          - !type:Locked
+            locked: false
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFScrapIron
+              amount: 2
+          steps:
+            - tool: Prying
+              doAfter: 5
+
+    - node: CFIronDoorMirrored
+      entity: CFIronDoorMirrored
+      edges:
+        - to: CFIronDoorFrameMirrored
+          conditions:
+          - !type:Locked
+            locked: false
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFScrapIron
+              amount: 2
+          steps:
+            - tool: Prying
+              doAfter: 5
+
+    - node: CFIronDoorWindowed
+      entity: CFIronDoorWindowed
+      edges:
+        - to: CFIronDoorFrame
+          conditions:
+          - !type:Locked
+            locked: false
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFScrapIron
+              amount: 2
+          steps:
+            - tool: Prying
+              doAfter: 5
+
+    - node: CFIronDoorWindowedMirrored
+      entity: CFIronDoorWindowedMirrored
+      edges:
+        - to: CFIronDoorFrameMirrored
+          conditions:
+          - !type:Locked
+            locked: false
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFScrapIron
+              amount: 2
+          steps:
+            - tool: Prying
+              doAfter: 5

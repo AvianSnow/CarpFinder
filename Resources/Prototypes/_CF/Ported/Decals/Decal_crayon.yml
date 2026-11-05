@@ -1,0 +1,101 @@
+# Ported from CP14 by the CF converter.
+
+- type: decal
+  id: CFCrayonArrowUp
+  tags: ["CFcrayon", "crayon-2-alphanum"]
+  defaultCleanable: true
+  defaultSnap: false
+  showMenu: true
+  sprite:
+    sprite: _CP14/Decals/crayon.rsi
+    state: arrow_u
+
+- type: decal
+  id: CFCrayonArrowDown
+  tags: ["CFcrayon", "crayon-2-alphanum"]
+  defaultCleanable: true
+  defaultSnap: false
+  showMenu: true
+  sprite:
+    sprite: _CP14/Decals/crayon.rsi
+    state: arrow_d
+
+- type: decal
+  id: CFCrayonArrowLeft
+  tags: ["CFcrayon", "crayon-2-alphanum"]
+  defaultCleanable: true
+  defaultSnap: false
+  showMenu: true
+  sprite:
+    sprite: _CP14/Decals/crayon.rsi
+    state: arrow_l
+
+- type: decal
+  id: CFCrayonArrowRight
+  tags: ["CFcrayon", "crayon-2-alphanum"]
+  defaultCleanable: true
+  defaultSnap: false
+  showMenu: true
+  sprite:
+    sprite: _CP14/Decals/crayon.rsi
+    state: arrow_r
+
+- type: decal
+  id: CFCrayonArrowDownRight
+  tags: ["CFcrayon", "crayon-2-alphanum"]
+  defaultCleanable: true
+  defaultSnap: false
+  showMenu: true
+  sprite:
+    sprite: _CP14/Decals/crayon.rsi
+    state: arrow_dr
+
+- type: decal
+  id: CFCrayonArrowDownLeft
+  tags: ["CFcrayon", "crayon-2-alphanum"]
+  defaultCleanable: true
+  defaultSnap: false
+  showMenu: true
+  sprite:
+    sprite: _CP14/Decals/crayon.rsi
+    state: arrow_dl
+
+- type: decal
+  id: CFCrayonArrowUpLeft
+  tags: ["CFcrayon", "crayon-2-alphanum"]
+  defaultCleanable: true
+  defaultSnap: false
+  showMenu: true
+  sprite:
+    sprite: _CP14/Decals/crayon.rsi
+    state: arrow_ul
+
+- type: decal
+  id: CFCrayonArrowUpRight
+  tags: ["CFcrayon", "crayon-2-alphanum"]
+  defaultCleanable: true
+  defaultSnap: false
+  showMenu: true
+  sprite:
+    sprite: _CP14/Decals/crayon.rsi
+    state: arrow_ur
+
+- type: decal
+  id: CFCrayonArrowSkull
+  tags: ["CFcrayon", "crayon-2-alphanum"]
+  defaultCleanable: true
+  defaultSnap: false
+  showMenu: true
+  sprite:
+    sprite: _CP14/Decals/crayon.rsi
+    state: skull
+
+- type: decal
+  id: CFCrayonArrowPoint
+  tags: ["CFcrayon", "crayon-2-alphanum"]
+  defaultCleanable: true
+  defaultSnap: false
+  showMenu: true
+  sprite:
+    sprite: _CP14/Decals/crayon.rsi
+    state: point

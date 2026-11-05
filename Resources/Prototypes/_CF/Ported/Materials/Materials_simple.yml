@@ -1,0 +1,9 @@
+# Ported from CP14 by the CF converter.
+
+- type: material
+  id: CFBone
+  stackEntity: CFBone1
+  name: cp14-material-bone
+  icon: { sprite: _CP14/Objects/Materials/bones.rsi, state: bone_1 }
+  color: "#ccb495"
+  price: 0.15

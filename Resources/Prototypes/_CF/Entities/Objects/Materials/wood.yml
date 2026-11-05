@@ -39,8 +39,9 @@
       spawnCount: 3
     - type: Appearance
     - type: Damageable
-      damageContainer: Inorganic
       damageModifierSet: Wood
+    - type: Injurable
+      damageContainer: Inorganic
     - type: Destructible
       thresholds:
         - trigger: !type:DamageTrigger
@@ -98,8 +99,9 @@
       materialComposition:
         CFWoodenPlanks: 10
     - type: Damageable
-      damageContainer: Inorganic
       damageModifierSet: Wood
+    - type: Injurable
+      damageContainer: Inorganic
     - type: Destructible
       thresholds:
         - trigger: !type:DamageTrigger

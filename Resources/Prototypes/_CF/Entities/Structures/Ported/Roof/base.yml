@@ -1,0 +1,143 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  id: CFBaseRoof
+  categories: [ ForkFiltered ]
+  abstract: true
+  name: roof
+  description: A roof over your head to protect you from the heat of the sun or the weather.
+  placement:
+    mode: SnapgridCenter
+  components:
+  - type: PlacementReplacement
+    key: CFRoof
+  - type: Physics
+    bodyType: Static
+    canCollide: false
+  - type: Transform
+    anchored: true
+  - type: BlockWeather
+  - type: CFRoof
+  - type: Sprite
+    drawdepth: Effects
+    sprite: _CP14/Structures/Roof/test.rsi
+  - type: Icon
+    sprite: _CP14/Structures/Roof/test.rsi
+    state: full
+  - type: IconSmooth
+    key: CFroof
+    states:
+    - !type:CornerSpriteSmoothing
+      mask: [ CFroof ]
+      base: roof
+  - type: IsRoof
+  - type: SunShadowCast
+  - type: WallMount
+    arc: 360
+
+- type: entity
+  parent:
+  - CFBaseRoof
+  - CFBaseFlammableSpreading
+  id: CFRoofWooden
+  name: wooden roof
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Roof/wooden.rsi
+  - type: Icon
+    sprite: _CP14/Structures/Roof/wooden.rsi
+  - type: Damageable
+    damageModifierSet: Wood
+  - type: Injurable
+    damageContainer: Inorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 100
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: WoodDestroy
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFWoodenPlanks1:
+            min: 1
+            max: 1
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: Construction
+    graph: CFRoofWooden
+    node: CFRoofWooden
+
+- type: entity
+  id: CFRoofWoodenBirch
+  parent: CFRoofWooden
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Roof/birch.rsi
+  - type: Icon
+    sprite: _CP14/Structures/Roof/birch.rsi
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 100
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: WoodDestroy
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFBirchWoodenPlanks1:
+            min: 1
+            max: 1
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: Construction
+    graph: CFRoofWooden
+    node: CFRoofWoodenBirch
+
+- type: entity
+  parent:
+  - CFBaseRoof
+  id: CFRoofStone
+  name: stone roof
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Roof/stone.rsi
+  - type: Icon
+    sprite: _CP14/Structures/Roof/stone.rsi
+  - type: Damageable
+    damageModifierSet: Rock
+  - type: Injurable
+    damageContainer: StructuralInorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 150
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          path: /Audio/Effects/break_stone.ogg
+          params:
+            volume: -6
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: Construction
+    graph: CFRoofStone
+    node: CFRoofStone
+
+- type: entity
+  parent:
+  - CFBaseRoof
+  id: CFRoofRemover
+  name: roof remover debug
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Roof/stone.rsi
+  - type: Icon
+    sprite: _CP14/Structures/Roof/stone.rsi
+  - type: TimedDespawn
+    lifetime: 2

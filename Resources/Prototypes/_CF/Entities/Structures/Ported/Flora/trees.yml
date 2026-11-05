@@ -1,0 +1,647 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  id: CFBaseTree
+  abstract: true
+  parent: CFBaseFlammableSpreading
+  categories: [ ForkFiltered ]
+  name: tree
+  description: Decades of life and growth, saturating the surrounding nature with fresh air.
+  components:
+  - type: Transform
+    anchored: true
+  - type: SpriteFade
+  - type: Clickable
+  - type: Sprite
+    noRot: true
+    drawdepth: Mobs
+    offset: 0,0.9
+  - type: Physics
+    bodyType: Static
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.2,-0.2,0.2,0.2"
+        density: 1000
+        layer:
+        - WallLayer
+  - type: Damageable
+    damageModifierSet: Wood
+  - type: Injurable
+    damageContainer: Inorganic
+  - type: MeleeSound
+    soundGroups:
+      Brute:
+        path: /Audio/Effects/chop.ogg
+        params:
+          variation: 0.05
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTypeTrigger
+        damageType: Heat
+        damage: 50
+      behaviors:
+        - !type:DoActsBehavior
+          acts: [ "Destruction" ]
+    - trigger:
+        !type:DamageTrigger
+        damage: 200
+      behaviors:
+        - !type:DoActsBehavior
+          acts: [ "Destruction" ]
+    - trigger:
+        !type:DamageTrigger
+        damage: 75
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          path: /Audio/Effects/tree_fell.ogg
+          params:
+            volume: 5
+            variation: 0.05
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFWoodLog:
+            min: 1
+            max: 3
+  - type: Material
+
+- type: entity
+  parent: CFBaseTree
+  id: CFBaseTreeLarge
+  name: large tree
+  abstract: true
+  components:
+  - type: Sprite
+    offset: 0,1.55
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTypeTrigger
+        damageType: Heat
+        damage: 100
+      behaviors:
+        - !type:DoActsBehavior
+          acts: [ "Destruction" ]
+    - trigger:
+        !type:DamageTrigger
+        damage: 200
+      behaviors:
+        - !type:DoActsBehavior
+          acts: [ "Destruction" ]
+    - trigger:
+        !type:DamageTrigger
+        damage: 120
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          path: /Audio/Effects/tree_fell.ogg
+          params:
+            volume: 5
+            variation: 0.05
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFWoodLog:
+            min: 3
+            max: 6
+
+- type: entity
+  parent: CFBaseTree
+  id: CFFloraTreeGreen
+  components:
+  - type: Sprite
+    sprite: Objects/Decoration/Flora/flora_trees.rsi
+    layers:
+    - state: tree01
+      map: ["random"]
+  - type: RandomSprite
+    available:
+    - random:
+        tree01: ""
+        tree02: ""
+        tree03: ""
+        tree04: ""
+        tree05: ""
+        tree06: ""
+  - type: Tag
+    tags:
+    - CFAmbientForest
+
+- type: entity
+  parent: CFBaseTree
+  id: CFFloraTreeSnow
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Flora/tree_snow.rsi
+    layers:
+    - state: tree01
+      map: ["random"]
+  - type: RandomSprite
+    available:
+    - random:
+        tree01: ""
+        tree02: ""
+        tree03: ""
+        tree04: ""
+        tree05: ""
+        tree06: ""
+
+- type: entity
+  parent: CFBaseTree
+  id: CFFloraTreeRed
+  name: motherblood tree
+  description: Ask Wanderere to insert lore here
+  components:
+  - type: Sprite
+    offset: 0,1.1
+    sprite: _CP14/Structures/Flora/tree_vampire.rsi
+    layers:
+    - state: 2
+      map: ["random"]
+  - type: RandomSprite
+    available:
+    - random:
+        1: ""
+        2: ""
+        3: ""
+        4: ""
+        5: ""
+        6: ""
+  - type: Tag
+    tags:
+    - CFAmbientForest
+
+- type: entity
+  parent: CFBaseTree
+  id: CFFloraTreeDead
+  components:
+  - type: Sprite
+    offset: 0,1.1
+    sprite: _CP14/Structures/Flora/tree_died.rsi
+    layers:
+    - state: tree01
+      map: ["random"]
+  - type: RandomSprite
+    available:
+    - random:
+        tree01: ""
+        tree02: ""
+        tree03: ""
+        tree04: ""
+
+- type: entity
+  parent: CFBaseTree
+  id: CFFloraTreeDeadSmall
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Flora/tree_died_small.rsi
+    layers:
+    - state: tree01
+      map: ["random"]
+  - type: RandomSprite
+    available:
+    - random:
+        tree01: ""
+        tree02: ""
+        tree03: ""
+        tree04: ""
+
+- type: entity
+  parent: CFBaseTreeLarge
+  id: CFFloraTreeGreenLarge
+  components:
+  - type: Sprite
+    sprite: Objects/Decoration/Flora/flora_treeslarge.rsi
+    layers:
+    - state: treelarge01
+      map: ["random"]
+  - type: RandomSprite
+    available:
+    - random:
+        treelarge01: ""
+        treelarge02: ""
+        treelarge03: ""
+        treelarge04: ""
+        treelarge05: ""
+        treelarge06: ""
+  - type: Tag
+    tags:
+    - CFAmbientForest
+
+- type: entity
+  id: CFBaseLucensTree
+  parent: CFBaseTree
+  name: lucens tree
+  components:
+  - type: PointLight
+    radius: 1.5
+    energy: 2
+    color: "#87CEEB"
+  - type: Sprite
+    noRot: true
+    sprite: _CP14/Structures/Flora/lucens.rsi
+    drawdepth: Mobs
+    offset: 0,0.9
+    layers:
+    - state: tree03
+      map: ["random"]
+  - type: RandomSprite
+    available:
+    - random:
+        tree03: ""
+        tree04: ""
+        tree05: ""
+        tree06: ""
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTypeTrigger
+        damageType: Heat
+        damage: 100
+      behaviors:
+        - !type:DoActsBehavior
+          acts: [ "Destruction" ]
+    - trigger:
+        !type:DamageTrigger
+        damage: 200
+      behaviors:
+        - !type:DoActsBehavior
+          acts: [ "Destruction" ]
+    - trigger:
+        !type:DamageTrigger
+        damage: 75
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          path: /Audio/Effects/tree_fell.ogg
+          params:
+            volume: 5
+            variation: 0.05
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFLucensWoodLog:
+            min: 1
+            max: 3
+
+- type: entity
+  parent: CFBaseLucensTree
+  id: CFBaseLucensTreeLarge
+  name: large lucens tree
+  components:
+  - type: Sprite
+    noRot: true
+    sprite: _CP14/Structures/Flora/lucens.rsi
+    drawdepth: Mobs
+    offset: 0,0.9
+    layers:
+    - state: tree01
+      map: ["random"]
+  - type: RandomSprite
+    available:
+    - random:
+        tree01: ""
+        tree02: ""
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTypeTrigger
+        damageType: Heat
+        damage: 100
+      behaviors:
+        - !type:DoActsBehavior
+          acts: [ "Destruction" ]
+    - trigger:
+        !type:DamageTrigger
+        damage: 200
+      behaviors:
+        - !type:DoActsBehavior
+          acts: [ "Destruction" ]
+    - trigger:
+        !type:DamageTrigger
+        damage: 120
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          path: /Audio/Effects/tree_fell.ogg
+          params:
+            volume: 5
+            variation: 0.05
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFLucensWoodLog:
+            min: 3
+            max: 6
+
+- type: entity
+  parent: CFBaseTree
+  id: CFFloraTreeBirchSmall
+  suffix: Small
+  components:
+  - type: Sprite
+    offset: 0,1.3
+    sprite: _CP14/Structures/Flora/tree_birch_small.rsi
+    layers:
+    - state: tree01
+      map: ["random"]
+  - type: RandomSprite
+    available:
+    - random:
+        tree01: ""
+        tree02: ""
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTypeTrigger
+        damageType: Heat
+        damage: 100
+      behaviors:
+        - !type:DoActsBehavior
+          acts: [ "Destruction" ]
+    - trigger:
+        !type:DamageTrigger
+        damage: 200
+      behaviors:
+        - !type:DoActsBehavior
+          acts: [ "Destruction" ]
+    - trigger:
+        !type:DamageTrigger
+        damage: 75
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          path: /Audio/Effects/tree_fell.ogg
+          params:
+            volume: 5
+            variation: 0.05
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFBirchWoodLog:
+            min: 1
+            max: 2
+
+- type: entity
+  parent: CFBaseTree
+  id: CFFloraTreeBirchMedium
+  suffix: Medium
+  components:
+  - type: Sprite
+    offset: 0,1.8
+    sprite: _CP14/Structures/Flora/tree_birch_medium.rsi
+    layers:
+    - state: tree01
+      map: ["random"]
+  - type: RandomSprite
+    available:
+    - random:
+        tree01: ""
+        tree02: ""
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTypeTrigger
+        damageType: Heat
+        damage: 100
+      behaviors:
+        - !type:DoActsBehavior
+          acts: [ "Destruction" ]
+    - trigger:
+        !type:DamageTrigger
+        damage: 200
+      behaviors:
+        - !type:DoActsBehavior
+          acts: [ "Destruction" ]
+    - trigger:
+        !type:DamageTrigger
+        damage: 75
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          path: /Audio/Effects/tree_fell.ogg
+          params:
+            volume: 5
+            variation: 0.05
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFBirchWoodLog:
+            min: 2
+            max: 4
+
+- type: entity
+  parent: CFBaseTree
+  id: CFFloraTreeBirchLarge
+  suffix: Large
+  components:
+  - type: Sprite
+    offset: 0,2.6
+    sprite: _CP14/Structures/Flora/tree_birch_big.rsi
+    layers:
+    - state: tree01
+      map: ["random"]
+  - type: RandomSprite
+    available:
+    - random:
+        tree01: ""
+        tree02: ""
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTypeTrigger
+        damageType: Heat
+        damage: 100
+      behaviors:
+        - !type:DoActsBehavior
+          acts: [ "Destruction" ]
+    - trigger:
+        !type:DamageTrigger
+        damage: 200
+      behaviors:
+        - !type:DoActsBehavior
+          acts: [ "Destruction" ]
+    - trigger:
+        !type:DamageTrigger
+        damage: 75
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          path: /Audio/Effects/tree_fell.ogg
+          params:
+            volume: 5
+            variation: 0.05
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFBirchWoodLog:
+            min: 3
+            max: 6
+
+
+#spruce
+
+- type: entity
+  parent: CFBaseTree
+  id: CFFloraTreeSpruceSmall
+  suffix: Small
+  components:
+  - type: Sprite
+    offset: 0,1
+    sprite: _CP14/Structures/Flora/tree_spruce_small.rsi
+    layers:
+    - state: tree01
+      map: ["random"]
+  - type: RandomSprite
+    available:
+    - random:
+        tree01: ""
+        tree02: ""
+        tree03: ""
+        tree04: ""
+        tree05: ""
+        tree06: ""
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTypeTrigger
+        damageType: Heat
+        damage: 100
+      behaviors:
+        - !type:DoActsBehavior
+          acts: [ "Destruction" ]
+    - trigger:
+        !type:DamageTrigger
+        damage: 200
+      behaviors:
+        - !type:DoActsBehavior
+          acts: [ "Destruction" ]
+    - trigger:
+        !type:DamageTrigger
+        damage: 75
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          path: /Audio/Effects/tree_fell.ogg
+          params:
+            volume: 5
+            variation: 0.05
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFSpruceWoodLog:
+            min: 1
+            max: 2
+
+- type: entity
+  parent: CFBaseTree
+  id: CFFloraTreeSpruceMedium
+  suffix: Medium
+  components:
+  - type: Sprite
+    offset: 0,1.6
+    sprite: _CP14/Structures/Flora/tree_spruce_medium.rsi
+    layers:
+    - state: tree01
+      map: ["random"]
+  - type: RandomSprite
+    available:
+    - random:
+        tree01: ""
+        tree02: ""
+        tree03: ""
+        tree04: ""
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTypeTrigger
+        damageType: Heat
+        damage: 100
+      behaviors:
+        - !type:DoActsBehavior
+          acts: [ "Destruction" ]
+    - trigger:
+        !type:DamageTrigger
+        damage: 200
+      behaviors:
+        - !type:DoActsBehavior
+          acts: [ "Destruction" ]
+    - trigger:
+        !type:DamageTrigger
+        damage: 75
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          path: /Audio/Effects/tree_fell.ogg
+          params:
+            volume: 5
+            variation: 0.05
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFSpruceWoodLog:
+            min: 2
+            max: 4
+
+- type: entity
+  parent: CFBaseTree
+  id: CFFloraTreeSpruceLarge
+  suffix: Large
+  components:
+  - type: Sprite
+    offset: 0,1.9
+    sprite: _CP14/Structures/Flora/tree_spruce_big.rsi
+    layers:
+    - state: tree01
+      map: ["random"]
+  - type: RandomSprite
+    available:
+    - random:
+        tree01: ""
+        tree02: ""
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTypeTrigger
+        damageType: Heat
+        damage: 100
+      behaviors:
+        - !type:DoActsBehavior
+          acts: [ "Destruction" ]
+    - trigger:
+        !type:DamageTrigger
+        damage: 200
+      behaviors:
+        - !type:DoActsBehavior
+          acts: [ "Destruction" ]
+    - trigger:
+        !type:DamageTrigger
+        damage: 75
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          path: /Audio/Effects/tree_fell.ogg
+          params:
+            volume: 5
+            variation: 0.05
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFSpruceWoodLog:
+            min: 3
+            max: 6

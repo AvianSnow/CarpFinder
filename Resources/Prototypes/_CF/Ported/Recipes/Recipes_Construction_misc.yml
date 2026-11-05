@@ -1,0 +1,37 @@
+# Ported from CP14 by the CF converter.
+
+- type: construction
+  id: CFBonfire
+  graph: CFBonfire
+  startNode: start
+  targetNode: CFBonfire
+  category: construction-category-misc
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFBaseTombstone
+  graph: CFBaseTombstone
+  startNode: start
+  targetNode: CFBaseTombstone
+  category: construction-category-misc
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFWoodenPallet
+  graph: CFWoodenPallet
+  startNode: start
+  targetNode: CFWoodenPallet
+  category: construction-category-misc
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked

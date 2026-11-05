@@ -1,0 +1,58 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  id: CFWoodenBirchDoorWindowed
+  parent:
+  - CFBaseDoor
+  - CFBaseFlammableSpreading
+  name: wooden birch windowed door
+  description: Not the most solid construction, but it's better than nothing.
+  suffix: Opened
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Doors/wooden_birch_windowed_door.rsi
+    layers:
+    - state: closed
+      map: ["enum.DoorVisualLayers.Base"]
+  - type: Occluder
+    enabled: false
+  - type: Door
+    occludes: false
+    openSound:
+      path: /Audio/Effects/door_open.ogg
+    closeSound:
+      path: /Audio/Effects/door_close.ogg
+  - type: Damageable
+    damageModifierSet: CFWoodStructural
+  - type: Injurable
+    damageContainer: Inorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 75
+      behaviors:
+      - !type:DoActsBehavior
+        acts: ["Destruction"]
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFBirchWoodenPlanks1:
+            min: 1
+            max: 2
+      - !type:ChangeConstructionNodeBehavior
+        node: CFWoodenDoorFrame
+  - type: Construction
+    graph: CFWoodenBirchDoor
+    node: CFWoodenBirchDoorWindowed
+
+- type: entity
+  id: CFWoodenBirchDoorWindowedMirrored
+  parent: CFWoodenBirchDoorWindowed
+  suffix: Opened, Mirrored
+  components:
+  - type: Door
+    openSpriteState: open_mirrored
+    closedSpriteState: closed_mirrored
+  - type: Construction
+    graph: CFWoodenBirchDoor
+    node: CFWoodenBirchDoorWindowedMirrored

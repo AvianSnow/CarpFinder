@@ -1,0 +1,73 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  parent: CFWoodenDoor
+  id: CFWoodenDoorTavernStaff
+  suffix: Tavern Staff
+  components:
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent:
+  - CFWoodenDoorTavernStaff
+  - CFWoodenDoorMirrored
+  id: CFWoodenDoorTavernStaffMirrored
+  suffix: Tavern Staff, Mirrored
+
+- type: entity
+  parent: CFWoodenDoor
+  id: CFWoodenDoorTavernDorms1
+  suffix: Tavern Dorms 1
+  components:
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent: CFWoodenDoor
+  id: CFWoodenDoorTavernDorms2
+  suffix: Tavern Dorms 2
+  components:
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent: CFWoodenDoor
+  id: CFWoodenDoorTavernDorms3
+  suffix: Tavern Dorms 3
+  components:
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent: CFWoodenDoor
+  id: CFWoodenDoorTavernDorms4
+  suffix: Tavern Dorms 4
+  components:
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent: CFWoodenDoor
+  id: CFWoodenDoorTavernDorms5
+  suffix: Tavern Dorms 5
+  components:
+  - type: Lock
+    locked: true
+
+# Wooden windowed
+
+- type: entity
+  parent: CFWoodenDoorWindowed
+  id: CFWoodenDoorWindowedTavernHall
+  suffix: Tavern Hall
+  components:
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent:
+  - CFWoodenDoorWindowedTavernHall
+  - CFWoodenDoorWindowedMirrored
+  id: CFWoodenDoorTavernHallMirrored
+  suffix: Tavern Hall, Mirrored

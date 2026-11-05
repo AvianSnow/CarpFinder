@@ -1,0 +1,113 @@
+# Ported from CP14 by the CF converter.
+
+- type: reagent
+  id: CFBloodFlowerSap
+  group: CFPrecurser
+  name: cp14-reagent-name-bloodflowersap
+  desc: cp14-reagent-desc-bloodflowersap
+  flavor: CFMetallic
+  color: "#5c1f0a"
+  physicalDesc: cp14-reagent-physical-desc-ferrous
+  footstepSound:
+    collection: FootstepBlood
+    params:
+      volume: 6
+  pricePerUnit: 0.40
+
+- type: reagent
+  id: CFYellowDayflinPulp
+  group: CFPrecurser
+  name: cp14-reagent-name-yellow-dayflin-pulp
+  desc: cp14-reagent-desc-yellow-dayflin-pulp
+  flavor: CFSweetly
+  color: "#ffe269"
+  physicalDesc: cp14-reagent-physical-desc-pureed
+  pricePerUnit: 0.35
+
+- type: reagent
+  id: CFAirLily
+  group: CFPrecurser
+  name: cp14-reagent-name-air-lily-juice
+  desc: cp14-reagent-desc-air-lily-juice
+  flavor: fizzy
+  color: "#92cae0"
+  physicalDesc: reagent-physical-desc-milky
+  pricePerUnit: 0.62
+
+- type: reagent
+  id: CFWildSageSap
+  group: CFPrecurser
+  name: cp14-reagent-name-wild-sage-sap
+  desc: cp14-reagent-desc-wild-sage-sap
+  flavor: CFSweetly
+  color: "#b06bc7"
+  physicalDesc: cp14-reagent-physical-desc-cloudy
+  pricePerUnit: 0.44
+
+# Fungus based
+
+- type: reagent
+  id: CFAgaricMushroom
+  group: CFPrecurser
+  name: cp14-reagent-name-agaric-shroom
+  desc: cp14-reagent-desc-agaric-shroom
+  flavor: CFBitterly
+  color: "#89a195"
+  physicalDesc: cp14-reagent-physical-desc-colorless
+  pricePerUnit: 0.46
+
+- type: reagent
+  id: CFLumiMushroom
+  group: CFPrecurser
+  name: cp14-reagent-name-lumi-shroom
+  desc: cp14-reagent-desc-lumi-shroom
+  flavor: CFVomit
+  color: "#36c98f"
+  physicalDesc: cp14-reagent-physical-desc-colorless
+  pricePerUnit: 0.94
+
+- type: reagent
+  id: CFBlueAmanita
+  group: CFPrecurser
+  name: cp14-reagent-name-blue-amanita
+  desc: cp14-reagent-desc-blue-amanita
+  flavor: CFMagic
+  color: "#6bb4bf"
+  physicalDesc: cp14-reagent-physical-desc-iridescent
+  pricePerUnit: 0.86
+
+- type: reagent
+  id: CFSilverNeedle
+  group: CFPrecurser
+  name: cp14-reagent-name-silver-needle
+  desc: cp14-reagent-desc-silver-needle
+  flavor: bitter
+  color: "#c2834c"
+  physicalDesc: cp14-reagent-physical-desc-iridescent
+  pricePerUnit: 1.20
+
+# Slime based
+
+- type: reagent
+  id: CFChromiumSlime
+  group: CFPrecurser
+  name: cp14-reagent-name-chromium-slime
+  desc: cp14-reagent-desc-chromium-slime
+  flavor: CFVomit
+  color: "#3b4872"
+  physicalDesc: cp14-reagent-physical-desc-colorless
+  slipData:
+    requiredSlipSpeed: 3.5
+  pricePerUnit: 2.20
+
+# Inorganic
+
+- type: reagent
+  id: CFWhistlerPoison
+  group: CFPrecurser
+  name: cp14-reagent-name-whistler-poison
+  desc: cp14-reagent-desc-whistler-poison
+  flavor: CFVerySweet
+  color: "#6bb4bf"
+  physicalDesc: reagent-physical-desc-powdery
+  pricePerUnit: 3.52

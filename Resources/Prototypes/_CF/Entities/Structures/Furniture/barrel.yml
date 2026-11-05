@@ -57,8 +57,8 @@
       noRot: true
     - type: Physics
     - type: Construction
-      graph: CP14BaseBarrel
-      node: CP14BaseBarrel
+      graph: CFBaseBarrel
+      node: CFBaseBarrel
     - type: Fixtures
       fixtures:
         fix1:
@@ -70,8 +70,9 @@
           layer:
             - MachineLayer
     - type: Damageable
-      damageContainer: Inorganic
       damageModifierSet: CFWood
+    - type: Injurable
+      damageContainer: Inorganic
     - type: Destructible
       thresholds:
         - trigger: !type:DamageTrigger
@@ -199,18 +200,6 @@
               Quantity: 300
 
 - type: entity
-  id: CFBarrelChromiumSlime
-  parent: CFBaseBarrel
-  suffix: Chromium Slime
-  components:
-    - type: SolutionContainerManager
-      solutions:
-        barrel:
-          reagents:
-            - ReagentId: CFCromiumSlime
-              Quantity: 300
-
-- type: entity
   id: CFBarrelWildSageSap
   parent: CFBaseBarrel
   suffix: Wild Sage sap
@@ -244,18 +233,6 @@
         barrel:
           reagents:
             - ReagentId: CFLumiMushroom
-              Quantity: 300
-
-- type: entity
-  id: CFBarrelDayflin
-  parent: CFBaseBarrel
-  suffix: Dayflin
-  components:
-    - type: SolutionContainerManager
-      solutions:
-        barrel:
-          reagents:
-            - ReagentId: CFBloodDayflinPulp
               Quantity: 300
 
 - type: entity

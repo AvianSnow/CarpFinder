@@ -1,0 +1,52 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  abstract: true
+  id: CFBaseMop
+  parent:
+  - BaseItem
+  - CFBaseWeaponDestructible
+  - CFBaseWeaponSelfDamage
+  components:
+  - type: Item
+    size: Ginormous
+  - type: MeleeWeapon
+    clickDamageModifier: 0.1
+    attackRate: 1.5
+    range: 1.6
+    angle: 30
+    wideAnimationRotation: 0
+    damage:
+      types:
+        Blunt: 2
+    animation: WeaponArcThrust
+    wideAnimation: WeaponArcThrust
+    soundHit:
+      collection: MetalThud
+  - type: IncreaseDamageOnWield
+    damage:
+      types:
+        Blunt: 2
+  - type: Wieldable
+  - type: Clothing
+    slots:
+    - neck
+    equipDelay: 1
+    unequipDelay: 1
+  - type: Spillable
+    solution: absorbed
+  - type: Absorbent
+  - type: SolutionContainerManager
+    solutions:
+      absorbed:
+        maxVol: 50
+
+- type: entity
+  parent: CFBaseMop
+  id: CFMop
+  name: mop
+  description: A simple mop for cleaning up spills and messes.
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Weapons/Melee/Mop/mop.rsi
+    state: icon

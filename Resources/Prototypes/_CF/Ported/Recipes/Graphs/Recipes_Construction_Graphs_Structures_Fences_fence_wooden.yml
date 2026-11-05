@@ -1,0 +1,107 @@
+# Ported from CP14 by the CF converter.
+
+- type: constructionGraph
+  id: CFFenceWooden
+  start: start
+  graph:
+    - node: start
+      edges:
+        - to: CFFenceWooden
+          completed:
+            - !type:SnapToGrid
+              southRotation: true
+          steps:
+            - material: CFWoodenPlanks
+              amount: 2
+              doAfter: 2
+
+    - node: CFFenceWooden
+      entity: CFFenceWooden
+      edges:
+        - to: start
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFWoodenPlanks1
+              amount: 2
+            - !type:DeleteEntity {}
+          steps:
+            - tool: Prying
+              doAfter: 2
+
+- type: constructionGraph
+  id: CFFenceWoodenBirch
+  start: start
+  graph:
+    - node: start
+      edges:
+        - to: CFFenceWoodenBirch
+          completed:
+            - !type:SnapToGrid
+              southRotation: true
+          steps:
+            - material: CFBirchWoodenPlanks
+              amount: 2
+              doAfter: 2
+
+    - node: CFFenceWoodenBirch
+      entity: CFFenceWoodenBirch
+      edges:
+        - to: start
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFBirchWoodenPlanks1
+              amount: 2
+            - !type:DeleteEntity {}
+          steps:
+            - tool: Prying
+              doAfter: 2
+
+- type: constructionGraph
+  id: CFFenceGateWooden
+  start: start
+  graph:
+    - node: start
+      edges:
+        - to: CFFenceGateWooden
+          steps:
+            - material: CFWoodenPlanks
+              amount: 2
+              doAfter: 2
+
+    - node: CFFenceGateWooden
+      entity: CFFenceGateWooden
+      edges:
+        - to: start
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFWoodenPlanks1
+              amount: 2
+            - !type:DeleteEntity {}
+          steps:
+            - tool: Prying
+              doAfter: 2
+
+- type: constructionGraph
+  id: CFFenceGateWoodenBirch
+  start: start
+  graph:
+    - node: start
+      edges:
+        - to: CFFenceGateWoodenBirch
+          steps:
+            - material: CFBirchWoodenPlanks
+              amount: 2
+              doAfter: 2
+
+    - node: CFFenceGateWoodenBirch
+      entity: CFFenceGateWoodenBirch
+      edges:
+        - to: start
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFBirchWoodenPlanks1
+              amount: 2
+            - !type:DeleteEntity {}
+          steps:
+            - tool: Prying
+              doAfter: 2

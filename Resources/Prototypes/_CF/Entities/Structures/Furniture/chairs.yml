@@ -8,8 +8,9 @@
   - CFBaseFlammable
   components:
   - type: Damageable
-    damageContainer: Inorganic
     damageModifierSet: CFWood
+  - type: Injurable
+    damageContainer: Inorganic
   - type: Sprite
     sprite: _CP14/Structures/Furniture/chairs.rsi
     state: wooden
@@ -116,7 +117,7 @@
           collection: WoodDestroy
       - !type:SpawnEntitiesBehavior
         spawn:
-          CP14WoodenPlanks1:
+          CFWoodenPlanks1:
             min: 1
             max: 1
 

@@ -1,0 +1,18 @@
+# Ported from CP14 by the CF converter.
+
+- type: constructionGraph
+  id: CFCrateDirtPitGrave
+  start: start
+  graph:
+    - node: start
+      actions:
+        - !type:DestroyEntity {}
+      edges:
+        - to: CFCrateDirtPitGrave
+          steps:
+            - material: CFDirt
+              amount: 3
+              doAfter: 5
+
+    - node: CFCrateDirtPitGrave
+      entity: CFCrateDirtPitGrave

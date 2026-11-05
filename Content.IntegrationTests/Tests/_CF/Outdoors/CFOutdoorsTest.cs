@@ -70,7 +70,7 @@ public sealed class CFOutdoorsTest : GameTest
 
     private void Seedbed(int x, int y)
     {
-        var tile = Server.ResolveDependency<ITileDefinitionManager>()["CFloorDirtSeedbed"];
+        var tile = Server.ResolveDependency<ITileDefinitionManager>()["CFFloorDirtSeedbed"];
         var coordinates = _map.Local(x, y);
         var maps = SEntMan.System<SharedMapSystem>();
         var grid = SEntMan.GetComponent<MapGridComponent>(_map.Grid);

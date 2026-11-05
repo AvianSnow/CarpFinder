@@ -61,33 +61,6 @@
 
 - type: entity
   parent: CFActivityTarget
-  id: CFActTrip
-  name: Trip
-  description: Athletics against Reflex. Success knocks the target prone.
-  components:
-  - type: CFActivity
-    kind: Trip
-
-- type: entity
-  parent: CFActivityTarget
-  id: CFActShove
-  name: Shove
-  description: Athletics against Fortitude. Success pushes the target.
-  components:
-  - type: CFActivity
-    kind: Shove
-
-- type: entity
-  parent: CFActivityTarget
-  id: CFActGrapple
-  name: Grapple
-  description: Athletics against Fortitude. Success grabs the target.
-  components:
-  - type: CFActivity
-    kind: Grapple
-
-- type: entity
-  parent: CFActivityTarget
   id: CFActFeint
   name: Feint
   description: Deception against Perception. Success makes the target off-guard to you.
@@ -97,36 +70,12 @@
 
 - type: entity
   parent: CFActivityInstant
-  id: CFActRaiseShield
-  name: Raise a Shield
-  description: You gain a +2 circumstance bonus to AC until your next turn. Needs a shield in your active hand.
-  components:
-  - type: Sprite
-    sprite: Objects/Weapons/Melee/shields.rsi
-    layers:
-    - state: riot-icon
-  - type: CFActivity
-    kind: RaiseShield
-
-- type: entity
-  parent: CFActivityInstant
   id: CFActRage
   name: Rage
   description: +2 damage and -1 AC until you end the rage. You cannot cast spells while raging.
   components:
   - type: CFActivity
     kind: Rage
-
-- type: entity
-  parent: CFActivityTarget
-  id: CFActHuntPrey
-  name: Hunt Prey
-  description: Mark a creature. Your first hit against it each turn deals 1d8 extra precision damage.
-  components:
-  - type: TargetAction
-    range: 12
-  - type: CFActivity
-    kind: HuntPrey
 
 - type: entity
   parent: CFActivityTarget
@@ -147,28 +96,6 @@
     actions: 2
   - type: CFActivity
     kind: Spellstrike
-
-- type: entity
-  parent: CFActivityTarget
-  id: CFActStratagem
-  name: Devise a Stratagem
-  description: Roll a d20. Your next Strike against that creature uses it.
-  components:
-  - type: TargetAction
-    range: 12
-  - type: CFActivity
-    kind: Stratagem
-
-- type: entity
-  parent: CFActivityTarget
-  id: CFActExploit
-  name: Exploit Vulnerability
-  description: The creature is off-guard to you and your Strikes deal 2 extra damage.
-  components:
-  - type: TargetAction
-    range: 6
-  - type: CFActivity
-    kind: Exploit
 
 - type: entity
   parent: CFActivityInstant

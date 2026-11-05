@@ -45,7 +45,14 @@ public sealed partial class CFConditionComponent : Component
     public bool Blinded;
 
     [DataField, AutoNetworkedField]
-    public bool RaisedShield;
+    public int Shoves;
+
+    [DataField]
+    public TimeSpan LastShove;
+
+    /// <summary>When the next Escape attempt can happen.</summary>
+    [DataField]
+    public TimeSpan NextEscape;
 
     /// <summary>Hardness of a shield spell that has not blocked yet. 0 means none.</summary>
     [DataField, AutoNetworkedField]

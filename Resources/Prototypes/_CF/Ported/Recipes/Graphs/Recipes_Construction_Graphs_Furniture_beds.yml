@@ -1,0 +1,28 @@
+# Ported from CP14 by the CF converter.
+
+- type: constructionGraph
+  id: CFWoodenBed
+  start: start
+  graph:
+    - node: start
+      actions:
+        - !type:DestroyEntity {}
+      edges:
+        - to: CFWoodenBed
+          steps:
+            - material: CFWoodenPlanks
+              amount: 2
+            - material: CFCloth
+              amount: 1
+              doAfter: 2
+        - to: CFBirchWoodenBed
+          steps:
+          - material: CFBirchWoodenPlanks
+            amount: 2
+          - material: CFCloth
+            amount: 1
+            doAfter: 2
+    - node: CFWoodenBed
+      entity: CFWoodenBed
+    - node: CFBirchWoodenBed
+      entity: CFBirchWoodenBed

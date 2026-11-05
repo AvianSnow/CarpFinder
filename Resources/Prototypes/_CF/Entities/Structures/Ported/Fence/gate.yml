@@ -1,0 +1,91 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  parent: CFBaseFence
+  id: CFBaseFenceGate
+  abstract: true
+  categories: [ ForkFiltered ]
+  name: fence gate
+  description: You have two paths. You can open the door like a normal person, or you can climb over the door like a funny person.
+  components:
+  - type: Sprite
+    layers:
+    - state: door_closed
+      map: ["enum.DoorVisualLayers.Base"]
+  - type: Icon
+    state: door_closed
+  - type: IconSmooth
+    states: []
+  - type: InteractionOutline
+  - type: Appearance
+  - type: Door
+    openSpriteState: door_opened
+    closedSpriteState: door_closed
+    canPry: false
+    occludes: false
+    changeAirtight: false
+    bumpOpen: false
+    clickOpen: true
+    canCrush: false
+    closeTimeOne: 0
+    closeTimeTwo: 0
+    openTimeOne: 0
+    openTimeTwo: 0
+    closedDrawDepth: Mobs
+    openDrawDepth: Mobs
+    openingAnimationTime: 0
+    closingAnimationTime: 0
+    openSound:
+      path: /Audio/Effects/door_open.ogg
+    closeSound:
+      path: /Audio/Effects/door_close.ogg
+  - type: Lock
+    locked: false
+
+- type: entity
+  parent:
+  - CFBaseFenceGate
+  - CFBaseFlammableSpreading
+  id: CFFenceGateWooden
+  suffix: Wooden
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Fence/wooden.rsi
+  - type: Icon
+    sprite: _CP14/Structures/Fence/wooden.rsi
+  - type: Damageable
+    damageModifierSet: Wood
+  - type: Injurable
+    damageContainer: Inorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 75
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: WoodDestroy
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFWoodenPlanks1:
+            min: 1
+            max: 2
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: Construction
+    graph: CFFenceGateWooden
+    node: CFFenceGateWooden
+
+- type: entity
+  parent: CFFenceGateWooden
+  id: CFFenceGateWoodenBirch
+  suffix: Wooden Birch
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Fence/wooden_birch.rsi
+  - type: Icon
+    sprite: _CP14/Structures/Fence/wooden_birch.rsi
+  - type: Construction
+    graph: CFFenceGateWooden
+    node: CFFenceGateWooden

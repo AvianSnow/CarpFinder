@@ -1,0 +1,23 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  id: CFWorkbenchCooking
+  parent:
+  - CFBaseWorkbench
+  - CFBaseFlammable
+  name: cooking table
+  suffix: Workbench
+  description: A table to work with food. Time to cook!
+  components:
+  - type: Sprite
+    state: cooking_table
+  - type: Icon
+    state: cooking_table
+  - type: Construction
+    graph: CFWorkbenchCooking
+    node: CFWorkbenchCooking
+  - type: CFWorkbench
+    craftSound:
+      collection: CFSawing #TODO
+    recipeTags:
+    - CFRecipeCooking

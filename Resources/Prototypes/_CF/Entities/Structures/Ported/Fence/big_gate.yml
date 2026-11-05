@@ -1,0 +1,122 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  parent: CFBaseFenceBig
+  id: CFBaseFenceGateBig
+  abstract: true
+  categories: [ ForkFiltered ]
+  name: fence big gate
+  description: Big man-sized gates. What's your next move?
+  components:
+  - type: Sprite
+    layers:
+    - state: door_closed
+      map: ["enum.DoorVisualLayers.Base"]
+  - type: Icon
+    state: door_closed
+  - type: IconSmooth
+    states: []
+  - type: InteractionOutline
+  - type: Appearance
+  - type: Door
+    openSpriteState: door_opened
+    closedSpriteState: door_closed
+    canPry: false
+    occludes: false
+    changeAirtight: false
+    bumpOpen: false
+    clickOpen: true
+    canCrush: false
+    closeTimeOne: 0
+    closeTimeTwo: 0
+    openTimeOne: 0
+    openTimeTwo: 0
+    closedDrawDepth: Mobs
+    openDrawDepth: Mobs
+    openingAnimationTime: 0
+    closingAnimationTime: 0
+    openSound:
+      path: /Audio/Effects/door_open.ogg
+    closeSound:
+      path: /Audio/Effects/door_close.ogg
+  - type: Lock
+    locked: false
+
+- type: entity
+  parent:
+  - CFBaseFenceGateBig
+  - CFBaseFlammableSpreading
+  id: CFFenceGateBigWooden
+  suffix: Wooden
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Fence/wooden_big.rsi
+  - type: Icon
+    sprite: _CP14/Structures/Fence/wooden_big.rsi
+  - type: Damageable
+    damageModifierSet: Wood
+  - type: Injurable
+    damageContainer: Inorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 150
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: WoodDestroy
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFWoodenPlanks1:
+            min: 2
+            max: 4
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: Construction
+    graph: CFFenceGateBigWooden
+    node: CFFenceGateBigWooden
+
+- type: entity
+  parent: CFFenceGateBigWooden
+  id: CFFenceGateBigWoodenBirch
+  suffix: Wooden Birch
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Fence/wooden_birch_big.rsi
+  - type: Icon
+    sprite: _CP14/Structures/Fence/wooden_birch_big.rsi
+  - type: Construction
+    graph: CFFenceGateBigWoodenBirch
+    node: CFFenceGateBigWoodenBirch
+
+- type: entity
+  parent:
+  - CFBaseFenceGateBig
+  id: CFFenceGateBigIron
+  suffix: Iron
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Fence/iron_big.rsi
+  - type: Icon
+    sprite: _CP14/Structures/Fence/iron_big.rsi
+  - type: Damageable
+    damageModifierSet: StructuralMetallic
+  - type: Injurable
+    damageContainer: StructuralInorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 150
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: WoodDestroy
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFScrapIron:
+            min: 1
+            max: 2
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]

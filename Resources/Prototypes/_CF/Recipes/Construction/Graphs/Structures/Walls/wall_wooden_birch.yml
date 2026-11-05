@@ -32,7 +32,7 @@
               doAfter: 2
         #- to: WindowWooden
         #  steps:
-        #    - material: CP14GlassSheet
+        #    - material: CFGlassSheet
         #      amount: 2
         #      doAfter: 2
 
@@ -41,7 +41,7 @@
       edges:
         - to: CFWallFrameWoodenBirch
           steps:
-            - tool: CFWoodenHammering
+            - tool: CFHammering
               doAfter: 4
           completed:
             - !type:SpawnPrototype

@@ -1,0 +1,13 @@
+# Ported from CP14 by the CF converter.
+
+- type: construction
+  id: CFWorkbenchCooking
+  graph: CFWorkbenchCooking
+  startNode: start
+  targetNode: CFWorkbenchCooking
+  category: construction-category-machines
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked

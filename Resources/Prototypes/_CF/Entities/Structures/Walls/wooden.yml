@@ -16,8 +16,9 @@
       graph: CFWallWooden
       node: CFWallFrameWooden
     - type: Damageable
-      damageContainer: StructuralInorganic
       damageModifierSet: WoodMod
+    - type: Injurable
+      damageContainer: StructuralInorganic
     - type: Destructible
       thresholds:
         - trigger: !type:DamageTrigger
@@ -51,8 +52,9 @@
       sprite: _CP14/Structures/Walls/wooden_wall.rsi
       state: full
     - type: Damageable
-      damageContainer: StructuralInorganic
       damageModifierSet: WoodMod
+    - type: Injurable
+      damageContainer: StructuralInorganic
     - type: Destructible
       thresholds:
         - trigger: !type:DamageTrigger
@@ -182,7 +184,7 @@
                 collection: WoodDestroy
             - !type:SpawnEntitiesBehavior
               spawn:
-                CP14SpruceWoodenPlanks1:
+                CFSpruceWoodenPlanks1:
                   min: 1
                   max: 2
             - !type:ChangeConstructionNodeBehavior

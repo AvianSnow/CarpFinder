@@ -1,0 +1,34 @@
+# Ported from CP14 by the CF converter.
+
+- type: reagent
+  id: CFBurntFood
+  name: cp14-reagent-name-burnt-food
+  group: Foods
+  desc: cp14-reagent-desc-burnt-food
+  physicalDesc: cp14-reagent-physical-desc-powdery
+  flavor: terrible
+  color: black
+  recognizable: true
+  metabolisms:
+    Digestion:
+      effects:
+      - !type:Satiate
+        satiationType: Thirst
+        factor: -0.2
+      - !type:Vomit
+        probability: 0.3
+
+- type: reagent
+  id: CFTaikamyrky
+  name: cp14-reagent-name-taikamyrky
+  group: Foods
+  desc: cp14-reagent-desc-taikamyrky
+  physicalDesc: cp14-reagent-physical-desc-viscous
+  flavor: terrible
+  color: "#6d00a3"
+  recognizable: true
+  metabolisms:
+    Digestion:
+      effects:
+      - !type:Satiate
+        satiationType: Hunger

@@ -9,7 +9,7 @@
             - !type:SnapToGrid
               southRotation: true
           steps:
-            - material: CP14MarbleStone
+            - material: CFMarbleStone
               amount: 2
               doAfter: 5
 
@@ -27,14 +27,14 @@
               doAfter: 4
         - to: CFWallMarbleBrick
           steps:
-            - material: CP14MarbleStone
+            - material: CFMarbleStone
               amount: 2
               doAfter: 5
 
     - node: CFWallMarbleBrick
       entity: CFWallMarbleBrick
       edges:
-        - to: CP14WallFrameMarbleBrick
+        - to: CFWallFrameMarbleBrick
           steps:
             - tool: CFHammering
               doAfter: 2

@@ -12,11 +12,11 @@
     state: icon
   - type: CFEditTileTool
     tileReplace:
-      CFFloorDirt: CFloorDirtSeedbed
-      CFloorDirtSeedbed: CFFloorDirt
-      CFFloorGrass: CFloorDirtSeedbed
-      CFFloorGrassLight: CFloorDirtSeedbed
-      CFFloorGrassTall: CFloorDirtSeedbed
+      CFFloorDirt: CFFloorDirtSeedbed
+      CFFloorDirtSeedbed: CFFloorDirt
+      CFFloorGrass: CFFloorDirtSeedbed
+      CFFloorGrassLight: CFFloorDirtSeedbed
+      CFFloorGrassTall: CFFloorDirtSeedbed
   - type: CFBulk
     bulk: 1
   - type: CFItemPrice

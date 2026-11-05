@@ -23,6 +23,7 @@ public sealed partial class CFArmorSystem : EntitySystem
 
     [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private InventorySystem _inventory = default!;
+    [Dependency] private Content.Shared.Hands.EntitySystems.SharedHandsSystem _hands = default!;
     [Dependency] private MovementSpeedModifierSystem _speed = default!;
     [Dependency] private CFBonusSystem _bonuses = default!;
     [Dependency] private CFEncumbranceSystem _encumbrance = default!;
@@ -98,6 +99,13 @@ public sealed partial class CFArmorSystem : EntitySystem
 
         if (_encumbrance.IsEncumbered(mob))
             penalty += EncumberedSpeedPenalty;
+
+        // A shield's Speed penalty applies while held, and Strength does not reduce it.
+        foreach (var held in _hands.EnumerateHeld(mob))
+        {
+            if (TryComp(held, out CFShieldComponent? shield))
+                penalty += shield.SpeedPenalty;
+        }
 
         return penalty;
     }

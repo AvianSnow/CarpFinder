@@ -390,7 +390,6 @@
   bodyPart: Tail
   groupWhitelist: [CFFelionoid]
   canBeDisplaced: false
-  waggingId: FelionoidTailAnimated
   sprites:
     - sprite: _Starlight/Mobs/Customization/Felionoid/parts.rsi
       state: tail_behind
@@ -401,7 +400,6 @@
   bodyPart: Tail
   groupWhitelist: [CFFelionoid]
   canBeDisplaced: false
-  staticId: FelionoidTail
   sprites:
     - sprite: _Starlight/Mobs/Customization/Felionoid/parts.rsi
       state: tail_wagging

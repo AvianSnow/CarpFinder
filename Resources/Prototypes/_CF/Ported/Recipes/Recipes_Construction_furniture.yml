@@ -1,0 +1,284 @@
+# Ported from CP14 by the CF converter.
+
+- type: construction
+  id: CFChairWooden
+  graph: CFSeat
+  startNode: start
+  targetNode: CFChairWooden
+  category: construction-category-furniture
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFChairWoodenBirch
+  graph: CFSeat
+  startNode: start
+  targetNode: CFChairWoodenBirch
+  category: construction-category-furniture
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+  - !type:TileNotBlocked
+
+- type: construction
+  id: CFStoolWooden
+  graph: CFStool
+  startNode: start
+  targetNode: CFStoolWooden
+  category: construction-category-furniture
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+  - !type:TileNotBlocked
+
+- type: construction
+  id: CFStoolBirch
+  graph: CFStool
+  startNode: start
+  targetNode: CFStoolBirch
+  category: construction-category-furniture
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+  - !type:TileNotBlocked
+
+- type: construction
+  id: CFTableWooden
+  graph: CFTableWooden
+  startNode: start
+  targetNode: CFTableWooden
+  category: construction-category-furniture
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFTableWoodenBirch
+  graph: CFTableWooden
+  startNode: start
+  targetNode: CFTableWoodenBirch
+  category: construction-category-furniture
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+  - !type:TileNotBlocked
+
+- type: construction
+  id: CFTableWoodenRound
+  graph: CFTableWoodenRound
+  startNode: start
+  targetNode: CFTableWoodenRound
+  category: construction-category-furniture
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFTableWoodenBirchRound
+  graph: CFTableWoodenBirchRound
+  startNode: start
+  targetNode: CFTableWoodenBirchRound
+  category: construction-category-furniture
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFTableWoodenCounter
+  graph: CFTableWooden
+  startNode: start
+  targetNode: CFTableWoodenCounter
+  category: construction-category-furniture
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFTableWoodenBirchCounter
+  graph: CFTableWooden
+  startNode: start
+  targetNode: CFTableWoodenBirchCounter
+  category: construction-category-furniture
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+  - !type:TileNotBlocked
+
+- type: construction
+  id: CFOrderBoard
+  graph: CFOrderBoard
+  startNode: start
+  targetNode: CFOrderBoard
+  category: construction-category-furniture
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  canRotate: true
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFMannequin
+  graph: CFMannequin
+  startNode: start
+  targetNode: CFmannequin
+  category: construction-category-furniture
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canRotate: true
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFTargetStake
+  graph: CFTargetStake
+  startNode: start
+  targetNode: CFtargetStake
+  category: construction-category-furniture
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFTarget
+  graph: CFTargetStake
+  startNode: start
+  targetNode: CFtarget
+  category: construction-category-furniture
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFTargetEffigy
+  graph: CFTargetEffigy
+  startNode: start
+  targetNode: CFtargetEffigy
+  category: construction-category-furniture
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canRotate: true
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFWoodenBed
+  graph: CFWoodenBed
+  startNode: start
+  targetNode: CFWoodenBed
+  category: construction-category-furniture
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canRotate: false
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFBirchWoodenBed
+  graph: CFWoodenBed
+  startNode: start
+  targetNode: CFBirchWoodenBed
+  category: construction-category-furniture
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canRotate: false
+  canBuildInImpassable: false
+  conditions:
+  - !type:TileNotBlocked
+
+- type: construction
+  id: CFBenchWood
+  graph: CFBenchWood
+  startNode: start
+  targetNode: CFBenchWood
+  category: construction-category-furniture
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canRotate: true
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFBenchWoodBirch
+  graph: CFBenchWood
+  startNode: start
+  targetNode: CFBenchWoodBirch
+  category: construction-category-furniture
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canRotate: true
+  canBuildInImpassable: false
+  conditions:
+  - !type:TileNotBlocked
+
+- type: construction
+  id: CFWoodenCloset
+  graph: CFWoodenCloset
+  startNode: start
+  targetNode: CFWoodenCloset
+  category: construction-category-furniture
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFWoodenCabinet
+  graph: CFWoodenCabinet
+  startNode: start
+  targetNode: CFWoodenCabinet
+  category: construction-category-furniture
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFIronCabinet
+  graph: CFIronCabinet
+  startNode: start
+  targetNode: CFIronCabinet
+  category: construction-category-furniture
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFFurnace
+  graph: CFFurnace
+  startNode: start
+  targetNode: CFFurnace
+  category: construction-category-furniture
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked

@@ -1,0 +1,194 @@
+# Other ranged weapons, built on the longbow's bow pipeline.
+
+- type: entity
+  parent: CFLongbow
+  id: CFShortbow
+  name: shortbow
+  description: A shortbow.
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Weapons/Ranged/bow.rsi
+  - type: Item
+    size: Large
+    sprite: _CP14/Objects/Weapons/Ranged/bow.rsi
+  - type: Clothing
+    sprite: _CP14/Objects/Weapons/Ranged/bow.rsi
+    quickEquip: false
+    slots:
+    - neck
+  - type: CFWeapon
+    damageDie: 6
+    damageType: Piercing
+    category: Martial
+    group: Bow
+    hands: OnePlus
+  - type: CFRangedWeapon
+    rangeIncrementFeet: 60
+    reload: 0
+  # Replaces the longbow's traits: lists are not merged with the parent's.
+  - type: CFTrait
+    traits:
+    - DeadlyD10
+  - type: CFBulk
+    bulk: 1
+  - type: CFItemPrice
+    copper: 300
+
+- type: entity
+  parent: CFLongbow
+  id: CFCrossbow
+  name: crossbow
+  description: A crossbow.
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Weapons/Ranged/light_crossbow.rsi
+  - type: Item
+    size: Large
+    sprite: _CP14/Objects/Weapons/Ranged/light_crossbow.rsi
+  - type: Clothing
+    sprite: _CP14/Objects/Weapons/Ranged/light_crossbow.rsi
+    quickEquip: false
+    slots:
+    - neck
+  - type: CFWeapon
+    damageDie: 8
+    damageType: Piercing
+    category: Simple
+    group: Crossbow
+    hands: Two
+  - type: CFRangedWeapon
+    rangeIncrementFeet: 120
+    reload: 1
+  # Replaces the longbow's traits: lists are not merged with the parent's.
+  - type: CFTrait
+    traits: []
+  - type: CFBulk
+    bulk: 1
+  - type: CFItemPrice
+    copper: 300
+  - type: ItemSlots
+    slots:
+      projectiles:
+        name: Projectiles
+        startingItem: CFBolt
+        insertSound: /Audio/Weapons/Guns/Misc/arrow_nock.ogg
+        whitelist:
+          tags:
+          - CFBolt
+  - type: ItemMapper
+    spriteLayers:
+    - arrow
+    mapLayers:
+      arrow:
+        whitelist:
+          tags:
+          - CFBolt
+
+- type: entity
+  parent: CFLongbow
+  id: CFHeavyCrossbow
+  name: heavy crossbow
+  description: A heavy crossbow.
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Weapons/Ranged/crossbow.rsi
+  - type: Item
+    size: Large
+    sprite: _CP14/Objects/Weapons/Ranged/crossbow.rsi
+  - type: Clothing
+    sprite: _CP14/Objects/Weapons/Ranged/crossbow.rsi
+    quickEquip: false
+    slots:
+    - neck
+  - type: CFWeapon
+    damageDie: 10
+    damageType: Piercing
+    category: Simple
+    group: Crossbow
+    hands: Two
+  - type: CFRangedWeapon
+    rangeIncrementFeet: 120
+    reload: 2
+  # Replaces the longbow's traits: lists are not merged with the parent's.
+  - type: CFTrait
+    traits: []
+  - type: CFBulk
+    bulk: 2
+  - type: CFItemPrice
+    copper: 400
+  - type: ItemSlots
+    slots:
+      projectiles:
+        name: Projectiles
+        startingItem: CFBolt
+        insertSound: /Audio/Weapons/Guns/Misc/arrow_nock.ogg
+        whitelist:
+          tags:
+          - CFBolt
+  - type: ItemMapper
+    spriteLayers:
+    - arrow
+    mapLayers:
+      arrow:
+        whitelist:
+          tags:
+          - CFBolt
+
+- type: entity
+  parent: CFLongbow
+  id: CFSling
+  name: sling
+  description: A sling.
+  components:
+  - type: CFWeapon
+    damageDie: 6
+    damageType: Bludgeoning
+    category: Simple
+    group: Sling
+    hands: One
+  - type: CFRangedWeapon
+    rangeIncrementFeet: 50
+    reload: 1
+  # Replaces the longbow's traits: lists are not merged with the parent's.
+  - type: CFTrait
+    traits:
+    - Propulsive
+  - type: CFBulk
+    bulk: 0.1
+  - type: CFItemPrice
+    copper: 0
+
+- type: entity
+  parent: CFArrow
+  id: CFBolt
+  name: bolt
+  description: A short, heavy crossbow bolt.
+  components:
+  - type: Tag
+    tags:
+    - CFBolt
+
+- type: entity
+  parent: ClothingBeltQuiver
+  id: CFBoltCaseFilled
+  name: bolt case
+  description: A case of crossbow bolts.
+  components:
+  - type: Storage
+    whitelist:
+      tags:
+      - CFBolt
+  - type: EntityTableContainerFill
+    containers:
+      storagebase: !type:AllSelector
+        children:
+        - id: CFBolt
+        - id: CFBolt
+        - id: CFBolt
+        - id: CFBolt
+        - id: CFBolt
+        - id: CFBolt
+        - id: CFBolt
+        - id: CFBolt
+        - id: CFBolt
+        - id: CFBolt

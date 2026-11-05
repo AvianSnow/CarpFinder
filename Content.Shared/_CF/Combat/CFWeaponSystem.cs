@@ -51,8 +51,22 @@ public sealed partial class CFWeaponSystem : EntitySystem
             Potency: Math.Clamp(runes?.Potency ?? 0, 0, 3),
             Striking: striking,
             Reload: ranged ? shooter!.Reload : 0,
-            ThrownStrike: thrown);
+            ThrownStrike: thrown,
+            Improvised: data.Improvised);
         return true;
+    }
+
+    /// <summary>
+    /// Whether a right-click with this item is a maneuver instead of a wide swing: a shield, or a weapon
+    /// with the shove or disarm trait. The sweep trait keeps its wide swing.
+    /// </summary>
+    public bool ManeuverOnRightClick(EntityUid weapon)
+    {
+        if (HasComp<CFShieldComponent>(weapon))
+            return true;
+
+        var traits = Traits(weapon);
+        return !traits.Sweep && (traits.Shove || traits.Disarm);
     }
 
     /// <summary>Melee reach in feet: the weapon's own reach, raised by the reach trait.</summary>

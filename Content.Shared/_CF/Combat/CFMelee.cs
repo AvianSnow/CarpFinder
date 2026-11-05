@@ -89,6 +89,9 @@ public static class CFMelee
         var bonus = !weapon.Ranged && combatant.PrintedAttack is { } printed
             ? printed
             : ability + proficiency + combatant.StrikeAdjustment;
+        if (weapon.Improvised)
+            bonus -= 2;
+
         bonus += RangeIncrementPenalty(distanceFeet, weapon.RangeIncrementFeet);
         if (!ignoreVolley)
             bonus += VolleyPenalty(distanceFeet, weapon.Traits.Volley);

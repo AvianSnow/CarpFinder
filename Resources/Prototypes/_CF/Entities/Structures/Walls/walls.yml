@@ -76,8 +76,9 @@
           mask: [CFWall]
           base: wood
     - type: Damageable
-      damageContainer: Inorganic
       damageModifierSet: WoodMod
+    - type: Injurable
+      damageContainer: Inorganic
     - type: Destructible
       thresholds:
         - trigger: !type:DamageTrigger

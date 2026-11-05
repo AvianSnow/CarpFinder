@@ -1,0 +1,31 @@
+# A small two-level test station: stairs, a ladder and a hole down to a cellar.
+# Load it with: forcemap CFZLevelTest
+- type: gameMap
+  id: CFZLevelTest
+  mapName: Z-level test
+  mapPath: /Maps/_CF/ZLevels/ground.yml
+  minPlayers: 0
+  stations:
+    CFZLevelTest:
+      stationProto: CFStationBasic
+      components:
+        - type: StationNameSetup
+          mapNameTemplate: "Z-level test"
+        - type: StationJobs
+          availableJobs:
+            CFAlpha: [ 0, 6 ]
+            CFBeta: [ 0, 6 ]
+            CFMerchant: [ -1, -1 ]
+        - type: CFStationZLevels
+          levels:
+            -1: /Maps/_CF/ZLevels/cellar.yml
+
+# A CF settlement: jobs and spawning, with none of the Nanotrasen shuttles, cargo or evacuation.
+- type: entity
+  id: CFStationBasic
+  parent:
+  - BaseStation
+  - BaseStationJobsSpawning
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Transform

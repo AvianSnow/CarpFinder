@@ -1,0 +1,62 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  parent: BaseStructureDynamic
+  id: CFChestGeneric
+  categories: [ HideSpawnMenu, ForkFiltered ]
+  name: Chest
+  description: Chest.
+  abstract: true
+  components:
+  - type: Transform
+    noRot: true
+  - type: Icon
+    sprite: _CP14/Structures/Storage/Crates/chest.rsi
+    state: icon
+  - type: Sprite
+    offset: 0,0.3
+    noRot: true
+    sprite: _CP14/Structures/Storage/Crates/chest.rsi
+    layers:
+    - state: base
+      map: ["enum.StorageVisualLayers.Base"]
+    - state: closed
+      map: ["enum.StorageVisualLayers.Door"]
+  - type: InteractionOutline
+  - type: Physics
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.4,-0.4,0.4,0.29"
+        density: 500
+        mask:
+        - SmallMobMask #this is so they can go under plastic flaps
+        layer:
+        - MachineLayer
+  - type: EntityStorage
+    closeSound:
+      path: /Audio/Effects/woodenclosetclose.ogg
+    openSound:
+      path: /Audio/Effects/woodenclosetopen.ogg
+  - type: PlaceableSurface
+    isPlaceable: false # defaults to closed.
+  - type: Appearance
+  - type: EntityStorageVisuals
+    stateDoorOpen: open
+    stateDoorClosed: closed
+  - type: PaperLabel
+    labelSlot:
+      insertVerbText: Attach Label
+      ejectVerbText: Remove Label
+      whitelist:
+        components:
+        - Paper
+  - type: ContainerContainer
+    containers:
+      entity_storage: !type:Container
+      paper_label: !type:ContainerSlot
+  - type: ItemSlots
+  - type: Lock
+    locked: false

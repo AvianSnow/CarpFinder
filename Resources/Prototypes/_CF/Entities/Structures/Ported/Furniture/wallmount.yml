@@ -1,0 +1,69 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  id: CFBaseWallmount
+  abstract: true
+  categories: [ ForkFiltered ]
+  placement:
+    mode: SnapgridCenter
+  components:
+  - type: Transform
+    anchored: true
+  - type: Clickable
+  - type: InteractionOutline
+  - type: Sprite
+    drawdepth: Mobs
+  - type: CFWallmount
+  - type: Physics
+    canCollide: false
+
+- type: entity
+  id: CFWallmountBarShelfA
+  name: bar shelf
+  suffix: 1
+  parent: CFBaseWallmount
+  description: Wall shelves to store your wine collection
+  components:
+  - type: Appearance
+  - type: Sprite
+    sprite: _CP14/Structures/Wallmount/wallmount_bar_shelf.rsi
+    layers:
+    - state: shelf
+    - state: bottleA-0
+    - map: ["enum.StorageFillLayers.Fill"]
+  - type: StorageFillVisualizer
+    maxFillLevels: 7
+    fillBaseName: bottleA
+  - type: Storage
+    grid:
+    - 0,0,5,3
+    maxItemSize: Normal
+##   whitelist:                TODO
+##     tags:
+##       - CFBottles
+  - type: UserInterface
+    interfaces:
+      enum.StorageUiKey.Key:
+        type: StorageBoundUserInterface
+  - type: ContainerContainer
+    containers:
+      storagebase: !type:Container
+  - type: Construction
+    graph: CFWallmountBarShelfA
+    node: CFWallmountBarShelfA
+
+- type: entity
+  id: CFWallmountBarShelfB
+  suffix: 2
+  parent: CFWallmountBarShelfA
+  components:
+  - type: Sprite
+    layers:
+    - state: shelf
+    - state: bottleB-0
+    - map: ["enum.StorageFillLayers.Fill"]
+  - type: StorageFillVisualizer
+    fillBaseName: bottleB
+  - type: Construction
+    graph: CFWallmountBarShelfB
+    node: CFWallmountBarShelfB

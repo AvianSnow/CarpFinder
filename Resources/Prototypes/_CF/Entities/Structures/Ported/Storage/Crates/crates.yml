@@ -1,0 +1,87 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  id: CFBaseSmallCrate
+  abstract: true
+  components:
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeCircle
+          radius: 0.35
+        density: 300
+        mask:
+        - MachineMask
+        layer:
+        - MachineLayer
+  - type: Storage
+    grid:
+    - 0,0,5,5
+    maxItemSize: Normal
+
+- type: entity
+  id: CFLargeWoodenCrate
+  name: large wooden crate
+  description: Solid wooden crate.
+  parent: [CFBaseFlammable ]
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Storage/Crates/large_wooden_crate.rsi
+  - type: Damageable
+    damageModifierSet: CFWood
+  - type: Injurable
+    damageContainer: Inorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 50
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: WoodDestroy
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFWoodenPlanks1:
+            min: 1
+            max: 2
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: Construction
+    graph: CFLargeWoodenCrate
+    node: CFLargeWoodenCrate
+
+- type: entity
+  id: CFSmallWoodenCrate
+  name: small wooden crate
+  description: Solid wooden crate.
+  parent:
+  - CFBaseSmallCrate
+  - CFBaseFlammable
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Storage/Crates/small_wooden_crate.rsi
+  - type: Damageable
+    damageModifierSet: CFWood
+  - type: Injurable
+    damageContainer: Inorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 30
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: WoodDestroy
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFWoodenPlanks1:
+            min: 1
+            max: 1
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: Construction
+    graph: CFSmallWoodenCrate
+    node: CFSmallWoodenCrate

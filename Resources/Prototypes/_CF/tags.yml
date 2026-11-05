@@ -32,3 +32,175 @@
 
 - type: Tag
   id: CFRecipeLeatherWorking
+
+# From CP14.
+- type: Tag
+  id: CFAlchemicalHerbals
+
+- type: Tag
+  id: CFAmbientForest
+
+- type: Tag
+  id: CFAmbientLurker
+
+- type: Tag
+  id: CFAmbientWater
+
+- type: Tag
+  id: CFArrow
+
+- type: Tag
+  id: CFBigCrossbowBolt
+
+- type: Tag
+  id: CFBloodFlower
+
+- type: Tag
+  id: CFBoar
+
+- type: Tag
+  id: CFBottles
+
+- type: Tag
+  id: CFCabbage
+
+- type: Tag
+  id: CFCartridgeBulletRifle
+
+- type: Tag
+  id: CFCheese
+
+- type: Tag
+  id: CFCoin
+
+- type: Tag
+  id: CFCrossbowBolt
+
+- type: Tag
+  id: CFDayflin
+
+- type: Tag
+  id: CFDough
+
+- type: Tag
+  id: CFEgg
+
+- type: Tag
+  id: CFEnergyCrystal
+
+- type: Tag
+  id: CFFarmFood
+
+- type: Tag
+  id: CFFarmSeed
+
+- type: Tag
+  id: CFFireplaceFuel
+
+- type: Tag
+  id: CFFitInFryingPan
+
+- type: Tag
+  id: CFFitInMortar
+
+- type: Tag
+  id: CFFruits
+
+- type: Tag
+  id: CFHerbalGathering
+
+- type: Tag
+  id: CFInkwellFittable
+
+- type: Tag
+  id: CFKey
+
+- type: Tag
+  id: CFLighter
+
+- type: Tag
+  id: CFLockpick
+
+- type: Tag
+  id: CFMeat
+
+- type: Tag
+  id: CFMeatCutlet
+
+- type: Tag
+  id: CFMeatLeg
+
+- type: Tag
+  id: CFMeatMonster
+
+- type: Tag
+  id: CFMeatPig
+
+- type: Tag
+  id: CFMeatSlice
+
+- type: Tag
+  id: CFMosquito
+
+- type: Tag
+  id: CFPestle
+
+- type: Tag
+  id: CFPig
+
+- type: Tag
+  id: CFPotato
+
+- type: Tag
+  id: CFPumpkin
+
+- type: Tag
+  id: CFRabbit
+
+- type: Tag
+  id: CFRaidLeader
+
+- type: Tag
+  id: CFRat
+
+- type: Tag
+  id: CFRatWearable
+
+- type: Tag
+  id: CFRecipeCooking
+
+- type: Tag
+  id: CFRecipeVampire
+
+- type: Tag
+  id: CFSalad
+
+- type: Tag
+  id: CFSandwich
+
+- type: Tag
+  id: CFScissors
+
+- type: Tag
+  id: CFSharpeningStone
+
+- type: Tag
+  id: CFSheep
+
+- type: Tag
+  id: CFSpellScroll
+
+- type: Tag
+  id: CFTorch
+
+- type: Tag
+  id: CFVegetable
+
+- type: Tag
+  id: CFVial
+
+- type: Tag
+  id: CFWheat
+
+- type: Tag
+  id: CFBolt

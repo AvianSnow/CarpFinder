@@ -33,8 +33,9 @@
   - type: PlaceableSurface
     placeCentered: true
   - type: Damageable
-    damageContainer: Inorganic
     damageModifierSet: CFWood
+  - type: Injurable
+    damageContainer: Inorganic
   - type: Destructible
     thresholds:
     - trigger:

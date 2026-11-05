@@ -1,0 +1,284 @@
+# Ways between Z-levels, from CP14's zLevelLadders.yml. Place the AutoLink version: it builds the other end
+# on the next level, at the same position. Stairs are walked through. Ladders are clicked to Climb.
+
+- type: entity
+  abstract: true
+  id: CFStairsDownBase
+  name: stairway down
+  description: Steps leading down into the dark.
+  placement:
+    mode: SnapgridCenter
+  components:
+  - type: Sprite
+    drawdepth: FloorTiles
+    sprite: _CP14/Structures/Dungeon/ladders.rsi
+  - type: Transform
+    anchored: true
+  - type: InteractionOutline
+  - type: Clickable
+  - type: Physics
+    bodyType: Static
+  - type: Fixtures
+    fixtures:
+      portalFixture:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.48,-0.48,0.48,-0.05"
+        mask:
+        - FullTileMask
+        layer:
+        - WallLayer
+        hard: false
+  - type: Portal
+    canTeleportToOtherMaps: true
+    randomTeleport: false
+
+- type: entity
+  abstract: true
+  parent: CFStairsDownBase
+  id: CFStairsUpBase
+  name: stairway up
+  description: Steps leading up and out.
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    sprite: _CP14/Structures/Dungeon/ladders_up.rsi
+  - type: Fixtures
+    fixtures:
+      portalFixture:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.48,0.05,0.48,0.48"
+        mask:
+        - FullTileMask
+        layer:
+        - WallLayer
+        hard: false
+  - type: PointLight
+    color: White
+    radius: 3
+    energy: 1
+    netsync: false
+
+- type: entity
+  parent: CFStairsDownBase
+  id: CFStairsDownStone
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Sprite
+    state: stone
+
+- type: entity
+  parent: CFStairsUpBase
+  id: CFStairsUpStone
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Sprite
+    state: stone
+
+- type: entity
+  parent: CFStairsDownStone
+  id: CFStairsDownStoneAutoLink
+  suffix: Stone
+  categories: [ ForkFiltered ]
+  components:
+  - type: CFZLevelAutoPortal
+    offset: -1
+    otherSide: CFStairsUpStone
+
+- type: entity
+  parent: CFStairsUpStone
+  id: CFStairsUpStoneAutoLink
+  suffix: Stone
+  categories: [ ForkFiltered ]
+  components:
+  - type: CFZLevelAutoPortal
+    offset: 1
+    otherSide: CFStairsDownStone
+
+- type: entity
+  parent: CFStairsDownBase
+  id: CFStairsDownWood
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Sprite
+    state: wood
+
+- type: entity
+  parent: CFStairsUpBase
+  id: CFStairsUpWood
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Sprite
+    state: wood
+
+- type: entity
+  parent: CFStairsDownWood
+  id: CFStairsDownWoodAutoLink
+  suffix: Wood
+  categories: [ ForkFiltered ]
+  components:
+  - type: CFZLevelAutoPortal
+    offset: -1
+    otherSide: CFStairsUpWood
+
+- type: entity
+  parent: CFStairsUpWood
+  id: CFStairsUpWoodAutoLink
+  suffix: Wood
+  categories: [ ForkFiltered ]
+  components:
+  - type: CFZLevelAutoPortal
+    offset: 1
+    otherSide: CFStairsDownWood
+
+- type: entity
+  parent: CFStairsDownBase
+  id: CFStairsDownMarble
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Sprite
+    state: marble
+
+- type: entity
+  parent: CFStairsUpBase
+  id: CFStairsUpMarble
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Sprite
+    state: marble
+
+- type: entity
+  parent: CFStairsDownMarble
+  id: CFStairsDownMarbleAutoLink
+  suffix: Marble
+  categories: [ ForkFiltered ]
+  components:
+  - type: CFZLevelAutoPortal
+    offset: -1
+    otherSide: CFStairsUpMarble
+
+- type: entity
+  parent: CFStairsUpMarble
+  id: CFStairsUpMarbleAutoLink
+  suffix: Marble
+  categories: [ ForkFiltered ]
+  components:
+  - type: CFZLevelAutoPortal
+    offset: 1
+    otherSide: CFStairsDownMarble
+
+# Ladders. Click to Climb: one action and two free hands. Set dc on CFZLevelClimb for a hard climb.
+- type: entity
+  abstract: true
+  id: CFLadderBase
+  name: ladder
+  description: Rungs leading to another level.
+  placement:
+    mode: SnapgridCenter
+  components:
+  - type: Transform
+    anchored: true
+  - type: InteractionOutline
+  - type: Clickable
+  - type: Sprite
+    drawdepth: FloorTiles
+    sprite: _CP14/Structures/Dungeon/ladders.rsi
+    state: wood
+  - type: CFZLevelClimb
+
+- type: entity
+  parent: CFLadderBase
+  id: CFLadderDown
+  categories: [ HideSpawnMenu ]
+
+- type: entity
+  parent: CFLadderBase
+  id: CFLadderUp
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    sprite: _CP14/Structures/Dungeon/ladders_up.rsi
+    state: wood
+
+- type: entity
+  parent: CFLadderDown
+  id: CFLadderDownAutoLink
+  categories: [ ForkFiltered ]
+  components:
+  - type: CFZLevelAutoPortal
+    offset: -1
+    otherSide: CFLadderUp
+
+- type: entity
+  parent: CFLadderUp
+  id: CFLadderUpAutoLink
+  categories: [ ForkFiltered ]
+  components:
+  - type: CFZLevelAutoPortal
+    offset: 1
+    otherSide: CFLadderDown
+
+- type: entity
+  id: CFZLevelHole
+  name: hole
+  description: A drop to the level below. Watch your step.
+  categories: [ ForkFiltered ]
+  placement:
+    mode: SnapgridCenter
+  components:
+  - type: Transform
+    anchored: true
+  - type: InteractionOutline
+  - type: Clickable
+  - type: Sprite
+    drawdepth: FloorTiles
+    sprite: _CP14/Structures/Dungeon/holes.rsi
+    state: hole_big
+  - type: Physics
+    bodyType: Static
+  - type: Fixtures
+    fixtures:
+      hole:
+        shape:
+          !type:PhysShapeCircle
+          radius: 0.35
+        mask:
+        - FullTileMask
+        layer:
+        - WallLayer
+        hard: false
+  - type: CFZLevelHole
+
+- type: entity
+  parent: BaseAction
+  id: CFActionZLevelUp
+  categories: [ HideSpawnMenu ]
+  name: Move up
+  description: Move up one level.
+  components:
+  - type: Action
+    checkCanInteract: false
+  - type: Sprite
+    sprite: _CP14/Actions/zLevel.rsi
+    layers:
+    - state: up
+  - type: InstantAction
+    event: !type:CFZLevelActionUp
+
+- type: entity
+  parent: BaseAction
+  id: CFActionZLevelDown
+  categories: [ HideSpawnMenu ]
+  name: Move down
+  description: Move down one level.
+  components:
+  - type: Action
+    checkCanInteract: false
+  - type: Sprite
+    sprite: _CP14/Actions/zLevel.rsi
+    layers:
+    - state: down
+  - type: InstantAction
+    event: !type:CFZLevelActionDown
