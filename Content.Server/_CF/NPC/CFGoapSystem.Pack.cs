@@ -24,6 +24,9 @@ public sealed partial class CFGoapSystem
 
     private static readonly TimeSpan NavigateInterval = TimeSpan.FromSeconds(0.5);
 
+    /// <summary>Half the width of a creature's body, in tiles.</summary>
+    private const float BodyHalfWidth = 0.35f;
+
     private static readonly TimeSpan FieldBuildInterval = TimeSpan.FromSeconds(1);
 
     /// <summary>How many tiles a field spreads from its goal, which caps what a build can cost.</summary>
@@ -86,7 +89,7 @@ public sealed partial class CFGoapSystem
     {
         var from = _transform.GetMapCoordinates(target).Position;
         var offset = here.Position - from;
-        if (offset.Length() > FlankRange || offset == Vector2.Zero)
+        if (offset.Length() > FlankRange || offset == Vector2.Zero || !IsLineClear(uid, from))
             return false;
 
         var slot = new Angle(SlotAngle(uid, group));
@@ -109,15 +112,28 @@ public sealed partial class CFGoapSystem
         var at = _transform.GetMapCoordinates(target);
         var angle = SlotAngle(ent, group);
         var slot = at.Offset(new Vector2(MathF.Cos(angle), MathF.Sin(angle)) * FlankDistance);
-        if (IsWalkable(target, slot) && _interaction.InRangeUnobstructed(ent, slot, SightTiles))
+        if (ent.Comp.Obstacle == null && IsWalkable(target, slot) && CanWalkStraight(ent, slot.Position))
+        {
+            ent.Comp.UsingField = false;
             MoveTo(ent, slot.Position);
-        else
-            Chase(ent, target);
+            return;
+        }
+
+        // Seen through glass or round a corner, the way there is not the way it looks.
+        if (ent.Comp.Obstacle != null || !CanWalkStraight(ent, at.Position))
+        {
+            Navigate(ent, at.Position, target);
+            return;
+        }
+
+        ent.Comp.UsingField = false;
+        Chase(ent, target);
     }
 
     /// <summary>
     /// Heads straight there while a ray says the way is clear, which costs almost nothing. When something is in the
-    /// way it follows the arrows instead. Only the navigator builds them.
+    /// way it follows the arrows instead. Only the navigator builds them. Arrows can lead through a door or window,
+    /// which it then opens or breaks.
     /// </summary>
     public void Navigate(Entity<CFGoapComponent> ent, Vector2 goal, EntityUid? target)
     {
@@ -126,26 +142,45 @@ public sealed partial class CFGoapSystem
             return;
 
         ent.Comp.NextNavigate = now + NavigateInterval;
-        if (IsLineClear(ent, goal))
+        if (ent.Comp.Obstacle != null && WorkOnObstacle(ent, goal))
+            return;
+
+        var rerouted = ent.Comp.Rerouted;
+        ent.Comp.Rerouted = false;
+        if (CanWalkStraight(ent, goal))
         {
-            if (!ent.Comp.UsingField)
+            if (!ent.Comp.UsingField && !rerouted)
                 return;
 
-            ent.Comp.UsingField = false;
-            if (target is { } creature)
-                Chase(ent, creature);
-            else
-                MoveTo(ent, goal);
+            HeadStraightThere(ent, goal, target);
+            return;
+        }
+
+        if (!TryGetField(ent, goal, out var field))
+        {
+            if (rerouted)
+                HeadStraightThere(ent, goal, target);
 
             return;
         }
 
-        if (TryGetField(ent, goal, out var field) && !ent.Comp.UsingField)
+        if (!ent.Comp.UsingField || rerouted)
         {
             ent.Comp.UsingField = true;
             var flow = new CFSteeringBehavior { Kind = CFSteeringKind.FlowField };
             _steering.Steer(ent, Steer(Profile(ent), flow), target, goal, CFFeltMobs.Chase, field);
         }
+
+        LookForObstacle(ent, field);
+    }
+
+    private void HeadStraightThere(Entity<CFGoapComponent> ent, Vector2 goal, EntityUid? target)
+    {
+        ent.Comp.UsingField = false;
+        if (target is { } creature)
+            Chase(ent, creature);
+        else
+            MoveTo(ent, goal);
     }
 
     /// <summary>A ray to the goal. Reaching a creature means nothing stood in the way.</summary>
@@ -161,18 +196,38 @@ public sealed partial class CFGoapSystem
     }
 
     /// <summary>
+    /// Whether its body fits along that line. A thin ray goes through a gap whose corner the body catches on, and a
+    /// creature sent straight at it never gets through, so a ray runs down each side as well.
+    /// </summary>
+    private bool CanWalkStraight(EntityUid uid, Vector2 goal)
+    {
+        if (!IsLineClear(uid, goal))
+            return false;
+
+        var from = _transform.GetWorldPosition(uid);
+        var line = goal - from;
+        var length = line.Length();
+        if (length <= 0f)
+            return true;
+
+        var direction = line / length;
+        var side = new Vector2(direction.Y, -direction.X) * BodyHalfWidth;
+        return IsSideClear(uid, from + side, direction, length) && IsSideClear(uid, from - side, direction, length);
+    }
+
+    private bool IsSideClear(EntityUid uid, Vector2 from, Vector2 direction, float length)
+    {
+        return !_steering.TryFeel(uid, from, direction, length, out var hit) || HasComp<MobStateComponent>(hit.Entity);
+    }
+
+    /// <summary>
     /// The field this creature should read. The first living member of a group is its navigator and keeps the field
     /// up to date. A creature alone is its own navigator. Followers only ever read, so a group costs one build.
     /// </summary>
     private bool TryGetField(Entity<CFGoapComponent> ent, Vector2 goal, out CFFlowField field)
     {
-        var navigator = true;
-        field = ent.Comp.OwnField;
-        if (TryGetGroup(ent, out var group))
-        {
-            field = group.Field;
-            navigator = group.Members.Count > 0 && group.Members[0] == ent.Owner;
-        }
+        field = FieldOf(ent);
+        var navigator = !TryGetGroup(ent, out var group) || group.Members.Count > 0 && group.Members[0] == ent.Owner;
 
         var moved = (field.Goal - goal).Length();
         if (navigator && (field.Arrows.Count == 0 || moved >= FieldGoalSlack && _timing.CurTime >= field.NextBuild))
@@ -181,7 +236,12 @@ public sealed partial class CFGoapSystem
         return field.Arrows.Count > 0 && (field.Goal - goal).Length() < FieldShareRange;
     }
 
-    /// <summary>Fills in the arrows. Walls and dangerous tiles are blocked, so the arrows lead around lava.</summary>
+    private CFFlowField FieldOf(Entity<CFGoapComponent> ent)
+    {
+        return TryGetGroup(ent, out var group) ? group.Field : ent.Comp.OwnField;
+    }
+
+    /// <summary>Fills in the arrows. Walls and dangerous tiles are blocked, and doors and glass are slow going.</summary>
     public void BuildField(EntityUid uid, CFFlowField field, Vector2 goal)
     {
         field.Goal = goal;
@@ -191,7 +251,7 @@ public sealed partial class CFGoapSystem
 
         field.Arrows = CFFlowFieldBuilder.Build(
             _maps.WorldToTile(grid, gridComp, goal),
-            tile => IsWalkable(uid, _maps.GridTileToWorld(grid, gridComp, tile)),
+            tile => TileCost(uid, field, grid, gridComp, tile),
             FieldReach);
     }
 

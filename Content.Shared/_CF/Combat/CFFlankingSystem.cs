@@ -1,5 +1,6 @@
 using Content.Shared.ActionBlocker;
 using Content.Shared.CF.Factions;
+using Content.Shared.Climbing.Components;
 using Content.Shared.Examine;
 using Content.Shared.Hands;
 using Content.Shared.Hands.EntitySystems;
@@ -287,6 +288,10 @@ public sealed partial class CFFlankingSystem : EntitySystem
 
         if (created)
             sensor.ReachFeet = reach;
+
+        // Stock ends a climb when any fixture touches a wall, and this one reaches well past the body.
+        if (created && TryComp(uid, out ClimbingComponent? climbing))
+            climbing.TransitionCollisionMask = 0;
     }
 
     private bool IsSensor(EntityUid uid, Fixture fixture)

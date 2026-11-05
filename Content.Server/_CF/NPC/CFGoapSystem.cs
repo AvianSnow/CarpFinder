@@ -151,7 +151,9 @@ public sealed partial class CFGoapSystem : EntitySystem
             ent.Comp.LkpHeading = CompOrNull<PhysicsComponent>(seen)?.LinearVelocity ?? Vector2.Zero;
             facts |= CFGoapFact.TargetVisible;
 
-            if ((_transform.GetMapCoordinates(seen).Position - here.Position).Length() <= ReachTiles)
+            // Glass lets it see the target without being able to touch it.
+            if ((_transform.GetMapCoordinates(seen).Position - here.Position).Length() <= ReachTiles
+                && IsLineClear(uid, _transform.GetWorldPosition(seen)))
                 facts |= CFGoapFact.TargetInReach;
         }
 
@@ -184,6 +186,17 @@ public sealed partial class CFGoapSystem : EntitySystem
             facts |= CFGoapFact.Prone;
         if (_conditions.Frightened(uid) > 0)
             facts |= CFGoapFact.Frightened;
+
+        if (_timing.CurTime < ent.Comp.NoWayUntil)
+        {
+            // The target came out where it can be reached after all.
+            if ((facts & CFGoapFact.TargetVisible) != 0
+                && ent.Comp.Target is { } target
+                && CanWalkStraight(uid, _transform.GetWorldPosition(target)))
+                ent.Comp.NoWayUntil = TimeSpan.Zero;
+            else
+                facts |= CFGoapFact.NoWay;
+        }
 
         facts |= PackFacts(ent, here, (facts & CFGoapFact.TargetVisible) != 0);
         return (uint) facts;
@@ -730,6 +743,9 @@ public sealed partial class CFGoapSystem : EntitySystem
     {
         ent.Comp.StepStarted = false;
         ent.Comp.UsingField = false;
+        ent.Comp.Obstacle = null;
+        ent.Comp.Working = false;
+        ent.Comp.Rerouted = false;
         ent.Comp.Item = null;
         ent.Comp.Node = null;
         RemComp<NPCMeleeCombatComponent>(ent);

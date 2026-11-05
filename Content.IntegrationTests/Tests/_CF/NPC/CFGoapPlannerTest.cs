@@ -126,6 +126,11 @@ public sealed class CFGoapPlannerTest
     }
 
     /// <summary>A 12x7 room with a wall down the middle and one gap at the top.</summary>
+    private static int RoomCost(Robust.Shared.Maths.Vector2i tile)
+    {
+        return RoomWithWall(tile) ? 0 : CFFlowFieldBuilder.Blocked;
+    }
+
     private static bool RoomWithWall(Robust.Shared.Maths.Vector2i tile)
     {
         if (tile.X < 0 || tile.X > 11 || tile.Y < 0 || tile.Y > 6)
@@ -150,7 +155,7 @@ public sealed class CFGoapPlannerTest
     public void EveryTileLeadsToTheGoalAroundTheWall()
     {
         var goal = new Robust.Shared.Maths.Vector2i(10, 0);
-        var arrows = CFFlowFieldBuilder.Build(goal, RoomWithWall, 40);
+        var arrows = CFFlowFieldBuilder.Build(goal, RoomCost, 40);
 
         // Anywhere at all, which is why nobody can fall behind.
         foreach (var start in new Robust.Shared.Maths.Vector2i[] { new(0, 0), new(5, 3), new(0, 6), new(6, 6), new(11, 6) })
@@ -162,17 +167,39 @@ public sealed class CFGoapPlannerTest
     [Test]
     public void ArrowsDoNotCutCorners()
     {
-        var arrows = CFFlowFieldBuilder.Build(new Robust.Shared.Maths.Vector2i(10, 0), RoomWithWall, 40);
+        var arrows = CFFlowFieldBuilder.Build(new Robust.Shared.Maths.Vector2i(10, 0), RoomCost, 40);
         var arrow = arrows[new Robust.Shared.Maths.Vector2i(5, 5)];
 
         Assert.That(arrow.X, Is.EqualTo(0f).Within(0.001f), "Going diagonally here would clip the end of the wall.");
         Assert.That(arrow.Y, Is.GreaterThan(0f));
     }
 
+    /// <summary>A wall along x = 6 with a slow tile in it at y = 0, and the end of the wall at y = 6.</summary>
+    private static int RoomWithSlowTile(Robust.Shared.Maths.Vector2i tile, int slowCost)
+    {
+        return tile == new Robust.Shared.Maths.Vector2i(6, 0) ? slowCost : RoomCost(tile);
+    }
+
+    [Test]
+    public void ACheapDoorBeatsTheLongWayRound()
+    {
+        var arrows = CFFlowFieldBuilder.Build(new Robust.Shared.Maths.Vector2i(10, 0), t => RoomWithSlowTile(t, 10), 40);
+        var arrow = arrows[new Robust.Shared.Maths.Vector2i(5, 0)];
+        Assert.That(arrow.X, Is.GreaterThan(0f), "It goes through.");
+    }
+
+    [Test]
+    public void TheLongWayRoundBeatsADearWindow()
+    {
+        var arrows = CFFlowFieldBuilder.Build(new Robust.Shared.Maths.Vector2i(10, 0), t => RoomWithSlowTile(t, 200), 40);
+        var arrow = arrows[new Robust.Shared.Maths.Vector2i(5, 0)];
+        Assert.That(arrow.X, Is.LessThanOrEqualTo(0.001f), "Going around costs less than breaking through.");
+    }
+
     [Test]
     public void AFieldStopsAtItsReach()
     {
-        var arrows = CFFlowFieldBuilder.Build(Robust.Shared.Maths.Vector2i.Zero, _ => true, 5);
+        var arrows = CFFlowFieldBuilder.Build(Robust.Shared.Maths.Vector2i.Zero, _ => 0, 5);
         Assert.That(arrows.ContainsKey(new Robust.Shared.Maths.Vector2i(4, 0)));
         Assert.That(arrows.ContainsKey(new Robust.Shared.Maths.Vector2i(20, 0)), Is.False, "An open map must not cost more than a closed one.");
     }

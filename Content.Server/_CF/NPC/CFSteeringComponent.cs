@@ -143,6 +143,9 @@ public sealed partial class CFSteeringComponent : Component
     /// <summary>The arrows it is reading. A group shares one.</summary>
     public CFFlowField? Field;
 
+    /// <summary>A door or window it means to get through, so its feelers and safety circle leave it alone.</summary>
+    public EntityUid? Through;
+
     public float WanderAngle;
 
     /// <summary>The share of full speed Arrive wants now.</summary>

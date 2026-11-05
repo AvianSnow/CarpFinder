@@ -14,6 +14,8 @@ Character builder + PF2e spawn/combat MVP notes: `character-builder.md`.
 
 Where mappers place AI hints: `investigation-nodes.md`.
 
+How to test the AI, what `Skipped` really means, and what is known to fail: `ai-testing.md`. Read it before running AI tests.
+
 Map of the codebase: `codebase.md`. Start there to find something.
 
 The ordered feature plan is `roadmap.md`. Check it before starting a feature and tick items off when they land.

@@ -16,9 +16,13 @@ public sealed class CFFlowField
 
     public TimeSpan NextBuild;
 
+    /// <summary>Doors and windows given up on, and until when. On the field, so a whole group gives up together.</summary>
+    public Dictionary<EntityUid, TimeSpan> GaveUp = new();
+
     public void Clear()
     {
         Arrows = new Dictionary<Vector2i, Vector2>();
+        GaveUp = new Dictionary<EntityUid, TimeSpan>();
         NextBuild = TimeSpan.Zero;
     }
 }
@@ -26,6 +30,9 @@ public sealed class CFFlowField
 /// <summary>Builds flow fields as plain code, so it tests without a game.</summary>
 public static class CFFlowFieldBuilder
 {
+    /// <summary>The cost of a tile that cannot be crossed at all.</summary>
+    public const int Blocked = -1;
+
     private const int StraightCost = 10;
 
     private const int DiagonalCost = 14;
@@ -39,19 +46,21 @@ public static class CFFlowFieldBuilder
     /// <summary>
     /// Spreads out from the goal, then points each tile at its cheapest neighbour. It stops
     /// <paramref name="reach"/> tiles out, so the cost has a limit however big the map is.
+    /// <paramref name="tileCost"/> is what crossing a tile adds, where 0 is open floor and a plain step costs 10.
+    /// <see cref="Blocked"/> means it cannot be crossed.
     /// </summary>
-    public static Dictionary<Vector2i, Vector2> Build(Vector2i goal, Func<Vector2i, bool> isWalkable, int reach)
+    public static Dictionary<Vector2i, Vector2> Build(Vector2i goal, Func<Vector2i, int> tileCost, int reach)
     {
-        var known = new Dictionary<Vector2i, bool>();
-        bool Walkable(Vector2i tile)
+        var known = new Dictionary<Vector2i, int>();
+        int Cost(Vector2i tile)
         {
-            if (!known.TryGetValue(tile, out var walkable))
+            if (!known.TryGetValue(tile, out var extra))
             {
-                walkable = isWalkable(tile);
-                known[tile] = walkable;
+                extra = tileCost(tile);
+                known[tile] = extra;
             }
 
-            return walkable;
+            return extra;
         }
 
         var costs = new Dictionary<Vector2i, int> { [goal] = 0 };
@@ -67,10 +76,10 @@ public static class CFFlowFieldBuilder
             foreach (var step in Steps)
             {
                 var next = tile + step;
-                if (!CanStep(tile, step, Walkable))
+                if (!CanStep(tile, step, Cost))
                     continue;
 
-                var total = cost + (step.X != 0 && step.Y != 0 ? DiagonalCost : StraightCost);
+                var total = cost + Cost(next) + (step.X != 0 && step.Y != 0 ? DiagonalCost : StraightCost);
                 if (costs.TryGetValue(next, out var known2) && known2 <= total)
                     continue;
 
@@ -89,7 +98,7 @@ public static class CFFlowFieldBuilder
             var arrow = Vector2i.Zero;
             foreach (var step in Steps)
             {
-                if (costs.TryGetValue(tile + step, out var neighbour) && neighbour < best && CanStep(tile, step, Walkable))
+                if (costs.TryGetValue(tile + step, out var neighbour) && neighbour < best && CanStep(tile, step, Cost))
                 {
                     best = neighbour;
                     arrow = step;
@@ -103,12 +112,12 @@ public static class CFFlowFieldBuilder
         return arrows;
     }
 
-    /// <summary>A diagonal step needs both tiles beside it clear, or a creature would clip the corner.</summary>
-    private static bool CanStep(Vector2i from, Vector2i step, Func<Vector2i, bool> walkable)
+    /// <summary>A diagonal step needs both tiles beside it open, or a creature would clip the corner.</summary>
+    private static bool CanStep(Vector2i from, Vector2i step, Func<Vector2i, int> cost)
     {
-        if (!walkable(from + step))
+        if (cost(from + step) == Blocked)
             return false;
 
-        return step.X == 0 || step.Y == 0 || walkable(from + new Vector2i(step.X, 0)) && walkable(from + new Vector2i(0, step.Y));
+        return step.X == 0 || step.Y == 0 || cost(from + new Vector2i(step.X, 0)) == 0 && cost(from + new Vector2i(0, step.Y)) == 0;
     }
 }

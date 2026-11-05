@@ -106,6 +106,7 @@ Anything that targets, rolls, and applies effects is data on the source entity: 
 | Combat mode, right-click, weapon with the `Shove` or `Disarm` trait and no `Sweep` | That maneuver instead of the wide swing | `CFManeuverSystem.OnDisarmAttempt` |
 | Combat mode, right-click, empty hand | Disarm if the target holds something, otherwise Shove | `CFManeuverSystem.OnDisarmAttempt` |
 | Combat mode, right-click, shield | Shove, always | `CFManeuverSystem.OnDisarmAttempt` |
+| Throw a weapon with the thrown trait | Ranged Strike at the first living enemy it touches (1 action). It flies to the cursor, up to six range increments | `CFStrikeSystem.OnThrownHit`, `CFWeaponSystem.ThrowRange` |
 | Use in hand (Z), shield | Raise (1 action) or lower (free) | `CFShieldSystem.OnUseInHand` |
 | Pull a living enemy | Grapple (1 action). The pull only starts if it lands. | `CFManeuverSystem.OnPullAttempt` |
 | Pull a friend, ally, downed creature, or object | Stock free pull | |
@@ -212,8 +213,9 @@ All edits carry `// CarpFinder` markers, so `grep -rn CarpFinder Content.Client 
 | Temperature | `TemperatureSystem.cs`, `SharedTemperatureSystem.cs` | Cooking heats the surface first |
 | Icons | `SharedStatusIconSystem.cs` | Partial for the flanked icon |
 | Ghosts | `Resources/Prototypes/Entities/Mobs/Player/observer.yml` | Z-level Move up and Move down actions |
-| Prone | `Content.Shared/Stunnable/SharedStunSystem.Knockdown.cs` | Do not force a creature up while it is being deleted |
+| Prone | `Content.Shared/Stunnable/SharedStunSystem.Knockdown.cs` | Do not force a creature up while it is being deleted. "No room to stand" ignores sensors |
 | Pointing | `Content.Shared/Pointing/SharedPointingSystem.cs` | An event for pointing at the ground, for Seek |
+| Throwing | `Content.Server/Hands/Systems/HandsSystem.cs` | A thrown weapon's reach comes from its range increments, not the hand's 8 tiles |
 | Tiles | `Tiles/lava.yml`, `liquid_plasma.yml`, `chasm.yml` | The `CFDangerousTile` marker |
 | Maps | `Maps/Test/dev_map.yml`, `Maps/Nonstations/meteor-arena.yml`, `dm01-entryway.yml` | `MapAtmosphere`, so mobs can breathe |
 

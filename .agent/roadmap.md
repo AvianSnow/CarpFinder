@@ -248,6 +248,8 @@ Every number was checked against the Player Core rows on Archives of Nethys. `CF
 
 Left over from Phase 3:
 
+- [ ] Only the spear flies point first and sticks in a target. The dagger, hatchet, light hammer and dart reach the cursor and Strike, but spin and drop. Each needs a `ThrowingAngle` to suit its sprite.
+- [ ] A spear bounces off walls, where a stock spear sticks in them.
 - [ ] Companions have no inventory, so nothing can wear `CFRatArmor`. Barding also needs an AC path: `ArmorFromEquipment` is off for creatures with printed AC.
 - [ ] Take Cover gives only the AC bonus. Cover also adds to Reflex against area effects and to Stealth.
 - [ ] CP14's magic staves and the ice bow (spell storage on mana) wait for spellcasting staves.
@@ -682,7 +684,7 @@ A personality is one `cfGoapProfile` prototype. It changes numbers (steering par
 ### 6g. Verify
 
 - [x] Scenario test on the dev map, per personality: the target goes undetected, and the NPC goes to the LKP, checks the node, Seeks, and finds them. Cowardly is tested on its keep-out radius instead.
-- [ ] A purpose-built test map with a corridor, side room and closet.
+- [ ] A purpose-built test map. See proposal 1 in `ai-testing.md`, which covers this and the corridor, side room and closet.
 
 ### 6h. Encounters
 
@@ -696,7 +698,14 @@ A personality is one `cfGoapProfile` prototype. It changes numbers (steering par
 - [x] The flanking reach sensor feeds the same vectors through `CFFlankingSystem.EnemiesInReach`, covering enemies beside and behind the fan.
 - [x] Feeler safeguards: blocked straight ahead, it turns to the freer side, or right if they balance, so a flat wall cannot freeze it. Danger eases over a few frames so it does not shake along a wall, and snaps at once when something is close. Length scales with speed against `feelerFullSpeed`, so a fast creature sees further, down to `feelerMinLength`.
 - [x] Cooperative steering with flow fields. While a ray to the goal is clear, an NPC heads straight there. When it is blocked, the group's navigator (its first living member, or a lone NPC itself) builds a `CFFlowField`: arrows on each tile out to 20 tiles, with walls and `CFDangerousTile` blocked. Every member reads the arrow under its feet and blends it with its feelers. There is no path to fall behind on, and GOAP no longer uses A* at all.
-- [ ] Doors count as blocked in a field, and nothing opens them. Stock did that from its path code.
+- [x] Doors and glass in a field. A closed door, a locked door and a window are slow tiles (`CFGoapSystem.Obstacles`), not blocked ones, so a short detour still wins. An arrow leading into one makes the creature open it if it has hands and the door is unlocked, and Strike it otherwise. A smashed window leaves a frame to climb, and a smashed door a frame to break.
+- [x] Patience. `smashPatience` on a `cfGoapProfile` is how many seconds it keeps at one door or window: Default 20, Brave 40, Stealthy 10, Cowardly 5. Then the obstacle is off the field for 60 seconds, shared by the group. With no other way, the `NoWay` fact stops `Close`, `TakeFlank`, `GoToLkp` and `CheckNode` for that long.
+- [x] Sight through glass. Plain windows have no `Occluder`, so a creature sees through them and heads for the target. `TargetInReach` and `AtFlank` need a clear ray, so it does not swing at someone behind glass.
+- [ ] The locked door scenario reaches the target in about 33 of 40 runs. The suspected causes are in `ai-testing.md`.
+- [ ] With no node or scent, a creature that loses sight does not go to the last known position. `GoToLkp` only exists as the step before `CheckNode`.
+- [ ] Fleeing does not use any of this. A routed creature treats a door as a wall.
+- [ ] A kobold alone is slow on glass: Hardness and Multiple Attack Penalty leave it about 1 damage in 13 seconds, so it usually runs out of patience.
+- [ ] Choosing a detour over glass is only tested on `CFFlowFieldBuilder`. The arena has lava either side of its one clear row, so a live test has no room.
 - [ ] A field is built in one go. 20 tiles is a few hundred at most, but a much larger `FieldReach` would want spreading over ticks.
 - [ ] Group memory lives on the spawner, so deleting the spawner mid-fight stops the group sharing a target.
 - [x] Perf check: 30 NPCs + 10 emitters thinking once, on the dev map, cost logged by `ThinkingStaysCheapWithAFullEncounter`.

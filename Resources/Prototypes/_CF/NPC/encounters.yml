@@ -73,6 +73,7 @@
   id: TakeFlank
   step: Flank
   needs: [ TargetVisible, AlliesNearby ]
+  needsNot: [ NoWay ]
   gives: [ AtFlank ]
   cost: 0.4
 

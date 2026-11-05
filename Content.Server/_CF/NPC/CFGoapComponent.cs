@@ -61,6 +61,21 @@ public sealed partial class CFGoapComponent : Component
     /// <summary>Whether it is following a flow field rather than heading straight there.</summary>
     public bool UsingField;
 
+    /// <summary>The door or window it is dealing with.</summary>
+    public EntityUid? Obstacle;
+
+    /// <summary>When it turned to that obstacle. Its patience runs from here.</summary>
+    public TimeSpan ObstacleStart;
+
+    /// <summary>Whether it has started swinging at the obstacle or climbing it.</summary>
+    public bool Working;
+
+    /// <summary>It just finished with an obstacle and has to set off again.</summary>
+    public bool Rerouted;
+
+    /// <summary>It gave up and found no other way, so until this time it stops trying to get there.</summary>
+    public TimeSpan NoWayUntil;
+
     /// <summary>The field of a creature with no group. In a group, the spawner holds one for all of them.</summary>
     public CFFlowField OwnField = new();
 

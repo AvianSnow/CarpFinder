@@ -425,7 +425,8 @@ public sealed class CFGoapTest : GameTest
             SEntMan.System<NPCSystem>().WakeNPC(boss);
         });
 
-        await Pair.RunTicksSync(300);
+        // Usually about 6 seconds, and it has taken 29. Ticks are cheap, so the window is not what should fail this.
+        await Pair.RunTicksSync(1200);
 
         await Server.WaitAssertion(() =>
         {

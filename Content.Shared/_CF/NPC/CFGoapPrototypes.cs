@@ -33,6 +33,9 @@ public enum CFGoapFact : uint
 
     Hiding = 1 << 17,
 
+    /// <summary>It gave up on a door or window and has no other way to where it was going.</summary>
+    NoWay = 1 << 18,
+
     // Never sensed. These only exist as what a goal wants, so a plan has something to reach.
     TargetHurt = 1 << 20,
     Safe = 1 << 21,
@@ -196,6 +199,10 @@ public sealed partial class CFGoapProfilePrototype : IPrototype
     /// <summary>How strongly it stays away from allies. Keeps a pack spread out.</summary>
     [DataField]
     public float Separation;
+
+    /// <summary>Seconds it keeps at a door or window it has to break before giving up.</summary>
+    [DataField]
+    public float SmashPatience = 20f;
 
     /// <summary>Seconds it looks around at the last known position.</summary>
     [DataField]

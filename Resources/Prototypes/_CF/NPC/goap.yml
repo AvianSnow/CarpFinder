@@ -78,6 +78,7 @@
   id: Close
   step: Close
   needs: [ TargetVisible ]
+  needsNot: [ NoWay ]
   gives: [ TargetInReach ]
 
 - type: cfGoapAction
@@ -119,6 +120,7 @@
   id: GoToLkp
   step: GoToLkp
   needs: [ KnowsLkp ]
+  needsNot: [ NoWay ]
   gives: [ AtLkp ]
   cost: 2
 
@@ -126,6 +128,7 @@
   id: CheckNode
   step: CheckNode
   needs: [ AtLkp, NodeNearby ]
+  needsNot: [ NoWay ]
   gives: [ TargetVisible ]
   cost: 3
 
@@ -150,6 +153,7 @@
   maxSpeed: 1.2
   arriveRadius: 0.2
   lkpDwell: 0.5
+  smashPatience: 40
   fleeHealth: 0
   goalPriority:
     StayAlive: 0.5
@@ -163,6 +167,7 @@
   id: Stealthy
   maxSpeed: 0.8
   wallFollow: 0.6
+  smashPatience: 10
   fleeHealth: 0.25
   nodeTags:
     Shadow: 3
@@ -171,6 +176,7 @@
   id: Cowardly
   wanderJitter: 1.5
   lkpKeepOut: 5
+  smashPatience: 5
   fleeHealth: 0.3
   goalPriority:
     StayAlive: 1.5

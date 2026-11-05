@@ -58,11 +58,19 @@ One directed component + event pair. A second subscriber throws `Duplicate Subsc
 - Mobs do not collide. `MobLayer` is not in `MobMask`, so they overlap and push through `MobCollisionComponent`. `PreventCollideEvent` changes nothing between two mobs. Cancel `AttemptMobCollideEvent` and `AttemptMobTargetCollideEvent` instead. Neither event says who the other mob is.
 - A click in combat mode is a swing, even with a non-weapon in hand. `AfterInteractEvent` does not run. Use `UseInHandEvent` for anything that has to work in a fight.
 - `MeleeHitEvent.Direction` is null for a click and set for a wide swing.
+- The flanking sensor is a fixture, so `GetEntitiesIntersectingBody`, `GetAABBNoContainer` and `GetWorldAABB` all see a creature as 2.5 tiles wide. That silently ended every climb near a wall (`ClimbingComponent.TransitionCollisionMask` is 0 on combatants for this) and gave "no room to stand" beside any table (marked fix in `SharedStunSystem.Knockdown`). `LookupFlags.Sensors` lookups find a creature that far out too. `InRangeUnobstructed` is not affected: it skips non-hard fixtures on a hard body.
+- `InRangeUnobstructed` between two entities measures surface to surface. NPC melee measures center to center, so a creature can pass the first and still be out of swing range.
+- A thin ray fits through a gap the body does not. A creature sent straight at a one-tile gap catches its corner and circles there, so `CFGoapSystem.CanWalkStraight` casts down each side as well.
+- A smashed `CFWindowWooden` leaves a broken frame, which is a half wall to climb and can trip whoever is beside it. A smashed door leaves a door frame, which still blocks a body although it is not `Impassable`.
+- A thrown item without `LandAtCursor` ends its flight at about 80% of the way and slides the rest, so it never hits what the cursor is on. Every thrown weapon needs it, and `CFThrownWeaponTest` checks that.
+- `BeforeThrowEvent.Direction` is read-only and already clamped to `HandsComponent.ThrowRange`. Range has to change in `HandsSystem.ThrowHeldItem`.
+- Stock times a flight as if air did not slow the item, so a long throw lands short. `CFStrikeSystem.OnThrown` stretches `LandTime` for thrown weapons.
+- `EmbeddableProjectile` embeds on any touch of a thrown item, with no roll, and `EmbedAttach` is private. Set `embedOnThrow: false` and raise `ProjectileHitEvent` on the item to stick it.
 - `OpenStorage` empties a closet before it raises `StorageAfterOpenEvent`, so the contents are already gone. Watch `EntGotRemovedFromContainerMessage` on the creature.
 - `PlayEmoteMessage` is only sent by the emote menu. `EmoteEvent` also fires for typed emotes and for automatic ones such as pain screams.
 - Alt+Z runs the first `AlternativeVerb` on the held item. Set a high `Priority` to come first.
 - An `Entity<T>` handler must take the event by `ref`, whether or not the event is `[ByRefEvent]`. A broadcast handler for a plain class event is by value.
-- In test output, `Skipped` can be a failure from the same run. Run the test alone to see it.
+- In test output, `Skipped` with `Test was dirty-disposed` is a failed test. An assert inside `Server.WaitAssertion` runs on the server thread, whose NUnit context belongs to whichever test started that pair. On a reused pair the failure is not recorded on the current test, and the dirty-dispose warning becomes its only result. A short duration proves nothing: hundreds of ticks run in under a second. See `ai-testing.md`.
 - A test with no game (plain math) goes in a plain class, not a `GameTest`. Mixed in, it can fail the tests around it with no message.
 - `NPCSteeringSystem.Register` with new coordinates cancels the path, so call it once. `new EntityCoordinates(target, Vector2.Zero)` follows a moving target.
 - Stock gives up on a path for good after three failures, and `SteeringStatus.NoPath` then stops all steering until the NPC is unregistered. HTN's move operator gets replanned. Code that moves an NPC itself has to retry.

@@ -6,6 +6,7 @@ using Content.Shared.CF.Combat;
 using Content.Shared.CF.Detection;
 using Content.Shared.CF.Factions;
 using Content.Shared.CF.NPC;
+using Content.Shared.Climbing.Components;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Movement.Systems;
@@ -99,7 +100,8 @@ public sealed partial class CFSteeringSystem : EntitySystem
         EntityUid? target = null,
         Vector2? point = null,
         CFFeltMobs felt = CFFeltMobs.Ignore,
-        CFFlowField? field = null)
+        CFFlowField? field = null,
+        EntityUid? through = null)
     {
         var steering = EnsureComp<CFSteeringComponent>(uid);
         steering.Behaviors = behaviors;
@@ -107,6 +109,7 @@ public sealed partial class CFSteeringSystem : EntitySystem
         steering.Point = point;
         steering.FeltMobs = felt;
         steering.Field = field;
+        steering.Through = through;
         steering.ArriveSpeed = 1f;
 
         // Stock leaves this set for good, and a creature in it does not steer at all.
@@ -127,6 +130,7 @@ public sealed partial class CFSteeringSystem : EntitySystem
         ent.Comp.Point = null;
         ent.Comp.FeltMobs = CFFeltMobs.Ignore;
         ent.Comp.Field = null;
+        ent.Comp.Through = null;
         ent.Comp.ArriveSpeed = 1f;
         ApplySpeed((ent.Owner, ent.Comp));
         _npcSteering.Unregister(ent);
@@ -194,6 +198,7 @@ public sealed partial class CFSteeringSystem : EntitySystem
         var position = args.WorldPosition;
         var velocity = CompOrNull<PhysicsComponent>(ent)?.LinearVelocity ?? Vector2.Zero;
         var escape = Vector2.Zero;
+        var onlyWalls = true;
         var search = ent.Comp.PanicRadius + velocity.Length() * PanicLeadSearch + PanicSearchMargin;
         foreach (var other in _lookup.GetEntitiesInRange(ent.Owner, search, PanicLookup))
         {
@@ -214,11 +219,24 @@ public sealed partial class CFSteeringSystem : EntitySystem
 
             var distance = away.Length();
             if (distance > 0f && distance < radius)
+            {
                 escape += away / distance * (radius - distance);
+                onlyWalls &= !HasComp<MobStateComponent>(other) && !HasComp<CFDangerousTileComponent>(other);
+            }
         }
 
         if (escape == Vector2.Zero)
             return;
+
+        // A wall cannot hurt it, so it slides along instead of being thrown back. Thrown straight off the corner of a
+        // doorway, it comes back and rattles there for good.
+        var wanted = onlyWalls ? Wanted(ref args) : Vector2.Zero;
+        if (wanted != Vector2.Zero)
+        {
+            var slide = escape + Vector2.Normalize(wanted) * escape.Length();
+            if (slide.LengthSquared() > MinimumEscape)
+                escape = slide;
+        }
 
         // Straight back only returns it to the same spot, so it keeps going the way it committed to.
         // The two can cancel out exactly, and normalizing zero gives NaN, which stock's blend then keeps forever.
@@ -241,9 +259,21 @@ public sealed partial class CFSteeringSystem : EntitySystem
     /// <summary>
     /// Walls, dangerous tiles and other mobs. Not who it means to reach, or it could never fight them.
     /// </summary>
+    /// <summary>Where its behaviours want to go this tick, in world space.</summary>
+    private static Vector2 Wanted(ref NPCSteeringEvent args)
+    {
+        var wanted = Vector2.Zero;
+        for (var i = 0; i < SharedNPCSteeringSystem.InterestDirections; i++)
+        {
+            wanted += NPCSteeringSystem.Directions[i] * args.Steering.Interest[i];
+        }
+
+        return (-args.OffsetRotation).RotateVec(wanted);
+    }
+
     private bool IsPanicCause(Entity<CFSteeringComponent> ent, EntityUid other)
     {
-        if (other == ent.Owner || other == ent.Comp.Target)
+        if (other == ent.Owner || other == ent.Comp.Target || other == ent.Comp.Through || IsClimbingOver(ent, other))
             return false;
 
         if (HasComp<MobStateComponent>(other))
@@ -263,8 +293,16 @@ public sealed partial class CFSteeringSystem : EntitySystem
 
         var (centre, left, right) = CFSteering.Fan(heading, ent.Comp.FeelerAngle);
         var ahead = FeelAlong(ent, ref args, centre, length);
-        var leftDanger = FeelAlong(ent, ref args, left, sideLength);
-        var rightDanger = FeelAlong(ent, ref args, right, sideLength);
+        var leftDanger = FeelAlong(ent, ref args, left, sideLength, apply: false);
+        var rightDanger = FeelAlong(ent, ref args, right, sideLength, apply: false);
+
+        // Both sides touched with the middle clear is a gap to go through. Their danger would cancel the way forward
+        // and hold it in front of an open doorway, and the safety circle still keeps it off the frame.
+        if (ahead > 0f || leftDanger <= 0f || rightDanger <= 0f)
+        {
+            AddDanger(ent, ref args, left, leftDanger);
+            AddDanger(ent, ref args, right, rightDanger);
+        }
 
         // Blocked straight ahead, nothing is left with any interest, and a flat wall would hold it there.
         var now = _timing.CurTime;
@@ -278,10 +316,10 @@ public sealed partial class CFSteeringSystem : EntitySystem
             Add(ref args, ent.Comp.AvoidDirection, AvoidWeight);
     }
 
-    /// <summary>Casts one ray and returns the danger it found.</summary>
-    private float FeelAlong(Entity<CFSteeringComponent> ent, ref NPCSteeringEvent args, Vector2 direction, float length)
+    /// <summary>Casts one ray and returns the danger it found, leaving it to the caller when told not to apply it.</summary>
+    private float FeelAlong(Entity<CFSteeringComponent> ent, ref NPCSteeringEvent args, Vector2 direction, float length, bool apply = true)
     {
-        if (!TryFeel(ent, args.WorldPosition, direction, ent.Comp.FeelerSight, out var hit))
+        if (!TryFeel(ent, args.WorldPosition, direction, ent.Comp.FeelerSight, out var hit, ent.Comp.Through))
             return 0f;
 
         if (HasComp<MobStateComponent>(hit.Entity))
@@ -291,7 +329,9 @@ public sealed partial class CFSteeringSystem : EntitySystem
             return 0f;
 
         var danger = (1f - hit.Distance / length) * FeelerDanger;
-        AddDanger(ent, ref args, direction, danger);
+        if (apply)
+            AddDanger(ent, ref args, direction, danger);
+
         return danger;
     }
 
@@ -327,14 +367,14 @@ public sealed partial class CFSteeringSystem : EntitySystem
     /// Casts one ray and returns the first thing it touches: a wall or other fixed solid, a dangerous tile
     /// (whose fixture is not hard), or an enemy. Allies, and enemies this creature cannot detect, do not stop it.
     /// </summary>
-    public bool TryFeel(EntityUid uid, Vector2 from, Vector2 direction, float length, out CFFeelerHit hit)
+    public bool TryFeel(EntityUid uid, Vector2 from, Vector2 direction, float length, out CFFeelerHit hit, EntityUid? through = null)
     {
         hit = default;
         var filter = new QueryFilter
         {
             MaskBits = FeelerMask,
             Flags = QueryFlags.Static | QueryFlags.Dynamic | QueryFlags.Sensors,
-            IsIgnored = other => !CanFeel(uid, other),
+            IsIgnored = other => other == through || !CanFeel(uid, other),
         };
 
         var result = _rays.CastRayClosest(Transform(uid).MapID, from, direction * length, filter);
@@ -346,10 +386,16 @@ public sealed partial class CFSteeringSystem : EntitySystem
         return true;
     }
 
+    /// <summary>Partway over a frame it has to carry on, not be pushed back the way it came.</summary>
+    private bool IsClimbingOver(EntityUid uid, EntityUid other)
+    {
+        return HasComp<ClimbableComponent>(other) && TryComp(uid, out ClimbingComponent? climbing) && climbing.IsClimbing;
+    }
+
     /// <summary>The sensors query also finds things like triggers, which are nothing to steer around.</summary>
     private bool CanFeel(EntityUid uid, EntityUid other)
     {
-        if (other == uid)
+        if (other == uid || IsClimbingOver(uid, other))
             return false;
 
         if (HasComp<MobStateComponent>(other))
