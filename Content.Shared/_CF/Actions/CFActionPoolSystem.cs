@@ -4,9 +4,11 @@ using Content.Shared.CF.Combat;
 using Content.Shared.CF.Detection;
 using Content.Shared.CF.Effects;
 using Content.Shared.CF.Spells;
+using Content.Shared.CombatMode.Pacification;
 using Content.Shared.Interaction.Events;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Popups;
+using Content.Shared.Throwing;
 using Content.Shared.Weapons.Melee.Events;
 using Content.Shared.Weapons.Ranged.Components;
 using Content.Shared.Weapons.Ranged.Events;
@@ -25,6 +27,7 @@ public sealed partial class CFActionPoolSystem : EntitySystem
 {
     [Dependency] private CFShieldSystem _shields = default!;
     [Dependency] private CFStealthSystem _stealth = default!;
+    [Dependency] private CFWeaponSystem _weapons = default!;
 
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private INetManager _net = default!;
@@ -261,6 +264,23 @@ public sealed partial class CFActionPoolSystem : EntitySystem
 
         TrySpend(args.User, pool, ShotCost(weapon));
         _stealth.RevealAfterShot(args.User);
+    }
+
+    /// <summary>Throwing a thrown weapon is a Strike, paid as it leaves the hand. Tossing anything else stays free.</summary>
+    [SubscribeLocalEvent(after: [typeof(PacificationSystem)])]
+    private void OnBeforeThrow(Entity<CFActionPoolComponent> ent, ref BeforeThrowEvent args)
+    {
+        if (args.Cancelled || _weapons.ThrownIncrement(args.ItemUid) <= 0)
+            return;
+
+        if (!TrySpendActions(ent, 1, stealthy: true))
+        {
+            args.Cancelled = true;
+            return;
+        }
+
+        // As with a shot, a hidden thrower stays hidden until the Strike lands.
+        _stealth.RevealAfterShot(ent);
     }
 
     /// <summary>A shot is one Strike action plus the weapon's reload (crossbow 1, heavy crossbow 2).</summary>

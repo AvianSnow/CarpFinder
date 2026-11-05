@@ -2,6 +2,7 @@ using System.Numerics;
 using Content.Server.Stack;
 using Content.Server.Stunnable;
 using Content.Shared.ActionBlocker;
+using Content.Shared.CF.Combat;
 using Content.Shared.CombatMode;
 using Content.Shared.Damage.Systems;
 using Content.Shared.Explosion;
@@ -32,6 +33,7 @@ namespace Content.Server.Hands.Systems
         [Dependency] private SharedTransformSystem _transformSystem = default!;
         [Dependency] private PullingSystem _pullingSystem = default!;
         [Dependency] private ThrowingSystem _throwingSystem = default!;
+        [Dependency] private CFWeaponSystem _cfWeapons = default!; // CarpFinder: the range of a thrown weapon
         [Dependency] private EntityQuery<PhysicsComponent> _physicsQuery = default!;
 
         /// <summary>
@@ -161,7 +163,7 @@ namespace Content.Server.Hands.Systems
                 return true;
 
             var length = direction.Length();
-            var distance = Math.Clamp(length, minDistance, hands.ThrowRange);
+            var distance = Math.Clamp(length, minDistance, _cfWeapons.ThrowRange(throwEnt.Value, hands.ThrowRange)); // CarpFinder: a thrown weapon reaches its last range increment
             direction *= distance / length;
 
             var throwSpeed = hands.BaseThrowspeed;

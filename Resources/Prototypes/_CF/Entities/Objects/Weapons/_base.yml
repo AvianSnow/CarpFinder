@@ -86,6 +86,7 @@
     - VersatileS
   - type: CFItemPrice
     copper: 20
+  - type: LandAtCursor
 
 - type: entity
   parent: [ CFBaseWeapon, CFBaseWeaponCarryNeck ]
@@ -287,6 +288,13 @@
     - Thrown20
   - type: CFItemPrice
     copper: 10
+  - type: ThrowingAngle
+    angle: -90
+  - type: LandAtCursor
+  # CFStrikeSystem sticks it in what a Strike hits. Stock would stick it in anything it touched, hit or miss.
+  - type: EmbeddableProjectile
+    embedOnThrow: false
+    removalTime: 1.5
 
 - type: entity
   parent: [ CFBaseWeapon, CFBaseWeaponCarryBelt ]
@@ -317,6 +325,7 @@
     - Thrown10
   - type: CFItemPrice
     copper: 40
+  - type: LandAtCursor
 
 - type: entity
   parent: [ CFBaseWeapon, CFBaseWeaponCarryBelt ]
@@ -376,6 +385,7 @@
     - Thrown20
   - type: CFItemPrice
     copper: 30
+  - type: LandAtCursor
   - type: Tool
     qualities:
     - CFHammering
@@ -590,3 +600,4 @@
     bulk: 0
   - type: CFItemPrice
     copper: 1
+  - type: LandAtCursor

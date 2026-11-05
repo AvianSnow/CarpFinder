@@ -56,6 +56,22 @@ public sealed partial class CFWeaponSystem : EntitySystem
         return true;
     }
 
+    /// <summary>Thrown range increment in feet. 0 when this is not a thrown weapon.</summary>
+    public int ThrownIncrement(EntityUid item)
+    {
+        return HasComp<CFWeaponComponent>(item) ? Traits(item).Thrown : 0;
+    }
+
+    /// <summary>
+    /// How far an item can be thrown, in tiles. A thrown weapon reaches its last range increment, the same limit
+    /// a ranged Strike has. Anything else keeps <paramref name="handRange"/>.
+    /// </summary>
+    public float ThrowRange(EntityUid item, float handRange)
+    {
+        var increment = ThrownIncrement(item);
+        return increment > 0 ? increment * CFMelee.MaxRangeIncrements / CFMelee.FeetPerTile : handRange;
+    }
+
     /// <summary>
     /// Whether a right-click with this item is a maneuver instead of a wide swing: a shield, or a weapon
     /// with the shove or disarm trait. The sweep trait keeps its wide swing.

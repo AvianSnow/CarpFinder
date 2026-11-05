@@ -25,6 +25,7 @@ using Content.Shared.Weapons.Melee.Events;
 using Robust.Shared.Audio;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Network;
+using Robust.Shared.Physics.Components;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
@@ -59,12 +60,19 @@ public sealed partial class CFStrikeSystem : EntitySystem
     [Dependency] private CFEffectSystem _effects = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private SharedAudioSystem _audio = default!;
+    [Dependency] private ThrownItemSystem _thrownItems = default!;
 
     /// <summary>Unconscious / dying creatures are off-guard (−4 AC status, simplified).</summary>
     private const int DownedAcPenalty = 4;
 
     /// <summary>Only has to outlast the Strike that gives the attacker away.</summary>
     private const float UnseenOffGuardSeconds = 1f;
+
+    /// <summary>
+    /// How much longer a thrown weapon stays in the air than stock's timing. Stock ignores air friction,
+    /// so without this a long throw comes down short of a target right under the cursor.
+    /// </summary>
+    private const float ThrownFlightStretch = 1.2f;
 
     /// <summary>Stops a reaction Strike from starting another reaction Strike.</summary>
     private int _strikeDepth;
@@ -171,9 +179,22 @@ public sealed partial class CFStrikeSystem : EntitySystem
             ReactiveStrike(shooter.Value);
     }
 
+    [SubscribeLocalEvent]
+    private void OnThrown(Entity<CFWeaponComponent> weapon, ref ThrownEvent args)
+    {
+        if (_weapons.ThrownIncrement(weapon) <= 0
+            || !TryComp(weapon, out ThrownItemComponent? thrown)
+            || thrown.ThrownTime is not { } start
+            || thrown.LandTime is not { } land)
+            return;
+
+        thrown.LandTime = start + (land - start) * ThrownFlightStretch;
+        Dirty(weapon, thrown);
+    }
+
     /// <summary>
     /// A weapon with the thrown trait that hits a creature makes a ranged Strike with its thrown range increment.
-    /// Thrown Strikes add Strength to damage.
+    /// Thrown Strikes add Strength to damage. The action was paid when it left the hand.
     /// </summary>
     [SubscribeLocalEvent]
     private void OnThrownHit(Entity<CFWeaponComponent> weapon, ref ThrowDoHitEvent args)
@@ -187,12 +208,30 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (!_weapons.TryStats(weapon, out var stats, thrown: true) || stats.RangeIncrementFeet <= 0)
             return;
 
-        if (!HasComp<MobStateComponent>(args.Target))
+        // Only a living enemy stops it. It flies on past an ally or a body.
+        if (!TryComp(args.Target, out MobStateComponent? mob)
+            || _mobState.IsDead(args.Target, mob)
+            || !_factions.CanHarm(thrower, args.Target))
             return;
 
         var map = _actions.MapPenalty(thrower, stats.Agile);
         _actions.CountAttack(thrower);
-        ResolveStrike(thrower, args.Target, combat, abilities, stats, GetDistanceFeet(thrower, args.Target), weapon, melee: false, map);
+        var hit = ResolveStrike(thrower, args.Target, combat, abilities, stats, GetDistanceFeet(thrower, args.Target), weapon, melee: false, map);
+        if (_strikeDepth == 0)
+            ReactiveStrike(thrower);
+
+        // One throw is one Strike, so the flight ends here. A miss skids on past the target.
+        if (TryComp(weapon, out PhysicsComponent? body))
+            _thrownItems.LandComponent(weapon, args.Component, body, playSound: !hit);
+
+        _thrownItems.StopThrow(weapon, args.Component);
+
+        // Stock embeds on any touch, so spears turn that off and stick here, only in what the Strike hit.
+        if (hit && !TerminatingOrDeleted(args.Target))
+        {
+            var stick = new ProjectileHitEvent(new DamageSpecifier(), args.Target, thrower);
+            RaiseLocalEvent(weapon, ref stick);
+        }
     }
 
     private bool TryGetMeleeAttacker(
@@ -674,7 +713,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (hit && !isObject && !_inChampion)
             ChampionReact(user, target);
 
-        PlayStrikeImpact(weaponUid, target, degree, rolled.DamageType, melee);
+        PlayStrikeImpact(weaponUid, target, degree, rolled.DamageType, melee || weapon.ThrownStrike);
 
         RaiseNetworkEvent(
             new CFCombatNumberEvent(GetNetEntity(target), degree, damage, rolled.DamageType),

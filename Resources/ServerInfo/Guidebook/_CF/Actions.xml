@@ -5,6 +5,7 @@ Most actions use the controls you already have. They are not on the wheel, so th
 ## Fighting
 - [bold]Left-click in combat mode:[/bold] Strike.
 - [bold]Right-click in combat mode:[/bold] a wide swing. With an empty hand, a shield, or a weapon with the shove or disarm trait, it Shoves or Disarms instead. Three shoves in a row knock a target prone.
+- [bold]Throw a weapon with the thrown trait:[/bold] a ranged Strike at the first enemy it touches. It flies to your cursor, up to six times its range. Past its range you take a penalty, and a spear sticks in what it hits.
 - [bold]Pull a living enemy:[/bold] Grapple. Press a move key while grabbed to Escape.
 - [bold]Ctrl and right-click while grabbing an enemy:[/bold] Reposition it.
 - [bold]Run into an enemy and keep pushing:[/bold] Tumble Through. It uses Acrobatics against their Reflex. Walking never tumbles.

@@ -24,6 +24,9 @@ public static class CFMelee
     /// <summary>Approximate PF feet per SS14 tile (1 tile ≈ 1.5 m ≈ 5 ft grid square).</summary>
     public const float FeetPerTile = 5f;
 
+    /// <summary>A ranged Strike cannot reach past this many range increments.</summary>
+    public const int MaxRangeIncrements = 6;
+
     /// <summary>
     /// Multiple Attack Penalty for an attack roll. <paramref name="attacksAlreadyMade"/> is how many
     /// attack rolls this creature has made since its action pool was last full.
@@ -142,7 +145,7 @@ public static class CFMelee
         if (incrementIndex <= 1)
             return 0;
 
-        if (incrementIndex > 6)
+        if (incrementIndex > MaxRangeIncrements)
             return -999;
 
         return -2 * (incrementIndex - 1);
