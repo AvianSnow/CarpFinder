@@ -30,6 +30,7 @@ namespace Content.Server.Construction
         [Dependency] private SharedHandsSystem _handsSystem = default!;
         [Dependency] private EntityLookupSystem _lookupSystem = default!;
         [Dependency] private EntityWhitelistSystem _whitelistSystem = default!;
+        [Dependency] private Content.Shared.CF.Crafting.CFCraftingSystem _cfCrafting = default!; // CarpFinder: the crafting menu needs training in Crafting
 
         // --- WARNING! LEGACY CODE AHEAD! ---
         // This entire file contains the legacy code for initial construction.
@@ -328,6 +329,11 @@ namespace Content.Server.Construction
         // LEGACY CODE. See warning at the top of the file!
         public async Task<bool> TryStartItemConstruction(string prototype, EntityUid user)
         {
+            // CarpFinder: the crafting menu needs training in Crafting
+            if (!_cfCrafting.CanUseConstructionMenu(user))
+                return false;
+            // CarpFinder end
+
             if (!ProtoMan.TryIndex(prototype, out ConstructionPrototype? constructionPrototype))
             {
                 Log.Error($"Tried to start construction of invalid recipe '{prototype}'!");
@@ -426,6 +432,14 @@ namespace Content.Server.Construction
                 Log.Error($"Client sent {nameof(TryStartStructureConstructionMessage)} with no attached entity!");
                 return;
             }
+
+            // CarpFinder: the crafting menu needs training in Crafting
+            if (!_cfCrafting.CanUseConstructionMenu(user))
+            {
+                RaiseNetworkEvent(new AckStructureConstructionMessage(ev.Ack));
+                return;
+            }
+            // CarpFinder end
 
             if (_whitelistSystem.IsWhitelistFail(constructionPrototype.EntityWhitelist, user))
             {

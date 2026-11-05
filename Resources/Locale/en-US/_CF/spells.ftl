@@ -39,3 +39,9 @@ cf-spell-bolt-choice =
         [one] Store 1 bolt. Click a creature to send it. Uses 1 action and one spell slot.
        *[other] Store { $count } bolts. Each click sends one, at the same creature or another. Uses { $count } actions and one spell slot.
     }
+cf-magic-none = You sense no magic nearby.
+cf-magic-present = You sense magic nearby.
+cf-magic-level = You sense magic nearby. The strongest is level { $level }.
+cf-magic-source = Magic
+cf-magic-aura-magical = { CAPITALIZE(THE($target)) } has a magical aura.
+cf-magic-aura-mundane = { CAPITALIZE(THE($target)) } has no magical aura.

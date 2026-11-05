@@ -275,7 +275,7 @@ public sealed partial class CFBonusSystem : EntitySystem
         var query = EntityQueryEnumerator<CFResistancesComponent>();
         while (query.MoveNext(out _, out var comp))
         {
-            comp.Entries.RemoveAll(e => e.Expires <= now);
+            comp.Entries.RemoveAll(e => e.Expires != TimeSpan.Zero && e.Expires <= now);
         }
     }
 

@@ -53,9 +53,8 @@
   actionCost: Two
   components: Somatic, verbal
   range: 120 feet
-  targets: 1 object
   duration: Until your next daily preparations
-  summary: The object sheds bright light in a 20-foot radius.
+  summary: An orb sheds bright light in a 20-foot radius and dim light for 20 feet more. Up to four at once.
 
 - type: cfSpell
   id: TelekineticProjectile
@@ -142,8 +141,7 @@
   actionCost: Two
   components: Somatic, verbal
   area: 30-foot emanation
-  duration: 1 minute
-  summary: You sense whether magic is present. The strongest nearby effect stands out.
+  summary: You sense whether magic is present. At rank 3 you learn the strongest level, and at rank 4 where it is.
 
 - type: cfSpell
   id: ReadAura
@@ -155,8 +153,7 @@
   components: Somatic
   range: 30 feet
   targets: 1 object
-  duration: 1 minute
-  summary: You learn whether the object is magical and the school and tradition of the strongest aura.
+  summary: You learn whether the object is magical.
 
 - type: cfSpell
   id: Prestidigitation

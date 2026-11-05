@@ -1,0 +1,104 @@
+# PF2e light sources, replacing CP14's crystal lamps. Art stays under _CP14.
+
+- type: entity
+  id: CFLightOrb
+  name: orb of light
+  description: A floating orb of magical light.
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: PointLight
+    enabled: true
+    radius: 8
+    energy: 1.5
+    color: "#fff4d6"
+  - type: CFTrait
+    traits:
+    - Magical
+  - type: CFLightOrb
+
+- type: entity
+  parent: BaseItem
+  id: CFEverburningTorch
+  name: everburning torch
+  description: A torch that burns with a magical flame. It gives off no heat and never goes out.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Item
+    size: Normal
+    heldPrefix: lit
+    sprite: _CP14/Objects/Tools/torch.rsi
+  - type: Sprite
+    sprite: _CP14/Objects/Tools/torch.rsi
+    layers:
+    - state: torch-unlit
+    - state: lit-overlay
+      shader: unshaded
+  - type: PointLight
+    enabled: true
+    radius: 8 # bright 20 feet, dim 20 more
+    energy: 1.5
+    color: "#ffb45a"
+  - type: CFTrait
+    traits:
+    - Magical
+  - type: CFItem
+    level: 1
+  - type: CFBulk
+    bulk: 0.1
+  - type: CFItemPrice
+    copper: 1500 # 15 gp
+
+- type: entity
+  parent: BaseItem
+  id: CFHoodedLantern
+  name: hooded lantern
+  description: A lantern with shutters. Open or close them to control the light.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Item
+    size: Normal
+    sprite: _CP14/Objects/Tools/crystal_lamp.rsi
+  - type: Sprite
+    sprite: _CP14/Objects/Tools/crystal_lamp.rsi
+    state: icon
+  - type: Clothing
+    sprite: _CP14/Objects/Tools/crystal_lamp.rsi
+    quickEquip: false
+    slots:
+    - belt
+  - type: UnpoweredFlashlight
+  - type: PointLight
+    enabled: false
+    radius: 12 # bright 30 feet, dim 30 more
+    energy: 1.5
+    color: "#ffe2a8"
+  - type: CFItem
+    level: 0
+  - type: CFBulk
+    bulk: 0.1
+  - type: CFItemPrice
+    copper: 70 # 7 sp
+
+- type: entity
+  parent: BaseSign
+  id: CFWallLamp
+  name: magic wall lamp
+  description: A wall lamp that burns with a steady magical light.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Wallmount/wallmount_lamp.rsi
+    layers:
+    - state: base
+    - state: crystal
+    - state: on
+      color: "#b2ceeb"
+      shader: unshaded
+  - type: PointLight
+    enabled: true
+    energy: 1
+    radius: 8
+    color: "#dfe7f0"
+  - type: CFTrait
+    traits:
+    - Magical

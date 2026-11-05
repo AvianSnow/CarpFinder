@@ -1,0 +1,16 @@
+- type: entity
+  parent: CFBaseWorkbench
+  id: CFMerchantCounter
+  name: merchant's counter
+  description: Place goods here to sell them, or see what is for sale.
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Furniture/workbench.rsi
+    state: filler
+  - type: ActivatableUI
+    key: enum.CFMerchantUiKey.Key
+  - type: UserInterface
+    interfaces:
+      enum.CFMerchantUiKey.Key:
+        type: CFMerchantBoundUserInterface
+  - type: CFMerchantCounter

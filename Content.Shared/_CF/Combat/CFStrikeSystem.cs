@@ -542,7 +542,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (spellDice > weapon.Striking)
             rolled = rolled with { DamageDice = rolled.DamageDice + spellDice - weapon.Striking, Striking = spellDice };
 
-        var damageMod = CFMelee.DamageBonus(attackerAbilities, rolled) + pointBlank;
+        var damageMod = CFMelee.DamageBonus(attackerAbilities, rolled, attackerCombat) + pointBlank;
         damageMod += CFMelee.ForcefulBonus(rolled, attacksBefore);
         if (melee && style is { Raging: true })
             damageMod += 2;

@@ -26,6 +26,15 @@ public static class CFDefense
         if (defense == CFDefenseType.Perception)
             return PerceptionModifier(prototypes, combat, abilities, status, frightened);
 
+        var printed = defense switch
+        {
+            CFDefenseType.Reflex => combat?.PrintedReflex,
+            CFDefenseType.Will => combat?.PrintedWill,
+            _ => combat?.PrintedFortitude,
+        };
+        if (printed is { } save)
+            return save + status - Math.Max(0, frightened);
+
         var bonus = defense switch
         {
             CFDefenseType.Reflex => CFCommonerStats.Reflex,
@@ -58,6 +67,9 @@ public static class CFDefense
         int status = 0,
         int frightened = 0)
     {
+        if (combat?.PrintedPerception is { } printed)
+            return printed + status - Math.Max(0, frightened);
+
         if (combat == null || abilities == null || string.IsNullOrEmpty(combat.ClassId)
             || !prototypes.TryIndex(combat.ClassId, out CFClassPrototype? cls))
         {
@@ -69,14 +81,8 @@ public static class CFDefense
         return bonus + status - Math.Max(0, frightened);
     }
 
-    public static int SkillModifier(
-        IPrototypeManager prototypes,
-        CFCombatantComponent combat,
-        CFAbilityScoreComponent abilities,
-        string skill,
-        CFAbility ability,
-        int circumstance = 0,
-        int frightened = 0)
+    /// <summary>Proficiency rank in <paramref name="skill"/>, from class, background and trained picks.</summary>
+    public static CFProficiencyRank SkillRank(IPrototypeManager prototypes, CFCombatantComponent combat, string skill)
     {
         CFClassPrototype? cls = null;
         if (!string.IsNullOrEmpty(combat.ClassId))
@@ -86,7 +92,19 @@ public static class CFDefense
         if (!string.IsNullOrEmpty(combat.BackgroundId))
             prototypes.TryIndex(combat.BackgroundId, out background);
 
-        var rank = CFSkills.GetSkillRank(cls, background, skill, combat.TrainedSkills);
+        return CFSkills.GetSkillRank(cls, background, skill, combat.TrainedSkills);
+    }
+
+    public static int SkillModifier(
+        IPrototypeManager prototypes,
+        CFCombatantComponent combat,
+        CFAbilityScoreComponent abilities,
+        string skill,
+        CFAbility ability,
+        int circumstance = 0,
+        int frightened = 0)
+    {
+        var rank = SkillRank(prototypes, combat, skill);
         var mod = CFSkills.SkillModifier(abilities.AbilityModifiers, ability, combat.Level, rank, circumstance);
         return mod - Math.Max(0, frightened);
     }

@@ -17,3 +17,18 @@
 
 - type: Tag
   id: CFVitality # PF2e Vitality — life energy; heals living, harms undead.
+
+- type: Tag
+  id: CFRecipeWorkbench
+
+- type: Tag
+  id: CFRecipeAnvil
+
+- type: Tag
+  id: CFRecipeMeltingFurnace
+
+- type: Tag
+  id: CFRecipeSewing
+
+- type: Tag
+  id: CFRecipeLeatherWorking

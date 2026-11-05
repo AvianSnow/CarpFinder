@@ -5,7 +5,7 @@ namespace Content.Shared.CF.Combat;
 /// <summary>
 /// Carpfinder combat stats (AC / HP) for player characters and mobs.
 /// </summary>
-[RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
+[RegisterComponent, NetworkedComponent, AutoGenerateComponentState(true)]
 public sealed partial class CFCombatantComponent : Component
 {
     [DataField, AutoNetworkedField]
@@ -33,6 +33,34 @@ public sealed partial class CFCombatantComponent : Component
     /// </summary>
     [DataField, AutoNetworkedField]
     public int StrikeAdjustment;
+
+    /// <summary>Stat block Fortitude. Null means work it out from the class, or Commoner stats without one.</summary>
+    [DataField, AutoNetworkedField]
+    public int? PrintedFortitude;
+
+    /// <summary>Stat block Reflex.</summary>
+    [DataField, AutoNetworkedField]
+    public int? PrintedReflex;
+
+    /// <summary>Stat block Will.</summary>
+    [DataField, AutoNetworkedField]
+    public int? PrintedWill;
+
+    /// <summary>Stat block Perception.</summary>
+    [DataField, AutoNetworkedField]
+    public int? PrintedPerception;
+
+    /// <summary>A stat block's melee attack bonus. It replaces abilities and proficiency.</summary>
+    [DataField, AutoNetworkedField]
+    public int? PrintedAttack;
+
+    /// <summary>The flat part of a stat block's melee damage, where it differs from Strength.</summary>
+    [DataField, AutoNetworkedField]
+    public int? PrintedDamage;
+
+    /// <summary>Monsters die at 0 HP instead of dying, and defeating one is worth XP.</summary>
+    [DataField, AutoNetworkedField]
+    public bool DiesAtZeroHp;
 
     [DataField, AutoNetworkedField]
     public int MaxHp = 10;

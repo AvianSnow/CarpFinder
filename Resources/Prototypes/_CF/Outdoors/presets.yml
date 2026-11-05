@@ -1,0 +1,34 @@
+# Climates for cf_outdoors, or to copy onto a map's CFOutdoors.
+
+- type: entity
+  id: CFOutdoorsTemperate
+  name: temperate climate
+  components:
+  - type: CFOutdoors
+    weather:
+    - weight: 5
+    - weather: CFWeatherRain
+      weight: 3
+    - weather: CFWeatherStorm
+    - weather: CFWeatherMist
+
+- type: entity
+  id: CFOutdoorsArctic
+  name: arctic climate
+  components:
+  - type: CFOutdoors
+    temperature: SevereCold
+    weather:
+    - weight: 3
+    - weather: CFWeatherSnowLight
+      weight: 3
+    - weather: CFWeatherSnowHeavy
+
+- type: entity
+  id: CFOutdoorsDesert
+  name: desert climate
+  components:
+  - type: CFOutdoors
+    temperature: SevereHeat
+    weather:
+    - weight: 1

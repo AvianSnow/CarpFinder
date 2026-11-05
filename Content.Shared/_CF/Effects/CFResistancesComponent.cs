@@ -27,6 +27,7 @@ public sealed partial class CFActiveResistance
     [DataField]
     public bool Weakness;
 
+    /// <summary>Zero means it never ends: a creature's printed resistances and immunities.</summary>
     [DataField]
     public TimeSpan Expires;
 }

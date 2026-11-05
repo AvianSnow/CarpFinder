@@ -1,0 +1,77 @@
+# Adventure sites. Encounters are threats in order from the entrance to the deepest point.
+# Creatures and hazards are pools: the generator keeps what fits the party's level.
+
+- type: dungeonConfig
+  id: CFLayoutCave
+  layers:
+  - !type:NoiseDistanceDunGen
+    size: 70, 70
+    distanceConfig: !type:DunGenEuclideanSquaredDistance
+      blendWeight: 0.5
+    layers:
+    - tile: CFFloorDirt
+      threshold: 0.50
+      noise:
+        frequency: 0.030
+        noiseType: OpenSimplex2
+        fractalType: FBm
+        octaves: 5
+        lacunarity: 2
+        gain: 0.5
+
+- type: adventureSite
+  id: Cave
+  layout: CFLayoutCave
+  wall: CFSiteWallStone
+  encounters:
+  - Low
+  - Moderate
+  - Moderate
+  - Severe
+  creatures:
+  - CFMobGiantRat
+  - CFMobGiantFrog
+  - CFMobHuntingSpider
+  - CFMobSewerOoze
+  - CFMobVelociraptor
+  - CFMobBoar
+  - CFMobGrizzlyBear
+  - CFKoboldWarrior
+  hazards:
+  - CFSpikeTrapMonster
+  hazardCount: 3
+
+# Uses a stock damage set: CFRockStructural is part of the materials port on another branch.
+# Once that lands, the site can use CFWallStone directly.
+- type: entity
+  parent: CFWallStone
+  id: CFSiteWallStone
+  suffix: Adventure site
+  components:
+  - type: Damageable
+    damageModifierSet: Rock
+
+- type: entity
+  parent: PortalBlue
+  id: CFAdventurePortal
+  name: rift
+  description: A tear in the world. It leads somewhere else.
+  components:
+  - type: Portal
+    canTeleportToOtherMaps: true
+
+- type: entity
+  id: CFAdventureRift
+  name: sealed rift
+  description: A crack in the world. Touch it to open the way.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Transform
+    anchored: true
+  - type: Clickable
+  - type: InteractionOutline
+  - type: Sprite
+    sprite: /Textures/Effects/portal.rsi
+    state: portal-red
+  - type: CFAdventureRift
+    site: Cave

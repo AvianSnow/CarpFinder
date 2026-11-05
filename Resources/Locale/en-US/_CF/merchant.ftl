@@ -1,0 +1,13 @@
+cf-stack-copper-coin = copper coin
+cf-stack-silver-coin = silver coin
+cf-stack-gold-coin = gold coin
+cf-stack-platinum-coin = platinum coin
+cf-coins-take = Take out coins
+cf-coins-pocketed = You pocket { $amount }.
+cf-merchant-title = Merchant
+cf-merchant-hint = Place goods on the counter to sell them.
+cf-merchant-no-value = not wanted
+cf-merchant-total = Offer: { $amount }
+cf-merchant-sell = Sell
+cf-merchant-buy = Browse the shop
+cf-merchant-sold = You sell your goods for { $amount }.

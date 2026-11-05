@@ -1,0 +1,134 @@
+- type: entity
+  id: CFBaseSeed
+  parent: BaseItem
+  abstract: true
+  categories: [ ForkFiltered ]
+  components:
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: _CP14/Objects/Specific/Farming/seeds.rsi
+  - type: CFBulk
+    bulk: 0
+  - type: CFItemPrice
+    copper: 5 # ours: PF2e prints no seeds
+
+- type: entity
+  id: CFSeedWheat
+  name: wheat seeds
+  description: Small wheat seeds. What will you do with them? Grind them into flour, or plant them again?
+  parent: CFBaseSeed
+  components:
+  - type: Sprite
+    layers:
+    - state: bag
+    - state: wheat
+  - type: CFSeed
+    plantProto: CFPlantWheat
+  - type: StaticPrice
+    price: 0.4
+
+- type: entity
+  id: CFSeedPumpkin
+  name: pumpkin seeds
+  description: Pumpkin seeds. Some pumpkin seems to have been gutted and butchered.
+  parent: CFBaseSeed
+  components:
+  - type: Sprite
+    layers:
+    - state: bag
+    - state: pumpkin
+  - type: CFSeed
+    plantProto: CFPlantPumpkin
+  - type: StaticPrice
+    price: 1
+
+- type: entity
+  id: CFSeedCabbage
+  name: cabbage seeds
+  description: Oh, no, my cabbage!
+  parent: CFBaseSeed
+  components:
+  - type: Sprite
+    layers:
+    - state: bag
+    - state: cabbage
+  - type: CFSeed
+    plantProto: CFPlantCabbage
+  - type: StaticPrice
+    price: 0.6
+
+- type: entity
+  id: CFSeedCucumber
+  name: cucumber seeds
+  description: Are cucumber seeds. You know what to do with them.
+  parent: CFBaseSeed
+  components:
+  - type: Sprite
+    layers:
+    - state: bag
+    - state: cucumber
+  - type: CFSeed
+    plantProto: CFPlantCucumber
+  - type: StaticPrice
+    price: 1
+
+- type: entity
+  id: CFSeedTomato
+  name: tomato seeds
+  description: It looks like powder! They're so small, these seeds.
+  parent: CFBaseSeed
+  components:
+  - type: Sprite
+    layers:
+    - state: bag
+    - state: tomato
+  - type: CFSeed
+    plantProto: CFPlantTomatoes
+  - type: StaticPrice
+    price: 0.4
+
+- type: entity
+  id: CFSeedPepper
+  name: pepper seeds
+  description: Pepper seeds, with a peppercorn inside.
+  parent: CFBaseSeed
+  components:
+  - type: Sprite
+    layers:
+    - state: bag
+    - state: pepper
+  - type: CFSeed
+    plantProto: CFPlantPepper
+  - type: StaticPrice
+    price: 2
+
+- type: entity
+  id: CFSeedSage
+  name: sage seeds
+  description: Sage seeds. It's time to grow some fun herbs!
+  parent: CFBaseSeed
+  components:
+  - type: Sprite
+    layers:
+    - state: bag
+    - state: sage
+  - type: CFSeed
+    plantProto: CFPlantSage
+  - type: StaticPrice
+    price: 5
+
+- type: entity
+  id: CFSeedCotton
+  name: cotton seeds
+  description: Cotton seeds. It's time to grow some pants!
+  parent: CFBaseSeed
+  components:
+  - type: Sprite
+    layers:
+    - state: bag
+    - state: cotton
+  - type: CFSeed
+    plantProto: CFPlantCotton
+  - type: StaticPrice
+    price: 1

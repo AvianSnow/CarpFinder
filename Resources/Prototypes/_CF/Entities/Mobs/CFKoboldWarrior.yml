@@ -48,6 +48,11 @@
   - type: CFCombatant
     level: -1
     armorClass: 16
+    diesAtZeroHp: true
+    printedFortitude: 3
+    printedReflex: 7
+    printedWill: 3
+    printedPerception: 3
     # Stat block attacks are spear +3 and sling +5; abilities and proficiency give +2 and +4.
     strikeAdjustment: 1
     maxHp: 7

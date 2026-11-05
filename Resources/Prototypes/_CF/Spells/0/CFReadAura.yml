@@ -1,8 +1,8 @@
 ﻿- type: entity
-  parent: CFSpellTarget
+  parent: CFSpellObject
   id: CFReadAura
   name: Read Aura
-  description: You study the target's magic.
+  description: You learn whether an object or creature is magical.
   components:
   - type: Sprite
     sprite: Objects/Magic/magicactions.rsi
@@ -19,7 +19,8 @@
     filter: All
   - type: CFDegreeEffects
     landed:
-    - !type:CFPopupEffect
-      text: cf-spell-affected
+    - !type:CFReadAuraEffect
+  - type: TargetAction
+    range: 6
   - type: EntityTargetAction
     canTargetSelf: true

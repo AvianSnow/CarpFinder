@@ -1,0 +1,31 @@
+# Player Core clothing for harsh climates.
+
+- type: entity
+  parent: ClothingOuterWinterCoat
+  id: CFClothingColdWeather
+  name: cold-weather clothing
+  description: Warm layers. Negates severe cold and eases extreme cold.
+  components:
+  - type: CFTemperatureGear
+    kind: Cold
+  - type: CFItem
+    level: 0
+  - type: CFBulk
+    bulk: 0.1
+  - type: CFItemPrice
+    copper: 40 # 4 sp
+
+- type: entity
+  parent: ClothingOuterWinterCoat
+  id: CFClothingDesert
+  name: desert clothing
+  description: Light, loose robes. Negates severe heat, but not over armor.
+  components:
+  - type: CFTemperatureGear
+    kind: Heat
+  - type: CFItem
+    level: 0
+  - type: CFBulk
+    bulk: 0.1
+  - type: CFItemPrice
+    copper: 40 # 4 sp

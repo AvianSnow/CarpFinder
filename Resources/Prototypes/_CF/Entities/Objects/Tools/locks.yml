@@ -1,0 +1,92 @@
+# Lock grades (Player Core): add one as a second parent, as in CFWoodDoorLocked below.
+# Force Open depends on the door, so set forceDc on the door when the default does not fit.
+# Stock click, verb and emag behaviour is off: only a key, a pick, or force gets past a CF lock.
+
+- type: entity
+  abstract: true
+  id: CFBaseLock
+  components:
+  - type: Lock
+    useAccess: false
+    unlockOnClick: false
+    showLockVerbs: false
+    breakOnAccessBreaker: false
+  - type: CFLock
+
+- type: entity
+  abstract: true
+  parent: CFBaseLock
+  id: CFLockPoor
+  components:
+  - type: CFLock
+    dc: 15
+    successesNeeded: 2
+
+- type: entity
+  abstract: true
+  parent: CFBaseLock
+  id: CFLockSimple
+  components:
+  - type: CFLock
+    dc: 20
+    successesNeeded: 3
+
+- type: entity
+  abstract: true
+  parent: CFBaseLock
+  id: CFLockAverage
+  components:
+  - type: CFLock
+    dc: 25
+    successesNeeded: 4
+
+- type: entity
+  abstract: true
+  parent: CFBaseLock
+  id: CFLockGood
+  components:
+  - type: CFLock
+    dc: 30
+    successesNeeded: 5
+
+- type: entity
+  abstract: true
+  parent: CFBaseLock
+  id: CFLockSuperior
+  components:
+  - type: CFLock
+    dc: 40
+    successesNeeded: 6
+
+- type: entity
+  parent: [ WoodDoor, CFLockSimple ]
+  id: CFWoodDoorLocked
+  suffix: Locked
+  components:
+  - type: CFLock
+    forceDc: 20 # flimsy wooden door: expert task
+    keyId: Iron
+
+- type: entity
+  abstract: true
+  parent: BaseItem
+  id: CFBaseKey
+  name: key
+  description: A small, intricate piece of metal that opens some locks.
+  components:
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: _CP14/Objects/keys.rsi
+  - type: CFBulk
+    bulk: 0
+
+- type: entity
+  parent: CFBaseKey
+  id: CFKeyIron
+  name: iron key
+  components:
+  - type: Sprite
+    state: key_iron
+  - type: CFKey
+    keyId: Iron

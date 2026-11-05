@@ -1,0 +1,26 @@
+<DefaultWindow xmlns="https://spacestation14.io"
+               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+               x:Class="Content.Client.CF.Crafting.CFWorkbenchWindow"
+               Title="{Loc 'cf-craft-window-title'}"
+               SetSize="640 420"
+               MinSize="480 300">
+    <BoxContainer Orientation="Horizontal">
+        <BoxContainer Orientation="Vertical" HorizontalExpand="True" Margin="0 0 8 0">
+            <LineEdit Name="SearchBar" PlaceHolder="{Loc 'cf-craft-window-search'}" Margin="0 0 0 4" />
+            <Label Name="EmptyLabel" Text="{Loc 'cf-craft-window-empty'}" Visible="False" />
+            <ScrollContainer VerticalExpand="True" HScrollEnabled="False">
+                <BoxContainer Name="RecipeList" Orientation="Vertical" HorizontalExpand="True" />
+            </ScrollContainer>
+        </BoxContainer>
+        <BoxContainer Orientation="Vertical" HorizontalExpand="True">
+            <EntityPrototypeView Name="ItemView" Scale="2,2" MinSize="64 64" HorizontalAlignment="Left" />
+            <RichTextLabel Name="ItemName" />
+            <RichTextLabel Name="ItemDescription" VerticalExpand="True" />
+            <Label Text="{Loc 'cf-craft-window-materials'}" Margin="0 4 0 0" />
+            <BoxContainer Name="Requirements" Orientation="Vertical" />
+            <Label Name="DcLabel" />
+            <Label Name="BlockedLabel" FontColorOverride="#d9534f" Visible="False" />
+            <Button Name="CraftButton" Text="{Loc 'cf-craft-window-craft'}" Disabled="True" />
+        </BoxContainer>
+    </BoxContainer>
+</DefaultWindow>

@@ -1,3 +1,4 @@
+using Content.Shared.CF.Shop;
 using System.Linq;
 using Content.Client.CharacterInfo;
 using Content.Client.Gameplay;
@@ -54,6 +55,7 @@ public sealed partial class CharacterUIController : UIController, IOnStateEntere
 
         _window.OnClose += DeactivateButton;
         _window.OnOpen += ActivateButton;
+        _window.OnOpen += RefreshShopTab;
         _window.OnClose += _window.SpellsTab.CancelDrag;
         _window.SpellsTab.OnCast += () => _window?.Close();
 
@@ -108,6 +110,11 @@ public sealed partial class CharacterUIController : UIController, IOnStateEntere
         _window?.SpellsTab.FrameUpdate();
         if (_window is { IsOpen: true } && _player.LocalEntity is { } entity)
             _window.SheetTab.UpdateXp(entity);
+    }
+
+    private void RefreshShopTab()
+    {
+        _window?.SetShopVisible(EntityManager.HasComponent<CFShopAccessComponent>(_player.LocalEntity));
     }
 
     private void DeactivateButton()

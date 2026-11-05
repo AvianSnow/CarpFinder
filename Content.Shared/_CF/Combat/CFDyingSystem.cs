@@ -159,6 +159,12 @@ public sealed partial class CFDyingSystem : EntitySystem
         EntityUid? origin = null)
     {
         combatant.CurrentHp = 0;
+        if (combatant.DiesAtZeroHp)
+        {
+            Die(target, combatant, origin);
+            return;
+        }
+
         var dying = fromCriticalHit ? 2 : 1;
         dying += combatant.Wounded;
         SetDying(target, combatant, dying, origin, knockedOut: true);
@@ -406,6 +412,12 @@ public sealed partial class CFDyingSystem : EntitySystem
 
         SyncSs14Dead(target, origin);
         PopupPvs(Loc.GetString("cf-combat-dying-death"), target, PopupType.LargeCaution);
+
+        if (combatant.DiesAtZeroHp && origin is { } killer && killer != target)
+        {
+            var defeated = new CFCreatureDefeatedEvent(killer, combatant.Level);
+            RaiseLocalEvent(target, ref defeated);
+        }
     }
 
     private void PopupPvs(string message, EntityUid target, PopupType type)
@@ -550,3 +562,7 @@ public sealed partial class CFDyingSystem : EntitySystem
 /// </summary>
 [ByRefEvent]
 public readonly record struct CFCombatantRevivedEvent;
+
+/// <summary>Raised on a monster when <see cref="Killer"/> brings it to 0 HP. The server awards XP for it.</summary>
+[ByRefEvent]
+public readonly record struct CFCreatureDefeatedEvent(EntityUid Killer, int Level);

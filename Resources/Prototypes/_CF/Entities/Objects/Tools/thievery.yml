@@ -1,0 +1,52 @@
+- type: entity
+  parent: BaseItem
+  id: CFThievesToolkit
+  name: thieves' toolkit
+  description: Picks and tools for opening locks and disabling devices.
+  components:
+  - type: Item
+    size: Small
+    storedRotation: -90
+  - type: Sprite
+    sprite: _CP14/Objects/keys.rsi
+    state: lockpick_iron
+  - type: CFThievesToolkit
+  - type: CFItem
+    level: 0
+  - type: CFBulk
+    bulk: 0.1
+  - type: CFItemPrice
+    copper: 300 # 3 gp
+
+- type: entity
+  parent: BaseItem
+  id: CFCrowbar
+  name: crowbar
+  description: A bar of iron for prying things open. Forcing something open without one is harder.
+  components:
+  - type: Item
+    size: Normal
+    sprite: Objects/Tools/crowbar.rsi
+  - type: Sprite
+    sprite: Objects/Tools/crowbar.rsi
+    state: icon
+  - type: CFCrowbar
+  - type: CFItem
+    level: 0
+  - type: CFBulk
+    bulk: 0.1
+  - type: CFItemPrice
+    copper: 50 # 5 sp
+
+- type: entity
+  parent: CFCrowbar
+  id: CFCrowbarLevered
+  name: levered crowbar
+  description: A crowbar with a better grip and a longer lever.
+  components:
+  - type: CFCrowbar
+    itemBonus: 1
+  - type: CFItem
+    level: 3
+  - type: CFItemPrice
+    copper: 2000 # 20 gp

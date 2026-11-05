@@ -80,26 +80,69 @@ public sealed partial class CFExperienceSystem : EntitySystem
     /// </summary>
     public int AwardHazard(EntityUid user, int hazardLevel, bool complex)
     {
+        CFExperienceAwards.TryHazard(complex, hazardLevel - PartyLevel(user), out var xp);
+        return Award(user, xp);
+    }
+
+    /// <summary>XP for defeating a creature, by its level against the party level. Shared like hazard XP.</summary>
+    public int AwardCreature(EntityUid user, int creatureLevel)
+    {
+        CFExperienceAwards.TryAdversary(creatureLevel - PartyLevel(user), out var xp);
+        return Award(user, xp);
+    }
+
+    private int PartyLevel(EntityUid user)
+    {
         var factionId = CompOrNull<CFFactionComponent>(user)?.Faction.Id;
         var partyLevel = CompOrNull<CFCombatantComponent>(user)?.Level ?? 1;
+        if (factionId == null)
+            return partyLevel;
+
+        var query = EntityQueryEnumerator<CFExperienceComponent, CFFactionComponent, CFCombatantComponent>();
+        while (query.MoveNext(out _, out _, out var faction, out var combat))
+        {
+            if (faction.Faction.Id == factionId)
+                partyLevel = Math.Max(partyLevel, combat.Level);
+        }
+
+        return partyLevel;
+    }
+
+    /// <summary>The user's company: its highest level, and how many characters are in it.</summary>
+    public (int Level, int Size) Party(EntityUid user)
+    {
+        var size = 0;
+        var factionId = CompOrNull<CFFactionComponent>(user)?.Faction.Id;
         if (factionId != null)
         {
-            var query = EntityQueryEnumerator<CFExperienceComponent, CFFactionComponent, CFCombatantComponent>();
-            while (query.MoveNext(out _, out _, out var faction, out var combat))
+            var query = EntityQueryEnumerator<CFExperienceComponent, CFFactionComponent>();
+            while (query.MoveNext(out _, out var faction))
             {
                 if (faction.Faction.Id == factionId)
-                    partyLevel = Math.Max(partyLevel, combat.Level);
+                    size++;
             }
         }
 
-        if (!CFExperienceAwards.TryHazard(complex, hazardLevel - partyLevel, out var xp) || xp <= 0)
+        return (PartyLevel(user), Math.Max(1, size));
+    }
+
+    private int Award(EntityUid user, int xp)
+    {
+        if (xp <= 0)
             return 0;
 
+        var factionId = CompOrNull<CFFactionComponent>(user)?.Faction.Id;
         if (factionId != null && AwardFaction(factionId, xp).Count > 0)
             return xp;
 
         AddXp(user, xp);
         return xp;
+    }
+
+    [SubscribeLocalEvent]
+    private void OnCreatureDefeated(Entity<CFCombatantComponent> ent, ref CFCreatureDefeatedEvent args)
+    {
+        AwardCreature(args.Killer, args.Level);
     }
 
     [SubscribeLocalEvent]

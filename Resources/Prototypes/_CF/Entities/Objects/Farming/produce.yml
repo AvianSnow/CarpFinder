@@ -1,0 +1,235 @@
+# Whole vegetables. Slices and cooked versions come with cooking. If the Consumables port lands with these ids, delete this file.
+
+- type: entity
+  id: CFFoodCabbage
+  parent: FoodInjectableBase
+  categories: [ ForkFiltered ]
+  name: cabbage
+  description: Green edible ball.
+  components:
+  - type: Item
+    size: Normal
+  - type: Sprite
+    sprite: _CP14/Objects/Flora/Farm/cabbage.rsi
+    layers:
+      - state: base1
+        map: [ "random" ]
+  - type: RandomSprite
+    available:
+      - random:
+          base1: ""
+          base2: ""
+          base3: ""
+  - type: Solution
+    solution:
+      reagents:
+      - ReagentId: Nutriment
+        Quantity: 3
+      - ReagentId: Vitamin
+        Quantity: 0.5
+
+- type: entity
+  id: CFFoodPumpkin
+  parent: FoodInjectableBase
+  categories: [ ForkFiltered ]
+  name: pumpkin
+  description: Big, cool pumpkin.
+  components:
+  - type: Item
+    size: Normal
+  - type: Sprite
+    sprite: _CP14/Objects/Flora/Farm/pumpkin.rsi
+    layers:
+      - state: base1
+        map: [ "random" ]
+  - type: RandomSprite
+    available:
+      - random:
+          base1: ""
+          base2: ""
+          base3: ""
+          base4: ""
+  - type: Solution
+    solution:
+      reagents:
+      - ReagentId: PumpkinFlesh
+        Quantity: 10
+      - ReagentId: Vitamin
+        Quantity: 2
+
+- type: entity
+  id: CFFoodPotato
+  parent: FoodInjectableBase
+  categories: [ ForkFiltered ]
+  name: potato
+  description: Cute potato.
+  components:
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: _CP14/Objects/Flora/Farm/potato.rsi
+    layers:
+      - state: base1
+        map: [ "random" ]
+  - type: RandomSprite
+    available:
+      - random:
+          base1: ""
+          base2: ""
+          base3: ""
+          base4: ""
+  - type: Solution
+    solution:
+      reagents:
+      - ReagentId: Nutriment
+        Quantity: 2.33
+      - ReagentId: Vitamin
+        Quantity: 1.14
+  - type: CFSeed
+    plantProto: CFPlantPotato #TODO sliceable potato
+
+- type: entity
+  id: CFFoodCucumber
+  parent: FoodInjectableBase
+  categories: [ ForkFiltered ]
+  name: cucumber
+  description: An oblong green vegetable. Refreshing!
+  components:
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: _CP14/Objects/Flora/Farm/cucumber.rsi
+    layers:
+      - state: base1
+        map: [ "random" ]
+  - type: RandomSprite
+    available:
+      - random:
+          base1: ""
+          base2: ""
+          base3: ""
+          base4: ""
+  - type: Solution
+    solution:
+      reagents:
+      - ReagentId: Nutriment
+        Quantity: 1.33
+      - ReagentId: Vitamin
+        Quantity: 1.14
+      - ReagentId: Water
+        Quantity: 3
+
+- type: entity
+  id: CFFoodTomatoes
+  parent: [FoodInjectableBase, ItemHeftyBase]
+  categories: [ ForkFiltered ]
+  name: tomatoes
+  description: A red, juicy tomato. You just want to throw it in someone's face!
+  components:
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: _CP14/Objects/Flora/Farm/tomatoes.rsi
+    layers:
+      - state: base1
+        map: [ "random" ]
+  - type: RandomSprite
+    available:
+      - random:
+          base1: ""
+          base2: ""
+          base3: ""
+  - type: Solution
+    solution:
+      reagents:
+      - ReagentId: Nutriment
+        Quantity: 1
+      - ReagentId: Vitamin
+        Quantity: 1.71
+      - ReagentId: JuiceTomato
+        Quantity: 6
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 1
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: desecration
+      - !type:SpillBehavior
+        solution: food
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: Extractable
+    grindableSolutionName: food
+    juiceSolution:
+      reagents:
+      - ReagentId: JuiceTomato
+        Quantity: 10
+  - type: Damageable
+  - type: DamageOnHighSpeedImpact
+    minimumSpeed: 0.1
+    damage:
+      types:
+        Blunt: 1
+
+- type: entity
+  id: CFFoodPepper
+  parent: FoodInjectableBase
+  categories: [ ForkFiltered ]
+  name: pepper
+  description: Red and sweetish.
+  components:
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: _CP14/Objects/Flora/Farm/pepper.rsi
+    layers:
+      - state: base1
+        map: [ "random" ]
+  - type: RandomSprite
+    available:
+      - random:
+          base1: ""
+          base2: ""
+          base3: ""
+  - type: Solution
+    solution:
+      reagents:
+      - ReagentId: Nutriment
+        Quantity: 2.67
+      - ReagentId: Vitamin
+        Quantity: 3.43
+
+- type: entity
+  id: CFFoodOnion
+  parent: FoodInjectableBase
+  categories: [ ForkFiltered ]
+  name: onion
+  description: If you eat too much, you can cry tears of joy.
+  components:
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: _CP14/Objects/Flora/Farm/onion.rsi
+    layers:
+      - state: base1
+        map: [ "random" ]
+  - type: RandomSprite
+    available:
+      - random:
+          base1: ""
+          base2: ""
+          base3: ""
+  - type: Solution
+    solution:
+      reagents:
+      - ReagentId: Nutriment
+        Quantity: 3
+      - ReagentId: Vitamin
+        Quantity: 2.29
+      - ReagentId: Allicin
+        Quantity: 3
+  - type: CFSeed
+    plantProto: CFPlantOnion

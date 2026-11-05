@@ -86,7 +86,9 @@ public static class CFMelee
         else
             ability = abilities.GetModifier(CFAbility.Strength);
 
-        var bonus = ability + proficiency + combatant.StrikeAdjustment;
+        var bonus = !weapon.Ranged && combatant.PrintedAttack is { } printed
+            ? printed
+            : ability + proficiency + combatant.StrikeAdjustment;
         bonus += RangeIncrementPenalty(distanceFeet, weapon.RangeIncrementFeet);
         if (!ignoreVolley)
             bonus += VolleyPenalty(distanceFeet, weapon.Traits.Volley);
@@ -97,8 +99,14 @@ public static class CFMelee
     /// Damage modifier. Melee and thrown add Strength. Propulsive adds half a positive Strength
     /// (all of a negative one). Other ranged weapons add nothing.
     /// </summary>
-    public static int DamageBonus(CFAbilityScoreComponent abilities, CFStrikeWeaponStats weapon)
+    public static int DamageBonus(
+        CFAbilityScoreComponent abilities,
+        CFStrikeWeaponStats weapon,
+        CFCombatantComponent? combatant = null)
     {
+        if (!weapon.Ranged && combatant?.PrintedDamage is { } printed)
+            return printed;
+
         var str = abilities.GetModifier(CFAbility.Strength);
         if (!weapon.Ranged || weapon.ThrownStrike)
             return str;

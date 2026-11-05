@@ -1,0 +1,75 @@
+# Weather status effects, from CP14's weather.yml. Rain waters exposed crops and puts out fires.
+# Storm lightning and the mana mists are not ported.
+
+- type: entity
+  parent: WeatherBase
+  id: CFWeatherRain
+  components:
+  - type: WeatherStatusEffect
+    sprite:
+      sprite: /Textures/_CP14/Effects/weather.rsi
+      state: rain
+    sound:
+      collection: Rain
+      params:
+        loop: true
+        volume: -6
+  - type: CFWeatherEffects
+    extinguishChance: 0.2
+    waterChance: 0.5
+
+- type: entity
+  parent: WeatherBase
+  id: CFWeatherStorm
+  components:
+  - type: WeatherStatusEffect
+    sprite:
+      sprite: /Textures/_CP14/Effects/weather.rsi
+      state: storm
+    sound:
+      path: /Audio/Effects/Weather/rain_heavy.ogg
+      params:
+        loop: true
+        volume: -6
+  - type: CFWeatherEffects
+    extinguishChance: 0.4
+    waterChance: 0.5
+
+- type: entity
+  parent: WeatherBase
+  id: CFWeatherMist
+  components:
+  - type: WeatherStatusEffect
+    color: "#a9c4bfcc"
+    scrolling: 0.04, 0.06
+    sprite:
+      sprite: /Textures/_CP14/Effects/parallax.rsi
+      state: noise
+
+- type: entity
+  parent: WeatherBase
+  id: CFWeatherSnowLight
+  components:
+  - type: WeatherStatusEffect
+    sprite:
+      sprite: /Textures/_CP14/Effects/weather.rsi
+      state: snowfall_light
+    sound:
+      path: /Audio/Effects/Weather/snowstorm_weak.ogg
+      params:
+        loop: true
+        volume: -6
+
+- type: entity
+  parent: WeatherBase
+  id: CFWeatherSnowHeavy
+  components:
+  - type: WeatherStatusEffect
+    sprite:
+      sprite: /Textures/_CP14/Effects/weather.rsi
+      state: snowfall_heavy
+    sound:
+      path: /Audio/Effects/Weather/snowstorm.ogg
+      params:
+        loop: true
+        volume: -6

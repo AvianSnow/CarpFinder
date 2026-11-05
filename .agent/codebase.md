@@ -1,0 +1,204 @@
+# CarpFinder codebase map
+
+Where things are and how they connect. Read this first when you need to find something. Rules live in `Projectinstructions.md` and `ss14rules.md`. The feature plan is `roadmap.md`.
+
+CarpFinder (CF) is a Space Station 14 fork that replaces SS14's combat and character rules with Pathfinder 2e Remaster, played in real time. SS14 still supplies the engine, maps, hands, inventory, movement, chat, and UI framework. CF code sits on top of those through events, and edits upstream files as little as it can.
+
+## Top-level layout
+
+| Path | What it is |
+|---|---|
+| `Content.Shared/_CF/` | Most CF logic. Components, prototypes, and systems both sides run. |
+| `Content.Server/_CF/` | Server-only: spawning a character, XP, shop, companions, fire spread. |
+| `Content.Client/_CF/` | HUD, character sheet, shop UI, lobby character builder, targeting overlays. |
+| `Content.IntegrationTests/Tests/_CF/` | CF integration tests. All run on the dev map through `CFDevMap`. |
+| `Resources/Prototypes/_CF/` | CF YAML. About 900 of the files are characters, mostly one feat per file. |
+| `Resources/Locale/en-US/_CF/` | CF Fluent strings, one file per area (`combat.ftl`, `items.ftl`, `spells.ftl`, ...). |
+| `Resources/Textures/_CP14`, `_CE`, `_DV`, `_Starlight`, ... | Imported art. It stays in its fork folder with its `meta.json` license. |
+| `RobustToolbox/` | Engine submodule. Do not edit. |
+| `.agent/` | These docs. `.agents` (with an s) is in `.gitignore`, so do not put docs there. |
+| `C:\project\crystall-punk-14` | Read-only reference for porting. |
+
+## Shared systems by folder
+
+Everything below is under `Content.Shared/_CF/`.
+
+| Folder | Holds | Start at |
+|---|---|---|
+| `Actions/` | Action stamina, multiple attack penalty, radial activities | `CFActionPoolSystem`, `CFActivitySystem` |
+| `Alchemy/` | Drinkable and feedable potions | `CFAlchemicalItemSystem` |
+| `Character/` | Prototypes for ancestry, class, feat, heritage, background, spell; skill and attribute math | `CFAttributeMath`, `CFSkills` |
+| `Checks/` | Degrees of success, defenses, casting DCs | `CFDegrees`, `CFDefense`, `CFCasting` |
+| `Combat/` | Strikes, conditions, dying, flanking, armor, shields, weapons, runes | `CFStrikeSystem`, `CFConditionSystem` |
+| `Companions/` | Pet data and math. The AI is server-side. | `CFPetMath` |
+| `DamageTypes/` | `cfDamageType` and its link to SS14 damage | `CFDamageTypes` |
+| `Effects/` | Target, roll a check, apply effects. Bonuses and resistances. | `CFEffectSystem`, `CFBonusSystem` |
+| `Factions/` | Party, Opposition, Neutral | `CFFactionSystem` |
+| `Hazards/` | Traps: noticing, triggering, disabling | `CFHazardSystem` |
+| `Items/` | Item level, rarity, Bulk, encumbrance | `CFEncumbranceSystem` |
+| `Locks/` | Keys, Pick a Lock, Force Open, on top of the stock `Lock` | `CFLockSystem` |
+| `Outdoors/` | The outdoor map component, temperature rules, weather effects. The logic is server-side. | `CFEnvironmentRules`, `CFOutdoorsWorldSystem` |
+| `Farming/` | Plant, seed and harvest data. The logic is server-side. | `CFFarmingSystem` |
+| `Adventure/` | Site prototypes, encounter and treasure tables. Generation is server-side. | `CFEncounterRules`, `CFAdventureSiteSystem` |
+| `Magic/` | Light, Detect Magic, Read Aura, and what counts as magical | `CFMagicSenseSystem` |
+| `Crafting/` | Recipes, formulas, Craft DCs. The workbench logic is server-side. | `CFCraftingRules`, `CFWorkbenchSystem` |
+| `Preferences/` | The build stored on `HumanoidCharacterProfile` | `CFCharacterBuildData` |
+| `Shop/` | Coins, prices, the merchant counter UI. Selling and coin logic are server-side. | `CFCoins`, `CFMerchantSystem`, `CFCoinSystem` |
+| `Spells/` | Paying for a cast, Prestidigitation | `CFSpellSystem` |
+| `Traits/` | `cfTrait` prototypes and `CFTrait` | `CFTraitPrototype` |
+| `Temperature/`, `TileEditTool/`, `Wallpaper/`, `Time/` | Ported CP14 systems and the world clock | |
+
+Server: `Character/` (`CFCharacterSpawnSystem`, `CFExperienceSystem`, `CFGiveXpCommand`), `Companions/CFCompanionSystem`, `Shop/CFShopSystem`, `Spells/CFPrestidigitationSystem`, `Temperature/`, `Materials/`.
+
+Client: `Hud/` (the in-game bar and radial menu), `Character/` (sheet, spells tab, shop), `Combat/` (floating numbers, flanking icon), `Effects/` (area and target overlays, mode and volley menus), `Lobby/UI/` (character builder, see `lobby-overlay.md`), `UserInterface/Systems/Character/` (the character window overlay).
+
+## From lobby to a playable character
+
+1. The lobby builder (`Content.Client/_CF/Lobby/UI/`) writes to `HumanoidCharacterProfile.CFBuild`.
+2. `CFCharacterSpawnSystem.OnPlayerSpawnComplete` runs `ApplyBuild`: abilities, `CFCombatant` (level, AC, HP, proficiencies), speed, spellbook.
+3. `GrantActivities` grants the basic skill actions, then class and feat actions. `CFCombatOptionsComponent` holds the class and feat flags that Strikes read (`SneakAttack`, `ReactiveStrike`, `ReactiveShield`, ...).
+4. Later feats wait on `CFExperienceComponent` and apply on level up through `ApplyFeat`.
+
+Details: `character-builder.md`.
+
+## A turn in real time
+
+There are no turns. `CFActionPoolComponent` stands in for them.
+
+- Each creature holds `MaxActions` (default 3) of stamina and regains one every `RegenSeconds` (default 1.8).
+- An action on the wheel pays through `CFRadialSlotComponent`. An activity outside the wheel calls `CFActionPoolSystem.TrySpendActions`.
+- A full pool counts as a new turn. `CFTurnRefilledEvent` fires, frightened eases, reactions come back, and `MapAttacks` clears.
+- Anything PF2e times "until your next turn" uses a fixed 6 seconds instead.
+
+## A Strike
+
+`CFStrikeSystem` takes over stock melee and projectile hits.
+
+1. `MeleeHitEvent` on a `CFMeleeWeapon`, or on fists, sets `Handled` so stock damage never happens. Ranged Strikes come from `BeforeProjectileHitEvent` and thrown ones from `ThrowDoHitEvent`.
+2. `ResolveStrike` checks faction, sanctuary, and flat checks, then builds the attack bonus: abilities, proficiency, MAP, bonuses, weapon traits.
+3. It builds AC: base, off-guard, frightened, clumsy, bonuses, raised shield.
+4. It rolls with `CFDegrees.DegreeOfSuccess`, then `AdjustDefense` gives reactions a chance (Reactive Shield, Nimble Dodge).
+5. On a hit it rolls damage, applies resistances, Shield Block, and hardness, and writes `CFCombatant.CurrentHp`.
+6. `CFDyingSystem` handles 0 HP. A creature with `diesAtZeroHp` dies at once and is worth XP; everyone else goes dying. The SS14 damage bar is rewritten from CF HP, never summed (see `ss14rules.md`).
+
+Stock mobs and objects get combat stats on first contact from `CFCombatBridgeSystem`: mobs act as Commoners, objects get a `cfMaterial`.
+
+## Spells, bombs, traps: the effect pipeline
+
+Anything that targets, rolls, and applies effects is data on the source entity: `CFTargeting`, `CFAreaEffect`, `CFCheck`, `CFDegreeEffects`, plus `CFProjectileDelivery`, `CFModeChoice`, `CFHeighten`. `CFEffectSystem` runs it. Effect classes are in `Effects/Types/`, written in YAML as `!type:CFDamageEffect` and so on. Do not write a new resolver.
+
+`CFSpellSystem` only pays for the cast. `CFHazardSystem` only decides when a trap fires. Both hand over to `CFEffectSystem`.
+
+## Input: how a player does each thing
+
+| Input | Result | Code |
+|---|---|---|
+| Combat mode, left-click | Strike with the held weapon, fists if the hand is empty, or a shield bash | `CFStrikeSystem` |
+| Combat mode, right-click, CF weapon | Stock wide swing, resolved as Strikes | `CFStrikeSystem` |
+| Combat mode, right-click, weapon with the `Shove` or `Disarm` trait and no `Sweep` | That maneuver instead of the wide swing | `CFActivitySystem.OnDisarmAttempt` |
+| Combat mode, right-click, empty hand | Disarm if the target holds something, otherwise Shove | `CFActivitySystem.OnDisarmAttempt` |
+| Combat mode, right-click, shield | Shove, always | `CFActivitySystem.OnDisarmAttempt` |
+| Use in hand (Z), shield | Raise (1 action) or lower (free) | `CFShieldSystem.OnUseInHand` |
+| Pull a living enemy | Grapple (1 action). The pull only starts if it lands. | `CFActivitySystem.OnPullAttempt` |
+| Pull a friend, ally, downed creature, or object | Stock free pull | |
+| Press a move key while grabbed | Escape (1 action) | `CFConditionSystem.TryEscape` |
+| C while prone, or right-click yourself in combat mode | Stand (1 action) | `CFActionPoolSystem.OnStandFinished`, `OnForceStand` |
+| Point at a living enemy | Hunt Prey, Exploit Vulnerability, or Devise a Stratagem, by class (1 action) | `CFActivitySystem.OnPointedAt` |
+| Radial wheel or hotbar | Activities and spells | `CFActivitySystem`, `CFSpellSystem` |
+| Reactions | Not on the wheel. They resolve in code when triggered. | `CFConditionSystem.TrySpendReaction` |
+
+## Shields
+
+`CFShieldComponent.Raised` is the active state, and it lives on the item.
+
+- It stays up across turns. It ends when lowered, dropped, stored, or broken.
+- It counts in either hand, so a character can raise it, swap hands, and Strike with the weapon in the other hand. `CFShieldSystem.TryGetRaisedShield` is the one check for this.
+- Reactive Shield raises it through `AdjustDefense` without an action.
+- Shield Block needs a raised shield and spends the reaction.
+- Every shield is also a d4 martial weapon (the shield bash). It has to be: a shield must have a `MeleeWeapon` to reach the right-click at all, and left-click on a `MeleeWeapon` always swings. A new shield parents `CFBaseShield`, which brings `MeleeWeapon`, `CFWeapon`, and `CFMeleeWeapon`.
+- `CFShield.SpeedPenalty` applies while held. `CFShield.TakeCoverBonus` makes a raised shield offer a Take Cover verb. `CoverPosition` remembers the spot, and `RaisedBonus` stops counting it once the holder leaves. `CFActionPoolSystem.CountAttack` calls `EndCover`, so any attack roll ends it.
+
+## Shove and Disarm
+
+These replace stock's right-click for attackers with `CFCombatant` and `CFAbilityScore`. Stock mobs keep the stock behaviour.
+
+- `DoDisarm` in `SharedMeleeWeaponSystem` validates range and target, then raises `DisarmAttemptEvent`. `OnDisarmAttempt` cancels it there, before stock rolls its 75% fail chance, and resolves the PF2e check on the server.
+- Cancelling skips everything after that point in `AttemptAttack`, so the handler does that work itself: the action cost, `weapon.Attacking` (without it, holding the button repeats the maneuver), sound, and lunge.
+- The target choice copies stock, where `HandsSystem.OnDisarmed` drops a held item and only shoves when there is nothing to drop.
+- The faction check skips disarms, so party members can be shoved out of the way.
+- The stock client only sends a disarm for unarmed swings. The one marked line in `Content.Client/Weapons/Melee/MeleeWeaponSystem.cs` adds whatever `CFWeaponSystem.ManeuverOnRightClick` allows. The server applies the same rule, so a client cannot maneuver with a weapon that does not qualify.
+- A `Disarm` weapon against an empty-handed target shows a popup and costs nothing. A `Shove` weapon always shoves. A weapon with both follows the empty hand rule.
+- `Sweep` wins. A sweep weapon keeps its wide swing and gives up the maneuver.
+- Keybinds are fixed: do not edit upstream keybinds. Z is use in hand. Alt+Z is reserved for Swashbucklers choosing a finisher, so there is no weapon mode switch.
+
+Trip has no action. Three successful shoves in a row knock the target prone (`CFConditionSystem.NoteShove`). This is a deliberate change from PF2e, to keep the HUD small. Shoves from anyone count, a miss neither counts nor resets, and each must land within 6 seconds of the last.
+
+## Prone
+
+Prone is the stock `KnockedDownComponent`, read through `CFConditionSystem.IsProne`. Every source counts: shoves, spells, slips, and pressing C to crawl.
+
+- A prone creature is off-guard to everyone, melee or ranged, and takes −2 circumstance to attack rolls. `ProneAttackPenalty` does not stack with another circumstance penalty, such as a loosened grip.
+- `KnockProne` leaves players down until they press C. Anyone without a player keeps stock auto-stand, so NPCs need no loop of their own. Sleep and paralysis use the same rule.
+- Standing costs one action. `StandUpAttemptEvent` only checks the creature can pay, because it also runs for "could it stand?" checks and several times per stand. `OnStandFinished` takes the cost once, after stock's handler, and only if the creature really got up.
+- With no action, a stand waits: stock retries every tick while auto-stand is on, so pressing C queues it.
+- With no room to stand, stock turns auto-stand off and charges nothing here. A player presses C again. `OnStandFinished` turns it back on for anyone else, or an NPC would stay prone for good.
+- `KnockProne` still locks the creature down for 3 seconds before it can stand, and stock takes 2 more to get up.
+- A creature with no `Crawler` component (most animals) stands through a stock path that skips both the check and the cost.
+
+## Grapple
+
+Pulling a living enemy rolls Grapple. Friends and allies are never rolled against, so a party member can always be dragged to safety.
+
+- `PullAttemptEvent` runs the roll, not `CanPull`, which also runs for every verb menu. On the client the pull is cancelled and waits for the server.
+- A grab and its pull last together. Letting go ends the grab, and `ReleaseGrab` ends the pull.
+- Stock lets a pulled creature walk out of a pull. `OnAttemptStopPull` blocks that while it is grabbed.
+- Escape is pressing a move key while grabbed. It rolls the best of unarmed attack, Athletics, and Acrobatics against the grabber's Athletics DC, and a success ends the grab and the pull. Attempts are at least 1 second apart, because changing direction also counts as movement input. A critical failure blocks Escape for 6 seconds.
+- NPC steering raises no `MoveInputEvent`, so `CFConditionSystem.Update` makes a grabbed creature without a player attempt Escape once every 6 seconds.
+- Pulling needs a free hand, as Grapple does.
+
+## Class marks by pointing
+
+Rangers, Thaumaturges, and Investigators mark with the stock point gesture, through `AfterPointedAtEvent`. It also orders companions (`CFCompanionSystem`), so a Ranger's point does both. Only a living enemy within the old action's range is marked, so other pointing stays a free gesture. Re-pointing at the current mark costs nothing.
+
+## Known gaps in maneuvers
+
+- Shove, Disarm, Grapple, and Escape do not count toward MAP.
+- A critical success on Grapple grabs but does not restrain.
+- The `Trip` weapon trait does nothing now that Trip is not an action.
+- Shove's optional Stride after the target is not automatic. The player walks after them.
+- PF2e lets you drop a shove or disarm weapon on a critical failure to take a plain failure instead. The critical failure always applies here.
+- Disarm's −2 applies to all the target's attacks, not only those with that item.
+
+## Upstream files CF has edited
+
+All edits carry `// CarpFinder` markers, so `grep -rn CarpFinder Content.Client Content.Shared Content.Server` lists them.
+
+| Area | Files | Why |
+|---|---|---|
+| Spell targeting | `Content.Client/Actions/ActionsSystem.cs`, `Outline/TargetOutlineSystem.cs` | Click the outlined creature; do not outline through walls or past 90 feet |
+| Spell requests | `Content.Shared/Actions/ActionEvents.cs`, `SharedActionsSystem.cs` | Bolt count and mode on the perform request |
+| Radial wheel and hotbar | `SimpleRadialMenu.xaml.cs`, `ActionUIController.cs`, `ActionButtonContainer.cs`, `EmotesUIController.cs`, `HandsUIController.cs` | The CF wheel and action HUD |
+| Melee | `Content.Client/Weapons/Melee/MeleeWeaponSystem.cs` | Right-click maneuvers for shields and trait weapons |
+| Crafting menu | `Content.Client/Construction/ConstructionSystem.cs`, `Content.Server/Construction/ConstructionSystem.Initial.cs` | The stock menu needs training in Crafting |
+| Characters | `HumanoidCharacterProfile.cs`, `HumanoidVisualLayers.cs` | The PF2e build; pelvis layer for split bodies |
+| NPCs | `Content.Server/NPC/Systems/NPCUtilitySystem.cs` | Faction hostility |
+| Temperature | `TemperatureSystem.cs`, `SharedTemperatureSystem.cs` | Cooking heats the surface first |
+| Icons | `SharedStatusIconSystem.cs` | Partial for the flanked icon |
+
+The character editor and character window are swapped with csproj `Compile Remove` rules instead (`Content.Client/Content.Client.csproj`, `lobby-overlay.md`).
+
+## Prototype kinds
+
+`adventureSite`, `craftingRecipe`, `cfAbility`, `cfAbilitySkill`, `cfAncestry`, `cfBackground`, `cfClass`, `cfDamageType`, `cfFaction`, `cfFeat`, `cfHeritage`, `cfJobGroup`, `cfMaterial`, `cfPet`, `cfPetGear`, `cfPropertyRune`, `cfSpell`, `cfTrait`.
+
+Radial actions are entities in `Resources/Prototypes/_CF/Actions/activities.yml`, and each spell is an action entity in `Resources/Prototypes/_CF/Spells/{0,1,2,3}/`. Feats with `pendingAction: true` have data but no behaviour yet.
+
+## Test entities
+
+| Id | Use |
+|---|---|
+| `CFTrainingDummy` | AC 15, 20 HP. `spawn CFTrainingDummy` in game. |
+| `CFKoboldWarrior` | A hostile with a monster stat block |
+| `CFMobBoar`, `CFMobGiantRat`, ... | Monster Core creatures, in `Entities/Mobs/Creatures/creatures.yml` |
+| `Objects/Weapons/`, `Clothing/CFArmors.yml` | Weapons, shields and armor. Bases are in `Objects/Weapons/_base.yml` |
+| `/Maps/Test/dev_map.yml` (gameMap `Dev`) | The map all integration tests load |

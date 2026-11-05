@@ -1,0 +1,18 @@
+<DefaultWindow xmlns="https://spacestation14.io"
+               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+               x:Class="Content.Client.CF.Shop.CFMerchantWindow"
+               Title="{Loc 'cf-merchant-title'}"
+               SetSize="380 340"
+               MinSize="320 240">
+    <BoxContainer Orientation="Vertical">
+        <Label Text="{Loc 'cf-merchant-hint'}" Margin="0 0 0 4" />
+        <ScrollContainer VerticalExpand="True" HScrollEnabled="False">
+            <BoxContainer Name="Goods" Orientation="Vertical" HorizontalExpand="True" />
+        </ScrollContainer>
+        <Label Name="TotalLabel" Margin="0 4" />
+        <BoxContainer Orientation="Horizontal">
+            <Button Name="SellButton" Text="{Loc 'cf-merchant-sell'}" HorizontalExpand="True" Disabled="True" />
+            <Button Name="BuyButton" Text="{Loc 'cf-merchant-buy'}" HorizontalExpand="True" />
+        </BoxContainer>
+    </BoxContainer>
+</DefaultWindow>

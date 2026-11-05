@@ -1,0 +1,243 @@
+- type: entity
+  abstract: true
+  parent: BaseItem
+  id: CFBaseFormula
+  name: formula
+  description: A schematic on rolled-up parchment. Read it in hand to learn it.
+  components:
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: Objects/Misc/bureaucracy.rsi
+    state: paper_words
+  - type: CFBulk
+    bulk: 0.1
+  - type: CFItemPrice
+    copper: 50 # level 0 formula: 5 sp
+
+- type: entity
+  parent: BaseItem
+  id: CFBasicCraftersBook
+  name: basic crafter's book
+  description: Formulas for all the common level 0 items. Read it in hand to learn them.
+  components:
+  - type: Item
+    size: Small
+  - type: Sprite
+    sprite: Objects/Misc/books.rsi
+    state: book_icon
+  - type: CFFormula
+    allBasic: true
+  - type: CFItem
+    level: 0
+  - type: CFBulk
+    bulk: 0.1
+  - type: CFItemPrice
+    copper: 10 # 1 sp
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaIronBuckle
+  name: formula (iron buckle)
+  components:
+  - type: CFFormula
+    recipes:
+    - IronBuckle
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaRatArmor
+  name: formula (light barding)
+  components:
+  - type: CFFormula
+    recipes:
+    - RatArmor
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaThievesToolkit
+  name: formula (thieves' toolkit)
+  components:
+  - type: CFFormula
+    recipes:
+    - ThievesToolkit
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaCopperBar
+  name: formula (copper bar)
+  components:
+  - type: CFFormula
+    recipes:
+    - CopperBar
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaIronBar
+  name: formula (iron bar)
+  components:
+  - type: CFFormula
+    recipes:
+    - IronBar
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaGoldBar
+  name: formula (gold bar)
+  components:
+  - type: CFFormula
+    recipes:
+    - GoldBar
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaMithrilBar
+  name: formula (mithril bar)
+  components:
+  - type: CFFormula
+    recipes:
+    - MithrilBar
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaGlassFromQuartz
+  name: formula (glass from quartz)
+  components:
+  - type: CFFormula
+    recipes:
+    - GlassFromQuartz
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaGlassFromShards
+  name: formula (glass from shards)
+  components:
+  - type: CFFormula
+    recipes:
+    - GlassFromShards
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaLeatherFromScraps
+  name: formula (leather from scraps)
+  components:
+  - type: CFFormula
+    recipes:
+    - LeatherFromScraps
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaLeatherFromThin
+  name: formula (leather from thin hide)
+  components:
+  - type: CFFormula
+    recipes:
+    - LeatherFromThin
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaCloth
+  name: formula (cloth)
+  components:
+  - type: CFFormula
+    recipes:
+    - Cloth
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaStringFromWeb
+  name: formula (string from web)
+  components:
+  - type: CFFormula
+    recipes:
+    - StringFromWeb
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaStringFromCloth
+  name: formula (string from cloth)
+  components:
+  - type: CFFormula
+    recipes:
+    - StringFromCloth
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaWallpaperBlack
+  name: formula (wallpaper black)
+  components:
+  - type: CFFormula
+    recipes:
+    - WallpaperBlack
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaWallpaperGreen
+  name: formula (wallpaper green)
+  components:
+  - type: CFFormula
+    recipes:
+    - WallpaperGreen
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaWallpaperPurple
+  name: formula (wallpaper purple)
+  components:
+  - type: CFFormula
+    recipes:
+    - WallpaperPurple
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaWallpaperRed
+  name: formula (wallpaper red)
+  components:
+  - type: CFFormula
+    recipes:
+    - WallpaperRed
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaWallpaperYellow
+  name: formula (wallpaper yellow)
+  components:
+  - type: CFFormula
+    recipes:
+    - WallpaperYellow
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaWallpaperWhite
+  name: formula (wallpaper white)
+  components:
+  - type: CFFormula
+    recipes:
+    - WallpaperWhite
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaWallpaperWhite2
+  name: formula (wallpaper white2)
+  components:
+  - type: CFFormula
+    recipes:
+    - WallpaperWhite2
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaClothFromCotton
+  name: formula (cloth from cotton)
+  components:
+  - type: CFFormula
+    recipes:
+    - ClothFromCotton
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaStringFromCotton
+  name: formula (string from cotton)
+  components:
+  - type: CFFormula
+    recipes:
+    - StringFromCotton

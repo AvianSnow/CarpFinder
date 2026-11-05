@@ -1,0 +1,120 @@
+- type: constructionGraph
+  id: CFWorkbench
+  start: start
+  graph:
+    - node: start
+      actions:
+        - !type:DestroyEntity {}
+      edges:
+        - to: CFWorkbench
+          steps:
+            - material: CFWoodenPlanks
+              amount: 3
+              doAfter: 2
+    - node: CFWorkbench
+      entity: CFWorkbench
+      edges:
+      - to: start
+        steps:
+        - tool: Prying
+          doAfter: 5
+        completed:
+        - !type:SpawnPrototype
+          prototype: CFWoodenPlanks1
+          amount: 3
+
+- type: constructionGraph
+  id: CFWorkbenchSewing
+  start: start
+  graph:
+    - node: start
+      actions:
+        - !type:DestroyEntity {}
+      edges:
+        - to: CFWorkbenchSewing
+          steps:
+            - material: CFWoodenPlanks
+              amount: 3
+              doAfter: 2
+    - node: CFWorkbenchSewing
+      entity: CFWorkbenchSewing
+      edges:
+      - to: start
+        steps:
+        - tool: Prying
+          doAfter: 5
+        completed:
+        - !type:SpawnPrototype
+          prototype: CFWoodenPlanks1
+          amount: 3
+
+- type: constructionGraph
+  id: CFWorkbenchLeather
+  start: start
+  graph:
+    - node: start
+      actions:
+        - !type:DestroyEntity {}
+      edges:
+        - to: CFWorkbenchLeather
+          steps:
+            - material: CFWoodenPlanks
+              amount: 3
+              doAfter: 2
+    - node: CFWorkbenchLeather
+      entity: CFWorkbenchLeather
+      edges:
+      - to: start
+        steps:
+        - tool: Prying
+          doAfter: 5
+        completed:
+        - !type:SpawnPrototype
+          prototype: CFWoodenPlanks1
+          amount: 3
+
+- type: constructionGraph
+  id: CFWorkbenchAnvil
+  start: start
+  graph:
+    - node: start
+      actions:
+        - !type:DestroyEntity {}
+      edges:
+        - to: CFWorkbenchAnvil
+          steps:
+            - material: CFIronBar
+              amount: 5
+              doAfter: 2
+    - node: CFWorkbenchAnvil
+      entity: CFWorkbenchAnvil
+      edges:
+      - to: start
+        steps:
+        - tool: Prying
+          doAfter: 5
+        completed:
+        - !type:SpawnPrototype
+          prototype: CFIronBar1
+          amount: 5
+
+- type: constructionGraph
+  id: CFWorkbenchFurnace
+  start: start
+  graph:
+    - node: start
+      actions:
+        - !type:DestroyEntity {}
+      edges:
+        - to: CFWorkbenchFurnace
+          steps:
+            - material: CFStone
+              amount: 10
+              doAfter: 2
+    - node: CFWorkbenchFurnace
+      entity: CFWorkbenchFurnace
+      edges:
+      - to: start
+        steps:
+        - tool: Prying
+          doAfter: 5

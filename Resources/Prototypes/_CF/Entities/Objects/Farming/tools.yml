@@ -1,0 +1,23 @@
+- type: entity
+  parent: BaseItem
+  id: CFFork
+  name: fork
+  description: A simple fork for digging up soil and turning it into a seedbed.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Item
+    size: Large
+  - type: Sprite
+    sprite: _CP14/Objects/Weapons/Melee/Fork/fork.rsi
+    state: icon
+  - type: CFEditTileTool
+    tileReplace:
+      CFFloorDirt: CFloorDirtSeedbed
+      CFloorDirtSeedbed: CFFloorDirt
+      CFFloorGrass: CFloorDirtSeedbed
+      CFFloorGrassLight: CFloorDirtSeedbed
+      CFFloorGrassTall: CFloorDirtSeedbed
+  - type: CFBulk
+    bulk: 1
+  - type: CFItemPrice
+    copper: 20 # ours: 2 sp

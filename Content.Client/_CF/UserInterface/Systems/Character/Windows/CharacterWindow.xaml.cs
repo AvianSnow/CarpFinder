@@ -8,6 +8,8 @@ namespace Content.Client.UserInterface.Systems.Character.Windows;
 [GenerateTypedNameReferences]
 public sealed partial class CharacterWindow : DefaultWindow
 {
+    private const int ShopTabIndex = 3;
+
     public CharacterWindow()
     {
         RobustXamlLoader.Load(this);
@@ -17,5 +19,14 @@ public sealed partial class CharacterWindow : DefaultWindow
         Tabs.SetTabTitle(3, Loc.GetString("cf-shop-tab"));
         ShopTab.OnAccept += Close;
         ShopTab.OnCancel += Close;
+    }
+
+    /// <summary>The shop is for merchants. Leaves the tab if it is the one being hidden.</summary>
+    public void SetShopVisible(bool visible)
+    {
+        if (!visible && Tabs.CurrentTab == ShopTabIndex)
+            Tabs.CurrentTab = 0;
+
+        Tabs.SetTabVisible(ShopTabIndex, visible);
     }
 }

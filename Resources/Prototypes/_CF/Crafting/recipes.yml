@@ -1,0 +1,242 @@
+# CP14 workbench recipes for items this branch has. Materials and craft times are CP14's.
+# Level and rarity come from the result's CFItem: no CFItem means level 0, common.
+- type: craftingRecipe
+  id: IronBuckle
+  tag: CFRecipeAnvil
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFIronBar
+  result: CFIronBuckle
+  resultCount: 5
+
+- type: craftingRecipe
+  id: RatArmor
+  tag: CFRecipeAnvil
+  craftTime: 4
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFIronBar
+    count: 6
+  result: CFRatArmor
+
+- type: craftingRecipe
+  id: ThievesToolkit
+  tag: CFRecipeAnvil
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFIronBar
+  result: CFThievesToolkit
+
+- type: craftingRecipe
+  id: CopperBar
+  tag: CFRecipeMeltingFurnace
+  craftTime: 1
+  requirements:
+  - !type:CFMaterialRequirement
+    material: CFCopper
+    count: 10
+  result: CFCopperBar1
+
+- type: craftingRecipe
+  id: IronBar
+  tag: CFRecipeMeltingFurnace
+  craftTime: 1
+  requirements:
+  - !type:CFMaterialRequirement
+    material: CFIron
+    count: 10
+  result: CFIronBar1
+
+- type: craftingRecipe
+  id: GoldBar
+  tag: CFRecipeMeltingFurnace
+  craftTime: 1
+  requirements:
+  - !type:CFMaterialRequirement
+    material: CFGold
+    count: 10
+  result: CFGoldBar1
+
+- type: craftingRecipe
+  id: MithrilBar
+  tag: CFRecipeMeltingFurnace
+  craftTime: 1
+  requirements:
+  - !type:CFMaterialRequirement
+    material: CFMithril
+    count: 10
+  result: CFMithrilBar1
+
+- type: craftingRecipe
+  id: GlassFromQuartz
+  tag: CFRecipeMeltingFurnace
+  craftTime: 1
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFCrystalShardQuartz
+  result: CFGlassSheet1
+
+- type: craftingRecipe
+  id: GlassFromShards
+  tag: CFRecipeMeltingFurnace
+  craftTime: 1
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFGlassShard
+    count: 2
+  result: CFGlassSheet1
+
+- type: craftingRecipe
+  id: LeatherFromScraps
+  tag: CFRecipeLeatherWorking
+  craftTime: 2
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFScrapLeather
+    count: 3
+  - !type:CFItemRequirement
+    protoId: CFString
+  result: CFLeather1
+
+- type: craftingRecipe
+  id: LeatherFromThin
+  tag: CFRecipeLeatherWorking
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFThinLeather
+    count: 2
+  - !type:CFItemRequirement
+    protoId: CFString
+  result: CFLeather1
+
+- type: craftingRecipe
+  id: Cloth
+  tag: CFRecipeSewing
+  craftTime: 1
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFString
+    count: 2
+  result: CFCloth1
+
+- type: craftingRecipe
+  id: StringFromWeb
+  tag: CFRecipeSewing
+  craftTime: 1
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFWeb
+    count: 2
+  result: CFString
+
+- type: craftingRecipe
+  id: StringFromCloth
+  tag: CFRecipeSewing
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFCloth
+  result: CFString
+  resultCount: 2
+
+- type: craftingRecipe
+  id: WallpaperBlack
+  tag: CFRecipeSewing
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFCloth
+    count: 10
+  - !type:CFItemRequirement
+    protoId: CFDyeBlack
+  result: CFWallpaperBlack
+
+- type: craftingRecipe
+  id: WallpaperGreen
+  tag: CFRecipeSewing
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFCloth
+    count: 10
+  - !type:CFItemRequirement
+    protoId: CFDyeGreen
+  result: CFWallpaperGreen
+
+- type: craftingRecipe
+  id: WallpaperPurple
+  tag: CFRecipeSewing
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFCloth
+    count: 10
+  - !type:CFItemRequirement
+    protoId: CFDyePurple
+  result: CFWallpaperPurple
+
+- type: craftingRecipe
+  id: WallpaperRed
+  tag: CFRecipeSewing
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFCloth
+    count: 10
+  - !type:CFItemRequirement
+    protoId: CFDyeRed
+  result: CFWallpaperRed
+
+- type: craftingRecipe
+  id: WallpaperYellow
+  tag: CFRecipeSewing
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFCloth
+    count: 10
+  - !type:CFItemRequirement
+    protoId: CFDyeYellow
+  result: CFWallpaperYellow
+
+- type: craftingRecipe
+  id: WallpaperWhite
+  tag: CFRecipeSewing
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFCloth
+    count: 10
+  result: CFWallpaperWhite
+
+- type: craftingRecipe
+  id: WallpaperWhite2
+  tag: CFRecipeSewing
+  craftTime: 2
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFCloth
+    count: 10
+  result: CFWallpaperWhite2
+
+- type: craftingRecipe
+  id: ClothFromCotton
+  tag: CFRecipeSewing
+  craftTime: 1
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFCotton
+    count: 2
+  result: CFCloth1
+
+- type: craftingRecipe
+  id: StringFromCotton
+  tag: CFRecipeSewing
+  craftTime: 1
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFCotton
+  result: CFString

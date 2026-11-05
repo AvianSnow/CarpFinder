@@ -58,6 +58,10 @@
   playTimeTracker: JobCFMerchant
   icon: JobIconPassenger
   supervisors: job-supervisors-nobody
+  special:
+  - !type:AddComponentSpecial
+    components:
+    - type: CFShopAccess
 
 - type: job
   id: CFArcaneResearcher

@@ -72,6 +72,16 @@ public static class CFCoins
         return 0;
     }
 
+    /// <summary>
+    /// What a merchant pays for <paramref name="count"/> of a stack whose prototype holds
+    /// <paramref name="prototypeCount"/>: the share of the printed Price, halved unless it resells in full.
+    /// </summary>
+    public static int SaleValue(int price, bool fullResale, int count, int prototypeCount)
+    {
+        var worth = price * count / Math.Max(1, prototypeCount);
+        return fullResale ? worth : worth / 2;
+    }
+
     /// <summary>Item price, lowest coins omitted when they are zero.</summary>
     public static string FormatPrice(int copper)
     {

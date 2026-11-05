@@ -27,6 +27,36 @@
   inhand:
     - CFHealingPotionMinor
 
+- type: loadout
+  id: CFLoadoutThievesToolkit
+  inhand:
+    - CFThievesToolkit
+
+- type: loadout
+  id: CFLoadoutCrowbar
+  inhand:
+    - CFCrowbar
+
+- type: loadout
+  id: CFLoadoutCrowbarLevered
+  inhand:
+    - CFCrowbarLevered
+
+- type: loadout
+  id: CFLoadoutBasicCraftersBook
+  inhand:
+    - CFBasicCraftersBook
+
+- type: loadout
+  id: CFLoadoutColdWeather
+  equipment:
+    outerClothing: CFClothingColdWeather
+
+- type: loadout
+  id: CFLoadoutDesertClothing
+  equipment:
+    outerClothing: CFClothingDesert
+
 - type: loadoutGroup
   id: CFWeaponsMelee
   name: cf-loadout-group-weapons
@@ -58,6 +88,12 @@
   editorTab: Gear
   loadouts:
     - CFLoadoutHealingPotion
+    - CFLoadoutThievesToolkit
+    - CFLoadoutCrowbar
+    - CFLoadoutCrowbarLevered
+    - CFLoadoutBasicCraftersBook
+    - CFLoadoutColdWeather
+    - CFLoadoutDesertClothing
 
 # roleLoadout ids must be Job<JobId> (see LoadoutSystem.GetJobPrototype).
 - type: roleLoadout

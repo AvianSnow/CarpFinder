@@ -15,7 +15,7 @@ namespace Content.Server.CF.Shop;
 /// <summary>
 /// Spawns accepted shop lines onto the player: an empty hand, then the backpack, then the ground nearby.
 /// </summary>
-public sealed class CFShopSystem : EntitySystem
+public sealed partial class CFShopSystem : EntitySystem
 {
     private const int MaxItems = 100;
     private const string BackSlot = "back";
@@ -49,16 +49,17 @@ public sealed class CFShopSystem : EntitySystem
 
     private void OnPurchase(CFShopPurchaseEvent ev, EntitySessionEventArgs args)
     {
-        if (args.SenderSession.AttachedEntity is not { } user)
+        if (args.SenderSession.AttachedEntity is { } user)
+            Purchase(user, ev);
+    }
+
+    /// <summary>Buys the accepted lines. Only characters with shop access can.</summary>
+    public void Purchase(EntityUid user, CFShopPurchaseEvent ev)
+    {
+        if (!HasComp<CFShopAccessComponent>(user))
             return;
 
-        var purse = EnsureComp<CFPurseComponent>(user);
-        if (!purse.Seeded)
-        {
-            var level = TryComp<CFCombatantComponent>(user, out var combatant) ? combatant.Level : 1;
-            purse.Copper = CFCoins.StartingCopper(level);
-            purse.Seeded = true;
-        }
+        var purse = Purse(user);
 
         var plan = new List<(string Prototype, int Count)>();
         var total = 0;
@@ -110,6 +111,19 @@ public sealed class CFShopSystem : EntitySystem
         Dirty(user, purse);
         if (given > 0)
             _popup.PopupEntity(Loc.GetString("cf-shop-bought", ("count", given)), user, user);
+    }
+
+    /// <summary>The creature's purse, filled with its starting coins the first time it is touched.</summary>
+    public CFPurseComponent Purse(EntityUid user)
+    {
+        var purse = EnsureComp<CFPurseComponent>(user);
+        if (purse.Seeded)
+            return purse;
+
+        var level = TryComp<CFCombatantComponent>(user, out var combatant) ? combatant.Level : 1;
+        purse.Copper = CFCoins.StartingCopper(level);
+        purse.Seeded = true;
+        return purse;
     }
 
     private bool IsShopItem(string id)
