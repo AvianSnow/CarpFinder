@@ -26,7 +26,7 @@
     key: web
     states:
     - !type:CornerSpriteSmoothing
-      mask: [ web, CFwall ]
+      mask: [ web, CFWall ]
       base: carpet_
   - type: Clickable
   - type: Transform

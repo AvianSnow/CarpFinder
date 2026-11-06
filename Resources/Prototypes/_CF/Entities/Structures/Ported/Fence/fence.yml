@@ -41,7 +41,7 @@
     key: CFfence
     states:
     - !type:CornerSpriteSmoothing
-      mask: [ CFfence, CFwall ]
+      mask: [ CFfence, CFWall ]
       base: fence
   - type: Climbable
     delay: 2.5
