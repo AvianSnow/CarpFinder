@@ -23,14 +23,14 @@ public sealed partial class CFGOAPComponent : Component
     [DataField]
     public List<ProtoId<CFGOAPGoalPrototype>> Goals = new()
     {
-        "KillTarget", "StayAlive", "Heal", "ArmSelf", "HuntTarget", "Investigate", "Idle",
+        "KillTarget", "StayAlive", "Heal", "ArmSelf", "HuntTarget", "Investigate", "GoHome", "Idle",
     };
 
     [DataField]
     public List<ProtoId<CFGOAPActionPrototype>> Actions = new()
     {
         "Strike", "Close", "Demoralize", "Feint", "HoldBack", "Flee", "FightBack", "PickUpWeapon", "PickUpHealing", "DrinkHealing",
-        "FollowScent", "GoToLkp", "CheckNode", "LookAround", "Wander",
+        "FollowScent", "GoToLkp", "CheckNode", "LookAround", "GoHome", "Wander",
     };
 
     public uint Facts;
@@ -40,6 +40,19 @@ public sealed partial class CFGOAPComponent : Component
 
     /// <summary>Last known position. This is the only place it may know the target is, once out of sight.</summary>
     public MapCoordinates? Lkp;
+
+    /// <summary>
+    /// Where it started, relative to the grid, so a home on an airship moves with the ship. Set the first time it
+    /// thinks, and not saved: a loaded map starts fresh from where each creature stands.
+    /// </summary>
+    public EntityCoordinates? Home;
+
+    /// <summary>How far it may roam from <see cref="Home"/> with nothing to do, in tiles.</summary>
+    [DataField]
+    public float HomeRange = 8f;
+
+    /// <summary>It has set off home, and will not stop at the edge of its range.</summary>
+    public bool GoingHome;
 
     /// <summary>Which way the target was heading when last seen.</summary>
     public Vector2 LkpHeading;

@@ -752,13 +752,39 @@ Weights for how a creature fights, reading what Baldur's Gate 3's AI weighs and 
 
 Found by that run, not fixed:
 
-- [ ] **Mobs bounce off corners in one-tile corridors.** The worst one left: they cannot follow correct arrows along the maze. `Flow` should aim at the middle of the next tile. See `ai-testing.md`.
+- [x] Mobs bounced off corners in one-tile corridors. Fixed in 6l.
 - [ ] `ARealGroupRunsWhenHalfAreDown` fails now and then (2 of 11 runs): a kobold goes down within a second of starting to flee, on the arena. Its log stops at `goal none`, so the cause is not proven. Lava is the suspect, because a flee field only blocks tiles and the arena leaves little room. Log mob state and damage next time.
 - [ ] A mob cannot follow a trail through a door. A closed door takes no scent, and `FollowScent` does not use `Navigate`, so it never opens one. It also flips between `HuntTarget` and `Investigate` as scent comes and goes.
 - [ ] `Investigate` never Seeks, so a hidden creature beside the mob is not looked for without a node.
 - [ ] `Wander` runs at full speed and can jam for good in a corridor.
 - [ ] A routed creature that can still see its enemy never hides, because the flee map ignores line of sight.
 - [ ] Swings at obstacles ignore `discipline`, so the pool stays empty and it stays at -10.
+
+### 6l. Corners, routes and going home (6 November 2026): pick up here
+
+Corner bouncing is fixed and tested. Going home is written and builds, but **has never been run**. It stopped here to move to another computer.
+
+Fixed and tested (GOAP suite 101 of 101, run before any of the route and home code went in):
+
+- [x] `Flow` aims at the middle of the next tile, not along the arrow, so a creature stays on a corridor's centre line.
+- [x] On a tile with an arrow, walls and anchored furniture no longer trigger feelers or the safety circle (`OnArrows`). The circle is 0.42 and a corridor's middle is 0.5 from each wall, so 0.08 of drift threw it back. Lava, mobs and loose bodies still count. Rays still stop at walls, so nothing is felt through one.
+- [x] Stock `CollisionAvoidance` is skipped for GOAP mobs, in one marked line in `NPCSteeringSystem.cs`. With no stock path its filter is skipped, so a cable or wall light underfoot counted as a blocker at full weight and froze the mob.
+- Results on `npc_test_map`: `FarAcrossTheMaze` reaches the hero in about 12 s (59 s at best before). `GrilleOnly` went from 0 HP dealt to 208.
+
+Written, builds, **not run, no tests yet**:
+
+- [ ] `CFGOAPFlowFieldBuilder.TryFindRoute`: a tile A* on `TileCost`, with the same step rules as the arrows. Our own instead of stock's, because stock paths cross lava, are async and need the path graph, and ours gets doors, tables and given-up obstacles for free.
+- [ ] `CFGOAPSteeringSystem.Travel` (`.Travel.cs`): walks a route on short field legs. It takes a place, never a creature, so it cannot find a player. `GoToLkp` and `CheckNode` now use it, so **those two steps changed as well**.
+- [ ] `CFGOAPComponent.Home`, `HomeRange` (8), `GoingHome`, `TryGetHome`, `AtHome` fact, `CFGOAPHomeSensorSystem`, `CFGOAPGoHomeStepSystem`, and the `GoHome` goal (priority 1.5) and action. Home is set at the first `Start`, relative to the grid. A group member goes home on its own field.
+
+Next, in order:
+
+1. Run the GOAP suite. `GoHome` is now a default goal and `Travel` is in two old steps, so failures are possible. Expect `ARealGroupRunsWhenHalfAreDown` to fail now and then, as it did before.
+2. Add tests. Plain `TryFindRoute` cases in `CFGOAPPlannerTest` (round a wall, walled off, over the limit, goal with something on it). A new `CFGOAPMazeTest` on `npc_test_map`: the corridor from (-3,5) with no turning back, the walk home from (12,7) to (-10,7) with `Route` used on the way, and a home at sealed tile (-11,9) giving `NoWay` and then `Idle`.
+3. Check that a satisfied `GoHome` goal is skipped in `ChooseGoal`, and that `Wander` does not fight it at the edge of `HomeRange`.
+4. Update `goap.md` and `ai-testing.md`. The 6h line saying GOAP uses no A* is out of date: routes are for known places only.
+
+`.agent/ai-trial/CFGOAPMapTrial.cs.txt` is the throwaway trial with `CorridorProbe`, `TileProbe`, `FarAcrossTheMaze` and `GrilleOnly`. To use it, copy it to `Content.IntegrationTests/Tests/_CF/GOAP/CFGOAPMapTrial.cs`, set `CF_TRIAL_OUT` to a folder, and remove it again afterwards. Always check the build printed `Build succeeded` first: `dotnet test --no-build` happily runs the old binary after a failed build.
 
 ### DEBUG code to remove
 

@@ -161,6 +161,9 @@ public sealed partial class CFGOAPSteeringComponent : Component
     /// <summary>Whether it is following a flow field rather than heading straight there.</summary>
     public bool UsingField;
 
+    /// <summary>The tile underfoot had an arrow on this steering tick, so feelers leave what is fixed to the arrows.</summary>
+    public bool OnArrows;
+
     /// <summary>The door or window it is dealing with.</summary>
     public EntityUid? Obstacle;
 
@@ -178,6 +181,24 @@ public sealed partial class CFGOAPSteeringComponent : Component
 
     /// <summary>It gave up and found no other way, so until this time it stops trying to get there.</summary>
     public TimeSpan NoWayUntil;
+
+    /// <summary>The whole way to a far place, as grid tiles. Empty when it does not need one.</summary>
+    public List<Vector2i> Route = new();
+
+    /// <summary>The grid <see cref="Route"/> is on.</summary>
+    public EntityUid? RouteGrid;
+
+    /// <summary>The place <see cref="Route"/> leads to, in world space.</summary>
+    public Vector2 RouteGoal;
+
+    /// <summary>The route tile it has got to.</summary>
+    public int RouteAt;
+
+    /// <summary>The route tile its field is aimed at.</summary>
+    public int RouteStop;
+
+    /// <summary>When it may search for a route again.</summary>
+    public TimeSpan NextRoute;
 
     /// <summary>The field of a creature with no group. In a group, the spawner holds one for all of them.</summary>
     public CFGOAPFlowField OwnField = new();

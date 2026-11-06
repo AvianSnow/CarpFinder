@@ -26,7 +26,7 @@ public sealed partial class CFGOAPGoToLkpStepSystem : CFGOAPStepSystem
         var here = _transform.GetMapCoordinates(ent);
         if ((lkp.Position - here.Position).Length() > CFGOAPSystem.LkpArrival + profile.LkpKeepOut)
         {
-            Steering.Navigate(ent, lkp.Position, null);
+            Steering.Travel(ent, lkp.Position);
             ent.Comp.StepTime = _timing.CurTime;
             return false;
         }

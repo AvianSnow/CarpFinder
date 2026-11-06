@@ -147,6 +147,7 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
         ent.Comp.Field = null;
         ent.Comp.Through = null;
         ent.Comp.ArriveSpeed = 1f;
+        ent.Comp.Route.Clear();
         ApplySpeed((ent.Owner, ent.Comp));
         _npcSteering.Unregister(ent);
     }
@@ -181,6 +182,7 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
     private void Feel(Entity<CFGOAPSteeringComponent> ent, ref NPCSteeringEvent args)
     {
         ent.Comp.Felt = null;
+        ent.Comp.OnArrows = OnArrows(ent, args.WorldPosition);
         Array.Clear(ent.Comp.FeelerTarget);
 
         // Beside or behind it, where the fan cannot reach. Flanking already tracks these.
@@ -299,10 +301,10 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
 
         // Busy with an obstacle, it stays put. What stands beside it cannot hurt it, and being thrown clear of the next
         // table along would only end the climb, over and over.
-        if (ent.Comp.Through != null)
+        if (ent.Comp.Through != null || ent.Comp.OnArrows)
             return false;
 
-        return TryComp(other, out PhysicsComponent? body) && body.Hard && body.BodyType == BodyType.Static;
+        return IsFixed(other);
     }
 
     private void FeelFan(Entity<CFGOAPSteeringComponent> ent, ref NPCSteeringEvent args, Vector2 heading)
@@ -345,7 +347,8 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
         if (HasComp<MobStateComponent>(hit.Entity))
             return FeelMob(ent, ref args, hit.Entity);
 
-        if (hit.Distance >= length)
+        // The ray still stops here, so nothing is felt through a wall. It just adds nothing to what the arrows know.
+        if (hit.Distance >= length || ent.Comp.OnArrows && IsFixed(hit.Entity) && !HasComp<CFDangerousTileComponent>(hit.Entity))
             return 0f;
 
         var danger = (1f - hit.Distance / length) * FeelerDanger;
@@ -404,6 +407,23 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
         var first = result.Results[0];
         hit = new CFGOAPFeelerHit(first.Entity, first.Fraction * length);
         return true;
+    }
+
+    private bool IsFixed(EntityUid other)
+    {
+        return TryComp(other, out PhysicsComponent? body) && body.Hard && body.BodyType == BodyType.Static;
+    }
+
+    /// <summary>
+    /// Whether the tile underfoot has an arrow. Arrows already go round everything fixed, so feeling for walls as well
+    /// only fights them: in a one-tile corridor the middle is 0.5 from each wall, and the safety circle is 0.42 wide.
+    /// </summary>
+    private bool OnArrows(Entity<CFGOAPSteeringComponent> ent, Vector2 position)
+    {
+        return ent.Comp is { UsingField: true, Field: { } field }
+               && Transform(ent).GridUid is { } grid
+               && TryComp(grid, out MapGridComponent? gridComp)
+               && field.Arrows.ContainsKey(_maps.WorldToTile(grid, gridComp, position));
     }
 
     /// <summary>Partway over a frame it has to carry on, not be pushed back the way it came.</summary>
@@ -519,7 +539,11 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
         }
     }
 
-    /// <summary>The arrow on the square underfoot. Off the edge of the field it heads straight for the goal, or from it.</summary>
+    /// <summary>
+    /// The middle of the tile the arrow underfoot points at. Following the arrow itself would keep a creature's sideways
+    /// drift, and in a one-tile corridor that drift ends on a corner. Off the edge of the field it heads straight for
+    /// the goal, or from it, so it can get back on.
+    /// </summary>
     private Vector2 Flow(Entity<CFGOAPSteeringComponent> ent, Vector2 position)
     {
         var xform = Transform(ent);
@@ -527,7 +551,13 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
             && xform.GridUid is { } grid
             && TryComp(grid, out MapGridComponent? gridComp)
             && field.Arrows.TryGetValue(_maps.WorldToTile(grid, gridComp, position), out var arrow))
-            return _transform.GetWorldRotation(grid).RotateVec(arrow);
+        {
+            if (arrow == Vector2.Zero)
+                return Vector2.Zero;
+
+            var next = CFGOAPFlowFieldBuilder.NextTile(_maps.WorldToTile(grid, gridComp, position), arrow);
+            return CFGOAPSteeringMath.Seek(position, _maps.GridTileToWorldPos(grid, gridComp, next));
+        }
 
         if (!TryGetGoal(ent, out var goal, out _))
             return Vector2.Zero;

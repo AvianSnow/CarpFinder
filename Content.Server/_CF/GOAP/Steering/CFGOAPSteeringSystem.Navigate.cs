@@ -40,7 +40,7 @@ public sealed partial class CFGOAPSteeringSystem
     /// way it follows the arrows instead. Only the navigator builds them. Arrows can lead through a door or window,
     /// which it then opens or breaks.
     /// </summary>
-    public void Navigate(EntityUid uid, Vector2 goal, EntityUid? target)
+    public void Navigate(EntityUid uid, Vector2 goal, EntityUid? target, bool alone = false)
     {
         if (!TryComp(uid, out CFGOAPSteeringComponent? steering))
             return;
@@ -65,7 +65,7 @@ public sealed partial class CFGOAPSteeringSystem
             return;
         }
 
-        if (!TryGetField(ent, goal, out var field))
+        if (!TryGetField(ent, goal, alone, out var field))
         {
             if (rerouted)
                 HeadStraightThere(uid, goal, target);
@@ -73,7 +73,7 @@ public sealed partial class CFGOAPSteeringSystem
             return;
         }
 
-        if (!steering.UsingField || rerouted)
+        if (!steering.UsingField || rerouted || steering.Field != field)
         {
             steering.UsingField = true;
             var flow = new CFGOAPSteeringBehavior { Kind = CFGOAPSteeringKind.FlowField };
@@ -243,11 +243,12 @@ public sealed partial class CFGOAPSteeringSystem
     /// <summary>
     /// The field this creature should read. The first living member of a group is its navigator and keeps the field
     /// up to date. A creature alone is its own navigator. Followers only ever read, so a group costs one build.
+    /// <paramref name="alone"/> uses its own field, even in a group.
     /// </summary>
-    private bool TryGetField(Entity<CFGOAPSteeringComponent> ent, Vector2 goal, out CFGOAPFlowField field)
+    private bool TryGetField(Entity<CFGOAPSteeringComponent> ent, Vector2 goal, bool alone, out CFGOAPFlowField field)
     {
-        field = FieldOf(ent);
-        var navigator = !_encounters.TryGetGroup(ent, out var group) || group.Members.Count > 0 && group.Members[0] == ent.Owner;
+        field = alone ? ent.Comp.OwnField : FieldOf(ent);
+        var navigator = alone || !_encounters.TryGetGroup(ent, out var group) || group.Members.Count > 0 && group.Members[0] == ent.Owner;
 
         var moved = (field.Goal - goal).Length();
         if (navigator && (field.Away || field.Arrows.Count == 0 || moved >= FieldGoalSlack && _timing.CurTime >= field.NextBuild))

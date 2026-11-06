@@ -1,0 +1,702 @@
+#nullable enable
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Numerics;
+using System.Text;
+using Content.IntegrationTests.Fixtures;
+using Content.Server.CF.GOAP;
+using Content.Server.CF.GOAP.Debug;
+using Content.Server.CF.GOAP.Encounters;
+using Content.Server.CF.GOAP.Steering;
+using Content.Server.NPC.Components;
+using Content.Server.NPC.Systems;
+using Content.Shared.CCVar;
+using Content.Shared.CF.Actions;
+using Content.Shared.CF.Combat;
+using Content.Shared.CF.Detection;
+using Content.Shared.CF.GOAP;
+using Content.Shared.Doors.Components;
+using Content.Server.Atmos.EntitySystems;
+using Content.Shared.Hands.EntitySystems;
+using Content.Shared.Mobs.Components;
+using Content.Shared.Mobs;
+using Content.Shared.Mobs.Systems;
+using Robust.Shared.Configuration;
+using Robust.Shared.EntitySerialization;
+using Robust.Shared.EntitySerialization.Systems;
+using Robust.Shared.GameObjects;
+using Robust.Shared.Map;
+using Robust.Shared.Map.Components;
+using Robust.Shared.Maths;
+using Robust.Shared.Physics.Components;
+using Robust.Shared.Physics.Systems;
+using Robust.Shared.Timing;
+using Robust.Shared.Utility;
+
+namespace Content.IntegrationTests.Tests.CF.GOAP;
+
+/// <summary>THROWAWAY. A monitored run on npc_test_map, not a pass or fail test. It writes what happened to files.</summary>
+[TestFixture]
+public sealed class CFGOAPMapTrial : GameTest
+{
+    private static readonly ResPath MapPath = new("/Maps/Test/npc_test_map.yml");
+    private static readonly string OutDir = Environment.GetEnvironmentVariable("CF_TRIAL_OUT") ?? "/tmp";
+
+    public override PoolSettings PoolSettings => new() { Connected = false, Dirty = true };
+
+    [TestPrototypes]
+    private const string Prototypes = @"
+- type: entity
+  parent: [ MobHuman, CFGOAPBrain ]
+  id: CFTrialBoss
+  components:
+  - type: CFCombatant
+    level: 1
+    armorClass: 15
+    maxHp: 60
+    currentHp: 60
+    printedAttack: 8
+    printedDamage: 4
+  - type: CFAbilityScore
+  - type: CFCombatOptions
+  - type: CFFaction
+    faction: Monster
+
+- type: entity
+  parent: MobHuman
+  id: CFTrialHero
+  components:
+  - type: CFCombatant
+    level: 1
+    armorClass: 18
+    maxHp: 100000
+    currentHp: 100000
+  - type: CFAbilityScore
+  - type: CFCombatOptions
+  - type: CFFaction
+    faction: Alpha
+";
+
+    private EntityUid _grid;
+    private readonly StringBuilder _out = new();
+    private readonly Dictionary<EntityUid, Dictionary<Vector2i, int>> _paths = new();
+    private readonly Dictionary<EntityUid, string> _lastLine = new();
+
+    private SharedTransformSystem Xform => SEntMan.System<SharedTransformSystem>();
+    private SharedMapSystem Maps => SEntMan.System<SharedMapSystem>();
+    private IGameTiming Timing => Server.ResolveDependency<IGameTiming>();
+
+    private async Task Load()
+    {
+        await Server.WaitPost(() =>
+        {
+            var loader = SEntMan.System<MapLoaderSystem>();
+            Assert.That(loader.TryLoadMap(MapPath, out _, out var grids, new DeserializationOptions { InitializeMaps = true }));
+            _grid = grids!.First().Owner;
+            Server.ResolveDependency<IConfigurationManager>().SetCVar(CCVars.NPCEnabled, true);
+        });
+    }
+
+    private string Body(EntityUid mob)
+    {
+        var state = SEntMan.GetComponent<MobStateComponent>(mob).CurrentState;
+        var air = SEntMan.System<AtmosphereSystem>().GetContainingMixture(mob);
+        var text = FormattableString.Invariant($"state={state} kPa={air?.Pressure:F0}");
+        return text;
+    }
+
+    private EntityCoordinates At(int x, int y) => new(_grid, x + 0.5f, y + 0.5f);
+
+    private EntityUid Hero(int x, int y)
+    {
+        var hero = SEntMan.SpawnEntity("CFTrialHero", At(x, y));
+        SEntMan.EnsureComponent<Content.Server.CF.GOAP.Influence.CFGOAPScentEmitterComponent>(hero);
+        SEntMan.System<SharedPhysicsSystem>().WakeBody(hero);
+        return hero;
+    }
+
+    private Entity<CFGOAPComponent> Boss(int x, int y, string tactics = "Default", string profile = "Default")
+    {
+        var boss = SEntMan.SpawnEntity("CFTrialBoss", At(x, y));
+        var goap = SEntMan.GetComponent<CFGOAPComponent>(boss);
+        goap.Tactics = tactics;
+        goap.Profile = profile;
+        var sword = SEntMan.SpawnEntity("CFLongsword", At(x, y));
+        SEntMan.System<SharedHandsSystem>().TryPickupAnyHand(boss, sword, checkActionBlocker: false);
+        Wake(boss);
+        return (boss, goap);
+    }
+
+    private void Wake(EntityUid mob)
+    {
+        SEntMan.System<SharedPhysicsSystem>().WakeBody(mob);
+        SEntMan.System<NPCSystem>().WakeNPC(mob);
+    }
+
+    private string Name(EntityUid? uid)
+    {
+        if (uid is not { } e || !SEntMan.EntityExists(e))
+            return "-";
+
+        return SEntMan.GetComponent<MetaDataComponent>(e).EntityPrototype?.ID ?? e.ToString();
+    }
+
+    private Vector2i TileOf(EntityUid uid)
+    {
+        var grid = SEntMan.GetComponent<MapGridComponent>(_grid);
+        return Maps.CoordinatesToTile(_grid, grid, Xform.GetMoverCoordinates(uid));
+    }
+
+    private string Line(EntityUid mob)
+    {
+        var goap = SEntMan.GetComponent<CFGOAPComponent>(mob);
+        var steer = SEntMan.GetComponent<CFGOAPSteeringComponent>(mob);
+        SEntMan.TryGetComponent(mob, out CFActionPoolComponent? pool);
+        var step = goap.Step < goap.Plan.Count ? goap.Plan[goap.Step].Id : "(none)";
+        var kinds = string.Join("+", steer.Behaviors.Select(b => b.Kind));
+        var dist = goap.Target is { } t && SEntMan.EntityExists(t)
+            ? (Xform.GetWorldPosition(t) - Xform.GetWorldPosition(mob)).Length()
+            : -1f;
+        var speed = SEntMan.GetComponent<PhysicsComponent>(mob).LinearVelocity.Length();
+        var tile = TileOf(mob);
+        return FormattableString.Invariant(
+            $"({tile.X},{tile.Y}) v{speed:F1} goal={goap.Goal?.Id ?? "-"} step={step} steer={kinds} field={steer.UsingField} obs={Name(steer.Obstacle)} work={steer.Working} sta={pool?.Stamina:F1} map={pool?.MapAttacks} dist={dist:F1} melee={SEntMan.HasComponent<NPCMeleeCombatComponent>(mob)}");
+    }
+
+    /// <summary>Runs the world in half seconds, writing a line whenever a creature's state changes.</summary>
+    private async Task Watch(int seconds, IReadOnlyList<EntityUid> mobs, Action<float>? script = null)
+    {
+        var start = TimeSpan.Zero;
+        await Server.WaitPost(() => start = Timing.CurTime);
+        var steps = seconds * 2;
+        for (var i = 0; i < steps; i++)
+        {
+            await Pair.RunTicksSync(Timing.TickRate / 2);
+            await Server.WaitPost(() =>
+            {
+                var t = (float) (Timing.CurTime - start).TotalSeconds;
+                script?.Invoke(t);
+                foreach (var mob in mobs)
+                {
+                    if (!SEntMan.EntityExists(mob) || !SEntMan.HasComponent<CFGOAPComponent>(mob))
+                        continue;
+
+                    if (i % 20 == 0)
+                        _out.AppendLine(FormattableString.Invariant($"{t,5:F1} {mob} BODY {Body(mob)}"));
+
+                    if (SEntMan.System<MobStateSystem>().IsDead(mob))
+                        continue;
+
+                    if (!_paths.TryGetValue(mob, out var path))
+                        _paths[mob] = path = new Dictionary<Vector2i, int>();
+
+                    path.TryAdd(TileOf(mob), (int) t);
+                    var line = Line(mob);
+                    var key = line[(line.IndexOf(' ') + 1)..];
+                    key = key[(key.IndexOf(' ') + 1)..];
+                    if (_lastLine.GetValueOrDefault(mob) == key && i % 8 != 0)
+                        continue;
+
+                    _lastLine[mob] = key;
+                    _out.AppendLine(FormattableString.Invariant($"{t,5:F1} {mob} {line}"));
+                }
+            });
+        }
+    }
+
+    private char Glyph(Vector2i tile, MapGridComponent grid, Dictionary<Vector2i, int>? path)
+    {
+        var glyph = Maps.TryGetTileRef(_grid, grid, tile, out var tileRef) && !tileRef.Tile.IsEmpty ? '.' : ' ';
+        foreach (var e in Maps.GetAnchoredEntities(_grid, grid, tile))
+        {
+            var id = Name(e);
+            if (id.StartsWith("Wall"))
+                glyph = '#';
+            else if (id == "Window" || id.Contains("WindowWooden"))
+                glyph = 'W';
+            else if (id == "Grille" && glyph != 'W')
+                glyph = 'g';
+            else if (id == "GrilleBroken")
+                glyph = ',';
+            else if (SEntMan.TryGetComponent(e, out DoorComponent? door))
+                glyph = door.State is DoorState.Open or DoorState.Opening ? 'o' : 'D';
+            else if (id.StartsWith("Table"))
+                glyph = 't';
+        }
+
+        if (path != null && path.TryGetValue(tile, out var when) && glyph is '.' or 'o' or ',' or 'g')
+            glyph = "0123456789abcdefghijklmnopqrstuvwxyz"[Math.Min(35, when / 5)];
+
+        return glyph;
+    }
+
+    private void Report(string name, IEnumerable<EntityUid> mobs, IEnumerable<EntityUid> heroes)
+    {
+        var text = new StringBuilder();
+        text.AppendLine($"===== {name} =====");
+        text.Append(_out);
+        var grid = SEntMan.GetComponent<MapGridComponent>(_grid);
+        foreach (var hero in heroes)
+        {
+            if (!SEntMan.TryGetComponent(hero, out CFCombatantComponent? combat))
+                continue;
+
+            text.AppendLine($"hero {hero} lost {combat.MaxHp - combat.CurrentHp} hp, at {TileOf(hero)}");
+        }
+
+        foreach (var mob in mobs)
+        {
+            if (SEntMan.EntityExists(mob))
+                text.AppendLine($"end {mob} {Body(mob)}");
+        }
+
+        var bridge = SEntMan.System<CFCombatBridgeSystem>();
+        var shown = new HashSet<string>();
+        var anchored = SEntMan.AllEntityQueryEnumerator<TransformComponent>();
+        while (anchored.MoveNext(out var uid, out var xform))
+        {
+            var id = Name(uid);
+            if (xform.Anchored && id is "Grille" or "Window" or "CFWoodenBirchDoor" && shown.Add(id)
+                && bridge.TryEnsureCombatTarget(uid, out var combat, out var hardness, out var isObject))
+                text.AppendLine($"object {id}: hp {combat.CurrentHp}/{combat.MaxHp} ac {combat.ArmorClass} hardness {hardness} isObject {isObject}");
+        }
+
+        SEntMan.System<CFGOAPDebugLogSystem>().WatchAll();
+        foreach (var mob in mobs)
+        {
+            if (!SEntMan.EntityExists(mob))
+                continue;
+
+            if (SEntMan.TryGetComponent(mob, out CFGOAPDebugLogComponent? log))
+            {
+                text.AppendLine($"--- decision log {mob} {Name(mob)}");
+                foreach (var entry in log.Entries)
+                {
+                    text.AppendLine("  " + entry);
+                }
+            }
+
+            _paths.TryGetValue(mob, out var path);
+            text.AppendLine($"--- path {mob} (digit = 5 s blocks), {path?.Count ?? 0} tiles");
+            for (var y = 9; y >= -17; y--)
+            {
+                var row = new StringBuilder(FormattableString.Invariant($"{y,4} "));
+                for (var x = -11; x <= 15; x++)
+                {
+                    row.Append(Glyph(new Vector2i(x, y), grid, path));
+                }
+
+                text.AppendLine(row.ToString());
+            }
+        }
+
+        File.WriteAllText(Path.Combine(OutDir, $"trial-{name}.txt"), text.ToString());
+    }
+
+    private async Task Finish(string name, IEnumerable<EntityUid> mobs, IEnumerable<EntityUid> heroes)
+    {
+        await Server.WaitPost(() =>
+        {
+            Report(name, mobs, heroes);
+            Server.ResolveDependency<IConfigurationManager>().SetCVar(CCVars.NPCEnabled, false);
+        });
+    }
+
+    [Test]
+    public async Task AirEverywhere()
+    {
+        await Load();
+        await Pair.RunTicksSync(30);
+        await Server.WaitPost(() =>
+        {
+            var atmos = SEntMan.System<AtmosphereSystem>();
+            var grid = SEntMan.GetComponent<MapGridComponent>(_grid);
+            var low = new List<string>();
+            var total = 0;
+            foreach (var tile in Maps.GetAllTiles(_grid, grid))
+            {
+                total++;
+                var air = atmos.GetTileMixture(_grid, null, tile.GridIndices);
+                if (air == null || air.Pressure < 90f)
+                    low.Add($"{tile.GridIndices} {air?.Pressure:F0}");
+            }
+
+            File.WriteAllText(Path.Combine(OutDir, "trial-air.txt"), $"{total} tiles, {low.Count} under 90 kPa\n{string.Join("\n", low.Take(20))}\n");
+            Server.ResolveDependency<IConfigurationManager>().SetCVar(CCVars.NPCEnabled, false);
+        });
+    }
+
+    /// <summary>Runs the real command, and reports what it changed on each tile.</summary>
+    [Test]
+    public async Task FixGridAtmosCompare()
+    {
+        await Load();
+        await Pair.RunTicksSync(30);
+        var before = new Dictionary<Vector2i, string>();
+        var text = new StringBuilder();
+        await Server.WaitPost(() =>
+        {
+            foreach (var (tile, reading) in AirReadings())
+            {
+                before[tile] = reading;
+            }
+
+            var kinds = before.Values.GroupBy(v => v).Select(g => $"{g.Count()} x {g.Key}");
+            text.AppendLine("before: " + string.Join(" | ", kinds));
+            Server.ResolveDependency<Robust.Shared.Console.IConsoleHost>().ExecuteCommand($"fixgridatmos {SEntMan.GetNetEntity(_grid)}");
+        });
+        await Pair.RunTicksSync(30);
+        await Server.WaitPost(() =>
+        {
+            var after = AirReadings();
+            var kinds = after.Values.GroupBy(v => v).Select(g => $"{g.Count()} x {g.Key}");
+            text.AppendLine("after:  " + string.Join(" | ", kinds));
+            var changed = after.Where(p => before.GetValueOrDefault(p.Key) != p.Value).ToList();
+            text.AppendLine($"tiles changed: {changed.Count}");
+            foreach (var (tile, reading) in changed.Take(12))
+            {
+                text.AppendLine($"  {tile}: {before.GetValueOrDefault(tile)} became {reading}");
+            }
+
+            var solid = 0;
+            var solidNoAir = 0;
+            var grid = SEntMan.GetComponent<MapGridComponent>(_grid);
+            foreach (var (tile, reading) in after)
+            {
+                if (reading != "none")
+                    continue;
+
+                solidNoAir++;
+                if (Maps.GetAnchoredEntities(_grid, grid, tile).Any(e => Name(e) is "WallReinforced" or "Window" or "Grille" or "CFWoodenBirchDoor"))
+                    solid++;
+            }
+
+            text.AppendLine($"tiles with no air: {solidNoAir}, of which under a wall, window, grille or door: {solid}");
+            File.WriteAllText(Path.Combine(OutDir, "trial-fixgridatmos.txt"), text.ToString());
+            Server.ResolveDependency<IConfigurationManager>().SetCVar(CCVars.NPCEnabled, false);
+        });
+    }
+
+    private Dictionary<Vector2i, string> AirReadings()
+    {
+        var atmos = SEntMan.System<AtmosphereSystem>();
+        var grid = SEntMan.GetComponent<MapGridComponent>(_grid);
+        var result = new Dictionary<Vector2i, string>();
+        foreach (var tile in Maps.GetAllTiles(_grid, grid))
+        {
+            var air = atmos.GetTileMixture(_grid, null, tile.GridIndices);
+            result[tile.GridIndices] = air == null
+                ? "none"
+                : FormattableString.Invariant($"{air.Pressure:F0}kPa {air.Temperature:F0}K");
+        }
+
+        return result;
+    }
+
+    /// <summary>Draws the real arrows, from the real tile costs, for the journeys that went wrong.</summary>
+    [Test]
+    public async Task FieldProbe()
+    {
+        await Load();
+        var text = new StringBuilder();
+        await Server.WaitPost(() =>
+        {
+            var boss = Boss(0, 5);
+            var steering = SEntMan.System<CFGOAPSteeringSystem>();
+            var grid = SEntMan.GetComponent<MapGridComponent>(_grid);
+            void Draw(string title, Vector2 goal)
+            {
+                var field = new CFGOAPFlowField();
+                steering.BuildField(boss, field, goal);
+                text.AppendLine($"--- {title}: {field.Arrows.Count} arrows");
+                for (var y = 9; y >= -5; y--)
+                {
+                    var row = new StringBuilder(FormattableString.Invariant($"{y,4} "));
+                    for (var x = -11; x <= 15; x++)
+                    {
+                        var tile = new Vector2i(x, y);
+                        if (field.Arrows.TryGetValue(tile, out var arrow))
+                        {
+                            var angle = MathF.Atan2(arrow.Y, arrow.X) * 180f / MathF.PI;
+                            var octant = (int) MathF.Round(((angle + 360f) % 360f) / 45f) % 8;
+                            row.Append(">/^\\<,v.".Replace(".", "`")[octant]);
+                        }
+                        else
+                        {
+                            row.Append(Glyph(tile, grid, null));
+                        }
+                    }
+
+                    text.AppendLine(row.ToString());
+                }
+            }
+
+            Draw("to the far hero (12,7)", Xform.ToMapCoordinates(At(12, 7)).Position);
+            Draw("to the hero under the window (0,3)", Xform.ToMapCoordinates(At(0, 3)).Position);
+            File.WriteAllText(Path.Combine(OutDir, "trial-fields.txt"), text.ToString());
+            Server.ResolveDependency<IConfigurationManager>().SetCVar(CCVars.NPCEnabled, false);
+        });
+    }
+
+    /// <summary>Tick by tick along the one-tile corridor, where a mob with correct arrows still goes back and forth.</summary>
+    [Test]
+    public async Task CorridorProbe()
+    {
+        await Load();
+        EntityUid hero = default, boss = default;
+        await Server.WaitPost(() =>
+        {
+            hero = Hero(12, 7);
+            var brain = Boss(-3, 5);
+            boss = brain;
+            brain.Comp.Lkp = Xform.GetMapCoordinates(hero);
+        });
+
+        var text = new StringBuilder();
+        var dirs = new[] { "E", "NE", "N", "NW", "W", "SW", "S", "SE" };
+        for (var i = 0; i < 180; i++)
+        {
+            await Pair.RunTicksSync(2);
+            await Server.WaitPost(() =>
+            {
+                if (!SEntMan.TryGetComponent(boss, out NPCSteeringComponent? stock))
+                {
+                    text.AppendLine($"{i * 2,4} no stock steering at x={Xform.GetMoverCoordinates(boss).Position.X:F2}");
+                    return;
+                }
+
+                var cf = SEntMan.GetComponent<CFGOAPSteeringComponent>(boss);
+                var body = SEntMan.GetComponent<PhysicsComponent>(boss);
+                if (i == 60)
+                {
+                    var from = Xform.GetWorldPosition(boss);
+                    if (SEntMan.System<CFGOAPSteeringSystem>().TryFeel(boss, from, new Vector2(1f, 0f), 12f, out var hit))
+                        text.AppendLine($"RAY E hit {hit.Entity} {Name(hit.Entity)} at {hit.Distance} static={SEntMan.GetComponent<PhysicsComponent>(hit.Entity).BodyType}");
+                    text.AppendLine($"onArrows={cf.OnArrows} usingField={cf.UsingField} field={cf.Field?.Arrows.Count} felt={Name(cf.Felt)} through={Name(cf.Through)} obstacle={Name(cf.Obstacle)} point={cf.Point}");
+                    var ft = string.Join(",", cf.FeelerTarget.Select(v => v.ToString("F2")));
+                    text.AppendLine($"feelerTarget={ft}");
+                    var fd = string.Join(",", stock.Danger.Select(v => v.ToString("F2")));
+                    text.AppendLine($"stockDanger={fd} status={stock.Status}");
+                }
+
+                var local = Xform.GetMoverCoordinates(boss).Position;
+                var n = stock.Interest.Length;
+                var best = 0;
+                var worst = 0;
+                for (var k = 0; k < n; k++)
+                {
+                    if (stock.Interest[k] > stock.Interest[best])
+                        best = k;
+                    if (stock.Danger[k] > stock.Danger[worst])
+                        worst = k;
+                }
+
+                var avoiding = Timing.CurTime < cf.AvoidUntil;
+                var name = (int k) => dirs[k * 8 / n];
+                text.AppendLine(FormattableString.Invariant(
+                    $"{i * 2,4} x={local.X:F2} y={local.Y:F2} vx={body.LinearVelocity.X:F1} vy={body.LinearVelocity.Y:F1} interest={name(best)}:{stock.Interest[best]:F2} intE={stock.Interest[0]:F2} intW={stock.Interest[n / 2]:F2} danger={name(worst)}:{stock.Danger[worst]:F2} dangE={stock.Danger[0]:F2} avoid={avoiding} dir=({cf.AvoidDirection.X:F1},{cf.AvoidDirection.Y:F1}) last=({stock.LastSteerDirection.X:F1},{stock.LastSteerDirection.Y:F1}) kinds={string.Join("+", cf.Behaviors.Select(b => b.Kind))}"));
+            });
+        }
+
+        await Server.WaitPost(() =>
+        {
+            File.WriteAllText(Path.Combine(OutDir, "trial-corridor.txt"), text.ToString());
+            Server.ResolveDependency<IConfigurationManager>().SetCVar(CCVars.NPCEnabled, false);
+        });
+    }
+
+    [Test]
+    public async Task TileProbe()
+    {
+        await Load();
+        await Server.WaitPost(() =>
+        {
+            var grid = SEntMan.GetComponent<MapGridComponent>(_grid);
+            var lookup = SEntMan.System<EntityLookupSystem>();
+            var text = new StringBuilder();
+            foreach (var x in new[] { 5, 6, 7 })
+            {
+                foreach (var e in lookup.GetLocalEntitiesIntersecting(_grid, new Vector2i(x, 5), flags: LookupFlags.All, gridComp: grid))
+                {
+                    SEntMan.TryGetComponent(e, out PhysicsComponent? body);
+                    text.AppendLine($"({x},5) {e} {Name(e)} body={body?.BodyType} hard={body?.Hard} canCollide={body?.CanCollide} layer={body?.CollisionLayer} pos={Xform.GetMoverCoordinates(e).Position} anchored={SEntMan.GetComponent<TransformComponent>(e).Anchored}");
+                }
+            }
+
+            File.WriteAllText(Path.Combine(OutDir, "trial-tiles.txt"), text.ToString());
+            Server.ResolveDependency<IConfigurationManager>().SetCVar(CCVars.NPCEnabled, false);
+        });
+    }
+
+    [Test]
+    public async Task DoorChase()
+    {
+        await Load();
+        EntityUid hero = default, boss = default;
+        await Server.WaitPost(() => { hero = Hero(3, 0); boss = Boss(0, 0); });
+
+        // The hero leaves through the door and it closes behind them, at a walk.
+        var route = new (int, int)[] { (3, -1), (4, -2), (4, -3), (4, -4), (4, -6), (4, -7), (5, -7), (6, -7) };
+        var hop = 0;
+        await Watch(70, new[] { boss }, t =>
+        {
+            if (t >= 2f && hop < route.Length && t >= 2f + hop * 0.5f)
+            {
+                Xform.SetCoordinates(hero, At(route[hop].Item1, route[hop].Item2));
+                hop++;
+            }
+        });
+        await Finish("DoorChase", new[] { boss }, new[] { hero });
+    }
+
+    [Test]
+    public async Task WindowBetween()
+    {
+        await Load();
+        EntityUid hero = default, boss = default;
+        await Server.WaitPost(() => { hero = Hero(0, 3); boss = Boss(0, 5); });
+        await Watch(90, new[] { boss });
+        await Finish("WindowBetween", new[] { boss }, new[] { hero });
+    }
+
+    [Test]
+    public async Task GrilleOnly()
+    {
+        await Load();
+        EntityUid hero = default, boss = default;
+        await Server.WaitPost(() =>
+        {
+            var grid = SEntMan.GetComponent<MapGridComponent>(_grid);
+            foreach (var x in new[] { -1, 0, 1 })
+            {
+                foreach (var e in Maps.GetAnchoredEntities(_grid, grid, new Vector2i(x, 4)).ToList())
+                {
+                    if (Name(e) == "Window")
+                        SEntMan.DeleteEntity(e);
+                }
+            }
+
+            hero = Hero(0, 3);
+            boss = Boss(0, 5);
+        });
+        await Watch(60, new[] { boss });
+        await Finish("GrilleOnly", new[] { boss }, new[] { hero });
+    }
+
+    [Test]
+    public async Task FarAcrossTheMaze()
+    {
+        await Load();
+        EntityUid hero = default, boss = default;
+        await Server.WaitPost(() =>
+        {
+            hero = Hero(12, 7);
+            var brain = Boss(-10, 7);
+            boss = brain;
+            brain.Comp.Lkp = Xform.GetMapCoordinates(hero);
+        });
+        await Watch(90, new[] { boss });
+        await Finish("FarAcrossTheMaze", new[] { boss }, new[] { hero });
+    }
+
+    [Test]
+    public async Task SmallGroupFlankAndRout()
+    {
+        await Load();
+        EntityUid hero = default;
+        var members = new List<EntityUid>();
+        Entity<CFGOAPEncounterSpawnerComponent> spawner = default;
+        await Server.WaitPost(() =>
+        {
+            hero = Hero(3, 0);
+            var uid = SEntMan.SpawnEntity("CFEncounterSpawner", At(0, 1));
+            spawner = (uid, SEntMan.GetComponent<CFGOAPEncounterSpawnerComponent>(uid));
+            SEntMan.System<CFGOAPEncounterSystem>().Spawn(spawner);
+            members.AddRange(spawner.Comp.Members);
+            foreach (var member in members)
+            {
+                Wake(member);
+            }
+        });
+
+        var killed = false;
+        await Watch(60, members, t =>
+        {
+            if (killed || t < 30f)
+                return;
+
+            killed = true;
+            _out.AppendLine("  ---- two members killed, group routs ----");
+            var state = SEntMan.System<MobStateSystem>();
+            foreach (var member in spawner.Comp.Members.Take(2).ToList())
+            {
+                state.ChangeMobState(member, MobState.Dead);
+            }
+        });
+        await Finish("SmallGroupFlankAndRout", members, new[] { hero });
+    }
+
+    [Test]
+    public async Task LostTarget()
+    {
+        await Load();
+        EntityUid hero = default, boss = default;
+        await Server.WaitPost(() => { hero = Hero(3, 1); boss = Boss(-3, 1); });
+        var hidden = false;
+        await Watch(45, new[] { boss }, t =>
+        {
+            if (hidden || t < 3f)
+                return;
+
+            hidden = true;
+            _out.AppendLine("  ---- hero goes undetected ----");
+            var stealth = SEntMan.EnsureComponent<CFStealthComponent>(hero);
+            stealth.Active = true;
+            stealth.Detection[boss] = CFDetection.Undetected;
+        });
+        await Finish("LostTarget", new[] { boss }, new[] { hero });
+    }
+
+    [Test]
+    public async Task IdleWander()
+    {
+        await Load();
+        EntityUid boss = default;
+        await Server.WaitPost(() => boss = Boss(0, 0));
+        await Watch(60, new[] { boss });
+        await Finish("IdleWander", new[] { boss }, Array.Empty<EntityUid>());
+    }
+
+    [Test]
+    public async Task TwoHeroes()
+    {
+        await Load();
+        EntityUid near = default, far = default, boss = default;
+        await Server.WaitPost(() => { near = Hero(2, 0); far = Hero(-3, 0); boss = Boss(0, 0); });
+        var hurt = false;
+        await Watch(40, new[] { boss }, t =>
+        {
+            if (hurt || t < 15f)
+                return;
+
+            hurt = true;
+            _out.AppendLine("  ---- the far hero hits it ----");
+            var hit = new CFDamagedEvent(far, 3);
+            SEntMan.EventBus.RaiseLocalEvent(boss, ref hit);
+        });
+        await Finish("TwoHeroes", new[] { boss }, new[] { near, far });
+    }
+
+    [TestCase("Default")]
+    [TestCase("Beast")]
+    [TestCase("Tactician")]
+    public async Task SustainedFight(string tactics)
+    {
+        await Load();
+        EntityUid hero = default, boss = default;
+        await Server.WaitPost(() => { hero = Hero(1, 0); boss = Boss(0, 0, tactics); });
+        await Watch(60, new[] { boss });
+        await Finish("SustainedFight-" + tactics, new[] { boss }, new[] { hero });
+    }
+}

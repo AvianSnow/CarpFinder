@@ -294,6 +294,7 @@ public sealed partial class CFGOAPSteeringSystem
         var until = _timing.CurTime + GiveUpMemory;
         field.GaveUp[obstacle] = until;
         ClearObstacle(ent);
+        ent.Comp.Route.Clear();
 
         // Running away, any other way out will do, so there is nothing to stop trying.
         if (field.Away)

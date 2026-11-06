@@ -7,6 +7,7 @@ using Content.Shared.CF.Combat;
 using Content.Shared.CF.Factions;
 using Content.Shared.CF.GOAP;
 using Content.Shared.Mobs.Systems;
+using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
@@ -22,6 +23,9 @@ public sealed partial class CFGOAPSystem : EntitySystem
 {
     /// <summary>How near the last known position counts as there.</summary>
     public const float LkpArrival = 1f;
+
+    /// <summary>How close to home counts as back, in tiles.</summary>
+    public const float HomeArrival = 1.5f;
 
     private static readonly TimeSpan ThinkInterval = TimeSpan.FromSeconds(0.5);
 
@@ -59,11 +63,24 @@ public sealed partial class CFGOAPSystem : EntitySystem
         if (Transform(ent).GridUid is { } grid)
             _influence.EnsureMap(grid);
 
+        ent.Comp.Home ??= _transform.GetMoverCoordinates(ent);
+
         var steering = EnsureComp<CFGOAPSteeringComponent>(ent);
         steering.SpeedMultiplier = Profile(ent).MaxSpeed;
 
         // Each think is timed from the last one, so this keeps a group that woke together from thinking on one tick.
         ent.Comp.NextThink = _timing.CurTime + ThinkInterval * _random.NextDouble();
+    }
+
+    /// <summary>Where home is now. False if it has none it could walk to, such as one on another level.</summary>
+    public bool TryGetHome(Entity<CFGOAPComponent> ent, out MapCoordinates home)
+    {
+        home = default;
+        if (ent.Comp.Home is not { } coordinates || !Exists(coordinates.EntityId))
+            return false;
+
+        home = _transform.ToMapCoordinates(coordinates);
+        return home.MapId == Transform(ent).MapID;
     }
 
     /// <summary>Stops whatever it was doing.</summary>

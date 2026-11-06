@@ -88,6 +88,73 @@ public static class CFGOAPFlowFieldBuilder
         return Arrows(safety, cost, keepFlat: true);
     }
 
+    /// <summary>
+    /// The cheapest way between two tiles, by the same rules as the arrows, with no limit on how far apart they are.
+    /// <paramref name="limit"/> caps how many tiles it looks at. The route leaves out where it starts. The goal counts
+    /// as open even if something stands on it, as it does for a field.
+    /// </summary>
+    public static bool TryFindRoute(Vector2i start, Vector2i goal, Func<Vector2i, int> tileCost, int limit, out List<Vector2i> route)
+    {
+        route = new List<Vector2i>();
+        var cost = Remembered(tile => tile == goal ? 0 : tileCost(tile));
+        var costs = new Dictionary<Vector2i, int> { [start] = 0 };
+        var cameFrom = new Dictionary<Vector2i, Vector2i>();
+        var open = new PriorityQueue<Vector2i, int>();
+        open.Enqueue(start, Estimate(start, goal));
+
+        var searched = 0;
+        while (open.TryDequeue(out var tile, out var priority))
+        {
+            if (tile == goal)
+            {
+                for (var at = goal; at != start; at = cameFrom[at])
+                {
+                    route.Add(at);
+                }
+
+                route.Reverse();
+                return true;
+            }
+
+            if (priority > costs[tile] + Estimate(tile, goal))
+                continue;
+
+            if (++searched > limit)
+                return false;
+
+            foreach (var step in Steps)
+            {
+                var next = tile + step;
+                if (!CanStep(tile, step, cost))
+                    continue;
+
+                var total = costs[tile] + cost(next) + (step.X != 0 && step.Y != 0 ? DiagonalCost : StraightCost);
+                if (costs.TryGetValue(next, out var known) && known <= total)
+                    continue;
+
+                costs[next] = total;
+                cameFrom[next] = tile;
+                open.Enqueue(next, total + Estimate(next, goal));
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>The cost of the way with nothing in it, which no real way can beat.</summary>
+    private static int Estimate(Vector2i from, Vector2i to)
+    {
+        var x = Math.Abs(from.X - to.X);
+        var y = Math.Abs(from.Y - to.Y);
+        return Math.Min(x, y) * DiagonalCost + Math.Abs(x - y) * StraightCost;
+    }
+
+    /// <summary>The tile an arrow on <paramref name="tile"/> leads to.</summary>
+    public static Vector2i NextTile(Vector2i tile, Vector2 arrow)
+    {
+        return tile + new Vector2i((int) MathF.Round(arrow.X), (int) MathF.Round(arrow.Y));
+    }
+
     private static Func<Vector2i, int> Remembered(Func<Vector2i, int> tileCost)
     {
         var known = new Dictionary<Vector2i, int>();

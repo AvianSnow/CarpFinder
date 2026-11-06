@@ -42,6 +42,9 @@ public enum CFGOAPFact : uint
     /// <summary>Its side of the target is somewhere it cannot stand, such as on a table.</summary>
     FlankBlocked = 1 << 28,
 
+    /// <summary>It is near where it started.</summary>
+    AtHome = 1 << 29,
+
     // Never sensed. These only exist as what a goal wants, so a plan has something to reach.
     TargetHurt = 1 << 20,
     Safe = 1 << 21,
@@ -81,6 +84,9 @@ public enum CFGOAPStep : byte
 
     /// <summary>Stay put until thinking changes the plan.</summary>
     Wait,
+
+    /// <summary>Walk back to where it started.</summary>
+    GoHome,
 }
 
 /// <summary>How an action's worth is worked out when planning. See <c>CFGOAPTacticsSystem</c>.</summary>

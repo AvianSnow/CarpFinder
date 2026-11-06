@@ -66,6 +66,12 @@
   wants: [ Idled ]
   priority: 1
 
+# With nothing better to do, it goes back to where it started instead of roaming off for good.
+- type: cfGoapGoal
+  id: GoHome
+  wants: [ AtHome ]
+  priority: 1.5
+
 # With no trail or node to go on, it still goes and looks at the place.
 - type: cfGoapGoal
   id: Investigate
@@ -185,6 +191,12 @@
   needsNot: [ NoWay ]
   gives: [ Investigated ]
   cost: 2
+
+- type: cfGoapAction
+  id: GoHome
+  step: GoHome
+  needsNot: [ NoWay ]
+  gives: [ AtHome ]
 
 - type: cfGoapAction
   id: Wander

@@ -39,7 +39,7 @@ public sealed partial class CFGOAPCheckNodeStepSystem : CFGOAPStepSystem
         var at = _transform.GetMapCoordinates(node);
         if ((at.Position - _transform.GetMapCoordinates(ent).Position).Length() > CFGOAPSystem.LkpArrival)
         {
-            Steering.Navigate(ent, at.Position, null);
+            Steering.Travel(ent, at.Position);
             return false;
         }
 
