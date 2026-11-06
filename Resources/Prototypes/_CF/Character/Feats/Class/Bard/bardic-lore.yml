@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFBardicLore
-  name: "Bardic Lore"
-  description: "Requires enigma muse. Lore: Bardic Lore."
+  name: cf-feat-bardic-lore
+  description: cf-feat-bardic-lore-desc
   class: Bard
   level: 1
   traits:

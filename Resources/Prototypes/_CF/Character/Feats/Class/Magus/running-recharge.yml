@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFRunningRecharge
-  name: "Running Recharge"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-running-recharge
+  description: cf-feat-running-recharge-desc
   class: Magus
   level: 4
   traits:

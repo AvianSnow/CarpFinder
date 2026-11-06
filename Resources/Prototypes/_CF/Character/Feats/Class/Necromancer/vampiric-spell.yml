@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFVampiricSpell
-  name: "Vampiric Spell"
-  description: "Changes an item. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-vampiric-spell
+  description: cf-feat-vampiric-spell-desc
   class: Necromancer
   level: 4
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFOrcWeaponFamiliarity
-  name: "Orc Weapon Familiarity"
-  description: "Ancestry weapons count as a simpler group for proficiency. Not applied in combat yet."
+  name: cf-feat-orc-weapon-familiarity
+  description: cf-feat-orc-weapon-familiarity-desc
   ancestry: Orc
   level: 1
   traits:

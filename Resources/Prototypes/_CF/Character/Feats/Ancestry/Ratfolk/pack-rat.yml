@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFPackRat
-  name: "Pack Rat"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-pack-rat
+  description: cf-feat-pack-rat-desc
   ancestry: Ratfolk
   level: 1
   traits:

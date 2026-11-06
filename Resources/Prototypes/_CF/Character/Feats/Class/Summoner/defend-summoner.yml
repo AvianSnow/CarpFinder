@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFDefendSummoner
-  name: "Defend Summoner"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-defend-summoner
+  description: cf-feat-defend-summoner-desc
   class: Summoner
   level: 4
   traits:

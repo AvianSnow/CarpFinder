@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Divine Mysteries
 - type: cfFeat
   id: CFOathoftheAvenger
-  name: "Oath of the Avenger"
-  description: "Requires lay on hands. Changes an item. This feature will be implemented later."
+  name: cf-feat-oathofthe-avenger
+  description: cf-feat-oathofthe-avenger-desc
   class: Champion
   level: 2
   traits:

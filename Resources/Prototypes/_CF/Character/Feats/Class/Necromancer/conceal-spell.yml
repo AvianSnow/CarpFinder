@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFConcealSpellNecromancer
-  name: "Conceal Spell"
-  description: "Changes an item. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-conceal-spell-necromancer
+  description: cf-feat-conceal-spell-necromancer-desc
   class: Necromancer
   level: 2
   traits:

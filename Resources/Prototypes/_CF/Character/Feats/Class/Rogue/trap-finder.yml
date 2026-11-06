@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFTrapFinderRogue
-  name: "Trap Finder"
-  description: "This feature will be implemented later."
+  name: cf-feat-trap-finder-rogue
+  description: cf-feat-trap-finder-rogue-desc
   class: Rogue
   level: 1
   traits:

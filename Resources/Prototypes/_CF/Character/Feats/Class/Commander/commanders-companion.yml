@@ -2,8 +2,8 @@
 # source: Carpfinder Battlecry!
 - type: cfFeat
   id: CFCommandersCompanion
-  name: "Commander's Companion"
-  description: "This feature will be implemented later."
+  name: cf-feat-commanders-companion
+  description: cf-feat-commanders-companion-desc
   class: Commander
   level: 1
   traits:

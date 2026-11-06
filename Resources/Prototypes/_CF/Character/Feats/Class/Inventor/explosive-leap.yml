@@ -2,8 +2,8 @@
 # source: Carpfinder Guns & Gears
 - type: cfFeat
   id: CFExplosiveLeap
-  name: "Explosive Leap"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-explosive-leap
+  description: cf-feat-explosive-leap-desc
   class: Inventor
   level: 1
   traits:

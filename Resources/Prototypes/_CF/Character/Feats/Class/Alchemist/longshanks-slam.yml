@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Cheliax, Infernal Inheritance
 - type: cfFeat
   id: CFLongshanksSlam
-  name: "Longshanks Slam"
-  description: "This feature will be implemented later."
+  name: cf-feat-longshanks-slam
+  description: cf-feat-longshanks-slam-desc
   class: Alchemist
   level: 4
   rarity: Uncommon

@@ -2,8 +2,8 @@
 # source: Carpfinder Guns & Gears
 - type: cfFeat
   id: CFCollapseConstruct
-  name: "Collapse Construct"
-  description: "Requires construct innovation. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-collapse-construct
+  description: cf-feat-collapse-construct-desc
   class: Inventor
   level: 2
   traits:

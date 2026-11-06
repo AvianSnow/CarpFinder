@@ -2,8 +2,8 @@
 # source: Carpfinder Battlecry!
 - type: cfFeat
   id: CFArmoredCourage
-  name: "Armored Courage"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-armored-courage
+  description: cf-feat-armored-courage-desc
   class: Guardian
   level: 4
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFCourageousAdvance
-  name: "Courageous Advance"
-  description: "Requires warrior muse. Changes an item. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-courageous-advance
+  description: cf-feat-courageous-advance-desc
   class: Bard
   level: 4
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFOrcFerocity
-  name: "Orc Ferocity"
-  description: "Reaction. TBA - action will be added"
+  name: cf-feat-orc-ferocity
+  description: cf-feat-orc-ferocity-desc
   ancestry: Orc
   level: 1
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Draconic Codex
 - type: cfFeat
   id: CFKoboldBreath
-  name: "Kobold Breath"
-  description: "Requires dragonscaled kobold heritage. Grants Draconic Benefactor. Not added in play yet. Changes an item. Not applied in play yet. Costs 2 actions. TBA - action will be added"
+  name: cf-feat-kobold-breath
+  description: cf-feat-kobold-breath-desc
   ancestry: Kobold
   level: 1
   traits:

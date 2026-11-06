@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens High Seas
 - type: cfFeat
   id: CFTouchoftheSea
-  name: "Touch of the Sea"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-touchofthe-sea
+  description: cf-feat-touchofthe-sea-desc
   ancestry: Elf
   level: 1
   traits:

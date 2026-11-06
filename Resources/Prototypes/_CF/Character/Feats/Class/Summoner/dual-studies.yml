@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFDualStudies
-  name: "Dual Studies"
-  description: "This feature will be implemented later."
+  name: cf-feat-dual-studies
+  description: cf-feat-dual-studies-desc
   class: Summoner
   level: 1
   traits:

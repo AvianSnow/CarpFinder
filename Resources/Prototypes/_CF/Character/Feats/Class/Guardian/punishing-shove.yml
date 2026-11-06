@@ -2,8 +2,8 @@
 # source: Carpfinder Battlecry!
 - type: cfFeat
   id: CFPunishingShove
-  name: "Punishing Shove"
-  description: "Requires trained in Athletics."
+  name: cf-feat-punishing-shove
+  description: cf-feat-punishing-shove-desc
   class: Guardian
   level: 1
   traits:

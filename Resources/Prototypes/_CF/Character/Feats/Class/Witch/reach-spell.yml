@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFReachSpellWitch
-  name: "Reach Spell"
-  description: "Changes an item. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-reach-spell-witch
+  description: cf-feat-reach-spell-witch-desc
   class: Witch
   level: 1
   traits:

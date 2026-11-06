@@ -1,3 +1,4 @@
+using Content.Shared.CF.Languages;
 using Content.Shared.CF.Preferences;
 using Content.Shared.Humanoid.Prototypes;
 using Robust.Shared.Prototypes;
@@ -78,7 +79,7 @@ public sealed partial class CFAncestryPrototype : IPrototype
     public List<CFAbility> AbilityFlaws = new();
 
     [DataField]
-    public List<LocId> Languages = new();
+    public List<ProtoId<CFLanguagePrototype>> Languages = new();
 
     [DataField]
     public List<LocId> Traits = new();

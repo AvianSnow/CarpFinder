@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFArcaneFists
-  name: "Arcane Fists"
-  description: "Unarmed attack (Unarmed). Changes an item. This feature will be implemented later."
+  name: cf-feat-arcane-fists
+  description: cf-feat-arcane-fists-desc
   class: Magus
   level: 1
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFParthenogenicHatchling
-  name: "Parthenogenic Hatchling"
-  description: "Improves Saving Throw results. Not applied in play yet. +1 circumstance bonus to Saving Throw. Not applied in play yet."
+  name: cf-feat-parthenogenic-hatchling
+  description: cf-feat-parthenogenic-hatchling-desc
   ancestry: Lizardfolk
   level: 1
   traits:

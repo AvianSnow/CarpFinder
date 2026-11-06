@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFEnergyAblation
-  name: "Energy Ablation"
-  description: "Changes an item. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-energy-ablation
+  description: cf-feat-energy-ablation-desc
   class: Wizard
   level: 2
   traits:

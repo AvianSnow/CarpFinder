@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFDeflectProjectile
-  name: "Deflect Projectile"
-  description: "+4 circumstance bonus to Ac. Reaction. This feature will be implemented later."
+  name: cf-feat-deflect-projectile
+  description: cf-feat-deflect-projectile-desc
   class: Monk
   level: 4
   traits:

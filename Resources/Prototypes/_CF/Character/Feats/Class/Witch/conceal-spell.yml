@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFConcealSpellWitch
-  name: "Conceal Spell"
-  description: "Changes an item. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-conceal-spell-witch
+  description: cf-feat-conceal-spell-witch-desc
   class: Witch
   level: 2
   traits:

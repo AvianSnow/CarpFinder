@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFKneecap
-  name: "Kneecap"
-  description: "Costs 1 action. TBA - action will be added"
+  name: cf-feat-kneecap
+  description: cf-feat-kneecap-desc
   ancestry: Goblin
   level: 5
   traits:

@@ -144,6 +144,18 @@ dotnet build -c Tools --no-incremental -nologo -clp:ErrorsOnly "-flp:logfile=bui
 Select-String -Path build.log -Pattern ': warning ' | Where-Object { $_.Line -match '_CF' }
 ```
 
+## A wall is a component, not a tag
+
+Stock replaced the `Wall` tag with `WallComponent`. CP14 code still asks for the tag, so check for the component when porting. Windows only have the `Window` tag. The linter catches a `ProtoId<TagPrototype>` naming a tag that is gone, but only if the error is not lost among others.
+
+## A LocId field holds a key, never the text
+
+`[DataField] public LocId Name` wants a key that is in an `.ftl`. English written straight into the YAML still shows up in game, because `Loc.GetString` hands back an unknown key as it is, so nothing looks wrong. But the YAML linter reports `No localization message found`, the client logs `Unknown messageId` every time it is read, and nothing can translate it. That was 2,567 errors on feats and backgrounds.
+
+Do not compare the result of a `LocId` in code. `CFPetMath` used to search a feat's name for "Animal Companion", which stops working once the name is a key. Match on the id, or better, on a field made for it.
+
+Fluent treats `{` and `}` as code, and a value starting with `.`, `[` or `*` as syntax, so write those as `{"{"}`. One bad line can lose the rest of the file.
+
 ## Ported prototypes must bring what they reference
 
 A ported item that names a `stackType`, a `materialComposition` key, or a `ReagentId` that was not ported crashes the moment it is spawned or previewed (`Unknown StackPrototype prototype: CFAsh`, opening the character sheet). Port the CP14 `stack`, `material` and `reagent` prototypes with the items (CF stacks: `Resources/Prototypes/_CF/Stacks/`, materials: `_CF/Materials/`).

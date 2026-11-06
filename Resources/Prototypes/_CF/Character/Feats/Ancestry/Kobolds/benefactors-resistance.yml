@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Draconic Codex
 - type: cfFeat
   id: CFBenefactorsResistance
-  name: "Benefactor's Resistance"
-  description: "Requires dragonscaled kobold heritage. Grants Draconic Benefactor. Not added in play yet. Has a resistance. Not applied in play yet."
+  name: cf-feat-benefactors-resistance
+  description: cf-feat-benefactors-resistance-desc
   ancestry: Kobold
   level: 1
   traits:

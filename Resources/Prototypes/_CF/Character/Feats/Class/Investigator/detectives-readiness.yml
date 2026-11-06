@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFDetectivesReadiness
-  name: "Detective's Readiness"
-  description: "Changes an item. +1 circumstance bonus to Saving Throw. This feature will be implemented later."
+  name: cf-feat-detectives-readiness
+  description: cf-feat-detectives-readiness-desc
   class: Investigator
   level: 4
   traits:

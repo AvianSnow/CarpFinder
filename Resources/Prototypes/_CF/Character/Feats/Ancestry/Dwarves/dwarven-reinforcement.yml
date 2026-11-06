@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFDwarvenReinforcement
-  name: "Dwarven Reinforcement"
-  description: "Requires expert in Crafting."
+  name: cf-feat-dwarven-reinforcement
+  description: cf-feat-dwarven-reinforcement-desc
   ancestry: Dwarf
   level: 5
   traits:

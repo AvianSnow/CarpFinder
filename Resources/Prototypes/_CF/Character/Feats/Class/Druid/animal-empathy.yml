@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFAnimalEmpathy
-  name: "Animal Empathy"
-  description: "This feature will be implemented later."
+  name: cf-feat-animal-empathy
+  description: cf-feat-animal-empathy-desc
   class: Druid
   level: 1
   traits:

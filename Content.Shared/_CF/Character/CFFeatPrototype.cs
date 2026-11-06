@@ -85,6 +85,29 @@ public sealed partial class CFFeatPrototype : IPrototype
     [DataField]
     public bool PendingAction;
 
+    /// <summary>Set on general and skill feats, which belong to no ancestry or class.</summary>
+    [DataField]
+    public CFFeatCategory Category = CFFeatCategory.None;
+
+    /// <summary>A skill this feat needs, where the prerequisite is that simple. Anything else stays in the text.</summary>
+    [DataField]
+    public ProtoId<CFAbilitySkillPrototype>? RequiresSkill;
+
+    [DataField]
+    public CFProficiencyRank RequiresRank = CFProficiencyRank.Trained;
+
+    /// <summary>A skill feat slot takes skill feats only.</summary>
+    public bool FitsSkillSlot(int level)
+    {
+        return Category == CFFeatCategory.Skill && Level <= level;
+    }
+
+    /// <summary>A general feat slot also takes a skill feat, because every skill feat is a general feat.</summary>
+    public bool FitsGeneralSlot(int level)
+    {
+        return Category != CFFeatCategory.None && Level <= level;
+    }
+
     public bool Fits(string? ancestryId, int level)
     {
         if (Ancestry is not { } ancestry || string.IsNullOrEmpty(ancestry.Id))
@@ -112,4 +135,11 @@ public sealed partial class CFFeatPrototype : IPrototype
 
         return false;
     }
+}
+
+public enum CFFeatCategory : byte
+{
+    None,
+    General,
+    Skill,
 }

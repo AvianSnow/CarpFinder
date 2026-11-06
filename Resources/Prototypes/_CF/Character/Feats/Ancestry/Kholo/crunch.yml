@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFCrunch
-  name: "Crunch"
-  description: "Changes an item. Not applied in play yet."
+  name: cf-feat-crunch
+  description: cf-feat-crunch-desc
   ancestry: Kholo
   level: 1
   traits:

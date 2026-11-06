@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFAnchoringRoots
-  name: "Anchoring Roots"
-  description: "Also grants Steady Balance. Grants Anchor. Not added in play yet. TBA - action will be added"
+  name: cf-feat-anchoring-roots
+  description: cf-feat-anchoring-roots-desc
   ancestry: Leshy
   level: 5
   traits:

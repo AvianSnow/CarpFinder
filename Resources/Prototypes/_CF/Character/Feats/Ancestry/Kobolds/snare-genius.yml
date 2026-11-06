@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFSnareGenius
-  name: "Snare Genius"
-  description: "Requires expert in Crafting and Snare Crafting."
+  name: cf-feat-snare-genius
+  description: cf-feat-snare-genius-desc
   ancestry: Kobold
   level: 5
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFLeechClip
-  name: "Leech-Clip"
-  description: "Costs 2 actions. TBA - action will be added"
+  name: cf-feat-leech-clip
+  description: cf-feat-leech-clip-desc
   ancestry: Hobgoblin
   level: 1
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFSeektheHiddenGlyphs
-  name: "Seek the Hidden Glyphs"
-  description: "+1 circumstance bonus to Perception. This feature will be implemented later."
+  name: cf-feat-seekthe-hidden-glyphs
+  description: cf-feat-seekthe-hidden-glyphs-desc
   class: Runesmith
   level: 1
   traits:

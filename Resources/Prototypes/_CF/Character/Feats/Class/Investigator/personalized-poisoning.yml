@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens High Seas
 - type: cfFeat
   id: CFPersonalizedPoisoning
-  name: "Personalized Poisoning"
-  description: "Requires alchemical sciences methodology."
+  name: cf-feat-personalized-poisoning
+  description: cf-feat-personalized-poisoning-desc
   class: Investigator
   level: 2
   rarity: Uncommon

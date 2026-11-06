@@ -1,0 +1,1506 @@
+# General and skill feats through level 4. Made by .agent/port-scripts/general_feats.py: edit that, not this.
+
+- type: cfFeat
+  id: CFAcrobaticPerformer
+  name: cf-feat-acrobatic-performer
+  description: cf-feat-acrobatic-performer-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Acrobatics"
+  requiresSkill: Acrobatics
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFAdditionalLore
+  name: cf-feat-additional-lore
+  description: cf-feat-additional-lore-desc
+  category: Skill
+  level: 1
+  pendingAction: true
+
+- type: cfFeat
+  id: CFAdoptedAncestry
+  name: cf-feat-adopted-ancestry
+  description: cf-feat-adopted-ancestry-desc
+  category: General
+  level: 1
+  pendingAction: true
+
+- type: cfFeat
+  id: CFAlchemicalCrafting
+  name: cf-feat-alchemical-crafting
+  description: cf-feat-alchemical-crafting-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Crafting"
+  requiresSkill: Crafting
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFAncestralParagon
+  name: cf-feat-ancestral-paragon
+  description: cf-feat-ancestral-paragon-desc
+  category: General
+  level: 3
+  pendingAction: true
+
+- type: cfFeat
+  id: CFArcaneSense
+  name: cf-feat-arcane-sense
+  description: cf-feat-arcane-sense-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Arcana"
+  requiresSkill: Arcana
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFArmorAssist
+  name: cf-feat-armor-assist
+  description: cf-feat-armor-assist-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Warfare Lore or Trained in Athletics"
+  pendingAction: true
+
+- type: cfFeat
+  id: CFArmorProficiency
+  name: cf-feat-armor-proficiency
+  description: cf-feat-armor-proficiency-desc
+  category: General
+  level: 1
+  pendingAction: true
+
+- type: cfFeat
+  id: CFArmoredStealth
+  name: cf-feat-armored-stealth
+  description: cf-feat-armored-stealth-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Expert in Stealth"
+  requiresSkill: Stealth
+  requiresRank: Expert
+  pendingAction: true
+
+- type: cfFeat
+  id: CFAssurance
+  name: cf-feat-assurance
+  description: cf-feat-assurance-desc
+  category: Skill
+  level: 1
+  traits:
+  - "Fortune"
+  prerequisites:
+  - "trained in at least one skill"
+  pendingAction: true
+
+- type: cfFeat
+  id: CFAssuredIdentification
+  name: cf-feat-assured-identification
+  description: cf-feat-assured-identification-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Expert in Arcana, Expert in Nature, Expert in Occultism, or Expert in Religion"
+  pendingAction: true
+
+- type: cfFeat
+  id: CFAutomaticKnowledge
+  name: cf-feat-automatic-knowledge
+  description: cf-feat-automatic-knowledge-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "expert in a skill with the Recall Knowledge action; Assurance in that skill"
+  pendingAction: true
+
+- type: cfFeat
+  id: CFBackupDisguise
+  name: cf-feat-backup-disguise
+  description: cf-feat-backup-disguise-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Expert in Deception"
+  requiresSkill: Deception
+  requiresRank: Expert
+  pendingAction: true
+
+- type: cfFeat
+  id: CFBargainHunter
+  name: cf-feat-bargain-hunter
+  description: cf-feat-bargain-hunter-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Diplomacy"
+  requiresSkill: Diplomacy
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFBattleMedicine
+  name: cf-feat-battle-medicine
+  description: cf-feat-battle-medicine-desc
+  category: Skill
+  level: 1
+  traits:
+  - "Healing"
+  - "Manipulate"
+  prerequisites:
+  - "Trained in Medicine"
+  requiresSkill: Medicine
+  requiresRank: Trained
+  action: Action
+  pendingAction: true
+
+- type: cfFeat
+  id: CFBattlePlanner
+  name: cf-feat-battle-planner
+  description: cf-feat-battle-planner-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Expert in Warfare Lore"
+  pendingAction: true
+
+- type: cfFeat
+  id: CFBonMot
+  name: cf-feat-bon-mot
+  description: cf-feat-bon-mot-desc
+  category: Skill
+  level: 1
+  traits:
+  - "Auditory"
+  - "Concentrate"
+  - "Emotion"
+  - "Linguistic"
+  - "Mental"
+  prerequisites:
+  - "Trained in Diplomacy"
+  requiresSkill: Diplomacy
+  requiresRank: Trained
+  action: Action
+  pendingAction: true
+
+- type: cfFeat
+  id: CFBondedAnimal
+  name: cf-feat-bonded-animal
+  description: cf-feat-bonded-animal-desc
+  category: Skill
+  level: 2
+  traits:
+  - "Downtime"
+  prerequisites:
+  - "Expert in Nature"
+  requiresSkill: Nature
+  requiresRank: Expert
+  pendingAction: true
+
+- type: cfFeat
+  id: CFBreathControl
+  name: cf-feat-breath-control
+  description: cf-feat-breath-control-desc
+  category: General
+  level: 1
+  pendingAction: true
+
+- type: cfFeat
+  id: CFCannyAcumen
+  name: cf-feat-canny-acumen
+  description: cf-feat-canny-acumen-desc
+  category: General
+  level: 1
+  pendingAction: true
+
+- type: cfFeat
+  id: CFCatFall
+  name: cf-feat-cat-fall
+  description: cf-feat-cat-fall-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Acrobatics"
+  requiresSkill: Acrobatics
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFCharmingLiar
+  name: cf-feat-charming-liar
+  description: cf-feat-charming-liar-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Deception"
+  requiresSkill: Deception
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFCombatClimber
+  name: cf-feat-combat-climber
+  description: cf-feat-combat-climber-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Athletics"
+  requiresSkill: Athletics
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFCommunalCrafting
+  name: cf-feat-communal-crafting
+  description: cf-feat-communal-crafting-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Expert in Crafting"
+  requiresSkill: Crafting
+  requiresRank: Expert
+  pendingAction: true
+
+- type: cfFeat
+  id: CFConcealingLegerdemain
+  name: cf-feat-concealing-legerdemain
+  description: cf-feat-concealing-legerdemain-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Thievery"
+  requiresSkill: Thievery
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFConfabulator
+  name: cf-feat-confabulator
+  description: cf-feat-confabulator-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Expert in Deception"
+  requiresSkill: Deception
+  requiresRank: Expert
+  pendingAction: true
+
+- type: cfFeat
+  id: CFContinualRecovery
+  name: cf-feat-continual-recovery
+  description: cf-feat-continual-recovery-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Expert in Medicine"
+  requiresSkill: Medicine
+  requiresRank: Expert
+  pendingAction: true
+
+- type: cfFeat
+  id: CFCourtlyGraces
+  name: cf-feat-courtly-graces
+  description: cf-feat-courtly-graces-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Society"
+  requiresSkill: Society
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFCrafterSAppraisal
+  name: cf-feat-crafter-sappraisal
+  description: cf-feat-crafter-sappraisal-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Crafting"
+  requiresSkill: Crafting
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFDeceptiveWorship
+  name: cf-feat-deceptive-worship
+  description: cf-feat-deceptive-worship-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Occultism"
+  requiresSkill: Occultism
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFDiehard
+  name: cf-feat-diehard
+  description: cf-feat-diehard-desc
+  category: General
+  level: 1
+  pendingAction: true
+
+- type: cfFeat
+  id: CFDirtyTrick
+  name: cf-feat-dirty-trick
+  description: cf-feat-dirty-trick-desc
+  category: Skill
+  level: 1
+  traits:
+  - "Attack"
+  - "Manipulate"
+  prerequisites:
+  - "Trained in Thievery"
+  requiresSkill: Thievery
+  requiresRank: Trained
+  action: Action
+  pendingAction: true
+
+- type: cfFeat
+  id: CFDiscreetInquiry
+  name: cf-feat-discreet-inquiry
+  description: cf-feat-discreet-inquiry-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Expert in Deception or Expert in Diplomacy"
+  pendingAction: true
+
+- type: cfFeat
+  id: CFDistractingPerformance
+  name: cf-feat-distracting-performance
+  description: cf-feat-distracting-performance-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Expert in Performance"
+  requiresSkill: Performance
+  requiresRank: Expert
+  action: Action
+  pendingAction: true
+
+- type: cfFeat
+  id: CFDubiousKnowledge
+  name: cf-feat-dubious-knowledge
+  description: cf-feat-dubious-knowledge-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "trained in a skill with the Recall Knowledge action"
+  pendingAction: true
+
+- type: cfFeat
+  id: CFExhortTheFaithful
+  name: cf-feat-exhort-the-faithful
+  description: cf-feat-exhort-the-faithful-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Expert in Religion; follower of a specific religion"
+  requiresSkill: Religion
+  requiresRank: Expert
+  pendingAction: true
+
+- type: cfFeat
+  id: CFExperiencedProfessional
+  name: cf-feat-experienced-professional
+  description: cf-feat-experienced-professional-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Lore"
+  requiresSkill: Lore
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFExperiencedSmuggler
+  name: cf-feat-experienced-smuggler
+  description: cf-feat-experienced-smuggler-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Stealth"
+  requiresSkill: Stealth
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFExperiencedTracker
+  name: cf-feat-experienced-tracker
+  description: cf-feat-experienced-tracker-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Survival"
+  requiresSkill: Survival
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFExpressRider
+  name: cf-feat-express-rider
+  description: cf-feat-express-rider-desc
+  category: Skill
+  level: 1
+  traits:
+  - "Exploration"
+  prerequisites:
+  - "Trained in Nature"
+  requiresSkill: Nature
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFEyeForNumbers
+  name: cf-feat-eye-for-numbers
+  description: cf-feat-eye-for-numbers-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Society"
+  requiresSkill: Society
+  requiresRank: Trained
+  action: Action
+  pendingAction: true
+
+- type: cfFeat
+  id: CFEyesOfTheCity
+  name: cf-feat-eyes-of-the-city
+  description: cf-feat-eyes-of-the-city-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Trained in Diplomacy or Trained in Society"
+  pendingAction: true
+
+- type: cfFeat
+  id: CFFascinatingPerformance
+  name: cf-feat-fascinating-performance
+  description: cf-feat-fascinating-performance-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Performance"
+  requiresSkill: Performance
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFFastRecovery
+  name: cf-feat-fast-recovery
+  description: cf-feat-fast-recovery-desc
+  category: General
+  level: 1
+  prerequisites:
+  - "Constitution +2"
+  pendingAction: true
+
+- type: cfFeat
+  id: CFFeatherStep
+  name: cf-feat-feather-step
+  description: cf-feat-feather-step-desc
+  category: General
+  level: 1
+  prerequisites:
+  - "Dexterity +2"
+  pendingAction: true
+
+- type: cfFeat
+  id: CFFleet
+  name: cf-feat-fleet
+  description: cf-feat-fleet-desc
+  category: General
+  level: 1
+  pendingAction: true
+
+- type: cfFeat
+  id: CFForager
+  name: cf-feat-forager
+  description: cf-feat-forager-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Survival"
+  requiresSkill: Survival
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFForensicAcumen
+  name: cf-feat-forensic-acumen
+  description: cf-feat-forensic-acumen-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Medicine"
+  requiresSkill: Medicine
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFGladHand
+  name: cf-feat-glad-hand
+  description: cf-feat-glad-hand-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Expert in Diplomacy"
+  requiresSkill: Diplomacy
+  requiresRank: Expert
+  pendingAction: true
+
+- type: cfFeat
+  id: CFGleanContents
+  name: cf-feat-glean-contents
+  description: cf-feat-glean-contents-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Society"
+  requiresSkill: Society
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFGroupCoercion
+  name: cf-feat-group-coercion
+  description: cf-feat-group-coercion-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Intimidation"
+  requiresSkill: Intimidation
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFGroupImpression
+  name: cf-feat-group-impression
+  description: cf-feat-group-impression-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Diplomacy"
+  requiresSkill: Diplomacy
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFHeftyHauler
+  name: cf-feat-hefty-hauler
+  description: cf-feat-hefty-hauler-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Athletics"
+  requiresSkill: Athletics
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFHobnobber
+  name: cf-feat-hobnobber
+  description: cf-feat-hobnobber-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Diplomacy"
+  requiresSkill: Diplomacy
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFImpressivePerformance
+  name: cf-feat-impressive-performance
+  description: cf-feat-impressive-performance-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Performance"
+  requiresSkill: Performance
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFImproviseTool
+  name: cf-feat-improvise-tool
+  description: cf-feat-improvise-tool-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Crafting"
+  requiresSkill: Crafting
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFImprovisedRepair
+  name: cf-feat-improvised-repair
+  description: cf-feat-improvised-repair-desc
+  category: General
+  level: 3
+  action: Action
+  pendingAction: true
+
+- type: cfFeat
+  id: CFIncredibleInitiative
+  name: cf-feat-incredible-initiative
+  description: cf-feat-incredible-initiative-desc
+  category: General
+  level: 1
+  pendingAction: true
+
+- type: cfFeat
+  id: CFInoculation
+  name: cf-feat-inoculation
+  description: cf-feat-inoculation-desc
+  category: Skill
+  level: 1
+  traits:
+  - "Healing"
+  prerequisites:
+  - "Trained in Medicine"
+  requiresSkill: Medicine
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFIntimidatingGlare
+  name: cf-feat-intimidating-glare
+  description: cf-feat-intimidating-glare-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Intimidation"
+  requiresSkill: Intimidation
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFIntimidatingProwess
+  name: cf-feat-intimidating-prowess
+  description: cf-feat-intimidating-prowess-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Strength +3; Expert in Intimidation"
+  requiresSkill: Intimidation
+  requiresRank: Expert
+  pendingAction: true
+
+- type: cfFeat
+  id: CFInventor
+  name: cf-feat-inventor
+  description: cf-feat-inventor-desc
+  category: Skill
+  level: 2
+  traits:
+  - "Downtime"
+  prerequisites:
+  - "Expert in Crafting"
+  requiresSkill: Crafting
+  requiresRank: Expert
+  pendingAction: true
+
+- type: cfFeat
+  id: CFKeenFollower
+  name: cf-feat-keen-follower
+  description: cf-feat-keen-follower-desc
+  category: General
+  level: 3
+  pendingAction: true
+
+- type: cfFeat
+  id: CFLastingCoercion
+  name: cf-feat-lasting-coercion
+  description: cf-feat-lasting-coercion-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Expert in Intimidation"
+  requiresSkill: Intimidation
+  requiresRank: Expert
+  pendingAction: true
+
+- type: cfFeat
+  id: CFLeadClimber
+  name: cf-feat-lead-climber
+  description: cf-feat-lead-climber-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Expert in Athletics"
+  requiresSkill: Athletics
+  requiresRank: Expert
+  pendingAction: true
+
+- type: cfFeat
+  id: CFLengthyDiversion
+  name: cf-feat-lengthy-diversion
+  description: cf-feat-lengthy-diversion-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Deception"
+  requiresSkill: Deception
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFLeverageConnections
+  name: cf-feat-leverage-connections
+  description: cf-feat-leverage-connections-desc
+  category: Skill
+  level: 2
+  traits:
+  - "Uncommon"
+  prerequisites:
+  - "Courtly Graces or Streetwise; Expert in Society"
+  pendingAction: true
+
+- type: cfFeat
+  id: CFLieToMe
+  name: cf-feat-lie-to-me
+  description: cf-feat-lie-to-me-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Deception"
+  requiresSkill: Deception
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFMagicalCrafting
+  name: cf-feat-magical-crafting
+  description: cf-feat-magical-crafting-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Expert in Crafting"
+  requiresSkill: Crafting
+  requiresRank: Expert
+  pendingAction: true
+
+- type: cfFeat
+  id: CFMagicalShorthand
+  name: cf-feat-magical-shorthand
+  description: cf-feat-magical-shorthand-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Expert in Arcana, Expert in Nature, Expert in Occultism, or Expert in Religion"
+  pendingAction: true
+
+- type: cfFeat
+  id: CFMultilingual
+  name: cf-feat-multilingual
+  description: cf-feat-multilingual-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Society"
+  requiresSkill: Society
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFNaturalMedicine
+  name: cf-feat-natural-medicine
+  description: cf-feat-natural-medicine-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Nature"
+  requiresSkill: Nature
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFNimbleCrawl
+  name: cf-feat-nimble-crawl
+  description: cf-feat-nimble-crawl-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Expert in Acrobatics"
+  requiresSkill: Acrobatics
+  requiresRank: Expert
+  pendingAction: true
+
+- type: cfFeat
+  id: CFNoCauseForAlarm
+  name: cf-feat-no-cause-for-alarm
+  description: cf-feat-no-cause-for-alarm-desc
+  category: Skill
+  level: 1
+  traits:
+  - "Auditory"
+  - "Concentrate"
+  - "Emotion"
+  - "Linguistic"
+  - "Mental"
+  prerequisites:
+  - "Trained in Diplomacy"
+  requiresSkill: Diplomacy
+  requiresRank: Trained
+  action: Action
+  pendingAction: true
+
+- type: cfFeat
+  id: CFOddityIdentification
+  name: cf-feat-oddity-identification
+  description: cf-feat-oddity-identification-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Occultism"
+  requiresSkill: Occultism
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFPet
+  name: cf-feat-pet
+  description: cf-feat-pet-desc
+  category: General
+  level: 1
+  pendingAction: true
+
+- type: cfFeat
+  id: CFPickUpThePace
+  name: cf-feat-pick-up-the-pace
+  description: cf-feat-pick-up-the-pace-desc
+  category: General
+  level: 3
+  prerequisites:
+  - "Constitution +2"
+  pendingAction: true
+
+- type: cfFeat
+  id: CFPickpocket
+  name: cf-feat-pickpocket
+  description: cf-feat-pickpocket-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Thievery"
+  requiresSkill: Thievery
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFPilgrimSToken
+  name: cf-feat-pilgrim-stoken
+  description: cf-feat-pilgrim-stoken-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Religion; follower of a specific religion"
+  requiresSkill: Religion
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFPowerfulLeap
+  name: cf-feat-powerful-leap
+  description: cf-feat-powerful-leap-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Expert in Athletics"
+  requiresSkill: Athletics
+  requiresRank: Expert
+  pendingAction: true
+
+- type: cfFeat
+  id: CFPrescientPlanner
+  name: cf-feat-prescient-planner
+  description: cf-feat-prescient-planner-desc
+  category: General
+  level: 3
+  pendingAction: true
+
+- type: cfFeat
+  id: CFQuickCoercion
+  name: cf-feat-quick-coercion
+  description: cf-feat-quick-coercion-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Intimidation"
+  requiresSkill: Intimidation
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFQuickDisguise
+  name: cf-feat-quick-disguise
+  description: cf-feat-quick-disguise-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Expert in Deception"
+  requiresSkill: Deception
+  requiresRank: Expert
+  pendingAction: true
+
+- type: cfFeat
+  id: CFQuickIdentification
+  name: cf-feat-quick-identification
+  description: cf-feat-quick-identification-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "trained in Arcana, Nature, Occultism, or Religion"
+  pendingAction: true
+
+- type: cfFeat
+  id: CFQuickJump
+  name: cf-feat-quick-jump
+  description: cf-feat-quick-jump-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Athletics"
+  requiresSkill: Athletics
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFQuickRepair
+  name: cf-feat-quick-repair
+  description: cf-feat-quick-repair-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Crafting"
+  requiresSkill: Crafting
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFQuickSqueeze
+  name: cf-feat-quick-squeeze
+  description: cf-feat-quick-squeeze-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Acrobatics"
+  requiresSkill: Acrobatics
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFQuietAllies
+  name: cf-feat-quiet-allies
+  description: cf-feat-quiet-allies-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Expert in Stealth"
+  requiresSkill: Stealth
+  requiresRank: Expert
+  pendingAction: true
+
+- type: cfFeat
+  id: CFRapidMantel
+  name: cf-feat-rapid-mantel
+  description: cf-feat-rapid-mantel-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Expert in Athletics"
+  requiresSkill: Athletics
+  requiresRank: Expert
+  pendingAction: true
+
+- type: cfFeat
+  id: CFReadLips
+  name: cf-feat-read-lips
+  description: cf-feat-read-lips-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Society"
+  requiresSkill: Society
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFRecognizeSpell
+  name: cf-feat-recognize-spell
+  description: cf-feat-recognize-spell-desc
+  category: Skill
+  level: 1
+  traits:
+  - "Secret"
+  prerequisites:
+  - "Trained in Arcana, Trained in Nature, Trained in Occultism, or Trained in Religion"
+  action: Reaction
+  pendingAction: true
+
+- type: cfFeat
+  id: CFRide
+  name: cf-feat-ride
+  description: cf-feat-ride-desc
+  category: General
+  level: 1
+  pendingAction: true
+
+- type: cfFeat
+  id: CFRiskySurgery
+  name: cf-feat-risky-surgery
+  description: cf-feat-risky-surgery-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Medicine"
+  requiresSkill: Medicine
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFRobustHealth
+  name: cf-feat-robust-health
+  description: cf-feat-robust-health-desc
+  category: General
+  level: 3
+  pendingAction: true
+
+- type: cfFeat
+  id: CFRobustRecovery
+  name: cf-feat-robust-recovery
+  description: cf-feat-robust-recovery-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Expert in Medicine"
+  requiresSkill: Medicine
+  requiresRank: Expert
+  pendingAction: true
+
+- type: cfFeat
+  id: CFRollingLanding
+  name: cf-feat-rolling-landing
+  description: cf-feat-rolling-landing-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Cat Fall"
+  pendingAction: true
+
+- type: cfFeat
+  id: CFRootMagic
+  name: cf-feat-root-magic
+  description: cf-feat-root-magic-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Occultism"
+  requiresSkill: Occultism
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFSanctifyWater
+  name: cf-feat-sanctify-water
+  description: cf-feat-sanctify-water-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Expert in Religion; you follow a deity with “holy” or “unholy” sanctification"
+  action: Action
+  pendingAction: true
+
+- type: cfFeat
+  id: CFSchooledInSecrets
+  name: cf-feat-schooled-in-secrets
+  description: cf-feat-schooled-in-secrets-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Occultism"
+  requiresSkill: Occultism
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFSeasoned
+  name: cf-feat-seasoned
+  description: cf-feat-seasoned-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Alcohol Lore, Trained in Cooking Lore, or Trained in Crafting"
+  pendingAction: true
+
+- type: cfFeat
+  id: CFShadowMark
+  name: cf-feat-shadow-mark
+  description: cf-feat-shadow-mark-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Expert in Stealth"
+  requiresSkill: Stealth
+  requiresRank: Expert
+  pendingAction: true
+
+- type: cfFeat
+  id: CFShieldBlock
+  name: cf-feat-shield-block
+  description: cf-feat-shield-block-desc
+  category: General
+  level: 1
+  action: Reaction
+  pendingAction: true
+
+- type: cfFeat
+  id: CFSignLanguage
+  name: cf-feat-sign-language
+  description: cf-feat-sign-language-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Society"
+  requiresSkill: Society
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFSkillTraining
+  name: cf-feat-skill-training
+  description: cf-feat-skill-training-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Intelligence +1"
+  pendingAction: true
+
+- type: cfFeat
+  id: CFSlipperyPrey
+  name: cf-feat-slippery-prey
+  description: cf-feat-slippery-prey-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Trained in Athletics or Trained in Acrobatics"
+  pendingAction: true
+
+- type: cfFeat
+  id: CFSnareCrafting
+  name: cf-feat-snare-crafting
+  description: cf-feat-snare-crafting-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Crafting"
+  requiresSkill: Crafting
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFSowRumor
+  name: cf-feat-sow-rumor
+  description: cf-feat-sow-rumor-desc
+  category: Skill
+  level: 2
+  traits:
+  - "Secret"
+  - "Uncommon"
+  prerequisites:
+  - "Expert in Deception"
+  requiresSkill: Deception
+  requiresRank: Expert
+  pendingAction: true
+
+- type: cfFeat
+  id: CFSpecialtyCrafting
+  name: cf-feat-specialty-crafting
+  description: cf-feat-specialty-crafting-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Crafting"
+  requiresSkill: Crafting
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFSteadyBalance
+  name: cf-feat-steady-balance
+  description: cf-feat-steady-balance-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Acrobatics"
+  requiresSkill: Acrobatics
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFStreetwise
+  name: cf-feat-streetwise
+  description: cf-feat-streetwise-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Society"
+  requiresSkill: Society
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFStudentOfTheCanon
+  name: cf-feat-student-of-the-canon
+  description: cf-feat-student-of-the-canon-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Religion"
+  requiresSkill: Religion
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFSubtleTheft
+  name: cf-feat-subtle-theft
+  description: cf-feat-subtle-theft-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Thievery"
+  requiresSkill: Thievery
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFSurveyWildlife
+  name: cf-feat-survey-wildlife
+  description: cf-feat-survey-wildlife-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Survival"
+  requiresSkill: Survival
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFTerrainExpertise
+  name: cf-feat-terrain-expertise
+  description: cf-feat-terrain-expertise-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Survival"
+  requiresSkill: Survival
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFTerrainStalker
+  name: cf-feat-terrain-stalker
+  description: cf-feat-terrain-stalker-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Stealth"
+  requiresSkill: Stealth
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFTerrifyingResistance
+  name: cf-feat-terrifying-resistance
+  description: cf-feat-terrifying-resistance-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Expert in Intimidation"
+  requiresSkill: Intimidation
+  requiresRank: Expert
+  pendingAction: true
+
+- type: cfFeat
+  id: CFThoroughSearch
+  name: cf-feat-thorough-search
+  description: cf-feat-thorough-search-desc
+  category: General
+  level: 3
+  prerequisites:
+  - "Expert in Perception"
+  pendingAction: true
+
+- type: cfFeat
+  id: CFTitanWrestler
+  name: cf-feat-titan-wrestler
+  description: cf-feat-titan-wrestler-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Athletics"
+  requiresSkill: Athletics
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFToughness
+  name: cf-feat-toughness
+  description: cf-feat-toughness-desc
+  category: General
+  level: 1
+  pendingAction: true
+
+- type: cfFeat
+  id: CFTrainAnimal
+  name: cf-feat-train-animal
+  description: cf-feat-train-animal-desc
+  category: Skill
+  level: 1
+  traits:
+  - "Downtime"
+  - "Manipulate"
+  prerequisites:
+  - "Trained in Nature"
+  requiresSkill: Nature
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFTrickMagicItem
+  name: cf-feat-trick-magic-item
+  description: cf-feat-trick-magic-item-desc
+  category: Skill
+  level: 1
+  traits:
+  - "Manipulate"
+  prerequisites:
+  - "Trained in Arcana, Trained in Nature, Trained in Occultism, or Trained in Religion"
+  action: Action
+  pendingAction: true
+
+- type: cfFeat
+  id: CFTumblingTeamwork
+  name: cf-feat-tumbling-teamwork
+  description: cf-feat-tumbling-teamwork-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Expert in Acrobatics"
+  requiresSkill: Acrobatics
+  requiresRank: Expert
+  pendingAction: true
+
+- type: cfFeat
+  id: CFUndergroundNetwork
+  name: cf-feat-underground-network
+  description: cf-feat-underground-network-desc
+  category: Skill
+  level: 2
+  traits:
+  - "Uncommon"
+  prerequisites:
+  - "Streetwise; Expert in Society"
+  requiresSkill: Society
+  requiresRank: Expert
+  pendingAction: true
+
+- type: cfFeat
+  id: CFUnderwaterMarauder
+  name: cf-feat-underwater-marauder
+  description: cf-feat-underwater-marauder-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Athletics"
+  requiresSkill: Athletics
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFUnmistakableLore
+  name: cf-feat-unmistakable-lore
+  description: cf-feat-unmistakable-lore-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Expert in Lore"
+  requiresSkill: Lore
+  requiresRank: Expert
+  pendingAction: true
+
+- type: cfFeat
+  id: CFUntrainedImprovisation
+  name: cf-feat-untrained-improvisation
+  description: cf-feat-untrained-improvisation-desc
+  category: General
+  level: 3
+  pendingAction: true
+
+- type: cfFeat
+  id: CFUnusualTreatment
+  name: cf-feat-unusual-treatment
+  description: cf-feat-unusual-treatment-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Expert in Medicine"
+  requiresSkill: Medicine
+  requiresRank: Expert
+  pendingAction: true
+
+- type: cfFeat
+  id: CFVirtuosicPerformer
+  name: cf-feat-virtuosic-performer
+  description: cf-feat-virtuosic-performer-desc
+  category: Skill
+  level: 1
+  prerequisites:
+  - "Trained in Performance"
+  requiresSkill: Performance
+  requiresRank: Trained
+  pendingAction: true
+
+- type: cfFeat
+  id: CFWardMedic
+  name: cf-feat-ward-medic
+  description: cf-feat-ward-medic-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Expert in Medicine"
+  requiresSkill: Medicine
+  requiresRank: Expert
+  pendingAction: true
+
+- type: cfFeat
+  id: CFWaryDisarmament
+  name: cf-feat-wary-disarmament
+  description: cf-feat-wary-disarmament-desc
+  category: Skill
+  level: 2
+  prerequisites:
+  - "Expert in Thievery"
+  requiresSkill: Thievery
+  requiresRank: Expert
+  pendingAction: true
+
+- type: cfFeat
+  id: CFWeaponProficiency
+  name: cf-feat-weapon-proficiency
+  description: cf-feat-weapon-proficiency-desc
+  category: General
+  level: 1
+  pendingAction: true

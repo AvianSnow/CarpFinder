@@ -1,3 +1,5 @@
+using System.Linq;
+using Content.Shared.CF.Languages;
 using Content.Server.CF.GOAP.Influence;
 using System.Numerics;
 using Content.Shared.Actions;
@@ -149,6 +151,12 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         xp.ClassFeatLevel2 = IdOf(profile.CFBuild.ClassFeatLevel2);
         xp.ClassFeatLevel4 = IdOf(profile.CFBuild.ClassFeatLevel4);
         xp.AncestryFeatLevel5 = IdOf(profile.CFBuild.AncestryFeatLevel5);
+        xp.SkillFeatLevel2 = QualifiedFeat(profile.CFBuild, ancestryId, profile.CFBuild.SkillFeatLevel2, 2, skillSlot: true);
+        xp.GeneralFeatLevel3 = QualifiedFeat(profile.CFBuild, ancestryId, profile.CFBuild.GeneralFeatLevel3, 3, skillSlot: false);
+        xp.SkillFeatLevel4 = QualifiedFeat(profile.CFBuild, ancestryId, profile.CFBuild.SkillFeatLevel4, 4, skillSlot: true);
+        xp.SkillIncreaseLevel3 = KnownSkill(profile.CFBuild.SkillIncreaseLevel3);
+        xp.SkillIncreaseLevel5 = KnownSkill(profile.CFBuild.SkillIncreaseLevel5);
+        xp.AbilityBoostsLevel5 = profile.CFBuild.AbilityBoostsLevel5.Distinct().Take(CFAttributeMath.LevelFiveBoostCount).ToList();
         Dirty(mob, xp);
         combatant.LoreNames.Clear();
         foreach (var chosen in chosenFeats)
@@ -170,6 +178,9 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         if (heritage != null && !heritage.Fits(sheet.Ancestry?.ID))
             heritage = null;
         ApplyAncestry(mob, sheet.Ancestry, heritage, speedBonus);
+        var languages = EnsureComp<CFLanguagesComponent>(mob);
+        languages.Known = CFLanguageRules.Known(_prototypes, sheet.Ancestry, profile.CFBuild.Languages, sheet.Modifiers);
+        Dirty(mob, languages);
         _actionPool.Ensure(mob);
         ApplySpellbook(mob, profile, sheet.Class);
         GrantSpellActions(mob, profile);
@@ -179,6 +190,26 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
     /// <summary>
     /// Speed scales the usual walk and sprint. Darkvision uses the same night-vision overlay as goblins.
     /// </summary>
+    /// <summary>The feat, if it fits the slot and the build meets its skill requirement by that level.</summary>
+    private string? QualifiedFeat(
+        CFCharacterBuildData build,
+        string? ancestryId,
+        ProtoId<CFFeatPrototype>? id,
+        int level,
+        bool skillSlot)
+    {
+        if (id == null || !_prototypes.TryIndex(id.Value, out var feat))
+            return null;
+
+        var fits = skillSlot ? feat.FitsSkillSlot(level) : feat.FitsGeneralSlot(level);
+        return fits && CFSkills.Qualifies(_prototypes, build, ancestryId, feat, level) ? feat.ID : null;
+    }
+
+    private string? KnownSkill(ProtoId<CFAbilitySkillPrototype>? skill)
+    {
+        return skill != null && _prototypes.HasIndex(skill.Value) ? skill.Value.Id : null;
+    }
+
     private void ApplyAncestry(EntityUid mob, CFAncestryPrototype? ancestry, CFHeritagePrototype? heritage, int speedBonus)
     {
         var speed = CFAttributeMath.EffectiveSpeed(ancestry, heritage) + Math.Max(0, speedBonus);

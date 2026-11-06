@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFOngoingSelfishness
-  name: "Ongoing Selfishness"
-  description: "Requires desecration cause."
+  name: cf-feat-ongoing-selfishness
+  description: cf-feat-ongoing-selfishness-desc
   class: Champion
   level: 1
   rarity: Uncommon

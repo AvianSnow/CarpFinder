@@ -1,3 +1,4 @@
+using Content.Shared.CF.Preferences;
 using Robust.Shared.GameStates;
 
 namespace Content.Shared.CF.Character;
@@ -30,4 +31,22 @@ public sealed partial class CFExperienceComponent : Component
 
     [DataField, AutoNetworkedField]
     public string? AncestryFeatLevel5;
+
+    [DataField, AutoNetworkedField]
+    public string? SkillFeatLevel2;
+
+    [DataField, AutoNetworkedField]
+    public string? GeneralFeatLevel3;
+
+    [DataField, AutoNetworkedField]
+    public string? SkillFeatLevel4;
+
+    [DataField, AutoNetworkedField]
+    public string? SkillIncreaseLevel3;
+
+    [DataField, AutoNetworkedField]
+    public string? SkillIncreaseLevel5;
+
+    [DataField, AutoNetworkedField]
+    public List<CFAbility> AbilityBoostsLevel5 = new();
 }

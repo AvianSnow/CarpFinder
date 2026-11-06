@@ -2,8 +2,8 @@
 # source: Carpfinder Dark Archive (Remastered)
 - type: cfFeat
   id: CFMentalBuffer
-  name: "Mental Buffer"
-  description: "Has a resistance. This feature will be implemented later."
+  name: cf-feat-mental-buffer
+  description: cf-feat-mental-buffer-desc
   class: Psychic
   level: 1
   traits:

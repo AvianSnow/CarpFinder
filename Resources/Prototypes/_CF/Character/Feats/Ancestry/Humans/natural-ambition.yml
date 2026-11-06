@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFNaturalAmbition
-  name: "Natural Ambition"
-  description: "Grants an item. Not added in play yet."
+  name: cf-feat-natural-ambition
+  description: cf-feat-natural-ambition-desc
   ancestry: Human
   level: 1
   traits:

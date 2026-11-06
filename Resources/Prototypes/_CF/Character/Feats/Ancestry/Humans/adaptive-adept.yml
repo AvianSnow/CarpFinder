@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFAdaptiveAdept
-  name: "Adaptive Adept"
-  description: "Requires Adapted Cantrip and can cast 3rd rank spells."
+  name: cf-feat-adaptive-adept
+  description: cf-feat-adaptive-adept-desc
   ancestry: Human
   level: 5
   traits:

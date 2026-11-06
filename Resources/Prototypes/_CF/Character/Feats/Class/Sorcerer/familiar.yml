@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFFamiliarSorcerer
-  name: "Familiar"
-  description: "Also grants Pet. This feature will be implemented later."
+  name: cf-feat-familiar-sorcerer
+  description: cf-feat-familiar-sorcerer-desc
   class: Sorcerer
   level: 1
   traits:

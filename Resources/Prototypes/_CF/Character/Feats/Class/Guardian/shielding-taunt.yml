@@ -2,8 +2,8 @@
 # source: Carpfinder Battlecry!
 - type: cfFeat
   id: CFShieldingTaunt
-  name: "Shielding Taunt"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-shielding-taunt
+  description: cf-feat-shielding-taunt-desc
   class: Guardian
   level: 2
   traits:

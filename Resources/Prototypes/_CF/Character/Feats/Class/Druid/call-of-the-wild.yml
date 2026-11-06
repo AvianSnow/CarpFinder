@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFCalloftheWild
-  name: "Call of the Wild"
-  description: "This feature will be implemented later."
+  name: cf-feat-callofthe-wild
+  description: cf-feat-callofthe-wild-desc
   class: Druid
   level: 2
   traits:

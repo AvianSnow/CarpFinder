@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFUncannyAgility
-  name: "Uncanny Agility"
-  description: "Also grants Steady Balance. TBA - action will be added"
+  name: cf-feat-uncanny-agility
+  description: cf-feat-uncanny-agility-desc
   ancestry: Tengu
   level: 1
   traits:

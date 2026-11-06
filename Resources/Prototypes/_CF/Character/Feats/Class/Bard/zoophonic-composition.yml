@@ -2,8 +2,8 @@
 # source: Carpfinder Howl of the Wild
 - type: cfFeat
   id: CFZoophonicComposition
-  name: "Zoophonic Composition"
-  description: "Requires zoophonia muse. Free action. This feature will be implemented later."
+  name: cf-feat-zoophonic-composition
+  description: cf-feat-zoophonic-composition-desc
   class: Bard
   level: 4
   traits:

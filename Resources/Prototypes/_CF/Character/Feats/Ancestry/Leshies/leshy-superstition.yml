@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFLeshySuperstition
-  name: "Leshy Superstition"
-  description: "+1 circumstance bonus to Saving Throw. Not applied in play yet. Reaction. TBA - action will be added"
+  name: cf-feat-leshy-superstition
+  description: cf-feat-leshy-superstition-desc
   ancestry: Leshy
   level: 1
   traits:

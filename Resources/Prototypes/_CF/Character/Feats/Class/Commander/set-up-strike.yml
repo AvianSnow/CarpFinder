@@ -2,8 +2,8 @@
 # source: Carpfinder Battlecry!
 - type: cfFeat
   id: CFSetUpStrike
-  name: "Set-Up Strike"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-set-up-strike
+  description: cf-feat-set-up-strike-desc
   class: Commander
   level: 2
   traits:

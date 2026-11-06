@@ -2,8 +2,8 @@
 # source: Carpfinder War of Immortals
 - type: cfFeat
   id: CFSpiritFamiliarAnimist
-  name: "Spirit Familiar (Animist)"
-  description: "Also grants Pet. This feature will be implemented later."
+  name: cf-feat-spirit-familiar-animist
+  description: cf-feat-spirit-familiar-animist-desc
   class: Animist
   level: 1
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFMartialPerformance
-  name: "Martial Performance"
-  description: "Requires warrior muse."
+  name: cf-feat-martial-performance
+  description: cf-feat-martial-performance-desc
   class: Bard
   level: 1
   traits:

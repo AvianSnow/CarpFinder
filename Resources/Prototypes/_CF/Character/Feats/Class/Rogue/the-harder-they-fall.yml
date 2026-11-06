@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFTheHarderTheyFall
-  name: "The Harder They Fall"
-  description: "This feature will be implemented later."
+  name: cf-feat-the-harder-they-fall
+  description: cf-feat-the-harder-they-fall-desc
   class: Rogue
   level: 4
   traits:

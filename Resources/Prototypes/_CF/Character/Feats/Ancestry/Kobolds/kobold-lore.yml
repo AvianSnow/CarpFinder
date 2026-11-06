@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFKoboldLore
-  name: "Kobold Lore"
-  description: "Lore: Kobold Lore. Trained in Stealth and Thievery."
+  name: cf-feat-kobold-lore
+  description: cf-feat-kobold-lore-desc
   ancestry: Kobold
   level: 1
   traits:

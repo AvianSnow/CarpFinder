@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFGhostlyStride
-  name: "Ghostly Stride"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-ghostly-stride
+  description: cf-feat-ghostly-stride-desc
   class: Necromancer
   level: 4
   traits:

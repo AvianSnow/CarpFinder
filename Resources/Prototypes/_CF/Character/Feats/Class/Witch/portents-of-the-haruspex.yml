@@ -2,8 +2,8 @@
 # source: Carpfinder Howl of the Wild
 - type: cfFeat
   id: CFPortentsoftheHaruspex
-  name: "Portents of the Haruspex"
-  description: "Reaction. This feature will be implemented later."
+  name: cf-feat-portentsofthe-haruspex
+  description: cf-feat-portentsofthe-haruspex-desc
   class: Witch
   level: 4
   traits:

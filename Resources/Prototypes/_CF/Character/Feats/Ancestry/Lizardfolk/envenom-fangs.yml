@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFEnvenomFangs
-  name: "Envenom Fangs"
-  description: "Requires Iruxi Armaments (Fangs). Costs 1 action. TBA - action will be added"
+  name: cf-feat-envenom-fangs
+  description: cf-feat-envenom-fangs-desc
   ancestry: Lizardfolk
   level: 5
   traits:

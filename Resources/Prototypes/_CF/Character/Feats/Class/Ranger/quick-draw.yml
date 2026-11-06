@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFQuickDrawRanger
-  name: "Quick Draw"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-quick-draw-ranger
+  description: cf-feat-quick-draw-ranger-desc
   class: Ranger
   level: 2
   traits:

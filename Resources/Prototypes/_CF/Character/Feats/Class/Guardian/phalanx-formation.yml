@@ -2,8 +2,8 @@
 # source: Carpfinder Battlecry!
 - type: cfFeat
   id: CFPhalanxFormation
-  name: "Phalanx Formation"
-  description: "Requires Guardian or Knight Vigilant Dedication."
+  name: cf-feat-phalanx-formation
+  description: cf-feat-phalanx-formation-desc
   class: Guardian
   level: 2
   traits:

@@ -85,6 +85,10 @@ public sealed partial class CFCombatantComponent : Component
     [DataField, AutoNetworkedField]
     public List<string> TrainedSkills = new();
 
+    /// <summary>Skills raised by a skill increase, once for each increase.</summary>
+    [DataField, AutoNetworkedField]
+    public List<string> SkillIncreases = new();
+
     /// <summary>Specific Lore names from the chosen ancestry feat, shown on the Lore row.</summary>
     [DataField, AutoNetworkedField]
     public List<string> LoreNames = new();

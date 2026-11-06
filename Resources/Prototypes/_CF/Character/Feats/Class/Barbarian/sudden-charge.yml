@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFSuddenChargeBarbarian
-  name: "Sudden Charge"
-  description: "Stride into reach and Strike. Costs 2 actions."
+  name: cf-feat-sudden-charge-barbarian
+  description: cf-feat-sudden-charge-barbarian-desc
   class: Barbarian
   level: 1
   traits:

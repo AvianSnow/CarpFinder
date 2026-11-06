@@ -2,8 +2,8 @@
 # source: Carpfinder Battlecry!
 - type: cfFeat
   id: CFShieldedRecovery
-  name: "Shielded Recovery"
-  description: "Requires Officer's Medical Training."
+  name: cf-feat-shielded-recovery
+  description: cf-feat-shielded-recovery-desc
   class: Commander
   level: 4
   traits:

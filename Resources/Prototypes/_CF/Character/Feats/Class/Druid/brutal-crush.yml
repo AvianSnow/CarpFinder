@@ -2,8 +2,8 @@
 # source: Carpfinder Howl of the Wild
 - type: cfFeat
   id: CFBrutalCrushDruid
-  name: "Brutal Crush"
-  description: "Requires animal instinct or untamed order. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-brutal-crush-druid
+  description: cf-feat-brutal-crush-druid-desc
   class: Druid
   level: 4
   traits:

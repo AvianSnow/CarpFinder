@@ -2,8 +2,8 @@
 # source: Carpfinder Dark Archive (Remastered)
 - type: cfFeat
   id: CFDivineDisharmony
-  name: "Divine Disharmony"
-  description: "+2 circumstance bonus to Intimidation and Deception. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-divine-disharmony
+  description: cf-feat-divine-disharmony-desc
   class: Thaumaturge
   level: 1
   traits:

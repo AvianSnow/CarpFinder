@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFAncestralSuspicion
-  name: "Ancestral Suspicion"
-  description: "+2 circumstance bonus to Saving Throw. Not applied in play yet. +2 circumstance bonus to Perception. Not applied in play yet."
+  name: cf-feat-ancestral-suspicion
+  description: cf-feat-ancestral-suspicion-desc
   ancestry: Elf
   level: 5
   traits:

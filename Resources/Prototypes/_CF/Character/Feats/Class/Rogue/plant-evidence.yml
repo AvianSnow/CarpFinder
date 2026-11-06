@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFPlantEvidence
-  name: "Plant Evidence"
-  description: "Requires Pickpocket. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-plant-evidence
+  description: cf-feat-plant-evidence-desc
   class: Rogue
   level: 1
   traits:

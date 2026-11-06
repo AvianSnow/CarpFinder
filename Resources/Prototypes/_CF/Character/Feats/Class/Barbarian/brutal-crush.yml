@@ -2,8 +2,8 @@
 # source: Carpfinder Howl of the Wild
 - type: cfFeat
   id: CFBrutalCrushBarbarian
-  name: "Brutal Crush"
-  description: "Requires animal instinct or untamed order. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-brutal-crush-barbarian
+  description: cf-feat-brutal-crush-barbarian-desc
   class: Barbarian
   level: 4
   traits:

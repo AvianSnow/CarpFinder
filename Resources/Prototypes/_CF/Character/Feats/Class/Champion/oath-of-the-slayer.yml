@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Divine Mysteries
 - type: cfFeat
   id: CFOathoftheSlayer
-  name: "Oath of the Slayer"
-  description: "Changes a modifier. This feature will be implemented later."
+  name: cf-feat-oathofthe-slayer
+  description: cf-feat-oathofthe-slayer-desc
   class: Champion
   level: 2
   traits:

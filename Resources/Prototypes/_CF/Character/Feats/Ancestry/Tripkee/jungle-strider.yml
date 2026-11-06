@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFJungleStrider
-  name: "Jungle Strider"
-  description: "Improves Acrobatics results. Not applied in play yet."
+  name: cf-feat-jungle-strider
+  description: cf-feat-jungle-strider-desc
   ancestry: Tripkee
   level: 1
   traits:

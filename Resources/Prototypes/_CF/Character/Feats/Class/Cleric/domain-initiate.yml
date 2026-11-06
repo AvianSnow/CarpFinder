@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFDomainInitiate
-  name: "Domain Initiate"
-  description: "This feature will be implemented later."
+  name: cf-feat-domain-initiate
+  description: cf-feat-domain-initiate-desc
   class: Cleric
   level: 1
   traits:

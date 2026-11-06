@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFCatfolkDance
-  name: "Catfolk Dance"
-  description: "Costs 1 action. TBA - action will be added"
+  name: cf-feat-catfolk-dance
+  description: cf-feat-catfolk-dance-desc
   ancestry: Catfolk
   level: 1
   traits:

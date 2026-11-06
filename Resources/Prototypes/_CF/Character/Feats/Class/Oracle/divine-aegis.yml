@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFDivineAegis
-  name: "Divine Aegis"
-  description: "Reaction. This feature will be implemented later."
+  name: cf-feat-divine-aegis
+  description: cf-feat-divine-aegis-desc
   class: Oracle
   level: 2
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFArcaneEvolution
-  name: "Arcane Evolution"
-  description: "Requires bloodline that grants arcane spells."
+  name: cf-feat-arcane-evolution
+  description: cf-feat-arcane-evolution-desc
   class: Sorcerer
   level: 4
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFHarmonizeSelf
-  name: "Harmonize Self"
-  description: "Requires Qi Spells."
+  name: cf-feat-harmonize-self
+  description: cf-feat-harmonize-self-desc
   class: Monk
   level: 4
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFTwinParryFighter
-  name: "Twin Parry"
-  description: "Changes a modifier. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-twin-parry-fighter
+  description: cf-feat-twin-parry-fighter-desc
   class: Fighter
   level: 4
   traits:

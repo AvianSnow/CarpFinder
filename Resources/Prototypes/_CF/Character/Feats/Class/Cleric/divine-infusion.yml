@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFDivineInfusion
-  name: "Divine Infusion"
-  description: "Changes an item. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-divine-infusion
+  description: cf-feat-divine-infusion-desc
   class: Cleric
   level: 4
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFFeyFellowship
-  name: "Fey Fellowship"
-  description: "+2 circumstance bonus to Perception. Not applied in play yet. +2 circumstance bonus to Saving Throw. Not applied in play yet."
+  name: cf-feat-fey-fellowship
+  description: cf-feat-fey-fellowship-desc
   ancestry: Gnome
   level: 1
   traits:

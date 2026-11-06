@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFNimbleElf
-  name: "Nimble Elf"
-  description: "Speed +5 feet."
+  name: cf-feat-nimble-elf
+  description: cf-feat-nimble-elf-desc
   ancestry: Elf
   level: 1
   traits:

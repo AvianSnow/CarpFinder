@@ -2,8 +2,8 @@
 # source: Carpfinder Dark Archive (Remastered)
 - type: cfFeat
   id: CFCallImplement
-  name: "Call Implement"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-call-implement
+  description: cf-feat-call-implement-desc
   class: Thaumaturge
   level: 2
   traits:

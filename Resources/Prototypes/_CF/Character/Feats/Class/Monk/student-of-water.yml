@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Rival Academies
 - type: cfFeat
   id: CFStudentofWater
-  name: "Student of Water"
-  description: "Also grants Underwater Marauder. Also grants Water Sprint. This feature will be implemented later."
+  name: cf-feat-studentof-water
+  description: cf-feat-studentof-water-desc
   class: Monk
   level: 2
   rarity: Uncommon

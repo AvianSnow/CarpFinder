@@ -2,8 +2,8 @@
 # source: Carpfinder Dark Archive (Remastered)
 - type: cfFeat
   id: CFCounterThought
-  name: "Counter Thought"
-  description: "Reaction. This feature will be implemented later."
+  name: cf-feat-counter-thought
+  description: cf-feat-counter-thought-desc
   class: Psychic
   level: 1
   traits:

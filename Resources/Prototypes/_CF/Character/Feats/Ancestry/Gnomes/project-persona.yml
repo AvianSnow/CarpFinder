@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFProjectPersona
-  name: "Project Persona"
-  description: "Costs 1 action. TBA - action will be added"
+  name: cf-feat-project-persona
+  description: cf-feat-project-persona-desc
   ancestry: Gnome
   level: 5
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFLabRat
-  name: "Lab Rat"
-  description: "+1 circumstance bonus to Saving Throw. Not applied in play yet. Improves Saving Throw results. Not applied in play yet."
+  name: cf-feat-lab-rat
+  description: cf-feat-lab-rat-desc
   ancestry: Ratfolk
   level: 5
   traits:

@@ -16,6 +16,9 @@ public static class CFAttributeMath
     public const int FinishingFreeBoostCount = 4;
     public const int TrainedProficiencyBonus = 2;
 
+    /// <summary>Different attributes boosted at level 5.</summary>
+    public const int LevelFiveBoostCount = 4;
+
     public static Dictionary<CFAbility, int> EmptyModifiers()
     {
         return Enum.GetValues<CFAbility>().ToDictionary(ability => ability, _ => 0);
@@ -262,6 +265,19 @@ public static class CFAttributeMath
             Class = cls,
             Ancestry = FindAncestry(prototypes, profile.Species),
         };
+    }
+
+    /// <summary>
+    /// A level 5 boost. At +4 or higher a boost is only half of one, and the other half comes at level 10, which this
+    /// game does not reach, so it changes nothing. False if the modifier stayed the same.
+    /// </summary>
+    public static bool TryLevelBoost(Dictionary<CFAbility, int> mods, CFAbility ability)
+    {
+        if (mods.GetValueOrDefault(ability) >= LevelOneMaxModifier)
+            return false;
+
+        mods[ability] = mods.GetValueOrDefault(ability) + 1;
+        return true;
     }
 
     private static void ApplyBoost(Dictionary<CFAbility, int> mods, CFAbility ability)

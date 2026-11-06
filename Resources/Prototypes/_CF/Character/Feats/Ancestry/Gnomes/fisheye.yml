@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Tian Xia Character Guide
 - type: cfFeat
   id: CFFisheye
-  name: "Fisheye"
-  description: "Requires kijimuna gnome heritage. +1 circumstance bonus to Saving Throw. Not applied in play yet. Improves Saving Throw results. Not applied in play yet."
+  name: cf-feat-fisheye
+  description: cf-feat-fisheye-desc
   ancestry: Gnome
   level: 1
   traits:

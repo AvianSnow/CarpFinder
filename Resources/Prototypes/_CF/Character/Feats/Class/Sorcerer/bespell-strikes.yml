@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFBespellStrikesSorcerer
-  name: "Bespell Strikes"
-  description: "Changes an item. Free action. This feature will be implemented later."
+  name: cf-feat-bespell-strikes-sorcerer
+  description: cf-feat-bespell-strikes-sorcerer-desc
   class: Sorcerer
   level: 4
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFCharmedLife
-  name: "Charmed Life"
-  description: "Requires Charisma +2. +2 circumstance bonus to Saving Throw. Reaction. This feature will be implemented later."
+  name: cf-feat-charmed-life
+  description: cf-feat-charmed-life-desc
   class: Swashbuckler
   level: 2
   traits:

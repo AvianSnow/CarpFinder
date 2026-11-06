@@ -1,8 +1,7 @@
 - type: cfBackground
   id: cf-background-acrobat
-  name: Acrobat
-  description: >-
-    You spent your early days tumbling for coin or training for the circus. You're trained in the Acrobatics skill.
+  name: cf-background-acrobat
+  description: cf-background-description-acrobat
   trainedSkills:
     - Acrobatics
   abilityBoosts:

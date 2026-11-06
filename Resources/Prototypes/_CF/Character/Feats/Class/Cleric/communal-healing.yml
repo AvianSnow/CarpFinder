@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFCommunalHealing
-  name: "Communal Healing"
-  description: "This feature will be implemented later."
+  name: cf-feat-communal-healing
+  description: cf-feat-communal-healing-desc
   class: Cleric
   level: 2
   traits:

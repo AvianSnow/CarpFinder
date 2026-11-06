@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFMercy
-  name: "Mercy"
-  description: "Requires lay on hands."
+  name: cf-feat-mercy
+  description: cf-feat-mercy-desc
   class: Champion
   level: 4
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Cheliax, Infernal Inheritance
 - type: cfFeat
   id: CFStrixDefender
-  name: "Strix Defender"
-  description: "+1 circumstance bonus to Intimidation, Perception, and Survival. Not applied in play yet. -2 circumstance bonus to Diplomacy. Not applied in play yet. +1 circumstance bonus to Damage. Not applied in play yet."
+  name: cf-feat-strix-defender
+  description: cf-feat-strix-defender-desc
   ancestry: Strix
   level: 1
   traits:

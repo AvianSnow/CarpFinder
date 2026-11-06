@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFBespellStrikesWizard
-  name: "Bespell Strikes"
-  description: "Changes an item. Free action. This feature will be implemented later."
+  name: cf-feat-bespell-strikes-wizard
+  description: cf-feat-bespell-strikes-wizard-desc
   class: Wizard
   level: 4
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Battlecry!
 - type: cfFeat
   id: CFProudNail
-  name: "Proud Nail"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-proud-nail
+  description: cf-feat-proud-nail-desc
   class: Guardian
   level: 4
   traits:

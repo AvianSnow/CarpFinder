@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFAdvancedWarden
-  name: "Advanced Warden"
-  description: "Requires Initiate Warden."
+  name: cf-feat-advanced-warden
+  description: cf-feat-advanced-warden-desc
   class: Ranger
   level: 4
   traits:

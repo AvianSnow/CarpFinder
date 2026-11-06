@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFOverextendingFeint
-  name: "Overextending Feint"
-  description: "Requires trained in Deception."
+  name: cf-feat-overextending-feint
+  description: cf-feat-overextending-feint-desc
   class: Rogue
   level: 1
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFNudgetheScales
-  name: "Nudge the Scales"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-nudgethe-scales
+  description: cf-feat-nudgethe-scales-desc
   class: Oracle
   level: 1
   traits:

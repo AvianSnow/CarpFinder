@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFVerdantWeapon
-  name: "Verdant Weapon"
-  description: "Grants an item. Changes an item. This feature will be implemented later."
+  name: cf-feat-verdant-weapon
+  description: cf-feat-verdant-weapon-desc
   class: Druid
   level: 1
   traits:

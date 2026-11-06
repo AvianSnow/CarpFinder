@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFCringe
-  name: "Cringe"
-  description: "Reaction. TBA - action will be added"
+  name: cf-feat-cringe
+  description: cf-feat-cringe-desc
   ancestry: Kobold
   level: 1
   traits:

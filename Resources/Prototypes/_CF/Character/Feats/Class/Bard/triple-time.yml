@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFTripleTime
-  name: "Triple Time"
-  description: "This feature will be implemented later."
+  name: cf-feat-triple-time
+  description: cf-feat-triple-time-desc
   class: Bard
   level: 4
   traits:

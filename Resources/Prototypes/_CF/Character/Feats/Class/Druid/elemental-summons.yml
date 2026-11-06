@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFElementalSummons
-  name: "Elemental Summons"
-  description: "This feature will be implemented later."
+  name: cf-feat-elemental-summons
+  description: cf-feat-elemental-summons-desc
   class: Druid
   level: 4
   traits:

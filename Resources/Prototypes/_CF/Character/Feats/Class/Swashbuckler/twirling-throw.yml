@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFTwirlingThrow
-  name: "Twirling Throw"
-  description: "Requires Flying Blade. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-twirling-throw
+  description: cf-feat-twirling-throw-desc
   class: Swashbuckler
   level: 4
   traits:

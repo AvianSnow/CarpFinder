@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFCounterspellPreparedWitch
-  name: "Counterspell (Prepared)"
-  description: "Reaction. This feature will be implemented later."
+  name: cf-feat-counterspell-prepared-witch
+  description: cf-feat-counterspell-prepared-witch-desc
   class: Witch
   level: 1
   traits:

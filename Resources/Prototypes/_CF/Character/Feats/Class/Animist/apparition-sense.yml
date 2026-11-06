@@ -2,8 +2,8 @@
 # source: Carpfinder War of Immortals
 - type: cfFeat
   id: CFApparitionSense
-  name: "Apparition Sense"
-  description: "This feature will be implemented later."
+  name: cf-feat-apparition-sense
+  description: cf-feat-apparition-sense-desc
   class: Animist
   level: 1
   traits:

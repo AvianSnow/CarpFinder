@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFElementalFist
-  name: "Elemental Fist"
-  description: "Requires Inner Upheaval."
+  name: cf-feat-elemental-fist
+  description: cf-feat-elemental-fist-desc
   class: Monk
   level: 2
   traits:

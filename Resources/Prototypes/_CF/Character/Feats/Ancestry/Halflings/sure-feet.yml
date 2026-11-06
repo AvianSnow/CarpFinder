@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFSureFeet
-  name: "Sure Feet"
-  description: "Improves Acrobatics results. Not applied in play yet. Improves Athletics results. Not applied in play yet."
+  name: cf-feat-sure-feet
+  description: cf-feat-sure-feet-desc
   ancestry: Halfling
   level: 1
   traits:

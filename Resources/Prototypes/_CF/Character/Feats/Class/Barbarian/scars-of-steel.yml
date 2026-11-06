@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFScarsofSteel
-  name: "Scars of Steel"
-  description: "Requires Fury Instinct. Has a resistance. Reaction. This feature will be implemented later."
+  name: cf-feat-scarsof-steel
+  description: cf-feat-scarsof-steel-desc
   class: Barbarian
   level: 4
   traits:

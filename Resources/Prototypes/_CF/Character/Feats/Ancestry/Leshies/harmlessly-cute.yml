@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFHarmlesslyCute
-  name: "Harmlessly Cute"
-  description: "+1 circumstance bonus to Initiative. Not applied in play yet. Also grants Shameless Request. TBA - action will be added"
+  name: cf-feat-harmlessly-cute
+  description: cf-feat-harmlessly-cute-desc
   ancestry: Leshy
   level: 1
   traits:

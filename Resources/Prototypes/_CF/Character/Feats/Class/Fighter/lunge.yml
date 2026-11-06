@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFLunge
-  name: "Lunge"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-lunge
+  description: cf-feat-lunge-desc
   class: Fighter
   level: 2
   traits:

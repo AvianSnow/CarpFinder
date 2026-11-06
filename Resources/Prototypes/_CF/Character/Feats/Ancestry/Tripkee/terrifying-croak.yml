@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFTerrifyingCroak
-  name: "Terrifying Croak"
-  description: "Requires trained in Intimidation. Costs 1 action. TBA - action will be added"
+  name: cf-feat-terrifying-croak
+  description: cf-feat-terrifying-croak-desc
   ancestry: Tripkee
   level: 1
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFMonsterHunter
-  name: "Monster Hunter"
-  description: "This feature will be implemented later."
+  name: cf-feat-monster-hunter
+  description: cf-feat-monster-hunter-desc
   class: Ranger
   level: 1
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder #210: Whispers in the Dirt
 - type: cfFeat
   id: CFShametheSin
-  name: "Shame the Sin"
-  description: "Costs 1 action. TBA - action will be added"
+  name: cf-feat-shamethe-sin
+  description: cf-feat-shamethe-sin-desc
   ancestry: Elf
   level: 5
   rarity: Uncommon

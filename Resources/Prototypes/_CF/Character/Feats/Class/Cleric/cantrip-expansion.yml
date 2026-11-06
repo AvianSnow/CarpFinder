@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFCantripExpansionCleric
-  name: "Cantrip Expansion"
-  description: "This feature will be implemented later."
+  name: cf-feat-cantrip-expansion-cleric
+  description: cf-feat-cantrip-expansion-cleric-desc
   class: Cleric
   level: 2
   traits:

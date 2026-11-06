@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFWellMetTraveler
-  name: "Well-Met Traveler"
-  description: "Trained in Diplomacy. Also grants Hobnobber. TBA - action will be added"
+  name: cf-feat-well-met-traveler
+  description: cf-feat-well-met-traveler-desc
   ancestry: Catfolk
   level: 1
   traits:

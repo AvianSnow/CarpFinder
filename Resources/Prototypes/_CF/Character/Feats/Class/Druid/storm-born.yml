@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFStormBorn
-  name: "Storm Born"
-  description: "Requires storm order."
+  name: cf-feat-storm-born
+  description: cf-feat-storm-born-desc
   class: Druid
   level: 1
   traits:

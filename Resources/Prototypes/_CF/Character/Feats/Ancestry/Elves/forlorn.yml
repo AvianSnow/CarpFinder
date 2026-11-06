@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFForlorn
-  name: "Forlorn"
-  description: "+1 circumstance bonus to Saving Throw. Not applied in play yet. Improves Saving Throw results. Not applied in play yet."
+  name: cf-feat-forlorn
+  description: cf-feat-forlorn-desc
   ancestry: Elf
   level: 1
   traits:

@@ -117,7 +117,9 @@ public sealed partial class CFCharacterSheetTab : BoxContainer
             if (!_prototypes.TryIndex(skillId, out CFAbilitySkillPrototype? skill))
                 continue;
 
-            var rank = CFSkills.GetSkillRank(cls, background, skillId, combatant.TrainedSkills);
+            var rank = CFSkills.RaiseRank(
+                CFSkills.GetSkillRank(cls, background, skillId, combatant.TrainedSkills),
+                combatant.SkillIncreases.Count(id => id == skillId));
             var mod = CFSkills.SkillModifier(abilities.AbilityModifiers, skill.Ability, combatant.Level, rank);
             var skillName = Loc.GetString(skill.Name);
             if (skillId == "Lore" && combatant.LoreNames.Count > 0)

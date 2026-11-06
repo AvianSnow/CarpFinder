@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Tian Xia Character Guide
 - type: cfFeat
   id: CFChildlikePlant
-  name: "Childlike Plant"
-  description: "Requires chrysanthemum leshy heritage or peachchild leshy heritage. Trained in Deception. +4 circumstance bonus to Deception. Not applied in play yet."
+  name: cf-feat-childlike-plant
+  description: cf-feat-childlike-plant-desc
   ancestry: Leshy
   level: 1
   traits:

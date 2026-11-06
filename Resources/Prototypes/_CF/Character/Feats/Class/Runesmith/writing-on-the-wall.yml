@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFWritingOntheWall
-  name: "Writing On the Wall"
-  description: "Requires expert in Arcana, Nature, Occultism, or Religion."
+  name: cf-feat-writing-onthe-wall
+  description: cf-feat-writing-onthe-wall-desc
   class: Runesmith
   level: 4
   traits:

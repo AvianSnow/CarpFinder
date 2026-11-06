@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFSongofStrength
-  name: "Song of Strength"
-  description: "Requires warrior muse."
+  name: cf-feat-songof-strength
+  description: cf-feat-songof-strength-desc
   class: Bard
   level: 2
   traits:

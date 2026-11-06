@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFEnhancedFamiliarDruid
-  name: "Enhanced Familiar"
-  description: "Requires a familiar."
+  name: cf-feat-enhanced-familiar-druid
+  description: cf-feat-enhanced-familiar-druid-desc
   class: Druid
   level: 2
   traits:

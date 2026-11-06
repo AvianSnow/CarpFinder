@@ -2,8 +2,8 @@
 # source: Carpfinder Guns & Gears
 - type: cfFeat
   id: CFRunningReloadGunslinger
-  name: "Running Reload"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-running-reload-gunslinger
+  description: cf-feat-running-reload-gunslinger-desc
   class: Gunslinger
   level: 4
   traits:

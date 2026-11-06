@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFSlamDown
-  name: "Slam Down"
-  description: "Requires trained in Athletics. Costs 2 actions. This feature will be implemented later."
+  name: cf-feat-slam-down
+  description: cf-feat-slam-down-desc
   class: Fighter
   level: 4
   traits:

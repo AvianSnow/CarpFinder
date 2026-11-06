@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFPartingShot
-  name: "Parting Shot"
-  description: "Costs 2 actions. This feature will be implemented later."
+  name: cf-feat-parting-shot
+  description: cf-feat-parting-shot-desc
   class: Fighter
   level: 4
   traits:

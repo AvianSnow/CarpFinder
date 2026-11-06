@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFStarlitEyes
-  name: "Starlit Eyes"
-  description: "Requires starlit span hybrid study."
+  name: cf-feat-starlit-eyes
+  description: cf-feat-starlit-eyes-desc
   class: Magus
   level: 4
   traits:

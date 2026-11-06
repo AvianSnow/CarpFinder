@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFHalflingLuck
-  name: "Halfling Luck"
-  description: "Free action. TBA - action will be added"
+  name: cf-feat-halfling-luck
+  description: cf-feat-halfling-luck-desc
   ancestry: Halfling
   level: 1
   traits:

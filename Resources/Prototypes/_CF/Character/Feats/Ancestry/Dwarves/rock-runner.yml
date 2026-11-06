@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFRockRunner
-  name: "Rock Runner"
-  description: "Improves Acrobatics results. Not applied in play yet."
+  name: cf-feat-rock-runner
+  description: cf-feat-rock-runner-desc
   ancestry: Dwarf
   level: 1
   traits:

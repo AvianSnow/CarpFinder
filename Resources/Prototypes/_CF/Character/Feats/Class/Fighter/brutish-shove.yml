@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFBrutishShove
-  name: "Brutish Shove"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-brutish-shove
+  description: cf-feat-brutish-shove-desc
   class: Fighter
   level: 2
   traits:

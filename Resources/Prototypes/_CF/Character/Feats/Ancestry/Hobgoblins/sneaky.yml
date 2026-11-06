@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFSneaky
-  name: "Sneaky"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-sneaky
+  description: cf-feat-sneaky-desc
   ancestry: Hobgoblin
   level: 1
   traits:

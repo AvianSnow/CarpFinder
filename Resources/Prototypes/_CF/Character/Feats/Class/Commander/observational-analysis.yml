@@ -2,8 +2,8 @@
 # source: Carpfinder Battlecry!
 - type: cfFeat
   id: CFObservationalAnalysis
-  name: "Observational Analysis"
-  description: "Requires Combat Assessment. Changes a modifier. This feature will be implemented later."
+  name: cf-feat-observational-analysis
+  description: cf-feat-observational-analysis-desc
   class: Commander
   level: 4
   traits:

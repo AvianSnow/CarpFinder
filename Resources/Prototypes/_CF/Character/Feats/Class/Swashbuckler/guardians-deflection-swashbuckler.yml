@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFGuardiansDeflectionSwashbuckler
-  name: "Guardian's Deflection (Swashbuckler)"
-  description: "Reaction. This feature will be implemented later."
+  name: cf-feat-guardians-deflection-swashbuckler
+  description: cf-feat-guardians-deflection-swashbuckler-desc
   class: Swashbuckler
   level: 4
   traits:

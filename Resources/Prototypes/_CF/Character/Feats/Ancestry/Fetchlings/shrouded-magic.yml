@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Cheliax, Infernal Inheritance
 - type: cfFeat
   id: CFShroudedMagic
-  name: "Shrouded Magic"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-shrouded-magic
+  description: cf-feat-shrouded-magic-desc
   ancestry: Fetchling
   level: 1
   traits:

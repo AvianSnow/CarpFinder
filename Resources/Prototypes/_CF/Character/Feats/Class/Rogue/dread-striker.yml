@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFDreadStriker
-  name: "Dread Striker"
-  description: "This feature will be implemented later."
+  name: cf-feat-dread-striker
+  description: cf-feat-dread-striker-desc
   class: Rogue
   level: 4
   traits:

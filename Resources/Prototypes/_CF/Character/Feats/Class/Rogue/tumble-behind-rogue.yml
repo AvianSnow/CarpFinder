@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFTumbleBehindRogue
-  name: "Tumble Behind (Rogue)"
-  description: "Automatic. When you Tumble Through an enemy by running into it, it is off-guard to you afterwards."
+  name: cf-feat-tumble-behind-rogue
+  description: cf-feat-tumble-behind-rogue-desc
   class: Rogue
   level: 1
   traits:

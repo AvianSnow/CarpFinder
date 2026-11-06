@@ -2,6 +2,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Content.Shared.CCVar;
+using Content.Shared.CF.Languages;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Companions;
 using Content.Shared.CF.Preferences;
@@ -831,6 +832,28 @@ namespace Content.Shared.Preferences
 
             if (!string.IsNullOrEmpty(CFBuild.PetId) && !prototypeManager.HasIndex<CFPetPrototype>(CFBuild.PetId))
                 CFBuild.PetId = "";
+
+            CFBuild.Languages = CFBuild.Languages
+                .Where(language => prototypeManager.HasIndex(language))
+                .Distinct()
+                .Take(CFLanguageRules.MaxPicks)
+                .ToList();
+
+            if (CFBuild.SkillFeatLevel2 is { } skillFeat2 && !prototypeManager.HasIndex(skillFeat2))
+                CFBuild.SkillFeatLevel2 = null;
+            if (CFBuild.GeneralFeatLevel3 is { } generalFeat3 && !prototypeManager.HasIndex(generalFeat3))
+                CFBuild.GeneralFeatLevel3 = null;
+            if (CFBuild.SkillFeatLevel4 is { } skillFeat4 && !prototypeManager.HasIndex(skillFeat4))
+                CFBuild.SkillFeatLevel4 = null;
+            if (CFBuild.SkillIncreaseLevel3 is { } increase3 && !prototypeManager.HasIndex(increase3))
+                CFBuild.SkillIncreaseLevel3 = null;
+            if (CFBuild.SkillIncreaseLevel5 is { } increase5 && !prototypeManager.HasIndex(increase5))
+                CFBuild.SkillIncreaseLevel5 = null;
+
+            CFBuild.AbilityBoostsLevel5 = CFBuild.AbilityBoostsLevel5
+                .Distinct()
+                .Take(CFAttributeMath.LevelFiveBoostCount)
+                .ToList();
             // CarpFinder end
         }
 

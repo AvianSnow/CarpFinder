@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFCleverImproviser
-  name: "Clever Improviser"
-  description: "Also grants Untrained Improvisation. TBA - action will be added"
+  name: cf-feat-clever-improviser
+  description: cf-feat-clever-improviser-desc
   ancestry: Human
   level: 5
   traits:

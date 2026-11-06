@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFReactiveShieldFighter
-  name: "Reactive Shield"
-  description: "Reaction. Raise a Shield when you are hit, if you are holding one."
+  name: cf-feat-reactive-shield-fighter
+  description: cf-feat-reactive-shield-fighter-desc
   class: Fighter
   level: 1
   traits:

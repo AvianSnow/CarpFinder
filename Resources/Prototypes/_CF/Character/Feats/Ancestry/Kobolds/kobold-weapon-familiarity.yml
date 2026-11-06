@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFKoboldWeaponFamiliarity
-  name: "Kobold Weapon Familiarity"
-  description: "Ancestry weapons count as a simpler group for proficiency. Not applied in combat yet."
+  name: cf-feat-kobold-weapon-familiarity
+  description: cf-feat-kobold-weapon-familiarity-desc
   ancestry: Kobold
   level: 1
   traits:

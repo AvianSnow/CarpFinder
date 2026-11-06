@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFChannelSmite
-  name: "Channel Smite"
-  description: "Costs 2 actions. This feature will be implemented later."
+  name: cf-feat-channel-smite
+  description: cf-feat-channel-smite-desc
   class: Cleric
   level: 4
   traits:

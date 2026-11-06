@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Tian Xia Character Guide
 - type: cfFeat
   id: CFSevenChangesPerformance
-  name: "Seven Changes Performance"
-  description: "Requires trained in Performance. Also grants Quick Disguise. TBA - action will be added"
+  name: cf-feat-seven-changes-performance
+  description: cf-feat-seven-changes-performance-desc
   ancestry: Kitsune
   level: 1
   traits:

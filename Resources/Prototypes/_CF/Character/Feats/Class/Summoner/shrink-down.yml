@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFShrinkDown
-  name: "Shrink Down"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-shrink-down
+  description: cf-feat-shrink-down-desc
   class: Summoner
   level: 4
   traits:

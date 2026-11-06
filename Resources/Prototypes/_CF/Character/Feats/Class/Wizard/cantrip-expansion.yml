@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFCantripExpansionWizard
-  name: "Cantrip Expansion"
-  description: "This feature will be implemented later."
+  name: cf-feat-cantrip-expansion-wizard
+  description: cf-feat-cantrip-expansion-wizard-desc
   class: Wizard
   level: 2
   traits:

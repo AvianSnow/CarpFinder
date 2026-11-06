@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFSoothingVials
-  name: "Soothing Vials"
-  description: "This feature will be implemented later."
+  name: cf-feat-soothing-vials
+  description: cf-feat-soothing-vials-desc
   class: Alchemist
   level: 1
   traits:

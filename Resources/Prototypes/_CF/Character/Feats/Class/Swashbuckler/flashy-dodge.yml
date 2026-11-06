@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFFlashyDodge
-  name: "Flashy Dodge"
-  description: "+2 circumstance bonus to Ac. Reaction. This feature will be implemented later."
+  name: cf-feat-flashy-dodge
+  description: cf-feat-flashy-dodge-desc
   class: Swashbuckler
   level: 1
   traits:

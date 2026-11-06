@@ -91,6 +91,7 @@
                                     <Button Name="SetAbilitiesButton" Text="{Loc 'cf-character-builder-set-abilities'}" />
                                     <Button Name="SkillTrainingButton" Text="{Loc 'cf-character-builder-skill-training'}" />
                                     <Button Name="ClassSkillButton" Text="{Loc 'cf-character-builder-class-skill'}" />
+                                    <Button Name="LanguagesButton" Text="{Loc 'cf-character-builder-languages'}" />
                                 </GridContainer>
                                 <Button Name="HeritageSlot" ToggleMode="True" Text="{Loc 'cf-character-builder-heritage-slot'}" HorizontalExpand="True" />
                                 <Button Name="SpriteSlot" ToggleMode="True" Text="{Loc 'cf-character-builder-sprite-slot'}" HorizontalExpand="True" />
@@ -103,6 +104,7 @@
                                 <Button Name="Level2Toggle" Text="{Loc 'cf-character-builder-level-2'}" ToggleMode="True" Pressed="True" HorizontalExpand="True" />
                                 <BoxContainer Name="Level2Body" Orientation="Vertical">
                                     <Button Name="Level2FeatSlot" ToggleMode="True" Text="{Loc 'cf-character-builder-class-feat-level-2-slot'}" HorizontalExpand="True" />
+                                    <Button Name="Level2SkillFeatSlot" Text="{Loc 'cf-character-builder-skill-feat'}" HorizontalExpand="True" />
                                 </BoxContainer>
                             </BoxContainer>
                         </PanelContainer>
@@ -111,6 +113,7 @@
                                 <Button Name="Level3Toggle" Text="{Loc 'cf-character-builder-level-3'}" ToggleMode="True" Pressed="True" HorizontalExpand="True" />
                                 <BoxContainer Name="Level3Body" Orientation="Vertical">
                                     <Button Name="Level3SkillIncreaseSlot" Text="{Loc 'cf-character-builder-skill-increase'}" HorizontalExpand="True" />
+                                    <Button Name="Level3GeneralFeatSlot" Text="{Loc 'cf-character-builder-general-feat'}" HorizontalExpand="True" />
                                 </BoxContainer>
                             </BoxContainer>
                         </PanelContainer>
@@ -119,6 +122,7 @@
                                 <Button Name="Level4Toggle" Text="{Loc 'cf-character-builder-level-4'}" ToggleMode="True" Pressed="True" HorizontalExpand="True" />
                                 <BoxContainer Name="Level4Body" Orientation="Vertical">
                                     <Button Name="Level4FeatSlot" ToggleMode="True" Text="{Loc 'cf-character-builder-class-feat-level-4-slot'}" HorizontalExpand="True" />
+                                    <Button Name="Level4SkillFeatSlot" Text="{Loc 'cf-character-builder-skill-feat'}" HorizontalExpand="True" />
                                 </BoxContainer>
                             </BoxContainer>
                         </PanelContainer>
@@ -127,6 +131,8 @@
                                 <Button Name="Level5Toggle" Text="{Loc 'cf-character-builder-level-5'}" ToggleMode="True" Pressed="True" HorizontalExpand="True" />
                                 <BoxContainer Name="Level5Body" Orientation="Vertical">
                                     <Button Name="Level5FeatSlot" ToggleMode="True" Text="{Loc 'cf-character-builder-ancestry-feat-level-5-slot'}" HorizontalExpand="True" />
+                                    <Button Name="Level5SkillIncreaseSlot" Text="{Loc 'cf-character-builder-skill-increase'}" HorizontalExpand="True" />
+                                    <Button Name="Level5BoostsSlot" Text="{Loc 'cf-character-builder-level-boosts'}" HorizontalExpand="True" />
                                 </BoxContainer>
                             </BoxContainer>
                         </PanelContainer>

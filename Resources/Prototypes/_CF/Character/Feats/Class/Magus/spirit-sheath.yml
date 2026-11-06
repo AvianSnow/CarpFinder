@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFSpiritSheath
-  name: "Spirit Sheath"
-  description: "This feature will be implemented later."
+  name: cf-feat-spirit-sheath
+  description: cf-feat-spirit-sheath-desc
   class: Magus
   level: 2
   traits:

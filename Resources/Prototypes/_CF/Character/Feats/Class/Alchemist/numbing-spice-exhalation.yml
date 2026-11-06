@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Tian Xia Character Guide
 - type: cfFeat
   id: CFNumbingSpiceExhalation
-  name: "Numbing Spice Exhalation"
-  description: "This feature will be implemented later."
+  name: cf-feat-numbing-spice-exhalation
+  description: cf-feat-numbing-spice-exhalation-desc
   class: Alchemist
   level: 4
   traits:

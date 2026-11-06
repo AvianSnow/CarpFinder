@@ -2,8 +2,8 @@
 # source: Carpfinder War of Immortals
 - type: cfFeat
   id: CFCircleofSpirits
-  name: "Circle of Spirits"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-circleof-spirits
+  description: cf-feat-circleof-spirits-desc
   class: Animist
   level: 1
   traits:

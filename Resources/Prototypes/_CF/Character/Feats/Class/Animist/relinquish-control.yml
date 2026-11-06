@@ -2,8 +2,8 @@
 # source: Carpfinder War of Immortals
 - type: cfFeat
   id: CFRelinquishControl
-  name: "Relinquish Control"
-  description: "Free action. This feature will be implemented later."
+  name: cf-feat-relinquish-control
+  description: cf-feat-relinquish-control-desc
   class: Animist
   level: 1
   traits:

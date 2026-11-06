@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFShakeitOff
-  name: "Shake it Off"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-shakeit-off
+  description: cf-feat-shakeit-off-desc
   class: Barbarian
   level: 2
   traits:

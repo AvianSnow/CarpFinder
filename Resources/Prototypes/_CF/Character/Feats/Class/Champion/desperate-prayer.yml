@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFDesperatePrayer
-  name: "Desperate Prayer"
-  description: "Free action. This feature will be implemented later."
+  name: cf-feat-desperate-prayer
+  description: cf-feat-desperate-prayer-desc
   class: Champion
   level: 1
   traits:

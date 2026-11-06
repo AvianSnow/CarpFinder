@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFNonlethalSpell
-  name: "Nonlethal Spell"
-  description: "Changes an item. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-nonlethal-spell
+  description: cf-feat-nonlethal-spell-desc
   class: Wizard
   level: 2
   traits:

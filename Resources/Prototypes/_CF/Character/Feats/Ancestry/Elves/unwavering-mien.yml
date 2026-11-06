@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFUnwaveringMien
-  name: "Unwavering Mien"
-  description: "Improves Saving Throw results. Not applied in play yet."
+  name: cf-feat-unwavering-mien
+  description: cf-feat-unwavering-mien-desc
   ancestry: Elf
   level: 1
   traits:

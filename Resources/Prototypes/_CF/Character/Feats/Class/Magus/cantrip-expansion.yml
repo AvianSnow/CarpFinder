@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFCantripExpansionMagus
-  name: "Cantrip Expansion"
-  description: "This feature will be implemented later."
+  name: cf-feat-cantrip-expansion-magus
+  description: cf-feat-cantrip-expansion-magus-desc
   class: Magus
   level: 2
   traits:

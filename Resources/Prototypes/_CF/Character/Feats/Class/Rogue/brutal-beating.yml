@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFBrutalBeating
-  name: "Brutal Beating"
-  description: "Requires ruffian racket."
+  name: cf-feat-brutal-beating
+  description: cf-feat-brutal-beating-desc
   class: Rogue
   level: 2
   traits:

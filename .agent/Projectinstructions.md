@@ -20,7 +20,7 @@ Map of the codebase: `codebase.md`. Start there to find something.
 
 How to turn a Pathfinder 2e stat block into a monster: `importcreatures.md`.
 
-The ordered feature plan is `roadmap.md`. Check it before starting a feature and tick items off when they land.
+The ordered feature plan is `roadmap.md`. Check it before starting a feature and tick items off when they land. What is already built, and why, is in `roadmapold.md`. It is not loaded each session, so read it when you need the history.
 
 ## Pathfinder Game Rules
 
@@ -138,6 +138,7 @@ Class examples: `CFMySystem`, `CFMyServerSystem`, `CFMyClientSystem`, `CFExample
 | New monster | Follow `importcreatures.md`. Copy an entry in `Resources/Prototypes/_CF/Entities/Mobs/Creatures/` and set the printed stats from Archives of Nethys. Add its row to `CFCreatureTest.StatBlocks`. Set `diesAtZeroHp: true`. |
 | Any generated map | Call `CFOutdoorsSystem.ApplySkyWorld(map)` first. CF takes place in the sky, on floating islands with airships, not in space, so every generated map needs the breathable air and `Sky` parallax from the `CFSkyWorld` prototype. |
 | Money | `CFShopSystem.Purse(user)` for a seeded purse. Sale value is `CFMerchantSystem.SaleValue(item)`. Set `fullResale: true` on `CFItemPrice` for gems, art objects and raw materials. |
+| Languages | `CFLanguageSystem.Understands`, `TryGetSpoken`, `TrySpeak`. A creature with no `CFLanguages` understands everything |
 | Skill proficiency rank | `CFDefense.SkillRank(prototypes, combat, skill)` |
 | Area tiles (burst, cone, emanation, line, square) | `CFAreaGrid.Collect` (`Content.Shared.CF.Effects.Areas`), 1 tile = 5 ft |
 | Damage type data (SS14 type, colour, hit sound) | `cfDamageType` prototypes, resolved with `CFDamageTypes.TryResolve` (`Content.Shared.CF.DamageTypes`). Matching ignores case and checks aliases, so `slashing` resolves to `Slashing`. |

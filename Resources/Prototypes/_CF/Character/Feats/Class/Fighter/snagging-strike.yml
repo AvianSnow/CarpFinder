@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFSnaggingStrike
-  name: "Snagging Strike"
-  description: "Automatic. A Strike that hits while you have a hand free leaves a target in reach of that hand off-guard until your next turn."
+  name: cf-feat-snagging-strike
+  description: cf-feat-snagging-strike-desc
   class: Fighter
   level: 1
   traits:

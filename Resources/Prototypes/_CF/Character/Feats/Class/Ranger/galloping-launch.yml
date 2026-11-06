@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Cheliax, Infernal Inheritance
 - type: cfFeat
   id: CFGallopingLaunchRanger
-  name: "Galloping Launch"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-galloping-launch-ranger
+  description: cf-feat-galloping-launch-ranger-desc
   class: Ranger
   level: 4
   traits:

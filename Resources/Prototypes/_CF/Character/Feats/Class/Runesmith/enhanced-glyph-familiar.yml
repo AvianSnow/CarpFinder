@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFEnhancedGlyphFamiliar
-  name: "Enhanced Glyph Familiar"
-  description: "Requires Glyph Familiar."
+  name: cf-feat-enhanced-glyph-familiar
+  description: cf-feat-enhanced-glyph-familiar-desc
   class: Runesmith
   level: 2
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFRetreatingFinisher
-  name: "Retreating Finisher"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-retreating-finisher
+  description: cf-feat-retreating-finisher-desc
   class: Swashbuckler
   level: 2
   traits:

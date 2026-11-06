@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFAllysShelter
-  name: "Ally's Shelter"
-  description: "Reaction. TBA - action will be added"
+  name: cf-feat-allys-shelter
+  description: cf-feat-allys-shelter-desc
   ancestry: Kobold
   level: 5
   traits:

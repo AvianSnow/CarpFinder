@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFCauldron
-  name: "Cauldron"
-  description: "This feature will be implemented later."
+  name: cf-feat-cauldron
+  description: cf-feat-cauldron-desc
   class: Witch
   level: 1
   traits:

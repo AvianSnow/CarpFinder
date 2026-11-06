@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFDisruptPrey
-  name: "Disrupt Prey"
-  description: "Reaction. This feature will be implemented later."
+  name: cf-feat-disrupt-prey
+  description: cf-feat-disrupt-prey-desc
   class: Ranger
   level: 4
   traits:

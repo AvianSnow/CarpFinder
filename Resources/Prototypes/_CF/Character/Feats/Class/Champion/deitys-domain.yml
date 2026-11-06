@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFDeitysDomain
-  name: "Deity's Domain"
-  description: "This feature will be implemented later."
+  name: cf-feat-deitys-domain
+  description: cf-feat-deitys-domain-desc
   class: Champion
   level: 1
   traits:

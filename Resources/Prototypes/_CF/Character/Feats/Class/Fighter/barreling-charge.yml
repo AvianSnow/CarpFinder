@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFBarrelingChargeFighter
-  name: "Barreling Charge"
-  description: "Requires trained in Athletics. Costs 2 actions. This feature will be implemented later."
+  name: cf-feat-barreling-charge-fighter
+  description: cf-feat-barreling-charge-fighter-desc
   class: Fighter
   level: 4
   traits:

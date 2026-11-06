@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFDivineCastigation
-  name: "Divine Castigation"
-  description: "Requires holy or unholy trait. Changes an item. This feature will be implemented later."
+  name: cf-feat-divine-castigation
+  description: cf-feat-divine-castigation-desc
   class: Cleric
   level: 1
   traits:

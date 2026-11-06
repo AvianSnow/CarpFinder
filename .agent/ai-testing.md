@@ -110,7 +110,7 @@ Final code, 5 November 2026: the CF suite passed 297 of 297 in one run. That doe
 
 ### What `npc_test_map.yml` showed (6 November 2026)
 
-`Resources/Maps/Test/npc_test_map.yml` is a maze of one-tile corridors, doors, windows on grilles and tables, which the arena has none of. Load it for navigation problems, as `CFGOAPMazeTest` does. A monitored run found these, and they are in the roadmap under 6k:
+`Resources/Maps/Test/npc_test_map.yml` is a maze of one-tile corridors, doors, windows on grilles and tables, which the arena has none of. Load it for navigation problems, as `CFGOAPMazeTest` does. A monitored run found these, and they are in the roadmap under 6k in Step 5:
 
 - **Corners in one-tile corridors.** Arrows give a direction and nothing centres the body. Danger from one wall nudges it off the middle, its body catches the next corner, the safety circle throws it back, and it repeats. Measured tick by tick at the mouth of the alcove at (0-1, 6). This is very likely the "stalls in front of the gap" cause below.
 - Single runs are noisy. The same fight dealt 127, 140 and 168 damage in three runs, so read trends, not numbers.

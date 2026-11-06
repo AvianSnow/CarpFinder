@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFCombatGrab
-  name: "Combat Grab"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-combat-grab
+  description: cf-feat-combat-grab-desc
   class: Fighter
   level: 2
   traits:

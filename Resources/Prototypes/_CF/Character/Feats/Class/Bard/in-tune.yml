@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFInTune
-  name: "In Tune"
-  description: "Requires maestro muse. Changes an item. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-in-tune
+  description: cf-feat-in-tune-desc
   class: Bard
   level: 4
   traits:

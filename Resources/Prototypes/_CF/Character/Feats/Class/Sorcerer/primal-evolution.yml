@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFPrimalEvolution
-  name: "Primal Evolution"
-  description: "Requires bloodline that grants primal spells."
+  name: cf-feat-primal-evolution
+  description: cf-feat-primal-evolution-desc
   class: Sorcerer
   level: 4
   traits:

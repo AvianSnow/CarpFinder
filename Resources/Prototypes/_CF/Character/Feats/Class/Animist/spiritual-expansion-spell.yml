@@ -2,8 +2,8 @@
 # source: Carpfinder War of Immortals
 - type: cfFeat
   id: CFSpiritualExpansionSpell
-  name: "Spiritual Expansion Spell"
-  description: "Changes an item. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-spiritual-expansion-spell
+  description: cf-feat-spiritual-expansion-spell-desc
   class: Animist
   level: 2
   traits:

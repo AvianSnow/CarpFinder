@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFSwipeBarbarian
-  name: "Swipe"
-  description: "Costs 2 actions. This feature will be implemented later."
+  name: cf-feat-swipe-barbarian
+  description: cf-feat-swipe-barbarian-desc
   class: Barbarian
   level: 4
   traits:

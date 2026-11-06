@@ -1,3 +1,4 @@
+using System.Linq;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Preferences;
@@ -92,7 +93,8 @@ public static class CFDefense
         if (!string.IsNullOrEmpty(combat.BackgroundId))
             prototypes.TryIndex(combat.BackgroundId, out background);
 
-        return CFSkills.GetSkillRank(cls, background, skill, combat.TrainedSkills);
+        var rank = CFSkills.GetSkillRank(cls, background, skill, combat.TrainedSkills);
+        return CFSkills.RaiseRank(rank, combat.SkillIncreases.Count(id => id == skill));
     }
 
     public static int SkillModifier(

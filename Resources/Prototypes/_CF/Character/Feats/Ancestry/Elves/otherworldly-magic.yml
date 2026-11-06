@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFOtherworldlyMagic
-  name: "Otherworldly Magic"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-otherworldly-magic
+  description: cf-feat-otherworldly-magic-desc
   ancestry: Elf
   level: 1
   traits:

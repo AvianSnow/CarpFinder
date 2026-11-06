@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFLightPaws
-  name: "Light Paws"
-  description: "Costs 2 actions. TBA - action will be added"
+  name: cf-feat-light-paws
+  description: cf-feat-light-paws-desc
   ancestry: Catfolk
   level: 5
   traits:

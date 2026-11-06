@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFSensitiveNose
-  name: "Sensitive Nose"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-sensitive-nose
+  description: cf-feat-sensitive-nose-desc
   ancestry: Kholo
   level: 1
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFScalpelsPoint
-  name: "Scalpel's Point"
-  description: "Requires forensic medicine methodology."
+  name: cf-feat-scalpels-point
+  description: cf-feat-scalpels-point-desc
   class: Investigator
   level: 4
   traits:

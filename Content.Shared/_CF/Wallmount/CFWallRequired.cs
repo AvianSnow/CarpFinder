@@ -37,7 +37,7 @@ public sealed partial class CFWallRequired : IConstructionCondition
         var target = location.Offset(-direction.ToAngle().ToWorldVec());
         foreach (var anchored in mapSystem.GetAnchoredEntities(grid.Value, gridComp, target))
         {
-            if (tagSystem.HasAnyTag(anchored, CFWallmountSystem.WallTags))
+            if (CFWallmountSystem.IsWall(entityManager, tagSystem, anchored))
                 return true;
         }
 

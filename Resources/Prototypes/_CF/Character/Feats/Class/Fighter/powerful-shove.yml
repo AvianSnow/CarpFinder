@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFPowerfulShove
-  name: "Powerful Shove"
-  description: "Requires Aggressive Block or Brutish Shove."
+  name: cf-feat-powerful-shove
+  description: cf-feat-powerful-shove-desc
   class: Fighter
   level: 4
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFIruxiArmaments
-  name: "Iruxi Armaments"
-  description: "Your unarmed Strike deals 1d8 piercing."
+  name: cf-feat-iruxi-armaments
+  description: cf-feat-iruxi-armaments-desc
   ancestry: Lizardfolk
   level: 1
   traits:

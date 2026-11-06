@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Tian Xia Character Guide
 - type: cfFeat
   id: CFFermentingLiquors
-  name: "Fermenting Liquors"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-fermenting-liquors
+  description: cf-feat-fermenting-liquors-desc
   class: Alchemist
   level: 4
   traits:

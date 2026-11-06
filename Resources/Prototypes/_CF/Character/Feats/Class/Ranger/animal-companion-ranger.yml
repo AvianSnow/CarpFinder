@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFAnimalCompanionRanger
-  name: "Animal Companion (Ranger)"
-  description: "Changes an item. This feature will be implemented later."
+  name: cf-feat-animal-companion-ranger
+  description: cf-feat-animal-companion-ranger-desc
   class: Ranger
   level: 1
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Battlecry!
 - type: cfFeat
   id: CFLongDistanceTaunt
-  name: "Long-Distance Taunt"
-  description: "Changes an item. This feature will be implemented later."
+  name: cf-feat-long-distance-taunt
+  description: cf-feat-long-distance-taunt-desc
   class: Guardian
   level: 1
   traits:

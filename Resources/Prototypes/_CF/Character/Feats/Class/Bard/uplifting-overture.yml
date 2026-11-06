@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFUpliftingOverture
-  name: "Uplifting Overture"
-  description: "Requires maestro muse."
+  name: cf-feat-uplifting-overture
+  description: cf-feat-uplifting-overture-desc
   class: Bard
   level: 2
   traits:

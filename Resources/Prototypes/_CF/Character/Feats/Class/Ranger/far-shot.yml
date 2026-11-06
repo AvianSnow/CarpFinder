@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFFarShot
-  name: "Far Shot"
-  description: "This feature will be implemented later."
+  name: cf-feat-far-shot
+  description: cf-feat-far-shot-desc
   class: Ranger
   level: 4
   traits:

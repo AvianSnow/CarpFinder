@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFFlyingBlade
-  name: "Flying Blade"
-  description: "Requires precise strike."
+  name: cf-feat-flying-blade
+  description: cf-feat-flying-blade-desc
   class: Swashbuckler
   level: 1
   traits:

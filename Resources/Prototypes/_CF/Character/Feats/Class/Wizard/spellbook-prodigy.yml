@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFSpellbookProdigy
-  name: "Spellbook Prodigy"
-  description: "Requires trained in Arcana. Also grants Magical Shorthand. Improves Skill Check results. This feature will be implemented later."
+  name: cf-feat-spellbook-prodigy
+  description: cf-feat-spellbook-prodigy-desc
   class: Wizard
   level: 1
   traits:

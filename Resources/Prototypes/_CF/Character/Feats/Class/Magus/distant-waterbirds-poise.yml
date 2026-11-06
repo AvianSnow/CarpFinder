@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Tian Xia Character Guide
 - type: cfFeat
   id: CFDistantWaterbirdsPoise
-  name: "Distant Waterbird's Poise"
-  description: "Requires aloof firmament hybrid study and Spellstrike. Reaction. This feature will be implemented later."
+  name: cf-feat-distant-waterbirds-poise
+  description: cf-feat-distant-waterbirds-poise-desc
   class: Magus
   level: 4
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFOrderMagic
-  name: "Order Magic"
-  description: "Requires Order Explorer."
+  name: cf-feat-order-magic
+  description: cf-feat-order-magic-desc
   class: Druid
   level: 4
   traits:

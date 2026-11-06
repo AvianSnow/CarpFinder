@@ -2,8 +2,8 @@
 # source: Carpfinder Battlecry!
 - type: cfFeat
   id: CFTauntingStrike
-  name: "Taunting Strike"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-taunting-strike
+  description: cf-feat-taunting-strike-desc
   class: Guardian
   level: 2
   traits:

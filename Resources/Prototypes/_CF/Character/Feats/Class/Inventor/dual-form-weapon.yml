@@ -2,8 +2,8 @@
 # source: Carpfinder Guns & Gears
 - type: cfFeat
   id: CFDualFormWeapon
-  name: "Dual-Form Weapon"
-  description: "Requires expert overdrive and weapon innovation."
+  name: cf-feat-dual-form-weapon
+  description: cf-feat-dual-form-weapon-desc
   class: Inventor
   level: 4
   traits:

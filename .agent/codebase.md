@@ -44,6 +44,7 @@ Everything below is under `Content.Shared/_CF/`.
 | `Outdoors/` | The outdoor map component, temperature rules, weather effects. The logic is server-side. | `CFEnvironmentRules`, `CFOutdoorsWorldSystem` |
 | `Farming/` | Plant, seed and harvest data. The logic is server-side. | `CFFarmingSystem` |
 | `Adventure/` | Site prototypes, encounter and treasure tables. Generation is server-side. | `CFEncounterRules`, `CFAdventureSiteSystem` |
+| `Languages/` | What a creature speaks and understands, and what it sounds like otherwise. Chat asks per listener. | `CFLanguageSystem`, `CFLanguageRules` |
 | `Magic/` | Light, Detect Magic, Read Aura, and what counts as magical | `CFMagicSenseSystem` |
 | `Scene/` | DM narration and player-started skill checks. The logic is server-side. | `CFSceneSystem` |
 | `ZLevels/` | Stairs, ladders, holes, falling rules. The stacking logic is server-side. | `CFFallRules`, `CFZLevelSystem` |
@@ -125,6 +126,7 @@ Anything that targets, rolls, and applies effects is data on the source entity: 
 | Click a creature with a healer's toolkit | Treat Wounds | `CFMedicineSystem` |
 | Use a healer's toolkit in hand, combat mode, feat | Battle Medicine on the nearest hurt ally (1 action) | `CFMedicineSystem` |
 | Aid verb on an ally | Aid (1 action) | `CFManeuverSystem.TryAid` |
+| Speak verb on yourself | Choose which language you speak (free) | `CFLanguageSystem` |
 | Examine tab, information icon | Recall Knowledge (1 action) | `CFManeuverSystem.TryRecall` |
 | Alt+Z with a melee weapon, with panache | Confident Finisher at the enemy being aimed at (1 action) | `CFManeuverSystem.TryFinisher` |
 | Play a held instrument, as a Bard | Courageous Anthem, 1 action every 12 seconds | `CFAnthemSystem` |
@@ -218,13 +220,14 @@ All edits carry `// CarpFinder` markers, so `grep -rn CarpFinder Content.Client 
 | Pointing | `Content.Shared/Pointing/SharedPointingSystem.cs` | An event for pointing at the ground, for Seek |
 | Throwing | `Content.Server/Hands/Systems/HandsSystem.cs` | A thrown weapon's reach comes from its range increments, not the hand's 8 tiles |
 | Tiles | `Tiles/lava.yml`, `liquid_plasma.yml`, `chasm.yml` | The `CFDangerousTile` marker |
+| Chat | `Content.Server/Chat/Systems/ChatSystem.PrivateAPI.cs`, `ChatSystem.Utility.cs` | Each listener hears speech in a language they know, or nonsense |
 | Maps | `Maps/Test/dev_map.yml`, `Maps/Nonstations/meteor-arena.yml`, `dm01-entryway.yml` | `MapAtmosphere`, so mobs can breathe |
 
 The character editor and character window are swapped with csproj `Compile Remove` rules instead (`Content.Client/Content.Client.csproj`, `lobby-overlay.md`).
 
 ## Prototype kinds
 
-`adventureSite`, `craftingRecipe`, `cfAbility`, `cfAbilitySkill`, `cfAncestry`, `cfBackground`, `cfClass`, `cfDamageType`, `cfFaction`, `cfFeat`, `cfGoapAction`, `cfGoapGoal`, `cfGoapProfile`, `encounter`, `goapTactics`, `cfHeritage`, `cfJobGroup`, `cfMaterial`, `cfPet`, `cfPetGear`, `cfPropertyRune`, `cfSpell`, `cfTrait`.
+`adventureSite`, `craftingRecipe`, `cfAbility`, `cfAbilitySkill`, `cfAncestry`, `cfBackground`, `cfClass`, `cfDamageType`, `cfFaction`, `cfFeat`, `cfGoapAction`, `cfGoapGoal`, `cfGoapProfile`, `encounter`, `goapTactics`, `cfHeritage`, `cfJobGroup`, `language`, `cfMaterial`, `cfPet`, `cfPetGear`, `cfPropertyRune`, `cfSpell`, `cfTrait`.
 
 Radial actions are entities in `Resources/Prototypes/_CF/Actions/activities.yml`, and each spell is an action entity in `Resources/Prototypes/_CF/Spells/{0,1,2,3}/`. Feats with `pendingAction: true` have data but no behaviour yet.
 

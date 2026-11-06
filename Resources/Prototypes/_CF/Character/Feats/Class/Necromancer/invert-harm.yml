@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFInvertHarm
-  name: "Invert Harm"
-  description: "Requires Mastery of Life and Death."
+  name: cf-feat-invert-harm
+  description: cf-feat-invert-harm-desc
   class: Necromancer
   level: 2
   traits:

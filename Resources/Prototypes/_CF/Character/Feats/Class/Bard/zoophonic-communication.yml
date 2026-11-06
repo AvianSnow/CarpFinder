@@ -2,8 +2,8 @@
 # source: Carpfinder Howl of the Wild
 - type: cfFeat
   id: CFZoophonicCommunication
-  name: "Zoophonic Communication"
-  description: "Requires zoophonia muse."
+  name: cf-feat-zoophonic-communication
+  description: cf-feat-zoophonic-communication-desc
   class: Bard
   level: 1
   traits:

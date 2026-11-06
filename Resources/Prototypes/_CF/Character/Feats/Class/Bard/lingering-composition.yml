@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFLingeringComposition
-  name: "Lingering Composition"
-  description: "Requires maestro muse."
+  name: cf-feat-lingering-composition
+  description: cf-feat-lingering-composition-desc
   class: Bard
   level: 1
   traits:

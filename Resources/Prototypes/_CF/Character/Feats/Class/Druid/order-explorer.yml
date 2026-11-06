@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFOrderExplorer
-  name: "Order Explorer"
-  description: "Grants an item. This feature will be implemented later."
+  name: cf-feat-order-explorer
+  description: cf-feat-order-explorer-desc
   class: Druid
   level: 2
   traits:

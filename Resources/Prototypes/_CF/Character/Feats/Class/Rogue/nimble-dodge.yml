@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFNimbleDodge
-  name: "Nimble Dodge"
-  description: "Reaction. +2 circumstance bonus to AC against one attack."
+  name: cf-feat-nimble-dodge
+  description: cf-feat-nimble-dodge-desc
   class: Rogue
   level: 1
   traits:

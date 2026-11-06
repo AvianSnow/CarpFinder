@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFSeedpod
-  name: "Seedpod"
-  description: "Your unarmed Strike deals 1d4 bludgeoning."
+  name: cf-feat-seedpod
+  description: cf-feat-seedpod-desc
   ancestry: Leshy
   level: 1
   traits:

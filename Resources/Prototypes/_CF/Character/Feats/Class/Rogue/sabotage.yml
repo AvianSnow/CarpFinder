@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFSabotage
-  name: "Sabotage"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-sabotage
+  description: cf-feat-sabotage-desc
   class: Rogue
   level: 4
   traits:

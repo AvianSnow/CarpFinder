@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFQiSpells
-  name: "Qi Spells"
-  description: "This feature will be implemented later."
+  name: cf-feat-qi-spells
+  description: cf-feat-qi-spells-desc
   class: Monk
   level: 1
   traits:

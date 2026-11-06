@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFEnergizedFont
-  name: "Energized Font"
-  description: "Requires focus pool and at least one innate spell from a gnome heritage or ancestry feat that shares a tradition with at least one of your focus spells. Costs 1 action. TBA - action will be added"
+  name: cf-feat-energized-font
+  description: cf-feat-energized-font-desc
   ancestry: Gnome
   level: 5
   traits:

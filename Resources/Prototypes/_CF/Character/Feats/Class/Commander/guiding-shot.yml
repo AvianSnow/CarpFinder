@@ -2,8 +2,8 @@
 # source: Carpfinder Battlecry!
 - type: cfFeat
   id: CFGuidingShot
-  name: "Guiding Shot"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-guiding-shot
+  description: cf-feat-guiding-shot-desc
   class: Commander
   level: 2
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFMonasticWeaponry
-  name: "Monastic Weaponry"
-  description: "Ancestry weapons count as a simpler group for proficiency. This feature will be implemented later."
+  name: cf-feat-monastic-weaponry
+  description: cf-feat-monastic-weaponry-desc
   class: Monk
   level: 1
   traits:

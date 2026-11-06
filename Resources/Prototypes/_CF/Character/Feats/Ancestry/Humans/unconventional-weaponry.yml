@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFUnconventionalWeaponry
-  name: "Unconventional Weaponry"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-unconventional-weaponry
+  description: cf-feat-unconventional-weaponry-desc
   ancestry: Human
   level: 1
   traits:

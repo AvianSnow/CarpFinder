@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFEngravingStrike
-  name: "Engraving Strike"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-engraving-strike
+  description: cf-feat-engraving-strike-desc
   class: Runesmith
   level: 1
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens High Seas
 - type: cfFeat
   id: CFSwanDive
-  name: "Swan Dive"
-  description: "Improves Athletics results. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-swan-dive
+  description: cf-feat-swan-dive-desc
   class: Swashbuckler
   level: 2
   traits:

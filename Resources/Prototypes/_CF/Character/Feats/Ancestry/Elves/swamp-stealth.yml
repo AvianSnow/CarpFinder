@@ -2,8 +2,8 @@
 # source: Carpfinder #210: Whispers in the Dirt
 - type: cfFeat
   id: CFSwampStealth
-  name: "Swamp Stealth"
-  description: "Requires expert in Stealth. Costs 1 action. TBA - action will be added"
+  name: cf-feat-swamp-stealth
+  description: cf-feat-swamp-stealth-desc
   ancestry: Elf
   level: 5
   rarity: Uncommon

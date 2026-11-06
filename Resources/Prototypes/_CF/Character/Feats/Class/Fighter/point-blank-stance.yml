@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFPointBlankStance
-  name: "Point Blank Stance"
-  description: "Ignore the volley penalty and gain +2 damage with ranged Strikes inside the first range increment."
+  name: cf-feat-point-blank-stance
+  description: cf-feat-point-blank-stance-desc
   class: Fighter
   level: 1
   traits:

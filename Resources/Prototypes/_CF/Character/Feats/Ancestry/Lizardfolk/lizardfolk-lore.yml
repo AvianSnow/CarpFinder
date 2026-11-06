@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFLizardfolkLore
-  name: "Lizardfolk Lore"
-  description: "Trained in Nature and Survival. Trained in a skill of your choice. That choice is not recorded yet."
+  name: cf-feat-lizardfolk-lore
+  description: cf-feat-lizardfolk-lore-desc
   ancestry: Lizardfolk
   level: 1
   traits:

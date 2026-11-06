@@ -13,7 +13,7 @@ Monsters run on stock SS14 HTN. Encounters give them GOAP later, so every creatu
 5. Write what is not in yet in the comment above the entity, so nobody thinks it was missed.
 6. Add a row to `StatBlocks` in `CFCreatureTest`. Add a test class if the creature has anything more than a natural attack.
 7. Check the build printed `Build succeeded`, then run the tests and the linter (`dotnet run --project Content.YAMLLinter -c Tools`).
-8. Tick it off under "Creatures with PF2e stat blocks" in `roadmap.md`.
+8. Update the "Still to port" list under "Creatures with PF2e stat blocks" in `roadmap.md`.
 
 ## Body and file
 
@@ -32,7 +32,7 @@ Monsters run on stock SS14 HTN. Encounters give them GOAP later, so every creatu
 |---|---|---|
 | Level, AC, HP | `CFCombatant` `level`, `armorClass`, `maxHp`, `currentHp` | Always set `diesAtZeroHp: true` |
 | Fort, Ref, Will, Perception | `CFCombatant` `printedFortitude`, `printedReflex`, `printedWill`, `printedPerception` | |
-| Skills | `CFCombatant` `trainedSkills` and `printedSkills` | `printedSkills: { Acrobatics: 6 }` |
+| Skills | `CFCombatant` `trainedSkills` and `printedSkills` | `printedSkills: { Acrobatics: 6 }`. `printedSkills` wins over rank and `SkillIncreases` |
 | Abilities | `CFAbilityScore` `abilityModifiers` | |
 | Speed | `CFCombatant` `speedFeet`, and `MovementSpeedModifier` | Walk is feet / 10, sprint is walk x 1.8: 25 feet is 2.5 and 4.5 |
 | Melee attack and damage | `CFCombatant` `printedAttack`, `printedDamage` | These replace abilities and proficiency for every melee Strike, weapon or natural, so a creature has one melee number |
@@ -46,6 +46,7 @@ Monsters run on stock SS14 HTN. Encounters give them GOAP later, so every creatu
 | Void healing | `CFVoidHealing`, and `Void` at 9999 in `CFResistances` | |
 | Traits | `CFTrait` `traits` | Check the id exists under `Prototypes/_CF/Traits` |
 | Darkvision | `NightVision`, copied from an existing creature | |
+| Languages | `CFLanguages` `known` | Only for a creature that talks. Without it, it speaks plainly and understands everything |
 | Recall Knowledge DC | Nothing | It comes from level. Say if a creature's printed DC differs |
 | HP bar | `MobThresholds` | `0: Alive`, `HP - 1: Critical`, `HP: Dead`. Required for the mirror in `CFDyingSystem` |
 

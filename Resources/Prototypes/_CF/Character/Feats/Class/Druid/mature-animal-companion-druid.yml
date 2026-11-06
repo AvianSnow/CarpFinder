@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFMatureAnimalCompanionDruid
-  name: "Mature Animal Companion (Druid)"
-  description: "Requires Animal Companion."
+  name: cf-feat-mature-animal-companion-druid
+  description: cf-feat-mature-animal-companion-druid-desc
   class: Druid
   level: 4
   traits:

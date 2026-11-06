@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Rival Academies
 - type: cfFeat
   id: CFReflectiveRippleStance
-  name: "Reflective Ripple Stance"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-reflective-ripple-stance
+  description: cf-feat-reflective-ripple-stance-desc
   class: Monk
   level: 1
   traits:

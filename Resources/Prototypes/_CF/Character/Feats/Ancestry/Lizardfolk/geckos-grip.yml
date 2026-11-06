@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFGeckosGrip
-  name: "Gecko's Grip"
-  description: "Also grants Combat Climber. Improves Athletics results. Not applied in play yet. Climb Speed 15 feet. Not applied in play yet. TBA - action will be added"
+  name: cf-feat-geckos-grip
+  description: cf-feat-geckos-grip-desc
   ancestry: Lizardfolk
   level: 5
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Howl of the Wild
 - type: cfFeat
   id: CFRipandTearBarbarian
-  name: "Rip and Tear"
-  description: "Requires animal instinct or untamed order. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-ripand-tear-barbarian
+  description: cf-feat-ripand-tear-barbarian-desc
   class: Barbarian
   level: 4
   traits:

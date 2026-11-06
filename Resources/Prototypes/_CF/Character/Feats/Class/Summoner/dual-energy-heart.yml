@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFDualEnergyHeart
-  name: "Dual Energy Heart"
-  description: "Requires Energy Heart."
+  name: cf-feat-dual-energy-heart
+  description: cf-feat-dual-energy-heart-desc
   class: Summoner
   level: 4
   traits:

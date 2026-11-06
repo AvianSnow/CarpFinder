@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFFirstWorldMagic
-  name: "First World Magic"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-first-world-magic
+  description: cf-feat-first-world-magic-desc
   ancestry: Gnome
   level: 1
   traits:

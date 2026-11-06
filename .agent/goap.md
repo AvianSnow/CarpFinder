@@ -4,7 +4,7 @@ Advanced NPCs: mini bosses and special encounters. Ordinary mobs stay on stock H
 
 This is our own design, under the repo's MIT licence. **Do not copy from `crystall-edge`.** Its `_CE` code is all rights reserved, and using it needs TheShuEd's written consent. A port of its GOAP was thrown away before it was ever committed, for that reason.
 
-To test it, read `ai-testing.md`. For where mappers put hints, read `investigation-nodes.md`. For what the weights mean and how mobs will choose spells, read `goap-weights.md`. The history and open items are under Phase 6 in `roadmap.md`.
+To test it, read `ai-testing.md`. For where mappers put hints, read `investigation-nodes.md`. For what the weights mean and how mobs will choose spells, read `goap-weights.md`. Open items are under Step 5 in `roadmap.md`, and the history is under Phase 6 in `roadmapold.md`.
 
 ## Layout
 

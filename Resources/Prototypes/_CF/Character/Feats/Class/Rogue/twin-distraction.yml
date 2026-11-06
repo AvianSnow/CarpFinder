@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFTwinDistraction
-  name: "Twin Distraction"
-  description: "Requires Twin Feint."
+  name: cf-feat-twin-distraction
+  description: cf-feat-twin-distraction-desc
   class: Rogue
   level: 4
   traits:

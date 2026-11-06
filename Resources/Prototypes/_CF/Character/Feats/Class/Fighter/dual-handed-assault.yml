@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFDualHandedAssault
-  name: "Dual-Handed Assault"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-dual-handed-assault
+  description: cf-feat-dual-handed-assault-desc
   class: Fighter
   level: 4
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFMonsterWarden
-  name: "Monster Warden"
-  description: "Requires Monster Hunter. Changes an item. This feature will be implemented later."
+  name: cf-feat-monster-warden
+  description: cf-feat-monster-warden-desc
   class: Ranger
   level: 2
   traits:

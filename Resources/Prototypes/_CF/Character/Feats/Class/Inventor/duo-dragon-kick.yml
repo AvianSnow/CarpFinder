@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Tian Xia Character Guide
 - type: cfFeat
   id: CFDuoDragonKick
-  name: "Duo Dragon Kick"
-  description: "Requires construct innovation. Changes an item. Costs 2 actions. This feature will be implemented later."
+  name: cf-feat-duo-dragon-kick
+  description: cf-feat-duo-dragon-kick-desc
   class: Inventor
   level: 4
   traits:

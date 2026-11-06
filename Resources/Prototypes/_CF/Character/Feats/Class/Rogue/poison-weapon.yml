@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFPoisonWeapon
-  name: "Poison Weapon"
-  description: "Changes an item. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-poison-weapon
+  description: cf-feat-poison-weapon-desc
   class: Rogue
   level: 4
   traits:

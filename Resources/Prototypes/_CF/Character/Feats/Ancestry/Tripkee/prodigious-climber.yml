@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFProdigiousClimber
-  name: "Prodigious Climber"
-  description: "Climb Speed 10 feet. Not applied in play yet. Climb Speed 20 feet. Not applied in play yet."
+  name: cf-feat-prodigious-climber
+  description: cf-feat-prodigious-climber-desc
   ancestry: Tripkee
   level: 5
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens High Seas
 - type: cfFeat
   id: CFAquaticElfWarrior
-  name: "Aquatic Elf Warrior"
-  description: "Ancestry weapons count as a simpler group for proficiency. Not applied in combat yet."
+  name: cf-feat-aquatic-elf-warrior
+  description: cf-feat-aquatic-elf-warrior-desc
   ancestry: Elf
   level: 1
   traits:

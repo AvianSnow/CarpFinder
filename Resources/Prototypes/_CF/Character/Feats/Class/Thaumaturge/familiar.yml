@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFFamiliarThaumaturge
-  name: "Familiar"
-  description: "Also grants Pet. This feature will be implemented later."
+  name: cf-feat-familiar-thaumaturge
+  description: cf-feat-familiar-thaumaturge-desc
   class: Thaumaturge
   level: 1
   traits:

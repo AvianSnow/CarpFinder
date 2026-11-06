@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFSpeakwithKindred
-  name: "Speak with Kindred"
-  description: "+2 circumstance bonus to Diplomacy. Not applied in play yet."
+  name: cf-feat-speakwith-kindred
+  description: cf-feat-speakwith-kindred-desc
   ancestry: Leshy
   level: 5
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Dark Archive (Remastered)
 - type: cfFeat
   id: CFPsiStrikes
-  name: "Psi Strikes"
-  description: "Free action. This feature will be implemented later."
+  name: cf-feat-psi-strikes
+  description: cf-feat-psi-strikes-desc
   class: Psychic
   level: 4
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFShedTail
-  name: "Shed Tail"
-  description: "Requires Iruxi Armaments (Tail). Reaction. TBA - action will be added"
+  name: cf-feat-shed-tail
+  description: cf-feat-shed-tail-desc
   ancestry: Lizardfolk
   level: 5
   traits:

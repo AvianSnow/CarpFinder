@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFRemorselessLash
-  name: "Remorseless Lash"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-remorseless-lash
+  description: cf-feat-remorseless-lash-desc
   ancestry: Hobgoblin
   level: 1
   traits:

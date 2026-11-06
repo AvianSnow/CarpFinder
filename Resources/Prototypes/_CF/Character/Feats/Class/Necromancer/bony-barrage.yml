@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFBonyBarrage
-  name: "Bony Barrage"
-  description: "This feature will be implemented later."
+  name: cf-feat-bony-barrage
+  description: cf-feat-bony-barrage-desc
   class: Necromancer
   level: 4
   traits:

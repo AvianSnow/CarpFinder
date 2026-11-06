@@ -2,8 +2,8 @@
 # source: Carpfinder Guns & Gears
 - type: cfFeat
   id: CFPistolTwirl
-  name: "Pistol Twirl"
-  description: "Requires trained in Deception. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-pistol-twirl
+  description: cf-feat-pistol-twirl-desc
   class: Gunslinger
   level: 2
   traits:

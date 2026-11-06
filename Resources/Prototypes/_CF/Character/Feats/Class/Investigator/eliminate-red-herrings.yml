@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFEliminateRedHerrings
-  name: "Eliminate Red Herrings"
-  description: "Improves Skill Check results. This feature will be implemented later."
+  name: cf-feat-eliminate-red-herrings
+  description: cf-feat-eliminate-red-herrings-desc
   class: Investigator
   level: 1
   traits:

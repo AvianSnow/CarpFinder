@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFAnimalAccomplice
-  name: "Animal Accomplice"
-  description: "Also grants Pet. TBA - action will be added"
+  name: cf-feat-animal-accomplice
+  description: cf-feat-animal-accomplice-desc
   ancestry: Gnome
   level: 1
   traits:

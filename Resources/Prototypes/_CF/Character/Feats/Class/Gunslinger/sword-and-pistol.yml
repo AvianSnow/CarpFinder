@@ -2,8 +2,8 @@
 # source: Carpfinder Guns & Gears
 - type: cfFeat
   id: CFSwordandPistol
-  name: "Sword and Pistol"
-  description: "This feature will be implemented later."
+  name: cf-feat-swordand-pistol
+  description: cf-feat-swordand-pistol-desc
   class: Gunslinger
   level: 1
   traits:

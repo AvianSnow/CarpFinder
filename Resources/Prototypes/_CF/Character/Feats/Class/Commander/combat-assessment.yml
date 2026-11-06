@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFCombatAssessmentCommander
-  name: "Combat Assessment"
-  description: "+2 circumstance bonus to Skill Check. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-combat-assessment-commander
+  description: cf-feat-combat-assessment-commander-desc
   class: Commander
   level: 1
   traits:

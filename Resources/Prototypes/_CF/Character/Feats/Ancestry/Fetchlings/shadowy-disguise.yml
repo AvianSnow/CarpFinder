@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Cheliax, Infernal Inheritance
 - type: cfFeat
   id: CFShadowyDisguise
-  name: "Shadowy Disguise"
-  description: "Changes an item. Not applied in play yet."
+  name: cf-feat-shadowy-disguise
+  description: cf-feat-shadowy-disguise-desc
   ancestry: Fetchling
   level: 5
   traits:
