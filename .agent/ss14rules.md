@@ -77,6 +77,7 @@ One directed component + event pair. A second subscriber throws `Duplicate Subsc
 - A bow's `ContainerAmmoProvider` reports its capacity as `int.MaxValue`, so `GunAmmoPrecondition` sees one arrow as about 0%. `RangedCombatCompound` drops the bow as empty, picks it up and repeats. Use `CFArcherCompound`.
 - `GunCombatCompound`'s `JukeOperator` strafes for the whole plan, not once. Its `MoveToOperator` uses `shutdownState: PlanFinished`, which leaves steering registered, and an NPC that has arrived then keeps its last move input forever. Strafing hides that, so take both out together.
 - A bow holds one arrow, and nothing in stock AI reloads a gun. `CFArrowSupply` nocks the next one.
+- Kobolds and other `MobBaseAncestor` mobs use the `monkey` inventory template, which has no pockets, belt or back. Stock `pocket1` also depends on `jumpsuit`. A kobold that needs one gets its own template: see `CFKoboldTrapper`.
 - With two parents, the first parent's copy of a component wins. `parent: [ CFMobSomething, CFGOAPBrain ]` keeps the mob's own `HTN`, which is why `CFGOAPSystem.OnBrainInit` sets the root task.
 - A thrown item without `LandAtCursor` ends its flight at about 80% of the way and slides the rest, so it never hits what the cursor is on. Every thrown weapon needs it, and `CFThrownWeaponTest` checks that.
 - `BeforeThrowEvent.Direction` is read-only and already clamped to `HandsComponent.ThrowRange`. Range has to change in `HandsSystem.ThrowHeldItem`.
@@ -182,6 +183,7 @@ This engine differs from CP14's fork in more places. A ported prototype needs th
 
 - `MagicMirror` needs an `organs` list. Stock barber scissors use `Head`.
 - `IconSmooth.key` is required. A missing one drops the entity on the client only.
+- `CornerSpriteSmoothing` numbers its states differently from CP14's fork. In any ported corner-smoothed RSI, swap the PNGs for states 1 and 4, and 3 and 6, or it draws as bars with gaps. The YAML can be right and the sprite still wrong. Swap each sheet once: a child entity with its own RSI inherits the smoothing but needs its own swap. To see which sheets are done, compare state 1 with the same file in `crystall-punk-14`.
 - `Crayon` needs `selectedState`. `Injector` needs `activeModeProtoId` and `allowedModes`. `Occluder` takes `polygon`, not `boundingBox`.
 - `ToggleableLightVisuals` is `ToggleableVisuals`. `FlammableSystem` sets its data, so burning items need nothing else.
 - `Sharp` is gone with no replacement: butchering goes through the kitchen spike. `Tool` with `Slicing` stays.

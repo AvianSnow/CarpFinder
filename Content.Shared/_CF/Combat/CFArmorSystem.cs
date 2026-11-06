@@ -166,7 +166,7 @@ public sealed partial class CFArmorSystem : EntitySystem
     [SubscribeLocalEvent]
     private void OnRefreshSpeed(Entity<CFCombatantComponent> ent, ref RefreshMovementSpeedModifiersEvent args)
     {
-        var penalty = SpeedPenalty(ent);
+        var penalty = SpeedPenalty(ent) + _bonuses.Total(ent, CFBonusStat.Speed);
         if (penalty >= 0)
             return;
 

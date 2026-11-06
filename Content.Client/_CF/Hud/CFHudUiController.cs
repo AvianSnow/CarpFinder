@@ -171,6 +171,7 @@ public sealed partial class CFHudUiController : UIController
         AddBonus(statuses, player, cond, "saves", CFBonusStat.Saves);
         AddBonus(statuses, player, cond, "perception", CFBonusStat.Perception);
         AddBonus(statuses, player, cond, "skills", CFBonusStat.SkillChecks);
+        AddBonus(statuses, player, cond, "speed", CFBonusStat.Speed);
         return statuses;
     }
 
@@ -184,7 +185,7 @@ public sealed partial class CFHudUiController : UIController
         CFBonusStat? also = null)
     {
         var value = EntityManager.System<CFBonusSystem>().TimedTotal(player, stat, also);
-        if (value < 0 && stat != CFBonusStat.Damage)
+        if (value < 0 && stat != CFBonusStat.Damage && stat != CFBonusStat.Speed)
             value = Math.Min(0, value + (cond?.SickenedValue ?? 0));
 
         if (value != 0)

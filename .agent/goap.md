@@ -52,6 +52,7 @@ Then `RunStep` looks the current action's `step` up in a table of step systems a
 | A step | A value in `CFGOAPStep` and a `CFGOAPStepSystem` in `Steps/`. It adds itself to the table. `EveryKindOfStepHasASystem` fails if one is missing |
 | A personality | A `cfGoapProfile` in `goap.yml`. It only changes numbers |
 | A way of fighting | A `goapTactics` in `tactics.yml`, with `parent: Default` and only what differs |
+| A leader who fights unlike its group | Give the mob `CFGOAPBrain` and its own `CFGOAP` lists. `Enlist` leaves a brain it finds alone, and the encounter's lists only go to mobs without one |
 | An action worth weighing | A `CFGOAPValue`, a case in `CFGOAPTacticsSystem.Value`, and `valuedBy` on the action. Measure it against a clean Strike, which is 1 |
 
 ## Rules
@@ -122,6 +123,24 @@ A flow field reaches 20 tiles. For a known place further off, `CFGOAPSteeringSys
 `Shoot` is an action like `Strike`, and the step hands the work to stock NPC shooting, which CF turns into Strikes. It needs `HasShot`: `CFGOAPShotSensorSystem` sets that for a loaded gun or bow in hand with the same line check stock shooting makes, so glass it can see through does not count. Its cost is 0.9, under a clean Strike, so an archer stays where it is even with an enemy beside it. Out of arrows, or with no line, it plans `Close` and `Strike` as anything else does. It keeps the empty bow in hand and uses its claws.
 
 `Shoot` has no `valuedBy`, so it does not weigh Multiple Attack Penalty. The action pool still paces its shots. `CFStrikeSystem.TryPreviewMelee` has no ranged version yet.
+
+## Standing off
+
+`CFGOAPStandoff` is for a creature that shoots and keeps a melee weapon put away, such as the kobold trapper. Its sensor only runs while a gun is in hand, so once the gun is gone the creature fights like anything else and nothing has to remember the swap.
+
+- `TooClose`: an enemy within `KeepTiles`. It stays set out to `ClearTiles`, so the creature does not stop and start. `KeepDistance` then runs `Flee`, which ends at that distance, not at safety.
+- `Cornered` comes from `Flee` finding no way out, as it does for anything else. It is also set when an enemy stays in reach for `CaughtTime`, because two creatures of equal Speed would otherwise run forever with one hitting the other.
+- `ShouldDraw`: cornered or out of ammunition, with something in `SidearmSlot`. `DrawSidearm` drops the gun for free and takes the weapon out for 1 action. It picks up with the active hand, because that is the hand a swing uses.
+
+## Laying traps
+
+`CFTrapLayer` holds the trap, charges and cooldown. A brain plans `LayTrap` when `CanLayTrap` is set: a target at 3 tiles or more, off cooldown, and a free tile on the target's side with no armed hazard within `SpacingTiles`. The step waits for the actions, so it can stand still for up to 3 regens.
+
+No AI avoids a trap. `CFTrapLayerSystem.TryLay` gives the hazard the builder's faction, and `CFHazardSystem.IsVictim` makes its sensors ignore allies, so allies simply walk over it. A player uses the same `TryLay` through the `ConstructTrap` activity.
+
+## Orders from a player
+
+`CFGOAPCommander` marks a group's leader. A player in that body points at a living enemy, and `CFGOAPEncounterSystem.Command` sets the group's target and tells each member where it is. This follows the companion rule, but it does not use `CFCompanion`, which drives a mob through `NPCMeleeCombat` and would fight the brain. The members stay on their own brains, so they still flank, and they carry on if the player does nothing. A member that sees another enemy and not the ordered one keeps fighting what it sees.
 
 ## Fire
 

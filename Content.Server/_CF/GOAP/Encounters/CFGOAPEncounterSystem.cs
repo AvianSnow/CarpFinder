@@ -14,6 +14,7 @@ using Robust.Server.Player;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Random;
 using Robust.Shared.Timing;
 
 namespace Content.Server.CF.GOAP.Encounters;
@@ -40,6 +41,7 @@ public sealed partial class CFGOAPEncounterSystem : EntitySystem
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private IPlayerManager _players = default!;
     [Dependency] private IPrototypeManager _prototypes = default!;
+    [Dependency] private IRobustRandom _random = default!;
     [Dependency] private CFGOAPSteeringSystem _steering = default!;
     [Dependency] private DeviceLinkSystem _links = default!;
     [Dependency] private HTNSystem _htn = default!;
@@ -53,6 +55,25 @@ public sealed partial class CFGOAPEncounterSystem : EntitySystem
     {
         group = default!;
         return TryComp(uid, out CFGOAPEncounterMemberComponent? member) && TryComp(member.Group, out group!);
+    }
+
+    /// <summary>Sends the whole group after one creature, and tells each member where it is.</summary>
+    public void Command(EntityUid commander, CFGOAPEncounterSpawnerComponent group, EntityUid target)
+    {
+        group.Target = target;
+        group.FlankAngle = _random.NextFloat(0f, MathF.Tau);
+
+        var at = _transform.GetMapCoordinates(target);
+        foreach (var member in group.Members)
+        {
+            if (member == commander || !TryComp(member, out CFGOAPComponent? goap))
+                continue;
+
+            goap.Target = target;
+            goap.Lkp = at;
+            goap.LkpReached = false;
+            goap.NodesChecked = 0;
+        }
     }
 
     /// <summary>Where this creature's side of the target is.</summary>
@@ -195,17 +216,24 @@ public sealed partial class CFGOAPEncounterSystem : EntitySystem
         return _turf.IsTileBlocked(grid, tile, CollisionGroup.Impassable) ? centre : point;
     }
 
-    /// <summary>Gives a creature the group's brain, whatever it is. This is what lets any mob be chosen.</summary>
+    /// <summary>
+    /// Gives a creature the group's brain, whatever it is. This is what lets any mob be chosen. A creature that came with
+    /// a brain of its own keeps it and only joins the group, so a leader can fight unlike the rest.
+    /// </summary>
     private void Enlist(Entity<CFGOAPEncounterSpawnerComponent> ent, EntityUid mob, CFGOAPEncounterPrototype encounter)
     {
         ent.Comp.Members.Add(mob);
         EnsureComp<CFGOAPEncounterMemberComponent>(mob).Group = ent;
 
-        var goap = EnsureComp<CFGOAPComponent>(mob);
-        goap.Profile = encounter.Profile;
-        goap.Tactics = encounter.Tactics;
-        goap.Goals.AddRange(encounter.Goals);
-        goap.Actions.AddRange(encounter.Actions);
+        if (!HasComp<CFGOAPComponent>(mob))
+        {
+            var goap = AddComp<CFGOAPComponent>(mob);
+            goap.Profile = encounter.Profile;
+            goap.Tactics = encounter.Tactics;
+            goap.Goals.AddRange(encounter.Goals);
+            goap.Actions.AddRange(encounter.Actions);
+        }
+
         EnsureComp<CFGOAPSteeringComponent>(mob);
 
         if (!TryComp(mob, out HTNComponent? htn))

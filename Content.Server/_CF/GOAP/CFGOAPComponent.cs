@@ -33,7 +33,7 @@ public sealed partial class CFGOAPComponent : Component
         "FollowScent", "GoToLkp", "CheckNode", "LookAround", "GoHome", "Wander", "PutOutFire",
     };
 
-    public uint Facts;
+    public ulong Facts;
 
     /// <summary>The creature it is after. It keeps this after losing sight of it, to know whose trail to follow.</summary>
     public EntityUid? Target;

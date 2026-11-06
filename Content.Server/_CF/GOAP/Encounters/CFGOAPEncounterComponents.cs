@@ -71,6 +71,12 @@ public sealed partial class CFGOAPEncounterMemberComponent : Component
     public EntityUid Group;
 }
 
+/// <summary>The leader of its group. A player in this body orders the rest by pointing. See <c>CFGOAPCommandSystem</c>.</summary>
+[RegisterComponent]
+public sealed partial class CFGOAPCommanderComponent : Component
+{
+}
+
 /// <summary>Where a group stands around its target.</summary>
 public static class CFGOAPFlankSlots
 {

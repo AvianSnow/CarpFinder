@@ -35,7 +35,7 @@ Everything below is under `Content.Shared/_CF/`.
 | `DamageTypes/` | `cfDamageType` and its link to SS14 damage | `CFDamageTypes` |
 | `Effects/` | Target, roll a check, apply effects. Bonuses and resistances. | `CFEffectSystem`, `CFBonusSystem` |
 | `Factions/` | Party, Opposition, Neutral | `CFFactionSystem` |
-| `Hazards/` | Traps: noticing, triggering, disabling | `CFHazardSystem` |
+| `Hazards/` | Traps: noticing, triggering, disabling, and creatures that build them | `CFHazardSystem`, `CFTrapLayerSystem` |
 | `Items/` | Item level, rarity, Bulk, encumbrance | `CFEncumbranceSystem` |
 | `Detection/` | Remaster Hide, Sneak, Seek and Create a Diversion. Each creature's view of a sneaker. The drawing is client-side. | `CFStealthSystem`, `CFStealthComponent` |
 | `GOAP/` | Advanced NPCs: facts, steps, and goals, actions and personalities as prototypes. The logic is server-side in `Content.Server/_CF/GOAP/`. See `goap.md`. | `CFGOAPSystem`, `CFGOAPPlanner` |
@@ -116,6 +116,7 @@ Anything that targets, rolls, and applies effects is data on the source entity: 
 | Point at a living enemy | Hunt Prey, Exploit Vulnerability, or Devise a Stratagem, by class (1 action) | `CFManeuverSystem.PointAt` |
 | Point at an enemy in reach, in combat mode | Feint (1 action, trained Deception). A class with a mark marks first, then Feints | `CFManeuverSystem.PointAt` |
 | Point at the ground, in combat mode | Seek (1 action) | `CFStealthSystem.TrySeek` |
+| Point at a living enemy, as an encounter's leader | The group goes for it (free) | `CFGOAPCommandSystem` |
 | Combat mode, right-click one creature, feat | Double Slice or Twin Feint with a weapon in each hand, otherwise Vicious Swing (2 actions) | `CFStrikeSystem.TryFeatSwing` |
 | Emote wheel, Scream, in combat mode | Demoralize the enemy being aimed at (1 action) | `CFManeuverSystem.TryAimedDemoralize` |
 | Emote wheel, Whistle, in combat mode | Create a Diversion (1 action) | `CFStealthSystem.TryDiversion` |
@@ -242,4 +243,5 @@ Radial actions are entities in `Resources/Prototypes/_CF/Actions/activities.yml`
 | `CFMobSkeletonguardMelee`, `CFMobSkeletonguardRanged` | Skeleton Guards with a scimitar and a shortbow, in `Entities/Mobs/Creatures/undead.yml` |
 | `Objects/Weapons/`, `Clothing/CFArmors.yml` | Weapons, shields and armor. Bases are in `Objects/Weapons/_base.yml` |
 | `/Maps/Nonstations/meteor-arena.yml` | The arena all integration tests load, through `CFDevMap` |
+| `CFMobKoboldTrapper` | A GOAP leader that shoots, lays traps and draws a hammer when cornered. Ghosts can take it. Set a spawner's `encounter` to `KoboldAmbush` for it and three warriors |
 | `CFEncounterSpawner` | Spawns an `encounter` when a player comes within `triggerFeet`. Edit it in VV as an aghost |

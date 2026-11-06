@@ -1,0 +1,165 @@
+# Kobold Trapper. Creature 2, Small, Humanoid Kobold. NPC Core p. 198. Recall Knowledge DC 16 (Society).
+# Light hammer +7 (1d6+1 bludgeoning, agile). Claw +7 (1d4+1 slashing, agile). Crossbow +9 (1d8 piercing, 120 feet, reload 1).
+# It leads the KoboldAmbush encounter, and works alone too. It stays back and shoots, lays traps, backs off from anything
+# that comes within 15 feet, and when cornered drops the crossbow and takes the hammer out of its pocket.
+# Not in yet: the thrown hammer, Booby-Trapped and its backpack, leather armor (its AC is printed), +1 to defenses
+# against traps, and +2 to Seek traps. The trap's damage type is not a choice. See CFConstructedTrap.
+
+- type: startingGear
+  id: CFKoboldTrapperGear
+  inhand:
+  - CFCrossbow
+  equipment:
+    pocket1: CFLightHammer
+
+- type: entity
+  parent: [ MobBaseKobold, CFGOAPBrain ]
+  id: CFMobKoboldTrapper
+  name: kobold trapper
+  description: A wiry kobold hung with tools and tripline, watching you over the stock of a crossbow.
+  suffix: Monster
+  components:
+  - type: InputMover
+  - type: MobMover
+  - type: NpcFactionMember
+    factions:
+    - SimpleHostile
+  - type: CFFaction
+    faction: Monster
+  - type: CombatMode
+  - type: Hands
+    startingHands:
+      hand_left:
+        location: Left
+      hand_right:
+        location: Right
+  - type: Inventory
+    templateId: CFKoboldTrapper
+    speciesId: monkey
+  - type: Loadout
+    prototypes: [ CFKoboldTrapperGear ]
+  - type: MovementSpeedModifier
+    baseWalkSpeed: 2.5
+    baseSprintSpeed: 4.5
+  - type: NightVision
+    enabled: true
+    prioritized: true
+    noiseAmount: 0
+    lightingColor: "#9BB6FF30"
+  - type: CFCombatant
+    level: 2
+    armorClass: 18
+    speedFeet: 25
+    maxHp: 32
+    currentHp: 32
+    diesAtZeroHp: true
+    printedFortitude: 5
+    printedReflex: 11
+    printedWill: 8
+    printedPerception: 7
+    printedAttack: 7
+    printedDamage: 1
+    # Only reaches the crossbow: printedAttack covers melee. Dex and proficiency give +7, and the book says +9.
+    strikeAdjustment: 2
+    trainedSkills:
+    - Acrobatics
+    - Crafting
+    - Stealth
+    - Survival
+    printedSkills:
+      Acrobatics: 5
+      Crafting: 8
+      Stealth: 7
+      Survival: 7
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 1
+      Dexterity: 3
+      Constitution: 1
+      Intelligence: 3
+      Wisdom: 2
+      Charisma: 0
+  # The claw, for when it has nothing in hand.
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 4
+    naturalType: Slashing
+    naturalAgile: true
+  - type: MeleeWeapon
+    angle: 0
+    animation: WeaponArcClaw
+    attackRate: 1
+    damage:
+      types:
+        Slash: 0
+  - type: CFTrait
+    traits:
+    - Humanoid
+    - Kobold
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      31: Critical
+      32: Dead
+  # One more is already on the crossbow.
+  - type: CFArrowSupply
+    arrows: 19
+    ammo: CFBolt
+  - type: CFTrapLayer
+    trap: CFConstructedTrap
+  - type: ActionGrant
+    actions:
+    - CFActConstructTrap
+  - type: CFGOAP
+    tactics: Skirmisher
+    goals:
+    - PutOutFire
+    - DrawSidearm
+    - KeepDistance
+    - LayTrap
+    - KillTarget
+    - StayAlive
+    - Heal
+    - ArmSelf
+    - HuntTarget
+    - Investigate
+    - GoHome
+    - Idle
+    - RunAway
+    - GoToGround
+    - StayHidden
+    actions:
+    - Strike
+    - Shoot
+    - Close
+    - Demoralize
+    - Feint
+    - HoldBack
+    - Flee
+    - FightBack
+    - PickUpWeapon
+    - PickUpHealing
+    - DrinkHealing
+    - FollowScent
+    - GoToLkp
+    - CheckNode
+    - LookAround
+    - GoHome
+    - Wander
+    - PutOutFire
+    - ConstructTrap
+    - DrawSidearm
+    - HideAway
+    - WaitHidden
+  - type: CFGOAPStandoff
+  - type: CFGOAPCommander
+  - type: GhostRole
+    prob: 1
+    makeSentient: true
+    allowMovement: true
+    allowSpeech: true
+    name: cf-ghost-kobold-trapper-name
+    description: cf-ghost-kobold-trapper-desc
+    rules: cf-ghost-kobold-trapper-rules
+    mindRoles:
+    - MindRoleGhostRoleTeamAntagonist

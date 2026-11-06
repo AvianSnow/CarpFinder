@@ -22,7 +22,7 @@ public sealed partial class CFGOAPDecisionLogComponent : Component
 
     public ProtoId<CFGOAPActionPrototype>? Action;
 
-    public uint Facts;
+    public ulong Facts;
 
     public EntityUid? Target;
 

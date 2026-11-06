@@ -126,7 +126,7 @@ public sealed partial class CFGOAPSystem : EntitySystem
         var before = ent.Comp.Facts;
         var sense = new CFGOAPSenseEvent(ent, _transform.GetMapCoordinates(ent), Profile(ent));
         RaiseLocalEvent(ref sense);
-        ent.Comp.Facts = (uint) sense.Facts;
+        ent.Comp.Facts = (ulong) sense.Facts;
         CheckReflexes(ent);
 
         var goal = ChooseGoal(ent, out var plan);
@@ -148,7 +148,7 @@ public sealed partial class CFGOAPSystem : EntitySystem
     /// <summary>Whether a fact was true on its last think.</summary>
     public static bool Knows(CFGOAPComponent goap, CFGOAPFact fact)
     {
-        return (goap.Facts & (uint) fact) != 0;
+        return (goap.Facts & (ulong) fact) != 0;
     }
 
     /// <summary>Its share of hit points, from 0 to 1. Anything without hit points counts as unhurt.</summary>

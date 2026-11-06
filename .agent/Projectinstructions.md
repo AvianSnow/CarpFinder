@@ -46,6 +46,13 @@ Never build only Shared: build Server, Client, or both via a normal `dotnet buil
 
 `MSB3027` / "file is locked" errors mean Content.Server or Content.Client is running and holding DLLs in `bin/`. Ask the user to close them; rebuilding will not help.
 
+To build and test while the server stays up, send the output to a folder of its own, two levels under the repo root so tests still find `Resources`. Delete it afterwards:
+
+```bash
+dotnet build Content.IntegrationTests/Content.IntegrationTests.csproj -c Tools -p:OutputPath=C:\project\CarpFinder\bin\Check\
+dotnet test bin/Check/Content.IntegrationTests.dll --filter "FullyQualifiedName~TestName"
+```
+
 After XAML moves under `_CF/`, do a rebuild (not incremental) if you see `No precompiled XAML found for …`.
 
 **XAML hot reload:** Debug/Tools can JIT-reload `.xaml` on save, but **open lobby editors are cached** — restart the client (or rebuild + restart) to see `HumanoidProfileEditor` layout changes. Closing the character window is not enough.
@@ -136,6 +143,7 @@ Class examples: `CFMySystem`, `CFMyServerSystem`, `CFMyClientSystem`, `CFExample
 | Actions for code with no player | `CFManeuverSystem.CanUse` and `TryUse` with a `CFBasicAction`, `CFStrikeSystem.TryFeatStrike` |
 | Whether a creature can see another | `CFStealthSystem.Detection`, `IsUnseenBy`, `Reveal`. Spending actions reveals a creature unless `TrySpendActions` is told `stealthy` |
 | Traps and hazards | `CFHazard` (Stealth DC, detect radius, trigger size, disarm checks) plus `CFCheck` and `CFDegreeEffects` for what it does. `CFHazardSystem` handles noticing, triggering, and disarming. A `CFFaction` on the hazard protects its allies. Disabling it raises `CFHazardDisarmedEvent`; `CFExperienceSystem.AwardHazard` gives the disarmer's company XP for the hazard's `level` (simple or `complex`). See `Resources/Prototypes/_CF/Entities/Hazards/traps.yml`. |
+| A creature that builds traps | `CFTrapLayer` with a hazard prototype, and `CFTrapLayerSystem.TryLay`. The trap takes the builder's faction, so allies never set it off. Do not make an AI walk around one. |
 | Locks on doors and containers | Add a grade as a second parent: `parent: [ WoodDoor, CFLockSimple ]`, with `forceDc` and `keyId` on `CFLock`. See `Resources/Prototypes/_CF/Entities/Objects/Tools/locks.yml`. `CFLockSystem` blocks stock lock toggles and opening a locked door; the stock `Lock` alone does not stop a door. |
 | New crafted item | Add a `craftingRecipe` in `Resources/Prototypes/_CF/Crafting/recipes.yml` and a `CFFormula<Id>` item in `Entities/Objects/Formulas/formulas.yml`. Level and rarity come from the result's `CFItem`. Formula prices are the Player Core table by item level. A new station is a `CFBaseWorkbench` child with a `recipeTags` tag. |
 | New monster | Follow `importcreatures.md`. Copy an entry in `Resources/Prototypes/_CF/Entities/Mobs/Creatures/` and set the printed stats from Archives of Nethys. Add its row to `CFCreatureTest.StatBlocks`. Set `diesAtZeroHp: true`. |

@@ -6,7 +6,7 @@ Monsters run on stock SS14 HTN. Encounters give them GOAP later, so every creatu
 
 ## Steps
 
-1. Get the stat block from https://2e.aonprd.com/ and put its source and page in a comment above the entity.
+1. Check the id is not already in `Creatures/`. Get the stat block from https://2e.aonprd.com/ and put its source and page in a comment above the entity. `www.aonprd.com` is Pathfinder 1e, so find the 2e creature and do not use its numbers: the 1e Giant Spider is the 2e Hunting Spider.
 2. Pick a body and a file (below).
 3. Fill in the stat block (the table below). Use printed numbers and do not derive them.
 4. Pick the AI root task (below).
@@ -24,7 +24,7 @@ Monsters run on stock SS14 HTN. Encounters give them GOAP later, so every creatu
 
 - An entity id starts with `CF`: `CFMobGiantRat`. Variants of one creature share an abstract base, such as `CFMobSkeletonguardBase`, and each sets `name`, `HTN` and `Loadout`.
 - Give it `InputMover`, `MobMover`, `NpcFactionMember` with `SimpleHostile`, and `CFFaction` with `Monster`. `CFBaseCreature` already has these.
-- Sprites: stock bodies come from the species. Other art stays in its fork folder with its `meta.json`.
+- Sprites: stock bodies come from the species. Other art stays in its fork folder with its `meta.json`. An RSI with `idle` and `moving` states walks through `SpriteMovement`, and its layer needs the `movement` map as well. See `CFMobHuntingSpider`.
 
 ## Stat block to YAML
 
@@ -39,7 +39,7 @@ Monsters run on stock SS14 HTN. Encounters give them GOAP later, so every creatu
 | Ranged attack | `CFCombatant` `strikeAdjustment` | Ranged ignores `printedAttack`. Set this to the book's bonus minus Dex minus (level + 2) |
 | Natural attack | `CFCombatOptions` `naturalDice`, `naturalDie`, `naturalType`, `naturalAgile`, `naturalFinesse` | Also what a disarmed creature uses |
 | Weapons | A `startingGear` with `inhand`, and `Loadout` on the mob | The item supplies dice, type and traits. Use the `CF` weapon, and do not copy its stats to the mob |
-| Ammunition | `CFArrowSupply` `arrows` | Leave out the arrow already on the bow, so 20 arrows is `arrows: 19` |
+| Ammunition | `CFArrowSupply` `arrows` | Leave out the arrow already on the bow, so 20 arrows is `arrows: 19`. Set `ammo: CFBolt` for a crossbow |
 | Resistances, weaknesses | `CFResistances` `entries` | `weakness: true` for a weakness |
 | Immunity to a damage type | `CFResistances` with `amount: 9999` | Bleed, Mental, Poison, and so on |
 | Immunity to a condition | `CFConditionImmunity` `conditions` | Mental means `Frightened`, `Charmed`, `Calmed`. Unconscious means `Asleep` |
@@ -58,6 +58,7 @@ Set the root task on `HTN`.
 |---|---|
 | Melee, with a weapon or natural attack | `SimpleHostileCompound` |
 | Bow | `CFArcherCompound`, plus `CFArrowSupply` |
+| A leader or anything with its own tactics | `CFGOAPBrain` as a second parent, with its own `CFGOAP` lists. See `CFMobKoboldTrapper` |
 | A mob that is itself a gun, such as a spitter | `SimpleRangedHostileCompound` |
 
 Do not use `SimpleHumanoidHostileCompound` or `GunCombatCompound` for a bow. `Resources/Prototypes/_CF/NPCs/archer.yml` says why.

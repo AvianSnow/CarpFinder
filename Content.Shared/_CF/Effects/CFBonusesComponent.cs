@@ -108,6 +108,9 @@ public enum CFBonusStat : byte
     Fortitude,
     Reflex,
     Will,
+
+    /// <summary>All Speeds, in feet. <c>CFArmorSystem</c> reads it with the other Speed penalties.</summary>
+    Speed,
 }
 
 /// <summary>Bonuses of the same type do not stack: the highest bonus and the worst penalty of each type apply.</summary>

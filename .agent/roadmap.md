@@ -289,6 +289,16 @@ The labels are the sections of Phase 6 in `roadmapold.md`, which has the design.
 - [ ] Give the creatures in `creatures.yml` a `tactics` value. They all use `Default` unless an encounter sets one.
 - [ ] Choosing spells. See `goap-weights.md`.
 
+**6j2. The kobold trapper (6 November 2026)**
+
+`CFMobKoboldTrapper`, `KoboldAmbush`, `CFConstructedTrap`. Tests: `CFKoboldTrapperTest`. How it works is in `goap.md`.
+
+- [ ] Not played yet: the full fight, a ghost in the body, Construct Trap on the wheel, and how a kobold looks with a crossbow.
+- [ ] A ghost cannot call its warriors back. Only attack orders exist: pointing at itself or the floor does nothing.
+- [ ] The trapper does not pick its crossbow back up if a fight ends with the hammer out.
+- [ ] Its Stealth and disable DCs and its level are ours. Disabling one gives hazard XP, which the rules would not give for a creature's ability.
+- [ ] Fleeing goes by the safety map, so it can run over the trapper's own side of the room and past the warriors. It does not head for its traps.
+
 **6k. Furniture, and a run on the maze map (6 November 2026)**
 
 - [ ] A mob cannot follow a trail through a door. A closed door takes no scent, and `FollowScent` does not use `Navigate`, so it never opens one. It also flips between `HuntTarget` and `Investigate` as scent comes and goes.
@@ -318,7 +328,7 @@ The labels are the sections of Phase 6 in `roadmapold.md`, which has the design.
 
 - Sky ships with FTL travel that dock on breathable planets below, for exploring. Those planets get dungeons too. Floating caves in the sky are the adventure sites until then. `CFAdventureSiteSystem.Generate` always makes its own map, so planet dungeons need it to build on an existing map as well.
 - Alchemical bombs and elixirs ported from CP14 alchemy, built on `CFAreaEffect` + `CFCheck`.
-- Hazards and traps (area + check + degree effects). Prototype done: `CFHazard` and the Beginner Box spike trap (`CFSpikeTrap`, `CFSpikeTrapMonster`). Still to do: complex hazards with routines, resetting traps, area traps (`CFAreaEffect` on the hazard), and a kobold trapper that lays `CFSpikeTrapMonster`.
+- Hazards and traps (area + check + degree effects). Prototype done: `CFHazard` and the Beginner Box spike trap (`CFSpikeTrap`, `CFSpikeTrapMonster`). Still to do: complex hazards with routines, resetting traps, and area traps (`CFAreaEffect` on the hazard).
 - Persistent damage and resistances/weaknesses everywhere damage is dealt.
 - AI avoids known traps through the `Threat` layer (6c).
 - GOAP for companions and animal companions taking player commands (Command an Animal).

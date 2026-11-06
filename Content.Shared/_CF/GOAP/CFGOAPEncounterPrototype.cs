@@ -26,11 +26,11 @@ public sealed partial class CFGOAPEncounterPrototype : IPrototype
     [DataField]
     public float RoutAt;
 
-    /// <summary>Added to each creature's goals, on top of the usual ones.</summary>
+    /// <summary>Added to each creature's goals, on top of the usual ones. A mob with its own brain keeps its own.</summary>
     [DataField]
     public List<ProtoId<CFGOAPGoalPrototype>> Goals = new();
 
-    /// <summary>Added to each creature's actions, on top of the usual ones.</summary>
+    /// <summary>Added to each creature's actions, on top of the usual ones. A mob with its own brain keeps its own.</summary>
     [DataField]
     public List<ProtoId<CFGOAPActionPrototype>> Actions = new();
 }

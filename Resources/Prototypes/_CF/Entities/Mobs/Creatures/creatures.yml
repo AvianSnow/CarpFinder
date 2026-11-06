@@ -29,7 +29,9 @@
       types:
         Piercing: 0
 
-# Giant rat. Creature -1, Small. Monster Core p. 288. Putrid plague is not in yet.
+# Giant rat. Creature -1, Small, Animal. Monster Core p. 288. Recall Knowledge DC 13.
+# Not in yet: putrid plague, low-light vision, scent, the climb Speed, and +4 Athletics to Climb or Swim.
+# It is an animal, so an encounter should set "tactics: Beast".
 - type: entity
   parent: CFBaseCreature
   id: CFMobGiantRat
@@ -66,6 +68,14 @@
     printedPerception: 5
     printedAttack: 7
     printedDamage: 1
+    trainedSkills:
+    - Acrobatics
+    - Athletics
+    - Stealth
+    printedSkills:
+      Acrobatics: 5
+      Athletics: 2
+      Stealth: 5
   - type: CFAbilityScore
     abilityModifiers:
       Strength: 1
@@ -80,6 +90,9 @@
     naturalType: Piercing
     naturalAgile: true
     naturalFinesse: true
+  - type: CFTrait
+    traits:
+    - Animal
   - type: MobThresholds
     thresholds:
       0: Alive
@@ -281,30 +294,46 @@
       29: Critical
       30: Dead
 
-# Hunting spider. Creature 1, Medium. Monster Core p. 320. Venom and web are not in yet.
+# Hunting spider, the common giant spider. Creature 1, Medium, Animal. Monster Core p. 320. Recall Knowledge DC 15.
+# The body is the stock tarantula's. It leaves out stock's Spider component, which would spawn stock webs.
+# Not in yet: hunting spider venom, the web Strike and Web Trap, web sense, Spring Upon Prey, Descend on a Web, and the climb Speed.
+# It is an animal, so an encounter should set "tactics: Beast".
 - type: entity
-  parent: CFBaseCreature
+  parent: [ CFBaseCreature, BaseSlicingRefinableButchering ]
   id: CFMobHuntingSpider
   name: hunting spider
   description: A spider the size of a large dog that runs its prey down.
   components:
   - type: Sprite
     drawdepth: Mobs
+    sprite: Mobs/Animals/Spiders/tarantulaspider.rsi
     layers:
-    - map: ["enum.DamageStateVisualLayers.Base"]
-      sprite: Mobs/Animals/spacespider.rsi
-      state: spacespider
+    - map: ["enum.DamageStateVisualLayers.Base", "movement"]
+      state: idle
+  - type: SpriteMovement
+    movementLayers:
+      movement:
+        state: moving
+    noMovementLayers:
+      movement:
+        state: idle
   - type: DamageStateVisuals
     states:
       Alive:
-        Base: spacespider
+        Base: idle
       Critical:
-        Base: spacespider_dead
+        Base: dead
       Dead:
-        Base: spacespider_dead
+        Base: dead
   - type: MovementSpeedModifier
     baseWalkSpeed: 2.5
     baseSprintSpeed: 4.5
+  - type: NightVision
+    enabled: true
+    prioritized: true
+    noiseAmount: 0
+    lightingColor: "#9BB6FF30"
+  - type: IgnoreSpiderWeb
   - type: CFCombatant
     level: 1
     armorClass: 17
@@ -318,6 +347,14 @@
     printedPerception: 7
     printedAttack: 9
     printedDamage: 2
+    trainedSkills:
+    - Acrobatics
+    - Athletics
+    - Stealth
+    printedSkills:
+      Acrobatics: 7
+      Athletics: 5
+      Stealth: 7
   - type: CFAbilityScore
     abilityModifiers:
       Strength: 2
@@ -332,11 +369,18 @@
     naturalType: Piercing
     naturalAgile: false
     naturalFinesse: true
+  - type: CFTrait
+    traits:
+    - Animal
   - type: MobThresholds
     thresholds:
       0: Alive
       15: Critical
       16: Dead
+  - type: ToolRefinable
+    refineResult:
+    - id: FoodMeatSpider
+      amount: 2
 
 # Sewer ooze. Creature 1, Medium. Monster Core p. 256. The extra 1d4 acid, Filth Wave, and immunity to critical hits and precision are not in yet.
 - type: entity

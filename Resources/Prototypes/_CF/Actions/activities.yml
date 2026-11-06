@@ -50,6 +50,18 @@
 
 - type: entity
   parent: CFActivityInstant
+  id: CFActConstructTrap
+  name: Construct Trap
+  description: Build a rudimentary trap on the square you are facing. It springs on any enemy that comes adjacent to it.
+  components:
+  - type: CFActivity
+    kind: ConstructTrap
+  - type: CFRadialSlot
+    group: Action
+    actions: 3
+
+- type: entity
+  parent: CFActivityInstant
   id: CFActRage
   name: Rage
   description: +2 damage and -1 AC until you end the rage. You cannot cast spells while raging.

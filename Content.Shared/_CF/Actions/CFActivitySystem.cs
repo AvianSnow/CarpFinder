@@ -4,6 +4,7 @@ using Content.Shared.CF.Checks;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Effects;
 using Content.Shared.CF.Factions;
+using Content.Shared.CF.Hazards;
 using Content.Shared.CF.Preferences;
 using Content.Shared.CF.Spells;
 using Content.Shared.Hands.EntitySystems;
@@ -40,6 +41,7 @@ public sealed partial class CFActivitySystem : EntitySystem
     [Dependency] private CFManeuverSystem _maneuvers = default!;
     [Dependency] private CFBonusSystem _bonuses = default!;
     [Dependency] private CFFactionSystem _factions = default!;
+    [Dependency] private CFTrapLayerSystem _traps = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private ThrowingSystem _throwing = default!;
@@ -73,6 +75,10 @@ public sealed partial class CFActivitySystem : EntitySystem
                 args.Cancelled = true;
                 args.Reason = Loc.GetString("cf-act-flourish-used");
                 break;
+            case CFActivityKind.ConstructTrap when !_traps.CanConstruct(args.User):
+                args.Cancelled = true;
+                args.Reason = Loc.GetString("cf-trap-cannot");
+                break;
         }
     }
 
@@ -99,6 +105,9 @@ public sealed partial class CFActivitySystem : EntitySystem
                 break;
             case CFActivityKind.Leap:
                 Leap(args.Performer);
+                break;
+            case CFActivityKind.ConstructTrap:
+                _traps.TryConstruct(args.Performer);
                 break;
         }
     }

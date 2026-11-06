@@ -40,6 +40,10 @@ public sealed partial class CFHazardComponent : Component
     [DataField]
     public float TriggerSizeFeet = 5f;
 
+    /// <summary>It is destroyed when it goes off, instead of staying visible and spent.</summary>
+    [DataField]
+    public bool DestroyOnTrigger;
+
     /// <summary>The ways to disable it. More than one shows a "Disarm trap" submenu.</summary>
     [DataField]
     public List<CFHazardDisarm> Disarm = new();

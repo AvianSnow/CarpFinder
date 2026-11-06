@@ -13,7 +13,7 @@ namespace Content.Server.CF.GOAP.DecisionLog;
 public sealed partial class CFGOAPDecisionLogSystem : EntitySystem
 {
     /// <summary>Flips with every swing, so it would drown out everything else.</summary>
-    private const uint Ignored = (uint) CFGOAPFact.ActionsLeft;
+    private const ulong Ignored = (ulong) CFGOAPFact.ActionsLeft;
 
     [Dependency] private IGameTiming _timing = default!;
 

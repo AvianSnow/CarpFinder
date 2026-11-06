@@ -3,6 +3,7 @@ using Content.Shared.CF.Checks;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.DamageTypes;
 using Content.Shared.CF.Traits;
+using Content.Shared.Movement.Systems;
 using Robust.Shared.Network;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
@@ -27,6 +28,7 @@ public sealed partial class CFBonusSystem : EntitySystem
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private CFActionPoolSystem _actions = default!;
     [Dependency] private CFEffectSystem _effects = default!;
+    [Dependency] private MovementSpeedModifierSystem _speed = default!;
 
     public override void Update(float frameTime)
     {
@@ -91,6 +93,9 @@ public sealed partial class CFBonusSystem : EntitySystem
             Skill = skill,
         });
         Dirty(uid, comp);
+
+        if (stat == CFBonusStat.Speed)
+            _speed.RefreshMovementSpeedModifiers(uid);
     }
 
     /// <summary>
@@ -327,8 +332,13 @@ public sealed partial class CFBonusSystem : EntitySystem
         var query = EntityQueryEnumerator<CFBonusesComponent>();
         while (query.MoveNext(out var uid, out var comp))
         {
+            var speed = Total(comp.Bonuses, CFBonusStat.Speed);
             if (comp.Bonuses.RemoveAll(b => b.Expires <= now) > 0)
+            {
                 Dirty(uid, comp);
+                if (speed != Total(comp.Bonuses, CFBonusStat.Speed))
+                    _speed.RefreshMovementSpeedModifiers(uid);
+            }
 
             if (comp.ActionCap != 0 && comp.ActionCapUntil <= now)
             {

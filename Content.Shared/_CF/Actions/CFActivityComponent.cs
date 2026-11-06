@@ -12,6 +12,7 @@ public enum CFActivityKind : byte
     SuddenCharge,
     PointBlank,
     Leap,
+    ConstructTrap,
 }
 
 /// <summary>

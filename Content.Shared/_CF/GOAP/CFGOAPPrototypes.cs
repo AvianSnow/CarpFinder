@@ -6,7 +6,7 @@ namespace Content.Shared.CF.GOAP;
 
 /// <summary>What an advanced NPC can know about its situation. Sensors fill these in every think.</summary>
 [Flags]
-public enum CFGOAPFact : uint
+public enum CFGOAPFact : ulong
 {
     None = 0,
     HasWeapon = 1 << 0,
@@ -51,6 +51,15 @@ public enum CFGOAPFact : uint
     /// <summary>It holds something loaded, and nothing stops a shot at its target.</summary>
     HasShot = 1u << 31,
 
+    /// <summary>It fights at range, and an enemy has come closer than it likes.</summary>
+    TooClose = 1ul << 32,
+
+    /// <summary>It has a trap to lay, somewhere to lay it, and the enemy is not on top of it.</summary>
+    CanLayTrap = 1ul << 33,
+
+    /// <summary>Its ranged weapon is no use any more, and it has a melee weapon put away.</summary>
+    ShouldDraw = 1ul << 34,
+
     // Never sensed. These only exist as what a goal wants, so a plan has something to reach.
     TargetHurt = 1 << 20,
     Safe = 1 << 21,
@@ -58,6 +67,8 @@ public enum CFGOAPFact : uint
     Regrouped = 1 << 23,
     Waited = 1 << 24,
     Investigated = 1 << 25,
+    TrapLaid = 1ul << 35,
+    SidearmDrawn = 1ul << 36,
 
     // Multiple Attack Penalty. It is what most changes the worth of a Strike, so a change in it has to replan.
     Attacked = 1 << 26,
@@ -99,6 +110,12 @@ public enum CFGOAPStep : byte
 
     /// <summary>Drop and roll until the fire is out.</summary>
     PutOutFire,
+
+    /// <summary>Wait for the actions, then build a trap beside itself, on the side the target is.</summary>
+    LayTrap,
+
+    /// <summary>Drop what it is shooting with and take its melee weapon out of its pocket.</summary>
+    DrawSidearm,
 }
 
 /// <summary>How an action's worth is worked out when planning. See <c>CFGOAPTacticsSystem</c>.</summary>
