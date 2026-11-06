@@ -515,9 +515,60 @@ public sealed partial class CFConditionSystem : EntitySystem
                || until <= _timing.CurTime;
     }
 
+    /// <summary>What Demoralize would roll against. Nothing is rolled or changed.</summary>
+    public bool TryGetDemoralizeCheck(EntityUid user, EntityUid target, out int skill, out int dc, int circumstance = 0)
+    {
+        skill = 0;
+        dc = 0;
+        if (!TryComp(user, out CFCombatantComponent? combat) || !TryComp(user, out CFAbilityScoreComponent? abilities))
+            return false;
+
+        skill = CFDefense.SkillModifier(
+            _prototypes,
+            combat,
+            abilities,
+            "Intimidation",
+            CFAbility.Charisma,
+            circumstance,
+            Frightened(user));
+        dc = 10 + CFDefense.SaveModifier(
+            _prototypes,
+            CompOrNull<CFCombatantComponent>(target),
+            CompOrNull<CFAbilityScoreComponent>(target),
+            CFDefenseType.Will,
+            SaveStatus(target),
+            Frightened(target));
+        return true;
+    }
+
+    /// <summary>What Feint would roll against. Nothing is rolled or changed.</summary>
+    public bool TryGetFeintCheck(EntityUid user, EntityUid target, out int skill, out int dc)
+    {
+        skill = 0;
+        dc = 0;
+        if (!TryComp(user, out CFCombatantComponent? combat) || !TryComp(user, out CFAbilityScoreComponent? abilities))
+            return false;
+
+        skill = CFDefense.SkillModifier(
+            _prototypes,
+            combat,
+            abilities,
+            "Deception",
+            CFAbility.Charisma,
+            0,
+            Frightened(user));
+        dc = 10 + CFDefense.PerceptionModifier(
+            _prototypes,
+            CompOrNull<CFCombatantComponent>(target),
+            CompOrNull<CFAbilityScoreComponent>(target),
+            DefenseStatus(target, CFDefenseType.Perception),
+            Frightened(target));
+        return true;
+    }
+
     public bool TryDemoralize(EntityUid user, EntityUid target, int circumstance = 0)
     {
-        if (!TryComp(user, out CFCombatantComponent? combat) || !TryComp(user, out CFAbilityScoreComponent? abilities))
+        if (!TryGetDemoralizeCheck(user, target, out var skill, out var dc, circumstance))
             return false;
 
         var cond = Ensure(target);
@@ -528,21 +579,6 @@ public sealed partial class CFConditionSystem : EntitySystem
         }
 
         cond.DemoralizedUntil[user] = _timing.CurTime + TimeSpan.FromSeconds(60);
-        var skill = CFDefense.SkillModifier(
-            _prototypes,
-            combat,
-            abilities,
-            "Intimidation",
-            CFAbility.Charisma,
-            circumstance,
-            Frightened(user));
-        var dc = 10 + CFDefense.SaveModifier(
-            _prototypes,
-            CompOrNull<CFCombatantComponent>(target),
-            CompOrNull<CFAbilityScoreComponent>(target),
-            CFDefenseType.Will,
-            SaveStatus(target),
-            cond.Frightened);
         var degree = CFDefense.Roll(_random, skill, dc);
         if (degree is CFDegree.Success or CFDegree.CriticalSuccess)
         {
@@ -563,23 +599,9 @@ public sealed partial class CFConditionSystem : EntitySystem
 
     public bool TryFeint(EntityUid user, EntityUid target)
     {
-        if (!TryComp(user, out CFCombatantComponent? combat) || !TryComp(user, out CFAbilityScoreComponent? abilities))
+        if (!TryGetFeintCheck(user, target, out var skill, out var dc))
             return false;
 
-        var skill = CFDefense.SkillModifier(
-            _prototypes,
-            combat,
-            abilities,
-            "Deception",
-            CFAbility.Charisma,
-            0,
-            Frightened(user));
-        var dc = 10 + CFDefense.PerceptionModifier(
-            _prototypes,
-            CompOrNull<CFCombatantComponent>(target),
-            CompOrNull<CFAbilityScoreComponent>(target),
-            DefenseStatus(target, CFDefenseType.Perception),
-            Frightened(target));
         var degree = CFDefense.Roll(_random, skill, dc);
         if (degree is not (CFDegree.Success or CFDegree.CriticalSuccess))
         {

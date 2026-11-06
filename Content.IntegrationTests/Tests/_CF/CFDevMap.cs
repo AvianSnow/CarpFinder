@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Content.IntegrationTests.Pair;
-using Content.Shared.CF.NPC;
+using Content.Shared.CF.GOAP;
 using Content.Shared.Mobs.Components;
 using Robust.Shared.EntitySerialization;
 using Robust.Shared.EntitySerialization.Systems;

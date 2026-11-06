@@ -1,0 +1,65 @@
+# How creatures fight. A personality in goap.yml says when one runs and how it moves. These say who it goes for and what
+# it thinks an action is worth, so the two combine. Set CFGOAP.tactics, or tactics on an encounter.
+#
+# See .agent/goap.md. Every number here is ours, tuned against PF2e math: a clean Strike is worth 1.
+
+- type: goapTactics
+  id: Default
+
+# Goes for what is close and what hurt it, and has no idea of its odds. It never stops swinging.
+- type: goapTactics
+  id: Beast
+  parent: Default
+  insight: 0
+  finish: 0
+  payback: 1
+  frighten: 0
+  feint: 0
+  discipline: 0
+
+# Oozes and the like. The nearest thing, until it stops moving.
+- type: goapTactics
+  id: Mindless
+  parent: Default
+  distance: 0.3
+  wounded: 0
+  finish: 0
+  payback: 0
+  commitment: 1
+  companions: 0
+  insight: 0
+  frighten: 0
+  feint: 0
+  discipline: 0
+
+# Hits the thing that hit it, hard, and keeps hitting.
+- type: goapTactics
+  id: Brute
+  parent: Default
+  payback: 1
+  insight: 0.25
+  strike: 1.5
+  frighten: 0.5
+  feint: 0
+  discipline: 0
+
+# Picks off the weak, and sets up its hits.
+- type: goapTactics
+  id: Skirmisher
+  parent: Default
+  wounded: 1
+  finish: 1.5
+  insight: 0.75
+  feint: 1.5
+
+# A mini boss that has done this before. It sizes everyone up and goes for the one that matters.
+- type: goapTactics
+  id: Tactician
+  parent: Default
+  finish: 1.5
+  casters: 1
+  companions: -0.5
+  insight: 1
+  frighten: 1.5
+  feint: 1.5
+  discipline: 0.35

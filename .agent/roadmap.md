@@ -599,7 +599,7 @@ Needed by the AI (6b), which has to do everything a player does without clicking
 
 ## Phase 6 — AI: GOAP on top of SS14 HTN (done)
 
-SS14 NPCs run on HTN (`HTNComponent`, compound/primitive tasks, operators, `NPCBlackboard`), with `NPCSteeringSystem` doing context steering (interest/danger directions) over the pathfinder. We **extend, not replace**. Stock HTN stays the AI for simple enemies, including most CF mobs. GOAP is opt-in per prototype, for advanced enemies: mini bosses and special encounters. Do not put it on ordinary CF mobs. All of this is server-only, under `Content.Server/_CF/NPC/`.
+SS14 NPCs run on HTN (`HTNComponent`, compound/primitive tasks, operators, `NPCBlackboard`), with `NPCSteeringSystem` doing context steering (interest/danger directions) over the pathfinder. We **extend, not replace**. Stock HTN stays the AI for simple enemies, including most CF mobs. GOAP is opt-in per prototype, for advanced enemies: mini bosses and special encounters. Do not put it on ordinary CF mobs. All of this is server-only, under `Content.Server/_CF/GOAP/`.
 
 Depends on the Phase 5d entry points and on `CFItemUseComponent` (6b). Steering (6a) and influence maps (6c) depend on neither and can start early.
 
@@ -607,7 +607,7 @@ Depends on the Phase 5d entry points and on `CFItemUseComponent` (6b). Steering 
 
 Implement as contributors to SS14's context steering (interest/danger maps, hooked through the steering event) instead of a second movement system, so collisions, doors and pathing keep working.
 
-- [x] `CFSteeringComponent`: list of weighted `CFSteeringBehavior` data entries, swapped by GOAP actions.
+- [x] `CFGOAPSteeringComponent`: list of weighted `CFGOAPSteeringBehavior` data entries, swapped by GOAP actions.
 - [x] Behaviours: **Seek**, **Flee**, **Arrive** (slow inside radius), **Wander** (jittered circle target), **Pursuit** (seek predicted position from target velocity), **Evade** (flee predicted position), **Cohesion** (toward faction-mates' centre; separation as its negative), **Obstacle Avoidance** (feeler rays into the danger map; reuse what SS14 already does, add only what's missing).
 - [x] **Vector Field Follow** (used by 6c): interest toward the strongest neighbouring influence cell.
 - [ ] Debug overlay for active behaviours. Stock's steering debug already draws interest and danger.
@@ -620,7 +620,7 @@ Implement as contributors to SS14's context steering (interest/danger maps, hook
 - [x] **Goals** (`cfGoapGoal` prototypes) with priority from a utility curve over world state: `KillTarget`, `StayAlive` (rises as health falls), `Heal`, `ArmSelf`, `HuntTarget` (lost contact), `Investigate`, `Regroup`, `Idle`.
 - [x] **Actions** (`cfGoapAction` prototypes): preconditions, effects, cost, and an executor. Executors are either a player action through the 5d entry points (Strike, Raise a Shield, Demoralize, cast a spell, drink potion) or a movement/utility step (`FindItem`, `PickUp`, `UseItem`, `MoveTo`, `FollowScent`, `GoToLKP`, `CheckNode`, `Flee`, `Wander`). The 5d `CanUse` checks become extra preconditions automatically.
 - [x] **Planner**: backward A* from the goal, depth and node limits. It runs inline, not as a job: GOAP NPCs are rare and a plan is small, so a job is not worth it. See the timing test. Replan on: goal priority change, plan step failure, or a watched fact flipping (target seen, health threshold crossed).
-- [x] **HTN bridge**: `CFGoapOperator` (HTN primitive operator) that owns plan → execute → replan. A CarpFinder NPC's root compound task can be "GOAP" alone, or HTN with GOAP inside one branch (e.g. HTN handles idle/patrol, GOAP takes over in combat).
+- [x] **HTN bridge**: `CFGOAPOperator` (HTN primitive operator) that owns plan → execute → replan. A CarpFinder NPC's root compound task can be "GOAP" alone, or HTN with GOAP inside one branch (e.g. HTN handles idle/patrol, GOAP takes over in combat).
 - [x] **Item behaviours**: `FindItem(tag)` queries nearby entities with `CFItemUseComponent`, scored by distance and usefulness; `UseItem` runs the item's action.
 - [x] **Personality** via weights, not code: `cfGoapProfile` scales goal priorities and action costs and overrides steering parameters (see 6f).
 - [ ] NPCs that cannot stand crawl away (see Known bugs).
@@ -631,12 +631,12 @@ Implement as contributors to SS14's context steering (interest/danger maps, hook
 
 Players and other tracked entities "paint" values onto an invisible grid as they move. The tracking AI doesn't pathfind to them: it uses Vector Field Follow, turning toward the highest neighbouring intensity until it reaches the epicentre.
 
-- [x] `CFInfluenceMapComponent` on each grid (one per map, so Z-levels stay separate). Cell = 1 tile (one 5-ft square). Stored in chunks (e.g. 8×8, like SS14 pathfinding/atmos chunks), allocated only where something has painted.
-- [x] `CFScentEmitterComponent`: layer (scent, noise, light, threat), strength, radius. Sneak/Hide and conditions scale it (invisible ≠ scentless).
+- [x] `CFGOAPInfluenceMapComponent` on each grid (one per map, so Z-levels stay separate). Cell = 1 tile (one 5-ft square). Stored in chunks (e.g. 8×8, like SS14 pathfinding/atmos chunks), allocated only where something has painted.
+- [x] `CFGOAPScentEmitterComponent`: layer (scent, noise, light, threat), strength, radius. Sneak/Hide and conditions scale it (invisible ≠ scentless).
 - [x] Layers: `Scent` (trail), `Noise` (one-shot spikes from melee, shots and speech), `Ally`, `Threat`.
 - [ ] Nothing paints `Threat` yet. Spells and doors make no noise yet.
 - [ ] `Light` layer: not built. Stealthy NPCs cannot avoid light, `Shadow` nodes are placed by mappers only, and darkness is not concealment.
-- [x] `CFInfluenceMapSystem`: paint on movement, decay over time, optional cheap diffusion, updated at a fixed rate (e.g. 4 Hz), and only in chunks near awake NPCs. Data lives on the component; the system holds no state.
+- [x] `CFGOAPInfluenceMapSystem`: paint on movement, decay over time, optional cheap diffusion, updated at a fixed rate (e.g. 4 Hz), and only in chunks near awake NPCs. Data lives on the component; the system holds no state.
 - [x] Paint only walkable cells, so following the gradient naturally goes around walls the way the target did.
 - [ ] Scent entering a portal continues on the linked level. Each level paints its own map, but an NPC does not cross a portal to follow it.
 - [ ] Debug overlay to view layers.
@@ -654,7 +654,7 @@ Each cell (breadcrumb) also stores **when** the target was there and **which way
 
 Mappers place hidden **Investigation Nodes** near corners, hiding spots and doorways. When the AI reaches the LKP (last known position) and loses the target, it checks nearby nodes.
 
-- [x] `CFInvestigationNodeComponent` marker entity (invisible in game, visible in mapping mode): `Weight`, tags (`Closet`, `Corner`, `Doorway`, `Corridor`, `Vent`, `Stairs`, `Shadow`), optional linked nodes (graph edges). `Shadow` can be placed by mappers or auto-flagged when the `Light` layer is low at the node.
+- [x] `CFGOAPInvestigationNodeComponent` marker entity (invisible in game, visible in mapping mode): `Weight`, tags (`Closet`, `Corner`, `Doorway`, `Corridor`, `Vent`, `Stairs`, `Shadow`), optional linked nodes (graph edges). `Shadow` can be placed by mappers or auto-flagged when the `Light` layer is low at the node.
 - [x] LKP stored on the blackboard when sight is lost, with the target's last heading (from 6d).
 - [x] Node query from LKP: candidates within range and reachable, score = base weight × distance falloff × direction match with last heading × scent bonus × "not checked recently" (per-NPC and per-pack memory). Pick by **weighted random** (`IRobustRandom`) so it isn't predictable.
 - [x] `CheckNode` GOAP action: go there, Seek (Perception vs Stealth DC), open containers/closets tagged `Closet`, mark the node checked, then pick the next node (graph edge or new query). Give up after N nodes → `Idle` / return to patrol.
@@ -667,7 +667,7 @@ Mappers place hidden **Investigation Nodes** near corners, hiding spots and door
 A personality is one `cfGoapProfile` prototype. It changes numbers (steering parameters, behaviour weights, goal priorities, node scoring) and adds a few **reflex rules** (trigger → behaviour swap). No personality gets its own system or code path.
 
 - [x] `cfGoapProfile` fields: `MaxSpeed` multiplier, per-behaviour weights and parameters (Arrive deceleration radius, Wander jitter/radius, avoidance spacing, separation, wall-follow), LKP dwell time, LKP keep-out radius, node tag multipliers, goal priority multipliers, reflex list.
-- [x] `CFSteeringReflex` data: trigger (`NoiseNearby` from the Noise layer, `AllyDown`, `HealthBelow`, `TargetSeen`, `LightOn`) → action (swap behaviour A for B, add weight, force a goal) with a duration.
+- [x] `CFGOAPReflex` data: trigger (`NoiseNearby` from the Noise layer, `AllyDown`, `HealthBelow`, `TargetSeen`, `LightOn`) → action (swap behaviour A for B, add weight, force a goal) with a duration.
 
 | Personality | Hunting (6c–6e) | Steering | Reflexes / goals |
 |---|---|---|---|
@@ -692,23 +692,77 @@ A personality is one `cfGoapProfile` prototype. It changes numbers (steering par
 - [x] The encounter gives any mob the GOAP brain at spawn, so plain kobolds elsewhere stay on stock HTN.
 - [x] `SmallGroup`: 4 kobolds on one target, in paired slots on opposite sides. `routAt: 0.5` breaks them at half, and they run, then Hide once they cannot see an adventurer.
 - [x] Signals on the spawner, for the multitool: `CFEncounterMemberDied`, `CFEncounterRouted`, `CFEncounterCleared`.
-- [ ] A routed creature only flees directly away. It does not look for cover or a node to hide at.
+- [x] A routed creature runs along a safety map, so it goes round corners toward open space. It does not look for cover or a node to hide at yet.
 - [x] Advanced NPCs move by feelers instead of A*: a three-ray fan along their heading, cast out to `feelerSight` (12 tiles), with obstacles counting inside `feelerLength` (2.5) for the center ray and `feelerSideLength` (1.75) for the side rays at ±30°. Rays touch walls, anything with `CFDangerousTile` (lava, liquid plasma, chasms), and enemies they can detect. An enemy adds interest when chasing and danger when fleeing. Stock pathing is unchanged, and simple mobs still use it.
 - [x] Safety circle (`panicRadius`, 0.42 tiles, and wider when closing on a dangerous tile at speed): a wall, dangerous tile or mob inside it overrides all other steering and snaps the NPC away, with no easing. The current target and enemies being chased do not count. It covers what rays miss, such as sliding alongside lava.
 - [x] The flanking reach sensor feeds the same vectors through `CFFlankingSystem.EnemiesInReach`, covering enemies beside and behind the fan.
 - [x] Feeler safeguards: blocked straight ahead, it turns to the freer side, or right if they balance, so a flat wall cannot freeze it. Danger eases over a few frames so it does not shake along a wall, and snaps at once when something is close. Length scales with speed against `feelerFullSpeed`, so a fast creature sees further, down to `feelerMinLength`.
-- [x] Cooperative steering with flow fields. While a ray to the goal is clear, an NPC heads straight there. When it is blocked, the group's navigator (its first living member, or a lone NPC itself) builds a `CFFlowField`: arrows on each tile out to 20 tiles, with walls and `CFDangerousTile` blocked. Every member reads the arrow under its feet and blends it with its feelers. There is no path to fall behind on, and GOAP no longer uses A* at all.
-- [x] Doors and glass in a field. A closed door, a locked door and a window are slow tiles (`CFGoapSystem.Obstacles`), not blocked ones, so a short detour still wins. An arrow leading into one makes the creature open it if it has hands and the door is unlocked, and Strike it otherwise. A smashed window leaves a frame to climb, and a smashed door a frame to break.
+- [x] Cooperative steering with flow fields. While a ray to the goal is clear, an NPC heads straight there. When it is blocked, the group's navigator (its first living member, or a lone NPC itself) builds a `CFGOAPFlowField`: arrows on each tile out to 20 tiles, with walls and `CFDangerousTile` blocked. Every member reads the arrow under its feet and blends it with its feelers. There is no path to fall behind on, and GOAP no longer uses A* at all.
+- [x] Doors and glass in a field. A closed door, a locked door and a window are slow tiles (`CFGOAPSteeringSystem.Obstacles`), not blocked ones, so a short detour still wins. An arrow leading into one makes the creature open it if it has hands and the door is unlocked, and Strike it otherwise. A smashed window leaves a frame to climb, and a smashed door a frame to break.
 - [x] Patience. `smashPatience` on a `cfGoapProfile` is how many seconds it keeps at one door or window: Default 20, Brave 40, Stealthy 10, Cowardly 5. Then the obstacle is off the field for 60 seconds, shared by the group. With no other way, the `NoWay` fact stops `Close`, `TakeFlank`, `GoToLkp` and `CheckNode` for that long.
 - [x] Sight through glass. Plain windows have no `Occluder`, so a creature sees through them and heads for the target. `TargetInReach` and `AtFlank` need a clear ray, so it does not swing at someone behind glass.
 - [ ] The locked door scenario reaches the target in about 33 of 40 runs. The suspected causes are in `ai-testing.md`.
-- [ ] With no node or scent, a creature that loses sight does not go to the last known position. `GoToLkp` only exists as the step before `CheckNode`.
-- [ ] Fleeing does not use any of this. A routed creature treats a door as a wall.
+- [x] With no node or scent, a creature that loses sight goes to the last known position, looks around, and forgets it (the `Investigate` goal).
+- [x] Fleeing goes through doors it can open. It treats glass and locked doors as walls.
 - [ ] A kobold alone is slow on glass: Hardness and Multiple Attack Penalty leave it about 1 damage in 13 seconds, so it usually runs out of patience.
-- [ ] Choosing a detour over glass is only tested on `CFFlowFieldBuilder`. The arena has lava either side of its one clear row, so a live test has no room.
+- [ ] Choosing a detour over glass is only tested on `CFGOAPFlowFieldBuilder`. The arena has lava either side of its one clear row, so a live test has no room.
 - [ ] A field is built in one go. 20 tiles is a few hundred at most, but a much larger `FieldReach` would want spreading over ticks.
 - [ ] Group memory lives on the spawner, so deleting the spawner mid-fight stops the group sharing a target.
 - [x] Perf check: 30 NPCs + 10 emitters thinking once, on the dev map, cost logged by `ThinkingStaysCheapWithAFullEncounter`.
+
+### 6i. Our own structure (6 November 2026)
+
+GOAP moved from `_CF/NPC` to `_CF/GOAP`, with `CFGOAP` names. See `goap.md`. The build and the YAML linter pass. **The AI tests have not been run since this change.** They were updated to compile, so expect some to need work.
+
+A port of Crystall Edge's GOAP came first. Its code is all rights reserved, so that port was thrown away before any commit, and this was rebuilt from our own commit `46ffa81597`. Do not copy from `crystall-edge`.
+
+- [x] Folders and `CFGOAP` names, on the server, in Shared, in YAML and in tests.
+- [x] Sensors in their own systems, handling `CFGOAPSenseEvent`, replacing the single `Sense`.
+- [x] Steps in their own systems, replacing the `switch` on `CFGOAPStep`.
+- [x] Navigation state and code moved from the brain to `Steering/`.
+- [x] New: being hit tells a creature where the attacker is, through a new `CFDamagedEvent`. A cornered creature fights back. `Investigate`.
+- [x] Fleeing uses a safety map on the flow fields instead of steering straight away. A routed group shares one.
+- [x] Fixed: a node more than a tile from the last known position could never be reached. Walking to it flipped `AtLkp` and sent the creature back.
+- [x] Fixed: the planner's heuristic counted each missing fact as a flat 1, though costs go below that.
+- [x] Flow fields stop at the edge of a grid.
+- [ ] Run the AI tests and fix what they find. New tests: `ItStaysOnItsWayToANodeAwayFromTheLastKnownPosition`, `WithNothingElseToGoOnItLooksAtTheLastKnownPosition`, `PainSaysWhereAnUnseenAttackerIs`, `ACorneredNpcFightsBack`, `EveryKindOfStepHasASystem`, `TwoCheapStepsBeatOneDearOne`, `ARunnerGoesThroughTheGapAndNotIntoTheNearestCorner`, `ADeadEndIsAsSafeAsItGets`.
+- [ ] Check in play that fleeing feels right.
+
+### 6j. Tactics (6 November 2026)
+
+Weights for how a creature fights, reading what Baldur's Gate 3's AI weighs and doing it in PF2e terms. See `goap.md` and `goap-weights.md`. It builds and lints. **Not tested in a fight.**
+
+- [x] `goapTactics` prototypes, with `parent`: `Default`, `Beast`, `Mindless`, `Brute`, `Skirmisher`, `Tactician`.
+- [x] Target choice by score instead of the nearest enemy.
+- [x] What an action is worth feeds the planner's costs. Demoralize, Feint and `HoldBack` compete with Strike.
+- [x] `TryPreviewMelee`, `TryGetDemoralizeCheck` and `TryGetFeintCheck`, so the AI reads the same numbers as the real roll.
+- [ ] Balance: a creature with discipline waits out Multiple Attack Penalty, so it hits much harder over a long fight. Worked out at 4 to 5 times for a +8 attack against AC 18. Check this in play, and drop `discipline` if it is too much.
+- [ ] Give the creatures in `creatures.yml` a `tactics` value. They all use `Default` unless an encounter sets one.
+- [ ] Choosing spells. See `goap-weights.md`.
+
+### 6k. Furniture, and a run on the maze map (6 November 2026)
+
+- [x] `npc_test_map.yml` has air: `MapAtmosphere`, and tile air on all 769 tiles. `fixgridatmos` changes nothing further.
+- [x] Flow fields see every hard body on a tile, so tables, crates and barrels are no longer open floor. See "Getting past things" in `goap.md`.
+- [x] Climbable things are climbed or gone around. A creature that cannot climb goes around.
+- [x] What it cannot hurt is a wall to it, which covers grilles. It walks round instead of swinging at them.
+- [x] The safety circle leaves a working creature alone, so it is not thrown off a climb.
+- [x] Melee reach goes over a table.
+- [x] A flank slot it cannot stand on is `FlankBlocked`, so it walks in and Strikes instead of circling.
+
+Found by that run, not fixed:
+
+- [ ] **Mobs bounce off corners in one-tile corridors.** The worst one left: they cannot follow correct arrows along the maze. `Flow` should aim at the middle of the next tile. See `ai-testing.md`.
+- [ ] `ARealGroupRunsWhenHalfAreDown` fails now and then (2 of 11 runs): a kobold goes down within a second of starting to flee, on the arena. Its log stops at `goal none`, so the cause is not proven. Lava is the suspect, because a flee field only blocks tiles and the arena leaves little room. Log mob state and damage next time.
+- [ ] A mob cannot follow a trail through a door. A closed door takes no scent, and `FollowScent` does not use `Navigate`, so it never opens one. It also flips between `HuntTarget` and `Investigate` as scent comes and goes.
+- [ ] `Investigate` never Seeks, so a hidden creature beside the mob is not looked for without a node.
+- [ ] `Wander` runs at full speed and can jam for good in a corridor.
+- [ ] A routed creature that can still see its enemy never hides, because the flee map ignores line of sight.
+- [ ] Swings at obstacles ignore `discipline`, so the pool stays empty and it stays at -10.
+
+### DEBUG code to remove
+
+- [ ] The decision log, once the AI has settled. `goap.md` lists the steps.
 
 ## Known bugs
 
@@ -725,6 +779,7 @@ A personality is one `cfGoapProfile` prototype. It changes numbers (steering par
 - Persistent damage and resistances/weaknesses everywhere damage is dealt.
 - AI avoids known traps through the `Threat` layer (6c).
 - GOAP for companions and animal companions taking player commands (Command an Animal).
+- Mobs that cast spells, chosen by score. `goap-weights.md` has the plan.
 
 ## Working notes
 

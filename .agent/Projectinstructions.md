@@ -12,7 +12,7 @@ Read and follow everything in this folder before making CF or upstream-touching 
 
 Character builder + PF2e spawn/combat MVP notes: `character-builder.md`.
 
-Where mappers place AI hints: `investigation-nodes.md`.
+How GOAP is laid out and how to add to it: `goap.md`. What its weights are for, and the plan for mobs casting spells: `goap-weights.md`. Where mappers place AI hints: `investigation-nodes.md`.
 
 How to test the AI, what `Skipped` really means, and what is known to fail: `ai-testing.md`. Read it before running AI tests.
 
@@ -126,8 +126,8 @@ Class examples: `CFMySystem`, `CFMyServerSystem`, `CFMyClientSystem`, `CFExample
 | Worn armor, check penalty, Speed penalty, AC refresh | `CFArmorSystem` (`TryGetWornArmor`, `CheckPenalty`, `SpeedPenalty`, `RefreshArmorClass`) |
 | Shields | `CFShieldSystem` (`TryGetRaisedShield`, `TryGetUsableShield`, `SetRaised`, `RaisedBonus`, `Block`). Raised is `CFShieldComponent.Raised` on the item. |
 | Bulk and encumbrance | `CFBulk`, `CFEncumbranceSystem`; clumsy from `CFConditionSystem.Clumsy` |
-| A group that fights together | An `encounter` prototype in `Resources/Prototypes/_CF/NPC/encounters.yml`, placed with `CFEncounterSpawner`. It gives any mob the brain at spawn, so mobs do not need their own GOAP prototype |
-| An advanced NPC (mini boss, special encounter) | Add `CFGoapBrain` as a second parent. Do not use it for ordinary mobs: stock HTN stays their AI. Set `CFGoap.profile` to a `cfGoapProfile` |
+| A group that fights together | An `encounter` prototype in `Resources/Prototypes/_CF/GOAP/encounters.yml`, placed with `CFEncounterSpawner`. It gives any mob the brain at spawn, so mobs do not need their own GOAP prototype |
+| An advanced NPC (mini boss, special encounter) | Add `CFGOAPBrain` as a second parent. Do not use it for ordinary mobs: stock HTN stays their AI. Set `CFGOAP.profile` to a `cfGoapProfile` and `CFGOAP.tactics` to a `goapTactics` |
 | Actions for code with no player | `CFManeuverSystem.CanUse` and `TryUse` with a `CFBasicAction`, `CFStrikeSystem.TryFeatStrike` |
 | Whether a creature can see another | `CFStealthSystem.Detection`, `IsUnseenBy`, `Reveal`. Spending actions reveals a creature unless `TrySpendActions` is told `stealthy` |
 | Traps and hazards | `CFHazard` (Stealth DC, detect radius, trigger size, disarm checks) plus `CFCheck` and `CFDegreeEffects` for what it does. `CFHazardSystem` handles noticing, triggering, and disarming. A `CFFaction` on the hazard protects its allies. Disabling it raises `CFHazardDisarmedEvent`; `CFExperienceSystem.AwardHazard` gives the disarmer's company XP for the hazard's `level` (simple or `complex`). See `Resources/Prototypes/_CF/Entities/Hazards/traps.yml`. |

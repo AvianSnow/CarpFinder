@@ -406,6 +406,79 @@ public sealed partial class CFStrikeSystem : EntitySystem
             CFWeaponTraits.Fist);
     }
 
+    /// <summary>
+    /// The attack bonus before Multiple Attack Penalty and anything spent by rolling, such as Aid.
+    /// </summary>
+    private int StandingAttackBonus(
+        EntityUid user,
+        CFCombatantComponent combat,
+        CFAbilityScoreComponent abilities,
+        CFStrikeWeaponStats weapon,
+        float distanceFeet,
+        bool ignoreVolley)
+    {
+        var trained = IsWeaponTrained(combat, weapon.Proficiency);
+        var bonus = CFMelee.AttackBonus(abilities, combat, weapon, trained, distanceFeet, ignoreVolley);
+        bonus -= _conditions.Frightened(user);
+        bonus += _conditions.ProneAttackPenalty(user);
+        if (weapon.Ranged)
+            bonus -= _conditions.Clumsy(user);
+
+        // Item bonuses do not stack: weapon potency or a spell's item bonus, whichever is higher.
+        var otherItem = _bonuses.TotalOfType(user, CFBonusStat.AttackRoll, CFBonusType.Item);
+        return bonus + _bonuses.Total(user, CFBonusStat.AttackRoll) - otherItem + Math.Max(otherItem, weapon.Potency);
+    }
+
+    /// <summary>The AC this attacker has to beat right now.</summary>
+    private int ArmorClassAgainst(
+        EntityUid user,
+        EntityUid target,
+        CFCombatantComponent defender,
+        bool melee,
+        bool unseen,
+        bool isObject,
+        bool alreadyDown)
+    {
+        // Downed creatures already take a larger AC penalty. Off-guard does not stack with itself.
+        var acPenalty = 0;
+        if (alreadyDown)
+            acPenalty = DownedAcPenalty;
+        else if (!isObject && _conditions.IsProne(target))
+            acPenalty = CFFlanking.OffGuardAcPenalty;
+        else if ((melee || unseen) && !isObject && (_flanking.IsOffGuardTo(target, user) || _conditions.IsOffGuardTo(target, user)))
+            acPenalty = CFFlanking.OffGuardAcPenalty;
+
+        var targetAc = defender.ArmorClass - acPenalty - _conditions.Frightened(target) - _conditions.Clumsy(target);
+        targetAc += _bonuses.Total(target, CFBonusStat.ArmorClass);
+        targetAc += _shields.RaisedBonus(target);
+
+        if (TryComp(target, out CFCombatOptionsComponent? defenderStyle) && defenderStyle.Raging)
+            targetAc -= 1;
+
+        return targetAc;
+    }
+
+    /// <summary>
+    /// What a melee Strike at this target would roll with right now. Nothing is rolled, spent or changed, so code with
+    /// no player can weigh a Strike up before making it.
+    /// </summary>
+    public bool TryPreviewMelee(EntityUid user, EntityUid target, out CFStrikePreview preview)
+    {
+        preview = default;
+        if (!TryComp(user, out CFCombatantComponent? combat)
+            || !TryComp(user, out CFAbilityScoreComponent? abilities)
+            || !TryComp(target, out CFCombatantComponent? defender)
+            || !TryMeleeWeapon(user, out var weapon, out _))
+            return false;
+
+        preview = new CFStrikePreview(
+            StandingAttackBonus(user, combat, abilities, weapon, 0f, false),
+            _actions.MapPenalty(user, weapon.Agile),
+            ArmorClassAgainst(user, target, defender, melee: true, unseen: false, isObject: false, alreadyDown: false),
+            weapon.DamageDice * (weapon.DamageDie + 1) / 2f + CFMelee.DamageBonus(abilities, weapon, combat));
+        return true;
+    }
+
     public bool TryMeleeWeapon(EntityUid user, out CFStrikeWeaponStats stats, out EntityUid weaponUid)
     {
         if (_hands.TryGetActiveItem(user, out var held)
@@ -550,22 +623,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
             }
         }
 
-        var weaponTrained = IsWeaponTrained(attackerCombat, weapon.Proficiency);
-        var attackBonus = mapPenalty + attackPenalty + CFMelee.AttackBonus(
-            attackerAbilities,
-            attackerCombat,
-            weapon,
-            weaponTrained,
-            distanceFeet,
-            ignoreVolley);
-        attackBonus -= _conditions.Frightened(user);
-        attackBonus += _conditions.ProneAttackPenalty(user) + _conditions.TakeAid(user);
-        if (weapon.Ranged)
-            attackBonus -= _conditions.Clumsy(user);
-
-        // Item bonuses do not stack: weapon potency or a spell's item bonus, whichever is higher.
-        var otherItem = _bonuses.TotalOfType(user, CFBonusStat.AttackRoll, CFBonusType.Item);
-        attackBonus += _bonuses.Total(user, CFBonusStat.AttackRoll) - otherItem + Math.Max(otherItem, weapon.Potency);
+        var attackBonus = mapPenalty + attackPenalty + _conditions.TakeAid(user)
+                          + StandingAttackBonus(user, attackerCombat, attackerAbilities, weapon, distanceFeet, ignoreVolley);
 
         // Sweep: +1 circumstance when this turn's earlier attack went at a different creature.
         var attacksBefore = AttacksBefore(mapPenalty);
@@ -585,21 +644,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
             return false;
         }
 
-        // Downed creatures already take a larger AC penalty. Off-guard does not stack with itself.
-        var acPenalty = 0;
-        if (alreadyDown)
-            acPenalty = DownedAcPenalty;
-        else if (!isObject && _conditions.IsProne(target))
-            acPenalty = CFFlanking.OffGuardAcPenalty;
-        else if ((melee || unseen) && !isObject && (_flanking.IsOffGuardTo(target, user) || _conditions.IsOffGuardTo(target, user)))
-            acPenalty = CFFlanking.OffGuardAcPenalty;
-
-        var targetAc = defender.ArmorClass - acPenalty - _conditions.Frightened(target) - _conditions.Clumsy(target);
-        targetAc += _bonuses.Total(target, CFBonusStat.ArmorClass);
-        targetAc += _shields.RaisedBonus(target);
-
-        if (TryComp(target, out CFCombatOptionsComponent? defenderStyle) && defenderStyle.Raging)
-            targetAc -= 1;
+        var targetAc = ArmorClassAgainst(user, target, defender, melee, unseen, isObject, alreadyDown);
 
         var rolled = weapon with { DamageType = ChooseDamageType(target, weapon) };
         if (extraDice > 0)
@@ -671,6 +716,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
                     defender.CurrentHp = Math.Max(0, defender.CurrentHp - damage);
                     Dirty(target, defender);
                     MirrorToSs14(user, target, defender, damage, rolled.DamageType, isObject);
+                    RaiseDamaged(target, user, damage);
                 }
 
                 if (!isObject && defender.CurrentHp <= 0)
@@ -696,6 +742,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
                 defender.CurrentHp = Math.Max(0, defender.CurrentHp - damage);
                 Dirty(target, defender);
                 MirrorToSs14(user, target, defender, damage, "precision", isObject);
+                RaiseDamaged(target, user, damage);
                 if (defender.CurrentHp <= 0)
                 {
                     _dying.KnockOut(target, defender, fromCriticalHit: false, user);
@@ -919,6 +966,12 @@ public sealed partial class CFStrikeSystem : EntitySystem
         }
 
         return true;
+    }
+
+    private void RaiseDamaged(EntityUid target, EntityUid source, int amount)
+    {
+        var ev = new CFDamagedEvent(source, amount);
+        RaiseLocalEvent(target, ref ev);
     }
 
     private void MirrorToSs14(

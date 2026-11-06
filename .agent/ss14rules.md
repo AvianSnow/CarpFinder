@@ -60,7 +60,7 @@ One directed component + event pair. A second subscriber throws `Duplicate Subsc
 - `MeleeHitEvent.Direction` is null for a click and set for a wide swing.
 - The flanking sensor is a fixture, so `GetEntitiesIntersectingBody`, `GetAABBNoContainer` and `GetWorldAABB` all see a creature as 2.5 tiles wide. That silently ended every climb near a wall (`ClimbingComponent.TransitionCollisionMask` is 0 on combatants for this) and gave "no room to stand" beside any table (marked fix in `SharedStunSystem.Knockdown`). `LookupFlags.Sensors` lookups find a creature that far out too. `InRangeUnobstructed` is not affected: it skips non-hard fixtures on a hard body.
 - `InRangeUnobstructed` between two entities measures surface to surface. NPC melee measures center to center, so a creature can pass the first and still be out of swing range.
-- A thin ray fits through a gap the body does not. A creature sent straight at a one-tile gap catches its corner and circles there, so `CFGoapSystem.CanWalkStraight` casts down each side as well.
+- A thin ray fits through a gap the body does not. A creature sent straight at a one-tile gap catches its corner and circles there, so `CFGOAPSteeringSystem.CanWalkStraight` casts down each side as well.
 - A smashed `CFWindowWooden` leaves a broken frame, which is a half wall to climb and can trip whoever is beside it. A smashed door leaves a door frame, which still blocks a body although it is not `Impassable`.
 - A thrown item without `LandAtCursor` ends its flight at about 80% of the way and slides the rest, so it never hits what the cursor is on. Every thrown weapon needs it, and `CFThrownWeaponTest` checks that.
 - `BeforeThrowEvent.Direction` is read-only and already clamped to `HandsComponent.ThrowRange`. Range has to change in `HandsSystem.ThrowHeldItem`.
@@ -76,12 +76,16 @@ One directed component + event pair. A second subscriber throws `Duplicate Subsc
 - Stock gives up on a path for good after three failures, and `SteeringStatus.NoPath` then stops all steering until the NPC is unregistered. HTN's move operator gets replanned. Code that moves an NPC itself has to retry.
 - Lava and chasms are not hard, so stock paths cross them. `IntersectRay` also ignores non-hard fixtures: a ray that must touch them needs `RayCastSystem.CastRayClosest` with `QueryFlags.Sensors`. `LookupFlags.Static` does not find them either. Add `LookupFlags.Sensors`.
 - `SharedTransformSystem.ToCoordinates(mapCoordinates)` parents to the map, and pathfinding only works on grids, so the path fails. Pass the grid: `ToCoordinates(grid, mapCoordinates)`. A path to something in line of sight can hide this.
+- `IsTileBlocked` with `Impassable` misses tables (`MidImpassable`) and every unanchored body. Stock crates are not `Impassable` either, because `MachineLayer` has no such bit. To know what stops a mob, compare the other body's hard layer with the mob's mask.
+- A stock `Window` stands on a separate `Grille`, so one tile can hold two obstacles and smashing the window leaves the grille. Anything that excuses one entity on a tile still trips over the other.
+- A grid's `GridAtmosphere` saves air per tile as an index into `uniqueMixes`, and that is what rooms have. `MapAtmosphere` only fills space outside the grid, so a map can have both and its rooms still be vacuum. Mobs show it as Critical after about 35 seconds. `fixgridatmos` only changes the running game: to keep it, save the map or edit the mix.
+- `GetTileMixture` returns null for a tile under a wall, window, grille or closed door. That is not vacuum.
 - A steering safety radius must stay under 0.5 tiles. The middle of a one-tile doorway is 0.5 from each side, so anything larger overrides the way forward and holds the NPC there.
 - `Vector2.Normalize(Vector2.Zero)` is NaN. In `NPCSteeringComponent.Interest` or `Danger`, stock's blend keeps a NaN forever and the NPC stands still with no error. Check before normalizing.
 - The path graph takes a few seconds to build after a map loads. An NPC test that needs a real path should run ticks first.
 - A map with no `MapAtmosphere` kills low-HP mobs in seconds, with full CF HP: a kobold's bar is only 7. Every map mobs stand on needs the block in `meteor-arena.yml`.
 - An occasional test failure in `SetUp` with `Value cannot be null. (Parameter 'key')` from `PrototypeManager.Freeze` is an engine race. Rerun the test.
-- Prototype kinds go in Shared, even when only the server reads them. The client also reads every prototype file and throws on a kind it does not know. A bare `[Prototype]` names the kind from the class: `CFGoapGoalPrototype` would be `cFGoapGoal`, so name it.
+- Prototype kinds go in Shared, even when only the server reads them. The client also reads every prototype file and throws on a kind it does not know. A bare `[Prototype]` names the kind from the class: `CFGOAPProfilePrototype` would be `cFGOAPProfile`, so name it.
 
 ## Do not use obsolete APIs
 

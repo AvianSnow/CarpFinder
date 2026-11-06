@@ -1,6 +1,6 @@
 # Placing investigation nodes
 
-`CFInvestigationNode` is a hidden marker for the AI. It is only visible in mapping mode. When an advanced NPC loses its target, it goes to the last known position, then checks nearby nodes. Without nodes it can only follow scent.
+`CFInvestigationNode` is a hidden marker for the AI. It is only visible in mapping mode. When an advanced NPC loses its target, it goes to the last known position, then checks nearby nodes. Without nodes it can only follow scent, or look around the last known position and give up.
 
 Only GOAP NPCs use these, so a node only matters where a mini boss or special encounter can reach. Simple mobs ignore them.
 

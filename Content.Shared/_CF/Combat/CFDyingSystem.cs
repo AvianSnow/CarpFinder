@@ -570,6 +570,13 @@ public sealed partial class CFDyingSystem : EntitySystem
 [ByRefEvent]
 public readonly record struct CFCombatantRevivedEvent;
 
+/// <summary>
+/// Raised on anything that loses hit points to <see cref="Source"/>. CF writes hit points itself, so the stock
+/// damage events never say who did it.
+/// </summary>
+[ByRefEvent]
+public readonly record struct CFDamagedEvent(EntityUid Source, int Amount);
+
 /// <summary>Raised on a monster when <see cref="Killer"/> brings it to 0 HP. The server awards XP for it.</summary>
 [ByRefEvent]
 public readonly record struct CFCreatureDefeatedEvent(EntityUid Killer, int Level);

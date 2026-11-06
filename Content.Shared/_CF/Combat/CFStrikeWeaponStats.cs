@@ -115,3 +115,10 @@ public sealed record CFWeaponTraits
         return versatile == null ? result : result with { Versatile = versatile };
     }
 }
+
+/// <summary>What a Strike would roll with, from <see cref="CFStrikeSystem.TryPreviewMelee"/>.</summary>
+/// <param name="Attack">The attack bonus before Multiple Attack Penalty.</param>
+/// <param name="Map">The Multiple Attack Penalty on the next attack, as zero or less.</param>
+/// <param name="ArmorClass">What it has to beat.</param>
+/// <param name="AverageDamage">The damage of a plain hit, on average.</param>
+public readonly record struct CFStrikePreview(int Attack, int Map, int ArmorClass, float AverageDamage);

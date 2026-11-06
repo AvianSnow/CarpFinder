@@ -26,7 +26,7 @@ public sealed partial class CFItemUseComponent : Component
 
 /// <summary>What a place is. Mappers tag investigation nodes with these.</summary>
 [Flags]
-public enum CFNodeTag : byte
+public enum CFGOAPNodeTag : byte
 {
     None = 0,
     Closet = 1 << 0,

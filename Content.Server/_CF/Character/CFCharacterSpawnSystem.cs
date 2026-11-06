@@ -1,4 +1,4 @@
-using Content.Server.CF.NPC;
+using Content.Server.CF.GOAP.Influence;
 using System.Numerics;
 using Content.Shared.Actions;
 using Content.Shared.CF.Actions;
@@ -271,7 +271,7 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         List<CFFeatPrototype> feats)
     {
         var options = EnsureComp<CFCombatOptionsComponent>(mob);
-        EnsureComp<CFScentEmitterComponent>(mob);
+        EnsureComp<CFGOAPScentEmitterComponent>(mob);
         Grant(mob, "CFActLeap");
 
         if (_prototypes.Resolve(profile.CFBuild.Background, out var background) && background.BattleMedicine)

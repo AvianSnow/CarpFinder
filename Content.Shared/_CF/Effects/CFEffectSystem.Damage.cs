@@ -88,6 +88,8 @@ public sealed partial class CFEffectSystem
         {
             combat.CurrentHp = Math.Max(0, combat.CurrentHp - amount);
             Dirty(target, combat);
+            var damaged = new CFDamagedEvent(user, amount);
+            RaiseLocalEvent(target, ref damaged);
         }
 
         if (!isObject && combat.CurrentHp <= 0 && amount > 0)

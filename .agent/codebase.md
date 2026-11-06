@@ -38,7 +38,7 @@ Everything below is under `Content.Shared/_CF/`.
 | `Hazards/` | Traps: noticing, triggering, disabling | `CFHazardSystem` |
 | `Items/` | Item level, rarity, Bulk, encumbrance | `CFEncumbranceSystem` |
 | `Detection/` | Remaster Hide, Sneak, Seek and Create a Diversion. Each creature's view of a sneaker. The drawing is client-side. | `CFStealthSystem`, `CFStealthComponent` |
-| `NPC/` | GOAP goals, actions and personalities as prototypes. The logic is server-side in `Content.Server/_CF/NPC/`. | `CFGoapSystem`, `CFGoapPlanner` |
+| `GOAP/` | Advanced NPCs: facts, steps, and goals, actions and personalities as prototypes. The logic is server-side in `Content.Server/_CF/GOAP/`. See `goap.md`. | `CFGOAPSystem`, `CFGOAPPlanner` |
 | `Medicine/` | Healer's toolkit, Treat Wounds, Battle Medicine | `CFMedicineSystem` |
 | `Locks/` | Keys, Pick a Lock, Force Open, on top of the stock `Lock` | `CFLockSystem` |
 | `Outdoors/` | The outdoor map component, temperature rules, weather effects. The logic is server-side. | `CFEnvironmentRules`, `CFOutdoorsWorldSystem` |
@@ -56,7 +56,7 @@ Everything below is under `Content.Shared/_CF/`.
 | `Wallmount/` | Wall-only placement | `CFWallmount`, `CFWallRequired` |
 | `Temperature/`, `TileEditTool/`, `Wallpaper/`, `Time/`, `StatusIcon/` | Ported CP14 systems, the world clock, status icons | |
 
-Server: `Character/` (`CFCharacterSpawnSystem`, `CFExperienceSystem`, `CFGiveXpCommand`), `Companions/CFCompanionSystem`, `Shop/CFShopSystem`, `Spells/CFPrestidigitationSystem`, `Temperature/`, `Materials/`.
+Server: `Character/` (`CFCharacterSpawnSystem`, `CFExperienceSystem`, `CFGiveXpCommand`), `Companions/CFCompanionSystem`, `GOAP/` (see `goap.md`), `Shop/CFShopSystem`, `Spells/CFPrestidigitationSystem`, `Temperature/`, `Materials/`.
 
 Client: `Hud/` (the in-game bar and radial menu), `Character/` (sheet, spells tab, shop), `Combat/` (floating numbers, flanking icon), `Effects/` (area and target overlays, mode and volley menus), `Lobby/UI/` (character builder, see `lobby-overlay.md`), `UserInterface/Systems/Character/` (the character window overlay).
 
@@ -223,7 +223,7 @@ The character editor and character window are swapped with csproj `Compile Remov
 
 ## Prototype kinds
 
-`adventureSite`, `craftingRecipe`, `cfAbility`, `cfAbilitySkill`, `cfAncestry`, `cfBackground`, `cfClass`, `cfDamageType`, `cfFaction`, `cfFeat`, `cfHeritage`, `cfJobGroup`, `cfMaterial`, `cfPet`, `cfPetGear`, `cfPropertyRune`, `cfSpell`, `cfTrait`.
+`adventureSite`, `craftingRecipe`, `cfAbility`, `cfAbilitySkill`, `cfAncestry`, `cfBackground`, `cfClass`, `cfDamageType`, `cfFaction`, `cfFeat`, `cfGoapAction`, `cfGoapGoal`, `cfGoapProfile`, `encounter`, `goapTactics`, `cfHeritage`, `cfJobGroup`, `cfMaterial`, `cfPet`, `cfPetGear`, `cfPropertyRune`, `cfSpell`, `cfTrait`.
 
 Radial actions are entities in `Resources/Prototypes/_CF/Actions/activities.yml`, and each spell is an action entity in `Resources/Prototypes/_CF/Spells/{0,1,2,3}/`. Feats with `pendingAction: true` have data but no behaviour yet.
 
