@@ -1,3 +1,4 @@
+using Content.Shared.CF.Character.Grants;
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared.CF.Character;
@@ -80,6 +81,10 @@ public sealed partial class CFFeatPrototype : IPrototype
 
     [DataField]
     public CFFeatAction Action = CFFeatAction.Passive;
+
+    /// <summary>What this gives a character. See <see cref="CFGrant"/>.</summary>
+    [DataField]
+    public List<CFGrant> Grants = new();
 
     /// <summary>The feat grants an activity or attack the game cannot perform yet.</summary>
     [DataField]

@@ -10,3 +10,6 @@
     - "Fighter"
     - "Stance"
   action: Action
+  grants:
+    - !type:CFGrantAction
+      action: CFActPointBlank

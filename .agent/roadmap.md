@@ -28,22 +28,25 @@ Some class feature text is wrong. Divine Font says it grants slots, and no code 
 
 ### What blocks it
 
-1. **Effects are hard-coded.** Two `switch` statements in `CFCharacterSpawnSystem` hold all of it: 15 feats and 12 classes. That cannot stretch to 1,000 options.
-2. **Nowhere to store a subclass.** `CFCharacterBuildData` has no field for an Instinct, Racket, Muse, Doctrine, Patron, School, Order or Mystery, and the builder has no button. About a third of the level 1 class features need one.
-3. **Class features never run at level-up.** `LevelUp` hands over the lobby's feats, skill increases and boosts, but class features at levels 3 and 5 are still not applied.
-4. **The rules text is not in the repo.** The 481 placeholder feats and 140 placeholder features were imported with their text removed, so each needs reading on Archives of Nethys.
-5. **Saves are closed.** They know one trait, fear, through `IsFear` and `SavesVsFear`. Nothing can change a save's degree, which "a success becomes a critical success" needs. Strikes have `AdjustDefense`; saves have no such hook.
-6. **Bonuses always expire.** `CFBonusSystem.AddBonus` needs a duration, so a permanent or conditional bonus has no home.
+1. **Nowhere to store a subclass.** `CFCharacterBuildData` has no field for an Instinct, Racket, Muse, Doctrine, Patron, School, Order or Mystery, and the builder has no button. About a third of the level 1 class features need one.
+2. **The rules text is not in the repo.** The 481 placeholder feats and 140 placeholder features were imported with their text removed, so each needs reading on Archives of Nethys.
 
 ### 1a. One pipeline for what an option grants
 
-- [ ] `CFGrant`: an abstract data class like `CFEffect`, written in YAML as `!type:CFGrantBonus` and so on.
-- [ ] A `grants` list on `cfFeat`, `CFClassFeature`, `cfHeritage`, `cfAncestry`, `cfBackground` and the class choices from 1c.
-- [ ] `CFCharacterFeatureSystem.Apply(mob, grants, source)`, called at spawn and on level-up.
-- [ ] Move both `switch` statements into YAML. The flags on `CFCombatOptionsComponent` stay for now, set by `!type:CFGrantOption`.
-- [ ] Permanent bonuses in `CFBonusSystem`, and bonuses that only count against a trait. This replaces `SavesVsFear`.
-- [ ] A hook that lets a grant change a save's degree, matching `AdjustDefense`.
-- [ ] Traits on `CFEffectArgs`, read from the source, so any check can ask what it is rolling against.
+Built on 6 November 2026, except where marked. Tests: `CFGrantTest`. What changed and why is in `roadmapold.md`.
+
+- [x] `CFGrant`: an abstract data class like `CFEffect`, written in YAML as `!type:CFGrantBonus` and so on.
+- [x] A `grants` list on `cfFeat`, `CFClassFeature`, `cfHeritage`, `cfAncestry` and `cfBackground`.
+- [ ] A `grants` list on the class choices, when 1c adds them.
+- [x] `CFCharacterFeatureSystem.Apply(mob, grants, source)`, called at spawn and on level-up.
+- [x] Move both `switch` statements into YAML. The flags on `CFCombatOptionsComponent` stay for now, set by `!type:CFGrantOption`.
+- [x] Permanent bonuses in `CFBonusSystem`, and bonuses that only count against a trait. This replaces `SavesVsFear`.
+- [x] A hook that lets a grant change a save's degree, matching `AdjustDefense`: `CFBonusSystem.UpgradeSave`, called from `CFConditionSystem.RollDefense`.
+- [x] Traits on `CFEffectArgs`, read from the source, so any check can ask what it is rolling against.
+- [ ] The character sheet and HUD show ranks but no bonuses, because `CFBonusesComponent` is server-only. A lasting +1 to a save or AC works in play and is not on the sheet.
+- [ ] A bonus against a trait only counts on saves and Perception. Attacks and AC have no source traits to read.
+- [ ] Nothing checks the ids in `CFGrantProficiency`, so a typo does nothing. `CFFeatureCoverageTest` in 1g should.
+- [ ] Low-light vision is a dimmer darkvision overlay, chosen by eye and not seen in a real client.
 
 | Grant | What it does | First uses |
 |---|---|---|
@@ -53,11 +56,11 @@ Some class feature text is wrong. Divine Font says it grants slots, and no code 
 | `CFGrantResistance` | Fixed, or half level | Forge Dwarf, Arctic Elf, Strong-Blooded Dwarf |
 | `CFGrantWeaponFamiliarity` | Treats listed weapons as simpler | About 22 ancestry feats |
 | `CFGrantSense` | Low-light vision, scent, imprecise senses | Heritages, ancestry feats |
-| `CFGrantMovement` | Climb speeds. Swim and fly stay `TBA` | 6 ancestry feats |
-| `CFGrantSpell` | An innate spell, a cantrip, or a focus spell | Seer Elf, Adapted Cantrip, every focus spell |
+| `CFGrantMovement` | `TBA`, not built. Climb, swim and fly all wait | 6 ancestry feats |
+| `CFGrantSpell` | An innate spell or a cantrip. A ranked spell is at will until 1f adds daily uses and focus | Seer Elf, Adapted Cantrip, every focus spell |
 | `CFGrantItem` | Starting gear | Clan Pistol, Alchemist's potions |
 | `CFGrantAction` | Adds an action to the wheel | 236 action and 30 free action feats |
-| `CFGrantReaction` | A trigger and what it does | 57 reaction feats |
+| `CFGrantReaction` | A trigger and what it does. Not built: it needs the trigger list from 1b | 57 reaction feats |
 | `CFGrantOption` | Sets a `CFCombatOptionsComponent` flag | Everything already coded |
 
 ### 1b. The shapes actions come in
@@ -83,7 +86,7 @@ All of this is picked in the lobby and stored on `CFCharacterBuildData`, the way
 
 - [x] Builder slots for levels 2 to 5: skill increases at 3 and 5, ability boosts at 5, a general feat at 3, and skill feats at 2 and 4.
 - [x] The same choices copied to `CFExperienceComponent` at spawn, checked again there because they come from a client, and applied by `LevelUp`.
-- [ ] Run class features from `LevelUp` when their level is reached.
+- [x] Run class features from `LevelUp` when their level is reached.
 - [ ] The feat a background names, at level 1.
 - [ ] Extra slots for classes that get more: a Rogue gets a skill feat every level and a skill increase from level 2.
 - [ ] Changing a skill pick can leave a later feat the build no longer qualifies for. It is dropped at spawn with no warning, so the builder should clear it or say so.
@@ -93,7 +96,7 @@ All of this is picked in the lobby and stored on `CFCharacterBuildData`, the way
 
 `Feats/General/feats.yml` holds 131 feats through level 4 from Player Core, Player Core 2 and GM Core, with the site's one line summaries. `.agent/port-scripts/general_feats.py` rewrites that file from Archives of Nethys, so put fixes in the script. Of 74 feats backgrounds name, 65 match by name.
 
-- [ ] Grants for them, in the waves. Battle Medicine moves from a background flag to a feat.
+- [ ] Grants for them, in the waves. Battle Medicine moves from a grant on 8 backgrounds to a feat.
 - [ ] Prerequisites beyond one skill rank are text, not enforced. 90 feats have a rank the game checks.
 - [ ] The 9 background feats with no match: spelling (`Lie To Me`), two feats in one line, or from other books.
 
@@ -123,7 +126,7 @@ Do 1a to 1d first, then work through these. For each entry: read it on Archives 
 Witch familiars, Druid animal companions and Summoner eidolons all lean on `cfPet`, and "Companions have no inventory" under Step 4 gets in their way.
 
 - [x] Feats with no effect show `(TBA)` in the builder's lists.
-- [ ] Mark unfinished heritages and class features too. Feats go by `pendingAction` or their placeholder text until `grants` exists.
+- [ ] Mark unfinished heritages and class features too. A feat with `grants` is finished unless it sets `pendingAction`. One without goes by its placeholder text.
 - [ ] `CFFeatureCoverageTest`: fails if a finished class has a placeholder, and if a `grants` entry cannot be read.
 - [ ] Kineticist is not included, but one feat file for it exists. Remove it.
 
@@ -132,7 +135,7 @@ Witch familiars, Druid animal companions and Summoner eidolons all lean on `cfPe
 - **Choices are made in the lobby, up to level 5.** A player picks every feat, skill and boost through level 5 before they play. The server records them, spawns the character at level 1, and hands each level's choices over as XP earns that level. Nothing is chosen in play.
 - **Unfinished options are marked in the builder**, not hidden, so a player can see what is coming.
 - **Exploration and downtime options run on the world clock** where that works. Otherwise they keep their flavour text with the word `TBA` on its own, so `TBA` can be searched for later.
-- **Swimming and flying are `TBA`.** Swimming will be ported from another fork, because SS14 has water entities. Climb speeds act on `CFZLevelClimb`.
+- **Swimming, flying and climbing are `TBA`.** Swimming will be ported from another fork, because SS14 has water entities. Climb speeds are not built, and `CFZLevelClimb` always rolls.
 - **Languages matter**, for roleplay: talk a goblin out of a fight in its own tongue. See "Languages" below.
 
 ### Languages

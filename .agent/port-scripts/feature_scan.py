@@ -1,6 +1,6 @@
 """How much of the character options really work. Run from the repo root: python3 .agent/port-scripts/feature_scan.py
 
-A feat works if CFCharacterSpawnSystem names it, or if it only needs data the game already applies (skills, lores,
+A feat works if it has grants, or if it only needs data the game already applies (skills, lores,
 Speed, a natural attack). Needs PyYAML. Update the numbers in roadmap.md from what this prints.
 """
 import glob
@@ -34,9 +34,6 @@ for path in glob.glob('Resources/Locale/en-US/_CF/*.ftl'):
                 key, value = line.rstrip('\n').split(' = ', 1)
                 strings[key] = value
 
-with open('Content.Server/_CF/Character/CFCharacterSpawnSystem.cs', encoding='utf-8') as f:
-    coded = set(re.findall(r'case "(CF\w+)"', f.read()))
-
 totals = Counter()
 owners = defaultdict(lambda: [0, 0])
 for feat in docs['cfFeat']:
@@ -44,7 +41,7 @@ for feat in docs['cfFeat']:
     has_data = any(feat.get(k) for k in ('trainedSkills', 'lores', 'speedBonus', 'naturalDie'))
     text = strings.get(feat.get('description'), '')
     placeholder = 'implemented later' in text or 'TBA' in text
-    state = 'works' if feat['id'] in coded or (has_data and not placeholder) else 'partly' if has_data else 'nothing'
+    state = 'works' if feat.get('grants') or (has_data and not placeholder) else 'partly' if has_data else 'nothing'
     totals[kind, state] += 1
     owner = owners[kind, str(feat.get('class') or feat.get('ancestry'))]
     owner[1] += 1

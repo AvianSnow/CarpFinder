@@ -11,3 +11,6 @@
     - "Fighter"
     - "Flourish"
   action: Action
+  grants:
+    - !type:CFGrantAction
+      action: CFActSuddenCharge

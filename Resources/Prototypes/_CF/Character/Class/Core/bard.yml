@@ -44,6 +44,11 @@
     - level: 1
       name: "Composition Spells"
       description: "Inspire Courage is on your action wheel."
+      grants:
+        - !type:CFGrantOption
+          option: Anthem
+        - !type:CFGrantAction
+          action: CFActAnthem
     - level: 1
       name: "Muses"
       description: "This feature will be implemented later."

@@ -9,3 +9,6 @@
   traits:
     - "Fighter"
   action: Action
+  grants:
+    - !type:CFGrantOption
+      option: DoubleSlice

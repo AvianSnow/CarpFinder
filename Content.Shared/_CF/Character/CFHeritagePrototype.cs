@@ -1,4 +1,5 @@
 using System.Linq;
+using Content.Shared.CF.Character.Grants;
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared.CF.Character;
@@ -47,6 +48,10 @@ public sealed partial class CFHeritagePrototype : IPrototype
     /// </summary>
     [DataField]
     public bool UpgradeVision;
+
+    /// <summary>What this gives a character. See <see cref="CFGrant"/>.</summary>
+    [DataField]
+    public List<CFGrant> Grants = new();
 
     public bool Fits(string? ancestryId)
     {

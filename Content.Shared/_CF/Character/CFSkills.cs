@@ -256,6 +256,22 @@ public static class CFSkills
             : RankFromList(cls.Proficiencies.SavingThrows, saveName);
     }
 
+    /// <summary>A class's rank with a weapon category, by its name in <c>attacks:</c>.</summary>
+    public static CFProficiencyRank GetAttackRank(CFClassPrototype? cls, string proficiency)
+    {
+        return cls == null
+            ? CFProficiencyRank.Untrained
+            : RankFromList(cls.Proficiencies.Attacks, proficiency);
+    }
+
+    /// <summary>A class's rank with armor or unarmored defense, by its name in <c>defenses:</c>.</summary>
+    public static CFProficiencyRank GetDefenseRank(CFClassPrototype? cls, string proficiency)
+    {
+        return cls == null
+            ? CFProficiencyRank.Untrained
+            : RankFromList(cls.Proficiencies.Defenses, proficiency);
+    }
+
     public static CFProficiencyRank GetPerceptionRank(CFClassPrototype? cls)
     {
         return cls == null

@@ -9,3 +9,6 @@
   traits:
     - "Rogue"
   action: Action
+  grants:
+    - !type:CFGrantOption
+      option: TwinFeint

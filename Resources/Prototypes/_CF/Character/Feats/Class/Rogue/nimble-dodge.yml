@@ -9,3 +9,6 @@
   traits:
     - "Rogue"
   action: Reaction
+  grants:
+    - !type:CFGrantOption
+      option: NimbleDodge

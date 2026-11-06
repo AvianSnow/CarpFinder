@@ -722,3 +722,16 @@ The decision log was also lost in the move between computers, because `.gitignor
 - `ChatSystem` wraps each line twice and picks per listener. Speech and all three whisper ranges do this. The speech bubble follows, because it comes from the same message.
 - Garbling hashes each word, so a word always sounds the same and a listener can start to recognise it. Common is not tagged in chat; other languages show as `(Goblin) hello` to those who know them.
 - Picks come from a client, so `EnsureValid` trims them and `CFLanguageRules.Known` rechecks rarity and count at spawn.
+
+## Grants (6 November 2026, Step 1a)
+
+- A character option now says what it gives in YAML: a `grants` list on `cfFeat`, `CFClassFeature`, `cfHeritage`, `cfAncestry` and `cfBackground`. `CFCharacterFeatureSystem` runs each list once, keyed by a source name, so gaining an option twice does nothing the second time.
+- Both `switch` statements are gone from `CFCharacterSpawnSystem`. Classes went onto the level 1 feature that names the ability. Bard's anthem sits on Composition Spells, and the Alchemist's potions on Alchemy. `battleMedicine: true` on 8 backgrounds became a grant.
+- `CFCombatant.ProficiencyRanks` holds ranks raised in play. `CFDefense` reads the better of that and the class's rank.
+- Rolls used to reduce a rank to trained or not, so an Expert rolled as Trained. Saves, Strikes and AC now use the real rank. **This changed numbers:** a Fighter hits at +2 from level 1 and has +2 Fortitude and Reflex, and other classes with expert ranks gain the same. The sheet already showed the real rank, so it and the rolls now agree.
+- `CFBonusStat.SkillChecks` was written and never read, so skill bonuses and the penalty from a condition did nothing. Every skill check now reads it through `CFConditionSystem.SkillBonus`.
+- There were two save rolls. `CFEffectSystem.RollDefense` is gone and everything uses `CFConditionSystem.RollDefense`. Spell saves now take stupefied, and a Sanctuary save takes bonuses.
+- Demoralize resists as Emotion, Fear and Mental, and Feint as Mental, so bonuses against those raise the DC.
+- A timed resistance used to merge into a lasting one and end it, and a timed bonus could merge into an equipment bonus. Lasting entries are now left out of that merge.
+- Stabilize by Medicine counted neither skill increases nor bonuses. It uses `CFDefense.SkillModifier` now.
+- `CFGrantMovement` was dropped on request: climbing is `TBA`.

@@ -35,6 +35,9 @@
     - level: 1
       name: "Hunt Prey"
       description: "Hunt Prey is on your action wheel. Your first hit each turn against that creature deals 1d8 precision damage."
+      grants:
+        - !type:CFGrantOption
+          pointMark: Prey
     - level: 1
       name: "Hunter's Edge"
       description: "Precision. The extra damage is part of Hunt Prey."

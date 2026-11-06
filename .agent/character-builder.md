@@ -29,6 +29,7 @@
   - `CFAbilityScoreComponent` (modifiers)
   - `CFCombatantComponent` (level, AC, HP, class/background ids, trained skill picks)
   - Movement scaled from ancestry Speed (25 feet is the usual human pace). Darkvision adds night vision.
+  - The `grants` of the ancestry, heritage, background, level 1 class features and level 1 feats. See `Content.Shared/_CF/Character/Grants/CFGrants.cs` for what a grant can do. A rank from a grant only counts when it beats the class's own.
 
 ## In-game character sheet
 

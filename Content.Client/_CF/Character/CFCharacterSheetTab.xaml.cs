@@ -1,6 +1,7 @@
 using System.Linq;
 using Content.Client.Chat.Managers;
 using Content.Shared.CF.Character;
+using Content.Shared.CF.Checks;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Preferences;
 using Content.Shared.Chat;
@@ -99,9 +100,9 @@ public sealed partial class CFCharacterSheetTab : BoxContainer
             TraitsLabel.Text = "—";
         }
 
-        var fortRank = CFSkills.GetSaveRank(cls, "Fortitude");
-        var refRank = CFSkills.GetSaveRank(cls, "Reflex");
-        var willRank = CFSkills.GetSaveRank(cls, "Will");
+        var fortRank = CFDefense.SaveRank(_prototypes, combatant, "Fortitude");
+        var refRank = CFDefense.SaveRank(_prototypes, combatant, "Reflex");
+        var willRank = CFDefense.SaveRank(_prototypes, combatant, "Will");
         _fortMod = CFSkills.SkillModifier(abilities.AbilityModifiers, CFAbility.Constitution, combatant.Level, fortRank);
         _refMod = CFSkills.SkillModifier(abilities.AbilityModifiers, CFAbility.Dexterity, combatant.Level, refRank);
         _willMod = CFSkills.SkillModifier(abilities.AbilityModifiers, CFAbility.Wisdom, combatant.Level, willRank);
@@ -117,9 +118,7 @@ public sealed partial class CFCharacterSheetTab : BoxContainer
             if (!_prototypes.TryIndex(skillId, out CFAbilitySkillPrototype? skill))
                 continue;
 
-            var rank = CFSkills.RaiseRank(
-                CFSkills.GetSkillRank(cls, background, skillId, combatant.TrainedSkills),
-                combatant.SkillIncreases.Count(id => id == skillId));
+            var rank = CFDefense.SkillRank(_prototypes, combatant, skillId);
             var mod = CFSkills.SkillModifier(abilities.AbilityModifiers, skill.Ability, combatant.Level, rank);
             var skillName = Loc.GetString(skill.Name);
             if (skillId == "Lore" && combatant.LoreNames.Count > 0)

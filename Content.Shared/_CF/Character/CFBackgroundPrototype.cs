@@ -1,3 +1,4 @@
+using Content.Shared.CF.Character.Grants;
 using Content.Shared.CF.Preferences;
 using Robust.Shared.Prototypes;
 
@@ -27,7 +28,7 @@ public sealed partial class CFBackgroundPrototype : IPrototype
     [DataField]
     public CFRarity Rarity = CFRarity.Common;
 
-    /// <summary>The one skill feat that does something so far. Others are only named in the description.</summary>
+    /// <summary>What this gives a character. See <see cref="CFGrant"/>.</summary>
     [DataField]
-    public bool BattleMedicine;
+    public List<CFGrant> Grants = new();
 }

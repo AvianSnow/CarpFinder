@@ -10,3 +10,6 @@
     - "Fighter"
     - "Guardian"
   action: Reaction
+  grants:
+    - !type:CFGrantOption
+      option: ReactiveShield

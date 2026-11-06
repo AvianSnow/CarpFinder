@@ -155,6 +155,33 @@ public static class CFReactions
     }
 }
 
+/// <summary>The flags on <see cref="CFCombatOptionsComponent"/> that a <c>CFGrantOption</c> can set.</summary>
+public enum CFCombatOption : byte
+{
+    SneakAttack,
+    CanRage,
+    ReactiveStrike,
+    ShieldBlock,
+    Flurry,
+    PowerfulFist,
+    PanacheStyle,
+    Spellstrike,
+    Devise,
+    Exploit,
+    Champion,
+    Anthem,
+    BattleMedicine,
+    NimbleDodge,
+    ReactiveShield,
+    YoureNext,
+    TumbleBehind,
+    SnaggingStrike,
+    ExactingStrike,
+    DoubleSlice,
+    TwinFeint,
+    ViciousSwing,
+}
+
 public enum CFPointMark : byte
 {
     None,

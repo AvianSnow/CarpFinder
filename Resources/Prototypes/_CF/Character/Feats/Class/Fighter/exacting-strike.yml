@@ -10,3 +10,6 @@
     - "Fighter"
     - "Press"
   action: Action
+  grants:
+    - !type:CFGrantOption
+      option: ExactingStrike

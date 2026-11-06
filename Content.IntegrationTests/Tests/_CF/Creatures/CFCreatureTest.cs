@@ -84,7 +84,7 @@ public sealed class CFCreatureTest : GameTest
                 Assert.That(CFDefense.SaveModifier(prototypes, combat, abilities, CFDefenseType.Reflex), Is.EqualTo(reflex));
                 Assert.That(CFDefense.SaveModifier(prototypes, combat, abilities, CFDefenseType.Will), Is.EqualTo(will));
                 Assert.That(CFDefense.PerceptionModifier(prototypes, combat, abilities), Is.EqualTo(perception));
-                Assert.That(CFMelee.AttackBonus(abilities, combat, stats, true), Is.EqualTo(attack));
+                Assert.That(CFMelee.AttackBonus(abilities, combat, stats, CFProficiencyRank.Trained), Is.EqualTo(attack));
                 Assert.That(CFMelee.DamageBonus(abilities, stats, combat), Is.EqualTo(damage));
                 Assert.That(stats.DamageDice, Is.EqualTo(dice));
                 Assert.That(stats.DamageDie, Is.EqualTo(die));

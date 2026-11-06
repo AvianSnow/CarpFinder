@@ -28,7 +28,7 @@ Everything below is under `Content.Shared/_CF/`.
 | `Actions/` | Action stamina, multiple attack penalty, radial activities, Shove, Disarm, Grapple, Escape, marks, standing | `CFActionPoolSystem`, `CFActivitySystem`, `CFManeuverSystem` |
 | `Afflictions/` | Staged afflictions such as Alcohol. Poisons and diseases can use the same pieces. | `CFAfflictionSystem` |
 | `Alchemy/` | Drinkable and feedable potions | `CFAlchemicalItemSystem` |
-| `Character/` | Prototypes for ancestry, class, feat, heritage, background, spell; skill and attribute math | `CFAttributeMath`, `CFSkills` |
+| `Character/` | Prototypes for ancestry, class, feat, heritage, background, spell; skill and attribute math; `Grants/`, what an option gives a character | `CFAttributeMath`, `CFSkills`, `CFCharacterFeatureSystem` |
 | `Checks/` | Degrees of success, defenses, casting DCs | `CFDegrees`, `CFDefense`, `CFCasting` |
 | `Combat/` | Strikes, conditions, dying, flanking, armor, shields, weapons, runes | `CFStrikeSystem`, `CFConditionSystem` |
 | `Companions/` | Pet data and math. The AI is server-side. | `CFPetMath` |
@@ -65,8 +65,8 @@ Client: `Hud/` (the in-game bar and radial menu), `Character/` (sheet, spells ta
 
 1. The lobby builder (`Content.Client/_CF/Lobby/UI/`) writes to `HumanoidCharacterProfile.CFBuild`.
 2. `CFCharacterSpawnSystem.OnPlayerSpawnComplete` runs `ApplyBuild`: abilities, `CFCombatant` (level, AC, HP, proficiencies), speed, spellbook.
-3. `GrantActivities` grants the basic skill actions, then class and feat actions. `CFCombatOptionsComponent` holds the class and feat flags that Strikes read (`SneakAttack`, `ReactiveStrike`, `ReactiveShield`, ...).
-4. Later feats wait on `CFExperienceComponent` and apply on level up through `ApplyFeat`.
+3. `ApplyFeatures` gives what everyone has, then runs the `grants` of the ancestry, heritage, background, level 1 class features and feats through `CFCharacterFeatureSystem`. `CFCombatOptionsComponent` holds the class and feat flags that Strikes read (`SneakAttack`, `ReactiveStrike`, `ReactiveShield`, ...).
+4. Later feats wait on `CFExperienceComponent` and apply on level up through `ApplyFeat`. `LevelUp` also runs the class features that level reaches.
 
 Details: `character-builder.md`.
 

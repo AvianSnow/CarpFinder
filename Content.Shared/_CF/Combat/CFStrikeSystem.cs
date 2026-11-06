@@ -417,8 +417,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
         float distanceFeet,
         bool ignoreVolley)
     {
-        var trained = IsWeaponTrained(combat, weapon.Proficiency);
-        var bonus = CFMelee.AttackBonus(abilities, combat, weapon, trained, distanceFeet, ignoreVolley);
+        var bonus = CFMelee.AttackBonus(abilities, combat, weapon, _weapons.Rank(combat, weapon), distanceFeet, ignoreVolley);
         bonus -= _conditions.Frightened(user);
         bonus += _conditions.ProneAttackPenalty(user);
         if (weapon.Ranged)
@@ -584,14 +583,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
 
         if (!isObject && TryComp(target, out CFConditionComponent? wardCond) && wardCond.Sanctuary)
         {
-            var will = CFDefense.SaveModifier(
-                _prototypes,
-                attackerCombat,
-                attackerAbilities,
-                CFDefenseType.Will,
-                0,
-                _conditions.Frightened(user));
-            var save = CFDefense.Roll(_random, will, wardCond.SanctuaryDc);
+            var save = _conditions.RollDefense(user, CFDefenseType.Will, wardCond.SanctuaryDc, out _);
             if (save is CFDegree.Failure or CFDegree.CriticalFailure)
             {
                 _popup.PopupEntity(Loc.GetString("cf-cond-sanctuary-held"), user, user);
@@ -955,17 +947,6 @@ public sealed partial class CFStrikeSystem : EntitySystem
         var b = _transform.GetWorldPosition(to);
         var tiles = Vector2.Distance(a, b);
         return CFMelee.TilesToFeet(tiles);
-    }
-
-    private bool IsWeaponTrained(CFCombatantComponent attackerCombat, string proficiency)
-    {
-        if (attackerCombat.ClassId != null
-            && _prototypes.TryIndex(attackerCombat.ClassId, out CFClassPrototype? cls))
-        {
-            return CFAttributeMath.IsWeaponTrained(cls, proficiency);
-        }
-
-        return true;
     }
 
     private void RaiseDamaged(EntityUid target, EntityUid source, int amount)

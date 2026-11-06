@@ -15,3 +15,6 @@
   prerequisites:
     - "trained in Intimidation"
   action: Reaction
+  grants:
+    - !type:CFGrantOption
+      option: YoureNext

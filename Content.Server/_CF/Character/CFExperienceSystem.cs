@@ -16,6 +16,7 @@ public sealed partial class CFExperienceSystem : EntitySystem
     [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private CFCharacterSpawnSystem _spawn = default!;
+    [Dependency] private CFCharacterFeatureSystem _features = default!;
 
     public IEnumerable<string> Factions()
     {
@@ -172,8 +173,8 @@ public sealed partial class CFExperienceSystem : EntitySystem
         combat.Level++;
         var constitutionRaised = ApplyLevelChoices(mob, combat, xp);
         var gain = 1;
-        if (combat.ClassId != null
-            && _prototypes.TryIndex(combat.ClassId, out CFClassPrototype? cls))
+        CFClassPrototype? cls = null;
+        if (combat.ClassId != null && _prototypes.TryIndex(combat.ClassId, out cls))
         {
             var con = TryComp(mob, out CFAbilityScoreComponent? scores)
                 ? scores.GetModifier(CFAbility.Constitution)
@@ -194,6 +195,9 @@ public sealed partial class CFExperienceSystem : EntitySystem
             if (featId != null && _prototypes.TryIndex(featId, out CFFeatPrototype? feat))
                 _spawn.ApplyFeat(mob, feat);
         }
+
+        if (cls != null)
+            _features.ApplyClassFeatures(mob, cls, combat.Level);
 
         _spawn.RefreshArmorClass(mob);
         _popup.PopupEntity(Loc.GetString("cf-xp-level", ("level", combat.Level)), mob, mob);

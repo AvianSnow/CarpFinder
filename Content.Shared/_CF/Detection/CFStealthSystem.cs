@@ -116,9 +116,25 @@ public sealed partial class CFStealthSystem : EntitySystem
     /// <summary>How <paramref name="observer"/> sees this creature.</summary>
     public CFDetection Detection(EntityUid creature, EntityUid observer)
     {
-        return TryComp(creature, out CFStealthComponent? stealth) && stealth.Active
-            ? stealth.Detection.GetValueOrDefault(observer)
-            : CFDetection.Observed;
+        if (!TryComp(creature, out CFStealthComponent? stealth) || !stealth.Active)
+            return CFDetection.Observed;
+
+        var detection = stealth.Detection.GetValueOrDefault(observer);
+        return detection == CFDetection.Undetected && SensesNearby(observer, creature)
+            ? CFDetection.Hidden
+            : detection;
+    }
+
+    /// <summary>An imprecise sense, such as scent, finds the square of a creature it cannot see.</summary>
+    private bool SensesNearby(EntityUid observer, EntityUid creature)
+    {
+        if (!TryComp(observer, out CFSensesComponent? senses) || senses.ImpreciseFeet <= 0)
+            return false;
+
+        var from = _transform.GetMapCoordinates(observer);
+        var to = _transform.GetMapCoordinates(creature);
+        return from.MapId == to.MapId
+               && (from.Position - to.Position).Length() * CFAreaGrid.FeetPerTile <= senses.ImpreciseFeet;
     }
 
     public bool IsUnseenBy(EntityUid creature, EntityUid observer)

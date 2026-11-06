@@ -622,9 +622,10 @@ public sealed partial class HumanoidProfileEditor
         var name = Loc.GetString(feat.Name);
         var text = Loc.GetString(feat.Description);
         var unfinished = feat.PendingAction
-                         || text.Contains("implemented later")
-                         || text.Contains("TBA")
-                         || text.Contains("ot applied in play");
+                         || feat.Grants.Count == 0
+                            && (text.Contains("implemented later")
+                                || text.Contains("TBA")
+                                || text.Contains("ot applied in play"));
         return unfinished ? Loc.GetString("cf-character-builder-feat-tba", ("name", name)) : name;
     }
 

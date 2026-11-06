@@ -119,10 +119,13 @@ Class examples: `CFMySystem`, `CFMyServerSystem`, `CFMyClientSystem`, `CFExample
 |---|---|
 | Degree of success for any check | `CFDegrees.DegreeOfSuccess(d20, modifier, dc)` → `CFDegree` (`Content.Shared.CF.Checks`) |
 | Roll a check | `CFDefense.Roll(random, modifier, dc)` |
-| Save / Perception / skill modifier | `CFDefense.SaveModifier`, `PerceptionModifier`, `SkillModifier` with `CFDefenseType` |
+| Save / Perception / skill modifier | `CFDefense.SaveModifier`, `PerceptionModifier`, `SkillModifier` with `CFDefenseType`. Add `CFConditionSystem.SkillBonus` to a skill modifier |
+| Roll a save | `CFConditionSystem.RollDefense`, with the source's traits. Do not roll one with `CFDefense.Roll`, or bonuses against a trait and save upgrades are skipped |
+| Proficiency rank | `CFDefense.SaveRank`, `PerceptionRank`, `AttackRank`, `ArmorRank`, `SkillRank`, `ClassDcRank`, `SpellRank`. `CFWeaponSystem.Rank` for a Strike. Never read a class's lists alone: feats raise ranks too |
+| What a feat, class feature, heritage, ancestry or background gives | A `grants` list of `CFGrant` entries (`Content.Shared/_CF/Character/Grants/CFGrants.cs`), such as `!type:CFGrantBonus`. Do not add a `switch` on an id. `CFCharacterFeatureSystem` runs them |
 | Spell / class / fixed DC and attack bonus | `CFCasting.Spellcasting`, `ClassDc`, `Fixed` (`Content.Shared.CF.Checks`). Cantrip rank: `CFCasting.CantripRank(level)` |
 | Anything that targets, rolls a check, and applies effects (spells, bombs, traps, auras) | Put `CFTargeting`, `CFAreaEffect`, `CFCheck`, `CFDegreeEffects` (and `CFProjectileDelivery`, `CFModeChoice`, `CFHeighten`) on the source, then call `CFEffectSystem.DeliverToTarget` / `ResolveArea` / `ResolveTarget` (`Content.Shared.CF.Effects`). Do not write a new resolver. |
-| Timed bonuses, fortune, action caps, resistances, persistent damage | `CFBonusSystem` (`AddBonus`, `Total`, `TryConsumeFortune`, `SetActionCap`, `AddResistance`, `ModifyDamage`, `AddPersistent`) |
+| Bonuses, fortune, action caps, resistances, persistent damage | `CFBonusSystem` (`AddBonus`, `AddPermanentBonus`, `Total`, `TryConsumeFortune`, `SetActionCap`, `AddResistance`, `AddPermanentResistance`, `ModifyDamage`, `AddPersistent`). A bonus can name a `trait` it counts against, or a `skill` |
 | Give a condition | `CFConditionSystem.ApplyCondition(target, CFConditionKind, value, seconds, source, dc)` |
 | Weapon stats for a Strike | `CFWeaponSystem.TryStats(weapon)` → `CFStrikeWeaponStats`; traits through `CFWeaponTraits` (never add weapon booleans: give the `cfTrait` a `rule`) |
 | Worn armor, check penalty, Speed penalty, AC refresh | `CFArmorSystem` (`TryGetWornArmor`, `CheckPenalty`, `SpeedPenalty`, `RefreshArmorClass`) |

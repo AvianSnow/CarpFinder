@@ -34,6 +34,11 @@
     - level: 1
       name: "Devise a Stratagem"
       description: "Devise a Stratagem is on your action wheel. Your next Strike against that creature uses the stored d20."
+      grants:
+        - !type:CFGrantOption
+          option: Devise
+        - !type:CFGrantOption
+          pointMark: Stratagem
     - level: 1
       name: "Methodology"
       description: "This feature will be implemented later."

@@ -157,9 +157,9 @@ public static class CFAttributeMath
         return Math.Max(1, hp);
     }
 
-    public static int ComputeUnarmoredAc(IReadOnlyDictionary<CFAbility, int> mods, int level, bool trainedUnarmored)
+    public static int ComputeUnarmoredAc(IReadOnlyDictionary<CFAbility, int> mods, int level, CFProficiencyRank rank)
     {
-        return ComputeAc(mods, level, trainedUnarmored, itemBonus: 0, dexCap: null);
+        return ComputeAc(mods, level, rank, itemBonus: 0, dexCap: null);
     }
 
     /// <summary>
@@ -168,11 +168,11 @@ public static class CFAttributeMath
     public static int ComputeAc(
         IReadOnlyDictionary<CFAbility, int> mods,
         int level,
-        bool trained,
+        CFProficiencyRank rank,
         int itemBonus,
         int? dexCap)
     {
-        var proficiency = trained ? level + TrainedProficiencyBonus : 0;
+        var proficiency = CFSkills.ProficiencyBonus(level, rank);
         var dex = mods[CFAbility.Dexterity];
         if (dexCap is { } cap)
             dex = Math.Min(dex, cap);
@@ -180,26 +180,13 @@ public static class CFAttributeMath
         return 10 + dex + proficiency + itemBonus;
     }
 
-    public static bool IsArmorTrained(CFClassPrototype? cls, string proficiency)
-    {
-        if (cls == null)
-            return false;
-
-        var defenses = cls.Proficiencies.Defenses;
-        return defenses.Trained.Contains(proficiency)
-               || defenses.Expert.Contains(proficiency)
-               || defenses.Master.Contains(proficiency)
-               || defenses.Legendary.Contains(proficiency);
-    }
-
     public static int ComputeSave(
         IReadOnlyDictionary<CFAbility, int> mods,
         CFAbility ability,
         int level,
-        bool trained)
+        CFProficiencyRank rank)
     {
-        var proficiency = trained ? level + TrainedProficiencyBonus : 0;
-        return mods[ability] + proficiency;
+        return mods[ability] + CFSkills.ProficiencyBonus(level, rank);
     }
 
     public static bool IsSaveTrained(CFClassPrototype? cls, string saveName)
@@ -211,30 +198,6 @@ public static class CFAttributeMath
                || cls.Proficiencies.SavingThrows.Expert.Contains(saveName)
                || cls.Proficiencies.SavingThrows.Master.Contains(saveName)
                || cls.Proficiencies.SavingThrows.Legendary.Contains(saveName);
-    }
-
-    public static bool IsUnarmoredTrained(CFClassPrototype? cls)
-    {
-        if (cls == null)
-            return false;
-
-        var defenses = cls.Proficiencies.Defenses;
-        return defenses.Trained.Contains("Unarmored")
-               || defenses.Expert.Contains("Unarmored")
-               || defenses.Master.Contains("Unarmored")
-               || defenses.Legendary.Contains("Unarmored");
-    }
-
-    public static bool IsWeaponTrained(CFClassPrototype? cls, string proficiency)
-    {
-        if (cls == null)
-            return false;
-
-        var attacks = cls.Proficiencies.Attacks;
-        return attacks.Trained.Contains(proficiency)
-               || attacks.Expert.Contains(proficiency)
-               || attacks.Master.Contains(proficiency)
-               || attacks.Legendary.Contains(proficiency);
     }
 
     public static int ProficiencyBonus(int level, bool trained)
@@ -251,16 +214,15 @@ public static class CFAttributeMath
             prototypes.TryIndex(build.Class.Value, out cls);
 
         var level = Math.Max(1, build.Level);
-        var trainedUnarmored = IsUnarmoredTrained(cls);
 
         return new CFCharacterSheet
         {
             Modifiers = mods,
             MaxHp = ComputeMaxHp(prototypes, profile.Species, build, mods),
-            ArmorClass = ComputeUnarmoredAc(mods, level, trainedUnarmored),
-            Fortitude = ComputeSave(mods, CFAbility.Constitution, level, IsSaveTrained(cls, "Fortitude")),
-            Reflex = ComputeSave(mods, CFAbility.Dexterity, level, IsSaveTrained(cls, "Reflex")),
-            Will = ComputeSave(mods, CFAbility.Wisdom, level, IsSaveTrained(cls, "Will")),
+            ArmorClass = ComputeUnarmoredAc(mods, level, CFSkills.GetDefenseRank(cls, "Unarmored")),
+            Fortitude = ComputeSave(mods, CFAbility.Constitution, level, CFSkills.GetSaveRank(cls, "Fortitude")),
+            Reflex = ComputeSave(mods, CFAbility.Dexterity, level, CFSkills.GetSaveRank(cls, "Reflex")),
+            Will = ComputeSave(mods, CFAbility.Wisdom, level, CFSkills.GetSaveRank(cls, "Will")),
             Level = level,
             Class = cls,
             Ancestry = FindAncestry(prototypes, profile.Species),

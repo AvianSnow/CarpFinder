@@ -1,14 +1,22 @@
+using Content.Shared.CF.Checks;
+using Content.Shared.CF.Traits;
+using Robust.Shared.Prototypes;
+
 namespace Content.Shared.CF.Effects;
 
 /// <summary>
-/// Timed bonuses and penalties on a creature: bless, shield, mystic armor, heroism, runic weapon, haste.
-/// Server-only. Read totals with <see cref="CFBonusSystem.Total"/>, which applies the remaster stacking rules.
+/// Bonuses and penalties on a creature: timed ones such as bless, shield and heroism, and lasting ones from equipment
+/// and character options. Server-only. Read totals with <see cref="CFBonusSystem.Total"/>, which applies the remaster stacking rules.
 /// </summary>
 [RegisterComponent, Access(typeof(CFBonusSystem))]
 public sealed partial class CFBonusesComponent : Component
 {
     [DataField]
     public List<CFActiveBonus> Bonuses = new();
+
+    /// <summary>Save results made a degree better. Applied by <see cref="CFBonusSystem.UpgradeSave"/>.</summary>
+    [DataField]
+    public List<CFSaveUpgrade> SaveUpgrades = new();
 
     /// <summary>The next attack roll is rolled twice and the higher result used (sure strike). Until this time.</summary>
     [DataField]
@@ -41,6 +49,30 @@ public sealed partial class CFActiveBonus
     /// <summary>Set for bonuses from worn equipment. They last until the equipment changes, not for a time.</summary>
     [DataField]
     public CFEquipmentBonusSlot? Equipment;
+
+    /// <summary>When set, this only counts against a source with this trait.</summary>
+    [DataField]
+    public ProtoId<CFTraitPrototype>? Trait;
+
+    /// <summary>When set on <see cref="CFBonusStat.SkillChecks"/>, this only counts for this skill.</summary>
+    [DataField]
+    public string? Skill;
+}
+
+/// <summary>One save result that becomes a degree better, such as a success against fear.</summary>
+[DataDefinition]
+public sealed partial class CFSaveUpgrade
+{
+    /// <summary>Null means every save.</summary>
+    [DataField]
+    public CFDefenseType? Save;
+
+    /// <summary>When set, this only works against a source with this trait.</summary>
+    [DataField]
+    public ProtoId<CFTraitPrototype>? Trait;
+
+    [DataField]
+    public CFDegree From = CFDegree.Success;
 }
 
 /// <summary>Where a lasting equipment bonus comes from, so re-equipping replaces it instead of adding another.</summary>
@@ -70,8 +102,10 @@ public enum CFBonusStat : byte
     /// <summary>Every damage roll: melee, ranged and spells. Counts as one stat with <see cref="MeleeDamage"/> for stacking.</summary>
     Damage,
 
-    /// <summary>Saves against fear effects only. Counts as one stat with <see cref="Saves"/> for stacking.</summary>
-    SavesVsFear,
+    /// <summary>One save. Counts as one stat with <see cref="Saves"/> for stacking.</summary>
+    Fortitude,
+    Reflex,
+    Will,
 }
 
 /// <summary>Bonuses of the same type do not stack: the highest bonus and the worst penalty of each type apply.</summary>

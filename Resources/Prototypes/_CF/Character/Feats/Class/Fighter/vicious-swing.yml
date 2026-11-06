@@ -10,3 +10,6 @@
     - "Fighter"
     - "Flourish"
   action: Action
+  grants:
+    - !type:CFGrantOption
+      option: ViciousSwing

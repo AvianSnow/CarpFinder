@@ -137,7 +137,7 @@ public sealed partial class CFManeuverSystem
         {
             foreach (var option in RecallSkills)
             {
-                var modifier = CFDefense.SkillModifier(_prototypes, combat, abilities, option.Skill, option.Ability);
+                var modifier = CFDefense.SkillModifier(_prototypes, combat, abilities, option.Skill, option.Ability, _conditions.SkillBonus(user, option.Skill));
                 if (modifier <= bestModifier)
                     continue;
 

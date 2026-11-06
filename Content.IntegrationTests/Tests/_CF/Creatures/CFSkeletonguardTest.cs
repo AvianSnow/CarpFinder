@@ -122,7 +122,7 @@ public sealed class CFSkeletonguardTest : GameTest
             var abilities = SEntMan.GetComponent<CFAbilityScoreComponent>(mob);
             Assert.Multiple(() =>
             {
-                Assert.That(CFMelee.AttackBonus(abilities, combat, stats, true), Is.EqualTo(6));
+                Assert.That(CFMelee.AttackBonus(abilities, combat, stats, CFProficiencyRank.Trained), Is.EqualTo(6));
                 Assert.That(CFMelee.DamageBonus(abilities, stats, combat), Is.EqualTo(damage));
                 Assert.That(stats.DamageDice, Is.EqualTo(1));
                 Assert.That(stats.DamageDie, Is.EqualTo(6));

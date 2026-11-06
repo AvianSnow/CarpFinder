@@ -1,5 +1,6 @@
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Effects;
+using Content.Shared.CF.Traits;
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared.CF.Afflictions;
@@ -19,6 +20,10 @@ public sealed partial class CFAfflictionPrototype : IPrototype
 
     [DataField(required: true)]
     public int Dc;
+
+    /// <summary>What a save against this resists, such as Poison or Disease.</summary>
+    [DataField]
+    public HashSet<ProtoId<CFTraitPrototype>> Traits = new();
 
     [DataField]
     public float OnsetWorldMinutes;

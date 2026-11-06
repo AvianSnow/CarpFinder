@@ -274,7 +274,7 @@ public sealed partial class CFActivitySystem : EntitySystem
     {
         _bonuses.AddBonus(ally, CFBonusStat.AttackRoll, CFBonusType.Status, 1, AnthemSeconds);
         _bonuses.AddBonus(ally, CFBonusStat.Damage, CFBonusType.Status, 1, AnthemSeconds);
-        _bonuses.AddBonus(ally, CFBonusStat.SavesVsFear, CFBonusType.Status, 1, AnthemSeconds);
+        _bonuses.AddBonus(ally, CFBonusStat.Saves, CFBonusType.Status, 1, AnthemSeconds, trait: "Fear");
     }
 
     /// <summary>

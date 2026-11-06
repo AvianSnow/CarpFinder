@@ -28,7 +28,9 @@
   id: cf-background-acupuncturist
   name: cf-background-acupuncturist
   description: cf-background-description-acupuncturist
-  battleMedicine: true
+  grants:
+    - !type:CFGrantOption
+      option: BattleMedicine
   rarity: Uncommon
   trainedSkills:
     - Medicine
@@ -1050,7 +1052,9 @@
   id: cf-background-field-medic
   name: cf-background-field-medic
   description: cf-background-description-field-medic
-  battleMedicine: true
+  grants:
+    - !type:CFGrantOption
+      option: BattleMedicine
   trainedSkills:
     - Medicine
     - Lore
@@ -1635,7 +1639,9 @@
   id: cf-background-lastwall-survivor
   name: cf-background-lastwall-survivor
   description: cf-background-description-lastwall-survivor
-  battleMedicine: true
+  grants:
+    - !type:CFGrantOption
+      option: BattleMedicine
   trainedSkills:
     - Medicine
     - Lore
@@ -2048,7 +2054,9 @@
   id: cf-background-once-bitten
   name: cf-background-once-bitten
   description: cf-background-description-once-bitten
-  battleMedicine: true
+  grants:
+    - !type:CFGrantOption
+      option: BattleMedicine
   trainedSkills:
     - Medicine
     - Lore
@@ -2641,7 +2649,9 @@
   id: cf-background-sarkorian-reclaimer
   name: cf-background-sarkorian-reclaimer
   description: cf-background-description-sarkorian-reclaimer
-  battleMedicine: true
+  grants:
+    - !type:CFGrantOption
+      option: BattleMedicine
   trainedSkills:
     - Medicine
     - Lore
@@ -2730,7 +2740,9 @@
   id: cf-background-school-medic
   name: cf-background-school-medic
   description: cf-background-description-school-medic
-  battleMedicine: true
+  grants:
+    - !type:CFGrantOption
+      option: BattleMedicine
   rarity: Uncommon
   trainedSkills:
     - Medicine
@@ -2766,7 +2778,9 @@
   id: cf-background-secular-medic
   name: cf-background-secular-medic
   description: cf-background-description-secular-medic
-  battleMedicine: true
+  grants:
+    - !type:CFGrantOption
+      option: BattleMedicine
   trainedSkills:
     - Medicine
     - Lore
@@ -3163,7 +3177,9 @@
   id: cf-background-tech-reliant
   name: cf-background-tech-reliant
   description: cf-background-description-tech-reliant
-  battleMedicine: true
+  grants:
+    - !type:CFGrantOption
+      option: BattleMedicine
   rarity: Rare
   trainedSkills:
     - Crafting

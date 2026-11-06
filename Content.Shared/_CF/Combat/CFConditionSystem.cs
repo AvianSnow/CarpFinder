@@ -11,6 +11,7 @@ using Content.Shared.CF.Detection;
 using Content.Shared.CF.Effects;
 using Content.Shared.CF.Items;
 using Content.Shared.CF.Preferences;
+using Content.Shared.CF.Traits;
 using Content.Shared.Movement.Systems;
 using Content.Shared.Overlays;
 using Content.Shared.Popups;
@@ -32,6 +33,13 @@ namespace Content.Shared.CF.Combat;
 public sealed partial class CFConditionSystem : EntitySystem
 {
     private const int ShovesToProne = 3;
+
+    /// <summary>What a creature resists when someone Demoralizes it.</summary>
+    private static readonly HashSet<ProtoId<CFTraitPrototype>> DemoralizeTraits = new() { "Emotion", "Fear", "Mental" };
+
+    /// <summary>What a creature resists when someone Feints it.</summary>
+    private static readonly HashSet<ProtoId<CFTraitPrototype>> FeintTraits = new() { "Mental" };
+
     private static readonly TimeSpan ShoveWindow = TimeSpan.FromSeconds(6);
 
     [Dependency] private PullingSystem _pulling = default!;
@@ -503,7 +511,7 @@ public sealed partial class CFConditionSystem : EntitySystem
         if (!TryComp(uid, out CFCombatantComponent? combat) || !TryComp(uid, out CFAbilityScoreComponent? abilities))
             return 10;
 
-        var mod = CFDefense.SkillModifier(_prototypes, combat, abilities, "Stealth", CFAbility.Dexterity, 0, Frightened(uid));
+        var mod = CFDefense.SkillModifier(_prototypes, combat, abilities, "Stealth", CFAbility.Dexterity, SkillBonus(uid, "Stealth"), Frightened(uid));
         return 10 + mod + _armor.CheckPenalty(uid, "Stealth", CFAbility.Dexterity, false) - Clumsy(uid);
     }
 
@@ -540,14 +548,14 @@ public sealed partial class CFConditionSystem : EntitySystem
             abilities,
             "Intimidation",
             CFAbility.Charisma,
-            circumstance,
+            circumstance + SkillBonus(user, "Intimidation"),
             Frightened(user));
         dc = 10 + CFDefense.SaveModifier(
             _prototypes,
             CompOrNull<CFCombatantComponent>(target),
             CompOrNull<CFAbilityScoreComponent>(target),
             CFDefenseType.Will,
-            SaveStatus(target),
+            DefenseStatus(target, CFDefenseType.Will, DemoralizeTraits),
             Frightened(target));
         return true;
     }
@@ -566,13 +574,13 @@ public sealed partial class CFConditionSystem : EntitySystem
             abilities,
             "Deception",
             CFAbility.Charisma,
-            0,
+            SkillBonus(user, "Deception"),
             Frightened(user));
         dc = 10 + CFDefense.PerceptionModifier(
             _prototypes,
             CompOrNull<CFCombatantComponent>(target),
             CompOrNull<CFAbilityScoreComponent>(target),
-            DefenseStatus(target, CFDefenseType.Perception),
+            DefenseStatus(target, CFDefenseType.Perception, FeintTraits),
             Frightened(target));
         return true;
     }
@@ -661,7 +669,7 @@ public sealed partial class CFConditionSystem : EntitySystem
         if (!TryComp(user, out CFCombatantComponent? combat) || !TryComp(user, out CFAbilityScoreComponent? abilities))
             return CFDegree.Failure;
 
-        var mod = CFDefense.SkillModifier(_prototypes, combat, abilities, skill, ability, itemBonus, Frightened(user));
+        var mod = CFDefense.SkillModifier(_prototypes, combat, abilities, skill, ability, itemBonus + SkillBonus(user, skill), Frightened(user));
         mod += _armor.CheckPenalty(user, skill, ability, attackTrait) + TakeAid(user);
         if (ability == CFAbility.Dexterity)
             mod -= Clumsy(user);
@@ -691,7 +699,7 @@ public sealed partial class CFConditionSystem : EntitySystem
     {
         var mod = 0;
         if (TryComp(user, out CFCombatantComponent? combat) && TryComp(user, out CFAbilityScoreComponent? abilities))
-            mod = CFDefense.SkillModifier(_prototypes, combat, abilities, skill, ability, itemBonus, Frightened(user));
+            mod = CFDefense.SkillModifier(_prototypes, combat, abilities, skill, ability, itemBonus + SkillBonus(user, skill), Frightened(user));
         else
             mod -= Frightened(user);
 
@@ -714,20 +722,35 @@ public sealed partial class CFConditionSystem : EntitySystem
         return Math.Max(timed, _encumbrance.IsEncumbered(uid) ? 1 : 0);
     }
 
-    /// <summary>Rolls a save or Perception against a DC. <paramref name="total"/> is the d20 plus modifier.</summary>
-    public CFDegree RollDefense(EntityUid uid, CFDefenseType defense, int dc, out int total)
+    /// <summary>
+    /// Rolls a save or Perception against a DC. Every save in the game comes through here, so bonuses against a trait
+    /// and upgrades to the degree apply to all of them. <paramref name="total"/> is the d20 plus modifier.
+    /// </summary>
+    /// <param name="traits">What is being resisted: the source's traits, such as Fear or Poison.</param>
+    public CFDegree RollDefense(
+        EntityUid uid,
+        CFDefenseType defense,
+        int dc,
+        out int total,
+        HashSet<ProtoId<CFTraitPrototype>>? traits = null)
     {
         var mod = CFDefense.SaveModifier(
             _prototypes,
             CompOrNull<CFCombatantComponent>(uid),
             CompOrNull<CFAbilityScoreComponent>(uid),
             defense,
-            DefenseStatus(uid, defense),
+            DefenseStatus(uid, defense, traits),
             Frightened(uid));
 
         var d20 = _random.Next(1, 21);
         total = d20 + mod;
-        return CFDegrees.DegreeOfSuccess(d20, mod, dc);
+        return _bonuses.UpgradeSave(uid, defense, CFDegrees.DegreeOfSuccess(d20, mod, dc), traits);
+    }
+
+    /// <summary>Bonuses to one skill: those to all skills, and those to this skill alone.</summary>
+    public int SkillBonus(EntityUid uid, string skill)
+    {
+        return _bonuses.Total(uid, CFBonusStat.SkillChecks, skill: skill);
     }
 
     /// <summary>Stupefied value: a penalty to Will saves and Perception.</summary>
@@ -865,16 +888,15 @@ public sealed partial class CFConditionSystem : EntitySystem
         _popup.PopupEntity(Loc.GetString(message), target);
     }
 
-    private int SaveStatus(EntityUid uid)
+    private int DefenseStatus(EntityUid uid, CFDefenseType defense, HashSet<ProtoId<CFTraitPrototype>>? traits = null)
     {
-        return _bonuses.Total(uid, CFBonusStat.Saves);
-    }
-
-    private int DefenseStatus(EntityUid uid, CFDefenseType defense)
-    {
-        var status = defense == CFDefenseType.Perception
-            ? _bonuses.Total(uid, CFBonusStat.Perception)
-            : SaveStatus(uid);
+        var status = defense switch
+        {
+            CFDefenseType.Perception => _bonuses.Total(uid, CFBonusStat.Perception, traits: traits),
+            CFDefenseType.Reflex => _bonuses.Total(uid, CFBonusStat.Saves, CFBonusStat.Reflex, traits),
+            CFDefenseType.Will => _bonuses.Total(uid, CFBonusStat.Saves, CFBonusStat.Will, traits),
+            _ => _bonuses.Total(uid, CFBonusStat.Saves, CFBonusStat.Fortitude, traits),
+        };
 
         return defense switch
         {
