@@ -1,4 +1,5 @@
 using System.Numerics;
+using Content.Shared.CF.Character;
 using Content.Shared.CF.Combat;
 using Robust.Client.Graphics;
 using Robust.Client.ResourceManagement;
@@ -12,7 +13,7 @@ namespace Content.Client.CF.Hud;
 /// Two potion bottles for hit points and temporary hit points, with a shield for Armor Class.
 /// Liquid is clipped to the clear interior of the bottle sprite.
 /// </summary>
-public sealed class CFHealthBall : Control
+public sealed partial class CFHealthBall : Control
 {
     private const string BottlePath = "/Textures/_CF/Interface/hud-bottle.png";
 
@@ -43,6 +44,7 @@ public sealed class CFHealthBall : Control
     private int _maxHp;
     private int _tempHp;
     private int _armorClass = 10;
+    private int _acModifier;
     private bool _offGuard;
 
     public CFHealthBall()
@@ -56,12 +58,14 @@ public sealed class CFHealthBall : Control
         MouseFilter = MouseFilterMode.Stop;
     }
 
-    public void Set(int currentHp, int maxHp, int tempHp, int armorClass, bool offGuard)
+    /// <param name="acModifier">What a raised shield, spells and conditions add to AC right now.</param>
+    public void Set(int currentHp, int maxHp, int tempHp, int armorClass, int acModifier, bool offGuard)
     {
         _maxHp = Math.Max(0, maxHp);
         _currentHp = Math.Max(0, currentHp);
         _tempHp = Math.Max(0, tempHp);
         _armorClass = armorClass;
+        _acModifier = acModifier;
         _offGuard = offGuard;
         _hpFill = _maxHp <= 0 ? 0f : Math.Clamp(_currentHp / (float) _maxHp, 0f, 1f);
         _tempFill = _maxHp <= 0 ? 0f : Math.Clamp(_tempHp / (float) _maxHp, 0f, 1f);
@@ -78,8 +82,8 @@ public sealed class CFHealthBall : Control
                 ("current", _currentHp),
                 ("max", _maxHp),
                 ("temp", _tempHp),
-                ("ac", _armorClass),
-                ("reduced", _armorClass - CFFlanking.OffGuardAcPenalty));
+                ("ac", _armorClass + _acModifier),
+                ("reduced", _armorClass + _acModifier - CFFlanking.OffGuardAcPenalty));
         }
         else
         {
@@ -87,7 +91,7 @@ public sealed class CFHealthBall : Control
                 ("current", _currentHp),
                 ("max", _maxHp),
                 ("temp", _tempHp),
-                ("ac", _armorClass));
+                ("ac", _armorClass + _acModifier));
         }
     }
 
@@ -193,14 +197,30 @@ public sealed class CFHealthBall : Control
         var center = box.Center + new Vector2(0f, box.Height * 0.06f);
         if (_offGuard)
             DrawOffGuardAc(handle, center, box.Width);
+        else if (_acModifier != 0)
+            DrawAcPair(handle, center, box.Width, _armorClass.ToString(), Color.White, false, CFSkills.FormatSigned(_acModifier), CFHudColors.ForBonus(_acModifier) ?? Color.White);
         else
             DrawCentered(handle, _font, _armorClass.ToString(), center, 1f, Color.White);
     }
 
     private void DrawOffGuardAc(DrawingHandleScreen handle, Vector2 center, float maxWidth)
     {
-        var original = _armorClass.ToString();
-        var reduced = (_armorClass - CFFlanking.OffGuardAcPenalty).ToString();
+        var armorClass = _armorClass + _acModifier;
+        var reduced = (armorClass - CFFlanking.OffGuardAcPenalty).ToString();
+        DrawAcPair(handle, center, maxWidth, armorClass.ToString(), new Color(196, 196, 196), true, reduced, new Color(220, 48, 48));
+    }
+
+    /// <summary>Two pieces of text side by side on the shield, shrunk to fit.</summary>
+    private void DrawAcPair(
+        DrawingHandleScreen handle,
+        Vector2 center,
+        float maxWidth,
+        string original,
+        Color originalColor,
+        bool struck,
+        string reduced,
+        Color reducedColor)
+    {
         var gap = 6f;
         var scale = 1f;
         var originalSize = handle.GetDimensions(_font, original, scale);
@@ -216,14 +236,16 @@ public sealed class CFHealthBall : Control
         }
 
         var left = center.X - total / 2f;
-        var struck = new Color(196, 196, 196);
         var originalPos = new Vector2(left, center.Y - originalSize.Y / 2f);
-        handle.DrawString(_font, originalPos, original, scale, struck);
-        var midY = originalPos.Y + originalSize.Y * 0.55f;
-        handle.DrawLine(new Vector2(originalPos.X, midY), new Vector2(originalPos.X + originalSize.X, midY), struck);
+        handle.DrawString(_font, originalPos, original, scale, originalColor);
+        if (struck)
+        {
+            var midY = originalPos.Y + originalSize.Y * 0.55f;
+            handle.DrawLine(new Vector2(originalPos.X, midY), new Vector2(originalPos.X + originalSize.X, midY), originalColor);
+        }
 
         var reducedPos = new Vector2(left + originalSize.X + gap, center.Y - reducedSize.Y / 2f);
-        handle.DrawString(_font, reducedPos, reduced, scale, new Color(220, 48, 48));
+        handle.DrawString(_font, reducedPos, reduced, scale, reducedColor);
     }
 
     private void DrawCentered(DrawingHandleScreen handle, Font font, string text, Vector2 at, float scale, Color color)

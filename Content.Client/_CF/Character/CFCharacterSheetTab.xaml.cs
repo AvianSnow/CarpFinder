@@ -1,4 +1,5 @@
 using System.Linq;
+using Content.Client.CF.Hud;
 using Content.Client.Chat.Managers;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Checks;
@@ -80,7 +81,10 @@ public sealed partial class CFCharacterSheetTab : BoxContainer
         SetAbility(CFAbility.Charisma, ChaScoreLabel, ChaModLabel, abilities);
 
         UpdateXp(entity);
-        ArmorClassLabel.Text = combatant.ArmorClass.ToString();
+        var conditions = _entities.System<CFConditionSystem>();
+        var acModifier = conditions.ArmorClassModifier(entity);
+        ArmorClassLabel.Text = (combatant.ArmorClass + acModifier).ToString();
+        ArmorClassLabel.FontColorOverride = CFHudColors.ForBonus(acModifier);
         CurrentHpLabel.Text = combatant.CurrentHp.ToString();
         MaxHpLabel.Text = combatant.MaxHp.ToString();
         TempHpLabel.Text = Loc.GetString("cf-sheet-temp-hp", ("hp", combatant.TemporaryHp));
@@ -103,9 +107,12 @@ public sealed partial class CFCharacterSheetTab : BoxContainer
         var fortRank = CFDefense.SaveRank(_prototypes, combatant, "Fortitude");
         var refRank = CFDefense.SaveRank(_prototypes, combatant, "Reflex");
         var willRank = CFDefense.SaveRank(_prototypes, combatant, "Will");
-        _fortMod = CFSkills.SkillModifier(abilities.AbilityModifiers, CFAbility.Constitution, combatant.Level, fortRank);
-        _refMod = CFSkills.SkillModifier(abilities.AbilityModifiers, CFAbility.Dexterity, combatant.Level, refRank);
-        _willMod = CFSkills.SkillModifier(abilities.AbilityModifiers, CFAbility.Wisdom, combatant.Level, willRank);
+        _fortMod = conditions.DefenseModifier(entity, CFDefenseType.Fortitude);
+        _refMod = conditions.DefenseModifier(entity, CFDefenseType.Reflex);
+        _willMod = conditions.DefenseModifier(entity, CFDefenseType.Will);
+        FortModLabel.FontColorOverride = CFHudColors.ForBonus(_fortMod - CFSkills.SkillModifier(abilities.AbilityModifiers, CFAbility.Constitution, combatant.Level, fortRank));
+        RefModLabel.FontColorOverride = CFHudColors.ForBonus(_refMod - CFSkills.SkillModifier(abilities.AbilityModifiers, CFAbility.Dexterity, combatant.Level, refRank));
+        WillModLabel.FontColorOverride = CFHudColors.ForBonus(_willMod - CFSkills.SkillModifier(abilities.AbilityModifiers, CFAbility.Wisdom, combatant.Level, willRank));
         FortRankLabel.Text = CFSheetSkillRow.RankLetter(fortRank);
         RefRankLabel.Text = CFSheetSkillRow.RankLetter(refRank);
         WillRankLabel.Text = CFSheetSkillRow.RankLetter(willRank);
@@ -119,7 +126,8 @@ public sealed partial class CFCharacterSheetTab : BoxContainer
                 continue;
 
             var rank = CFDefense.SkillRank(_prototypes, combatant, skillId);
-            var mod = CFSkills.SkillModifier(abilities.AbilityModifiers, skill.Ability, combatant.Level, rank);
+            var bonus = conditions.SkillBonus(entity, skillId);
+            var mod = CFSkills.SkillModifier(abilities.AbilityModifiers, skill.Ability, combatant.Level, rank, bonus);
             var skillName = Loc.GetString(skill.Name);
             if (skillId == "Lore" && combatant.LoreNames.Count > 0)
                 skillName = Loc.GetString("cf-sheet-lore-named", ("lores", string.Join(", ", combatant.LoreNames)));
@@ -128,7 +136,8 @@ public sealed partial class CFCharacterSheetTab : BoxContainer
                 skillName,
                 AbilityAbbr(skill.Ability),
                 rank,
-                mod);
+                mod,
+                bonus);
         }
     }
 

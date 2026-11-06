@@ -8,8 +8,6 @@ namespace Content.Client.CF.Hud;
 [GenerateTypedNameReferences]
 public sealed partial class CFGameHud : UIWidget
 {
-    private const float SpellWidth = 170f;
-
     private readonly Button[] _filters;
     private readonly Dictionary<Button, (Color Idle, Color Hot)> _colors = new();
     private bool _selecting;
@@ -30,7 +28,6 @@ public sealed partial class CFGameHud : UIWidget
         }
 
         DividerLeft.PanelOverride = Divider();
-        DividerRight.PanelOverride = Divider();
         ActionPanel.PanelOverride = new StyleBoxFlat
         {
             BackgroundColor = new Color(72, 72, 76, 110),
@@ -38,34 +35,6 @@ public sealed partial class CFGameHud : UIWidget
             BorderThickness = new Thickness(1),
         };
     }
-
-    /// <summary>
-    /// Hides the spell pips when the viewport is too narrow to keep the bar on screen.
-    /// </summary>
-    public void SetViewportWidth(float width)
-    {
-        var bar = DesiredSize.X;
-        if (Spells.Visible)
-            bar -= Spells.DesiredSize.X + DividerRight.DesiredSize.X + 20f;
-        if (bar < 400f)
-            bar = 860f;
-
-        var show = width >= bar + SpellWidth + 80f;
-        _showSpells = show;
-        ApplySpellVisibility();
-    }
-
-    /// <summary>
-    /// Spell pips stay hidden on a narrow viewport even after the book refreshes.
-    /// </summary>
-    public void ApplySpellVisibility()
-    {
-        var show = _showSpells && Spells.ChildCount > 0;
-        Spells.Visible = show;
-        DividerRight.Visible = show;
-    }
-
-    private bool _showSpells = true;
 
     private void Select(Button selected)
     {

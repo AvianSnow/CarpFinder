@@ -55,6 +55,7 @@ public sealed partial class CFConditionSystem : EntitySystem
     [Dependency] private CFActionPoolSystem _actions = default!;
     [Dependency] private CFBonusSystem _bonuses = default!;
     [Dependency] private CFArmorSystem _armor = default!;
+    [Dependency] private CFShieldSystem _shields = default!;
     [Dependency] private CFEncumbranceSystem _encumbrance = default!;
     [Dependency] private CFStealthSystem _stealth = default!;
 
@@ -84,6 +85,12 @@ public sealed partial class CFConditionSystem : EntitySystem
             if (cond.ClumsyValue > 0 && now >= cond.ClumsyUntil)
             {
                 cond.ClumsyValue = 0;
+                dirty = true;
+            }
+
+            if (cond.SickenedValue > 0 && now >= cond.SickenedUntil)
+            {
+                cond.SickenedValue = 0;
                 dirty = true;
             }
 
@@ -734,17 +741,35 @@ public sealed partial class CFConditionSystem : EntitySystem
         out int total,
         HashSet<ProtoId<CFTraitPrototype>>? traits = null)
     {
-        var mod = CFDefense.SaveModifier(
+        var mod = DefenseModifier(uid, defense, traits);
+        var d20 = _random.Next(1, 21);
+        total = d20 + mod;
+        return _bonuses.UpgradeSave(uid, defense, CFDegrees.DegreeOfSuccess(d20, mod, dc), traits);
+    }
+
+    /// <summary>A save or Perception as a roll would use it right now.</summary>
+    public int DefenseModifier(EntityUid uid, CFDefenseType defense, HashSet<ProtoId<CFTraitPrototype>>? traits = null)
+    {
+        return CFDefense.SaveModifier(
             _prototypes,
             CompOrNull<CFCombatantComponent>(uid),
             CompOrNull<CFAbilityScoreComponent>(uid),
             defense,
             DefenseStatus(uid, defense, traits),
             Frightened(uid));
+    }
 
-        var d20 = _random.Next(1, 21);
-        total = d20 + mod;
-        return _bonuses.UpgradeSave(uid, defense, CFDegrees.DegreeOfSuccess(d20, mod, dc), traits);
+    /// <summary>
+    /// Everything on a creature that moves its AC from <see cref="CFCombatantComponent.ArmorClass"/>, except off-guard,
+    /// which depends on who is attacking.
+    /// </summary>
+    public int ArmorClassModifier(EntityUid uid)
+    {
+        var modifier = _bonuses.Total(uid, CFBonusStat.ArmorClass) + _shields.RaisedBonus(uid) - Frightened(uid) - Clumsy(uid);
+        if (TryComp(uid, out CFCombatOptionsComponent? style) && style.Raging)
+            modifier -= 1;
+
+        return modifier;
     }
 
     /// <summary>Bonuses to one skill: those to all skills, and those to this skill alone.</summary>
@@ -777,6 +802,11 @@ public sealed partial class CFConditionSystem : EntitySystem
 
     private void ApplySickened(EntityUid target, int value, float seconds)
     {
+        var cond = EnsureComp<CFConditionComponent>(target);
+        cond.SickenedValue = Math.Max(cond.SickenedValue, value);
+        cond.SickenedUntil = _timing.CurTime + TimeSpan.FromSeconds(seconds);
+        Dirty(target, cond);
+
         _bonuses.AddBonus(target, CFBonusStat.ArmorClass, CFBonusType.Status, -value, seconds);
         _bonuses.AddBonus(target, CFBonusStat.AttackRoll, CFBonusType.Status, -value, seconds);
         _bonuses.AddBonus(target, CFBonusStat.Saves, CFBonusType.Status, -value, seconds);

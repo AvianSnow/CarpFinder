@@ -735,3 +735,11 @@ The decision log was also lost in the move between computers, because `.gitignor
 - A timed resistance used to merge into a lasting one and end it, and a timed bonus could merge into an equipment bonus. Lasting entries are now left out of that merge.
 - Stabilize by Medicine counted neither skill increases nor bonuses. It uses `CFDefense.SkillModifier` now.
 - `CFGrantMovement` was dropped on request: climbing is `TBA`.
+
+## Long rest and HUD bonuses (6 November 2026)
+
+- Falling asleep in a bed is a long rest, through `SleepStateChangedEvent`. A bed is a strap with `HealOnBuckle`, which is what gives the Sleep action. Sleeping anywhere else does nothing. The Sleep spell is a knockdown and raises no such event.
+- The spell pips moved inside the action panel, so the HUD no longer hides them on a narrow screen and `SetViewportWidth` is gone.
+- The HUD and sheet now show bonuses. `CFBonusesComponent.Bonuses` reaches the client, and `ArmorClassModifier` and `DefenseModifier` are the sums rolls use too, so they cannot disagree.
+- Raging's -1 AC only counted against Strikes. It now counts against spell attacks too, because both use `ArmorClassModifier`.
+- `SickenedValue` is new, only so the HUD can name the condition. Its penalties are still timed bonuses.

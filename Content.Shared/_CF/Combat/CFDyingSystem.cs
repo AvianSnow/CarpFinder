@@ -239,6 +239,18 @@ public sealed partial class CFDyingSystem : EntitySystem
         _ = healedCf;
     }
 
+    /// <summary>A long rest: full hit points and no wounded. The dead and dying get nothing.</summary>
+    public void RestoreFully(EntityUid target)
+    {
+        if (!TryComp(target, out CFCombatantComponent? combat) || !_mobState.IsAlive(target))
+            return;
+
+        combat.CurrentHp = combat.MaxHp;
+        combat.Wounded = 0;
+        Dirty(target, combat);
+        SyncSs14FromHp(target, combat);
+    }
+
     /// <summary>
     /// Medicine Stabilize — on success, clears dying, sets CF HP to 1, wipes SS14 damage, and wakes Alive.
     /// (SS14 crit thresholds don't model "unconscious at 0 HP", so we revive to 1 HP instead.)

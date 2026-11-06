@@ -447,14 +447,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
         else if ((melee || unseen) && !isObject && (_flanking.IsOffGuardTo(target, user) || _conditions.IsOffGuardTo(target, user)))
             acPenalty = CFFlanking.OffGuardAcPenalty;
 
-        var targetAc = defender.ArmorClass - acPenalty - _conditions.Frightened(target) - _conditions.Clumsy(target);
-        targetAc += _bonuses.Total(target, CFBonusStat.ArmorClass);
-        targetAc += _shields.RaisedBonus(target);
-
-        if (TryComp(target, out CFCombatOptionsComponent? defenderStyle) && defenderStyle.Raging)
-            targetAc -= 1;
-
-        return targetAc;
+        return defender.ArmorClass - acPenalty + _conditions.ArmorClassModifier(target);
     }
 
     /// <summary>

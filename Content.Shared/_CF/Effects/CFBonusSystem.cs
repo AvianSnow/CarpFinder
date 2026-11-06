@@ -73,7 +73,11 @@ public sealed partial class CFBonusSystem : EntitySystem
             }
 
             if (expires > bonus.Expires)
+            {
                 bonus.Expires = expires;
+                Dirty(uid, comp);
+            }
+
             return;
         }
 
@@ -86,6 +90,7 @@ public sealed partial class CFBonusSystem : EntitySystem
             Trait = trait,
             Skill = skill,
         });
+        Dirty(uid, comp);
     }
 
     /// <summary>
@@ -103,7 +108,8 @@ public sealed partial class CFBonusSystem : EntitySystem
         if (value == 0)
             return;
 
-        EnsureComp<CFBonusesComponent>(uid).Bonuses.Add(new CFActiveBonus
+        var comp = EnsureComp<CFBonusesComponent>(uid);
+        comp.Bonuses.Add(new CFActiveBonus
         {
             Stat = stat,
             Type = type,
@@ -112,6 +118,7 @@ public sealed partial class CFBonusSystem : EntitySystem
             Trait = trait,
             Skill = skill,
         });
+        Dirty(uid, comp);
     }
 
     /// <summary>
@@ -125,6 +132,7 @@ public sealed partial class CFBonusSystem : EntitySystem
 
         var comp = EnsureComp<CFBonusesComponent>(uid);
         comp.Bonuses.RemoveAll(b => b.Equipment == slot);
+        Dirty(uid, comp);
         if (value == 0)
             return;
 
@@ -179,6 +187,12 @@ public sealed partial class CFBonusSystem : EntitySystem
         return Total(comp.Bonuses, stat, also, traits, skill);
     }
 
+    /// <summary>The total from spells and other timed sources, leaving out what lasts: feats and equipment.</summary>
+    public int TimedTotal(EntityUid uid, CFBonusStat stat, CFBonusStat? also = null)
+    {
+        return TryComp(uid, out CFBonusesComponent? comp) ? Total(comp.Bonuses, stat, also, timedOnly: true) : 0;
+    }
+
     /// <summary>
     /// <paramref name="also"/> is a narrower stat that applies to this roll too. The two are totalled together,
     /// so a status bonus to one does not stack with a status bonus to the other.
@@ -190,7 +204,8 @@ public sealed partial class CFBonusSystem : EntitySystem
         CFBonusStat stat,
         CFBonusStat? also = null,
         HashSet<ProtoId<CFTraitPrototype>>? traits = null,
-        string? skill = null)
+        string? skill = null,
+        bool timedOnly = false)
     {
         // Plain locals per type: stackalloc/Span fails the client sandbox's IL verification.
         int status = 0, statusPenalty = 0;
@@ -201,6 +216,9 @@ public sealed partial class CFBonusSystem : EntitySystem
         foreach (var bonus in bonuses)
         {
             if (bonus.Stat != stat && bonus.Stat != also)
+                continue;
+
+            if (timedOnly && bonus.Expires == TimeSpan.MaxValue)
                 continue;
 
             if (bonus.Trait is { } trait && traits?.Contains(trait) != true)
@@ -309,7 +327,8 @@ public sealed partial class CFBonusSystem : EntitySystem
         var query = EntityQueryEnumerator<CFBonusesComponent>();
         while (query.MoveNext(out var uid, out var comp))
         {
-            comp.Bonuses.RemoveAll(b => b.Expires <= now);
+            if (comp.Bonuses.RemoveAll(b => b.Expires <= now) > 0)
+                Dirty(uid, comp);
 
             if (comp.ActionCap != 0 && comp.ActionCapUntil <= now)
             {

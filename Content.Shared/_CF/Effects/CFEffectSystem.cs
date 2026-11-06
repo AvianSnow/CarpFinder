@@ -48,7 +48,6 @@ public sealed partial class CFEffectSystem : EntitySystem
     [Dependency] private CFBonusSystem _bonuses = default!;
     [Dependency] private CFCombatBridgeSystem _bridge = default!;
     [Dependency] private CFDyingSystem _dying = default!;
-    [Dependency] private CFShieldSystem _shields = default!;
 
     public override void Update(float frameTime)
     {
@@ -406,10 +405,7 @@ public sealed partial class CFEffectSystem : EntitySystem
         if (_bridge.TryEnsureCombatTarget(target, out var defender, out _, out _))
             armorClass = defender.ArmorClass;
 
-        armorClass += _bonuses.Total(target, CFBonusStat.ArmorClass);
-        armorClass += _shields.RaisedBonus(target);
-        armorClass -= _conditions.Frightened(target);
-        armorClass -= _conditions.Clumsy(target);
+        armorClass += _conditions.ArmorClassModifier(target);
         armorClass -= check.TargetAcPenalty;
 
         attackBonus += check.AttackModifier;

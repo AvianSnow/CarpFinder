@@ -43,7 +43,6 @@ Built on 6 November 2026, except where marked. Tests: `CFGrantTest`. What change
 - [x] Permanent bonuses in `CFBonusSystem`, and bonuses that only count against a trait. This replaces `SavesVsFear`.
 - [x] A hook that lets a grant change a save's degree, matching `AdjustDefense`: `CFBonusSystem.UpgradeSave`, called from `CFConditionSystem.RollDefense`.
 - [x] Traits on `CFEffectArgs`, read from the source, so any check can ask what it is rolling against.
-- [ ] The character sheet and HUD show ranks but no bonuses, because `CFBonusesComponent` is server-only. A lasting +1 to a save or AC works in play and is not on the sheet.
 - [ ] A bonus against a trait only counts on saves and Perception. Attacks and AC have no source traits to read.
 - [ ] Nothing checks the ids in `CFGrantProficiency`, so a typo does nothing. `CFFeatureCoverageTest` in 1g should.
 - [ ] Low-light vision is a dimmer darkvision overlay, chosen by eye and not seen in a real client.
@@ -148,6 +147,13 @@ Built on 6 November 2026. `Content.Shared/_CF/Languages`, and `CFSpeech` in `Con
 - [ ] Recount the extra languages when Intelligence rises at level 5.
 - [ ] Give monsters that talk a `CFLanguages`. Without one, a creature speaks plainly and understands everything.
 - [ ] Languages from a heritage or a background.
+
+### Rest
+
+Built on 6 November 2026. `CFLongRestSystem`. Tests: `CFLongRestTest`.
+
+- [ ] A long rest has no limit. It takes no time, so a player can sleep in a bed mid-fight and be fully restored. PF2e allows one in 24 hours, after 8 hours.
+- [ ] It restores hit points, wounded, spell slots and focus. Conditions, Battle Medicine immunity and other daily limits are left alone.
 
 ## Step 2: Finish the rebuild
 

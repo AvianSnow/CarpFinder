@@ -1,17 +1,19 @@
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Traits;
+using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Serialization;
 
 namespace Content.Shared.CF.Effects;
 
 /// <summary>
 /// Bonuses and penalties on a creature: timed ones such as bless, shield and heroism, and lasting ones from equipment
-/// and character options. Server-only. Read totals with <see cref="CFBonusSystem.Total"/>, which applies the remaster stacking rules.
+/// and character options. Only the bonuses reach the client, for the HUD and sheet. Read totals with <see cref="CFBonusSystem.Total"/>, which applies the remaster stacking rules.
 /// </summary>
-[RegisterComponent, Access(typeof(CFBonusSystem))]
+[RegisterComponent, NetworkedComponent, AutoGenerateComponentState, Access(typeof(CFBonusSystem))]
 public sealed partial class CFBonusesComponent : Component
 {
-    [DataField]
+    [DataField, AutoNetworkedField]
     public List<CFActiveBonus> Bonuses = new();
 
     /// <summary>Save results made a degree better. Applied by <see cref="CFBonusSystem.UpgradeSave"/>.</summary>
@@ -30,7 +32,7 @@ public sealed partial class CFBonusesComponent : Component
     public TimeSpan ActionCapUntil;
 }
 
-[DataDefinition]
+[DataDefinition, Serializable, NetSerializable]
 public sealed partial class CFActiveBonus
 {
     [DataField]

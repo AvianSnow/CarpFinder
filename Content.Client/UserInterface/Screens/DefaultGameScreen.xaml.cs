@@ -37,7 +37,6 @@ public sealed partial class DefaultGameScreen : InGameScreen
 
     private void PlaceHud()
     {
-        Hud.SetViewportWidth(MainViewport.Size.X);
         var hudHeight = Hud.DesiredSize.Y;
         if (hudHeight < 64f)
             hudHeight = 160f;
