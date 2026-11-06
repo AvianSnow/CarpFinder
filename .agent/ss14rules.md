@@ -183,7 +183,7 @@ This engine differs from CP14's fork in more places. A ported prototype needs th
 
 - `MagicMirror` needs an `organs` list. Stock barber scissors use `Head`.
 - `IconSmooth.key` is required. A missing one drops the entity on the client only.
-- `CornerSpriteSmoothing` numbers its states differently from CP14's fork. In any ported corner-smoothed RSI, swap the PNGs for states 1 and 4, and 3 and 6, or it draws as bars with gaps. The YAML can be right and the sprite still wrong. Swap each sheet once: a child entity with its own RSI inherits the smoothing but needs its own swap. To see which sheets are done, compare state 1 with the same file in `crystall-punk-14`.
+- `CornerSpriteSmoothing` numbers its states differently from CP14's fork. In any ported corner-smoothed RSI, swap the PNGs for states 1 and 4, and 3 and 6, or it draws as bars with gaps. The YAML can be right and the sprite still wrong. Swap each sheet once: a child entity with its own RSI inherits the smoothing but needs its own swap. To see which sheets are done, compare state 1 with the same file in `crystall-punk-14`. A script that swaps files keeps their timestamps, so git misses a pair of the same size: `touch` them after, and check the count in `git status`.
 - `Crayon` needs `selectedState`. `Injector` needs `activeModeProtoId` and `allowedModes`. `Occluder` takes `polygon`, not `boundingBox`.
 - `ToggleableLightVisuals` is `ToggleableVisuals`. `FlammableSystem` sets its data, so burning items need nothing else.
 - `Sharp` is gone with no replacement: butchering goes through the kitchen spike. `Tool` with `Slicing` stays.
