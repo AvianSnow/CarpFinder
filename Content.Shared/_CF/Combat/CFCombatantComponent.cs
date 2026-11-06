@@ -58,6 +58,10 @@ public sealed partial class CFCombatantComponent : Component
     [DataField, AutoNetworkedField]
     public int? PrintedDamage;
 
+    /// <summary>Stat block skill modifiers by skill id, where the book differs from abilities and proficiency.</summary>
+    [DataField]
+    public Dictionary<string, int> PrintedSkills = new();
+
     /// <summary>Monsters die at 0 HP instead of dying, and defeating one is worth XP.</summary>
     [DataField, AutoNetworkedField]
     public bool DiesAtZeroHp;

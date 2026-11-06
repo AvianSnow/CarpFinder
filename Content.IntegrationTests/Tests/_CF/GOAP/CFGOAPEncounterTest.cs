@@ -1,7 +1,7 @@
 using System.Linq;
 using Content.IntegrationTests.Fixtures;
 using Content.IntegrationTests.Tests.CF;
-using Content.IntegrationTests.Tests.CF.GOAP.Debug;
+using Content.IntegrationTests.Tests.CF.GOAP.DecisionLog;
 using Content.Server.CF.GOAP;
 using Content.Server.CF.GOAP.Encounters;
 using Content.Server.CF.GOAP.Steering;
@@ -23,7 +23,7 @@ namespace Content.IntegrationTests.Tests.CF.GOAP;
 /// <summary>The encounter spawner and the SmallGroup encounter.</summary>
 [TestFixture]
 [TestOf(typeof(CFGOAPEncounterSystem))]
-public sealed class CFGOAPEncounterTest : CFGOAPDebugLoggedTest
+public sealed class CFGOAPEncounterTest : CFGOAPLoggedTest
 {
     private static readonly Box2i Footprint = new(-1, -1, 8, 2);
 

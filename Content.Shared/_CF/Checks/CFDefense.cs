@@ -104,8 +104,12 @@ public static class CFDefense
         int circumstance = 0,
         int frightened = 0)
     {
-        var rank = SkillRank(prototypes, combat, skill);
-        var mod = CFSkills.SkillModifier(abilities.AbilityModifiers, ability, combat.Level, rank, circumstance);
+        int mod;
+        if (combat.PrintedSkills.TryGetValue(skill, out var printed))
+            mod = printed + circumstance;
+        else
+            mod = CFSkills.SkillModifier(abilities.AbilityModifiers, ability, combat.Level, SkillRank(prototypes, combat, skill), circumstance);
+
         return mod - Math.Max(0, frightened);
     }
 

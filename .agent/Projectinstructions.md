@@ -18,6 +18,8 @@ How to test the AI, what `Skipped` really means, and what is known to fail: `ai-
 
 Map of the codebase: `codebase.md`. Start there to find something.
 
+How to turn a Pathfinder 2e stat block into a monster: `importcreatures.md`.
+
 The ordered feature plan is `roadmap.md`. Check it before starting a feature and tick items off when they land.
 
 ## Pathfinder Game Rules
@@ -133,7 +135,7 @@ Class examples: `CFMySystem`, `CFMyServerSystem`, `CFMyClientSystem`, `CFExample
 | Traps and hazards | `CFHazard` (Stealth DC, detect radius, trigger size, disarm checks) plus `CFCheck` and `CFDegreeEffects` for what it does. `CFHazardSystem` handles noticing, triggering, and disarming. A `CFFaction` on the hazard protects its allies. Disabling it raises `CFHazardDisarmedEvent`; `CFExperienceSystem.AwardHazard` gives the disarmer's company XP for the hazard's `level` (simple or `complex`). See `Resources/Prototypes/_CF/Entities/Hazards/traps.yml`. |
 | Locks on doors and containers | Add a grade as a second parent: `parent: [ WoodDoor, CFLockSimple ]`, with `forceDc` and `keyId` on `CFLock`. See `Resources/Prototypes/_CF/Entities/Objects/Tools/locks.yml`. `CFLockSystem` blocks stock lock toggles and opening a locked door; the stock `Lock` alone does not stop a door. |
 | New crafted item | Add a `craftingRecipe` in `Resources/Prototypes/_CF/Crafting/recipes.yml` and a `CFFormula<Id>` item in `Entities/Objects/Formulas/formulas.yml`. Level and rarity come from the result's `CFItem`. Formula prices are the Player Core table by item level. A new station is a `CFBaseWorkbench` child with a `recipeTags` tag. |
-| New monster | Copy an entry in `Resources/Prototypes/_CF/Entities/Mobs/Creatures/creatures.yml` and set the printed stats from Archives of Nethys. Add its row to `CFCreatureTest.StatBlocks`. Set `diesAtZeroHp: true`. |
+| New monster | Follow `importcreatures.md`. Copy an entry in `Resources/Prototypes/_CF/Entities/Mobs/Creatures/` and set the printed stats from Archives of Nethys. Add its row to `CFCreatureTest.StatBlocks`. Set `diesAtZeroHp: true`. |
 | Any generated map | Call `CFOutdoorsSystem.ApplySkyWorld(map)` first. CF takes place in the sky, on floating islands with airships, not in space, so every generated map needs the breathable air and `Sky` parallax from the `CFSkyWorld` prototype. |
 | Money | `CFShopSystem.Purse(user)` for a seeded purse. Sale value is `CFMerchantSystem.SaleValue(item)`. Set `fullResale: true` on `CFItemPrice` for gems, art objects and raw materials. |
 | Skill proficiency rank | `CFDefense.SkillRank(prototypes, combat, skill)` |

@@ -206,7 +206,7 @@ public sealed partial class CFDyingSystem : EntitySystem
     /// </summary>
     public void RestoreHitPoints(EntityUid target, int amount, EntityUid? healer = null)
     {
-        if (amount <= 0)
+        if (amount <= 0 || HasComp<CFVoidHealingComponent>(target))
             return;
 
         // Healing / potions cannot revive the dead.

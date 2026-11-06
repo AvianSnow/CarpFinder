@@ -58,7 +58,7 @@ public sealed partial class CFGOAPSteeringSystem
         steering.Rerouted = false;
         if (CanWalkStraight(uid, goal))
         {
-            if (!steering.UsingField && !rerouted)
+            if (!steering.UsingField && !rerouted && !HeadingElsewhere(steering, goal, target))
                 return;
 
             HeadStraightThere(uid, goal, target);
@@ -154,6 +154,15 @@ public sealed partial class CFGOAPSteeringSystem
 
         ent.Comp.Point = threat;
         LookForObstacle(ent, field);
+    }
+
+    /// <summary>
+    /// With a clear line it keeps the steering it has, so this catches a walk to a place that was never started, or
+    /// that is still aimed at the last stop of a route. A chase needs no check: its steering follows the target.
+    /// </summary>
+    private static bool HeadingElsewhere(CFGOAPSteeringComponent steering, Vector2 goal, EntityUid? target)
+    {
+        return target == null && (steering.Point is not { } point || (point - goal).Length() >= FieldGoalSlack);
     }
 
     private void HeadStraightThere(EntityUid uid, Vector2 goal, EntityUid? target)

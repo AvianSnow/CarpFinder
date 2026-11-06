@@ -81,10 +81,12 @@ public async Task Sweep([Range(1, 40)] int run)
 - Read values in `WaitPost` and assert after it, on the test thread, so a failure keeps its message.
 - A creature that loses sight needs a node or scent to hunt. Test heroes have no scent emitter, and players do.
 - Switch `NPCEnabled` back off at the end.
+- Assert what the scenario depends on. `ItSetsOffHomeWithAClearLine` first passed with its bug still in place, because the line it took to be clear had something on it. It now asserts `CanWalkStraight`, and it fails without the fix.
+- Check a new regression test against the unfixed code once, so you know it can fail.
 
 ## When a live scenario fails
 
-1. Read the decision log first: the test output has it, or VV on `CFGOAPDebugLog` in a real game. For what it leaves out, get a timeline before forming a theory: position, speed, goal, step, obstacle, facts, steering kinds, prone, held items. Guessing from one snapshot cost more runs than anything else.
+1. Read the decision log first: the test output has it, or VV on `CFGOAPDecisionLog` in a real game. For what it leaves out, get a timeline before forming a theory: position, speed, goal, step, obstacle, facts, steering kinds, prone, held items. Guessing from one snapshot cost more runs than anything else.
 2. Read facts by name. `(CFGOAPFact) comp.Facts` prints them.
 3. To see what is on a tile, use the anchored entities or default lookup flags. `LookupFlags.All` includes sensors, so it reports creatures up to 1.25 tiles away. That produced one wrong conclusion here.
 4. An empty goal, no steering and empty hands mean the brain stopped. The creature is probably down, not stuck.
@@ -108,7 +110,7 @@ Final code, 5 November 2026: the CF suite passed 297 of 297 in one run. That doe
 
 ### What `npc_test_map.yml` showed (6 November 2026)
 
-`Resources/Maps/Test/npc_test_map.yml` is a maze of one-tile corridors, doors, windows on grilles and tables, which the arena has none of. Load it for navigation problems. A monitored run found these, and they are in the roadmap under 6k:
+`Resources/Maps/Test/npc_test_map.yml` is a maze of one-tile corridors, doors, windows on grilles and tables, which the arena has none of. Load it for navigation problems, as `CFGOAPMazeTest` does. A monitored run found these, and they are in the roadmap under 6k:
 
 - **Corners in one-tile corridors.** Arrows give a direction and nothing centres the body. Danger from one wall nudges it off the middle, its body catches the next corner, the safety circle throws it back, and it repeats. Measured tick by tick at the mouth of the alcove at (0-1, 6). This is very likely the "stalls in front of the gap" cause below.
 - Single runs are noisy. The same fight dealt 127, 140 and 168 damage in three runs, so read trends, not numbers.
@@ -121,10 +123,18 @@ None of these is proven. They are read from the timelines of failing runs. Wheth
 |---|---|---|---|
 | **It loses sight and gives up.** Pushed off the line of a one-tile gap, it cannot see the target. With no node or scent, `HuntTarget` has no plan, because `GoToLkp` only exists as the step before `CheckNode`. It goes `Idle` and wanders off. The `Investigate` goal was added for this on 6 November 2026, so this needs checking again | `TargetVisible` drops, goal becomes `Idle`, it walks away | High | Less often, since players leave scent. A map with no nodes and a target without scent would show it |
 | **It stalls in front of the gap.** The door is gone and the line is clear, but it stands still or jitters a tile short. Feelers and the safety circle may be fighting near the corners, and the gap rule only applies when both side rays touch | `Pursuit` or `FlowField`, speed 0 to 3, x 1.6 to 2.0, for many seconds | Medium | Yes, at any one-tile doorway |
-| **It dies beside the lava.** The arena's lava is one tile from the test row. Stock fire kills through the damage bar while CF HP stays full | Goal empty, steering gone, hands empty, partway through the run. Mob state was never read, so this is inferred | Medium | Only near lava. Mostly a fault of the test map |
+| **It dies beside the lava.** The arena's lava is one tile from the test row. Stock fire used to kill through the damage bar while CF HP stayed full. `CFStockHeatSystem` fixed that on 6 November 2026, so this needs measuring again | Goal empty, steering gone, hands empty, partway through the run | Low now | Only near lava. Mostly a fault of the test map |
 | **The door frame.** A smashed door leaves `CFWoodenDoorFrame`, a second thing to break, with its own patience clock | The frame was still standing at the end of several failing runs | Low on its own | Yes |
 | **The safety circle moves it while it works.** `Hold` does not stop the circle pushing it | It ended up out of reach while `Working`. It now walks back, so this should only cost time | Low now | Yes |
 | **It slips on broken glass.** It falls, drops its weapon, and goes for `ArmSelf` | Seen in window runs, which recover | Low | Yes, and it is arguably correct |
+
+### `ARealGroupRunsWhenHalfAreDown`
+
+Before fire reached CF HP, a sweep on 6 November 2026 failed 2 of 30 runs. In both, one kobold ended `Dead` with 7/7 CF HP and `OnFire`, so stock fire killed it through the damage bar.
+
+After that fix and the `PutOutFire` goal, a sweep failed 2 of 30 again, but no kobold died in any run. In one failure a kobold's goal was `PutOutFire`, so it stopped to roll and did not get further from the hero. The other failure shows `RunAway` and no extra distance. A kobold still paralyzed from a roll would explain it, but that is not proven. Both are the test's distance check and goal list, not creatures dying.
+
+It shows as `Skipped` in a full run, because its asserts are inside `WaitAssertion`. This rate is accepted: kobolds are not that smart. A `Skipped` on this test alone is not a regression. A rate well above 1 in 15 would be.
 
 ### Other things found and not fixed
 

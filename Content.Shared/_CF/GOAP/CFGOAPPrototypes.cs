@@ -45,6 +45,12 @@ public enum CFGOAPFact : uint
     /// <summary>It is near where it started.</summary>
     AtHome = 1 << 29,
 
+    /// <summary>It is burning, and standing somewhere it could put that out.</summary>
+    OnFire = 1 << 30,
+
+    /// <summary>It holds something loaded, and nothing stops a shot at its target.</summary>
+    HasShot = 1u << 31,
+
     // Never sensed. These only exist as what a goal wants, so a plan has something to reach.
     TargetHurt = 1 << 20,
     Safe = 1 << 21,
@@ -63,6 +69,9 @@ public enum CFGOAPStep : byte
 {
     /// <summary>Stay near and let stock melee swing, which CF turns into Strikes.</summary>
     Strike,
+
+    /// <summary>Stay put and let stock NPC shooting fire, which CF turns into Strikes.</summary>
+    Shoot,
 
     /// <summary>Path to the target.</summary>
     Close,
@@ -87,6 +96,9 @@ public enum CFGOAPStep : byte
 
     /// <summary>Walk back to where it started.</summary>
     GoHome,
+
+    /// <summary>Drop and roll until the fire is out.</summary>
+    PutOutFire,
 }
 
 /// <summary>How an action's worth is worked out when planning. See <c>CFGOAPTacticsSystem</c>.</summary>

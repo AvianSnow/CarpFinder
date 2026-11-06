@@ -23,6 +23,13 @@
 
 # Goals. The highest priority that can be planned for wins.
 
+# Above everything, even running from a rout: burning kills faster than whatever it is running from.
+- type: cfGoapGoal
+  id: PutOutFire
+  avoids: [ OnFire ]
+  priority: 25
+  onlyWhen: [ OnFire ]
+
 - type: cfGoapGoal
   id: KillTarget
   wants: [ TargetHurt ]
@@ -88,6 +95,14 @@
   valuedBy: Strike
   needs: [ TargetVisible, TargetInReach, HasWeapon ]
   gives: [ TargetHurt ]
+
+# Under a Strike's cost of 1, so an archer keeps shooting even with an enemy beside it.
+- type: cfGoapAction
+  id: Shoot
+  step: Shoot
+  needs: [ TargetVisible, HasShot ]
+  gives: [ TargetHurt ]
+  cost: 0.9
 
 # These compete with a Strike for the same goal, so a poor Strike loses to them. Each counts as doing something to the
 # target. See tactics.yml.
@@ -197,6 +212,12 @@
   step: GoHome
   needsNot: [ NoWay ]
   gives: [ AtHome ]
+
+- type: cfGoapAction
+  id: PutOutFire
+  step: PutOutFire
+  needs: [ OnFire ]
+  removes: [ OnFire ]
 
 - type: cfGoapAction
   id: Wander

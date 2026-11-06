@@ -30,6 +30,12 @@ Build the list with `new List<T>()` and `Add`. Array expressions (`new[] { "a" }
 
 `Span<int> x = stackalloc int[4];` compiles to IL the client sandbox cannot verify. The server and integration tests run fine, but the client dies at startup with `ILVerify: Instruction cannot be verified` and `Assembly Content.Shared failed type checks`. Use plain locals or a normal array. Only a real client start catches this, so start the client after adding low-level code.
 
+## Stock damage does not reach CF HP
+
+Anything that calls `TryChangeDamage` writes to the bar, and CF HP never hears of it, so a creature can die with full hit points. `CFStockHeatSystem` catches heat. Cold, suffocation and pressure are not caught yet.
+
+To catch one, handle `BeforeDamageChangedEvent` and cancel it. `DamageModifyEvent` is not enough: stock temperature damage passes `ignoreResistances: true`, which skips that event. Deal the CF damage later, in `Update`, not in the handler, so the bar is not rewritten in the middle of a damage call.
+
 ## Do not sum SS14 damage
 
 `DamageableSystem.GetTotalDamage`, `GetAllDamage`, and `GetDamagePerGroup` are obsolete: do not treat damage as one number. `DamageableComponent.TotalDamage` and `Damage` are access-restricted to `DamageableSystem`.
@@ -41,6 +47,12 @@ Pathfinder hit points are the source of truth. Write the SS14 bar with `Damageab
 `Control.Dispose()` and `Control.Dispose(bool)` are obsolete (`CS0618`). Overriding `Dispose(bool)` also warns `CS0672`.
 
 Remove a control from the UI tree. Do not add an empty `Dispose` override that only calls `base.Dispose`. The lobby editor overlay (`HumanoidProfileEditor` under `_CF`) follows this.
+
+## Check lengths in a NetMessage
+
+A `NetMessage` that reads a length must call `buffer.AssertAtLeastSize` before it allocates or loops, or a client can claim a huge length and make the server allocate it. Use the sizes in `NetMessageExt`, such as `count * NetMessageExt.MinSizeOfString`. This is not a debug assert: a size that is too large disconnects a real client, so use the true minimum. Stock messages were fixed with `RobustToolbox` 294.0.2.
+
+CF has no `NetMessage` of its own. Prefer `[Serializable, NetSerializable]` events: NetSerializer checks those lengths itself, up to 64 MiB per call. Anything a client sends still needs checking in its handler, as `CFShopSystem.Purchase` does with `MaxItems`.
 
 ## Event subscriptions
 
@@ -62,6 +74,10 @@ One directed component + event pair. A second subscriber throws `Duplicate Subsc
 - `InRangeUnobstructed` between two entities measures surface to surface. NPC melee measures center to center, so a creature can pass the first and still be out of swing range.
 - A thin ray fits through a gap the body does not. A creature sent straight at a one-tile gap catches its corner and circles there, so `CFGOAPSteeringSystem.CanWalkStraight` casts down each side as well.
 - A smashed `CFWindowWooden` leaves a broken frame, which is a half wall to climb and can trip whoever is beside it. A smashed door leaves a door frame, which still blocks a body although it is not `Impassable`.
+- A bow's `ContainerAmmoProvider` reports its capacity as `int.MaxValue`, so `GunAmmoPrecondition` sees one arrow as about 0%. `RangedCombatCompound` drops the bow as empty, picks it up and repeats. Use `CFArcherCompound`.
+- `GunCombatCompound`'s `JukeOperator` strafes for the whole plan, not once. Its `MoveToOperator` uses `shutdownState: PlanFinished`, which leaves steering registered, and an NPC that has arrived then keeps its last move input forever. Strafing hides that, so take both out together.
+- A bow holds one arrow, and nothing in stock AI reloads a gun. `CFArrowSupply` nocks the next one.
+- With two parents, the first parent's copy of a component wins. `parent: [ CFMobSomething, CFGOAPBrain ]` keeps the mob's own `HTN`, which is why `CFGOAPSystem.OnBrainInit` sets the root task.
 - A thrown item without `LandAtCursor` ends its flight at about 80% of the way and slides the rest, so it never hits what the cursor is on. Every thrown weapon needs it, and `CFThrownWeaponTest` checks that.
 - `BeforeThrowEvent.Direction` is read-only and already clamped to `HandsComponent.ThrowRange`. Range has to change in `HandsSystem.ThrowHeldItem`.
 - Stock times a flight as if air did not slow the item, so a long throw lands short. `CFStrikeSystem.OnThrown` stretches `LandTime` for thrown weapons.
@@ -180,6 +196,10 @@ Stock limb organs set `VisualOrgan.data.state` to `l_arm` and so on. A body whos
 An entity spawned with an empty `Fixtures` component has `CanCollide` turned off. Creating fixtures later with `FixtureSystem.TryCreateFixture` does not turn it back on, so sensors never report contacts. After adding fixtures, call `SharedPhysicsSystem.SetCanCollide(uid, true)` (see `CFHazardSystem`).
 
 Bodies that stand still go to sleep and make no new contacts. Integration tests that spawn a creature beside a sensor must `WakeBody` it.
+
+## Do not name a folder Debug
+
+`.gitignore` has `[Dd]ebug/`, which matches at any depth, so a folder called `Debug` or `debug` is never committed and git says nothing. The files stay on that machine and the build breaks on the next one. That lost the first GOAP decision log. `Release/` and `bin/` are worth the same care. When in doubt, run `git check-ignore -v <path>`.
 
 ## Build
 

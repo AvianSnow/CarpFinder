@@ -361,7 +361,8 @@ If you can't tell which side something falls on, add it to "Decided" below as an
   - Each creature has one Strike, its first printed melee Strike. A second Strike needs a way to pick between attacks. Special abilities wait for the planned better AI, not for this row. They are not in: Grab, venom and disease, Ferocity, charges, Pack Attack, Filth Wave, the ooze's extra acid. The stat block comment on each creature lists what is missing. Immunity to critical hits and precision is not in either.
   - Size does not change a creature's body yet, so the Large bear is a Medium body.
   - No CP14 AI differences: all use `SimpleHostileCompound` and hunt on sight. CP14's retaliating herd animals are not ported.
-  - Still to port: livestock (pig, sheep, rabbit, cat; there is no printed stat block for most), undead (zombie, skeleton: these need CP14's humanoid species), watchers, spineguard, flem, cackle, bone hound, mole, myconids, ice spectre, whistler, mosquito, hydra, fairy. CP14-only monsters need a PF2e creature of a matching level chosen first.
+  - Skeleton Guard (Monster Core p. 312) landed as `CFMobSkeletonguardMelee` and `CFMobSkeletonguardRanged` on the stock skeleton body, in `Creatures/undead.yml`. They run on stock AI and work with GOAP. Stat blocks with hands and weapons now have what they need: `printedSkills`, `CFConditionImmunity`, `CFVoidHealing`, `CFArrowSupply`, and `CFArcherCompound` for bows. `importcreatures.md` is the guide. Tests: `CFSkeletonguardTest`. They have not been looked at in a real client.
+  - Still to port: livestock (pig, sheep, rabbit, cat; there is no printed stat block for most), zombies (they need CP14's humanoid species), watchers, spineguard, flem, cackle, bone hound, mole, myconids, ice spectre, whistler, mosquito, hydra, fairy. CP14-only monsters need a PF2e creature of a matching level chosen first.
   - Boar and bear drop CP14's leather, scraps and bone when butchered. Meat waits for the Consumables port.
 - [x] Adventure-site generator from `Demiplane` / `Procedural` with PF2e encounter levels, hazards and treasure.
   - `CFAdventureSiteSystem` (`Content.Server/_CF/Adventure`) builds a site on a new map from an `adventureSite` prototype (`Resources/Prototypes/_CF/Adventure/sites.yml`). `CFAdventureRift` generates it the first time someone touches it, sized to their company (highest level, number of characters), then becomes a two-way portal.
@@ -697,7 +698,7 @@ A personality is one `cfGoapProfile` prototype. It changes numbers (steering par
 - [x] Safety circle (`panicRadius`, 0.42 tiles, and wider when closing on a dangerous tile at speed): a wall, dangerous tile or mob inside it overrides all other steering and snaps the NPC away, with no easing. The current target and enemies being chased do not count. It covers what rays miss, such as sliding alongside lava.
 - [x] The flanking reach sensor feeds the same vectors through `CFFlankingSystem.EnemiesInReach`, covering enemies beside and behind the fan.
 - [x] Feeler safeguards: blocked straight ahead, it turns to the freer side, or right if they balance, so a flat wall cannot freeze it. Danger eases over a few frames so it does not shake along a wall, and snaps at once when something is close. Length scales with speed against `feelerFullSpeed`, so a fast creature sees further, down to `feelerMinLength`.
-- [x] Cooperative steering with flow fields. While a ray to the goal is clear, an NPC heads straight there. When it is blocked, the group's navigator (its first living member, or a lone NPC itself) builds a `CFGOAPFlowField`: arrows on each tile out to 20 tiles, with walls and `CFDangerousTile` blocked. Every member reads the arrow under its feet and blends it with its feelers. There is no path to fall behind on, and GOAP no longer uses A* at all.
+- [x] Cooperative steering with flow fields. While a ray to the goal is clear, an NPC heads straight there. When it is blocked, the group's navigator (its first living member, or a lone NPC itself) builds a `CFGOAPFlowField`: arrows on each tile out to 20 tiles, with walls and `CFDangerousTile` blocked. Every member reads the arrow under its feet and blends it with its feelers. There is no path to fall behind on, and chasing uses no A*. Long trips to a known place do, see 6l.
 - [x] Doors and glass in a field. A closed door, a locked door and a window are slow tiles (`CFGOAPSteeringSystem.Obstacles`), not blocked ones, so a short detour still wins. An arrow leading into one makes the creature open it if it has hands and the door is unlocked, and Strike it otherwise. A smashed window leaves a frame to climb, and a smashed door a frame to break.
 - [x] Patience. `smashPatience` on a `cfGoapProfile` is how many seconds it keeps at one door or window: Default 20, Brave 40, Stealthy 10, Cowardly 5. Then the obstacle is off the field for 60 seconds, shared by the group. With no other way, the `NoWay` fact stops `Close`, `TakeFlank`, `GoToLkp` and `CheckNode` for that long.
 - [x] Sight through glass. Plain windows have no `Occluder`, so a creature sees through them and heads for the target. `TargetInReach` and `AtFlank` need a clear ray, so it does not swing at someone behind glass.
@@ -708,11 +709,13 @@ A personality is one `cfGoapProfile` prototype. It changes numbers (steering par
 - [ ] Choosing a detour over glass is only tested on `CFGOAPFlowFieldBuilder`. The arena has lava either side of its one clear row, so a live test has no room.
 - [ ] A field is built in one go. 20 tiles is a few hundred at most, but a much larger `FieldReach` would want spreading over ticks.
 - [ ] Group memory lives on the spawner, so deleting the spawner mid-fight stops the group sharing a target.
+- [x] Shooting. `Shoot` action and step, the `HasShot` fact and `CFGOAPShotSensorSystem`. See "Shooting" in `goap.md`.
+- [ ] `Shoot` is not weighed against Multiple Attack Penalty, and an encounter's `TakeFlank` has not been tried on an archer.
 - [x] Perf check: 30 NPCs + 10 emitters thinking once, on the dev map, cost logged by `ThinkingStaysCheapWithAFullEncounter`.
 
 ### 6i. Our own structure (6 November 2026)
 
-GOAP moved from `_CF/NPC` to `_CF/GOAP`, with `CFGOAP` names. See `goap.md`. The build and the YAML linter pass. **The AI tests have not been run since this change.** They were updated to compile, so expect some to need work.
+GOAP moved from `_CF/NPC` to `_CF/GOAP`, with `CFGOAP` names. See `goap.md`. The build and the YAML linter pass. The AI tests ran clean on 6 November 2026, apart from the lava failure in 6k.
 
 A port of Crystall Edge's GOAP came first. Its code is all rights reserved, so that port was thrown away before any commit, and this was rebuilt from our own commit `46ffa81597`. Do not copy from `crystall-edge`.
 
@@ -725,7 +728,7 @@ A port of Crystall Edge's GOAP came first. Its code is all rights reserved, so t
 - [x] Fixed: a node more than a tile from the last known position could never be reached. Walking to it flipped `AtLkp` and sent the creature back.
 - [x] Fixed: the planner's heuristic counted each missing fact as a flat 1, though costs go below that.
 - [x] Flow fields stop at the edge of a grid.
-- [ ] Run the AI tests and fix what they find. New tests: `ItStaysOnItsWayToANodeAwayFromTheLastKnownPosition`, `WithNothingElseToGoOnItLooksAtTheLastKnownPosition`, `PainSaysWhereAnUnseenAttackerIs`, `ACorneredNpcFightsBack`, `EveryKindOfStepHasASystem`, `TwoCheapStepsBeatOneDearOne`, `ARunnerGoesThroughTheGapAndNotIntoTheNearestCorner`, `ADeadEndIsAsSafeAsItGets`.
+- [x] Run the AI tests and fix what they find. New tests: `ItStaysOnItsWayToANodeAwayFromTheLastKnownPosition`, `WithNothingElseToGoOnItLooksAtTheLastKnownPosition`, `PainSaysWhereAnUnseenAttackerIs`, `ACorneredNpcFightsBack`, `EveryKindOfStepHasASystem`, `TwoCheapStepsBeatOneDearOne`, `ARunnerGoesThroughTheGapAndNotIntoTheNearestCorner`, `ADeadEndIsAsSafeAsItGets`.
 - [ ] Check in play that fleeing feels right.
 
 ### 6j. Tactics (6 November 2026)
@@ -753,38 +756,48 @@ Weights for how a creature fights, reading what Baldur's Gate 3's AI weighs and 
 Found by that run, not fixed:
 
 - [x] Mobs bounced off corners in one-tile corridors. Fixed in 6l.
-- [ ] `ARealGroupRunsWhenHalfAreDown` fails now and then (2 of 11 runs): a kobold goes down within a second of starting to flee, on the arena. Its log stops at `goal none`, so the cause is not proven. Lava is the suspect, because a flee field only blocks tiles and the arena leaves little room. Log mob state and damage next time.
+- [x] `ARealGroupRunsWhenHalfAreDown` fails now and then, about 2 of 30 runs, and that rate is accepted: kobolds are not that smart. It used to be lava deaths with full CF HP, which 6m fixed. Now a kobold that caught fire stops to roll instead of running. See `ai-testing.md`. Do not chase it.
 - [ ] A mob cannot follow a trail through a door. A closed door takes no scent, and `FollowScent` does not use `Navigate`, so it never opens one. It also flips between `HuntTarget` and `Investigate` as scent comes and goes.
 - [ ] `Investigate` never Seeks, so a hidden creature beside the mob is not looked for without a node.
-- [ ] `Wander` runs at full speed and can jam for good in a corridor.
+- [ ] `Wander` runs at full speed and can jam for good in a corridor. With a home it also paces: every trip ends at home, but at a range of 3 tiles it makes about one trip every 2 seconds, and at the default 8 about one every 10. Check in play whether that looks wrong.
 - [ ] A routed creature that can still see its enemy never hides, because the flee map ignores line of sight.
 - [ ] Swings at obstacles ignore `discipline`, so the pool stays empty and it stays at -10.
 
-### 6l. Corners, routes and going home (6 November 2026): pick up here
+### 6l. Corners, routes and going home (6 November 2026)
 
-Corner bouncing is fixed and tested. Going home is written and builds, but **has never been run**. It stopped here to move to another computer.
+Corner bouncing, routes and going home are done and tested. Still to do: see them in a real client.
 
-Fixed and tested (GOAP suite 101 of 101, run before any of the route and home code went in):
+Fixed and tested:
 
 - [x] `Flow` aims at the middle of the next tile, not along the arrow, so a creature stays on a corridor's centre line.
 - [x] On a tile with an arrow, walls and anchored furniture no longer trigger feelers or the safety circle (`OnArrows`). The circle is 0.42 and a corridor's middle is 0.5 from each wall, so 0.08 of drift threw it back. Lava, mobs and loose bodies still count. Rays still stop at walls, so nothing is felt through one.
 - [x] Stock `CollisionAvoidance` is skipped for GOAP mobs, in one marked line in `NPCSteeringSystem.cs`. With no stock path its filter is skipped, so a cable or wall light underfoot counted as a blocker at full weight and froze the mob.
 - Results on `npc_test_map`: `FarAcrossTheMaze` reaches the hero in about 12 s (59 s at best before). `GrilleOnly` went from 0 HP dealt to 208.
 
-Written, builds, **not run, no tests yet**:
+Routes and going home. Tests: `CFGOAPMazeTest`, and the `ARoute...` cases in `CFGOAPPlannerTest`.
 
-- [ ] `CFGOAPFlowFieldBuilder.TryFindRoute`: a tile A* on `TileCost`, with the same step rules as the arrows. Our own instead of stock's, because stock paths cross lava, are async and need the path graph, and ours gets doors, tables and given-up obstacles for free.
-- [ ] `CFGOAPSteeringSystem.Travel` (`.Travel.cs`): walks a route on short field legs. It takes a place, never a creature, so it cannot find a player. `GoToLkp` and `CheckNode` now use it, so **those two steps changed as well**.
-- [ ] `CFGOAPComponent.Home`, `HomeRange` (8), `GoingHome`, `TryGetHome`, `AtHome` fact, `CFGOAPHomeSensorSystem`, `CFGOAPGoHomeStepSystem`, and the `GoHome` goal (priority 1.5) and action. Home is set at the first `Start`, relative to the grid. A group member goes home on its own field.
+- [x] `CFGOAPFlowFieldBuilder.TryFindRoute`: a tile A* on `TileCost`, with the same step rules as the arrows. Our own instead of stock's, because stock paths cross lava, are async and need the path graph, and ours gets doors, tables and given-up obstacles for free.
+- [x] `CFGOAPSteeringSystem.Travel` (`.Travel.cs`): walks a route on short field legs. It takes a place, never a creature, so it cannot find a player. `GoToLkp` and `CheckNode` now use it, so **those two steps changed as well**.
+- [x] `CFGOAPComponent.Home`, `HomeRange` (8), `GoingHome`, `TryGetHome`, `AtHome` fact, `CFGOAPHomeSensorSystem`, `CFGOAPGoHomeStepSystem`, and the `GoHome` goal (priority 1.5) and action. Home is set at the first `Start`, relative to the grid. A group member goes home on its own field.
 
-Next, in order:
+Running it found two bugs, both fixed:
 
-1. Run the GOAP suite. `GoHome` is now a default goal and `Travel` is in two old steps, so failures are possible. Expect `ARealGroupRunsWhenHalfAreDown` to fail now and then, as it did before.
-2. Add tests. Plain `TryFindRoute` cases in `CFGOAPPlannerTest` (round a wall, walled off, over the limit, goal with something on it). A new `CFGOAPMazeTest` on `npc_test_map`: the corridor from (-3,5) with no turning back, the walk home from (12,7) to (-10,7) with `Route` used on the way, and a home at sealed tile (-11,9) giving `NoWay` and then `Idle`.
-3. Check that a satisfied `GoHome` goal is skipped in `ChooseGoal`, and that `Wander` does not fight it at the edge of `HomeRange`.
-4. Update `goap.md` and `ai-testing.md`. The 6h line saying GOAP uses no A* is out of date: routes are for known places only.
+- [x] A creature with a clear line home never set off. `Navigate` keeps the steering it has while the line is clear, and `GoHome` starts none. All 24 runs of a sweep ended stuck like this. `HeadingElsewhere` fixes it, and also moves a walk on to the next stop of a route.
+- [x] A creature within 14 tiles of a sealed place stood still for good. An empty field looked like one not built yet, so no route was tried and `NoWay` was never set. This also applied to `GoToLkp` and `CheckNode`.
+
+The decision log was also lost in the move between computers, because `.gitignore` drops any `Debug/` folder. It is rebuilt in `DecisionLog/` with new names. If the old `Debug/` folders are still on the other computer, delete them.
 
 `.agent/ai-trial/CFGOAPMapTrial.cs.txt` is the throwaway trial with `CorridorProbe`, `TileProbe`, `FarAcrossTheMaze` and `GrilleOnly`. To use it, copy it to `Content.IntegrationTests/Tests/_CF/GOAP/CFGOAPMapTrial.cs`, set `CF_TRIAL_OUT` to a folder, and remove it again afterwards. Always check the build printed `Build succeeded` first: `dotnet test --no-build` happily runs the old binary after a failed build.
+
+### 6m. Fire (6 November 2026)
+
+- [x] Stock fire, lava and body heat land on CF HP, through `CFStockHeatSystem` (`Content.Server/_CF/Temperature`). No upstream file changed. Resistances, dying and death all work on it now. It takes hold of a creature with `CFCombatant` and `MobState`, for damage that is only Heat and has no origin. Tests: `CFStockHeatTest`.
+- [x] `HeatPerHp` is 5 and damage lands once a round. Both are our choice: 2 fire stacks come to about 1d6 a round.
+- [x] `PutOutFire` goal and action. It calls `FlammableSystem.Resist`, the same thing as clicking the on fire alert, so it drops what it holds and may take several rolls. It comes before every other goal, and it waits until the creature is off lava. Tests are in `CFGOAPMazeTest`. A kobold with 5 stacks was out in about 5 seconds, against 50 left alone.
+- [ ] Stock cold, suffocation and pressure still only touch the bar, so they can kill at full CF HP. The same pattern would fix them.
+- [ ] A creature rolls even with an enemy beside it. Check in play whether a smart one should finish the fight or get clear first.
+- [ ] Players roll for free, as in stock. PF2e has no fixed cost here, so it has no action cost for now.
+- [ ] A creature that falls in lava still relies on its steering to get out. The steps it would run there were not tested on real lava.
 
 ### DEBUG code to remove
 
@@ -792,6 +805,7 @@ Next, in order:
 
 ## Known bugs
 
+- `RainWatersExposedCrops` is unreliable, not just in a full run. On 6 November 2026 it showed as `Skipped` in two full runs, then failed once and passed once on its own. The failure message was not captured, so the cause is unknown. It only touches weather and plants, not the AI.
 - `GuideEntryPrototypeTests.Validate("Chemicals")` fails with `Hit style update limit. Queued: 1073` from `RecipesContainer`. The guide now has so many recipes that the UI warns while building it, and the test treats that warning as an error. Not investigated further.
 - `CFProneTest.NpcWithNoRoomKeepsTryingToStand` fails now and then. The same error also hit `NpcStandsOnceItHasAnAction`: an NPC's stand-up attempt adds a `StatusEffectContainerComponent` to a mob that is already being deleted, and the assert surfaces in the next test's setup. Left alone on purpose. It only affects stock NPCs now. GOAP NPCs are the only ones planned to crawl away, and that is not built.
 

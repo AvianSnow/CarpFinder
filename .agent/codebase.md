@@ -56,7 +56,7 @@ Everything below is under `Content.Shared/_CF/`.
 | `Wallmount/` | Wall-only placement | `CFWallmount`, `CFWallRequired` |
 | `Temperature/`, `TileEditTool/`, `Wallpaper/`, `Time/`, `StatusIcon/` | Ported CP14 systems, the world clock, status icons | |
 
-Server: `Character/` (`CFCharacterSpawnSystem`, `CFExperienceSystem`, `CFGiveXpCommand`), `Companions/CFCompanionSystem`, `GOAP/` (see `goap.md`), `Shop/CFShopSystem`, `Spells/CFPrestidigitationSystem`, `Temperature/`, `Materials/`.
+Server: `Character/` (`CFCharacterSpawnSystem`, `CFExperienceSystem`, `CFGiveXpCommand`), `Companions/CFCompanionSystem`, `GOAP/` (see `goap.md`), `Shop/CFShopSystem`, `Spells/CFPrestidigitationSystem`, `Temperature/` (`CFStockHeatSystem` turns stock burning into CF fire damage), `Materials/`.
 
 Client: `Hud/` (the in-game bar and radial menu), `Character/` (sheet, spells tab, shop), `Combat/` (floating numbers, flanking icon), `Effects/` (area and target overlays, mode and volley menus), `Lobby/UI/` (character builder, see `lobby-overlay.md`), `UserInterface/Systems/Character/` (the character window overlay).
 
@@ -235,6 +235,7 @@ Radial actions are entities in `Resources/Prototypes/_CF/Actions/activities.yml`
 | `CFTrainingDummy` | AC 15, 20 HP. `spawn CFTrainingDummy` in game. |
 | `CFKoboldWarrior` | A hostile with a monster stat block |
 | `CFMobBoar`, `CFMobGiantRat`, ... | Monster Core creatures, in `Entities/Mobs/Creatures/creatures.yml` |
+| `CFMobSkeletonguardMelee`, `CFMobSkeletonguardRanged` | Skeleton Guards with a scimitar and a shortbow, in `Entities/Mobs/Creatures/undead.yml` |
 | `Objects/Weapons/`, `Clothing/CFArmors.yml` | Weapons, shields and armor. Bases are in `Objects/Weapons/_base.yml` |
 | `/Maps/Nonstations/meteor-arena.yml` | The arena all integration tests load, through `CFDevMap` |
 | `CFEncounterSpawner` | Spawns an `encounter` when a player comes within `triggerFeet`. Edit it in VV as an aghost |

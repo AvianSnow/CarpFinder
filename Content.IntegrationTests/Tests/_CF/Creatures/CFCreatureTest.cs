@@ -57,6 +57,8 @@ public sealed class CFCreatureTest : GameTest
         new object[] { "CFMobHuntingSpider", 1, 17, 16, 6, 9, 5, 7, 9, 2, 1, 6 },
         new object[] { "CFMobSewerOoze", 1, 8, 40, 9, 1, 3, 3, 9, 1, 1, 6 },
         new object[] { "CFMobVelociraptor", 1, 16, 20, 5, 7, 4, 6, 8, 3, 1, 6 },
+        new object[] { "CFMobSkeletonguardMelee", -1, 16, 4, 2, 8, 2, 2, 6, 2, 1, 4 },
+        new object[] { "CFMobSkeletonguardRanged", -1, 16, 4, 2, 8, 2, 2, 6, 2, 1, 4 },
     };
 
     [TestCaseSource(nameof(StatBlocks))]

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Content.IntegrationTests.Fixtures;
 using Content.IntegrationTests.Tests.CF;
-using Content.IntegrationTests.Tests.CF.GOAP.Debug;
+using Content.IntegrationTests.Tests.CF.GOAP.DecisionLog;
 using Content.Server.CF.GOAP;
 using Content.Server.CF.GOAP.Influence;
 using Content.Server.CF.GOAP.Nodes;
@@ -26,7 +26,7 @@ namespace Content.IntegrationTests.Tests.CF.GOAP;
 /// <summary>What advanced NPCs decide, and that a real one acts on it.</summary>
 [TestFixture]
 [TestOf(typeof(CFGOAPSystem))]
-public sealed class CFGOAPTest : CFGOAPDebugLoggedTest
+public sealed class CFGOAPTest : CFGOAPLoggedTest
 {
     private static readonly Box2i Footprint = new(-1, -1, 8, 2);
 

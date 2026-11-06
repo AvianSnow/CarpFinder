@@ -6,7 +6,7 @@ using System.Numerics;
 using System.Text;
 using Content.IntegrationTests.Fixtures;
 using Content.Server.CF.GOAP;
-using Content.Server.CF.GOAP.Debug;
+using Content.Server.CF.GOAP.DecisionLog;
 using Content.Server.CF.GOAP.Encounters;
 using Content.Server.CF.GOAP.Steering;
 using Content.Server.NPC.Components;
@@ -262,13 +262,13 @@ public sealed class CFGOAPMapTrial : GameTest
                 text.AppendLine($"object {id}: hp {combat.CurrentHp}/{combat.MaxHp} ac {combat.ArmorClass} hardness {hardness} isObject {isObject}");
         }
 
-        SEntMan.System<CFGOAPDebugLogSystem>().WatchAll();
+        SEntMan.System<CFGOAPDecisionLogSystem>().WatchAll();
         foreach (var mob in mobs)
         {
             if (!SEntMan.EntityExists(mob))
                 continue;
 
-            if (SEntMan.TryGetComponent(mob, out CFGOAPDebugLogComponent? log))
+            if (SEntMan.TryGetComponent(mob, out CFGOAPDecisionLogComponent? log))
             {
                 text.AppendLine($"--- decision log {mob} {Name(mob)}");
                 foreach (var entry in log.Entries)

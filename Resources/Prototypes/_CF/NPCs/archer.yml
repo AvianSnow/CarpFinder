@@ -1,0 +1,78 @@
+# Stock AI for a mob with a bow, the same way SimpleHumanoidHostileCompound works with a gun.
+#
+# RangedCombatCompound cannot be used: a bow reports its capacity as int.MaxValue, so one arrow is about 0% ammo.
+# It drops the bow as empty, picks it up again, and repeats. Here "any ammo" is a percent smaller than 1 in int.MaxValue.
+#
+# GunCombatCompound is not used either: its JukeOperator strafes for the whole fight, and an archer stands its ground.
+# Without that strafing its MoveToOperator would need the default shutdownState: PlanFinished leaves steering registered,
+# and a mob that has arrived keeps its last move input and walks on past the target.
+
+- type: htnCompound
+  id: CFArcherCompound
+  branches:
+  - tasks:
+    - !type:HTNCompoundTask
+      task: CFBowCombatCompound
+  - tasks:
+    - !type:HTNCompoundTask
+      task: MeleeCombatCompound
+  - tasks:
+    - !type:HTNCompoundTask
+      task: IdleCompound
+
+- type: htnCompound
+  id: CFBowCombatCompound
+  branches:
+  # Out of arrows, so it fights with whatever else it has.
+  - preconditions:
+    - !type:ActiveHandComponentPrecondition
+      components:
+      - type: Gun
+    - !type:GunAmmoPrecondition
+      maxPercent: 0
+    tasks:
+    - !type:HTNPrimitiveTask
+      preconditions:
+      - !type:ActiveHandEntityPrecondition
+      operator: !type:DropOperator
+
+  - preconditions:
+    - !type:ActiveHandComponentPrecondition
+      components:
+      - type: Gun
+    - !type:WieldedPrecondition
+      wielded: false
+    tasks:
+    - !type:HTNPrimitiveTask
+      operator: !type:WieldOperator
+
+  # Walks only until it has a line of sight, then stands and shoots.
+  - preconditions:
+    - !type:GunAmmoPrecondition
+      minPercent: 0.0000000001
+    tasks:
+    - !type:HTNPrimitiveTask
+      operator: !type:UtilityOperator
+        proto: NearbyGunTargets
+
+    - !type:HTNPrimitiveTask
+      operator: !type:MoveToOperator
+        pathfindInPlanning: true
+        removeKeyOnFinish: false
+        targetKey: TargetCoordinates
+        pathfindKey: TargetPathfind
+        stopOnLineOfSight: true
+        rangeKey: MeleeRange
+
+    - !type:HTNPrimitiveTask
+      preconditions:
+      - !type:KeyExistsPrecondition
+        key: Target
+      operator: !type:GunOperator
+        targetKey: Target
+        requireLOS: true
+      services:
+      - !type:UtilityService
+        id: RangedService
+        proto: NearbyGunTargets
+        key: Target

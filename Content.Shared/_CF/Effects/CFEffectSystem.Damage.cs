@@ -102,7 +102,7 @@ public sealed partial class CFEffectSystem
 
     public void Heal(EntityUid user, EntityUid target, int amount)
     {
-        if (amount <= 0 || !_bridge.TryEnsureCombatTarget(target, out _, out _, out _))
+        if (amount <= 0 || HasComp<CFVoidHealingComponent>(target) || !_bridge.TryEnsureCombatTarget(target, out _, out _, out _))
             return;
 
         _dying.RestoreHitPoints(target, amount, user);

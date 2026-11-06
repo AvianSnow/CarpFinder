@@ -507,12 +507,21 @@ public sealed partial class CFConditionSystem : EntitySystem
         return 10 + mod + _armor.CheckPenalty(uid, "Stealth", CFAbility.Dexterity, false) - Clumsy(uid);
     }
 
-    /// <summary>Whether this creature has already faced down the user within the last minute.</summary>
+    /// <summary>False if the target cannot be frightened, or has faced down the user within the last minute.</summary>
     public bool CanDemoralize(EntityUid user, EntityUid target)
     {
+        if (IsImmune(target, CFConditionKind.Frightened))
+            return false;
+
         return !TryComp(target, out CFConditionComponent? cond)
                || !cond.DemoralizedUntil.TryGetValue(user, out var until)
                || until <= _timing.CurTime;
+    }
+
+    /// <summary>Whether a stat block's immunities rule this condition out.</summary>
+    public bool IsImmune(EntityUid target, CFConditionKind kind)
+    {
+        return TryComp(target, out CFConditionImmunityComponent? immunity) && immunity.Conditions.Contains(kind);
     }
 
     /// <summary>What Demoralize would roll against. Nothing is rolled or changed.</summary>
@@ -520,7 +529,9 @@ public sealed partial class CFConditionSystem : EntitySystem
     {
         skill = 0;
         dc = 0;
-        if (!TryComp(user, out CFCombatantComponent? combat) || !TryComp(user, out CFAbilityScoreComponent? abilities))
+        if (IsImmune(target, CFConditionKind.Frightened)
+            || !TryComp(user, out CFCombatantComponent? combat)
+            || !TryComp(user, out CFAbilityScoreComponent? abilities))
             return false;
 
         skill = CFDefense.SkillModifier(
@@ -782,6 +793,9 @@ public sealed partial class CFConditionSystem : EntitySystem
     /// </summary>
     public void ApplyCondition(EntityUid target, CFConditionKind kind, int value, float seconds, EntityUid source, int dc)
     {
+        if (IsImmune(target, kind))
+            return;
+
         seconds = Math.Max(1f, seconds);
         switch (kind)
         {

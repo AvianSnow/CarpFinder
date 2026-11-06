@@ -2,6 +2,7 @@ using Content.Server.CF.GOAP.Influence;
 using Content.Server.CF.GOAP.Sensors;
 using Content.Server.CF.GOAP.Steering;
 using Content.Server.CF.GOAP.Steps;
+using Content.Server.NPC.HTN;
 using Content.Server.CF.GOAP.Tactics;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Factions;
@@ -55,6 +56,17 @@ public sealed partial class CFGOAPSystem : EntitySystem
     public bool HasStep(CFGOAPStep kind)
     {
         return _steps.ContainsKey(kind);
+    }
+
+    /// <summary>
+    /// A brain always runs the creature. With two parents the first one's <c>HTN</c> wins, so a mob with stock AI of its
+    /// own would otherwise keep that and never think, whatever <c>CFGOAPBrain</c> says.
+    /// </summary>
+    [SubscribeLocalEvent]
+    private void OnBrainInit(Entity<CFGOAPComponent> ent, ref ComponentInit args)
+    {
+        if (TryComp(ent, out HTNComponent? htn))
+            htn.RootTask = new HTNCompoundTask { Task = "CFGOAPCompound" };
     }
 
     /// <summary>Gets a brain ready to run.</summary>
