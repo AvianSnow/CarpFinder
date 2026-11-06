@@ -1,0 +1,218 @@
+using Content.Shared.Actions;
+using Content.Shared.CF.Character.Grants;
+using Content.Shared.CF.Combat;
+using Content.Shared.CF.Traits;
+using Content.Shared.Overlays;
+using Robust.Shared.Prototypes;
+
+namespace Content.Shared.CF.Character;
+
+/// <summary>
+/// Runs the <see cref="CFGrant"/> lists of a character's options, at spawn and on level-up.
+/// Grants are the one way an option changes a character: add a <c>grants</c> entry, not a case in code.
+/// </summary>
+public sealed partial class CFCharacterFeatureSystem : EntitySystem
+{
+    /// <summary>How much low-light vision brightens the dark. Darkvision is about twice this.</summary>
+    private static readonly Color LowLightColor = new((byte) 0x9B, (byte) 0xB6, (byte) 0xFF, (byte) 0x18);
+
+    private static readonly Color DarkvisionColor = new((byte) 0x9B, (byte) 0xB6, (byte) 0xFF, (byte) 0x30);
+
+    [Dependency] private IPrototypeManager _prototypes = default!;
+    [Dependency] private SharedActionsSystem _actions = default!;
+
+    /// <summary>
+    /// Runs one option's grants. <paramref name="source"/> names the option, and a source that has run does nothing,
+    /// so gaining the same option a second way does not double its bonuses or its gear.
+    /// </summary>
+    public void Apply(EntityUid mob, IReadOnlyList<CFGrant> grants, string source)
+    {
+        if (grants.Count == 0)
+            return;
+
+        if (!EnsureComp<CFCharacterFeaturesComponent>(mob).Applied.Add(source))
+            return;
+
+        var args = new CFGrantArgs(mob, source);
+        foreach (var grant in grants)
+        {
+            grant.Apply(EntityManager, args);
+        }
+    }
+
+    /// <summary>Every class feature gained by <paramref name="level"/> that has not run yet.</summary>
+    public void ApplyClassFeatures(EntityUid mob, CFClassPrototype cls, int level)
+    {
+        foreach (var feature in cls.Features)
+        {
+            if (feature.Level <= level)
+                Apply(mob, feature.Grants, $"class:{cls.ID}:{feature.Level}:{feature.Name}");
+        }
+    }
+
+    public void RaiseProficiency(EntityUid mob, string proficiency, CFProficiencyRank rank)
+    {
+        var combat = EnsureComp<CFCombatantComponent>(mob);
+        if (combat.ProficiencyRanks.GetValueOrDefault(proficiency) >= rank)
+            return;
+
+        combat.ProficiencyRanks[proficiency] = rank;
+        Dirty(mob, combat);
+    }
+
+    public void AddFamiliarity(EntityUid mob, List<EntProtoId> weapons, List<ProtoId<CFTraitPrototype>> traits)
+    {
+        var combat = EnsureComp<CFCombatantComponent>(mob);
+        foreach (var weapon in weapons)
+        {
+            if (!combat.FamiliarWeapons.Contains(weapon))
+                combat.FamiliarWeapons.Add(weapon);
+        }
+
+        foreach (var trait in traits)
+        {
+            if (!combat.FamiliarWeaponTraits.Contains(trait))
+                combat.FamiliarWeaponTraits.Add(trait);
+        }
+
+        Dirty(mob, combat);
+    }
+
+    public void GrantSense(EntityUid mob, CFSense sense, int rangeFeet = 0)
+    {
+        var senses = EnsureComp<CFSensesComponent>(mob);
+        switch (sense)
+        {
+            case CFSense.Darkvision:
+                senses.Darkvision = true;
+                SetVision(mob, DarkvisionColor);
+                break;
+            case CFSense.LowLightVision:
+                senses.LowLightVision = true;
+                if (!senses.Darkvision)
+                    SetVision(mob, LowLightColor);
+                break;
+            default:
+                senses.ImpreciseFeet = Math.Max(senses.ImpreciseFeet, rangeFeet);
+                break;
+        }
+
+        Dirty(mob, senses);
+    }
+
+    private void SetVision(EntityUid mob, Color color)
+    {
+        var vision = EnsureComp<NightVisionComponent>(mob);
+        vision.Enabled = true;
+        vision.Prioritized = true;
+        vision.LightingColor = color;
+        vision.NoiseAmount = 0f;
+        Dirty(mob, vision);
+    }
+
+    /// <summary>Adds a spell's action, if the character does not have it yet. False if the spell has no action entity.</summary>
+    public bool GrantSpell(EntityUid mob, ProtoId<CFSpellPrototype> spell)
+    {
+        var action = "CF" + spell.Id;
+        if (!_prototypes.HasIndex<EntityPrototype>(action))
+            return false;
+
+        GrantAction(mob, action);
+        return true;
+    }
+
+    /// <summary>Adds an action, unless another option has already granted it.</summary>
+    public void GrantAction(EntityUid mob, EntProtoId action)
+    {
+        foreach (var existing in _actions.GetActions(mob))
+        {
+            if (MetaData(existing).EntityPrototype?.ID == action.Id)
+                return;
+        }
+
+        _actions.AddAction(mob, action);
+    }
+
+    public void SetPointMark(EntityUid mob, CFPointMark mark)
+    {
+        var options = EnsureComp<CFCombatOptionsComponent>(mob);
+        options.PointMark = mark;
+        Dirty(mob, options);
+    }
+
+    public void SetOption(EntityUid mob, CFCombatOption option)
+    {
+        var options = EnsureComp<CFCombatOptionsComponent>(mob);
+        switch (option)
+        {
+            case CFCombatOption.SneakAttack:
+                options.SneakAttack = true;
+                break;
+            case CFCombatOption.CanRage:
+                options.CanRage = true;
+                break;
+            case CFCombatOption.ReactiveStrike:
+                options.ReactiveStrike = true;
+                break;
+            case CFCombatOption.ShieldBlock:
+                options.ShieldBlock = true;
+                break;
+            case CFCombatOption.Flurry:
+                options.Flurry = true;
+                break;
+            case CFCombatOption.PowerfulFist:
+                options.PowerfulFist = true;
+                break;
+            case CFCombatOption.PanacheStyle:
+                options.PanacheStyle = true;
+                break;
+            case CFCombatOption.Spellstrike:
+                options.Spellstrike = true;
+                break;
+            case CFCombatOption.Devise:
+                options.Devise = true;
+                break;
+            case CFCombatOption.Exploit:
+                options.Exploit = true;
+                break;
+            case CFCombatOption.Champion:
+                options.Champion = true;
+                break;
+            case CFCombatOption.Anthem:
+                options.Anthem = true;
+                break;
+            case CFCombatOption.BattleMedicine:
+                options.BattleMedicine = true;
+                break;
+            case CFCombatOption.NimbleDodge:
+                options.NimbleDodge = true;
+                break;
+            case CFCombatOption.ReactiveShield:
+                options.ReactiveShield = true;
+                break;
+            case CFCombatOption.YoureNext:
+                options.YoureNext = true;
+                break;
+            case CFCombatOption.TumbleBehind:
+                options.TumbleBehind = true;
+                break;
+            case CFCombatOption.SnaggingStrike:
+                options.SnaggingStrike = true;
+                break;
+            case CFCombatOption.ExactingStrike:
+                options.ExactingStrike = true;
+                break;
+            case CFCombatOption.DoubleSlice:
+                options.DoubleSlice = true;
+                break;
+            case CFCombatOption.TwinFeint:
+                options.TwinFeint = true;
+                break;
+            case CFCombatOption.ViciousSwing:
+                options.ViciousSwing = true;
+                break;
+        }
+
+        Dirty(mob, options);
+    }
+}

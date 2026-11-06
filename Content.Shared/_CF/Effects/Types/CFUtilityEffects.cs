@@ -48,13 +48,13 @@ public sealed partial class CFForcedMovementEffect : CFEffect
     }
 }
 
-/// <summary>A dying creature loses the dying condition and stays unconscious at 0 HP.</summary>
+/// <summary>A dying creature loses the dying condition and wakes at 1 HP.</summary>
 public sealed partial class CFStabilizeEffect : CFEffect
 {
     public override void Apply(IEntityManager entities, CFEffectArgs args)
     {
         if (args.Target is { } target)
-            entities.System<CFDyingSystem>().Stabilize(target);
+            entities.System<CFDyingSystem>().Stabilize(target, args.User);
     }
 }
 

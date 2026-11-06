@@ -10,6 +10,7 @@ using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Weapons.Melee;
 using Robust.Shared.GameObjects;
+using Robust.Shared.Map;
 using Robust.Shared.Maths;
 using Robust.Shared.Prototypes;
 
@@ -137,6 +138,50 @@ public sealed class CFCreatureTest : GameTest
 
             Assert.That(SEntMan.System<MobStateSystem>().IsDead(hero), Is.False);
             Assert.That(SEntMan.GetComponent<CFCombatantComponent>(hero).Dying, Is.GreaterThan(0));
+        });
+    }
+
+    /// <summary>A CF rule change: PF2e leaves the target unconscious at 0 HP.</summary>
+    [Test]
+    public async Task StabilizeWakesTheDyingAtOneHp()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            var caster = SEntMan.SpawnEntity("CFCreatureTestHero", _map.Local(0, 0));
+            var patient = SEntMan.SpawnEntity("CFCreatureTestHero", _map.Local(1, 0));
+            var combat = SEntMan.GetComponent<CFCombatantComponent>(patient);
+            var effects = SEntMan.System<CFEffectSystem>();
+            var spell = SEntMan.SpawnEntity("CFStabilize", MapCoordinates.Nullspace);
+
+            effects.DealDamage(caster, patient, 1000, "Slashing", false);
+            Assert.That(combat.Dying, Is.GreaterThan(0));
+
+            effects.DeliverToTarget(spell, caster, patient);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(combat.CurrentHp, Is.EqualTo(1));
+                Assert.That(combat.Dying, Is.Zero);
+                Assert.That(combat.Wounded, Is.Zero, "The spell does not add wounded.");
+                Assert.That(SEntMan.System<MobStateSystem>().IsAlive(patient));
+            });
+        });
+    }
+
+    [Test]
+    public async Task StabilizeLeavesTheHealthyAlone()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            var caster = SEntMan.SpawnEntity("CFCreatureTestHero", _map.Local(0, 0));
+            var patient = SEntMan.SpawnEntity("CFCreatureTestHero", _map.Local(1, 0));
+            var spell = SEntMan.SpawnEntity("CFStabilize", MapCoordinates.Nullspace);
+
+            SEntMan.System<CFEffectSystem>().DeliverToTarget(spell, caster, patient);
+
+            Assert.That(SEntMan.GetComponent<CFCombatantComponent>(patient).CurrentHp, Is.EqualTo(500));
         });
     }
 

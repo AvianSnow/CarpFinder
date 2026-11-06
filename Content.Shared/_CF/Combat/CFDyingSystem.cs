@@ -124,17 +124,15 @@ public sealed partial class CFDyingSystem : EntitySystem
     }
 
     /// <summary>
-    /// The stabilize spell: dying drops to 0 and the creature stays unconscious at 0 HP. No check.
+    /// The stabilize spell: a dying creature wakes at 1 HP, with no check and no wounded.
+    /// PF2e leaves it unconscious at 0 HP. CF changes that for balance.
     /// </summary>
-    public void Stabilize(EntityUid target)
+    public void Stabilize(EntityUid target, EntityUid? healer = null)
     {
-        if (TryComp(target, out CFCombatantComponent? combat))
-        {
-            combat.Dying = 0;
-            Dirty(target, combat);
-        }
+        if (!TryComp(target, out CFCombatantComponent? combat) || !CanStabilize(target, combat))
+            return;
 
-        RemComp<CFDyingTrackerComponent>(target);
+        ReviveAtOneHitPoint(target, combat, healer, gainWounded: false);
         _popup.PopupEntity(Loc.GetString("cf-spell-stabilize"), target);
     }
 
@@ -309,12 +307,16 @@ public sealed partial class CFDyingSystem : EntitySystem
     /// Clear dying, set CF HP to 1, wipe SS14 damage/bleed, and force Alive.
     /// Refuses fully dead targets.
     /// </summary>
-    public void ReviveAtOneHitPoint(EntityUid target, CFCombatantComponent combatant, EntityUid? healer = null)
+    public void ReviveAtOneHitPoint(
+        EntityUid target,
+        CFCombatantComponent combatant,
+        EntityUid? healer = null,
+        bool gainWounded = true)
     {
         if (_mobState.IsDead(target))
             return;
 
-        LoseDying(target, combatant, gainWounded: true);
+        LoseDying(target, combatant, gainWounded);
         combatant.CurrentHp = 1;
         Dirty(target, combatant);
 

@@ -278,7 +278,7 @@
   components: Somatic, verbal
   range: 30 feet
   targets: 1 dying creature
-  summary: The target loses the dying condition, remains unconscious at 0 Hit Points, and does not gain wounded from this stabilization.
+  summary: The target loses the dying condition, wakes at 1 Hit Point, and does not gain wounded from this stabilization.
 
 - type: cfSpell
   id: KnowTheWay
