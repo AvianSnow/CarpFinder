@@ -1,0 +1,22 @@
+cf-ghost-monster-rules = You are a monster in this encounter. Fight the adventurers.
+
+cf-ghost-giant-rat-name = Giant rat
+cf-ghost-giant-rat-desc = A rat the size of a dog. Quick and easily killed, so bite and keep moving.
+cf-ghost-boar-name = Boar
+cf-ghost-boar-desc = A bristling wild pig with tusks. It takes a lot of killing.
+cf-ghost-grizzly-bear-name = Grizzly bear
+cf-ghost-grizzly-bear-desc = A huge brown bear, and the strongest of the wild animals.
+cf-ghost-giant-frog-name = Giant frog
+cf-ghost-giant-frog-desc = A frog as big as a man, with a mouth to match.
+cf-ghost-hunting-spider-name = Hunting spider
+cf-ghost-hunting-spider-desc = A spider the size of a large dog that runs its prey down.
+cf-ghost-sewer-ooze-name = Sewer ooze
+cf-ghost-sewer-ooze-desc = A heaving pile of filth. It is slow and easy to hit, but very hard to kill.
+cf-ghost-velociraptor-name = Velociraptor
+cf-ghost-velociraptor-desc = A quick, feathered hunter, at its best alongside others of its kind.
+cf-ghost-kobold-warrior-name = Kobold warrior
+cf-ghost-kobold-warrior-desc = A small skirmisher with a spear. Go for enemies who are busy with someone else.
+cf-ghost-skeleton-guard-name = Skeleton guard
+cf-ghost-skeleton-guard-desc = Old bones with a scimitar, still keeping the post they were given.
+cf-ghost-skeleton-archer-name = Skeleton archer
+cf-ghost-skeleton-archer-desc = Old bones with a shortbow. When the arrows run out, close in with your claws.

@@ -13,7 +13,7 @@
     pocket1: CFLightHammer
 
 - type: entity
-  parent: [ MobBaseKobold, CFGOAPBrain ]
+  parent: [ MobBaseKobold, CFGOAPBrain, CFMonsterGhostRole ]
   id: CFMobKoboldTrapper
   name: kobold trapper
   description: A wiry kobold hung with tools and tripline, watching you over the stock of a crossbow.
@@ -153,13 +153,9 @@
     - WaitHidden
   - type: CFGOAPStandoff
   - type: CFGOAPCommander
+  # MobBaseKobold has a stock role at prob 0.05, and the first parent's copy wins, so these have to be set here.
   - type: GhostRole
     prob: 1
-    makeSentient: true
-    allowMovement: true
-    allowSpeech: true
     name: cf-ghost-kobold-trapper-name
     description: cf-ghost-kobold-trapper-desc
     rules: cf-ghost-kobold-trapper-rules
-    mindRoles:
-    - MindRoleGhostRoleTeamAntagonist

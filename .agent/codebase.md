@@ -244,5 +244,6 @@ Radial actions are entities in `Resources/Prototypes/_CF/Actions/activities.yml`
 | `CFMobSkeletonguardMelee`, `CFMobSkeletonguardRanged` | Skeleton Guards with a scimitar and a shortbow, in `Entities/Mobs/Creatures/undead.yml` |
 | `Objects/Weapons/`, `Clothing/CFArmors.yml` | Weapons, shields and armor. Bases are in `Objects/Weapons/_base.yml` |
 | `/Maps/Nonstations/meteor-arena.yml` | The arena all integration tests load, through `CFDevMap` |
-| `CFMobKoboldTrapper` | A GOAP leader that shoots, lays traps and draws a hammer when cornered. Ghosts can take it. Set a spawner's `encounter` to `KoboldAmbush` for it and three warriors |
+| `CFMobKoboldTrapper` | A GOAP leader that shoots, lays traps and draws a hammer when cornered. Set a spawner's `encounter` to `KoboldAmbush` for it and three warriors |
+| Any monster | Ghosts can take every monster above from the ghost role menu, through `CFMonsterGhostRole` |
 | `CFEncounterSpawner` | Spawns an `encounter` when a player comes within `triggerFeet`. Edit it in VV as an aghost |

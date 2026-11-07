@@ -10,10 +10,11 @@ Monsters run on stock SS14 HTN. Encounters give them GOAP later, so every creatu
 2. Pick a body and a file (below).
 3. Fill in the stat block (the table below). Use printed numbers and do not derive them.
 4. Pick the AI root task (below).
-5. Write what is not in yet in the comment above the entity, so nobody thinks it was missed.
-6. Add a row to `StatBlocks` in `CFCreatureTest`. Add a test class if the creature has anything more than a natural attack.
-7. Check the build printed `Build succeeded`, then run the tests and the linter (`dotnet run --project Content.YAMLLinter -c Tools`).
-8. Update the "Still to port" list under "Creatures with PF2e stat blocks" in `roadmap.md`.
+5. Give it a ghost role (below), so a player can take it.
+6. Write what is not in yet in the comment above the entity, so nobody thinks it was missed.
+7. Add a row to `StatBlocks` in `CFCreatureTest`. Add a test class if the creature has anything more than a natural attack.
+8. Check the build printed `Build succeeded`, then run the tests and the linter (`dotnet run --project Content.YAMLLinter -c Tools`).
+9. Update the "Still to port" list under "Creatures with PF2e stat blocks" in `roadmap.md`.
 
 ## Body and file
 
@@ -25,6 +26,20 @@ Monsters run on stock SS14 HTN. Encounters give them GOAP later, so every creatu
 - An entity id starts with `CF`: `CFMobGiantRat`. Variants of one creature share an abstract base, such as `CFMobSkeletonguardBase`, and each sets `name`, `HTN` and `Loadout`.
 - Give it `InputMover`, `MobMover`, `NpcFactionMember` with `SimpleHostile`, and `CFFaction` with `Monster`. `CFBaseCreature` already has these.
 - Sprites: stock bodies come from the species. Other art stays in its fork folder with its `meta.json`. An RSI with `idle` and `moving` states walks through `SpriteMovement`, and its layer needs the `movement` map as well. See `CFMobHuntingSpider`.
+
+## Ghost role
+
+Every monster can be played. `CFMonsterGhostRole` holds the shared rules and `GhostTakeoverAvailable`. `CFBaseCreature` and `CFMobSkeletonguardBase` already have it as a parent; a creature on any other body adds it as a parent of its own. A stock parent with a `GhostRole` of its own wins over it: a kobold also sets `prob: 1` and `rules`. See `CFKoboldWarrior`.
+
+Each creature sets the name and description a ghost sees, with its text in `ghost-roles.ftl`:
+
+```yaml
+- type: GhostRole
+  name: cf-ghost-giant-rat-name
+  description: cf-ghost-giant-rat-desc
+```
+
+The role needs no AI work. Stock HTN sleeps while a player is in the body and wakes when they leave, and a GOAP brain runs inside HTN. `CFMonsterGhostRoleTest` fails if a monster has no role or no text.
 
 ## Stat block to YAML
 

@@ -494,6 +494,19 @@ public sealed partial class CFStrikeSystem : EntitySystem
     }
 
     /// <summary>
+    /// Multiple Attack Penalty on the next Strike with what is in hand. A held bow counts here,
+    /// where <see cref="TryMeleeWeapon"/> passes over it for fists.
+    /// </summary>
+    public int NextStrikeMapPenalty(EntityUid user)
+    {
+        if (_hands.TryGetActiveItem(user, out var held) && _weapons.TryStats(held.Value, out var stats))
+            return _actions.MapPenalty(user, stats.Agile);
+
+        TryMeleeWeapon(user, out stats, out _);
+        return _actions.MapPenalty(user, stats.Agile);
+    }
+
+    /// <summary>
     /// Versatile: the type the target is weakest to, or the weapon's own type when nothing is better.
     /// </summary>
     private string ChooseDamageType(EntityUid target, CFStrikeWeaponStats weapon)

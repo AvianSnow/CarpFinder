@@ -172,6 +172,14 @@ public sealed partial class CFHudUiController : UIController
         AddBonus(statuses, player, cond, "perception", CFBonusStat.Perception);
         AddBonus(statuses, player, cond, "skills", CFBonusStat.SkillChecks);
         AddBonus(statuses, player, cond, "speed", CFBonusStat.Speed);
+
+        // Last, because it comes and goes with every Strike and the rest of the row should not shift.
+        if (pool is { MapAttacks: > 0 })
+        {
+            var map = EntityManager.System<CFStrikeSystem>().NextStrikeMapPenalty(player);
+            statuses.Add(new CFHudStatus($"{Loc.GetString("cf-hud-status-map")} {CFSkills.FormatSigned(map)}", false));
+        }
+
         return statuses;
     }
 

@@ -146,6 +146,7 @@ Built on 6 November 2026. `Content.Shared/_CF/Languages`, and `CFSpeech` in `Con
 - [ ] `CFGrantLanguage`, for Multilingual and other feats that teach one.
 - [ ] Recount the extra languages when Intelligence rises at level 5.
 - [ ] Give monsters that talk a `CFLanguages`. Without one, a creature speaks plainly and understands everything.
+- [ ] Every monster can now be played, so a player in a rat or a skeleton talks in plain words. Animals and mindless undead need a way to make noise only.
 - [ ] Languages from a heritage or a background.
 
 ### Rest

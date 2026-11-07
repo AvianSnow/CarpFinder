@@ -1,9 +1,26 @@
 # Monster Core creatures on CP14 bodies. Numbers are the printed stat blocks, checked on Archives of Nethys.
 # Copy one for a new creature. printedAttack and printedDamage are the melee Strike's +N and +M in "+N, 1dX+M".
 
+# What makes a monster playable. Every monster takes this as a parent, and sets its own name and description on GhostRole.
+# GhostTakeoverAvailable is what lets a ghost actually take the body: without it the role is listed and does nothing.
+# Stock HTN sleeps while a player is in the body and wakes if they leave, and a GOAP brain runs inside HTN.
 - type: entity
   abstract: true
-  parent: [SimpleMobBase, MobCombat]
+  id: CFMonsterGhostRole
+  categories: [ HideSpawnMenu ]
+  components:
+    - type: GhostRole
+      makeSentient: true
+      allowMovement: true
+      allowSpeech: true
+      rules: cf-ghost-monster-rules
+      mindRoles:
+        - MindRoleGhostRoleTeamAntagonist
+    - type: GhostTakeoverAvailable
+
+- type: entity
+  abstract: true
+  parent: [SimpleMobBase, MobCombat, CFMonsterGhostRole]
   id: CFBaseCreature
   suffix: Monster
   categories: [ForkFiltered]
@@ -38,6 +55,9 @@
   name: giant rat
   description: A rat the size of a dog, with matted fur and yellow teeth.
   components:
+    - type: GhostRole
+      name: cf-ghost-giant-rat-name
+      description: cf-ghost-giant-rat-desc
     - type: Sprite
       drawdepth: SmallMobs
       layers:
@@ -106,6 +126,9 @@
   name: boar
   description: A bristling wild pig with tusks that can open a man from hip to rib.
   components:
+    - type: GhostRole
+      name: cf-ghost-boar-name
+      description: cf-ghost-boar-desc
     - type: Sprite
       drawdepth: Mobs
       layers:
@@ -175,6 +198,9 @@
   name: grizzly bear
   description: A huge brown bear, heavy with muscle.
   components:
+    - type: GhostRole
+      name: cf-ghost-grizzly-bear-name
+      description: cf-ghost-grizzly-bear-desc
     - type: Sprite
       drawdepth: Mobs
       layers:
@@ -244,6 +270,9 @@
   name: giant frog
   description: A frog as big as a man, with a mouth to match.
   components:
+    - type: GhostRole
+      name: cf-ghost-giant-frog-name
+      description: cf-ghost-giant-frog-desc
     - type: Sprite
       drawdepth: Mobs
       layers:
@@ -304,6 +333,9 @@
   name: hunting spider
   description: A spider the size of a large dog that runs its prey down.
   components:
+    - type: GhostRole
+      name: cf-ghost-hunting-spider-name
+      description: cf-ghost-hunting-spider-desc
     - type: Sprite
       drawdepth: Mobs
       sprite: Mobs/Animals/Spiders/tarantulaspider.rsi
@@ -389,6 +421,9 @@
   name: sewer ooze
   description: A heaving pile of filth that creeps toward anything that moves.
   components:
+    - type: GhostRole
+      name: cf-ghost-sewer-ooze-name
+      description: cf-ghost-sewer-ooze-desc
     - type: Sprite
       drawdepth: Mobs
       layers:
@@ -450,6 +485,9 @@
   name: velociraptor
   description: A quick, feathered hunter that attacks in packs.
   components:
+    - type: GhostRole
+      name: cf-ghost-velociraptor-name
+      description: cf-ghost-velociraptor-desc
     - type: Sprite
       drawdepth: Mobs
       layers:

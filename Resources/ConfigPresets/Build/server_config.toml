@@ -22,11 +22,11 @@ max_connections = 256
 
 [game]
 # Name of the server. This is what will be displayed in the server list and lobby.
-hostname = "MyServer"
+hostname = " Carps And Crypts"
 # Description of the server. This is what will be displayed in the server list.
-desc = "Just another server, don't mind me!"
+desc = "EARLY ALPHA, An Action based RPG Inspired by popular TTRPG like DnD And Pathfinder 2e"
 # The maximum number of players that can connect to the server. (Exluding admins)
-soft_max_players = 30
+soft_max_players = 40
 # Controls the lobby timer in seconds.
 lobbyduration = 150
 # Should roles be restricted based on time?
@@ -84,7 +84,7 @@ enabled = false
 [chat]
 # Message of the day. This is displayed to players when they connect to the server.
 # Type your message between the quotes.
-motd = ""
+motd = "Welcome to Carps And Crypts, This is Early Access, Make sure you Create your character in Customise, There is no way to change your Character at this time later in game"
 
 [hub]
 # Set to true to show this server on the public server list
@@ -93,7 +93,7 @@ motd = ""
 advertise = false
 # Comma-separated list of tags, useful for categorizing your server. For a list of standard tags, see the link below.
 # https://docs.spacestation14.com/en/robust-toolbox/server-http-api.html?highlight=http#standard-tags
-tags = ""
+tags = "rp:med, lang:en"
 # Comma-separated list of URLs of hub servers to advertise to.
 hub_urls = "https://hub.spacestation14.com/"
 # URL of your server. Fill this in if you have a domain name,
@@ -119,6 +119,7 @@ patreon = ""
 bug_report = ""
 appeal = ""
 telegram = ""
+discord = "https://discord.gg/47sGPRJ88V"
 
 [discord]
 # Discord webhook to send ahelp messages to.

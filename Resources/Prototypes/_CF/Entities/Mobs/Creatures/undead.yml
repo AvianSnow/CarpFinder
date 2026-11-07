@@ -17,7 +17,7 @@
 # It is Mindless, so an encounter should set "tactics: Mindless".
 - type: entity
   abstract: true
-  parent: MobSkeletonPerson
+  parent: [ MobSkeletonPerson, CFMonsterGhostRole ]
   id: CFMobSkeletonguardBase
   description: Old bones held up by void energy, still keeping the post they were given.
   suffix: Monster
@@ -126,6 +126,9 @@
   id: CFMobSkeletonguardMelee
   name: Skeletonguard-Melee
   components:
+  - type: GhostRole
+    name: cf-ghost-skeleton-guard-name
+    description: cf-ghost-skeleton-guard-desc
   - type: HTN
     rootTask:
       task: SimpleHostileCompound
@@ -139,6 +142,9 @@
   id: CFMobSkeletonguardRanged
   name: Skeletonguard-Ranged
   components:
+  - type: GhostRole
+    name: cf-ghost-skeleton-archer-name
+    description: cf-ghost-skeleton-archer-desc
   - type: HTN
     rootTask:
       task: CFArcherCompound

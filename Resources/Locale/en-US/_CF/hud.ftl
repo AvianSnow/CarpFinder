@@ -52,3 +52,4 @@ cf-hud-status-saves = Saves
 cf-hud-status-perception = Perception
 cf-hud-status-skills = Skills
 cf-hud-status-speed = Speed
+cf-hud-status-map = MAP
