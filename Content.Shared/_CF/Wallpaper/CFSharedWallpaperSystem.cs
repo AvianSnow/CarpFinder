@@ -6,7 +6,8 @@ using Robust.Shared.Utility;
 
 namespace Content.Shared.CF.Wallpaper;
 
-public sealed partial class CFSharedWallpaperSystem : EntitySystem
+/// <summary>Hanging wallpaper. Abstract with a subclass on each side, so its subscriptions are made once per side.</summary>
+public abstract partial class CFSharedWallpaperSystem : EntitySystem
 {
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private SharedDoAfterSystem _doAfter = default!;

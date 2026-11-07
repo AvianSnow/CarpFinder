@@ -913,10 +913,18 @@ public sealed partial class HumanoidProfileEditor
         }
     }
 
+    /// <summary>A <c>"license"</c> or <c>"copyright"</c> string in an RSI's meta.json.</summary>
+    private static readonly Regex MetaField = new("\"(?<key>license|copyright)\"\\s*:\\s*\"(?<value>(?:\\\\.|[^\"\\\\])*)\"");
+
     private static string? MatchMeta(string text, string key)
     {
-        var match = Regex.Match(text, $"\"{key}\"\\s*:\\s*\"(?<value>(?:\\\\.|[^\"\\\\])*)\"");
-        return match.Success ? Regex.Unescape(match.Groups["value"].Value) : null;
+        for (var match = MetaField.Match(text); match.Success; match = match.NextMatch())
+        {
+            if (match.Groups["key"].Value == key)
+                return Regex.Unescape(match.Groups["value"].Value);
+        }
+
+        return null;
     }
 
     private void ShowBoostAssignment()
