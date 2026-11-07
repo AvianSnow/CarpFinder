@@ -277,6 +277,7 @@ The labels are the sections of Phase 6 in `roadmapold.md`, which has the design.
 - [ ] Choosing a detour over glass is only tested on `CFGOAPFlowFieldBuilder`. The arena has lava either side of its one clear row, so a live test has no room.
 - [ ] A field is built in one go. 20 tiles is a few hundred at most, but a much larger `FieldReach` would want spreading over ticks.
 - [ ] Group memory lives on the spawner, so deleting the spawner mid-fight stops the group sharing a target.
+- [ ] `CFEncounterSpawner` shows to everyone, players included. It left `MarkerBase` as a stand-in, because a `Marker` stays hidden until `showmarkers`, even for an aghost. It should show to aghosts and DMs only.
 - [ ] `Shoot` is not weighed against Multiple Attack Penalty, and an encounter's `TakeFlank` has not been tried on an archer.
 
 **6i. Our own structure (6 November 2026)**

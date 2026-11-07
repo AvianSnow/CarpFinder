@@ -216,6 +216,7 @@ All edits carry `// CarpFinder` markers, so `grep -rn CarpFinder Content.Client 
 | NPCs | `Content.Server/NPC/Systems/NPCUtilitySystem.cs` | Faction hostility |
 | NPC steering | `Content.Server/NPC/Systems/NPCSteeringSystem.cs` | GOAP mobs skip stock `CollisionAvoidance`: their feelers do that job |
 | Temperature | `TemperatureSystem.cs`, `SharedTemperatureSystem.cs` | Cooking heats the surface first |
+| Fire | `Content.Client/Atmos/EntitySystems/FireVisualizerSystem.cs` | Do not spawn the light during `ComponentInit`: it crashed a Debug client that first saw something already burning |
 | Icons | `SharedStatusIconSystem.cs` | Partial for the flanked icon |
 | Ghosts | `Resources/Prototypes/Entities/Mobs/Player/observer.yml` | Z-level Move up and Move down actions |
 | Prone | `Content.Shared/Stunnable/SharedStunSystem.Knockdown.cs` | Do not force a creature up while it is being deleted. "No room to stand" ignores sensors |

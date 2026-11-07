@@ -1,15 +1,26 @@
 # Encounters. Place a CFEncounterSpawner and pick one with its encounter field. As an aghost, use VV on the
 # spawner: "mobs" takes entity ids separated by commas and replaces the list here, and "armed" spawns it again.
 
+# Stand-in: this has no Marker component, because the client hides those until showmarkers, so everyone can see it.
 - type: entity
-  parent: MarkerBase
   id: CFEncounterSpawner
   name: encounter spawner
   description: Spawns an encounter when an adventurer comes within 30 feet.
   suffix: DM
   categories: [ ForkFiltered ]
+  placement:
+    mode: SnapgridCenter
   components:
+  - type: Transform
+    anchored: true
+  - type: Clickable
+  - type: InteractionOutline
+  - type: Tag
+    tags:
+    - ForceFixRotations
   - type: Sprite
+    drawdepth: Overdoors
+    sprite: Markers/cross.rsi
     layers:
     - state: green
   - type: CFGOAPEncounterSpawner
