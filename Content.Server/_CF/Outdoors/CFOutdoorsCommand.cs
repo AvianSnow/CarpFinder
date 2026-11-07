@@ -8,7 +8,7 @@ namespace Content.Server.CF.Outdoors;
 
 /// <summary>Turns the map you are on into an outdoor world, from a preset such as <c>CFOutdoorsTemperate</c>.</summary>
 [AdminCommand(AdminFlags.Mapping)]
-public sealed class CFOutdoorsCommand : LocalizedEntityCommands
+public sealed partial class CFOutdoorsCommand : LocalizedEntityCommands
 {
     [Dependency] private IPrototypeManager _prototypes = default!;
 
