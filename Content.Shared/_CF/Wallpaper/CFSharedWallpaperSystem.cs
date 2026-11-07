@@ -6,7 +6,7 @@ using Robust.Shared.Utility;
 
 namespace Content.Shared.CF.Wallpaper;
 
-public partial class CFSharedWallpaperSystem : EntitySystem
+public sealed partial class CFSharedWallpaperSystem : EntitySystem
 {
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private SharedDoAfterSystem _doAfter = default!;

@@ -15,7 +15,6 @@ using Content.Shared.CF.Traits;
 using Content.Shared.Movement.Systems;
 using Content.Shared.Overlays;
 using Content.Shared.Popups;
-using Content.Shared.Stunnable;
 using Robust.Shared.Network;
 using Robust.Shared.Physics;
 using Robust.Shared.Physics.Components;

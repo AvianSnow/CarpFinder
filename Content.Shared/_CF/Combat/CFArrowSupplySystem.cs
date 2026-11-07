@@ -22,7 +22,7 @@ public sealed partial class CFArrowSupplySystem : EntitySystem
             || !TryComp(weapon, out ContainerAmmoProviderComponent? ammo))
             return;
 
-        if (EntityManager.TrySpawnInContainer(supply.Ammo, weapon, ammo.Container, out _))
+        if (TrySpawnInContainer(supply.Ammo, weapon, ammo.Container, out _))
             supply.Arrows--;
     }
 }
