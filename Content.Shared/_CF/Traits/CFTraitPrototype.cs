@@ -63,6 +63,9 @@ public enum CFTraitRule : byte
     Shove,
     Disarm,
     Grapple,
+    Concussive,
+    Kickback,
+    Scatter,
 
     // Armor
     Bulwark,

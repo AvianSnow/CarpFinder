@@ -85,6 +85,11 @@ cf-spell-needs-shield = You need a shield in hand for that.
 cf-act-spellstrike-spent = You have to recharge Spellstrike first.
 cf-act-spellstrike-ready = Spellstrike is ready.
 cf-act-taunt = Taunted!
+cf-damage-mode-status = Damage: [color={$color}]{$type}[/color]
+cf-damage-mode-changed = Now dealing {$type}.
+cf-damage-mode-examine = It is set to deal {$type} damage.
+cf-reload-no-weapon = You are not holding anything to load.
+cf-reload-no-ammo = You have no ammunition for that.
 cf-strike-action-needs-ignored-taunt = That enemy has not ignored your Taunt.
 cf-strike-action-needs-ranged = You need a ranged weapon in hand.
 cf-strike-action-needs-ammo = Your weapon is not loaded.

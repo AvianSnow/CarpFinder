@@ -1,0 +1,236 @@
+# Firearms, from Guns & Gears. They load like crossbows: one round, and each shot pays for its reload.
+
+- type: entity
+  abstract: true
+  parent: BaseItem
+  id: CFBaseFirearm
+  components:
+  - type: Item
+    size: Normal
+  - type: UseDelay
+    delay: 1
+  - type: Gun
+    minAngle: 0
+    maxAngle: 5
+    fireRate: 1
+    selectedMode: SemiAuto
+    availableModes:
+    - SemiAuto
+    soundGunshot:
+      path: /Audio/Weapons/Guns/Gunshots/sniper.ogg
+    soundEmpty: null
+  - type: ItemSlots
+    slots:
+      projectiles:
+        name: Projectiles
+        startingItem: CFFirearmRound
+        insertSound: /Audio/Weapons/Guns/Misc/arrow_nock.ogg
+        whitelist:
+          tags:
+          - CFFirearmRound
+  - type: ContainerContainer
+    containers:
+      projectiles: !type:ContainerSlot
+  - type: ContainerAmmoProvider
+    container: projectiles
+
+- type: entity
+  abstract: true
+  parent: CFBaseFirearm
+  id: CFBaseFirearmTwoHanded
+  components:
+  - type: Item
+    size: Large
+  - type: Wieldable
+  - type: GunRequiresWield
+
+- type: entity
+  parent: CFBaseFirearm
+  id: CFFlintlockPistol
+  name: flintlock pistol
+  description: A one-handed firearm. 1d4 piercing, range 40 feet, concussive, fatal d8, reload 1.
+  components:
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Snipers/flintlock.rsi
+    state: base
+  - type: Item
+    sprite: Objects/Weapons/Guns/Snipers/flintlock.rsi
+  - type: CFWeapon
+    damageDie: 4
+    damageType: Piercing
+    category: Simple
+    group: Firearm
+    hands: One
+  - type: CFRangedWeapon
+    rangeIncrementFeet: 40
+    reload: 1
+  - type: CFTrait
+    traits:
+    - Concussive
+    - FatalD8
+  - type: CFBulk
+    bulk: 1
+  - type: CFItemPrice
+    copper: 400
+
+- type: entity
+  parent: CFBaseFirearmTwoHanded
+  id: CFFlintlockMusket
+  name: flintlock musket
+  description: A long firearm. 1d6 piercing, range 70 feet, concussive, fatal d10, reload 1.
+  components:
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Snipers/musket.rsi
+    state: base
+  - type: Item
+    sprite: Objects/Weapons/Guns/Snipers/musket.rsi
+  - type: CFWeapon
+    damageDie: 6
+    damageType: Piercing
+    category: Simple
+    group: Firearm
+    hands: Two
+  - type: CFRangedWeapon
+    rangeIncrementFeet: 70
+    reload: 1
+  - type: CFTrait
+    traits:
+    - Concussive
+    - FatalD10
+  - type: CFBulk
+    bulk: 1
+  - type: CFItemPrice
+    copper: 500
+
+- type: entity
+  parent: CFBaseFirearmTwoHanded
+  id: CFArquebus
+  name: arquebus
+  description: A heavy firearm. 1d8 piercing, range 150 feet, concussive, fatal d12, kickback, reload 1.
+  components:
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Snipers/flintlock.rsi
+    state: base
+  - type: Item
+    sprite: Objects/Weapons/Guns/Snipers/flintlock.rsi
+  - type: Wieldable
+    wieldedInhandPrefix: null
+  - type: CFWeapon
+    damageDie: 8
+    damageType: Piercing
+    category: Martial
+    group: Firearm
+    hands: Two
+  - type: CFRangedWeapon
+    rangeIncrementFeet: 150
+    reload: 1
+  - type: CFTrait
+    traits:
+    - Concussive
+    - FatalD12
+    - Kickback
+  - type: CFBulk
+    bulk: 2
+  - type: CFItemPrice
+    copper: 800
+
+- type: entity
+  parent: CFBaseFirearmTwoHanded
+  id: CFBlunderbuss
+  name: blunderbuss
+  description: A firearm full of pellets. 1d8 piercing, range 40 feet, concussive, scatter 10 feet, reload 1.
+  components:
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Shotguns/blunderbuss.rsi
+    state: icon
+  - type: Item
+    sprite: Objects/Weapons/Guns/Shotguns/blunderbuss.rsi
+  - type: CFWeapon
+    damageDie: 8
+    damageType: Piercing
+    category: Martial
+    group: Firearm
+    hands: Two
+  - type: CFRangedWeapon
+    rangeIncrementFeet: 40
+    reload: 1
+  - type: CFTrait
+    traits:
+    - Concussive
+    - Scatter10
+  - type: CFBulk
+    bulk: 2
+  - type: CFItemPrice
+    copper: 600
+
+- type: entity
+  parent: CFBaseFirearm
+  id: CFHandCannon
+  name: hand cannon
+  description: A short, heavy firearm. 1d6, range 30 feet, reload 1. Use it in hand to switch between bludgeoning, piercing and slashing.
+  components:
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Launchers/pirate_cannon.rsi
+    state: icon
+  - type: Item
+    sprite: Objects/Weapons/Guns/Launchers/pirate_cannon.rsi
+  - type: CFDamageMode
+    types:
+    - Bludgeoning
+    - Piercing
+    - Slashing
+  - type: CFWeapon
+    damageDie: 6
+    damageType: Bludgeoning
+    category: Simple
+    group: Firearm
+    hands: One
+  - type: CFRangedWeapon
+    rangeIncrementFeet: 30
+    reload: 1
+  - type: CFTrait
+    traits:
+    - Modular
+  - type: CFBulk
+    bulk: 1
+  - type: CFItemPrice
+    copper: 300
+
+- type: entity
+  parent: CFArrow
+  id: CFFirearmRound
+  name: firearm round
+  description: Black powder and a lead ball.
+  components:
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Projectiles/projectiles2.rsi
+    layers:
+    - state: ball
+  - type: Tag
+    tags:
+    - CFFirearmRound
+
+- type: entity
+  parent: ClothingBeltQuiver
+  id: CFFirearmRoundPouchFilled
+  name: round pouch
+  description: A pouch of rounds for a firearm.
+  components:
+  - type: Storage
+    whitelist:
+      tags:
+      - CFFirearmRound
+  - type: EntityTableContainerFill
+    containers:
+      storagebase: !type:AllSelector
+        children:
+        - id: CFFirearmRound
+        - id: CFFirearmRound
+        - id: CFFirearmRound
+        - id: CFFirearmRound
+        - id: CFFirearmRound
+        - id: CFFirearmRound
+        - id: CFFirearmRound
+        - id: CFFirearmRound
+        - id: CFFirearmRound
+        - id: CFFirearmRound

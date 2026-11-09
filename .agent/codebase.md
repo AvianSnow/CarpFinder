@@ -109,6 +109,7 @@ Anything that targets, rolls, and applies effects is data on the source entity: 
 | Combat mode, right-click, shield | Shove, always | `CFManeuverSystem.OnDisarmAttempt` |
 | Throw a weapon with the thrown trait | Ranged Strike at the first living enemy it touches (1 action). It flies to the cursor, up to six range increments | `CFStrikeSystem.OnThrownHit`, `CFWeaponSystem.ThrowRange` |
 | Use in hand (Z), shield | Raise (1 action) or lower (free) | `CFShieldSystem.OnUseInHand` |
+| Use in hand (Z), weapon with `CFDamageMode` | Next damage type (1 action). The hand status shows which is set | `CFDamageModeSystem` |
 | Pull a living enemy | Grapple (1 action). The pull only starts if it lands. | `CFManeuverSystem.OnPullAttempt` |
 | Pull a friend, ally, downed creature, or object | Stock free pull | |
 | Press a move key while grabbed | Escape (1 action) | `CFManeuverSystem.TryEscape` |

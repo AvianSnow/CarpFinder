@@ -35,17 +35,20 @@
   features:
     - level: 1
       name: "Gunslinger's Way"
-      description: "Choose a way in the builder. It trains a skill. Its deeds and reload actions: TBA"
+      description: "Choose a way in the builder. It trains a skill and gives you a slinger's reload. Initial deeds need initiative: TBA"
     - level: 1
       name: "Slinger's Precision"
-      description: "Expert with crossbows, and your crossbow Strikes deal 2 extra precision damage. Firearms do not exist yet: TBA"
+      description: "Expert with crossbows and firearms. Your crossbow Strikes deal 2 extra precision damage, and your firearm Strikes 1d4. Reload is on your action wheel."
       grants:
         - !type:CFGrantProficiency
           proficiencies:
             - Crossbow
+            - Firearm
           rank: Expert
         - !type:CFGrantOption
           option: SlingerPrecision
+        - !type:CFGrantAction
+          action: CFActReload
     - level: 3
       name: "Stubborn"
       description: "Expert in Will saves. A second save against being controlled: TBA"
@@ -61,8 +64,7 @@
         - !type:CFGrantProficiency
           proficiencies:
             - Crossbow
-            - SimpleFirearms
-            - MartialFirearms
+            - Firearm
           rank: Master
         - !type:CFGrantProficiency
           proficiencies:

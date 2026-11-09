@@ -744,6 +744,13 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (style != null && style.Exploited == target)
             damageMod += 2;
 
+        if (rolled.Traits.Kickback)
+        {
+            damageMod += 1;
+            if (attackerAbilities.GetModifier(CFAbility.Strength) < 2)
+                attackBonus -= 2;
+        }
+
         var d20 = _random.Next(1, 21);
         var usedStratagem = false;
 
@@ -786,7 +793,9 @@ public sealed partial class CFStrikeSystem : EntitySystem
                     extra += weapon.Potency >= 3 ? 2 : 1;
 
                 damage = CFMelee.RollStrikeDamage(_random, rolled, damageMod, criticalHit, extra);
-                damage = _bonuses.ModifyDamage(target, rolled.DamageType, damage);
+                damage = rolled.Traits.Concussive
+                    ? Math.Max(_bonuses.ModifyDamage(target, "Piercing", damage), _bonuses.ModifyDamage(target, "Bludgeoning", damage))
+                    : _bonuses.ModifyDamage(target, rolled.DamageType, damage);
                 damage = ApplyShieldBlock(target, damage);
                 if (!isObject)
                     damage = _reactions.AnswerDamage(target, user, damage, rolled.DamageType);
@@ -851,6 +860,9 @@ public sealed partial class CFStrikeSystem : EntitySystem
 
         if (finisher && style is { FinishingFollowThrough: true } && !isObject && !alreadyDown && defender.CurrentHp <= 0)
             _conditions.GainPanache(user);
+
+        if (hit && rolled.Traits.Scatter > 0 && !isObject)
+            Scatter(user, target, rolled);
 
         if (degree == CFDegree.CriticalFailure && !isObject)
             _reactions.AnswerCriticalMiss(target, user);
@@ -931,8 +943,13 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (melee && style.PanacheStyle && (weapon.Agile || weapon.Finesse))
             total += finisher ? _random.Next(1, 7) + _random.Next(1, 7) : 2;
 
-        if (style.SlingerPrecision && !melee && CompOrNull<CFWeaponComponent>(weapon.Item)?.Group == CFWeaponGroup.Crossbow)
-            total += 2;
+        if (style.SlingerPrecision && !melee && CompOrNull<CFWeaponComponent>(weapon.Item) is { } gun)
+        {
+            if (gun.Group == CFWeaponGroup.Crossbow)
+                total += 2;
+            else if (gun.Group == CFWeaponGroup.Firearm)
+                total += _random.Next(1, 5);
+        }
 
         if (usedStratagem && style.StrategicStrike)
         {
@@ -999,6 +1016,25 @@ public sealed partial class CFStrikeSystem : EntitySystem
             _effects.Run(rune.OnHit, args);
             if (degree == CFDegree.CriticalSuccess)
                 _effects.Run(rune.OnCriticalHit, args);
+        }
+    }
+
+    /// <summary>Splash from a scatter weapon: 1 per damage die to enemies around the target, and the target itself.</summary>
+    private void Scatter(EntityUid user, EntityUid target, CFStrikeWeaponStats weapon)
+    {
+        var center = _transform.GetMapCoordinates(target);
+        foreach (var uid in _effects.CollectArea(
+                     user,
+                     CFAreaShape.Burst,
+                     weapon.Traits.Scatter,
+                     center,
+                     center,
+                     atPoint: true,
+                     includeCenter: true,
+                     selfAllowed: false,
+                     CFTargetFilter.Enemies))
+        {
+            _effects.DealDamage(user, uid, weapon.DamageDice, weapon.DamageType, critical: false);
         }
     }
 

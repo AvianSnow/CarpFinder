@@ -418,25 +418,33 @@
   id: Scatter5
   name: Scatter 5 ft
   category: Weapon
-  summary: "This weapon hits a cone of 5 feet. Targets use a Reflex save."
+  rule: Scatter
+  value: 5
+  summary: "On a hit, the target and nearby enemies take 1 splash damage per damage die."
 
 - type: cfTrait
   id: Scatter10
   name: Scatter 10 ft
   category: Weapon
-  summary: "This weapon hits a cone of 10 feet. Targets use a Reflex save."
+  rule: Scatter
+  value: 10
+  summary: "On a hit, the target and nearby enemies take 1 splash damage per damage die."
 
 - type: cfTrait
   id: Scatter15
   name: Scatter 15 ft
   category: Weapon
-  summary: "This weapon hits a cone of 15 feet. Targets use a Reflex save."
+  rule: Scatter
+  value: 15
+  summary: "On a hit, the target and nearby enemies take 1 splash damage per damage die."
 
 - type: cfTrait
   id: Scatter20
   name: Scatter 20 ft
   category: Weapon
-  summary: "This weapon hits a cone of 20 feet. Targets use a Reflex save."
+  rule: Scatter
+  value: 20
+  summary: "On a hit, the target and nearby enemies take 1 splash damage per damage die."
 
 - type: cfTrait
   id: Brace
@@ -501,19 +509,21 @@
   id: Modular
   name: Modular
   category: Weapon
-  summary: "You can spend time to change this weapon's damage type."
+  summary: "Use it in hand to change its damage type, for 1 action."
 
 - type: cfTrait
   id: Kickback
   name: Kickback
   category: Weapon
-  summary: "A successful ranged Strike with this weapon deals extra damage when you meet its Strength requirement."
+  rule: Kickback
+  summary: "+1 damage. -2 to hit without Strength +2."
 
 - type: cfTrait
   id: Concussive
   name: Concussive
   category: Weapon
-  summary: "A critical hit with this firearm can push the target or leave it off-guard."
+  rule: Concussive
+  summary: "Damage uses the weaker of the target's resistance to piercing or bludgeoning."
 
 - type: cfTrait
   id: Concealable

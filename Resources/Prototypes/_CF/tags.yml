@@ -204,3 +204,6 @@
 
 - type: Tag
   id: CFBolt
+
+- type: Tag
+  id: CFFirearmRound

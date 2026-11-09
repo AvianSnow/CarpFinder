@@ -62,6 +62,15 @@ public sealed record CFWeaponTraits
     /// <summary>On a critical hit the weapon's dice become this size, plus one extra die of it.</summary>
     public int Fatal { get; init; }
 
+    /// <summary>Damage uses the weaker of the target's piercing and bludgeoning resistance.</summary>
+    public bool Concussive { get; init; }
+
+    /// <summary>+1 damage, and -2 to hit without Strength +2.</summary>
+    public bool Kickback { get; init; }
+
+    /// <summary>The radius in feet of the splash on a hit. 0 means none.</summary>
+    public int Scatter { get; init; }
+
     /// <summary>Die size when wielded in two hands.</summary>
     public int TwoHand { get; init; }
 
@@ -105,6 +114,9 @@ public sealed record CFWeaponTraits
                 CFTraitRule.Volley => result with { Volley = Math.Max(result.Volley, trait.Value) },
                 CFTraitRule.Deadly => result with { Deadly = Math.Max(result.Deadly, trait.Value) },
                 CFTraitRule.Fatal => result with { Fatal = Math.Max(result.Fatal, trait.Value) },
+                CFTraitRule.Concussive => result with { Concussive = true },
+                CFTraitRule.Kickback => result with { Kickback = true },
+                CFTraitRule.Scatter => result with { Scatter = Math.Max(result.Scatter, trait.Value) },
                 CFTraitRule.TwoHand => result with { TwoHand = Math.Max(result.TwoHand, trait.Value) },
                 _ => result,
             };

@@ -7,6 +7,9 @@
   description: cf-class-choice-waydrifter-desc
   trainedSkills:
     - Acrobatics
+  grants:
+    - !type:CFGrantAction
+      action: CFActReloadingStrike
 
 - type: cfClassChoice
   id: WayPistolero
@@ -19,6 +22,9 @@
       skills:
         - Deception
         - Intimidation
+  grants:
+    - !type:CFGrantAction
+      action: CFActRaconteursReload
 
 - type: cfClassChoice
   id: WaySniper
@@ -28,6 +34,9 @@
   description: cf-class-choice-waysniper-desc
   trainedSkills:
     - Stealth
+  grants:
+    - !type:CFGrantAction
+      action: CFActCoveredReload
 
 - type: cfClassChoice
   id: WaySpellshot
@@ -53,3 +62,6 @@
   description: cf-class-choice-wayvanguard-desc
   trainedSkills:
     - Athletics
+  grants:
+    - !type:CFGrantAction
+      action: CFActClearAPath

@@ -45,7 +45,7 @@ public sealed partial class CFWeaponSystem : EntitySystem
         stats = new CFStrikeWeaponStats(
             data.DamageDice + striking,
             die,
-            data.DamageType,
+            CompOrNull<CFDamageModeComponent>(weapon)?.Current?.Id ?? data.DamageType,
             data.Category.Proficiency(),
             traits,
             Ranged: ranged || thrown,

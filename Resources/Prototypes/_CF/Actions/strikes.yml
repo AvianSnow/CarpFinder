@@ -156,3 +156,13 @@
   - type: CFStrikeAction
     needsIgnoredTaunt: true
     extraDice: 1
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActReloadingStrike
+  name: Reloading Strike
+  description: An unarmed Strike, and your held firearm is loaded. The next shot does not pay for a reload.
+  components:
+  - type: CFStrikeAction
+    unarmedOnly: true
+    reloads: true

@@ -1,0 +1,50 @@
+# Loading a held weapon. CFReloadSystem runs these.
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActReload
+  name: Reload
+  description: Load your held crossbow or firearm from what you carry. Its next shot pays for the reload.
+  components:
+  - type: CFRadialSlot
+    group: Free
+    actions: 0
+  - type: CFReloadAction
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActRaconteursReload
+  name: Raconteur's Reload
+  description: Demoralize an enemy and load your weapon. The next shot does not pay for a reload.
+  components:
+  - type: TargetAction
+    range: 6.25
+  - type: CFRadialSlot
+    group: Free
+    actions: 0
+  - type: CFReloadAction
+    then: Demoralize
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActCoveredReload
+  name: Covered Reload
+  description: Hide and load your weapon. The next shot does not pay for a reload.
+  components:
+  - type: CFRadialSlot
+    group: Free
+    actions: 0
+  - type: CFReloadAction
+    then: Hide
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActClearAPath
+  name: Clear a Path
+  description: Shove an enemy in reach and load your weapon. The next shot does not pay for a reload.
+  components:
+  - type: CFRadialSlot
+    group: Free
+    actions: 0
+  - type: CFReloadAction
+    then: Maneuver

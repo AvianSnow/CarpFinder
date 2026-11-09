@@ -24,6 +24,7 @@ public sealed partial class CFStrikeActionSystem : EntitySystem
     [Dependency] private CFEffectSystem _effects = default!;
     [Dependency] private CFConditionSystem _conditions = default!;
     [Dependency] private CFTauntSystem _taunts = default!;
+    [Dependency] private CFReloadSystem _reload = default!;
     [Dependency] private CFActivitySystem _activities = default!;
 
     /// <summary>
@@ -157,6 +158,9 @@ public sealed partial class CFStrikeActionSystem : EntitySystem
 
         if (action.TauntsTarget)
             _taunts.Taunt(user, target);
+
+        if (action.Reloads)
+            _reload.TryReload(user, prepaid: true);
 
         if (action.RechargesSpellstrike)
             _activities.RechargeSpellstrike(user);

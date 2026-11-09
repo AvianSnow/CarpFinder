@@ -53,6 +53,10 @@ public sealed partial class CFStrikeActionComponent : Component
     [DataField]
     public bool RechargesSpellstrike;
 
+    /// <summary>Reloads the held weapon as part of this Strike, a slinger's reload.</summary>
+    [DataField]
+    public bool Reloads;
+
     /// <summary>Added to the attack roll.</summary>
     [DataField]
     public int AttackBonus;

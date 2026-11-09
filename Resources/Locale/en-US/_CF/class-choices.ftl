@@ -253,17 +253,17 @@ cf-class-choice-implementweapon-desc = Implements are not items yet, so its init
 
 cf-class-choice-way = Gunslinger's Way
 cf-class-choice-waydrifter = Way of the Drifter
-cf-class-choice-waydrifter-desc = Trained in Acrobatics. Its deed and reload: TBA
+cf-class-choice-waydrifter-desc = Trained in Acrobatics. Reloading Strike: an unarmed Strike, and your firearm is loaded. Using a melee weapon in your other hand, and its deed: TBA
 cf-class-choice-waypistolero = Way of the Pistolero
-cf-class-choice-waypistolero-desc = Trained in Deception or Intimidation, your choice. Its deed and reload: TBA
+cf-class-choice-waypistolero-desc = Trained in Deception or Intimidation, your choice. Raconteur's Reload: Demoralize and load. Create a Diversion instead, and its deed: TBA
 cf-class-choice-waysniper = Way of the Sniper
-cf-class-choice-waysniper-desc = Trained in Stealth. Its deed and reload: TBA
+cf-class-choice-waysniper-desc = Trained in Stealth. Covered Reload: Hide and load. Take Cover instead, and its deed: TBA
 cf-class-choice-wayspellshot = Way of the Spellshot
-cf-class-choice-wayspellshot-desc = Magic through a gun. Firearms do not exist yet: TBA
+cf-class-choice-wayspellshot-desc = Magic through a gun: TBA
 cf-class-choice-waytriggerbrand = Way of the Triggerbrand
 cf-class-choice-waytriggerbrand-desc = Trained in Thievery. Combination weapons do not exist yet: TBA
 cf-class-choice-wayvanguard = Way of the Vanguard
-cf-class-choice-wayvanguard-desc = Trained in Athletics. Its deed and reload: TBA
+cf-class-choice-wayvanguard-desc = Trained in Athletics. Clear a Path: Shove and load. Its deed: TBA
 
 cf-class-choice-innovation = Innovation
 cf-class-choice-innovationarmor = Armor

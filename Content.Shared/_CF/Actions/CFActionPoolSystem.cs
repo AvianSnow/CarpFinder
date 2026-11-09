@@ -279,6 +279,12 @@ public sealed partial class CFActionPoolSystem : EntitySystem
             return;
 
         TrySpend(args.User, pool, ShotCost(weapon));
+        if (TryComp(weapon, out CFRangedWeaponComponent? ranged) && ranged.ReloadPrepaid)
+        {
+            ranged.ReloadPrepaid = false;
+            Dirty(weapon, ranged);
+        }
+
         _stealth.RevealAfterShot(args.User);
     }
 
@@ -302,7 +308,7 @@ public sealed partial class CFActionPoolSystem : EntitySystem
     /// <summary>A shot is one Strike action plus the weapon's reload (crossbow 1, heavy crossbow 2).</summary>
     private int ShotCost(EntityUid weapon)
     {
-        return 1 + Math.Max(0, CompOrNull<CFRangedWeaponComponent>(weapon)?.Reload ?? 0);
+        return TryComp(weapon, out CFRangedWeaponComponent? ranged) && !ranged.ReloadPrepaid ? 1 + Math.Max(0, ranged.Reload) : 1;
     }
 
     [SubscribeLocalEvent]

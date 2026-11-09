@@ -16,4 +16,8 @@ public sealed partial class CFRangedWeaponComponent : Component
     /// <summary>Actions spent reloading after each shot, on top of the Strike itself (crossbow 1, heavy crossbow 2).</summary>
     [DataField, AutoNetworkedField]
     public int Reload;
+
+    /// <summary>A slinger's reload has already paid for the next shot's reload.</summary>
+    [DataField, AutoNetworkedField]
+    public bool ReloadPrepaid;
 }
