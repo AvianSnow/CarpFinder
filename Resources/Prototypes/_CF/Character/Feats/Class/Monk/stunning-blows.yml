@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFStunningBlows
-  name: "Stunning Blows"
-  description: "Requires Flurry of Blows."
+  name: cf-feat-stunning-blows
+  description: cf-feat-stunning-blows-desc
   class: Monk
   level: 2
   traits:

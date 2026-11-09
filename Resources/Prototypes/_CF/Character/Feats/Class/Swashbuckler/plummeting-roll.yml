@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFPlummetingRoll
-  name: "Plummeting Roll"
-  description: "Requires trained in Acrobatics. Also grants Cat Fall. Grants Plummeting Roll. This feature will be implemented later."
+  name: cf-feat-plummeting-roll
+  description: cf-feat-plummeting-roll-desc
   class: Swashbuckler
   level: 1
   traits:

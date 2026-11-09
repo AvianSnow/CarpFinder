@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFIntimidatingStrikeBarbarian
-  name: "Intimidating Strike"
-  description: "Costs 2 actions. This feature will be implemented later."
+  name: cf-feat-intimidating-strike-barbarian
+  description: cf-feat-intimidating-strike-barbarian-desc
   class: Barbarian
   level: 2
   traits:

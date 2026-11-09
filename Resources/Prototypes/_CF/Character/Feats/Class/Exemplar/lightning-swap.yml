@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFLightningSwapExemplar
-  name: "Lightning Swap"
-  description: "Changes an item. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-lightning-swap-exemplar
+  description: cf-feat-lightning-swap-exemplar-desc
   class: Exemplar
   level: 2
   traits:

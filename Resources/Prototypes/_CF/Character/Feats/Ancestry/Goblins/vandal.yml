@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFVandal
-  name: "Vandal"
-  description: "Trained in Thievery."
+  name: cf-feat-vandal
+  description: cf-feat-vandal-desc
   ancestry: Goblin
   level: 5
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFDefensiveAdvanceChampion
-  name: "Defensive Advance"
-  description: "Costs 2 actions. This feature will be implemented later."
+  name: cf-feat-defensive-advance-champion
+  description: cf-feat-defensive-advance-champion-desc
   class: Champion
   level: 1
   traits:

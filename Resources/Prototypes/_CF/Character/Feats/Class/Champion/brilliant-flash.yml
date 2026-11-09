@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFBrilliantFlash
-  name: "Brilliant Flash"
-  description: "Requires grandeur cause. Changes an item. This feature will be implemented later."
+  name: cf-feat-brilliant-flash
+  description: cf-feat-brilliant-flash-desc
   class: Champion
   level: 1
   traits:

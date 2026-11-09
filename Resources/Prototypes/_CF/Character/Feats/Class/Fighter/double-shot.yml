@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFDoubleShot
-  name: "Double Shot"
-  description: "-2 bonus to Ranged Attack Roll. Costs 2 actions. This feature will be implemented later."
+  name: cf-feat-double-shot
+  description: cf-feat-double-shot-desc
   class: Fighter
   level: 4
   traits:

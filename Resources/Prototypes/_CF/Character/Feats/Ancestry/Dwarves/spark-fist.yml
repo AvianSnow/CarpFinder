@@ -2,8 +2,8 @@
 # source: Carpfinder Guns & Gears
 - type: cfFeat
   id: CFSparkFist
-  name: "Spark Fist"
-  description: "Requires expert in Crafting. Costs 1 action. TBA - action will be added"
+  name: cf-feat-spark-fist
+  description: cf-feat-spark-fist-desc
   ancestry: Dwarf
   level: 5
   rarity: Uncommon

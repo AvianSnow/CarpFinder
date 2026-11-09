@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFRemoteDetonation
-  name: "Remote Detonation"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-remote-detonation
+  description: cf-feat-remote-detonation-desc
   class: Runesmith
   level: 1
   traits:

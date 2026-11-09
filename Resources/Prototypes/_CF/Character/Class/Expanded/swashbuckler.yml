@@ -37,6 +37,9 @@
     - level: 1
       name: "Panache"
       description: "A successful Demoralize or Feint gives you panache."
+      grants:
+        - !type:CFGrantOption
+          option: PanacheStyle
     - level: 1
       name: "Precise Strike"
       description: "While you have panache, melee Strikes deal 2 extra precision damage."

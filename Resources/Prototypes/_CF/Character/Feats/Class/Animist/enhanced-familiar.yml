@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFEnhancedFamiliarAnimist
-  name: "Enhanced Familiar"
-  description: "Requires a familiar."
+  name: cf-feat-enhanced-familiar-animist
+  description: cf-feat-enhanced-familiar-animist-desc
   class: Animist
   level: 2
   traits:

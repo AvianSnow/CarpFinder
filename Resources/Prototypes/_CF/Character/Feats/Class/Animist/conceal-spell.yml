@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFConcealSpellAnimist
-  name: "Conceal Spell"
-  description: "Changes an item. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-conceal-spell-animist
+  description: cf-feat-conceal-spell-animist-desc
   class: Animist
   level: 2
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFQuickDrawGunslinger
-  name: "Quick Draw"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-quick-draw-gunslinger
+  description: cf-feat-quick-draw-gunslinger-desc
   class: Gunslinger
   level: 2
   traits:

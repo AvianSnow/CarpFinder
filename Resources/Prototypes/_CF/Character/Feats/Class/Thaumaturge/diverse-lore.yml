@@ -2,8 +2,8 @@
 # source: Carpfinder Dark Archive (Remastered)
 - type: cfFeat
   id: CFDiverseLore
-  name: "Diverse Lore"
-  description: "-2 bonus to Esoteric, Esoteric Lore, and Lore Esoteric. This feature will be implemented later."
+  name: cf-feat-diverse-lore
+  description: cf-feat-diverse-lore-desc
   class: Thaumaturge
   level: 1
   traits:

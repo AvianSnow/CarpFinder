@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFUntamedForm
-  name: "Untamed Form"
-  description: "Requires untamed order."
+  name: cf-feat-untamed-form
+  description: cf-feat-untamed-form-desc
   class: Druid
   level: 1
   traits:

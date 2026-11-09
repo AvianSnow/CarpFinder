@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFTripkeeWeaponFamiliarity
-  name: "Tripkee Weapon Familiarity"
-  description: "Ancestry weapons count as a simpler group for proficiency. Not applied in combat yet."
+  name: cf-feat-tripkee-weapon-familiarity
+  description: cf-feat-tripkee-weapon-familiarity-desc
   ancestry: Tripkee
   level: 1
   traits:

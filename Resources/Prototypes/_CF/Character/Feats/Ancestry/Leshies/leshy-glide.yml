@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFLeshyGlide
-  name: "Leshy Glide"
-  description: "Requires leaf leshy heritage or Cat Fall skill feat."
+  name: cf-feat-leshy-glide
+  description: cf-feat-leshy-glide-desc
   ancestry: Leshy
   level: 5
   traits:

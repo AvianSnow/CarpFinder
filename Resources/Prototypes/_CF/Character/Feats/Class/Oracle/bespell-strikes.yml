@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFBespellStrikesOracle
-  name: "Bespell Strikes"
-  description: "Changes an item. Free action. This feature will be implemented later."
+  name: cf-feat-bespell-strikes-oracle
+  description: cf-feat-bespell-strikes-oracle-desc
   class: Oracle
   level: 4
   traits:

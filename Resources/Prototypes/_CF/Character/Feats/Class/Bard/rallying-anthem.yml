@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFRallyingAnthem
-  name: "Rallying Anthem"
-  description: "This feature will be implemented later."
+  name: cf-feat-rallying-anthem
+  description: cf-feat-rallying-anthem-desc
   class: Bard
   level: 4
   traits:

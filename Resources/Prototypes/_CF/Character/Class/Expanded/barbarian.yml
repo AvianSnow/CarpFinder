@@ -41,6 +41,11 @@
     - level: 1
       name: "Rage"
       description: "Rage is on your action wheel. While raging, melee Strikes deal +2 damage and your AC takes -1."
+      grants:
+        - !type:CFGrantOption
+          option: CanRage
+        - !type:CFGrantAction
+          action: CFActRage
     - level: 3
       name: "Furious Footfalls"
       description: "This feature will be implemented later."

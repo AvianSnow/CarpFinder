@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFSecondWind
-  name: "Second Wind"
-  description: "This feature will be implemented later."
+  name: cf-feat-second-wind
+  description: cf-feat-second-wind-desc
   class: Barbarian
   level: 2
   traits:

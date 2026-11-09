@@ -1,228 +1,267 @@
 # Monster Core creatures on CP14 bodies. Numbers are the printed stat blocks, checked on Archives of Nethys.
 # Copy one for a new creature. printedAttack and printedDamage are the melee Strike's +N and +M in "+N, 1dX+M".
 
+# What makes a monster playable. Every monster takes this as a parent, and sets its own name and description on GhostRole.
+# GhostTakeoverAvailable is what lets a ghost actually take the body: without it the role is listed and does nothing.
+# Stock HTN sleeps while a player is in the body and wakes if they leave, and a GOAP brain runs inside HTN.
 - type: entity
   abstract: true
-  parent: [ SimpleMobBase, MobCombat ]
+  id: CFMonsterGhostRole
+  categories: [ HideSpawnMenu ]
+  components:
+    - type: GhostRole
+      makeSentient: true
+      allowMovement: true
+      allowSpeech: true
+      rules: cf-ghost-monster-rules
+      mindRoles:
+        - MindRoleGhostRoleTeamAntagonist
+    - type: GhostTakeoverAvailable
+
+- type: entity
+  abstract: true
+  parent: [SimpleMobBase, MobCombat, CFMonsterGhostRole]
   id: CFBaseCreature
   suffix: Monster
-  categories: [ ForkFiltered ]
+  categories: [ForkFiltered]
   components:
-  - type: InputMover
-  - type: MobMover
-  - type: HTN
-    rootTask:
-      task: SimpleHostileCompound
-  - type: NpcFactionMember
-    factions:
-    - SimpleHostile
-  - type: CFFaction
-    faction: Monster
-  - type: Appearance
-  - type: MeleeWeapon
-    angle: 0
-    animation: WeaponArcBite
-    attackRate: 1
-    soundHit:
-      path: /Audio/Effects/bite.ogg
-    damage:
-      types:
-        Piercing: 0
+    - type: InputMover
+    - type: MobMover
+    - type: HTN
+      rootTask:
+        task: SimpleHostileCompound
+    - type: NpcFactionMember
+      factions:
+        - SimpleHostile
+    - type: CFFaction
+      faction: Monster
+    - type: Appearance
+    - type: MeleeWeapon
+      angle: 0
+      animation: WeaponArcBite
+      attackRate: 1
+      soundHit:
+        path: /Audio/Effects/bite.ogg
+      damage:
+        types:
+          Piercing: 0
 
-# Giant rat. Creature -1, Small. Monster Core p. 288. Putrid plague is not in yet.
+# Giant rat. Creature -1, Small, Animal. Monster Core p. 288. Recall Knowledge DC 13.
+# Not in yet: putrid plague, low-light vision, scent, the climb Speed, and +4 Athletics to Climb or Swim.
+# It is an animal, so an encounter should set "tactics: Beast".
 - type: entity
   parent: CFBaseCreature
   id: CFMobGiantRat
   name: giant rat
   description: A rat the size of a dog, with matted fur and yellow teeth.
   components:
-  - type: Sprite
-    drawdepth: SmallMobs
-    layers:
-    - map: ["enum.DamageStateVisualLayers.Base"]
-      sprite: _CP14/Mobs/Pets/rat.rsi
-      state: rat
-  - type: DamageStateVisuals
-    states:
-      Alive:
-        Base: rat
-      Critical:
-        Base: rat_dead
-      Dead:
-        Base: rat_dead
-  - type: MovementSpeedModifier
-    baseWalkSpeed: 3
-    baseSprintSpeed: 5.4
-  - type: CFCombatant
-    level: -1
-    armorClass: 15
-    speedFeet: 30
-    maxHp: 8
-    currentHp: 8
-    diesAtZeroHp: true
-    printedFortitude: 6
-    printedReflex: 7
-    printedWill: 3
-    printedPerception: 5
-    printedAttack: 7
-    printedDamage: 1
-  - type: CFAbilityScore
-    abilityModifiers:
-      Strength: 1
-      Dexterity: 3
-      Constitution: 2
-      Intelligence: -4
-      Wisdom: 1
-      Charisma: -3
-  - type: CFCombatOptions
-    naturalDice: 1
-    naturalDie: 6
-    naturalType: Piercing
-    naturalAgile: true
-    naturalFinesse: true
-  - type: MobThresholds
-    thresholds:
-      0: Alive
-      7: Critical
-      8: Dead
+    - type: GhostRole
+      name: cf-ghost-giant-rat-name
+      description: cf-ghost-giant-rat-desc
+    - type: Sprite
+      drawdepth: SmallMobs
+      layers:
+        - map: ["enum.DamageStateVisualLayers.Base"]
+          sprite: _CP14/Mobs/Pets/rat.rsi
+          state: rat
+    - type: DamageStateVisuals
+      states:
+        Alive:
+          Base: rat
+        Critical:
+          Base: rat_dead
+        Dead:
+          Base: rat_dead
+    - type: MovementSpeedModifier
+      baseWalkSpeed: 3
+      baseSprintSpeed: 5.4
+    - type: CFCombatant
+      level: -1
+      armorClass: 12
+      speedFeet: 30
+      maxHp: 8
+      currentHp: 8
+      diesAtZeroHp: true
+      printedFortitude: 6
+      printedReflex: 7
+      printedWill: 3
+      printedPerception: 5
+      printedAttack: 7
+      printedDamage: 1
+      trainedSkills:
+        - Acrobatics
+        - Athletics
+        - Stealth
+      printedSkills:
+        Acrobatics: 5
+        Athletics: 2
+        Stealth: 5
+    - type: CFAbilityScore
+      abilityModifiers:
+        Strength: 0
+        Dexterity: 3
+        Constitution: 2
+        Intelligence: -4
+        Wisdom: 1
+        Charisma: -3
+    - type: CFCombatOptions
+      naturalDice: 1
+      naturalDie: 4
+      naturalType: Piercing
+      naturalAgile: true
+      naturalFinesse: true
+    - type: CFTrait
+      traits:
+        - Animal
+    - type: MobThresholds
+      thresholds:
+        0: Alive
+        7: Critical
+        8: Dead
 
 # Boar. Creature 2, Medium. Monster Core p. 43. Ferocity and Boar Charge are not in yet.
 - type: entity
-  parent: [ CFBaseCreature, BaseSlicingRefinableButchering ]
+  parent: [CFBaseCreature, BaseSlicingRefinableButchering]
   id: CFMobBoar
   name: boar
   description: A bristling wild pig with tusks that can open a man from hip to rib.
   components:
-  - type: Sprite
-    drawdepth: Mobs
-    layers:
-    - map: ["enum.DamageStateVisualLayers.Base"]
-      sprite: _CP14/Mobs/Animals/boar.rsi
-      state: live
-  - type: DamageStateVisuals
-    states:
-      Alive:
-        Base: live
-      Critical:
-        Base: dead
-      Dead:
-        Base: dead
-  - type: MovementSpeedModifier
-    baseWalkSpeed: 4
-    baseSprintSpeed: 7.2
-  - type: CFCombatant
-    level: 2
-    armorClass: 15
-    speedFeet: 40
-    maxHp: 40
-    currentHp: 40
-    diesAtZeroHp: true
-    printedFortitude: 10
-    printedReflex: 5
-    printedWill: 8
-    printedPerception: 8
-    printedAttack: 10
-    printedDamage: 4
-  - type: CFAbilityScore
-    abilityModifiers:
-      Strength: 4
-      Dexterity: 1
-      Constitution: 4
-      Intelligence: -4
-      Wisdom: 2
-      Charisma: -3
-  - type: CFCombatOptions
-    naturalDice: 2
-    naturalDie: 6
-    naturalType: Piercing
-    naturalAgile: false
-    naturalFinesse: false
-  - type: MobThresholds
-    thresholds:
-      0: Alive
-      39: Critical
-      40: Dead
-  - type: ToolRefinable
-    refineResult:
-    - id: CFLeather1
-      amount: 2
-      maxAmount: 4
-    - id: CFScrapLeather
-      amount: 1
-      maxAmount: 3
-      prob: 0.5
-    - id: CFBone1
-      amount: 2
-      maxAmount: 4
+    - type: GhostRole
+      name: cf-ghost-boar-name
+      description: cf-ghost-boar-desc
+    - type: Sprite
+      drawdepth: Mobs
+      layers:
+        - map: ["enum.DamageStateVisualLayers.Base"]
+          sprite: _CP14/Mobs/Animals/boar.rsi
+          state: live
+    - type: DamageStateVisuals
+      states:
+        Alive:
+          Base: live
+        Critical:
+          Base: dead
+        Dead:
+          Base: dead
+    - type: MovementSpeedModifier
+      baseWalkSpeed: 4
+      baseSprintSpeed: 7.2
+    - type: CFCombatant
+      level: 2
+      armorClass: 15
+      speedFeet: 40
+      maxHp: 40
+      currentHp: 40
+      diesAtZeroHp: true
+      printedFortitude: 10
+      printedReflex: 5
+      printedWill: 8
+      printedPerception: 8
+      printedAttack: 10
+      printedDamage: 4
+    - type: CFAbilityScore
+      abilityModifiers:
+        Strength: 4
+        Dexterity: 1
+        Constitution: 4
+        Intelligence: -4
+        Wisdom: 2
+        Charisma: -3
+    - type: CFCombatOptions
+      naturalDice: 2
+      naturalDie: 6
+      naturalType: Piercing
+      naturalAgile: false
+      naturalFinesse: false
+    - type: MobThresholds
+      thresholds:
+        0: Alive
+        39: Critical
+        40: Dead
+    - type: ToolRefinable
+      refineResult:
+        - id: CFLeather1
+          amount: 2
+          maxAmount: 4
+        - id: CFScrapLeather
+          amount: 1
+          maxAmount: 3
+          prob: 0.5
+        - id: CFBone1
+          amount: 2
+          maxAmount: 4
 
 # Grizzly bear. Creature 3, Large. Monster Core p. 41. Jaws only. Claw, Grab, Mauler and Rush are not in yet.
 - type: entity
-  parent: [ CFBaseCreature, BaseSlicingRefinableButchering ]
+  parent: [CFBaseCreature, BaseSlicingRefinableButchering]
   id: CFMobGrizzlyBear
   name: grizzly bear
   description: A huge brown bear, heavy with muscle.
   components:
-  - type: Sprite
-    drawdepth: Mobs
-    layers:
-    - map: ["enum.DamageStateVisualLayers.Base"]
-      sprite: _CP14/Mobs/Animals/bear.rsi
-      state: live
-  - type: DamageStateVisuals
-    states:
-      Alive:
-        Base: live
-      Critical:
-        Base: dead
-      Dead:
-        Base: dead
-  - type: MovementSpeedModifier
-    baseWalkSpeed: 3.5
-    baseSprintSpeed: 6.3
-  - type: CFCombatant
-    level: 3
-    armorClass: 17
-    speedFeet: 35
-    maxHp: 59
-    currentHp: 59
-    diesAtZeroHp: true
-    printedFortitude: 12
-    printedReflex: 6
-    printedWill: 8
-    printedPerception: 10
-    printedAttack: 11
-    printedDamage: 4
-  - type: CFAbilityScore
-    abilityModifiers:
-      Strength: 4
-      Dexterity: 1
-      Constitution: 5
-      Intelligence: -4
-      Wisdom: 1
-      Charisma: -2
-  - type: CFCombatOptions
-    naturalDice: 2
-    naturalDie: 8
-    naturalType: Piercing
-    naturalAgile: false
-    naturalFinesse: false
-  - type: MobThresholds
-    thresholds:
-      0: Alive
-      58: Critical
-      59: Dead
-  - type: ToolRefinable
-    refineResult:
-    - id: CFLeather1
-      amount: 2
-      maxAmount: 4
-    - id: CFScrapLeather
-      amount: 1
-      maxAmount: 3
-      prob: 0.5
-    - id: CFBone1
-      amount: 2
-      maxAmount: 4
+    - type: GhostRole
+      name: cf-ghost-grizzly-bear-name
+      description: cf-ghost-grizzly-bear-desc
+    - type: Sprite
+      drawdepth: Mobs
+      layers:
+        - map: ["enum.DamageStateVisualLayers.Base"]
+          sprite: _CP14/Mobs/Animals/bear.rsi
+          state: live
+    - type: DamageStateVisuals
+      states:
+        Alive:
+          Base: live
+        Critical:
+          Base: dead
+        Dead:
+          Base: dead
+    - type: MovementSpeedModifier
+      baseWalkSpeed: 3.5
+      baseSprintSpeed: 6.3
+    - type: CFCombatant
+      level: 3
+      armorClass: 17
+      speedFeet: 35
+      maxHp: 59
+      currentHp: 59
+      diesAtZeroHp: true
+      printedFortitude: 12
+      printedReflex: 6
+      printedWill: 8
+      printedPerception: 10
+      printedAttack: 11
+      printedDamage: 4
+    - type: CFAbilityScore
+      abilityModifiers:
+        Strength: 4
+        Dexterity: 1
+        Constitution: 5
+        Intelligence: -4
+        Wisdom: 1
+        Charisma: -2
+    - type: CFCombatOptions
+      naturalDice: 2
+      naturalDie: 8
+      naturalType: Piercing
+      naturalAgile: false
+      naturalFinesse: false
+    - type: MobThresholds
+      thresholds:
+        0: Alive
+        58: Critical
+        59: Dead
+    - type: ToolRefinable
+      refineResult:
+        - id: CFLeather1
+          amount: 2
+          maxAmount: 4
+        - id: CFScrapLeather
+          amount: 1
+          maxAmount: 3
+          prob: 0.5
+        - id: CFBone1
+          amount: 2
+          maxAmount: 4
 
 # Giant frog. Creature 1, Medium. Monster Core 2 p. 158. Jaws only. Grab and the tongue are not in yet.
 - type: entity
@@ -231,112 +270,149 @@
   name: giant frog
   description: A frog as big as a man, with a mouth to match.
   components:
-  - type: Sprite
-    drawdepth: Mobs
-    layers:
-    - map: ["enum.DamageStateVisualLayers.Base"]
-      sprite: _CP14/Mobs/Animals/frog.rsi
-      state: frog
-  - type: DamageStateVisuals
-    states:
-      Alive:
-        Base: frog
-      Critical:
-        Base: frog_dead
-      Dead:
-        Base: frog_dead
-  - type: MovementSpeedModifier
-    baseWalkSpeed: 2.5
-    baseSprintSpeed: 4.5
-  - type: CFCombatant
-    level: 1
-    armorClass: 15
-    speedFeet: 25
-    maxHp: 30
-    currentHp: 30
-    diesAtZeroHp: true
-    printedFortitude: 8
-    printedReflex: 7
-    printedWill: 5
-    printedPerception: 7
-    printedAttack: 8
-    printedDamage: 3
-  - type: CFAbilityScore
-    abilityModifiers:
-      Strength: 3
-      Dexterity: 2
-      Constitution: 3
-      Intelligence: -4
-      Wisdom: 2
-      Charisma: -1
-  - type: CFCombatOptions
-    naturalDice: 1
-    naturalDie: 6
-    naturalType: Piercing
-    naturalAgile: false
-    naturalFinesse: false
-  - type: MobThresholds
-    thresholds:
-      0: Alive
-      29: Critical
-      30: Dead
+    - type: GhostRole
+      name: cf-ghost-giant-frog-name
+      description: cf-ghost-giant-frog-desc
+    - type: Sprite
+      drawdepth: Mobs
+      layers:
+        - map: ["enum.DamageStateVisualLayers.Base"]
+          sprite: _CP14/Mobs/Animals/frog.rsi
+          state: frog
+    - type: DamageStateVisuals
+      states:
+        Alive:
+          Base: frog
+        Critical:
+          Base: frog_dead
+        Dead:
+          Base: frog_dead
+    - type: MovementSpeedModifier
+      baseWalkSpeed: 2.5
+      baseSprintSpeed: 4.5
+    - type: CFCombatant
+      level: 1
+      armorClass: 15
+      speedFeet: 25
+      maxHp: 30
+      currentHp: 30
+      diesAtZeroHp: true
+      printedFortitude: 8
+      printedReflex: 7
+      printedWill: 5
+      printedPerception: 7
+      printedAttack: 8
+      printedDamage: 3
+    - type: CFAbilityScore
+      abilityModifiers:
+        Strength: 3
+        Dexterity: 2
+        Constitution: 3
+        Intelligence: -4
+        Wisdom: 2
+        Charisma: -1
+    - type: CFCombatOptions
+      naturalDice: 1
+      naturalDie: 6
+      naturalType: Piercing
+      naturalAgile: false
+      naturalFinesse: false
+    - type: MobThresholds
+      thresholds:
+        0: Alive
+        29: Critical
+        30: Dead
 
-# Hunting spider. Creature 1, Medium. Monster Core p. 320. Venom and web are not in yet.
+# Hunting spider, the common giant spider. Creature 1, Medium, Animal. Monster Core p. 320. Recall Knowledge DC 15.
+# The body is the stock tarantula's. It leaves out stock's Spider component, which would spawn stock webs.
+# Not in yet: hunting spider venom, the web Strike and Web Trap, web sense, Spring Upon Prey, Descend on a Web, and the climb Speed.
+# It is an animal, so an encounter should set "tactics: Beast".
 - type: entity
-  parent: CFBaseCreature
+  parent: [CFBaseCreature, BaseSlicingRefinableButchering]
   id: CFMobHuntingSpider
   name: hunting spider
   description: A spider the size of a large dog that runs its prey down.
   components:
-  - type: Sprite
-    drawdepth: Mobs
-    layers:
-    - map: ["enum.DamageStateVisualLayers.Base"]
-      sprite: Mobs/Animals/spacespider.rsi
-      state: spacespider
-  - type: DamageStateVisuals
-    states:
-      Alive:
-        Base: spacespider
-      Critical:
-        Base: spacespider_dead
-      Dead:
-        Base: spacespider_dead
-  - type: MovementSpeedModifier
-    baseWalkSpeed: 2.5
-    baseSprintSpeed: 4.5
-  - type: CFCombatant
-    level: 1
-    armorClass: 17
-    speedFeet: 25
-    maxHp: 16
-    currentHp: 16
-    diesAtZeroHp: true
-    printedFortitude: 6
-    printedReflex: 9
-    printedWill: 5
-    printedPerception: 7
-    printedAttack: 9
-    printedDamage: 2
-  - type: CFAbilityScore
-    abilityModifiers:
-      Strength: 2
-      Dexterity: 4
-      Constitution: 1
-      Intelligence: -5
-      Wisdom: 2
-      Charisma: -4
-  - type: CFCombatOptions
-    naturalDice: 1
-    naturalDie: 6
-    naturalType: Piercing
-    naturalAgile: false
-    naturalFinesse: true
-  - type: MobThresholds
-    thresholds:
-      0: Alive
-      15: Critical
-      16: Dead
+    - type: GhostRole
+      name: cf-ghost-hunting-spider-name
+      description: cf-ghost-hunting-spider-desc
+    - type: Sprite
+      drawdepth: Mobs
+      sprite: Mobs/Animals/Spiders/tarantulaspider.rsi
+      layers:
+        - map: ["enum.DamageStateVisualLayers.Base", "movement"]
+          state: idle
+    - type: SpriteMovement
+      movementLayers:
+        movement:
+          state: moving
+      noMovementLayers:
+        movement:
+          state: idle
+    - type: DamageStateVisuals
+      states:
+        Alive:
+          Base: idle
+        Critical:
+          Base: dead
+        Dead:
+          Base: dead
+    - type: MovementSpeedModifier
+      baseWalkSpeed: 2.5
+      baseSprintSpeed: 4.5
+    - type: NightVision
+      enabled: true
+      prioritized: true
+      noiseAmount: 0
+      lightingColor: "#9BB6FF30"
+    - type: IgnoreSpiderWeb
+    - type: CFCombatant
+      level: 1
+      armorClass: 17
+      speedFeet: 25
+      maxHp: 16
+      currentHp: 16
+      diesAtZeroHp: true
+      printedFortitude: 6
+      printedReflex: 9
+      printedWill: 5
+      printedPerception: 7
+      printedAttack: 9
+      printedDamage: 2
+      trainedSkills:
+        - Acrobatics
+        - Athletics
+        - Stealth
+      printedSkills:
+        Acrobatics: 7
+        Athletics: 5
+        Stealth: 7
+    - type: CFAbilityScore
+      abilityModifiers:
+        Strength: 2
+        Dexterity: 4
+        Constitution: 1
+        Intelligence: -5
+        Wisdom: 2
+        Charisma: -4
+    - type: CFCombatOptions
+      naturalDice: 1
+      naturalDie: 6
+      naturalType: Piercing
+      naturalAgile: false
+      naturalFinesse: true
+    - type: CFTrait
+      traits:
+        - Animal
+    - type: MobThresholds
+      thresholds:
+        0: Alive
+        15: Critical
+        16: Dead
+    - type: ToolRefinable
+      refineResult:
+        - id: FoodMeatSpider
+          amount: 2
 
 # Sewer ooze. Creature 1, Medium. Monster Core p. 256. The extra 1d4 acid, Filth Wave, and immunity to critical hits and precision are not in yet.
 - type: entity
@@ -345,59 +421,62 @@
   name: sewer ooze
   description: A heaving pile of filth that creeps toward anything that moves.
   components:
-  - type: Sprite
-    drawdepth: Mobs
-    layers:
-    - map: ["enum.DamageStateVisualLayers.Base"]
-      sprite: _CP14/Mobs/Monster/slime.rsi
-      state: base
-  - type: DamageStateVisuals
-    states:
-      Alive:
-        Base: base
-      Critical:
-        Base: base
-      Dead:
-        Base: base
-  - type: MovementSpeedModifier
-    baseWalkSpeed: 1
-    baseSprintSpeed: 1.8
-  - type: CFCombatant
-    level: 1
-    armorClass: 8
-    speedFeet: 10
-    maxHp: 40
-    currentHp: 40
-    diesAtZeroHp: true
-    printedFortitude: 9
-    printedReflex: 1
-    printedWill: 3
-    printedPerception: 3
-    printedAttack: 9
-    printedDamage: 1
-  - type: CFAbilityScore
-    abilityModifiers:
-      Strength: 2
-      Dexterity: -5
-      Constitution: 4
-      Intelligence: -5
-      Wisdom: 0
-      Charisma: -5
-  - type: CFCombatOptions
-    naturalDice: 1
-    naturalDie: 6
-    naturalType: Bludgeoning
-    naturalAgile: false
-    naturalFinesse: false
-  - type: MobThresholds
-    thresholds:
-      0: Alive
-      39: Critical
-      40: Dead
-  - type: CFResistances
-    entries:
-    - damageType: Acid
-      amount: 9999
+    - type: GhostRole
+      name: cf-ghost-sewer-ooze-name
+      description: cf-ghost-sewer-ooze-desc
+    - type: Sprite
+      drawdepth: Mobs
+      layers:
+        - map: ["enum.DamageStateVisualLayers.Base"]
+          sprite: _CP14/Mobs/Monster/slime.rsi
+          state: base
+    - type: DamageStateVisuals
+      states:
+        Alive:
+          Base: base
+        Critical:
+          Base: base
+        Dead:
+          Base: base
+    - type: MovementSpeedModifier
+      baseWalkSpeed: 1
+      baseSprintSpeed: 1.8
+    - type: CFCombatant
+      level: 1
+      armorClass: 8
+      speedFeet: 10
+      maxHp: 40
+      currentHp: 40
+      diesAtZeroHp: true
+      printedFortitude: 9
+      printedReflex: 1
+      printedWill: 3
+      printedPerception: 3
+      printedAttack: 9
+      printedDamage: 1
+    - type: CFAbilityScore
+      abilityModifiers:
+        Strength: 2
+        Dexterity: -5
+        Constitution: 4
+        Intelligence: -5
+        Wisdom: 0
+        Charisma: -5
+    - type: CFCombatOptions
+      naturalDice: 1
+      naturalDie: 6
+      naturalType: Bludgeoning
+      naturalAgile: false
+      naturalFinesse: false
+    - type: MobThresholds
+      thresholds:
+        0: Alive
+        39: Critical
+        40: Dead
+    - type: CFResistances
+      entries:
+        - damageType: Acid
+          amount: 9999
 
 # Velociraptor. Creature 1, Small. Monster Core p. 96. Jaws only. Talon, Leaping Charge and Pack Attack are not in yet.
 - type: entity
@@ -406,52 +485,55 @@
   name: velociraptor
   description: A quick, feathered hunter that attacks in packs.
   components:
-  - type: Sprite
-    drawdepth: Mobs
-    layers:
-    - map: ["enum.DamageStateVisualLayers.Base"]
-      sprite: _CP14/Mobs/Animals/dino.rsi
-      state: live
-  - type: DamageStateVisuals
-    states:
-      Alive:
-        Base: live
-      Critical:
-        Base: dead
-      Dead:
-        Base: dead
-  - type: MovementSpeedModifier
-    baseWalkSpeed: 4
-    baseSprintSpeed: 7.2
-  - type: CFCombatant
-    level: 1
-    armorClass: 16
-    speedFeet: 40
-    maxHp: 20
-    currentHp: 20
-    diesAtZeroHp: true
-    printedFortitude: 5
-    printedReflex: 7
-    printedWill: 4
-    printedPerception: 6
-    printedAttack: 8
-    printedDamage: 3
-  - type: CFAbilityScore
-    abilityModifiers:
-      Strength: 0
-      Dexterity: 3
-      Constitution: 2
-      Intelligence: -4
-      Wisdom: 1
-      Charisma: 1
-  - type: CFCombatOptions
-    naturalDice: 1
-    naturalDie: 6
-    naturalType: Piercing
-    naturalAgile: false
-    naturalFinesse: true
-  - type: MobThresholds
-    thresholds:
-      0: Alive
-      19: Critical
-      20: Dead
+    - type: GhostRole
+      name: cf-ghost-velociraptor-name
+      description: cf-ghost-velociraptor-desc
+    - type: Sprite
+      drawdepth: Mobs
+      layers:
+        - map: ["enum.DamageStateVisualLayers.Base"]
+          sprite: _CP14/Mobs/Animals/dino.rsi
+          state: live
+    - type: DamageStateVisuals
+      states:
+        Alive:
+          Base: live
+        Critical:
+          Base: dead
+        Dead:
+          Base: dead
+    - type: MovementSpeedModifier
+      baseWalkSpeed: 4
+      baseSprintSpeed: 7.2
+    - type: CFCombatant
+      level: 1
+      armorClass: 16
+      speedFeet: 40
+      maxHp: 20
+      currentHp: 20
+      diesAtZeroHp: true
+      printedFortitude: 5
+      printedReflex: 7
+      printedWill: 4
+      printedPerception: 6
+      printedAttack: 8
+      printedDamage: 3
+    - type: CFAbilityScore
+      abilityModifiers:
+        Strength: 0
+        Dexterity: 3
+        Constitution: 2
+        Intelligence: -4
+        Wisdom: 1
+        Charisma: 1
+    - type: CFCombatOptions
+      naturalDice: 1
+      naturalDie: 6
+      naturalType: Piercing
+      naturalAgile: false
+      naturalFinesse: true
+    - type: MobThresholds
+      thresholds:
+        0: Alive
+        19: Critical
+        20: Dead

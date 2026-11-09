@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFWarpriestsArmor
-  name: "Warpriest's Armor"
-  description: "Requires warpriest doctrine."
+  name: cf-feat-warpriests-armor
+  description: cf-feat-warpriests-armor-desc
   class: Cleric
   level: 2
   traits:

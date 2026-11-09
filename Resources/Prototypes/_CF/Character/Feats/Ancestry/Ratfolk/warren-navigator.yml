@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFWarrenNavigator
-  name: "Warren Navigator"
-  description: "Trained in Survival. Improves All results. Not applied in play yet."
+  name: cf-feat-warren-navigator
+  description: cf-feat-warren-navigator-desc
   ancestry: Ratfolk
   level: 1
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFKnownWeaknesses
-  name: "Known Weaknesses"
-  description: "Changes an item. This feature will be implemented later."
+  name: cf-feat-known-weaknesses
+  description: cf-feat-known-weaknesses-desc
   class: Investigator
   level: 1
   traits:

@@ -1,4 +1,5 @@
 using Content.Shared.CF.Character;
+using Content.Shared.CF.Checks;
 using Content.Shared.CF.Effects;
 using Content.Shared.CF.Items;
 using Content.Shared.CF.Preferences;
@@ -123,10 +124,6 @@ public sealed partial class CFArmorSystem : EntitySystem
         if (!combat.ArmorFromEquipment)
             return;
 
-        CFClassPrototype? cls = null;
-        if (combat.ClassId != null)
-            _prototypes.TryIndex(combat.ClassId, out cls);
-
         var acBonus = 0;
         int? dexCap = null;
         var proficiency = "Unarmored";
@@ -139,10 +136,8 @@ public sealed partial class CFArmorSystem : EntitySystem
             worn = armor.Owner;
         }
 
-        var trained = proficiency == "Unarmored"
-            ? CFAttributeMath.IsUnarmoredTrained(cls)
-            : CFAttributeMath.IsArmorTrained(cls, proficiency);
-        combat.ArmorClass = CFAttributeMath.ComputeAc(abilities.AbilityModifiers, combat.Level, trained, acBonus, dexCap);
+        var rank = CFDefense.ArmorRank(_prototypes, combat, proficiency);
+        combat.ArmorClass = CFAttributeMath.ComputeAc(abilities.AbilityModifiers, combat.Level, rank, acBonus, dexCap);
         Dirty(mob, combat);
 
         var runes = worn != null ? CompOrNull<CFArmorRunesComponent>(worn.Value) : null;
@@ -171,7 +166,7 @@ public sealed partial class CFArmorSystem : EntitySystem
     [SubscribeLocalEvent]
     private void OnRefreshSpeed(Entity<CFCombatantComponent> ent, ref RefreshMovementSpeedModifiersEvent args)
     {
-        var penalty = SpeedPenalty(ent);
+        var penalty = SpeedPenalty(ent) + _bonuses.Total(ent, CFBonusStat.Speed);
         if (penalty >= 0)
             return;
 

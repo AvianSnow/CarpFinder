@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Tian Xia Character Guide
 - type: cfFeat
   id: CFPhantomResemblance
-  name: "Phantom Resemblance"
-  description: "Requires Phantom Visage."
+  name: cf-feat-phantom-resemblance
+  description: cf-feat-phantom-resemblance-desc
   ancestry: Goblin
   level: 5
   traits:

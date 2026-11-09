@@ -1,0 +1,155 @@
+# Undead from Monster Core, on stock skeleton bodies. Numbers are the printed stat blocks.
+# How to add one: .agent/importcreatures.md.
+
+- type: startingGear
+  id: CFSkeletonguardMeleeGear
+  inhand:
+  - CFScimitar
+
+- type: startingGear
+  id: CFSkeletonguardRangedGear
+  inhand:
+  - CFShortbow
+
+# Skeleton Guard. Creature -1, Medium, Mindless Skeleton Undead Unholy. Monster Core p. 312. Recall Knowledge DC 13.
+# Each variant fights with one weapon. A disarmed or empty-handed guard uses its claw, which is the natural attack below.
+# Not in yet: immunity to death effects, disease and poison afflictions, and void effects healing it.
+# It is Mindless, so an encounter should set "tactics: Mindless".
+- type: entity
+  abstract: true
+  parent: [ MobSkeletonPerson, CFMonsterGhostRole ]
+  id: CFMobSkeletonguardBase
+  description: Old bones held up by void energy, still keeping the post they were given.
+  suffix: Monster
+  categories: [ ForkFiltered ]
+  components:
+  - type: InputMover
+  - type: MobMover
+  - type: NpcFactionMember
+    factions:
+    - SimpleHostile
+  - type: CFFaction
+    faction: Monster
+  - type: MovementSpeedModifier
+    baseWalkSpeed: 2.5
+    baseSprintSpeed: 4.5
+  - type: NightVision
+    enabled: true
+    prioritized: true
+    noiseAmount: 0
+    lightingColor: "#9BB6FF30"
+  - type: CFCombatant
+    level: -1
+    armorClass: 16
+    speedFeet: 25
+    maxHp: 4
+    currentHp: 4
+    diesAtZeroHp: true
+    printedFortitude: 2
+    printedReflex: 8
+    printedWill: 2
+    printedPerception: 2
+    printedAttack: 6
+    printedDamage: 2
+    # Only reaches the shortbow: printedAttack covers melee. Dex and proficiency give +5, and the book says +6.
+    strikeAdjustment: 1
+    trainedSkills:
+    - Acrobatics
+    - Athletics
+    printedSkills:
+      Acrobatics: 6
+      Athletics: 3
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 2
+      Dexterity: 4
+      Constitution: 0
+      Intelligence: -5
+      Wisdom: 0
+      Charisma: 0
+  # The claw.
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 4
+    naturalType: Slashing
+    naturalAgile: true
+    naturalFinesse: true
+  - type: CFTrait
+    traits:
+    - Mindless
+    - Skeleton
+    - Undead
+    - Unholy
+  - type: CFVoidHealing
+  # Bleed, Mental and Poison are immunities. Void is what void healing says about void damage.
+  - type: CFResistances
+    entries:
+    - damageType: Cold
+      amount: 5
+    - damageType: Electricity
+      amount: 5
+    - damageType: Fire
+      amount: 5
+    - damageType: Piercing
+      amount: 5
+    - damageType: Slashing
+      amount: 5
+    - damageType: Bleed
+      amount: 9999
+    - damageType: Mental
+      amount: 9999
+    - damageType: Poison
+      amount: 9999
+    - damageType: Void
+      amount: 9999
+  # Mental covers Frightened, Charmed and Calmed. Unconscious covers Asleep.
+  - type: CFConditionImmunity
+    conditions:
+    - Asleep
+    - Calmed
+    - Charmed
+    - Frightened
+    - Paralyzed
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      3: Critical
+      4: Dead
+  # Stock skeletons also take Blunt from heat, which CF cannot turn into fire damage. Its bar is only 4 long.
+  - type: TemperatureDamage
+    heatDamage:
+      types:
+        Heat: 0.1
+
+- type: entity
+  parent: CFMobSkeletonguardBase
+  id: CFMobSkeletonguardMelee
+  name: Skeletonguard-Melee
+  components:
+  - type: GhostRole
+    name: cf-ghost-skeleton-guard-name
+    description: cf-ghost-skeleton-guard-desc
+  - type: HTN
+    rootTask:
+      task: SimpleHostileCompound
+  - type: Loadout
+    prototypes: [ CFSkeletonguardMeleeGear ]
+
+# Stock AI through CFArcherCompound: wields the bow, walks until it has a line of sight, then stands and shoots.
+# With its 20 arrows gone it drops the bow and closes in with its claws.
+- type: entity
+  parent: CFMobSkeletonguardBase
+  id: CFMobSkeletonguardRanged
+  name: Skeletonguard-Ranged
+  components:
+  - type: GhostRole
+    name: cf-ghost-skeleton-archer-name
+    description: cf-ghost-skeleton-archer-desc
+  - type: HTN
+    rootTask:
+      task: CFArcherCompound
+  - type: Loadout
+    prototypes: [ CFSkeletonguardRangedGear ]
+  # One more is already on the bow.
+  - type: CFArrowSupply
+    arrows: 19

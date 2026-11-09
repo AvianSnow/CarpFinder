@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFFormControl
-  name: "Form Control"
-  description: "Requires Untamed Form. Changes an item. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-form-control
+  description: cf-feat-form-control-desc
   class: Druid
   level: 4
   traits:

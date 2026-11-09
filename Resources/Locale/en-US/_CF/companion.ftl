@@ -7,3 +7,7 @@ cf-companion-give = Your ally hands you the item.
 cf-companion-give-ground = Your ally sets the item down beside you.
 cf-companion-ghost-name = Summoned ally
 cf-companion-ghost-desc = A dead player can take this body. It belongs to the summoner's company and Strikes with its own stats.
+cf-commander-attack = Your minions turn on them.
+cf-ghost-kobold-trapper-name = Kobold trapper
+cf-ghost-kobold-trapper-desc = Lead a kobold ambush. Shoot from a distance, build traps, and point at an adventurer to send your warriors after them.
+cf-ghost-kobold-trapper-rules = You are a monster in this encounter. Fight the adventurers. Your warriors fight on their own, and go for whoever you point at.

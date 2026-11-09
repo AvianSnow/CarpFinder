@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFGoblinLore
-  name: "Goblin Lore"
-  description: "Lore: Goblin Lore. Trained in Nature and Stealth."
+  name: cf-feat-goblin-lore
+  description: cf-feat-goblin-lore-desc
   ancestry: Goblin
   level: 1
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Battlecry!
 - type: cfFeat
   id: CFShieldYourEyes
-  name: "Shield Your Eyes"
-  description: "+2 circumstance bonus to Ac, Fortitude, Reflex, and Will. Improves Fortitude results. Improves Reflex results. Improves Will results. This feature will be implemented later."
+  name: cf-feat-shield-your-eyes
+  description: cf-feat-shield-your-eyes-desc
   class: Guardian
   level: 2
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFSpiritualGuides
-  name: "Spiritual Guides"
-  description: "Requires spirit instinct. Reaction. This feature will be implemented later."
+  name: cf-feat-spiritual-guides
+  description: cf-feat-spiritual-guides-desc
   class: Barbarian
   level: 4
   traits:

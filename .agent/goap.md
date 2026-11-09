@@ -4,7 +4,7 @@ Advanced NPCs: mini bosses and special encounters. Ordinary mobs stay on stock H
 
 This is our own design, under the repo's MIT licence. **Do not copy from `crystall-edge`.** Its `_CE` code is all rights reserved, and using it needs TheShuEd's written consent. A port of its GOAP was thrown away before it was ever committed, for that reason.
 
-To test it, read `ai-testing.md`. For where mappers put hints, read `investigation-nodes.md`. For what the weights mean and how mobs will choose spells, read `goap-weights.md`. The history and open items are under Phase 6 in `roadmap.md`.
+To test it, read `ai-testing.md`. For where mappers put hints, read `investigation-nodes.md`. For what the weights mean and how mobs will choose spells, read `goap-weights.md`. Open items are under Step 5 in `roadmap.md`, and the history is under Phase 6 in `roadmapold.md`.
 
 ## Layout
 
@@ -22,7 +22,7 @@ Content.Server/_CF/GOAP/
   Steps/                Do the work, one system per CFGOAPStep
   Tactics/              Puts numbers on a fight: target scores, and what an action is worth
   Steering/             Feelers, flow fields, doors and glass, on top of stock steering
-  Debug/                DEBUG, to be removed: the decision log
+  DecisionLog/          DEBUG, to be removed: the decision log
   Encounters/           The spawner and groups
   Influence/            Scent and noise maps
   Nodes/                Investigation nodes
@@ -52,6 +52,7 @@ Then `RunStep` looks the current action's `step` up in a table of step systems a
 | A step | A value in `CFGOAPStep` and a `CFGOAPStepSystem` in `Steps/`. It adds itself to the table. `EveryKindOfStepHasASystem` fails if one is missing |
 | A personality | A `cfGoapProfile` in `goap.yml`. It only changes numbers |
 | A way of fighting | A `goapTactics` in `tactics.yml`, with `parent: Default` and only what differs |
+| A leader who fights unlike its group | Give the mob `CFGOAPBrain` and its own `CFGOAP` lists. `Enlist` leaves a brain it finds alone, and the encounter's lists only go to mobs without one |
 | An action worth weighing | A `CFGOAPValue`, a case in `CFGOAPTacticsSystem.Value`, and `valuedBy` on the action. Measure it against a clean Strike, which is 1 |
 
 ## Rules
@@ -79,14 +80,16 @@ An agile weapon or an easy target keeps the third swing worthwhile, with no spec
 
 ## Decision log (DEBUG, to be removed)
 
-Every brain gets a `CFGOAPDebugLogComponent`: the last 64 goal changes, plans, steps, facts by name, targets, reflexes, obstacles and giving up. In a real game, open `CFGOAPDebugLog` on a creature in VV and read `Entries`. In tests, `CFGOAPDebugLoggedTest` prints it after each test, and the runner shows that for tests that fail.
+Every brain gets a `CFGOAPDecisionLogComponent`: the last 64 goal changes, plans, steps, facts by name, targets, reflexes, obstacles, routes and giving up. In a real game, open `CFGOAPDecisionLog` on a creature in VV and read `Entries`. In tests, `CFGOAPLoggedTest` prints it after each test, and the runner shows that for tests that fail.
 
-`CFGOAPDebugLogSystem` watches brains from outside once a tick, so the AI code has no logging in it. Two changes in one tick show as their result, and a one-action step can finish before it is seen. `ActionsLeft` is left out, because it flips with every swing.
+The folder must not be called `Debug`: `.gitignore` drops any folder with that name, which lost the first copy of this log.
+
+`CFGOAPDecisionLogSystem` watches brains from outside once a tick, so the AI code has no logging in it. Two changes in one tick show as their result, and a one-action step can finish before it is seen. `ActionsLeft` is left out, because it flips with every swing.
 
 To remove it:
 
-1. Delete `Content.Server/_CF/GOAP/Debug/` and `Content.IntegrationTests/Tests/_CF/GOAP/Debug/`.
-2. In `CFGOAPTest`, `CFGOAPEncounterTest` and `CFGOAPObstacleTest`, change `CFGOAPDebugLoggedTest` back to `GameTest` and drop its `using`.
+1. Delete `Content.Server/_CF/GOAP/DecisionLog/` and `Content.IntegrationTests/Tests/_CF/GOAP/DecisionLog/`.
+2. In `CFGOAPTest`, `CFGOAPEncounterTest`, `CFGOAPObstacleTest` and `CFGOAPMazeTest`, change `CFGOAPLoggedTest` back to `GameTest` and drop its `using`. Delete `TheDecisionLogKeepsWhatItChose`.
 3. Delete this section and its line in the layout above, and put the first step of "When a live scenario fails" in `ai-testing.md` back.
 
 ## Getting past things
@@ -102,6 +105,50 @@ To remove it:
 | Anything else: a wall, or a grille it cannot hurt | `Solid` | Blocked, so it goes round |
 
 Only `Navigate` deals with these, so a step that moves any other way cannot get through a door. `FollowScent` is one. A mob working on something is left alone by the safety circle, except by lava and other mobs, or the next table along would throw it off the one it is climbing.
+
+## Long trips
+
+A flow field reaches 20 tiles. For a known place further off, `CFGOAPSteeringSystem.Travel` plans the whole way with `CFGOAPFlowFieldBuilder.TryFindRoute`, a tile A* on the same `TileCost` and step rules as the arrows, then walks it on one short field after another. So doors, climbing and giving up work as usual. Stock paths are not used: they cross lava, run async, and need the path graph.
+
+`Travel` takes a place, never a creature, so it cannot find anyone. `GoToLkp`, `CheckNode` and `GoHome` use it. Chasing a creature still uses `Navigate`.
+
+- A place within 14 tiles gets a field first, because it may be close but a long walk round. A field that was built and has no arrow under the creature falls back to a route.
+- A field with no arrows at all means the place is sealed. No route then sets `NoWayUntil`, which is how the creature gives up. Telling "built and empty" from "not built yet" matters: mixing them up left a creature standing still for good.
+- `Navigate` keeps the steering it has while the line is clear. `HeadingElsewhere` is what starts a walk nothing else started, and moves it on to the next stop of a route.
+
+**Home.** `CFGOAPComponent.Home` is set the first time a brain starts, relative to the grid. With nothing to do it may wander up to `HomeRange` (8 tiles). Past that the `GoHome` goal walks it right back, to within `HomeArrival`, on its own field so a group's shared one is left alone. Going home runs the whole way, so a creature does not stop at the edge of its range.
+
+## Shooting
+
+`Shoot` is an action like `Strike`, and the step hands the work to stock NPC shooting, which CF turns into Strikes. It needs `HasShot`: `CFGOAPShotSensorSystem` sets that for a loaded gun or bow in hand with the same line check stock shooting makes, so glass it can see through does not count. Its cost is 0.9, under a clean Strike, so an archer stays where it is even with an enemy beside it. Out of arrows, or with no line, it plans `Close` and `Strike` as anything else does. It keeps the empty bow in hand and uses its claws.
+
+`Shoot` has no `valuedBy`, so it does not weigh Multiple Attack Penalty. The action pool still paces its shots. `CFStrikeSystem.TryPreviewMelee` has no ranged version yet.
+
+## Standing off
+
+`CFGOAPStandoff` is for a creature that shoots and keeps a melee weapon put away, such as the kobold trapper. Its sensor only runs while a gun is in hand, so once the gun is gone the creature fights like anything else and nothing has to remember the swap.
+
+- `TooClose`: an enemy within `KeepTiles`. It stays set out to `ClearTiles`, so the creature does not stop and start. `KeepDistance` then runs `Flee`, which ends at that distance, not at safety.
+- `Cornered` comes from `Flee` finding no way out, as it does for anything else. It is also set when an enemy stays in reach for `CaughtTime`, because two creatures of equal Speed would otherwise run forever with one hitting the other.
+- `ShouldDraw`: cornered or out of ammunition, with something in `SidearmSlot`. `DrawSidearm` drops the gun for free and takes the weapon out for 1 action. It picks up with the active hand, because that is the hand a swing uses.
+
+## Laying traps
+
+`CFTrapLayer` holds the trap, charges and cooldown. A brain plans `LayTrap` when `CanLayTrap` is set: a target at 3 tiles or more, off cooldown, and a free tile on the target's side with no armed hazard within `SpacingTiles`. The step waits for the actions, so it can stand still for up to 3 regens.
+
+No AI avoids a trap. `CFTrapLayerSystem.TryLay` gives the hazard the builder's faction, and `CFHazardSystem.IsVictim` makes its sensors ignore allies, so allies simply walk over it. A player uses the same `TryLay` through the `ConstructTrap` activity.
+
+## Orders from a player
+
+`CFGOAPCommander` marks a group's leader. A player in that body points at a living enemy, and `CFGOAPEncounterSystem.Command` sets the group's target and tells each member where it is. This follows the companion rule, but it does not use `CFCompanion`, which drives a mob through `NPCMeleeCombat` and would fight the brain. The members stay on their own brains, so they still flank, and they carry on if the player does nothing. A member that sees another enemy and not the ordered one keeps fighting what it sees.
+
+## Fire
+
+`PutOutFire` has the highest priority of any goal, so a burning creature stops what it is doing, even running from a rout. The step calls `FlammableSystem.Resist`, which is what clicking the on fire alert does: 2 seconds paralyzed, which drops what it holds, while the fire dies 15 times as fast. A big fire takes several rolls. `ArmSelf` picks the weapon back up afterwards.
+
+The `OnFire` fact is left off while it stands on a dangerous tile, because a roll on lava only lights it again. It carries on with its plan until it is off.
+
+What burning costs in hit points is not AI. See `CFStockHeatSystem`.
 
 ## Fleeing
 

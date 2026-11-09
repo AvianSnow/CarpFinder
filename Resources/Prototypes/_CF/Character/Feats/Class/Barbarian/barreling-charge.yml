@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFBarrelingChargeBarbarian
-  name: "Barreling Charge"
-  description: "Requires trained in Athletics. Costs 2 actions. This feature will be implemented later."
+  name: cf-feat-barreling-charge-barbarian
+  description: cf-feat-barreling-charge-barbarian-desc
   class: Barbarian
   level: 4
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFAlchemicalAssessment
-  name: "Alchemical Assessment"
-  description: "Requires trained in Crafting."
+  name: cf-feat-alchemical-assessment
+  description: cf-feat-alchemical-assessment-desc
   class: Alchemist
   level: 1
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFAggressiveBlockGuardian
-  name: "Aggressive Block"
-  description: "Free action. This feature will be implemented later."
+  name: cf-feat-aggressive-block-guardian
+  description: cf-feat-aggressive-block-guardian-desc
   class: Guardian
   level: 2
   traits:

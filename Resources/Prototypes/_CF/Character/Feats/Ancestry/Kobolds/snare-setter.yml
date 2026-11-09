@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFSnareSetter
-  name: "Snare Setter"
-  description: "Requires trained in Crafting. Trained in Crafting. Also grants Snare Crafting. TBA - action will be added"
+  name: cf-feat-snare-setter
+  description: cf-feat-snare-setter-desc
   ancestry: Kobold
   level: 1
   traits:

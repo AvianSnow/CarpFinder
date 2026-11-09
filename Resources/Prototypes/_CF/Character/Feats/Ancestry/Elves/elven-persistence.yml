@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Shining Kingdoms
 - type: cfFeat
   id: CFElvenPersistence
-  name: "Elven Persistence"
-  description: "Free action. TBA - action will be added"
+  name: cf-feat-elven-persistence
+  description: cf-feat-elven-persistence-desc
   ancestry: Elf
   level: 5
   traits:

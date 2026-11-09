@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFLeshyFamiliar
-  name: "Leshy Familiar"
-  description: "Requires leaf order. Also grants Pet. This feature will be implemented later."
+  name: cf-feat-leshy-familiar
+  description: cf-feat-leshy-familiar-desc
   class: Druid
   level: 1
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Howl of the Wild
 - type: cfFeat
   id: CFCreatureComfortsDruid
-  name: "Creature Comforts"
-  description: "Requires animal instinct or untamed order. Reaction. This feature will be implemented later."
+  name: cf-feat-creature-comforts-druid
+  description: cf-feat-creature-comforts-druid-desc
   class: Druid
   level: 4
   traits:

@@ -4,28 +4,28 @@ using Content.Shared.CF.GOAP;
 namespace Content.Server.CF.GOAP;
 
 /// <summary>Facts that must hold (<see cref="Mask"/> says which, <see cref="Value"/> says how).</summary>
-public readonly record struct CFGOAPConditions(uint Mask, uint Value)
+public readonly record struct CFGOAPConditions(ulong Mask, ulong Value)
 {
     /// <summary>The facts in <see cref="Mask"/> that do not match the world.</summary>
-    public uint Unmet(uint world)
+    public ulong Unmet(ulong world)
     {
         return (world ^ Value) & Mask;
     }
 
     public static CFGOAPConditions From(IEnumerable<CFGOAPFact> wanted, IEnumerable<CFGOAPFact> unwanted)
     {
-        uint mask = 0;
-        uint value = 0;
+        ulong mask = 0;
+        ulong value = 0;
         foreach (var fact in wanted)
         {
-            mask |= (uint) fact;
-            value |= (uint) fact;
+            mask |= (ulong) fact;
+            value |= (ulong) fact;
         }
 
         foreach (var fact in unwanted)
         {
-            mask |= (uint) fact;
-            value &= ~(uint) fact;
+            mask |= (ulong) fact;
+            value &= ~(ulong) fact;
         }
 
         return new CFGOAPConditions(mask, value);
@@ -48,7 +48,7 @@ public static class CFGOAPPlanner
     private sealed record Node(CFGOAPConditions Wanted, float Cost, Node? Next, int Action, int Depth);
 
     /// <summary>The cheapest list of options that reaches the goal, or null if there is none within the limits.</summary>
-    public static List<int>? Plan(uint world, CFGOAPConditions goal, IReadOnlyList<CFGOAPOption> options)
+    public static List<int>? Plan(ulong world, CFGOAPConditions goal, IReadOnlyList<CFGOAPOption> options)
     {
         // A missing fact costs at least the cheapest option. Costs go below 1, so counting each as a flat 1 could put
         // a cheap route behind a dearer one.
@@ -85,7 +85,7 @@ public static class CFGOAPPlanner
     }
 
     /// <summary>What must hold before this option, for everything wanted to hold after it.</summary>
-    private static bool TryRegress(CFGOAPConditions wanted, uint unmet, CFGOAPOption option, out CFGOAPConditions result)
+    private static bool TryRegress(CFGOAPConditions wanted, ulong unmet, CFGOAPOption option, out CFGOAPConditions result)
     {
         result = default;
 

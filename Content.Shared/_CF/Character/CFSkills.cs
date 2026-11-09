@@ -100,6 +100,60 @@ public static class CFSkills
     /// <summary>
     /// Background + free class skill picks for a build (class fixed skills stay on the class list).
     /// </summary>
+    /// <summary>
+    /// A skill increase raises a rank by one. Master needs level 7, so nothing below that goes past Expert.
+    /// </summary>
+    public static CFProficiencyRank RaiseRank(CFProficiencyRank rank, int increases)
+    {
+        for (var i = 0; i < increases; i++)
+        {
+            if (rank == CFProficiencyRank.Untrained)
+                rank = CFProficiencyRank.Trained;
+            else if (rank == CFProficiencyRank.Trained)
+                rank = CFProficiencyRank.Expert;
+        }
+
+        return rank;
+    }
+
+    /// <summary>The rank this build will have in a skill at a level, counting the skill increases by then.</summary>
+    public static CFProficiencyRank BuildRank(
+        IPrototypeManager prototypes,
+        CFCharacterBuildData build,
+        string? ancestryId,
+        string skillId,
+        int level)
+    {
+        CFClassPrototype? cls = null;
+        if (build.Class is { } classId)
+            prototypes.TryIndex(classId, out cls);
+
+        CFBackgroundPrototype? background = null;
+        if (build.Background is { } backgroundId)
+            prototypes.TryIndex(backgroundId, out background);
+
+        var trained = CollectTrainedSkills(prototypes, build, ancestryId, cls?.ID, level);
+        var increases = 0;
+        if (level >= 3 && build.SkillIncreaseLevel3?.Id == skillId)
+            increases++;
+        if (level >= 5 && build.SkillIncreaseLevel5?.Id == skillId)
+            increases++;
+
+        return RaiseRank(GetSkillRank(cls, background, skillId, trained), increases);
+    }
+
+    /// <summary>Whether this build meets a feat's skill requirement at a level.</summary>
+    public static bool Qualifies(
+        IPrototypeManager prototypes,
+        CFCharacterBuildData build,
+        string? ancestryId,
+        CFFeatPrototype feat,
+        int level)
+    {
+        return feat.RequiresSkill is not { } skill
+               || BuildRank(prototypes, build, ancestryId, skill.Id, level) >= feat.RequiresRank;
+    }
+
     public static List<CFFeatPrototype> SelectedFeats(
         IPrototypeManager prototypes,
         CFCharacterBuildData build,
@@ -115,9 +169,20 @@ public static class CFSkills
         }
 
         if (level >= 2)
+        {
             AddFeat(prototypes, result, build.ClassFeatLevel2, feat => feat.FitsClass(classId, 2));
+            AddFeat(prototypes, result, build.SkillFeatLevel2, feat => feat.FitsSkillSlot(2));
+        }
+
+        if (level >= 3)
+            AddFeat(prototypes, result, build.GeneralFeatLevel3, feat => feat.FitsGeneralSlot(3));
+
         if (level >= 4)
+        {
             AddFeat(prototypes, result, build.ClassFeatLevel4, feat => feat.FitsClass(classId, 4));
+            AddFeat(prototypes, result, build.SkillFeatLevel4, feat => feat.FitsSkillSlot(4));
+        }
+
         if (level >= 5)
             AddFeat(prototypes, result, build.AncestryFeatLevel5, feat => feat.Fits(ancestryId, 5));
         return result;
@@ -189,6 +254,22 @@ public static class CFSkills
         return cls == null
             ? CFProficiencyRank.Untrained
             : RankFromList(cls.Proficiencies.SavingThrows, saveName);
+    }
+
+    /// <summary>A class's rank with a weapon category, by its name in <c>attacks:</c>.</summary>
+    public static CFProficiencyRank GetAttackRank(CFClassPrototype? cls, string proficiency)
+    {
+        return cls == null
+            ? CFProficiencyRank.Untrained
+            : RankFromList(cls.Proficiencies.Attacks, proficiency);
+    }
+
+    /// <summary>A class's rank with armor or unarmored defense, by its name in <c>defenses:</c>.</summary>
+    public static CFProficiencyRank GetDefenseRank(CFClassPrototype? cls, string proficiency)
+    {
+        return cls == null
+            ? CFProficiencyRank.Untrained
+            : RankFromList(cls.Proficiencies.Defenses, proficiency);
     }
 
     public static CFProficiencyRank GetPerceptionRank(CFClassPrototype? cls)

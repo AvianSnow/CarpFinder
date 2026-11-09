@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFReachoftheDead
-  name: "Reach of the Dead"
-  description: "Changes an item. Free action. This feature will be implemented later."
+  name: cf-feat-reachofthe-dead
+  description: cf-feat-reachofthe-dead-desc
   class: Necromancer
   level: 1
   traits:

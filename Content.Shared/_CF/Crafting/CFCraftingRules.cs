@@ -19,7 +19,11 @@ public static class CFCraftingRules
 
     public static int LevelDc(int level)
     {
-        return LevelDcs[Math.Clamp(level, 0, LevelDcs.Length - 1)];
+        // The book's table starts at level -1, which only creatures can be.
+        if (level < 0)
+            return 13;
+
+        return LevelDcs[Math.Min(level, LevelDcs.Length - 1)];
     }
 
     /// <summary>Craft DC for an item: its level, made harder by rarity.</summary>

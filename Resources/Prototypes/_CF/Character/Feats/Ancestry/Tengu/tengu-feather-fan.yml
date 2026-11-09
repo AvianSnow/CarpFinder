@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFTenguFeatherFan
-  name: "Tengu Feather Fan"
-  description: "Grants Tengu Feather Fan. Not added in play yet. Changes an item. Not applied in play yet."
+  name: cf-feat-tengu-feather-fan
+  description: cf-feat-tengu-feather-fan-desc
   ancestry: Tengu
   level: 5
   traits:

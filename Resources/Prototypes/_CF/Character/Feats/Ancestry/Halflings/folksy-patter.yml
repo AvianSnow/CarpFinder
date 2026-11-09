@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFFolksyPatter
-  name: "Folksy Patter"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-folksy-patter
+  description: cf-feat-folksy-patter-desc
   ancestry: Halfling
   level: 1
   traits:

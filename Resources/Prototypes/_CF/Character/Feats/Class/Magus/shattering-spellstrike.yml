@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Rival Academies
 - type: cfFeat
   id: CFShatteringSpellstrike
-  name: "Shattering Spellstrike"
-  description: "Requires resurgent maelstrom hybrid study and Spellstrike. Costs 2 actions. This feature will be implemented later."
+  name: cf-feat-shattering-spellstrike
+  description: cf-feat-shattering-spellstrike-desc
   class: Magus
   level: 4
   rarity: Uncommon

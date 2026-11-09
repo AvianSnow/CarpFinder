@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFRatFamiliar
-  name: "Rat Familiar"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-rat-familiar
+  description: cf-feat-rat-familiar-desc
   ancestry: Ratfolk
   level: 1
   traits:

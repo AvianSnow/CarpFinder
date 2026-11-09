@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFRightHandBlood
-  name: "Right-Hand Blood"
-  description: "+1 item bonus to Medicine. Not applied in play yet."
+  name: cf-feat-right-hand-blood
+  description: cf-feat-right-hand-blood-desc
   ancestry: Kholo
   level: 5
   traits:

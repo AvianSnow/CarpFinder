@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFSleekReposition
-  name: "Sleek Reposition"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-sleek-reposition
+  description: cf-feat-sleek-reposition-desc
   class: Fighter
   level: 2
   traits:

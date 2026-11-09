@@ -37,6 +37,9 @@
     - level: 1
       name: "Sneak Attack"
       description: "Melee Strikes against an off-guard creature deal extra precision damage."
+      grants:
+        - !type:CFGrantOption
+          option: SneakAttack
     - level: 1
       name: "Surprise Attack"
       description: "This feature will be implemented later."

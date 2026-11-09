@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFLoremastersEtude
-  name: "Loremaster's Etude"
-  description: "Requires enigma muse."
+  name: cf-feat-loremasters-etude
+  description: cf-feat-loremasters-etude-desc
   class: Bard
   level: 2
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Tian Xia Character Guide
 - type: cfFeat
   id: CFSpiritCoffin
-  name: "Spirit Coffin"
-  description: "Requires bakuwa lizardfolk heritage or Tian Xia origin."
+  name: cf-feat-spirit-coffin
+  description: cf-feat-spirit-coffin-desc
   ancestry: Lizardfolk
   level: 1
   rarity: Uncommon

@@ -2,8 +2,8 @@
 # source: Carpfinder Guns & Gears
 - type: cfFeat
   id: CFFakeOut
-  name: "Fake Out"
-  description: "Reaction. This feature will be implemented later."
+  name: cf-feat-fake-out
+  description: cf-feat-fake-out-desc
   class: Gunslinger
   level: 2
   traits:

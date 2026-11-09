@@ -2,8 +2,8 @@
 # source: Carpfinder Battlecry!
 - type: cfFeat
   id: CFNotSoFast
-  name: "Not So Fast!"
-  description: "Requires Hampering Stance. Reaction. This feature will be implemented later."
+  name: cf-feat-not-so-fast
+  description: cf-feat-not-so-fast-desc
   class: Guardian
   level: 4
   traits:

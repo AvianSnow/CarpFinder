@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFReachSpellBard
-  name: "Reach Spell"
-  description: "Changes an item. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-reach-spell-bard
+  description: cf-feat-reach-spell-bard-desc
   class: Bard
   level: 1
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFTransposeEtching
-  name: "Transpose Etching"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-transpose-etching
+  description: cf-feat-transpose-etching-desc
   class: Runesmith
   level: 4
   traits:

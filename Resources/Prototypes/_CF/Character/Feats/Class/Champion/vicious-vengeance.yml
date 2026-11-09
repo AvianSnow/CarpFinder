@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFViciousVengeance
-  name: "Vicious Vengeance"
-  description: "Requires iniquity cause."
+  name: cf-feat-vicious-vengeance
+  description: cf-feat-vicious-vengeance-desc
   class: Champion
   level: 1
   rarity: Uncommon

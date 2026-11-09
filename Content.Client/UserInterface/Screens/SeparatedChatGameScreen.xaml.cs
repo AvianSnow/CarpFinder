@@ -41,7 +41,6 @@ public sealed partial class SeparatedChatGameScreen : InGameScreen
 
     private void PlaceHud()
     {
-        Hud.SetViewportWidth(ViewportContainer.Size.X);
         var hudHeight = Hud.DesiredSize.Y;
         if (hudHeight < 64f)
             hudHeight = 160f;

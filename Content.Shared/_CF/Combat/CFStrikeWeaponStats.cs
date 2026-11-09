@@ -5,7 +5,7 @@ namespace Content.Shared.CF.Combat;
 
 /// <summary>
 /// Snapshot of a weapon for one Strike: dice after runes and two-hand, damage type, proficiency,
-/// and the weapon's traits resolved from their <c>cfTrait</c> rules.
+/// and the weapon's traits resolved from their <c>cfTrait</c> rules. <c>Item</c> is null for fists.
 /// Built by <see cref="CFWeaponSystem.Stats"/> or <see cref="CFStrikeSystem.UnarmedStats"/>.
 /// </summary>
 public readonly record struct CFStrikeWeaponStats(
@@ -20,7 +20,8 @@ public readonly record struct CFStrikeWeaponStats(
     int Striking = 0,
     int Reload = 0,
     bool ThrownStrike = false,
-    bool Improvised = false)
+    bool Improvised = false,
+    EntityUid? Item = null)
 {
     public bool Agile => Traits.Agile;
     public bool Finesse => Traits.Finesse;

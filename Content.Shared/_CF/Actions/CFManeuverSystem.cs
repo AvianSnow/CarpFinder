@@ -300,7 +300,7 @@ public sealed partial class CFManeuverSystem : EntitySystem
     private int AthleticsModifier(EntityUid uid)
     {
         return TryComp(uid, out CFCombatantComponent? combat) && TryComp(uid, out CFAbilityScoreComponent? abilities)
-            ? CFDefense.SkillModifier(_prototypes, combat, abilities, "Athletics", CFAbility.Strength)
+            ? CFDefense.SkillModifier(_prototypes, combat, abilities, "Athletics", CFAbility.Strength, _conditions.SkillBonus(uid, "Athletics"))
             : 0;
     }
 
@@ -309,8 +309,9 @@ public sealed partial class CFManeuverSystem : EntitySystem
         if (!TryComp(uid, out CFCombatantComponent? combat) || !TryComp(uid, out CFAbilityScoreComponent? abilities))
             return 0;
 
-        var acrobatics = CFDefense.SkillModifier(_prototypes, combat, abilities, "Acrobatics", CFAbility.Dexterity);
-        var unarmed = abilities.GetModifier(CFAbility.Strength) + CFAttributeMath.ProficiencyBonus(combat.Level, true);
+        var acrobatics = CFDefense.SkillModifier(_prototypes, combat, abilities, "Acrobatics", CFAbility.Dexterity, _conditions.SkillBonus(uid, "Acrobatics"));
+        var rank = CFDefense.AttackRank(_prototypes, combat, CFWeaponCategory.Unarmed.Proficiency());
+        var unarmed = abilities.GetModifier(CFAbility.Strength) + CFSkills.ProficiencyBonus(combat.Level, rank);
         return Math.Max(Math.Max(AthleticsModifier(uid), acrobatics), unarmed);
     }
 

@@ -28,6 +28,7 @@ Pick these from the emote wheel. Typing them is only roleplay.
 - [bold]Click a creature with a healer's toolkit:[/bold] Treat Wounds. It takes 30 seconds and needs training in Medicine.
 - [bold]Use a healer's toolkit in hand in combat mode:[/bold] Battle Medicine on the nearest hurt ally, if you have the feat.
 - [bold]Right-click an ally, then Aid:[/bold] help with their next check.
+- [bold]Buckle into a bed, then use Sleep:[/bold] a long rest. It restores your Hit Points, spell slots and focus points.
 - [bold]Examine a creature, then the information icon:[/bold] Recall Knowledge. You get one try per creature.
 
 ## Feats that use these controls
@@ -36,6 +37,9 @@ Pick these from the emote wheel. Typing them is only roleplay.
 - [bold]Snagging Strike, Exacting Strike, Tumble Behind:[/bold] these happen on their own.
 - [bold]Confident Finisher:[/bold] Alt and Z with your weapon in hand, aimed at an enemy in reach.
 - [bold]Courageous Anthem:[/bold] play a held instrument, or use the wheel.
+
+## Languages
+Right-click yourself and choose Speak to change the language you speak. Anyone who does not know it hears nonsense, and the same word always sounds the same. Your ancestry teaches you some languages, and each point of Intelligence adds one more.
 
 ## Still on the wheel
 Spells, Leap, Rage, Flurry of Blows, Spellstrike, Sudden Charge, and Point-Blank Stance.

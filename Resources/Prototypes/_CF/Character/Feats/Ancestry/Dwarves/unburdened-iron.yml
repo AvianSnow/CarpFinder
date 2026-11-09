@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFUnburdenedIron
-  name: "Unburdened Iron"
-  description: "Changes a modifier. Not applied in play yet."
+  name: cf-feat-unburdened-iron
+  description: cf-feat-unburdened-iron-desc
   ancestry: Dwarf
   level: 1
   traits:

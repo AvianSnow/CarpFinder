@@ -78,7 +78,7 @@ public sealed partial class CFAfflictionSystem : EntitySystem
         if (active != null && now < active.NextExposure)
             return;
 
-        var degree = _conditions.RollDefense(uid, proto.Defense, proto.Dc, out _);
+        var degree = _conditions.RollDefense(uid, proto.Defense, proto.Dc, out _, proto.Traits);
         var cooldown = now + TimeSpan.FromSeconds(proto.ExposureCooldownSeconds);
         if (active != null)
             active.NextExposure = cooldown;
@@ -120,7 +120,7 @@ public sealed partial class CFAfflictionSystem : EntitySystem
         if (active.Stage == 0)
             return EnterStage(uid, proto, active, active.PendingStage);
 
-        var change = _conditions.RollDefense(uid, proto.Defense, proto.Dc, out _) switch
+        var change = _conditions.RollDefense(uid, proto.Defense, proto.Dc, out _, proto.Traits) switch
         {
             CFDegree.CriticalSuccess => -2,
             CFDegree.Success => -1,

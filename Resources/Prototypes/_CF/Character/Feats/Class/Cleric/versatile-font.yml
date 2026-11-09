@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFVersatileFont
-  name: "Versatile Font"
-  description: "Requires harmful font or healing font and deity that allows clerics to have both fonts."
+  name: cf-feat-versatile-font
+  description: cf-feat-versatile-font-desc
   class: Cleric
   level: 2
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFShadowoftheWilds
-  name: "Shadow of the Wilds"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-shadowofthe-wilds
+  description: cf-feat-shadowofthe-wilds-desc
   ancestry: Leshy
   level: 1
   traits:

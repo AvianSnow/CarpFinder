@@ -1,4 +1,7 @@
+using Content.Shared.CF.Character;
+using Content.Shared.CF.Traits;
 using Robust.Shared.GameStates;
+using Robust.Shared.Prototypes;
 
 namespace Content.Shared.CF.Combat;
 
@@ -58,6 +61,10 @@ public sealed partial class CFCombatantComponent : Component
     [DataField, AutoNetworkedField]
     public int? PrintedDamage;
 
+    /// <summary>Stat block skill modifiers by skill id, where the book differs from abilities and proficiency.</summary>
+    [DataField]
+    public Dictionary<string, int> PrintedSkills = new();
+
     /// <summary>Monsters die at 0 HP instead of dying, and defeating one is worth XP.</summary>
     [DataField, AutoNetworkedField]
     public bool DiesAtZeroHp;
@@ -80,6 +87,25 @@ public sealed partial class CFCombatantComponent : Component
     /// </summary>
     [DataField, AutoNetworkedField]
     public List<string> TrainedSkills = new();
+
+    /// <summary>Skills raised by a skill increase, once for each increase.</summary>
+    [DataField, AutoNetworkedField]
+    public List<string> SkillIncreases = new();
+
+    /// <summary>
+    /// Ranks raised by feats and class features, by proficiency id (<c>Fortitude</c>, <c>MartialWeapons</c>, <c>Sword</c>).
+    /// A rank here only counts when it beats the class's own. Read through <c>CFDefense</c>.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public Dictionary<string, CFProficiencyRank> ProficiencyRanks = new();
+
+    /// <summary>Weapons that count as simple for this character, who is at least trained with them.</summary>
+    [DataField, AutoNetworkedField]
+    public List<EntProtoId> FamiliarWeapons = new();
+
+    /// <summary>Weapons with these traits count as one category simpler for this character.</summary>
+    [DataField, AutoNetworkedField]
+    public List<ProtoId<CFTraitPrototype>> FamiliarWeaponTraits = new();
 
     /// <summary>Specific Lore names from the chosen ancestry feat, shown on the Lore row.</summary>
     [DataField, AutoNetworkedField]

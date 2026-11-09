@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Rival Academies
 - type: cfFeat
   id: CFTributaryCirculation
-  name: "Tributary Circulation"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-tributary-circulation
+  description: cf-feat-tributary-circulation-desc
   class: Monk
   level: 4
   rarity: Uncommon

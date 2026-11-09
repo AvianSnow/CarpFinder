@@ -2,8 +2,8 @@
 # source: Carpfinder Dark Archive (Remastered)
 - type: cfFeat
   id: CFPairedLink
-  name: "Paired Link"
-  description: "This feature will be implemented later."
+  name: cf-feat-paired-link
+  description: cf-feat-paired-link-desc
   class: Thaumaturge
   level: 4
   traits:

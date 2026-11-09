@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFSolidLead
-  name: "Solid Lead"
-  description: "This feature will be implemented later."
+  name: cf-feat-solid-lead
+  description: cf-feat-solid-lead-desc
   class: Investigator
   level: 2
   traits:

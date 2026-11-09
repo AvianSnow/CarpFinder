@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFGnomeObsession
-  name: "Gnome Obsession"
-  description: "Also grants Assurance. TBA - action will be added"
+  name: cf-feat-gnome-obsession
+  description: cf-feat-gnome-obsession-desc
   ancestry: Gnome
   level: 1
   traits:

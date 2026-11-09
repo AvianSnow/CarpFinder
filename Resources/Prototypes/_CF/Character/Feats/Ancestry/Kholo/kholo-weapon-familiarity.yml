@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFKholoWeaponFamiliarity
-  name: "Kholo Weapon Familiarity"
-  description: "Ancestry weapons count as a simpler group for proficiency. Not applied in combat yet."
+  name: cf-feat-kholo-weapon-familiarity
+  description: cf-feat-kholo-weapon-familiarity-desc
   ancestry: Kholo
   level: 1
   traits:

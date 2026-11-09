@@ -76,11 +76,11 @@ public static class CFMelee
         CFAbilityScoreComponent abilities,
         CFCombatantComponent combatant,
         CFStrikeWeaponStats weapon,
-        bool weaponTrained,
+        CFProficiencyRank rank,
         float distanceFeet = 0f,
         bool ignoreVolley = false)
     {
-        var proficiency = CFAttributeMath.ProficiencyBonus(combatant.Level, weaponTrained);
+        var proficiency = CFSkills.ProficiencyBonus(combatant.Level, rank);
         int ability;
         if (weapon.Ranged)
             ability = abilities.GetModifier(CFAbility.Dexterity);

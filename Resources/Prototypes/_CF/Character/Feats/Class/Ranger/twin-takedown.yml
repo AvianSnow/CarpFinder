@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFTwinTakedown
-  name: "Twin Takedown"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-twin-takedown
+  description: cf-feat-twin-takedown-desc
   class: Ranger
   level: 1
   traits:

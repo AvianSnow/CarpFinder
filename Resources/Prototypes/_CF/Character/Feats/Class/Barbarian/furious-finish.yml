@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFFuriousFinish
-  name: "Furious Finish"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-furious-finish
+  description: cf-feat-furious-finish-desc
   class: Barbarian
   level: 2
   traits:

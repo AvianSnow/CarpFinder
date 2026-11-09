@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Tian Xia Character Guide
 - type: cfFeat
   id: CFOilFire
-  name: "Oil Fire"
-  description: "Requires armor innovation. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-oil-fire
+  description: cf-feat-oil-fire-desc
   class: Inventor
   level: 2
   traits:

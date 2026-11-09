@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFForestPassage
-  name: "Forest Passage"
-  description: "Requires leaf order."
+  name: cf-feat-forest-passage
+  description: cf-feat-forest-passage-desc
   class: Druid
   level: 4
   traits:

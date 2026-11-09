@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFAnimalCompanion
-  name: "Animal Companion"
-  description: "Requires animal order."
+  name: cf-feat-animal-companion
+  description: cf-feat-animal-companion-desc
   class: Druid
   level: 1
   traits:

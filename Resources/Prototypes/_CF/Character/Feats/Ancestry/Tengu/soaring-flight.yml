@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFSoaringFlight
-  name: "Soaring Flight"
-  description: "Requires skyborn tengu heritage. Fly Speed 20 feet. Not applied in play yet. Costs 1 action. TBA - action will be added"
+  name: cf-feat-soaring-flight
+  description: cf-feat-soaring-flight-desc
   ancestry: Tengu
   level: 5
   traits:

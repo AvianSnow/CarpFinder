@@ -1,3 +1,5 @@
+using Content.Shared.CF.Character.Grants;
+using Content.Shared.CF.Languages;
 using Content.Shared.CF.Preferences;
 using Content.Shared.Humanoid.Prototypes;
 using Robust.Shared.Prototypes;
@@ -78,10 +80,14 @@ public sealed partial class CFAncestryPrototype : IPrototype
     public List<CFAbility> AbilityFlaws = new();
 
     [DataField]
-    public List<LocId> Languages = new();
+    public List<ProtoId<CFLanguagePrototype>> Languages = new();
 
     [DataField]
     public List<LocId> Traits = new();
+
+    /// <summary>What this gives a character. See <see cref="CFGrant"/>.</summary>
+    [DataField]
+    public List<CFGrant> Grants = new();
 }
 
 /// <summary>A body sprite a player can use for an ancestry.</summary>

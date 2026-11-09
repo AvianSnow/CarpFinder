@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFDrainingStrike
-  name: "Draining Strike"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-draining-strike
+  description: cf-feat-draining-strike-desc
   class: Necromancer
   level: 2
   traits:

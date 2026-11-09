@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFPoisonResistanceDruid
-  name: "Poison Resistance"
-  description: "+1 status bonus to Saving Throw. Has a resistance. This feature will be implemented later."
+  name: cf-feat-poison-resistance-druid
+  description: cf-feat-poison-resistance-druid-desc
   class: Druid
   level: 2
   traits:

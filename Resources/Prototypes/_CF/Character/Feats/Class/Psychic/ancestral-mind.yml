@@ -2,8 +2,8 @@
 # source: Carpfinder Dark Archive (Remastered)
 - type: cfFeat
   id: CFAncestralMind
-  name: "Ancestral Mind"
-  description: "This feature will be implemented later."
+  name: cf-feat-ancestral-mind
+  description: cf-feat-ancestral-mind-desc
   class: Psychic
   level: 1
   traits:

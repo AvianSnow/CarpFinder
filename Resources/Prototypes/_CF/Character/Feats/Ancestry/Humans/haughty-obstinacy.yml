@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFHaughtyObstinacy
-  name: "Haughty Obstinacy"
-  description: "Improves Will results. Not applied in play yet."
+  name: cf-feat-haughty-obstinacy
+  description: cf-feat-haughty-obstinacy-desc
   ancestry: Human
   level: 1
   traits:

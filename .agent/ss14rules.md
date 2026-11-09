@@ -30,6 +30,12 @@ Build the list with `new List<T>()` and `Add`. Array expressions (`new[] { "a" }
 
 `Span<int> x = stackalloc int[4];` compiles to IL the client sandbox cannot verify. The server and integration tests run fine, but the client dies at startup with `ILVerify: Instruction cannot be verified` and `Assembly Content.Shared failed type checks`. Use plain locals or a normal array. Only a real client start catches this, so start the client after adding low-level code.
 
+## Stock damage does not reach CF HP
+
+Anything that calls `TryChangeDamage` writes to the bar, and CF HP never hears of it, so a creature can die with full hit points. `CFStockHeatSystem` catches heat. Cold, suffocation and pressure are not caught yet.
+
+To catch one, handle `BeforeDamageChangedEvent` and cancel it. `DamageModifyEvent` is not enough: stock temperature damage passes `ignoreResistances: true`, which skips that event. Deal the CF damage later, in `Update`, not in the handler, so the bar is not rewritten in the middle of a damage call.
+
 ## Do not sum SS14 damage
 
 `DamageableSystem.GetTotalDamage`, `GetAllDamage`, and `GetDamagePerGroup` are obsolete: do not treat damage as one number. `DamageableComponent.TotalDamage` and `Damage` are access-restricted to `DamageableSystem`.
@@ -41,6 +47,12 @@ Pathfinder hit points are the source of truth. Write the SS14 bar with `Damageab
 `Control.Dispose()` and `Control.Dispose(bool)` are obsolete (`CS0618`). Overriding `Dispose(bool)` also warns `CS0672`.
 
 Remove a control from the UI tree. Do not add an empty `Dispose` override that only calls `base.Dispose`. The lobby editor overlay (`HumanoidProfileEditor` under `_CF`) follows this.
+
+## Check lengths in a NetMessage
+
+A `NetMessage` that reads a length must call `buffer.AssertAtLeastSize` before it allocates or loops, or a client can claim a huge length and make the server allocate it. Use the sizes in `NetMessageExt`, such as `count * NetMessageExt.MinSizeOfString`. This is not a debug assert: a size that is too large disconnects a real client, so use the true minimum. Stock messages were fixed with `RobustToolbox` 294.0.2.
+
+CF has no `NetMessage` of its own. Prefer `[Serializable, NetSerializable]` events: NetSerializer checks those lengths itself, up to 64 MiB per call. Anything a client sends still needs checking in its handler, as `CFShopSystem.Purchase` does with `MaxItems`.
 
 ## Event subscriptions
 
@@ -60,8 +72,15 @@ One directed component + event pair. A second subscriber throws `Duplicate Subsc
 - `MeleeHitEvent.Direction` is null for a click and set for a wide swing.
 - The flanking sensor is a fixture, so `GetEntitiesIntersectingBody`, `GetAABBNoContainer` and `GetWorldAABB` all see a creature as 2.5 tiles wide. That silently ended every climb near a wall (`ClimbingComponent.TransitionCollisionMask` is 0 on combatants for this) and gave "no room to stand" beside any table (marked fix in `SharedStunSystem.Knockdown`). `LookupFlags.Sensors` lookups find a creature that far out too. `InRangeUnobstructed` is not affected: it skips non-hard fixtures on a hard body.
 - `InRangeUnobstructed` between two entities measures surface to surface. NPC melee measures center to center, so a creature can pass the first and still be out of swing range.
+- `GhostRole` alone lists a role that cannot be taken: only `GhostTakeoverAvailable` handles `TakeGhostRoleEvent`, so the menu shows it and `Takeover` returns false. A monster gets both from `CFMonsterGhostRole`.
+- `MobBaseKobold` has its own `GhostRole` with `prob: 0.05`, non-antagonist rules and `GhostTakeoverAvailable`. The first parent's copy wins, so a CF kobold sets `prob: 1` and `rules` itself, or the role is deleted at map init 19 times in 20. Check a stock parent before calling a field redundant.
 - A thin ray fits through a gap the body does not. A creature sent straight at a one-tile gap catches its corner and circles there, so `CFGOAPSteeringSystem.CanWalkStraight` casts down each side as well.
 - A smashed `CFWindowWooden` leaves a broken frame, which is a half wall to climb and can trip whoever is beside it. A smashed door leaves a door frame, which still blocks a body although it is not `Impassable`.
+- A bow's `ContainerAmmoProvider` reports its capacity as `int.MaxValue`, so `GunAmmoPrecondition` sees one arrow as about 0%. `RangedCombatCompound` drops the bow as empty, picks it up and repeats. Use `CFArcherCompound`.
+- `GunCombatCompound`'s `JukeOperator` strafes for the whole plan, not once. Its `MoveToOperator` uses `shutdownState: PlanFinished`, which leaves steering registered, and an NPC that has arrived then keeps its last move input forever. Strafing hides that, so take both out together.
+- A bow holds one arrow, and nothing in stock AI reloads a gun. `CFArrowSupply` nocks the next one.
+- Kobolds and other `MobBaseAncestor` mobs use the `monkey` inventory template, which has no pockets, belt or back. Stock `pocket1` also depends on `jumpsuit`. A kobold that needs one gets its own template: see `CFKoboldTrapper`.
+- With two parents, the first parent's copy of a component wins. `parent: [ CFMobSomething, CFGOAPBrain ]` keeps the mob's own `HTN`, which is why `CFGOAPSystem.OnBrainInit` sets the root task.
 - A thrown item without `LandAtCursor` ends its flight at about 80% of the way and slides the rest, so it never hits what the cursor is on. Every thrown weapon needs it, and `CFThrownWeaponTest` checks that.
 - `BeforeThrowEvent.Direction` is read-only and already clamped to `HandsComponent.ThrowRange`. Range has to change in `HandsSystem.ThrowHeldItem`.
 - Stock times a flight as if air did not slow the item, so a long throw lands short. `CFStrikeSystem.OnThrown` stretches `LandTime` for thrown weapons.
@@ -69,6 +88,7 @@ One directed component + event pair. A second subscriber throws `Duplicate Subsc
 - `OpenStorage` empties a closet before it raises `StorageAfterOpenEvent`, so the contents are already gone. Watch `EntGotRemovedFromContainerMessage` on the creature.
 - `PlayEmoteMessage` is only sent by the emote menu. `EmoteEvent` also fires for typed emotes and for automatic ones such as pain screams.
 - Alt+Z runs the first `AlternativeVerb` on the held item. Set a high `Priority` to come first.
+- Do not spawn a child of an entity in its `ComponentInit`: the parent is only `Initializing`, and a Debug build asserts. The client hits this on a state for something new, so it only shows when an entity arrives in that condition. Spawn on `AppearanceChangeEvent` or `ComponentStartup`. Tools builds compile the asserts out, so run the test with `-c Debug`.
 - An `Entity<T>` handler must take the event by `ref`, whether or not the event is `[ByRefEvent]`. A broadcast handler for a plain class event is by value.
 - In test output, `Skipped` with `Test was dirty-disposed` is a failed test. An assert inside `Server.WaitAssertion` runs on the server thread, whose NUnit context belongs to whichever test started that pair. On a reused pair the failure is not recorded on the current test, and the dirty-dispose warning becomes its only result. A short duration proves nothing: hundreds of ticks run in under a second. See `ai-testing.md`.
 - A test with no game (plain math) goes in a plain class, not a `GameTest`. Mixed in, it can fail the tests around it with no message.
@@ -80,6 +100,8 @@ One directed component + event pair. A second subscriber throws `Duplicate Subsc
 - `IsTileBlocked` with `Impassable` misses tables (`MidImpassable`) and every unanchored body. Stock crates are not `Impassable` either, because `MachineLayer` has no such bit. To know what stops a mob, compare the other body's hard layer with the mob's mask.
 - A stock `Window` stands on a separate `Grille`, so one tile can hold two obstacles and smashing the window leaves the grille. Anything that excuses one entity on a tile still trips over the other.
 - A grid's `GridAtmosphere` saves air per tile as an index into `uniqueMixes`, and that is what rooms have. `MapAtmosphere` only fills space outside the grid, so a map can have both and its rooms still be vacuum. Mobs show it as Critical after about 35 seconds. `fixgridatmos` only changes the running game: to keep it, save the map or edit the mix.
+- Save a map under `/Maps/`, and from `mapping`, not a running round. A map file under `Resources/Prototypes/` fails with `document #1 is not a sequence`, and saving over a `gameMap` file loses that prototype. A forced save from a round is post-init: every entity gets `mapInit: true`, cooler cups and physics nudges are baked in, and `NoSavedPostMapInitTest` fails.
+- A wall-mounted item hangs on the wall its rotation points at, north when it has none. With no wall there, it deletes itself a few seconds after map init, with no error.
 - `GetTileMixture` returns null for a tile under a wall, window, grille or closed door. That is not vacuum.
 - A steering safety radius must stay under 0.5 tiles. The middle of a one-tile doorway is 0.5 from each side, so anything larger overrides the way forward and holds the NPC there.
 - `Vector2.Normalize(Vector2.Zero)` is NaN. In `NPCSteeringComponent.Interest` or `Danger`, stock's blend keeps a NaN forever and the NPC stands still with no error. Check before normalizing.
@@ -128,6 +150,18 @@ dotnet build -c Tools --no-incremental -nologo -clp:ErrorsOnly "-flp:logfile=bui
 Select-String -Path build.log -Pattern ': warning ' | Where-Object { $_.Line -match '_CF' }
 ```
 
+## A wall is a component, not a tag
+
+Stock replaced the `Wall` tag with `WallComponent`. CP14 code still asks for the tag, so check for the component when porting. Windows only have the `Window` tag. The linter catches a `ProtoId<TagPrototype>` naming a tag that is gone, but only if the error is not lost among others.
+
+## A LocId field holds a key, never the text
+
+`[DataField] public LocId Name` wants a key that is in an `.ftl`. English written straight into the YAML still shows up in game, because `Loc.GetString` hands back an unknown key as it is, so nothing looks wrong. But the YAML linter reports `No localization message found`, the client logs `Unknown messageId` every time it is read, and nothing can translate it. That was 2,567 errors on feats and backgrounds.
+
+Do not compare the result of a `LocId` in code. `CFPetMath` used to search a feat's name for "Animal Companion", which stops working once the name is a key. Match on the id, or better, on a field made for it.
+
+Fluent treats `{` and `}` as code, and a value starting with `.`, `[` or `*` as syntax, so write those as `{"{"}`. One bad line can lose the rest of the file.
+
 ## Ported prototypes must bring what they reference
 
 A ported item that names a `stackType`, a `materialComposition` key, or a `ReagentId` that was not ported crashes the moment it is spawned or previewed (`Unknown StackPrototype prototype: CFAsh`, opening the character sheet). Port the CP14 `stack`, `material` and `reagent` prototypes with the items (CF stacks: `Resources/Prototypes/_CF/Stacks/`, materials: `_CF/Materials/`).
@@ -154,6 +188,7 @@ This engine differs from CP14's fork in more places. A ported prototype needs th
 
 - `MagicMirror` needs an `organs` list. Stock barber scissors use `Head`.
 - `IconSmooth.key` is required. A missing one drops the entity on the client only.
+- `CornerSpriteSmoothing` numbers its states differently from CP14's fork. In any ported corner-smoothed RSI, swap the PNGs for states 1 and 4, and 3 and 6, or it draws as bars with gaps. The YAML can be right and the sprite still wrong. Swap each sheet once: a child entity with its own RSI inherits the smoothing but needs its own swap. To see which sheets are done, compare state 1 with the same file in `crystall-punk-14`. A script that swaps files keeps their timestamps, so git misses a pair of the same size: `touch` them after, and check the count in `git status`.
 - `Crayon` needs `selectedState`. `Injector` needs `activeModeProtoId` and `allowedModes`. `Occluder` takes `polygon`, not `boundingBox`.
 - `ToggleableLightVisuals` is `ToggleableVisuals`. `FlammableSystem` sets its data, so burning items need nothing else.
 - `Sharp` is gone with no replacement: butchering goes through the kitchen spike. `Tool` with `Slicing` stays.
@@ -180,6 +215,10 @@ Stock limb organs set `VisualOrgan.data.state` to `l_arm` and so on. A body whos
 An entity spawned with an empty `Fixtures` component has `CanCollide` turned off. Creating fixtures later with `FixtureSystem.TryCreateFixture` does not turn it back on, so sensors never report contacts. After adding fixtures, call `SharedPhysicsSystem.SetCanCollide(uid, true)` (see `CFHazardSystem`).
 
 Bodies that stand still go to sleep and make no new contacts. Integration tests that spawn a creature beside a sensor must `WakeBody` it.
+
+## Do not name a folder Debug
+
+`.gitignore` has `[Dd]ebug/`, which matches at any depth, so a folder called `Debug` or `debug` is never committed and git says nothing. The files stay on that machine and the build breaks on the next one. That lost the first GOAP decision log. `Release/` and `bin/` are worth the same care. When in doubt, run `git check-ignore -v <path>`.
 
 ## Build
 

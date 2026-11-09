@@ -159,6 +159,55 @@ public sealed class CFGOAPPlannerTest
         return tile.X != 6 || tile.Y == 6;
     }
 
+    [Test]
+    public void ARouteGoesRoundTheWall()
+    {
+        var goal = new Robust.Shared.Maths.Vector2i(11, 0);
+        var found = CFGOAPFlowFieldBuilder.TryFindRoute(Robust.Shared.Maths.Vector2i.Zero, goal, RoomCost, 4096, out var route);
+
+        Assert.That(found);
+        Assert.That(route[^1], Is.EqualTo(goal));
+        Assert.That(route, Does.Contain(new Robust.Shared.Maths.Vector2i(6, 6)), "The only gap is at the top of the wall.");
+        Assert.That(route.TrueForAll(RoomWithWall), "A route went through a wall.");
+    }
+
+    [Test]
+    public void NoRouteIntoASealedRoom()
+    {
+        static int Sealed(Robust.Shared.Maths.Vector2i tile)
+        {
+            return RoomWithWall(tile) && tile.X != 6 ? 0 : CFGOAPFlowFieldBuilder.Blocked;
+        }
+
+        var found = CFGOAPFlowFieldBuilder.TryFindRoute(Robust.Shared.Maths.Vector2i.Zero, new Robust.Shared.Maths.Vector2i(11, 0), Sealed, 4096, out var route);
+
+        Assert.That(found, Is.False);
+        Assert.That(route, Is.Empty);
+    }
+
+    [Test]
+    public void ARouteGivesUpAtTheLimit()
+    {
+        var found = CFGOAPFlowFieldBuilder.TryFindRoute(Robust.Shared.Maths.Vector2i.Zero, new Robust.Shared.Maths.Vector2i(11, 0), RoomCost, 3, out _);
+
+        Assert.That(found, Is.False);
+    }
+
+    [Test]
+    public void ARouteEndsOnAGoalWithSomethingOnIt()
+    {
+        var goal = new Robust.Shared.Maths.Vector2i(3, 0);
+        int Occupied(Robust.Shared.Maths.Vector2i tile)
+        {
+            return tile == goal ? CFGOAPFlowFieldBuilder.Blocked : RoomCost(tile);
+        }
+
+        var found = CFGOAPFlowFieldBuilder.TryFindRoute(Robust.Shared.Maths.Vector2i.Zero, goal, Occupied, 4096, out var route);
+
+        Assert.That(found);
+        Assert.That(route[^1], Is.EqualTo(goal));
+    }
+
     /// <summary>Walks the arrows from a tile, and returns where it ends up.</summary>
     private static Robust.Shared.Maths.Vector2i Walk(Dictionary<Robust.Shared.Maths.Vector2i, Vector2> arrows, Robust.Shared.Maths.Vector2i tile)
     {

@@ -2,8 +2,8 @@
 # source: Carpfinder War of Immortals
 - type: cfFeat
   id: CFThroughtheNeedlesEye
-  name: "Through the Needle's Eye"
-  description: "Grants Blinding Of The Needle. Changes an item. This feature will be implemented later."
+  name: cf-feat-throughthe-needles-eye
+  description: cf-feat-throughthe-needles-eye-desc
   class: Exemplar
   level: 4
   traits:

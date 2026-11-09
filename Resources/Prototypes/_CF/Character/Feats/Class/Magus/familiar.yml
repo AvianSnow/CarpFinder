@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFFamiliarMagus
-  name: "Familiar"
-  description: "Also grants Pet. This feature will be implemented later."
+  name: cf-feat-familiar-magus
+  description: cf-feat-familiar-magus-desc
   class: Magus
   level: 1
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Battlecry!
 - type: cfFeat
   id: CFBannersInspiration
-  name: "Banner's Inspiration"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-banners-inspiration
+  description: cf-feat-banners-inspiration-desc
   class: Commander
   level: 4
   traits:

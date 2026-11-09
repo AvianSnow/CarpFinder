@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFMartialExperience
-  name: "Martial Experience"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-martial-experience
+  description: cf-feat-martial-experience-desc
   ancestry: Elf
   level: 5
   traits:

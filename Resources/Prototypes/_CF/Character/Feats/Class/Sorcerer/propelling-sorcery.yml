@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFPropellingSorcery
-  name: "Propelling Sorcery"
-  description: "Changes an item. This feature will be implemented later."
+  name: cf-feat-propelling-sorcery
+  description: cf-feat-propelling-sorcery-desc
   class: Sorcerer
   level: 2
   traits:

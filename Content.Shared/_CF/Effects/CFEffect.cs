@@ -1,6 +1,8 @@
 using Content.Shared.CF.Checks;
+using Content.Shared.CF.Traits;
 using JetBrains.Annotations;
 using Robust.Shared.Map;
+using Robust.Shared.Prototypes;
 
 namespace Content.Shared.CF.Effects;
 
@@ -44,6 +46,9 @@ public sealed record CFEffectArgs
     public CFDefenseType Defense = CFDefenseType.None;
 
     public bool BasicSave;
+
+    /// <summary>The source's traits: what a target is rolling against, such as Fear or Poison.</summary>
+    public HashSet<ProtoId<CFTraitPrototype>> Traits = new();
 
     /// <summary>Rank the spell resolves at. Cantrips are half the caster's level, rounded up.</summary>
     public int Rank;

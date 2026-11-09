@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFEnhancedFamiliarWitch
-  name: "Enhanced Familiar"
-  description: "Requires a familiar."
+  name: cf-feat-enhanced-familiar-witch
+  description: cf-feat-enhanced-familiar-witch-desc
   class: Witch
   level: 2
   traits:

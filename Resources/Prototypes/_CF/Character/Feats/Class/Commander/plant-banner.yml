@@ -2,8 +2,8 @@
 # source: Carpfinder Battlecry!
 - type: cfFeat
   id: CFPlantBanner
-  name: "Plant Banner"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-plant-banner
+  description: cf-feat-plant-banner-desc
   class: Commander
   level: 1
   traits:

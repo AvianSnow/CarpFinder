@@ -1,3 +1,4 @@
+using Content.Shared.CF.Character.Grants;
 using Content.Shared.CF.Preferences;
 using Robust.Shared.Prototypes;
 
@@ -63,6 +64,10 @@ public sealed partial class CFClassFeature
 
     [DataField]
     public string Description { get; private set; } = "";
+
+    /// <summary>What this gives a character when <see cref="Level"/> is reached. See <see cref="CFGrant"/>.</summary>
+    [DataField]
+    public List<CFGrant> Grants = new();
 }
 
 /// <summary>

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFCantorianReinforcement
-  name: "Cantorian Reinforcement"
-  description: "Improves Saving Throw results. Not applied in play yet."
+  name: cf-feat-cantorian-reinforcement
+  description: cf-feat-cantorian-reinforcement-desc
   ancestry: Hobgoblin
   level: 1
   traits:

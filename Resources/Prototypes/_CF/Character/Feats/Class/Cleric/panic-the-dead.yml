@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFPanictheDead
-  name: "Panic the Dead"
-  description: "This feature will be implemented later."
+  name: cf-feat-panicthe-dead
+  description: cf-feat-panicthe-dead-desc
   class: Cleric
   level: 2
   traits:

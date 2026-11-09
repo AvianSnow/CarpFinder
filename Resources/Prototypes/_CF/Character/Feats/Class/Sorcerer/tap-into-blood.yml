@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFTapintoBlood
-  name: "Tap into Blood"
-  description: "Changes an item. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-tapinto-blood
+  description: cf-feat-tapinto-blood-desc
   class: Sorcerer
   level: 1
   traits:

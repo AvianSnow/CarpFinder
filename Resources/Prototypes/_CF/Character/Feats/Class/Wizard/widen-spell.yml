@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFWidenSpellWizard
-  name: "Widen Spell"
-  description: "Changes an item. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-widen-spell-wizard
+  description: cf-feat-widen-spell-wizard-desc
   class: Wizard
   level: 1
   traits:

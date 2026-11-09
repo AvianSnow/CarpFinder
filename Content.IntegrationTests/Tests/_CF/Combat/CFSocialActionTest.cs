@@ -8,6 +8,8 @@ using Content.Shared.CF.Character;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Effects;
 using Content.Shared.CF.Preferences;
+using Content.Shared.CF.Traits;
+using Robust.Shared.Prototypes;
 using Content.Shared.CombatMode;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Maths;
@@ -243,16 +245,17 @@ public sealed class CFSocialActionTest : GameTest
         await Server.WaitAssertion(() =>
         {
             var effects = SEntMan.System<CFEffectSystem>();
+            var bonuses = SEntMan.System<CFBonusSystem>();
             var bard = Hero();
-            var fear = SEntMan.SpawnEntity("CFFear", _map.Local(0, 0));
-            var other = SEntMan.SpawnEntity("CFBless", _map.Local(0, 0));
+            var fear = effects.SourceTraits(SEntMan.SpawnEntity("CFFear", _map.Local(0, 0)));
+            var other = effects.SourceTraits(SEntMan.SpawnEntity("CFBless", _map.Local(0, 0)));
 
             SEntMan.System<CFActivitySystem>().Anthem(bard);
 
-            Assert.That(effects.IsFear(fear));
-            Assert.That(effects.SaveBonus(bard, fear), Is.EqualTo(1));
-            Assert.That(effects.SaveBonus(bard, other), Is.Zero);
-            Assert.That(effects.SaveBonus(bard, null), Is.Zero);
+            Assert.That(fear, Does.Contain(new ProtoId<CFTraitPrototype>("Fear")));
+            Assert.That(bonuses.Total(bard, CFBonusStat.Saves, traits: fear), Is.EqualTo(1));
+            Assert.That(bonuses.Total(bard, CFBonusStat.Saves, traits: other), Is.Zero);
+            Assert.That(bonuses.Total(bard, CFBonusStat.Saves), Is.Zero);
         });
     }
 
@@ -300,7 +303,7 @@ public sealed class CFSocialActionTest : GameTest
             {
                 Assert.That(Bonuses.Total(mob, CFBonusStat.AttackRoll), Is.EqualTo(1));
                 Assert.That(Bonuses.Total(mob, CFBonusStat.Damage), Is.EqualTo(1));
-                Assert.That(Bonuses.Total(mob, CFBonusStat.SavesVsFear), Is.EqualTo(1));
+                Assert.That(Bonuses.Total(mob, CFBonusStat.Saves, traits: new() { "Fear" }), Is.EqualTo(1));
             }
 
             Assert.That(Bonuses.Total(foe, CFBonusStat.AttackRoll), Is.Zero);

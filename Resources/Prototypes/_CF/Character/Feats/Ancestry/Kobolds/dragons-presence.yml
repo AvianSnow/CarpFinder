@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFDragonsPresence
-  name: "Dragon's Presence"
-  description: "Requires dragonscaled kobold heritage. +1 circumstance bonus to Intimidation. Not applied in play yet. Improves Saving Throw results. Not applied in play yet."
+  name: cf-feat-dragons-presence
+  description: cf-feat-dragons-presence-desc
   ancestry: Kobold
   level: 1
   traits:

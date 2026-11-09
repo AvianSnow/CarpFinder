@@ -18,7 +18,9 @@ How to test the AI, what `Skipped` really means, and what is known to fail: `ai-
 
 Map of the codebase: `codebase.md`. Start there to find something.
 
-The ordered feature plan is `roadmap.md`. Check it before starting a feature and tick items off when they land.
+How to turn a Pathfinder 2e stat block into a monster: `importcreatures.md`.
+
+The ordered feature plan is `roadmap.md`. Check it before starting a feature and tick items off when they land. What is already built, and why, is in `roadmapold.md`. It is not loaded each session, so read it when you need the history.
 
 ## Pathfinder Game Rules
 
@@ -43,6 +45,13 @@ $out = dotnet build -c Tools -clp:ErrorsOnly -nologo 2>&1; $out | Select-String 
 Never build only Shared: build Server, Client, or both via a normal `dotnet build`.
 
 `MSB3027` / "file is locked" errors mean Content.Server or Content.Client is running and holding DLLs in `bin/`. Ask the user to close them; rebuilding will not help.
+
+To build and test while the server stays up, send the output to a folder of its own, two levels under the repo root so tests still find `Resources`. Delete it afterwards:
+
+```bash
+dotnet build Content.IntegrationTests/Content.IntegrationTests.csproj -c Tools -p:OutputPath=C:\project\CarpFinder\bin\Check\
+dotnet test bin/Check/Content.IntegrationTests.dll --filter "FullyQualifiedName~TestName"
+```
 
 After XAML moves under `_CF/`, do a rebuild (not incremental) if you see `No precompiled XAML found for …`.
 
@@ -117,10 +126,13 @@ Class examples: `CFMySystem`, `CFMyServerSystem`, `CFMyClientSystem`, `CFExample
 |---|---|
 | Degree of success for any check | `CFDegrees.DegreeOfSuccess(d20, modifier, dc)` → `CFDegree` (`Content.Shared.CF.Checks`) |
 | Roll a check | `CFDefense.Roll(random, modifier, dc)` |
-| Save / Perception / skill modifier | `CFDefense.SaveModifier`, `PerceptionModifier`, `SkillModifier` with `CFDefenseType` |
+| Save / Perception / skill modifier | `CFDefense.SaveModifier`, `PerceptionModifier`, `SkillModifier` with `CFDefenseType`. Add `CFConditionSystem.SkillBonus` to a skill modifier |
+| Roll a save | `CFConditionSystem.RollDefense`, with the source's traits. Do not roll one with `CFDefense.Roll`, or bonuses against a trait and save upgrades are skipped |
+| Proficiency rank | `CFDefense.SaveRank`, `PerceptionRank`, `AttackRank`, `ArmorRank`, `SkillRank`, `ClassDcRank`, `SpellRank`. `CFWeaponSystem.Rank` for a Strike. Never read a class's lists alone: feats raise ranks too |
+| What a feat, class feature, heritage, ancestry or background gives | A `grants` list of `CFGrant` entries (`Content.Shared/_CF/Character/Grants/CFGrants.cs`), such as `!type:CFGrantBonus`. Do not add a `switch` on an id. `CFCharacterFeatureSystem` runs them |
 | Spell / class / fixed DC and attack bonus | `CFCasting.Spellcasting`, `ClassDc`, `Fixed` (`Content.Shared.CF.Checks`). Cantrip rank: `CFCasting.CantripRank(level)` |
 | Anything that targets, rolls a check, and applies effects (spells, bombs, traps, auras) | Put `CFTargeting`, `CFAreaEffect`, `CFCheck`, `CFDegreeEffects` (and `CFProjectileDelivery`, `CFModeChoice`, `CFHeighten`) on the source, then call `CFEffectSystem.DeliverToTarget` / `ResolveArea` / `ResolveTarget` (`Content.Shared.CF.Effects`). Do not write a new resolver. |
-| Timed bonuses, fortune, action caps, resistances, persistent damage | `CFBonusSystem` (`AddBonus`, `Total`, `TryConsumeFortune`, `SetActionCap`, `AddResistance`, `ModifyDamage`, `AddPersistent`) |
+| Bonuses, fortune, action caps, resistances, persistent damage | `CFBonusSystem` (`AddBonus`, `AddPermanentBonus`, `Total`, `TryConsumeFortune`, `SetActionCap`, `AddResistance`, `AddPermanentResistance`, `ModifyDamage`, `AddPersistent`). A bonus can name a `trait` it counts against, or a `skill` |
 | Give a condition | `CFConditionSystem.ApplyCondition(target, CFConditionKind, value, seconds, source, dc)` |
 | Weapon stats for a Strike | `CFWeaponSystem.TryStats(weapon)` → `CFStrikeWeaponStats`; traits through `CFWeaponTraits` (never add weapon booleans: give the `cfTrait` a `rule`) |
 | Worn armor, check penalty, Speed penalty, AC refresh | `CFArmorSystem` (`TryGetWornArmor`, `CheckPenalty`, `SpeedPenalty`, `RefreshArmorClass`) |
@@ -131,11 +143,13 @@ Class examples: `CFMySystem`, `CFMyServerSystem`, `CFMyClientSystem`, `CFExample
 | Actions for code with no player | `CFManeuverSystem.CanUse` and `TryUse` with a `CFBasicAction`, `CFStrikeSystem.TryFeatStrike` |
 | Whether a creature can see another | `CFStealthSystem.Detection`, `IsUnseenBy`, `Reveal`. Spending actions reveals a creature unless `TrySpendActions` is told `stealthy` |
 | Traps and hazards | `CFHazard` (Stealth DC, detect radius, trigger size, disarm checks) plus `CFCheck` and `CFDegreeEffects` for what it does. `CFHazardSystem` handles noticing, triggering, and disarming. A `CFFaction` on the hazard protects its allies. Disabling it raises `CFHazardDisarmedEvent`; `CFExperienceSystem.AwardHazard` gives the disarmer's company XP for the hazard's `level` (simple or `complex`). See `Resources/Prototypes/_CF/Entities/Hazards/traps.yml`. |
+| A creature that builds traps | `CFTrapLayer` with a hazard prototype, and `CFTrapLayerSystem.TryLay`. The trap takes the builder's faction, so allies never set it off. Do not make an AI walk around one. |
 | Locks on doors and containers | Add a grade as a second parent: `parent: [ WoodDoor, CFLockSimple ]`, with `forceDc` and `keyId` on `CFLock`. See `Resources/Prototypes/_CF/Entities/Objects/Tools/locks.yml`. `CFLockSystem` blocks stock lock toggles and opening a locked door; the stock `Lock` alone does not stop a door. |
 | New crafted item | Add a `craftingRecipe` in `Resources/Prototypes/_CF/Crafting/recipes.yml` and a `CFFormula<Id>` item in `Entities/Objects/Formulas/formulas.yml`. Level and rarity come from the result's `CFItem`. Formula prices are the Player Core table by item level. A new station is a `CFBaseWorkbench` child with a `recipeTags` tag. |
-| New monster | Copy an entry in `Resources/Prototypes/_CF/Entities/Mobs/Creatures/creatures.yml` and set the printed stats from Archives of Nethys. Add its row to `CFCreatureTest.StatBlocks`. Set `diesAtZeroHp: true`. |
+| New monster | Follow `importcreatures.md`. Copy an entry in `Resources/Prototypes/_CF/Entities/Mobs/Creatures/` and set the printed stats from Archives of Nethys. Add its row to `CFCreatureTest.StatBlocks`. Set `diesAtZeroHp: true`. Give it a `GhostRole` name and description, so a player can take it. |
 | Any generated map | Call `CFOutdoorsSystem.ApplySkyWorld(map)` first. CF takes place in the sky, on floating islands with airships, not in space, so every generated map needs the breathable air and `Sky` parallax from the `CFSkyWorld` prototype. |
 | Money | `CFShopSystem.Purse(user)` for a seeded purse. Sale value is `CFMerchantSystem.SaleValue(item)`. Set `fullResale: true` on `CFItemPrice` for gems, art objects and raw materials. |
+| Languages | `CFLanguageSystem.Understands`, `TryGetSpoken`, `TrySpeak`. A creature with no `CFLanguages` understands everything |
 | Skill proficiency rank | `CFDefense.SkillRank(prototypes, combat, skill)` |
 | Area tiles (burst, cone, emanation, line, square) | `CFAreaGrid.Collect` (`Content.Shared.CF.Effects.Areas`), 1 tile = 5 ft |
 | Damage type data (SS14 type, colour, hit sound) | `cfDamageType` prototypes, resolved with `CFDamageTypes.TryResolve` (`Content.Shared.CF.DamageTypes`). Matching ignores case and checks aliases, so `slashing` resolves to `Slashing`. |

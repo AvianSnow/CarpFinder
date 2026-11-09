@@ -1,4 +1,7 @@
+using Content.Shared.CF.Character;
+using Content.Shared.CF.Traits;
 using Content.Shared.Popups;
+using Robust.Shared.Prototypes;
 
 namespace Content.Shared.CF.Effects;
 
@@ -21,6 +24,14 @@ public sealed partial class CFBonusEffect : CFEffect
     [DataField]
     public float DurationSeconds = 60f;
 
+    /// <summary>When set, the bonus only counts against a source with this trait.</summary>
+    [DataField]
+    public ProtoId<CFTraitPrototype>? Trait;
+
+    /// <summary>When set with <see cref="CFBonusStat.SkillChecks"/>, the bonus only counts for this skill.</summary>
+    [DataField]
+    public ProtoId<CFAbilitySkillPrototype>? Skill;
+
     /// <summary>Locale id shown over the target.</summary>
     [DataField]
     public string? Popup;
@@ -30,7 +41,7 @@ public sealed partial class CFBonusEffect : CFEffect
         if (args.Target is not { } target)
             return;
 
-        entities.System<CFBonusSystem>().AddBonus(target, Stat, Type, Value, DurationSeconds);
+        entities.System<CFBonusSystem>().AddBonus(target, Stat, Type, Value, DurationSeconds, Trait, Skill?.Id);
         if (Popup != null)
             entities.System<SharedPopupSystem>().PopupEntity(Loc.GetString(Popup), target);
     }

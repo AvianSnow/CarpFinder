@@ -205,7 +205,7 @@ public static class CFPetMath
             if (!string.Equals(feat.Class, classId, StringComparison.Ordinal)
                 && !feat.Classes.Contains(classId))
                 continue;
-            if (Matches(feat.Name, companion))
+            if (Matches(feat.ID, companion))
                 return true;
         }
 
@@ -217,13 +217,15 @@ public static class CFPetMath
         if (id == null || !prototypes.TryIndex(id.Value, out CFFeatPrototype? feat))
             return false;
 
-        return feat.Level <= level && Matches(feat.Name, companion);
+        return feat.Level <= level && Matches(feat.ID, companion);
     }
 
+    /// <summary>Takes a class feature's name or a feat's id, so spaces do not count.</summary>
     private static bool Matches(string name, bool companion)
     {
+        name = name.Replace(" ", string.Empty);
         if (companion)
-            return name.Contains("Animal Companion", StringComparison.OrdinalIgnoreCase);
+            return name.Contains("AnimalCompanion", StringComparison.OrdinalIgnoreCase);
 
         return name.Contains("Familiar", StringComparison.OrdinalIgnoreCase)
                && !name.Contains("Familiarity", StringComparison.OrdinalIgnoreCase);

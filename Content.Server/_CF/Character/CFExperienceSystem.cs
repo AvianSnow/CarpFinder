@@ -16,6 +16,7 @@ public sealed partial class CFExperienceSystem : EntitySystem
     [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private CFCharacterSpawnSystem _spawn = default!;
+    [Dependency] private CFCharacterFeatureSystem _features = default!;
 
     public IEnumerable<string> Factions()
     {
@@ -170,15 +171,20 @@ public sealed partial class CFExperienceSystem : EntitySystem
     private void LevelUp(EntityUid mob, CFCombatantComponent combat, CFExperienceComponent xp)
     {
         combat.Level++;
+        var constitutionRaised = ApplyLevelChoices(mob, combat, xp);
         var gain = 1;
-        if (combat.ClassId != null
-            && _prototypes.TryIndex(combat.ClassId, out CFClassPrototype? cls))
+        CFClassPrototype? cls = null;
+        if (combat.ClassId != null && _prototypes.TryIndex(combat.ClassId, out cls))
         {
             var con = TryComp(mob, out CFAbilityScoreComponent? scores)
                 ? scores.GetModifier(CFAbility.Constitution)
                 : 0;
             gain = Math.Max(1, cls.HitPoints + con);
         }
+
+        // Constitution counts for every level, so a rise pays back the earlier ones too.
+        if (constitutionRaised)
+            gain += combat.Level - 1;
 
         combat.MaxHp += gain;
         combat.CurrentHp += gain;
@@ -190,8 +196,38 @@ public sealed partial class CFExperienceSystem : EntitySystem
                 _spawn.ApplyFeat(mob, feat);
         }
 
+        if (cls != null)
+            _features.ApplyClassFeatures(mob, cls, combat.Level);
+
         _spawn.RefreshArmorClass(mob);
         _popup.PopupEntity(Loc.GetString("cf-xp-level", ("level", combat.Level)), mob, mob);
+    }
+
+    /// <summary>The skill increase and boosts picked in the lobby for this level. True if Constitution went up.</summary>
+    private bool ApplyLevelChoices(EntityUid mob, CFCombatantComponent combat, CFExperienceComponent xp)
+    {
+        var increase = combat.Level switch
+        {
+            3 => xp.SkillIncreaseLevel3,
+            5 => xp.SkillIncreaseLevel5,
+            _ => null,
+        };
+
+        if (!string.IsNullOrEmpty(increase))
+            combat.SkillIncreases.Add(increase);
+
+        if (combat.Level != 5 || !TryComp(mob, out CFAbilityScoreComponent? abilities))
+            return false;
+
+        var constitutionRaised = false;
+        foreach (var ability in xp.AbilityBoostsLevel5)
+        {
+            if (CFAttributeMath.TryLevelBoost(abilities.AbilityModifiers, ability) && ability == CFAbility.Constitution)
+                constitutionRaised = true;
+        }
+
+        Dirty(mob, abilities);
+        return constitutionRaised;
     }
 
     private static List<string> FeatsAt(CFExperienceComponent xp, int level)
@@ -217,6 +253,18 @@ public sealed partial class CFExperienceSystem : EntitySystem
 
         if (!string.IsNullOrEmpty(id))
             feats.Add(id);
+
+        var general = level switch
+        {
+            2 => xp.SkillFeatLevel2,
+            3 => xp.GeneralFeatLevel3,
+            4 => xp.SkillFeatLevel4,
+            _ => null,
+        };
+
+        if (!string.IsNullOrEmpty(general))
+            feats.Add(general);
+
         return feats;
     }
 }

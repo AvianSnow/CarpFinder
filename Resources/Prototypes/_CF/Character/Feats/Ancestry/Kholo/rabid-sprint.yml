@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFRabidSprint
-  name: "Rabid Sprint"
-  description: "Requires dog kholo heritage. Costs 2 actions. TBA - action will be added"
+  name: cf-feat-rabid-sprint
+  description: cf-feat-rabid-sprint-desc
   ancestry: Kholo
   level: 5
   traits:

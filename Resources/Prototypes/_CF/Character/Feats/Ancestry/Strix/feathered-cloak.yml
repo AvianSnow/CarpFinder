@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Cheliax, Infernal Inheritance
 - type: cfFeat
   id: CFFeatheredCloak
-  name: "Feathered Cloak"
-  description: "+2 circumstance bonus to Deception. Not applied in play yet. +2 circumstance bonus to Stealth. Not applied in play yet."
+  name: cf-feat-feathered-cloak
+  description: cf-feat-feathered-cloak-desc
   ancestry: Strix
   level: 5
   traits:

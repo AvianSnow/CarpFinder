@@ -74,3 +74,50 @@
   components:
   - type: CFFaction
     faction: Monster
+
+# Construct Trap, from the kobold trapper's stat block. NPC Core p. 198.
+# It goes off when a creature comes adjacent, so the area is 15 feet wide. 2d6 damage, DC 18 basic Reflex.
+# On a failure, a -5 status penalty to all Speeds for 1 minute. Gone once it goes off, or after 8 hours.
+# The book lets the builder pick bludgeoning, piercing or slashing. This one is always piercing.
+# The book gives no Stealth DC, disable DC or level, so 18, 18 and the trapper's own level 2 are ours.
+- type: entity
+  parent: CFBaseTrap
+  id: CFConstructedTrap
+  name: rudimentary trap
+  description: Sharpened sticks and a tripline, thrown together in a hurry.
+  components:
+  - type: CFHazard
+    level: 2
+    stealthDc: 18
+    detectRadiusFeet: 30
+    triggerSizeFeet: 15
+    destroyOnTrigger: true
+    disarm:
+    - skill: Thievery
+      ability: Dexterity
+      dc: 18
+  - type: CFFaction
+    faction: Monster
+  - type: CFCombatant
+    level: 2
+    armorClass: 10
+    maxHp: 10
+    currentHp: 10
+  - type: CFCheck
+    defense: Reflex
+    basicSave: true
+    dcSource: Fixed
+    fixedDc: 18
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 2
+      die: 6
+      damageType: Piercing
+    landed:
+    - !type:CFBonusEffect
+      stat: Speed
+      value: -5
+      durationSeconds: 60
+  - type: TimedDespawn
+    lifetime: 28800

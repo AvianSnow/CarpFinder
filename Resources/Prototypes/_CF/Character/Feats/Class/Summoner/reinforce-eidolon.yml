@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFReinforceEidolon
-  name: "Reinforce Eidolon"
-  description: "This feature will be implemented later."
+  name: cf-feat-reinforce-eidolon
+  description: cf-feat-reinforce-eidolon-desc
   class: Summoner
   level: 2
   traits:

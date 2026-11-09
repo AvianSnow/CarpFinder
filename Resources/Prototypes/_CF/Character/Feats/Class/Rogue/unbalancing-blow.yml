@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFUnbalancingBlow
-  name: "Unbalancing Blow"
-  description: "Requires thief racket."
+  name: cf-feat-unbalancing-blow
+  description: cf-feat-unbalancing-blow-desc
   class: Rogue
   level: 2
   traits:

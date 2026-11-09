@@ -41,6 +41,11 @@
     - level: 1
       name: "Exploit Vulnerability"
       description: "Exploit Vulnerability is on your action wheel. The creature is off-guard to you and your Strikes deal 2 extra damage."
+      grants:
+        - !type:CFGrantOption
+          option: Exploit
+        - !type:CFGrantOption
+          pointMark: Exploit
     - level: 1
       name: "First Implement and Esoterica"
       description: "This feature will be implemented later."

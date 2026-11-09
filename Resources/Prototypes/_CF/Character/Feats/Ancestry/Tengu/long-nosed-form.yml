@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFLongNosedForm
-  name: "Long-Nosed Form"
-  description: "Costs 1 action. TBA - action will be added"
+  name: cf-feat-long-nosed-form
+  description: cf-feat-long-nosed-form-desc
   ancestry: Tengu
   level: 5
   traits:

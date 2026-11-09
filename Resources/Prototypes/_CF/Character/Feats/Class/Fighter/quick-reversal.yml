@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFQuickReversal
-  name: "Quick Reversal"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-quick-reversal
+  description: cf-feat-quick-reversal-desc
   class: Fighter
   level: 4
   traits:

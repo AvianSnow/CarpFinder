@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFSaberTeeth
-  name: "Saber Teeth"
-  description: "Your unarmed Strike deals 1d6 piercing and is finesse."
+  name: cf-feat-saber-teeth
+  description: cf-feat-saber-teeth-desc
   ancestry: Catfolk
   level: 1
   traits:

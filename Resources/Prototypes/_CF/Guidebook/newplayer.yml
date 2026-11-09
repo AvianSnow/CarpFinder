@@ -1,0 +1,32 @@
+- type: guideEntry
+  id: NewPlayer
+  name: guide-entry-newplayer
+  priority: 0
+  text: "/ServerInfo/Guidebook/_CF/NewPlayer.xml"
+  children:
+    - CharacterCreation
+
+- type: guideEntry
+  id: CharacterCreation
+  name: guide-entry-charactercreation
+  text: "/ServerInfo/Guidebook/_CF/ABC/ABCINFO.xml"
+  children:
+    - Ancestry
+    - Background
+    - Class
+    - Don't Forget Scores
+    - Equipment & Details
+
+- type: guideEntry
+  id: Ancestries-guide
+  name: Ancestries
+  priority: 1
+  text: "/ServerInfo/Guidebook/_CF/ABC/Ancestries.xml"
+  children:
+    - Human
+    - Dwarf
+    - Elf
+    - Halfling
+    - Gnome
+    - Half-Orc
+    - Half-Elf

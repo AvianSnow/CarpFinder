@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFSecurity
-  name: "Security"
-  description: "Requires shields of the spirit. Changes an item. This feature will be implemented later."
+  name: cf-feat-security
+  description: cf-feat-security-desc
   class: Champion
   level: 4
   traits:

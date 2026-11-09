@@ -17,6 +17,7 @@ public sealed partial class CFStealthVisualsSystem : EntitySystem
 
     [Dependency] private IPlayerManager _player = default!;
     [Dependency] private SpriteSystem _sprite = default!;
+    [Dependency] private CFStealthSystem _stealth = default!;
 
     public override void FrameUpdate(float frameTime)
     {
@@ -36,7 +37,7 @@ public sealed partial class CFStealthVisualsSystem : EntitySystem
         }
     }
 
-    private static float Alpha(EntityUid uid, CFStealthComponent stealth, EntityUid? viewer)
+    private float Alpha(EntityUid uid, CFStealthComponent stealth, EntityUid? viewer)
     {
         if (!stealth.Active || viewer == null)
             return 1f;
@@ -44,7 +45,7 @@ public sealed partial class CFStealthVisualsSystem : EntitySystem
         if (uid == viewer)
             return SelfAlpha;
 
-        return stealth.Detection.GetValueOrDefault(viewer.Value) switch
+        return _stealth.Detection(uid, viewer.Value) switch
         {
             CFDetection.Undetected => 0f,
             CFDetection.Hidden => HiddenAlpha,

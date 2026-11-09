@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFDivineEvolution
-  name: "Divine Evolution"
-  description: "Requires bloodline that grants divine spells."
+  name: cf-feat-divine-evolution
+  description: cf-feat-divine-evolution-desc
   class: Sorcerer
   level: 4
   traits:

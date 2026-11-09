@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFMug
-  name: "Mug"
-  description: "Costs 2 actions. This feature will be implemented later."
+  name: cf-feat-mug
+  description: cf-feat-mug-desc
   class: Rogue
   level: 4
   traits:

@@ -1,5 +1,9 @@
 using Content.Shared.CF.Actions;
+using Content.Shared.CF.Checks;
+using Content.Shared.CF.Combat;
 using Content.Shared.CF.DamageTypes;
+using Content.Shared.CF.Traits;
+using Content.Shared.Movement.Systems;
 using Robust.Shared.Network;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
@@ -24,6 +28,7 @@ public sealed partial class CFBonusSystem : EntitySystem
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private CFActionPoolSystem _actions = default!;
     [Dependency] private CFEffectSystem _effects = default!;
+    [Dependency] private MovementSpeedModifierSystem _speed = default!;
 
     public override void Update(float frameTime)
     {
@@ -39,7 +44,16 @@ public sealed partial class CFBonusSystem : EntitySystem
 
     #region Bonuses
 
-    public void AddBonus(EntityUid uid, CFBonusStat stat, CFBonusType type, int value, float seconds)
+    /// <param name="trait">The bonus only counts against a source with this trait.</param>
+    /// <param name="skill">With <see cref="CFBonusStat.SkillChecks"/>, the bonus only counts for this skill.</param>
+    public void AddBonus(
+        EntityUid uid,
+        CFBonusStat stat,
+        CFBonusType type,
+        int value,
+        float seconds,
+        ProtoId<CFTraitPrototype>? trait = null,
+        string? skill = null)
     {
         if (value == 0)
             return;
@@ -50,15 +64,66 @@ public sealed partial class CFBonusSystem : EntitySystem
         // Recasting the same spell refreshes it instead of piling up entries.
         foreach (var bonus in comp.Bonuses)
         {
-            if (bonus.Stat != stat || bonus.Type != type || bonus.Value != value)
+            if (bonus.Stat != stat
+                || bonus.Type != type
+                || bonus.Value != value
+                || bonus.Trait != trait
+                || bonus.Skill != skill
+                || bonus.Expires == TimeSpan.MaxValue)
+            {
                 continue;
+            }
 
             if (expires > bonus.Expires)
+            {
                 bonus.Expires = expires;
+                Dirty(uid, comp);
+            }
+
             return;
         }
 
-        comp.Bonuses.Add(new CFActiveBonus { Stat = stat, Type = type, Value = value, Expires = expires });
+        comp.Bonuses.Add(new CFActiveBonus
+        {
+            Stat = stat,
+            Type = type,
+            Value = value,
+            Expires = expires,
+            Trait = trait,
+            Skill = skill,
+        });
+        Dirty(uid, comp);
+
+        if (stat == CFBonusStat.Speed)
+            _speed.RefreshMovementSpeedModifiers(uid);
+    }
+
+    /// <summary>
+    /// A bonus from a character option that never runs out. It is never merged with another entry, because
+    /// two untyped bonuses from two feats both count.
+    /// </summary>
+    public void AddPermanentBonus(
+        EntityUid uid,
+        CFBonusStat stat,
+        CFBonusType type,
+        int value,
+        ProtoId<CFTraitPrototype>? trait = null,
+        string? skill = null)
+    {
+        if (value == 0)
+            return;
+
+        var comp = EnsureComp<CFBonusesComponent>(uid);
+        comp.Bonuses.Add(new CFActiveBonus
+        {
+            Stat = stat,
+            Type = type,
+            Value = value,
+            Expires = TimeSpan.MaxValue,
+            Trait = trait,
+            Skill = skill,
+        });
+        Dirty(uid, comp);
     }
 
     /// <summary>
@@ -72,6 +137,7 @@ public sealed partial class CFBonusSystem : EntitySystem
 
         var comp = EnsureComp<CFBonusesComponent>(uid);
         comp.Bonuses.RemoveAll(b => b.Equipment == slot);
+        Dirty(uid, comp);
         if (value == 0)
             return;
 
@@ -95,7 +161,7 @@ public sealed partial class CFBonusSystem : EntitySystem
         var worst = 0;
         foreach (var bonus in comp.Bonuses)
         {
-            if (bonus.Stat != stat || bonus.Type != type)
+            if (bonus.Stat != stat || bonus.Type != type || bonus.Trait != null || bonus.Skill != null)
                 continue;
 
             if (type == CFBonusType.Untyped)
@@ -113,19 +179,38 @@ public sealed partial class CFBonusSystem : EntitySystem
     /// The total modifier for a stat. Per type, the highest bonus and the worst penalty apply.
     /// Untyped values all stack. Weapon dice take the highest value.
     /// </summary>
-    public int Total(EntityUid uid, CFBonusStat stat, CFBonusStat? also = null)
+    public int Total(
+        EntityUid uid,
+        CFBonusStat stat,
+        CFBonusStat? also = null,
+        HashSet<ProtoId<CFTraitPrototype>>? traits = null,
+        string? skill = null)
     {
         if (!TryComp(uid, out CFBonusesComponent? comp) || comp.Bonuses.Count == 0)
             return 0;
 
-        return Total(comp.Bonuses, stat, also);
+        return Total(comp.Bonuses, stat, also, traits, skill);
+    }
+
+    /// <summary>The total from spells and other timed sources, leaving out what lasts: feats and equipment.</summary>
+    public int TimedTotal(EntityUid uid, CFBonusStat stat, CFBonusStat? also = null)
+    {
+        return TryComp(uid, out CFBonusesComponent? comp) ? Total(comp.Bonuses, stat, also, timedOnly: true) : 0;
     }
 
     /// <summary>
     /// <paramref name="also"/> is a narrower stat that applies to this roll too. The two are totalled together,
     /// so a status bonus to one does not stack with a status bonus to the other.
+    /// A bonus tied to a trait counts only when <paramref name="traits"/> has it, and one tied to a skill only when
+    /// <paramref name="skill"/> is that skill.
     /// </summary>
-    public static int Total(IReadOnlyList<CFActiveBonus> bonuses, CFBonusStat stat, CFBonusStat? also = null)
+    public static int Total(
+        IReadOnlyList<CFActiveBonus> bonuses,
+        CFBonusStat stat,
+        CFBonusStat? also = null,
+        HashSet<ProtoId<CFTraitPrototype>>? traits = null,
+        string? skill = null,
+        bool timedOnly = false)
     {
         // Plain locals per type: stackalloc/Span fails the client sandbox's IL verification.
         int status = 0, statusPenalty = 0;
@@ -136,6 +221,15 @@ public sealed partial class CFBonusSystem : EntitySystem
         foreach (var bonus in bonuses)
         {
             if (bonus.Stat != stat && bonus.Stat != also)
+                continue;
+
+            if (timedOnly && bonus.Expires == TimeSpan.MaxValue)
+                continue;
+
+            if (bonus.Trait is { } trait && traits?.Contains(trait) != true)
+                continue;
+
+            if (bonus.Skill != null && bonus.Skill != skill)
                 continue;
 
             if (stat == CFBonusStat.WeaponDice)
@@ -176,6 +270,36 @@ public sealed partial class CFBonusSystem : EntitySystem
             worst = Math.Min(worst, value);
     }
 
+    /// <summary>From now on this result of a matching save is a degree better.</summary>
+    public void AddSaveUpgrade(EntityUid uid, CFDefenseType? save, ProtoId<CFTraitPrototype>? trait, CFDegree from)
+    {
+        EnsureComp<CFBonusesComponent>(uid).SaveUpgrades.Add(new CFSaveUpgrade { Save = save, Trait = trait, From = from });
+    }
+
+    /// <summary>The save's degree after any upgrade. However many match, a result only improves once.</summary>
+    public CFDegree UpgradeSave(
+        EntityUid uid,
+        CFDefenseType defense,
+        CFDegree degree,
+        HashSet<ProtoId<CFTraitPrototype>>? traits)
+    {
+        if (!defense.IsSave() || !TryComp(uid, out CFBonusesComponent? comp))
+            return degree;
+
+        foreach (var upgrade in comp.SaveUpgrades)
+        {
+            if (upgrade.From != degree || (upgrade.Save is { } save && save != defense))
+                continue;
+
+            if (upgrade.Trait is { } trait && traits?.Contains(trait) != true)
+                continue;
+
+            return CFDegrees.Improve(degree);
+        }
+
+        return degree;
+    }
+
     public void GrantFortune(EntityUid uid, float seconds)
     {
         var comp = EnsureComp<CFBonusesComponent>(uid);
@@ -208,7 +332,13 @@ public sealed partial class CFBonusSystem : EntitySystem
         var query = EntityQueryEnumerator<CFBonusesComponent>();
         while (query.MoveNext(out var uid, out var comp))
         {
-            comp.Bonuses.RemoveAll(b => b.Expires <= now);
+            var speed = Total(comp.Bonuses, CFBonusStat.Speed);
+            if (comp.Bonuses.RemoveAll(b => b.Expires <= now) > 0)
+            {
+                Dirty(uid, comp);
+                if (speed != Total(comp.Bonuses, CFBonusStat.Speed))
+                    _speed.RefreshMovementSpeedModifiers(uid);
+            }
 
             if (comp.ActionCap != 0 && comp.ActionCapUntil <= now)
             {
@@ -231,7 +361,8 @@ public sealed partial class CFBonusSystem : EntitySystem
         var expires = _timing.CurTime + TimeSpan.FromSeconds(Math.Max(1f, seconds));
         foreach (var entry in comp.Entries)
         {
-            if (entry.DamageType != type || entry.Weakness != weakness)
+            // A lasting entry stays as it is, or a spell running out would take it away too.
+            if (entry.DamageType != type || entry.Weakness != weakness || entry.Expires == TimeSpan.Zero)
                 continue;
 
             entry.Amount = Math.Max(entry.Amount, amount);
@@ -246,6 +377,20 @@ public sealed partial class CFBonusSystem : EntitySystem
             Amount = amount,
             Weakness = weakness,
             Expires = expires,
+        });
+    }
+
+    /// <summary>A resistance from a character option. <paramref name="halfLevel"/> grows with the creature.</summary>
+    public void AddPermanentResistance(EntityUid uid, ProtoId<CFDamageTypePrototype> type, int amount, bool halfLevel)
+    {
+        if (amount <= 0 && !halfLevel)
+            return;
+
+        EnsureComp<CFResistancesComponent>(uid).Entries.Add(new CFActiveResistance
+        {
+            DamageType = type,
+            Amount = amount,
+            HalfLevel = halfLevel,
         });
     }
 
@@ -265,10 +410,14 @@ public sealed partial class CFBonusSystem : EntitySystem
             if (!CFDamageTypes.Same(_prototypes, entry.DamageType, damageType))
                 continue;
 
+            var amount = entry.Amount;
+            if (entry.HalfLevel)
+                amount = Math.Max(amount, Math.Max(1, (CompOrNull<CFCombatantComponent>(target)?.Level ?? 1) / 2));
+
             if (entry.Weakness)
-                weak = Math.Max(weak, entry.Amount);
+                weak = Math.Max(weak, amount);
             else
-                resist = Math.Max(resist, entry.Amount);
+                resist = Math.Max(resist, amount);
         }
 
         return Math.Max(0, damage + weak - resist);

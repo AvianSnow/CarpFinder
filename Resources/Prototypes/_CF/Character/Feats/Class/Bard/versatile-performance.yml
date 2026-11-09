@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFVersatilePerformance
-  name: "Versatile Performance"
-  description: "Requires polymath muse."
+  name: cf-feat-versatile-performance
+  description: cf-feat-versatile-performance-desc
   class: Bard
   level: 1
   traits:

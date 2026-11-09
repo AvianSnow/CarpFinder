@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFReachSpellOracle
-  name: "Reach Spell"
-  description: "Changes an item. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-reach-spell-oracle
+  description: cf-feat-reach-spell-oracle-desc
   class: Oracle
   level: 1
   traits:

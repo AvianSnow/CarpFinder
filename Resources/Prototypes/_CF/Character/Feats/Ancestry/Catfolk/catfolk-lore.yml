@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFCatfolkLore
-  name: "Catfolk Lore"
-  description: "Lore: Catfolk Lore. Trained in Acrobatics and Survival."
+  name: cf-feat-catfolk-lore
+  description: cf-feat-catfolk-lore-desc
   ancestry: Catfolk
   level: 1
   traits:

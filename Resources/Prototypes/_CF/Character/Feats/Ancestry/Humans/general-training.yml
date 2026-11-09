@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFGeneralTraining
-  name: "General Training"
-  description: "Grants an item. Not added in play yet."
+  name: cf-feat-general-training
+  description: cf-feat-general-training-desc
   ancestry: Human
   level: 1
   traits:

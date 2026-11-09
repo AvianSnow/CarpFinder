@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFDragonStance
-  name: "Dragon Stance"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-dragon-stance
+  description: cf-feat-dragon-stance-desc
   class: Monk
   level: 1
   traits:

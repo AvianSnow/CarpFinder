@@ -28,14 +28,14 @@ Everything below is under `Content.Shared/_CF/`.
 | `Actions/` | Action stamina, multiple attack penalty, radial activities, Shove, Disarm, Grapple, Escape, marks, standing | `CFActionPoolSystem`, `CFActivitySystem`, `CFManeuverSystem` |
 | `Afflictions/` | Staged afflictions such as Alcohol. Poisons and diseases can use the same pieces. | `CFAfflictionSystem` |
 | `Alchemy/` | Drinkable and feedable potions | `CFAlchemicalItemSystem` |
-| `Character/` | Prototypes for ancestry, class, feat, heritage, background, spell; skill and attribute math | `CFAttributeMath`, `CFSkills` |
+| `Character/` | Prototypes for ancestry, class, feat, heritage, background, spell; skill and attribute math; `Grants/`, what an option gives a character | `CFAttributeMath`, `CFSkills`, `CFCharacterFeatureSystem` |
 | `Checks/` | Degrees of success, defenses, casting DCs | `CFDegrees`, `CFDefense`, `CFCasting` |
 | `Combat/` | Strikes, conditions, dying, flanking, armor, shields, weapons, runes | `CFStrikeSystem`, `CFConditionSystem` |
 | `Companions/` | Pet data and math. The AI is server-side. | `CFPetMath` |
 | `DamageTypes/` | `cfDamageType` and its link to SS14 damage | `CFDamageTypes` |
 | `Effects/` | Target, roll a check, apply effects. Bonuses and resistances. | `CFEffectSystem`, `CFBonusSystem` |
 | `Factions/` | Party, Opposition, Neutral | `CFFactionSystem` |
-| `Hazards/` | Traps: noticing, triggering, disabling | `CFHazardSystem` |
+| `Hazards/` | Traps: noticing, triggering, disabling, and creatures that build them | `CFHazardSystem`, `CFTrapLayerSystem` |
 | `Items/` | Item level, rarity, Bulk, encumbrance | `CFEncumbranceSystem` |
 | `Detection/` | Remaster Hide, Sneak, Seek and Create a Diversion. Each creature's view of a sneaker. The drawing is client-side. | `CFStealthSystem`, `CFStealthComponent` |
 | `GOAP/` | Advanced NPCs: facts, steps, and goals, actions and personalities as prototypes. The logic is server-side in `Content.Server/_CF/GOAP/`. See `goap.md`. | `CFGOAPSystem`, `CFGOAPPlanner` |
@@ -44,6 +44,7 @@ Everything below is under `Content.Shared/_CF/`.
 | `Outdoors/` | The outdoor map component, temperature rules, weather effects. The logic is server-side. | `CFEnvironmentRules`, `CFOutdoorsWorldSystem` |
 | `Farming/` | Plant, seed and harvest data. The logic is server-side. | `CFFarmingSystem` |
 | `Adventure/` | Site prototypes, encounter and treasure tables. Generation is server-side. | `CFEncounterRules`, `CFAdventureSiteSystem` |
+| `Languages/` | What a creature speaks and understands, and what it sounds like otherwise. Chat asks per listener. | `CFLanguageSystem`, `CFLanguageRules` |
 | `Magic/` | Light, Detect Magic, Read Aura, and what counts as magical | `CFMagicSenseSystem` |
 | `Scene/` | DM narration and player-started skill checks. The logic is server-side. | `CFSceneSystem` |
 | `ZLevels/` | Stairs, ladders, holes, falling rules. The stacking logic is server-side. | `CFFallRules`, `CFZLevelSystem` |
@@ -56,7 +57,7 @@ Everything below is under `Content.Shared/_CF/`.
 | `Wallmount/` | Wall-only placement | `CFWallmount`, `CFWallRequired` |
 | `Temperature/`, `TileEditTool/`, `Wallpaper/`, `Time/`, `StatusIcon/` | Ported CP14 systems, the world clock, status icons | |
 
-Server: `Character/` (`CFCharacterSpawnSystem`, `CFExperienceSystem`, `CFGiveXpCommand`), `Companions/CFCompanionSystem`, `GOAP/` (see `goap.md`), `Shop/CFShopSystem`, `Spells/CFPrestidigitationSystem`, `Temperature/`, `Materials/`.
+Server: `Character/` (`CFCharacterSpawnSystem`, `CFExperienceSystem`, `CFGiveXpCommand`, `CFLongRestSystem`), `Companions/CFCompanionSystem`, `GOAP/` (see `goap.md`), `Shop/CFShopSystem`, `Spells/CFPrestidigitationSystem`, `Temperature/` (`CFStockHeatSystem` turns stock burning into CF fire damage), `Materials/`.
 
 Client: `Hud/` (the in-game bar and radial menu), `Character/` (sheet, spells tab, shop), `Combat/` (floating numbers, flanking icon), `Effects/` (area and target overlays, mode and volley menus), `Lobby/UI/` (character builder, see `lobby-overlay.md`), `UserInterface/Systems/Character/` (the character window overlay).
 
@@ -64,8 +65,8 @@ Client: `Hud/` (the in-game bar and radial menu), `Character/` (sheet, spells ta
 
 1. The lobby builder (`Content.Client/_CF/Lobby/UI/`) writes to `HumanoidCharacterProfile.CFBuild`.
 2. `CFCharacterSpawnSystem.OnPlayerSpawnComplete` runs `ApplyBuild`: abilities, `CFCombatant` (level, AC, HP, proficiencies), speed, spellbook.
-3. `GrantActivities` grants the basic skill actions, then class and feat actions. `CFCombatOptionsComponent` holds the class and feat flags that Strikes read (`SneakAttack`, `ReactiveStrike`, `ReactiveShield`, ...).
-4. Later feats wait on `CFExperienceComponent` and apply on level up through `ApplyFeat`.
+3. `ApplyFeatures` gives what everyone has, then runs the `grants` of the ancestry, heritage, background, level 1 class features and feats through `CFCharacterFeatureSystem`. `CFCombatOptionsComponent` holds the class and feat flags that Strikes read (`SneakAttack`, `ReactiveStrike`, `ReactiveShield`, ...).
+4. Later feats wait on `CFExperienceComponent` and apply on level up through `ApplyFeat`. `LevelUp` also runs the class features that level reaches.
 
 Details: `character-builder.md`.
 
@@ -115,6 +116,7 @@ Anything that targets, rolls, and applies effects is data on the source entity: 
 | Point at a living enemy | Hunt Prey, Exploit Vulnerability, or Devise a Stratagem, by class (1 action) | `CFManeuverSystem.PointAt` |
 | Point at an enemy in reach, in combat mode | Feint (1 action, trained Deception). A class with a mark marks first, then Feints | `CFManeuverSystem.PointAt` |
 | Point at the ground, in combat mode | Seek (1 action) | `CFStealthSystem.TrySeek` |
+| Point at a living enemy, as an encounter's leader | The group goes for it (free) | `CFGOAPCommandSystem` |
 | Combat mode, right-click one creature, feat | Double Slice or Twin Feint with a weapon in each hand, otherwise Vicious Swing (2 actions) | `CFStrikeSystem.TryFeatSwing` |
 | Emote wheel, Scream, in combat mode | Demoralize the enemy being aimed at (1 action) | `CFManeuverSystem.TryAimedDemoralize` |
 | Emote wheel, Whistle, in combat mode | Create a Diversion (1 action) | `CFStealthSystem.TryDiversion` |
@@ -125,6 +127,8 @@ Anything that targets, rolls, and applies effects is data on the source entity: 
 | Click a creature with a healer's toolkit | Treat Wounds | `CFMedicineSystem` |
 | Use a healer's toolkit in hand, combat mode, feat | Battle Medicine on the nearest hurt ally (1 action) | `CFMedicineSystem` |
 | Aid verb on an ally | Aid (1 action) | `CFManeuverSystem.TryAid` |
+| Sleep action while buckled to a bed | Long rest: full hit points, spell slots and focus | `CFLongRestSystem` |
+| Speak verb on yourself | Choose which language you speak (free) | `CFLanguageSystem` |
 | Examine tab, information icon | Recall Knowledge (1 action) | `CFManeuverSystem.TryRecall` |
 | Alt+Z with a melee weapon, with panache | Confident Finisher at the enemy being aimed at (1 action) | `CFManeuverSystem.TryFinisher` |
 | Play a held instrument, as a Bard | Courageous Anthem, 1 action every 12 seconds | `CFAnthemSystem` |
@@ -212,19 +216,21 @@ All edits carry `// CarpFinder` markers, so `grep -rn CarpFinder Content.Client 
 | NPCs | `Content.Server/NPC/Systems/NPCUtilitySystem.cs` | Faction hostility |
 | NPC steering | `Content.Server/NPC/Systems/NPCSteeringSystem.cs` | GOAP mobs skip stock `CollisionAvoidance`: their feelers do that job |
 | Temperature | `TemperatureSystem.cs`, `SharedTemperatureSystem.cs` | Cooking heats the surface first |
+| Fire | `Content.Client/Atmos/EntitySystems/FireVisualizerSystem.cs` | Do not spawn the light during `ComponentInit`: it crashed a Debug client that first saw something already burning |
 | Icons | `SharedStatusIconSystem.cs` | Partial for the flanked icon |
 | Ghosts | `Resources/Prototypes/Entities/Mobs/Player/observer.yml` | Z-level Move up and Move down actions |
 | Prone | `Content.Shared/Stunnable/SharedStunSystem.Knockdown.cs` | Do not force a creature up while it is being deleted. "No room to stand" ignores sensors |
 | Pointing | `Content.Shared/Pointing/SharedPointingSystem.cs` | An event for pointing at the ground, for Seek |
 | Throwing | `Content.Server/Hands/Systems/HandsSystem.cs` | A thrown weapon's reach comes from its range increments, not the hand's 8 tiles |
 | Tiles | `Tiles/lava.yml`, `liquid_plasma.yml`, `chasm.yml` | The `CFDangerousTile` marker |
+| Chat | `Content.Server/Chat/Systems/ChatSystem.PrivateAPI.cs`, `ChatSystem.Utility.cs` | Each listener hears speech in a language they know, or nonsense |
 | Maps | `Maps/Test/dev_map.yml`, `Maps/Nonstations/meteor-arena.yml`, `dm01-entryway.yml` | `MapAtmosphere`, so mobs can breathe |
 
 The character editor and character window are swapped with csproj `Compile Remove` rules instead (`Content.Client/Content.Client.csproj`, `lobby-overlay.md`).
 
 ## Prototype kinds
 
-`adventureSite`, `craftingRecipe`, `cfAbility`, `cfAbilitySkill`, `cfAncestry`, `cfBackground`, `cfClass`, `cfDamageType`, `cfFaction`, `cfFeat`, `cfGoapAction`, `cfGoapGoal`, `cfGoapProfile`, `encounter`, `goapTactics`, `cfHeritage`, `cfJobGroup`, `cfMaterial`, `cfPet`, `cfPetGear`, `cfPropertyRune`, `cfSpell`, `cfTrait`.
+`adventureSite`, `craftingRecipe`, `cfAbility`, `cfAbilitySkill`, `cfAncestry`, `cfBackground`, `cfClass`, `cfDamageType`, `cfFaction`, `cfFeat`, `cfGoapAction`, `cfGoapGoal`, `cfGoapProfile`, `encounter`, `goapTactics`, `cfHeritage`, `cfJobGroup`, `language`, `cfMaterial`, `cfPet`, `cfPetGear`, `cfPropertyRune`, `cfSpell`, `cfTrait`.
 
 Radial actions are entities in `Resources/Prototypes/_CF/Actions/activities.yml`, and each spell is an action entity in `Resources/Prototypes/_CF/Spells/{0,1,2,3}/`. Feats with `pendingAction: true` have data but no behaviour yet.
 
@@ -235,6 +241,9 @@ Radial actions are entities in `Resources/Prototypes/_CF/Actions/activities.yml`
 | `CFTrainingDummy` | AC 15, 20 HP. `spawn CFTrainingDummy` in game. |
 | `CFKoboldWarrior` | A hostile with a monster stat block |
 | `CFMobBoar`, `CFMobGiantRat`, ... | Monster Core creatures, in `Entities/Mobs/Creatures/creatures.yml` |
+| `CFMobSkeletonguardMelee`, `CFMobSkeletonguardRanged` | Skeleton Guards with a scimitar and a shortbow, in `Entities/Mobs/Creatures/undead.yml` |
 | `Objects/Weapons/`, `Clothing/CFArmors.yml` | Weapons, shields and armor. Bases are in `Objects/Weapons/_base.yml` |
 | `/Maps/Nonstations/meteor-arena.yml` | The arena all integration tests load, through `CFDevMap` |
+| `CFMobKoboldTrapper` | A GOAP leader that shoots, lays traps and draws a hammer when cornered. Set a spawner's `encounter` to `KoboldAmbush` for it and three warriors |
+| Any monster | Ghosts can take every monster above from the ghost role menu, through `CFMonsterGhostRole` |
 | `CFEncounterSpawner` | Spawns an `encounter` when a player comes within `triggerFeet`. Edit it in VV as an aghost |

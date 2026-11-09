@@ -2,8 +2,8 @@
 # source: Carpfinder Howl of the Wild
 - type: cfFeat
   id: CFNaturalConduit
-  name: "Natural Conduit"
-  description: "Requires warden spells. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-natural-conduit
+  description: cf-feat-natural-conduit-desc
   class: Ranger
   level: 4
   traits:

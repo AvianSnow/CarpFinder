@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFElvenWeaponFamiliarity
-  name: "Elven Weapon Familiarity"
-  description: "Ancestry weapons count as a simpler group for proficiency. Not applied in combat yet."
+  name: cf-feat-elven-weapon-familiarity
+  description: cf-feat-elven-weapon-familiarity-desc
   ancestry: Elf
   level: 1
   traits:

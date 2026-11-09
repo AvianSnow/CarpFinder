@@ -167,6 +167,9 @@ public sealed partial class CFHazardSystem : EntitySystem
             victim,
             PopupType.MediumCaution);
         _effects.ResolveTarget(hazard, hazard, victim);
+
+        if (hazard.Comp.DestroyOnTrigger)
+            QueueDel(hazard);
     }
 
     [SubscribeLocalEvent]

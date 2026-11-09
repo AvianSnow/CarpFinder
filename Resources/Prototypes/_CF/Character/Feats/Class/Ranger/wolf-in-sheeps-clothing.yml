@@ -2,8 +2,8 @@
 # source: Carpfinder Dark Archive (Remastered)
 - type: cfFeat
   id: CFWolfinSheepsClothing
-  name: "Wolf in Sheep's Clothing"
-  description: "Requires Trained in Deception."
+  name: cf-feat-wolfin-sheeps-clothing
+  description: cf-feat-wolfin-sheeps-clothing-desc
   class: Ranger
   level: 4
   traits:

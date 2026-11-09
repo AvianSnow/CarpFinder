@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFSpringingLeaper
-  name: "Springing Leaper"
-  description: "Requires expert in Athletics."
+  name: cf-feat-springing-leaper
+  description: cf-feat-springing-leaper-desc
   ancestry: Catfolk
   level: 5
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder War of Immortals
 - type: cfFeat
   id: CFGraspingSpiritsSpell
-  name: "Grasping Spirits Spell"
-  description: "Changes an item. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-grasping-spirits-spell
+  description: cf-feat-grasping-spirits-spell-desc
   class: Animist
   level: 2
   traits:

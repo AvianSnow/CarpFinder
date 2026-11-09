@@ -2,11 +2,14 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFExactingStrike
-  name: "Exacting Strike"
-  description: "Automatic. When you already have a multiple attack penalty, a Strike that misses does not raise it. A critical miss still does."
+  name: cf-feat-exacting-strike
+  description: cf-feat-exacting-strike-desc
   class: Fighter
   level: 1
   traits:
     - "Fighter"
     - "Press"
   action: Action
+  grants:
+    - !type:CFGrantOption
+      option: ExactingStrike

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFOccultEvolution
-  name: "Occult Evolution"
-  description: "Requires bloodline the grants occult spells."
+  name: cf-feat-occult-evolution
+  description: cf-feat-occult-evolution-desc
   class: Sorcerer
   level: 4
   traits:

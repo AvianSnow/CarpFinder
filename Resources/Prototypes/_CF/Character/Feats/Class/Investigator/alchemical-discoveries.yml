@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFAlchemicalDiscoveries
-  name: "Alchemical Discoveries"
-  description: "Requires alchemical sciences methodology."
+  name: cf-feat-alchemical-discoveries
+  description: cf-feat-alchemical-discoveries-desc
   class: Investigator
   level: 4
   traits:

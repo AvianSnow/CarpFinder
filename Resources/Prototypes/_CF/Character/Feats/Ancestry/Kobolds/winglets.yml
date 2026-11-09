@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFWinglets
-  name: "Winglets"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-winglets
+  description: cf-feat-winglets-desc
   ancestry: Kobold
   level: 5
   traits:

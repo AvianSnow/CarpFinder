@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFUnimpededStep
-  name: "Unimpeded Step"
-  description: "Requires liberation cause. Changes an item. This feature will be implemented later."
+  name: cf-feat-unimpeded-step
+  description: cf-feat-unimpeded-step-desc
   class: Champion
   level: 1
   traits:

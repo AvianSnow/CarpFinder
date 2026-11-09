@@ -1,15 +1,26 @@
 # Encounters. Place a CFEncounterSpawner and pick one with its encounter field. As an aghost, use VV on the
 # spawner: "mobs" takes entity ids separated by commas and replaces the list here, and "armed" spawns it again.
 
+# Stand-in: this has no Marker component, because the client hides those until showmarkers, so everyone can see it.
 - type: entity
-  parent: MarkerBase
   id: CFEncounterSpawner
   name: encounter spawner
   description: Spawns an encounter when an adventurer comes within 30 feet.
   suffix: DM
   categories: [ ForkFiltered ]
+  placement:
+    mode: SnapgridCenter
   components:
+  - type: Transform
+    anchored: true
+  - type: Clickable
+  - type: InteractionOutline
+  - type: Tag
+    tags:
+    - ForceFixRotations
   - type: Sprite
+    drawdepth: Overdoors
+    sprite: Markers/cross.rsi
     layers:
     - state: green
   - type: CFGOAPEncounterSpawner
@@ -48,6 +59,29 @@
   - HideAway
   - WaitHidden
 
+# A kobold trapper and the three warriors it sends in. The warriors flank. The trapper keeps its own brain, set on
+# CFMobKoboldTrapper: it stays back, shoots and lays traps. It is last so the first two warriors take opposite sides.
+# The last one left breaks. A ghost can take the trapper, and then points at an adventurer to set the warriors on them.
+- type: encounter
+  id: KoboldAmbush
+  mobs:
+  - CFKoboldWarrior
+  - CFKoboldWarrior
+  - CFKoboldWarrior
+  - CFMobKoboldTrapper
+  count: 4
+  routAt: 0.25
+  tactics: Skirmisher
+  goals:
+  - RunAway
+  - GoToGround
+  - StayHidden
+  actions:
+  - TakeFlank
+  - StrikeFlanked
+  - HideAway
+  - WaitHidden
+
 # Pack goals and actions.
 
 - type: cfGoapGoal
@@ -69,6 +103,40 @@
   priority: 18
   onlyWhen: [ Routed, Hiding ]
   notWhen: [ TargetVisible ]
+
+# A shooter's goals. These sit above KillTarget, so they interrupt shooting, and below PutOutFire and a rout.
+
+# Backs off from what comes close. Cornered ends this: there is nowhere left to back off to.
+- type: cfGoapGoal
+  id: KeepDistance
+  wants: [ Safe ]
+  priority: 6.4
+  onlyWhen: [ TooClose ]
+  notWhen: [ Cornered ]
+
+- type: cfGoapGoal
+  id: DrawSidearm
+  wants: [ SidearmDrawn ]
+  priority: 6.5
+  onlyWhen: [ ShouldDraw ]
+
+- type: cfGoapGoal
+  id: LayTrap
+  wants: [ TrapLaid ]
+  priority: 5.5
+  onlyWhen: [ CanLayTrap ]
+
+- type: cfGoapAction
+  id: ConstructTrap
+  step: LayTrap
+  needs: [ CanLayTrap ]
+  gives: [ TrapLaid ]
+
+- type: cfGoapAction
+  id: DrawSidearm
+  step: DrawSidearm
+  needs: [ ShouldDraw ]
+  gives: [ SidearmDrawn ]
 
 - type: cfGoapAction
   id: TakeFlank

@@ -2,8 +2,8 @@
 # source: Carpfinder War of Immortals
 - type: cfFeat
   id: CFChanneledProtection
-  name: "Channeled Protection"
-  description: "Requires Channeler's Stance. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-channeled-protection
+  description: cf-feat-channeled-protection-desc
   class: Animist
   level: 4
   traits:

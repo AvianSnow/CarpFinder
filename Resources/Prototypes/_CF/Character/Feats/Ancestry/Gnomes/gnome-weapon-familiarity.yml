@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFGnomeWeaponFamiliarity
-  name: "Gnome Weapon Familiarity"
-  description: "Ancestry weapons count as a simpler group for proficiency. Not applied in combat yet."
+  name: cf-feat-gnome-weapon-familiarity
+  description: cf-feat-gnome-weapon-familiarity-desc
   ancestry: Gnome
   level: 1
   traits:

@@ -1,3 +1,4 @@
+using Content.Shared.CF.Character.Grants;
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared.CF.Character;
@@ -81,9 +82,36 @@ public sealed partial class CFFeatPrototype : IPrototype
     [DataField]
     public CFFeatAction Action = CFFeatAction.Passive;
 
+    /// <summary>What this gives a character. See <see cref="CFGrant"/>.</summary>
+    [DataField]
+    public List<CFGrant> Grants = new();
+
     /// <summary>The feat grants an activity or attack the game cannot perform yet.</summary>
     [DataField]
     public bool PendingAction;
+
+    /// <summary>Set on general and skill feats, which belong to no ancestry or class.</summary>
+    [DataField]
+    public CFFeatCategory Category = CFFeatCategory.None;
+
+    /// <summary>A skill this feat needs, where the prerequisite is that simple. Anything else stays in the text.</summary>
+    [DataField]
+    public ProtoId<CFAbilitySkillPrototype>? RequiresSkill;
+
+    [DataField]
+    public CFProficiencyRank RequiresRank = CFProficiencyRank.Trained;
+
+    /// <summary>A skill feat slot takes skill feats only.</summary>
+    public bool FitsSkillSlot(int level)
+    {
+        return Category == CFFeatCategory.Skill && Level <= level;
+    }
+
+    /// <summary>A general feat slot also takes a skill feat, because every skill feat is a general feat.</summary>
+    public bool FitsGeneralSlot(int level)
+    {
+        return Category != CFFeatCategory.None && Level <= level;
+    }
 
     public bool Fits(string? ancestryId, int level)
     {
@@ -112,4 +140,11 @@ public sealed partial class CFFeatPrototype : IPrototype
 
         return false;
     }
+}
+
+public enum CFFeatCategory : byte
+{
+    None,
+    General,
+    Skill,
 }

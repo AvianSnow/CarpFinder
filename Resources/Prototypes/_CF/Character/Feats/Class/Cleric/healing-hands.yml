@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFHealingHands
-  name: "Healing Hands"
-  description: "Requires healing font."
+  name: cf-feat-healing-hands
+  description: cf-feat-healing-hands-desc
   class: Cleric
   level: 1
   traits:

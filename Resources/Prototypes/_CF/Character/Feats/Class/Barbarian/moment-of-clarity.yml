@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFMomentofClarity
-  name: "Moment of Clarity"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-momentof-clarity
+  description: cf-feat-momentof-clarity-desc
   class: Barbarian
   level: 1
   traits:

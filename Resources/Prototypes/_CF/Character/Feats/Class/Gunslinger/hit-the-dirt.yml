@@ -2,8 +2,8 @@
 # source: Carpfinder Guns & Gears
 - type: cfFeat
   id: CFHittheDirt
-  name: "Hit the Dirt!"
-  description: "+2 circumstance bonus to Ac. Reaction. This feature will be implemented later."
+  name: cf-feat-hitthe-dirt
+  description: cf-feat-hitthe-dirt-desc
   class: Gunslinger
   level: 1
   traits:

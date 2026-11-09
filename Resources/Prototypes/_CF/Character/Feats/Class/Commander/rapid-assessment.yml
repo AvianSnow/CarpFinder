@@ -2,8 +2,8 @@
 # source: Carpfinder Battlecry!
 - type: cfFeat
   id: CFRapidAssessment
-  name: "Rapid Assessment"
-  description: "Free action. This feature will be implemented later."
+  name: cf-feat-rapid-assessment
+  description: cf-feat-rapid-assessment-desc
   class: Commander
   level: 2
   traits:

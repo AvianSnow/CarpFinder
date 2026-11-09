@@ -2,8 +2,8 @@
 # source: Carpfinder Dark Archive (Remastered)
 - type: cfFeat
   id: CFWarpSpace
-  name: "Warp Space"
-  description: "Changes an item. This feature will be implemented later."
+  name: cf-feat-warp-space
+  description: cf-feat-warp-space-desc
   class: Psychic
   level: 2
   traits:

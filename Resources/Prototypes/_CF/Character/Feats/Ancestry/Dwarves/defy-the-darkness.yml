@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFDefytheDarkness
-  name: "Defy the Darkness"
-  description: "Requires darkvision."
+  name: cf-feat-defythe-darkness
+  description: cf-feat-defythe-darkness-desc
   ancestry: Dwarf
   level: 5
   traits:

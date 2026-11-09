@@ -12,12 +12,18 @@
   - CFSpear
 
 - type: entity
-  parent: MobBaseKobold
+  parent: [ MobBaseKobold, CFMonsterGhostRole ]
   id: CFKoboldWarrior
   name: kobold warrior
   description: A small reptilian skirmisher in leather armor, armed with a spear. It strikes from the dark and keeps a sling ready.
   suffix: Monster
   components:
+  # MobBaseKobold has a stock role at prob 0.05, and the first parent's copy wins, so these have to be set here.
+  - type: GhostRole
+    prob: 1
+    name: cf-ghost-kobold-warrior-name
+    description: cf-ghost-kobold-warrior-desc
+    rules: cf-ghost-monster-rules
   - type: InputMover
   - type: MobMover
   - type: HTN

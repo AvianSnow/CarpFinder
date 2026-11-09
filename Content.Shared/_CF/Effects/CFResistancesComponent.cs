@@ -27,7 +27,11 @@ public sealed partial class CFActiveResistance
     [DataField]
     public bool Weakness;
 
-    /// <summary>Zero means it never ends: a creature's printed resistances and immunities.</summary>
+    /// <summary>At least half the creature's level, minimum 1, read when damage lands.</summary>
+    [DataField]
+    public bool HalfLevel;
+
+    /// <summary>Zero means it never ends: a creature's printed resistances and immunities, and character options.</summary>
     [DataField]
     public TimeSpan Expires;
 }

@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Tian Xia Character Guide
 - type: cfFeat
   id: CFVulpineScamper
-  name: "Vulpine Scamper"
-  description: "Requires fox alternate form."
+  name: cf-feat-vulpine-scamper
+  description: cf-feat-vulpine-scamper-desc
   ancestry: Kitsune
   level: 5
   traits:

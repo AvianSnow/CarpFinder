@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Tian Xia Character Guide
 - type: cfFeat
   id: CFSpeakwiththeSleeping
-  name: "Speak with the Sleeping"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-speakwiththe-sleeping
+  description: cf-feat-speakwiththe-sleeping-desc
   ancestry: Sprite
   level: 5
   rarity: Uncommon

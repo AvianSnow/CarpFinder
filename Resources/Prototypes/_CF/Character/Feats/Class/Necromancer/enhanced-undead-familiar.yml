@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFEnhancedUndeadFamiliar
-  name: "Enhanced Undead Familiar"
-  description: "Requires Undead Familiar."
+  name: cf-feat-enhanced-undead-familiar
+  description: cf-feat-enhanced-undead-familiar-desc
   class: Necromancer
   level: 2
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFEmblazonArmament
-  name: "Emblazon Armament"
-  description: "This feature will be implemented later."
+  name: cf-feat-emblazon-armament
+  description: cf-feat-emblazon-armament-desc
   class: Cleric
   level: 2
   traits:

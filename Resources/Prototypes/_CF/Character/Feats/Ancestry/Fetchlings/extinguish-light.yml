@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Cheliax, Infernal Inheritance
 - type: cfFeat
   id: CFExtinguishLight
-  name: "Extinguish Light"
-  description: "Costs 2 actions. TBA - action will be added"
+  name: cf-feat-extinguish-light
+  description: cf-feat-extinguish-light-desc
   ancestry: Fetchling
   level: 5
   traits:

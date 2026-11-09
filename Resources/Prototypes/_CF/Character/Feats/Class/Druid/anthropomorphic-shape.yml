@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFAnthropomorphicShape
-  name: "Anthropomorphic Shape"
-  description: "Requires Untamed Form."
+  name: cf-feat-anthropomorphic-shape
+  description: cf-feat-anthropomorphic-shape-desc
   class: Druid
   level: 4
   traits:

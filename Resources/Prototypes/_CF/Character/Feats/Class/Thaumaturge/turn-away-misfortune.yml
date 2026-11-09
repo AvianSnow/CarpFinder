@@ -2,8 +2,8 @@
 # source: Carpfinder Dark Archive (Remastered)
 - type: cfFeat
   id: CFTurnAwayMisfortune
-  name: "Turn Away Misfortune"
-  description: "Reaction. This feature will be implemented later."
+  name: cf-feat-turn-away-misfortune
+  description: cf-feat-turn-away-misfortune-desc
   class: Thaumaturge
   level: 2
   traits:

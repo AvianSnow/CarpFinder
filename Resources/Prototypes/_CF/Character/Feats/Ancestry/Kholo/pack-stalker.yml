@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFPackStalker
-  name: "Pack Stalker"
-  description: "Requires expert in Stealth. Also grants Terrain Stalker. TBA - action will be added"
+  name: cf-feat-pack-stalker
+  description: cf-feat-pack-stalker-desc
   ancestry: Kholo
   level: 5
   traits:

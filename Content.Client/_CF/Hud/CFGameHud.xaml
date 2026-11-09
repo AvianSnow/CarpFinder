@@ -26,16 +26,27 @@
         <hud:CFHealthBall Name="Ball" Access="Public" VerticalAlignment="Bottom" />
     </BoxContainer>
     <PanelContainer Name="DividerLeft" MinSize="2 120" />
-    <PanelContainer Name="ActionPanel" VerticalAlignment="Bottom">
-        <BoxContainer Orientation="Vertical" SeparationOverride="4" Align="Center" Margin="6">
-            <hud:CFActionPips Name="ActionPips" Access="Public" HorizontalAlignment="Center" />
-            <BoxContainer Orientation="Horizontal" SeparationOverride="6" HorizontalAlignment="Center">
-                <Button Name="ActionsFilter" ToggleMode="True" MinSize="88 26" Text="{Loc 'cf-hud-actions'}" ToolTip="{Loc 'cf-hud-actions-tooltip'}" />
-                <Button Name="SpellsFilter" ToggleMode="True" MinSize="88 26" Text="{Loc 'cf-hud-spells'}" ToolTip="{Loc 'cf-hud-spells-tooltip'}" />
+    <BoxContainer Orientation="Vertical" SeparationOverride="2" VerticalAlignment="Bottom">
+        <hud:CFStatusList Name="Status" Access="Public" HorizontalAlignment="Center" />
+        <PanelContainer Name="ActionPanel">
+            <BoxContainer Orientation="Vertical" SeparationOverride="4" Align="Center" Margin="6">
+                <BoxContainer Orientation="Horizontal" SeparationOverride="8">
+                    <BoxContainer Orientation="Horizontal" HorizontalExpand="True">
+                        <hud:CFDefensePanel Name="Defenses" Access="Public" HorizontalAlignment="Left" VerticalAlignment="Center" />
+                    </BoxContainer>
+                    <BoxContainer Orientation="Vertical" SeparationOverride="4">
+                        <hud:CFActionPips Name="ActionPips" Access="Public" HorizontalAlignment="Center" />
+                        <BoxContainer Orientation="Horizontal" SeparationOverride="6" HorizontalAlignment="Center">
+                            <Button Name="ActionsFilter" ToggleMode="True" MinSize="88 26" Text="{Loc 'cf-hud-actions'}" ToolTip="{Loc 'cf-hud-actions-tooltip'}" />
+                            <Button Name="SpellsFilter" ToggleMode="True" MinSize="88 26" Text="{Loc 'cf-hud-spells'}" ToolTip="{Loc 'cf-hud-spells-tooltip'}" />
+                        </BoxContainer>
+                    </BoxContainer>
+                    <BoxContainer Orientation="Horizontal" HorizontalExpand="True" Align="End">
+                        <hud:CFSpellPips Name="Spells" Access="Public" VerticalAlignment="Center" />
+                    </BoxContainer>
+                </BoxContainer>
+                <actions:ActionsBar />
             </BoxContainer>
-            <actions:ActionsBar />
-        </BoxContainer>
-    </PanelContainer>
-    <PanelContainer Name="DividerRight" MinSize="2 120" />
-    <hud:CFSpellPips Name="Spells" Access="Public" />
+        </PanelContainer>
+    </BoxContainer>
 </hud:CFGameHud>

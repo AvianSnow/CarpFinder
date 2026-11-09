@@ -2,8 +2,8 @@
 # source: Carpfinder War of Immortals
 - type: cfFeat
   id: CFVowofMortalDefiance
-  name: "Vow of Mortal Defiance"
-  description: "Requires You are not sanctified with the holy or unholy trait. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-vowof-mortal-defiance
+  description: cf-feat-vowof-mortal-defiance-desc
   class: Exemplar
   level: 1
   traits:

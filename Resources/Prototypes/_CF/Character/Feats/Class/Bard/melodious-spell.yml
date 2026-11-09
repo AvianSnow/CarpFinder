@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFMelodiousSpell
-  name: "Melodious Spell"
-  description: "Changes an item. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-melodious-spell
+  description: cf-feat-melodious-spell-desc
   class: Bard
   level: 4
   traits:

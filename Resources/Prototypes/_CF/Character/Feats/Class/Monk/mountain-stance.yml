@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFMountainStance
-  name: "Mountain Stance"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-mountain-stance
+  description: cf-feat-mountain-stance-desc
   class: Monk
   level: 1
   traits:

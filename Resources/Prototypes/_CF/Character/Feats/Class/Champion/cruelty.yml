@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFCruelty
-  name: "Cruelty"
-  description: "Requires touch of the void. Changes an item. This feature will be implemented later."
+  name: cf-feat-cruelty
+  description: cf-feat-cruelty-desc
   class: Champion
   level: 4
   traits:

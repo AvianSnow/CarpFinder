@@ -23,7 +23,7 @@
     key: CFSnowdrift
     states:
     - !type:CornerSpriteSmoothing
-      mask: [ CFSnowdrift, CFwall ]
+      mask: [ CFSnowdrift, CFWall ]
       base: state
   - type: FloorOccluder
   - type: Transform

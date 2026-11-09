@@ -1,3 +1,4 @@
+using Content.Shared.CF.Languages;
 using System.Linq;
 using Content.Shared.CF.Character;
 using Robust.Shared.Prototypes;
@@ -43,6 +44,30 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
     [DataField]
     public ProtoId<CFFeatPrototype>? AncestryFeatLevel5;
 
+    /// <summary>Level 2 skill feat.</summary>
+    [DataField]
+    public ProtoId<CFFeatPrototype>? SkillFeatLevel2;
+
+    /// <summary>Level 3 general feat. A skill feat also fits here.</summary>
+    [DataField]
+    public ProtoId<CFFeatPrototype>? GeneralFeatLevel3;
+
+    /// <summary>Level 4 skill feat.</summary>
+    [DataField]
+    public ProtoId<CFFeatPrototype>? SkillFeatLevel4;
+
+    /// <summary>The skill raised one rank at level 3.</summary>
+    [DataField]
+    public ProtoId<CFAbilitySkillPrototype>? SkillIncreaseLevel3;
+
+    /// <summary>The skill raised one rank at level 5.</summary>
+    [DataField]
+    public ProtoId<CFAbilitySkillPrototype>? SkillIncreaseLevel5;
+
+    /// <summary>The four different attributes boosted at level 5.</summary>
+    [DataField]
+    public List<CFAbility> AbilityBoostsLevel5 = new();
+
     /// <summary>
     /// Free attribute boosts granted by ancestry (one entry per Free in the ancestry prototype).
     /// </summary>
@@ -82,6 +107,10 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
     [DataField]
     public int Level = 1;
 
+    /// <summary>Extra languages from Intelligence, on top of the ancestry's.</summary>
+    [DataField]
+    public List<ProtoId<CFLanguagePrototype>> Languages = new();
+
     /// <summary>
     /// Spells chosen for each rank slot. Bonus spells use <see cref="CFSpellSlots.BonusRank"/>.
     /// </summary>
@@ -116,12 +145,19 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
             ClassFeatLevel2 = ClassFeatLevel2,
             ClassFeatLevel4 = ClassFeatLevel4,
             AncestryFeatLevel5 = AncestryFeatLevel5,
+            SkillFeatLevel2 = SkillFeatLevel2,
+            GeneralFeatLevel3 = GeneralFeatLevel3,
+            SkillFeatLevel4 = SkillFeatLevel4,
+            SkillIncreaseLevel3 = SkillIncreaseLevel3,
+            SkillIncreaseLevel5 = SkillIncreaseLevel5,
+            AbilityBoostsLevel5 = AbilityBoostsLevel5.ToList(),
             AncestryFreeBoosts = AncestryFreeBoosts.ToList(),
             BackgroundBoost = BackgroundBoost,
             BackgroundFreeBoost = BackgroundFreeBoost,
             FreeBoosts = FreeBoosts.ToList(),
             BackgroundTrainedSkills = BackgroundTrainedSkills.ToList(),
             ClassTrainedSkills = ClassTrainedSkills.ToList(),
+            Languages = Languages.ToList(),
             Level = Level,
             Spells = Spells.Select(spell => spell.Copy()).ToList(),
             PetId = PetId,
@@ -144,6 +180,12 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
                && ClassFeatLevel2 == other.ClassFeatLevel2
                && ClassFeatLevel4 == other.ClassFeatLevel4
                && AncestryFeatLevel5 == other.AncestryFeatLevel5
+               && SkillFeatLevel2 == other.SkillFeatLevel2
+               && GeneralFeatLevel3 == other.GeneralFeatLevel3
+               && SkillFeatLevel4 == other.SkillFeatLevel4
+               && SkillIncreaseLevel3 == other.SkillIncreaseLevel3
+               && SkillIncreaseLevel5 == other.SkillIncreaseLevel5
+               && AbilityBoostsLevel5.SequenceEqual(other.AbilityBoostsLevel5)
                && Level == other.Level
                && BackgroundBoost == other.BackgroundBoost
                && BackgroundFreeBoost == other.BackgroundFreeBoost
@@ -151,6 +193,7 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
                && FreeBoosts.SequenceEqual(other.FreeBoosts)
                && BackgroundTrainedSkills.SequenceEqual(other.BackgroundTrainedSkills)
                && ClassTrainedSkills.SequenceEqual(other.ClassTrainedSkills)
+               && Languages.SequenceEqual(other.Languages)
                && Spells.SequenceEqual(other.Spells)
                && PetId == other.PetId
                && PetName == other.PetName
@@ -173,6 +216,12 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
         hash.Add(ClassFeat);
         hash.Add(ClassFeatLevel2);
         hash.Add(ClassFeatLevel4);
+        hash.Add(Languages.Count);
+        hash.Add(SkillFeatLevel2);
+        hash.Add(GeneralFeatLevel3);
+        hash.Add(SkillFeatLevel4);
+        hash.Add(SkillIncreaseLevel3);
+        hash.Add(SkillIncreaseLevel5);
         hash.Add(AncestryFeatLevel5);
         hash.Add(Level);
         hash.Add(BackgroundBoost);

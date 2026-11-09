@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFBodyShield
-  name: "Body Shield"
-  description: "+2 bonus to Ac. Has a resistance. Reaction. This feature will be implemented later."
+  name: cf-feat-body-shield
+  description: cf-feat-body-shield-desc
   class: Necromancer
   level: 4
   traits:

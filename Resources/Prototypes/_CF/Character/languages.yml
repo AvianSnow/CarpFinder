@@ -1,0 +1,116 @@
+# Languages. Rarity is from Archives of Nethys. Common ones can be picked with Intelligence in the character builder.
+# The syllables are ours: they are what a listener hears without the language.
+
+- type: language
+  id: Common
+  name: cf-language-common
+  syllables: [ ta, len, mor, dan, ris, el, vor, ka, sem, bro ]
+
+- type: language
+  id: Draconic
+  name: cf-language-draconic
+  syllables: [ sjir, kaar, thrax, ix, vor, ssa, ghar, oth, zhur, ek ]
+
+- type: language
+  id: Dwarven
+  name: cf-language-dwarven
+  syllables: [ dur, grom, khaz, bor, drin, thul, ak, rund, gar, om ]
+
+- type: language
+  id: Elven
+  name: cf-language-elven
+  syllables: [ ae, lin, thae, sil, ien, vael, ri, nor, ela, wyn ]
+
+- type: language
+  id: Fey
+  name: cf-language-fey
+  syllables: [ fi, lu, pip, wen, ti, sylla, mi, ree, oo, tink ]
+
+- type: language
+  id: Gnomish
+  name: cf-language-gnomish
+  syllables: [ bim, zip, fiz, wob, nik, tok, pim, lop, zan, gle ]
+
+- type: language
+  id: Goblin
+  name: cf-language-goblin
+  syllables: [ gob, nak, skrit, zug, ik, rat, bok, grik, ak, snee ]
+
+- type: language
+  id: Halfling
+  name: cf-language-halfling
+  syllables: [ hob, wil, tam, bel, pod, min, sar, dun, lo, fen ]
+
+- type: language
+  id: Jotun
+  name: cf-language-jotun
+  syllables: [ jor, hrim, skal, ulf, stor, brag, un, tyr, hel, ga ]
+
+- type: language
+  id: Orcish
+  name: cf-language-orcish
+  syllables: [ gra, urk, mog, dak, thok, zug, ash, ruk, nar, ghul ]
+
+- type: language
+  id: Sakvroth
+  name: cf-language-sakvroth
+  syllables: [ sak, vro, thil, ssel, drae, kir, oz, naal, vex, um ]
+
+- type: language
+  id: Ysoki
+  name: cf-language-ysoki
+  syllables: [ ski, tik, chi, nib, yip, sko, rik, pee, tchi, ka ]
+
+- type: language
+  id: Alghollthu
+  name: cf-language-alghollthu
+  rarity: Uncommon
+  syllables: [ ulg, hol, thlu, mog, ool, sshu, gla, thu, ngh, ur ]
+
+- type: language
+  id: Amurrun
+  name: cf-language-amurrun
+  rarity: Uncommon
+  syllables: [ mrr, ow, purr, ra, sha, mew, rrun, ya, ees, hiss ]
+
+- type: language
+  id: Iruxi
+  name: cf-language-iruxi
+  rarity: Uncommon
+  syllables: [ ir, uxi, ssa, tal, kesh, ix, ro, hsa, mek, ta ]
+
+- type: language
+  id: Kholo
+  name: cf-language-kholo
+  rarity: Uncommon
+  syllables: [ kho, ha, lo, yip, ek, ruu, ha, dak, wha, kek ]
+
+- type: language
+  id: Shadowtongue
+  name: cf-language-shadowtongue
+  rarity: Uncommon
+  syllables: [ noct, umbr, ssh, vael, mor, thi, nyx, ash, ul, esh ]
+
+- type: language
+  id: Strix
+  name: cf-language-strix
+  rarity: Uncommon
+  syllables: [ kree, str, ix, aal, hoo, ska, ria, tuu, cai, ee ]
+
+- type: language
+  id: Tengu
+  name: cf-language-tengu
+  rarity: Uncommon
+  syllables: [ ka, ten, gu, rok, kaw, mi, shi, ro, ku, ao ]
+
+- type: language
+  id: Tripkee
+  name: cf-language-tripkee
+  rarity: Uncommon
+  syllables: [ rib, kee, trip, bo, loo, wik, ke, dro, pa, ip ]
+
+- type: language
+  id: Androffan
+  name: cf-language-androffan
+  rarity: Rare
+  syllables: [ 01, zet, kron, ax, ohm, vek, tri, dyn, ix, nul ]

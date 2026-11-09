@@ -35,6 +35,10 @@
     - level: 1
       name: "Alchemy"
       description: "You start with two minor healing potions."
+      grants:
+        - !type:CFGrantItem
+          item: CFHealingPotionMinor
+          count: 2
     - level: 1
       name: "Research Field"
       description: "This feature will be implemented later."

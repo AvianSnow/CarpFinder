@@ -23,17 +23,17 @@ public sealed partial class CFGOAPComponent : Component
     [DataField]
     public List<ProtoId<CFGOAPGoalPrototype>> Goals = new()
     {
-        "KillTarget", "StayAlive", "Heal", "ArmSelf", "HuntTarget", "Investigate", "GoHome", "Idle",
+        "PutOutFire", "KillTarget", "StayAlive", "Heal", "ArmSelf", "HuntTarget", "Investigate", "GoHome", "Idle",
     };
 
     [DataField]
     public List<ProtoId<CFGOAPActionPrototype>> Actions = new()
     {
-        "Strike", "Close", "Demoralize", "Feint", "HoldBack", "Flee", "FightBack", "PickUpWeapon", "PickUpHealing", "DrinkHealing",
-        "FollowScent", "GoToLkp", "CheckNode", "LookAround", "GoHome", "Wander",
+        "Strike", "Shoot", "Close", "Demoralize", "Feint", "HoldBack", "Flee", "FightBack", "PickUpWeapon", "PickUpHealing", "DrinkHealing",
+        "FollowScent", "GoToLkp", "CheckNode", "LookAround", "GoHome", "Wander", "PutOutFire",
     };
 
-    public uint Facts;
+    public ulong Facts;
 
     /// <summary>The creature it is after. It keeps this after losing sight of it, to know whose trail to follow.</summary>
     public EntityUid? Target;

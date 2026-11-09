@@ -2,6 +2,7 @@ using Content.Server.CF.GOAP.Influence;
 using Content.Server.CF.GOAP.Sensors;
 using Content.Server.CF.GOAP.Steering;
 using Content.Server.CF.GOAP.Steps;
+using Content.Server.NPC.HTN;
 using Content.Server.CF.GOAP.Tactics;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Factions;
@@ -55,6 +56,17 @@ public sealed partial class CFGOAPSystem : EntitySystem
     public bool HasStep(CFGOAPStep kind)
     {
         return _steps.ContainsKey(kind);
+    }
+
+    /// <summary>
+    /// A brain always runs the creature. With two parents the first one's <c>HTN</c> wins, so a mob with stock AI of its
+    /// own would otherwise keep that and never think, whatever <c>CFGOAPBrain</c> says.
+    /// </summary>
+    [SubscribeLocalEvent]
+    private void OnBrainInit(Entity<CFGOAPComponent> ent, ref ComponentInit args)
+    {
+        if (TryComp(ent, out HTNComponent? htn))
+            htn.RootTask = new HTNCompoundTask { Task = "CFGOAPCompound" };
     }
 
     /// <summary>Gets a brain ready to run.</summary>
@@ -114,7 +126,7 @@ public sealed partial class CFGOAPSystem : EntitySystem
         var before = ent.Comp.Facts;
         var sense = new CFGOAPSenseEvent(ent, _transform.GetMapCoordinates(ent), Profile(ent));
         RaiseLocalEvent(ref sense);
-        ent.Comp.Facts = (uint) sense.Facts;
+        ent.Comp.Facts = (ulong) sense.Facts;
         CheckReflexes(ent);
 
         var goal = ChooseGoal(ent, out var plan);
@@ -136,7 +148,7 @@ public sealed partial class CFGOAPSystem : EntitySystem
     /// <summary>Whether a fact was true on its last think.</summary>
     public static bool Knows(CFGOAPComponent goap, CFGOAPFact fact)
     {
-        return (goap.Facts & (uint) fact) != 0;
+        return (goap.Facts & (ulong) fact) != 0;
     }
 
     /// <summary>Its share of hit points, from 0 to 1. Anything without hit points counts as unhurt.</summary>

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFSquawk
-  name: "Squawk!"
-  description: "Reaction. TBA - action will be added"
+  name: cf-feat-squawk
+  description: cf-feat-squawk-desc
   ancestry: Tengu
   level: 1
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFUnbalancingFinisher
-  name: "Unbalancing Finisher"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-unbalancing-finisher
+  description: cf-feat-unbalancing-finisher-desc
   class: Swashbuckler
   level: 2
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Battlecry!
 - type: cfFeat
   id: CFShoulderCheck
-  name: "Shoulder Check"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-shoulder-check
+  description: cf-feat-shoulder-check-desc
   class: Guardian
   level: 1
   traits:

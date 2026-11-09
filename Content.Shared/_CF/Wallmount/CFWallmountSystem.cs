@@ -1,5 +1,6 @@
 // Ported from CrystallPunk 14 (CP14WallmountSystem).
 using Content.Shared.Tag;
+using Content.Shared.Wall;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Network;
@@ -15,7 +16,13 @@ public sealed partial class CFWallmountSystem : EntitySystem
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private INetManager _net = default!;
 
-    public static readonly ProtoId<TagPrototype>[] WallTags = { "Wall", "Window" };
+    private static readonly ProtoId<TagPrototype>[] WindowTags = { "Window" };
+
+    /// <summary>What something can hang on. Stock walls have <see cref="WallComponent"/>, and windows only a tag.</summary>
+    public static bool IsWall(IEntityManager entities, TagSystem tags, EntityUid uid)
+    {
+        return entities.HasComponent<WallComponent>(uid) || tags.HasAnyTag(uid, WindowTags);
+    }
 
     [SubscribeLocalEvent]
     private void OnWallAnchorChanged(Entity<CFWallmountedComponent> ent, ref AnchorStateChangedEvent args)
@@ -78,7 +85,7 @@ public sealed partial class CFWallmountSystem : EntitySystem
 
         foreach (var anchored in _map.GetAnchoredEntities(grid, gridComp, target))
         {
-            if (!_tag.HasAnyTag(anchored, WallTags))
+            if (!IsWall(EntityManager, _tag, anchored))
                 continue;
 
             EnsureComp<CFWallmountedComponent>(anchored).Attached.Add(wallmount);

@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Cheliax, Infernal Inheritance
 - type: cfFeat
   id: CFFetchlingLore
-  name: "Fetchling Lore"
-  description: "Trained in Occultism and Stealth."
+  name: cf-feat-fetchling-lore
+  description: cf-feat-fetchling-lore-desc
   ancestry: Fetchling
   level: 1
   traits:

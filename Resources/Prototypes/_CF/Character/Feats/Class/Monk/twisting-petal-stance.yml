@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Tian Xia Character Guide
 - type: cfFeat
   id: CFTwistingPetalStance
-  name: "Twisting Petal Stance"
-  description: "Requires trained in Deception. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-twisting-petal-stance
+  description: cf-feat-twisting-petal-stance-desc
   class: Monk
   level: 1
   traits:

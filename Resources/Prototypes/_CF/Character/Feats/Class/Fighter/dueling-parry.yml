@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFDuelingParry
-  name: "Dueling Parry"
-  description: "Changes a modifier. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-dueling-parry
+  description: cf-feat-dueling-parry-desc
   class: Fighter
   level: 2
   traits:

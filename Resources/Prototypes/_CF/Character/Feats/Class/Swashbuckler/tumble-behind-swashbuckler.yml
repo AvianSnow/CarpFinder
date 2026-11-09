@@ -2,9 +2,12 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFTumbleBehindSwashbuckler
-  name: "Tumble Behind (Swashbuckler)"
-  description: "Automatic. When you Tumble Through an enemy by running into it, it is off-guard to you afterwards."
+  name: cf-feat-tumble-behind-swashbuckler
+  description: cf-feat-tumble-behind-swashbuckler-desc
   class: Swashbuckler
   level: 2
   traits:
     - "Swashbuckler"
+  grants:
+    - !type:CFGrantOption
+      option: TumbleBehind

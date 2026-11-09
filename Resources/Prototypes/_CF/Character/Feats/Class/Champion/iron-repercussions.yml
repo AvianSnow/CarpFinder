@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFIronRepercussions
-  name: "Iron Repercussions"
-  description: "Requires obedience cause. Changes an item. This feature will be implemented later."
+  name: cf-feat-iron-repercussions
+  description: cf-feat-iron-repercussions-desc
   class: Champion
   level: 1
   traits:

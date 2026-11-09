@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFWellVersed
-  name: "Well-Versed"
-  description: "+1 circumstance bonus to Saving Throw. This feature will be implemented later."
+  name: cf-feat-well-versed
+  description: cf-feat-well-versed-desc
   class: Bard
   level: 1
   traits:

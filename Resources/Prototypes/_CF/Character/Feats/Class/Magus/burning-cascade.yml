@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFBurningCascade
-  name: "Burning Cascade"
-  description: "Requires Arcane Cascade. Changes an item. This feature will be implemented later."
+  name: cf-feat-burning-cascade
+  description: cf-feat-burning-cascade-desc
   class: Magus
   level: 4
   traits:

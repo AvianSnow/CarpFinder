@@ -2,11 +2,14 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFViciousSwing
-  name: "Vicious Swing"
-  description: "Right-click one creature for a Strike with one extra damage die, two at 10th level and three at 18th. Counts as two attacks. Costs 2 actions. Flourish."
+  name: cf-feat-vicious-swing
+  description: cf-feat-vicious-swing-desc
   class: Fighter
   level: 1
   traits:
     - "Fighter"
     - "Flourish"
   action: Action
+  grants:
+    - !type:CFGrantOption
+      option: ViciousSwing

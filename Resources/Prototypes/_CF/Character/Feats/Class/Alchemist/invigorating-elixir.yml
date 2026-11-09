@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFInvigoratingElixir
-  name: "Invigorating Elixir"
-  description: "Changes an item. This feature will be implemented later."
+  name: cf-feat-invigorating-elixir
+  description: cf-feat-invigorating-elixir-desc
   class: Alchemist
   level: 4
   traits:

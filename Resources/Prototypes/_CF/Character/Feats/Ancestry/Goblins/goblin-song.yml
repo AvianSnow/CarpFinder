@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFGoblinSong
-  name: "Goblin Song"
-  description: "Costs 1 action. TBA - action will be added"
+  name: cf-feat-goblin-song
+  description: cf-feat-goblin-song-desc
   ancestry: Goblin
   level: 1
   traits:

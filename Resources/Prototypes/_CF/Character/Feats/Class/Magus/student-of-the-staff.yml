@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFStudentoftheStaff
-  name: "Student of the Staff"
-  description: "Requires Arcane Cascade and twisting tree hybrid study. Changes an item. This feature will be implemented later."
+  name: cf-feat-studentofthe-staff
+  description: cf-feat-studentofthe-staff-desc
   class: Magus
   level: 4
   traits:

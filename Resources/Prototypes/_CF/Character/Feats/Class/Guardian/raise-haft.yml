@@ -2,8 +2,8 @@
 # source: Carpfinder Battlecry!
 - type: cfFeat
   id: CFRaiseHaft
-  name: "Raise Haft"
-  description: "Changes an item. Changes a modifier. This feature will be implemented later."
+  name: cf-feat-raise-haft
+  description: cf-feat-raise-haft-desc
   class: Guardian
   level: 2
   traits:

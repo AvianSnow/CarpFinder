@@ -21,7 +21,7 @@
   - Free
   - Free
   languages:
-  - cf-language-common
+  - Common
   traits:
   - cf-trait-human
   - cf-trait-humanoid
@@ -52,8 +52,8 @@
   abilityFlaws:
   - Charisma
   languages:
-  - cf-language-common
-  - cf-language-dwarven
+  - Common
+  - Dwarven
   darkvision: true
   traits:
   - cf-trait-dwarf
@@ -90,8 +90,8 @@
   abilityFlaws:
   - Wisdom
   languages:
-  - cf-language-common
-  - cf-language-goblin
+  - Common
+  - Goblin
   darkvision: true
   traits:
   - cf-trait-goblin
@@ -128,8 +128,8 @@
   abilityFlaws:
   - Constitution
   languages:
-  - cf-language-common
-  - cf-language-elven
+  - Common
+  - Elven
   traits:
   - cf-trait-elf
   - cf-trait-humanoid
@@ -157,9 +157,9 @@
   abilityFlaws:
   - Strength
   languages:
-  - cf-language-common
-  - cf-language-fey
-  - cf-language-gnomish
+  - Common
+  - Fey
+  - Gnomish
   traits:
   - cf-trait-gnome
   - cf-trait-humanoid
@@ -187,8 +187,8 @@
   abilityFlaws:
   - Strength
   languages:
-  - cf-language-common
-  - cf-language-halfling
+  - Common
+  - Halfling
   traits:
   - cf-trait-halfling
   - cf-trait-humanoid
@@ -224,8 +224,8 @@
   abilityFlaws:
   - Intelligence
   languages:
-  - cf-language-common
-  - cf-language-fey
+  - Common
+  - Fey
   traits:
   - cf-trait-leshy
   - cf-trait-plant
@@ -251,8 +251,8 @@
   - Free
   darkvision: true
   languages:
-  - cf-language-common
-  - cf-language-orcish
+  - Common
+  - Orcish
   traits:
   - cf-trait-orc
   - cf-trait-humanoid
@@ -292,8 +292,8 @@
   abilityFlaws:
   - Wisdom
   languages:
-  - cf-language-amurrun
-  - cf-language-common
+  - Amurrun
+  - Common
   traits:
   - cf-trait-catfolk
   - cf-trait-humanoid
@@ -323,8 +323,8 @@
   - Wisdom
   darkvision: true
   languages:
-  - cf-language-common
-  - cf-language-goblin
+  - Common
+  - Goblin
   traits:
   - cf-trait-hobgoblin
   - cf-trait-humanoid
@@ -352,8 +352,8 @@
   abilityFlaws:
   - Wisdom
   languages:
-  - cf-language-common
-  - cf-language-kholo
+  - Common
+  - Kholo
   traits:
   - cf-trait-kholo
   - cf-trait-humanoid
@@ -391,8 +391,8 @@
   - Constitution
   darkvision: true
   languages:
-  - cf-language-common
-  - cf-language-sakvroth
+  - Common
+  - Sakvroth
   traits:
   - cf-trait-kobold
   - cf-trait-humanoid
@@ -424,8 +424,8 @@
   abilityFlaws:
   - Intelligence
   languages:
-  - cf-language-common
-  - cf-language-iruxi
+  - Common
+  - Iruxi
   traits:
   - cf-trait-lizardfolk
   - cf-trait-humanoid
@@ -458,8 +458,8 @@
   abilityFlaws:
   - Strength
   languages:
-  - cf-language-common
-  - cf-language-ysoki
+  - Common
+  - Ysoki
   traits:
   - cf-trait-ratfolk
   - cf-trait-humanoid
@@ -505,8 +505,8 @@
   - Dexterity
   - Free
   languages:
-  - cf-language-common
-  - cf-language-tengu
+  - Common
+  - Tengu
   traits:
   - cf-trait-tengu
   - cf-trait-humanoid
@@ -535,8 +535,8 @@
   abilityFlaws:
   - Strength
   languages:
-  - cf-language-common
-  - cf-language-tripkee
+  - Common
+  - Tripkee
   traits:
   - cf-trait-tripkee
   - cf-trait-humanoid
@@ -569,8 +569,8 @@
   abilityFlaws:
   - Wisdom
   languages:
-  - cf-language-common
-  - cf-language-alghollthu
+  - Common
+  - Alghollthu
   traits:
   - cf-trait-azarketi
   - cf-trait-humanoid
@@ -605,8 +605,8 @@
   abilityFlaws:
   - Charisma
   languages:
-  - cf-language-common
-  - cf-language-androffan
+  - Common
+  - Androffan
   traits:
   - cf-trait-android
   - cf-trait-humanoid
@@ -638,8 +638,8 @@
   - Free
   darkvision: true
   languages:
-  - cf-language-common
-  - cf-language-shadowtongue
+  - Common
+  - Shadowtongue
   traits:
   - cf-trait-fetchling
   - cf-trait-humanoid
@@ -664,7 +664,7 @@
   - Constitution
   - Free
   languages:
-  - cf-language-common
+  - Common
   traits:
   - cf-trait-fleshwarp
   - cf-trait-aberration
@@ -695,7 +695,7 @@
   - Charisma
   - Free
   languages:
-  - cf-language-common
+  - Common
   traits:
   - cf-trait-kitsune
   - cf-trait-humanoid
@@ -724,8 +724,8 @@
   abilityFlaws:
   - Strength
   languages:
-  - cf-language-common
-  - cf-language-fey
+  - Common
+  - Fey
   traits:
   - cf-trait-sprite
   - cf-trait-fey
@@ -771,8 +771,8 @@
   - Dexterity
   - Free
   languages:
-  - cf-language-common
-  - cf-language-strix
+  - Common
+  - Strix
   traits:
   - cf-trait-strix
   - cf-trait-humanoid

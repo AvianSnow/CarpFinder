@@ -2,8 +2,8 @@
 # source: Carpfinder War of Immortals
 - type: cfFeat
   id: CFTwinStars
-  name: "Twin Stars"
-  description: "Changes an item. This feature will be implemented later."
+  name: cf-feat-twin-stars
+  description: cf-feat-twin-stars-desc
   class: Exemplar
   level: 1
   traits:

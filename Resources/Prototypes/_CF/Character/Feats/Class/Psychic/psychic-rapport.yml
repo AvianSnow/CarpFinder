@@ -2,8 +2,8 @@
 # source: Carpfinder Dark Archive (Remastered)
 - type: cfFeat
   id: CFPsychicRapport
-  name: "Psychic Rapport"
-  description: "Changes an item. This feature will be implemented later."
+  name: cf-feat-psychic-rapport
+  description: cf-feat-psychic-rapport-desc
   class: Psychic
   level: 1
   traits:

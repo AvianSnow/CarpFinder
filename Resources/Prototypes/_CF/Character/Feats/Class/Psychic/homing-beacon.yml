@@ -2,8 +2,8 @@
 # source: Carpfinder Dark Archive (Remastered)
 - type: cfFeat
   id: CFHomingBeacon
-  name: "Homing Beacon"
-  description: "Changes an item. This feature will be implemented later."
+  name: cf-feat-homing-beacon
+  description: cf-feat-homing-beacon-desc
   class: Psychic
   level: 4
   traits:

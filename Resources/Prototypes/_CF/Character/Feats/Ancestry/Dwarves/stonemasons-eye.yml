@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFStonemasonsEye
-  name: "Stonemason's Eye"
-  description: "Trained in Crafting. +2 circumstance bonus to Perception. Not applied in play yet. Also grants Specialty Crafting. TBA - action will be added"
+  name: cf-feat-stonemasons-eye
+  description: cf-feat-stonemasons-eye-desc
   ancestry: Dwarf
   level: 1
   traits:

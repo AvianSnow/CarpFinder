@@ -104,6 +104,10 @@ for b in re.split(r'(?m)^(?=- type: )',open(f).read()):
     out.append(b)
 open(f,'w').write(''.join(out))
 
+# CP14wall renames to CFwall, but our walls are written by hand and keyed CFWall, and IconSmooth keys are case sensitive.
+for f in ('Fence/big_fence','Fence/fence','Fence/window','Flora/snowdrift','Flora/web'):
+    sub(f'Entities/Structures/Ported/{f}.yml','CFwall','CFWall')
+
 # Rejected systems: essences, religion and alchemy books, demiplane loot, crystal lamps.
 sub('Entities/Structures/Ported/Flora/Crystal/elemental.yml',r'^ *- !type:SpawnEntitiesBehavior\n *spawn:\n *CFEssence\w+:\n *min: \d+\n *max: \d+\n','',regex=True)
 sub('Entities/Structures/Ported/Furniture/bookshelf.yml',r'^ *- id: CF(GuidebookAlchemy|BookPantheonGodsSileita|BookPantheonGodsSileitaImitators)\n','',regex=True)

@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFEmergencyTarge
-  name: "Emergency Targe"
-  description: "Requires sparkling targe hybrid study. Reaction. This feature will be implemented later."
+  name: cf-feat-emergency-targe
+  description: cf-feat-emergency-targe-desc
   class: Magus
   level: 4
   traits:

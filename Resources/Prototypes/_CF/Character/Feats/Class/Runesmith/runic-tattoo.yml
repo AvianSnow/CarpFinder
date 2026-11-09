@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFRunicTattoo
-  name: "Runic Tattoo"
-  description: "This feature will be implemented later."
+  name: cf-feat-runic-tattoo
+  description: cf-feat-runic-tattoo-desc
   class: Runesmith
   level: 2
   traits:

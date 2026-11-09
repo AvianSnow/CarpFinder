@@ -1,3 +1,5 @@
+using Content.Server.CF.GOAP.Steering;
+using Content.Shared.Atmos.Components;
 using Content.Shared.CF.Actions;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Detection;
@@ -13,6 +15,7 @@ public sealed partial class CFGOAPBodySensorSystem : EntitySystem
     [Dependency] private CFActionPoolSystem _actions = default!;
     [Dependency] private CFConditionSystem _conditions = default!;
     [Dependency] private CFGOAPSystem _goap = default!;
+    [Dependency] private CFGOAPSteeringSystem _steering = default!;
 
     [SubscribeLocalEvent]
     private void OnSense(ref CFGOAPSenseEvent args)
@@ -30,6 +33,10 @@ public sealed partial class CFGOAPBodySensorSystem : EntitySystem
             args.Facts |= CFGOAPFact.Hiding;
         if (_timing.CurTime < args.Creature.Comp.CorneredUntil)
             args.Facts |= CFGOAPFact.Cornered;
+
+        // Rolling on lava only lights it again, so it gets off first.
+        if (TryComp(uid, out FlammableComponent? fire) && fire.OnFire && !_steering.IsDangerous(args.Here))
+            args.Facts |= CFGOAPFact.OnFire;
 
         if (TryComp(uid, out CFActionPoolComponent? pool))
         {

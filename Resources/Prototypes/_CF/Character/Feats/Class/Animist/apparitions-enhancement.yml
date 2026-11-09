@@ -2,8 +2,8 @@
 # source: Carpfinder War of Immortals
 - type: cfFeat
   id: CFApparitionsEnhancement
-  name: "Apparition's Enhancement"
-  description: "Free action. This feature will be implemented later."
+  name: cf-feat-apparitions-enhancement
+  description: cf-feat-apparitions-enhancement-desc
   class: Animist
   level: 4
   traits:

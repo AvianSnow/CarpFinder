@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFLeftHandBlood
-  name: "Left-Hand Blood"
-  description: "Costs 1 action. TBA - action will be added"
+  name: cf-feat-left-hand-blood
+  description: cf-feat-left-hand-blood-desc
   ancestry: Kholo
   level: 5
   traits:

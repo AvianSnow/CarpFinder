@@ -2,8 +2,8 @@
 # source: Carpfinder Battlecry!
 - type: cfFeat
   id: CFShieldWarfare
-  name: "Shield Warfare"
-  description: "Changes an item. This feature will be implemented later."
+  name: cf-feat-shield-warfare
+  description: cf-feat-shield-warfare-desc
   class: Guardian
   level: 1
   traits:

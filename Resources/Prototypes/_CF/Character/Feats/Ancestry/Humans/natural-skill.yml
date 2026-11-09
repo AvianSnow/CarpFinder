@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFNaturalSkill
-  name: "Natural Skill"
-  description: "Trained in a skill of your choice. That choice is not recorded yet."
+  name: cf-feat-natural-skill
+  description: cf-feat-natural-skill-desc
   ancestry: Human
   level: 1
   traits:

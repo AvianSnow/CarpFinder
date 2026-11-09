@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFYoureNextSwashbuckler
-  name: "You're Next"
-  description: "Reaction. When you drop a creature to 0 HP, Demoralize another foe within 30 feet. +2 circumstance bonus."
+  name: cf-feat-youre-next-swashbuckler
+  description: cf-feat-youre-next-swashbuckler-desc
   class: Swashbuckler
   level: 1
   traits:
@@ -15,3 +15,6 @@
   prerequisites:
     - "trained in Intimidation"
   action: Reaction
+  grants:
+    - !type:CFGrantOption
+      option: YoureNext

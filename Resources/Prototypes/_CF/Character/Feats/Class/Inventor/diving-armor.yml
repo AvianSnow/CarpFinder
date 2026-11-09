@@ -2,8 +2,8 @@
 # source: Carpfinder Guns & Gears
 - type: cfFeat
   id: CFDivingArmor
-  name: "Diving Armor"
-  description: "Requires armor innovation. This feature will be implemented later."
+  name: cf-feat-diving-armor
+  description: cf-feat-diving-armor-desc
   class: Inventor
   level: 4
   traits:

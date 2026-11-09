@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens High Seas
 - type: cfFeat
   id: CFCheatersAlwaysProsper
-  name: "Cheaters Always Prosper"
-  description: "Requires Dirty Trick."
+  name: cf-feat-cheaters-always-prosper
+  description: cf-feat-cheaters-always-prosper-desc
   class: Fighter
   level: 4
   traits:

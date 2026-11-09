@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFEnhancedFamiliarWizard
-  name: "Enhanced Familiar"
-  description: "Requires a familiar."
+  name: cf-feat-enhanced-familiar-wizard
+  description: cf-feat-enhanced-familiar-wizard-desc
   class: Wizard
   level: 2
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFScavengersSearch
-  name: "Scavenger's Search"
-  description: "+2 circumstance bonus to Perception. Not applied in play yet."
+  name: cf-feat-scavengers-search
+  description: cf-feat-scavengers-search-desc
   ancestry: Tengu
   level: 1
   traits:

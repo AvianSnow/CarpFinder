@@ -2,10 +2,13 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFTwinFeint
-  name: "Twin Feint"
-  description: "Right-click one creature with a melee weapon in each hand: one Strike with each. The target is off-guard against the second. Costs 2 actions."
+  name: cf-feat-twin-feint
+  description: cf-feat-twin-feint-desc
   class: Rogue
   level: 1
   traits:
     - "Rogue"
   action: Action
+  grants:
+    - !type:CFGrantOption
+      option: TwinFeint

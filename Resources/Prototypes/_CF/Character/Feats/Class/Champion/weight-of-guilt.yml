@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFWeightofGuilt
-  name: "Weight of Guilt"
-  description: "Requires redemption cause. Changes an item. This feature will be implemented later."
+  name: cf-feat-weightof-guilt
+  description: cf-feat-weightof-guilt-desc
   class: Champion
   level: 1
   traits:

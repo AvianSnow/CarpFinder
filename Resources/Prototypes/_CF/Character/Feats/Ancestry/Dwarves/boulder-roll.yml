@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFBoulderRoll
-  name: "Boulder Roll"
-  description: "Requires Rock Runner. Costs 2 actions. TBA - action will be added"
+  name: cf-feat-boulder-roll
+  description: cf-feat-boulder-roll-desc
   ancestry: Dwarf
   level: 5
   traits:

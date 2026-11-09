@@ -2,8 +2,8 @@
 # source: Carpfinder War of Immortals
 - type: cfFeat
   id: CFEmbodimentoftheBalance
-  name: "Embodiment of the Balance"
-  description: "This feature will be implemented later."
+  name: cf-feat-embodimentofthe-balance
+  description: cf-feat-embodimentofthe-balance-desc
   class: Animist
   level: 2
   traits:

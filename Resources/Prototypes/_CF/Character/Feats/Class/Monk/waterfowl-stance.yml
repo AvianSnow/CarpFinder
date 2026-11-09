@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Rival Academies
 - type: cfFeat
   id: CFWaterfowlStance
-  name: "Waterfowl Stance"
-  description: "Requires Monastic Weaponry. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-waterfowl-stance
+  description: cf-feat-waterfowl-stance-desc
   class: Monk
   level: 2
   rarity: Uncommon

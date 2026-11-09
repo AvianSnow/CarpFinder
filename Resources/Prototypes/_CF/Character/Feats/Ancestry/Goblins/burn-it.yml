@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFBurnIt
-  name: "Burn It!"
-  description: "+1 status bonus to Damage. Not applied in play yet."
+  name: cf-feat-burn-it
+  description: cf-feat-burn-it-desc
   ancestry: Goblin
   level: 1
   traits:

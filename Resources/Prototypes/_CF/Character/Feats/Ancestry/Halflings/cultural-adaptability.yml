@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFCulturalAdaptability
-  name: "Cultural Adaptability"
-  description: "Also grants Adopted Ancestry. Grants an item. Not added in play yet. TBA - action will be added"
+  name: cf-feat-cultural-adaptability
+  description: cf-feat-cultural-adaptability-desc
   ancestry: Halfling
   level: 5
   traits:

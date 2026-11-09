@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFSupernaturalSenses
-  name: "Supernatural Senses"
-  description: "Requires Acute Scent or scent."
+  name: cf-feat-supernatural-senses
+  description: cf-feat-supernatural-senses-desc
   class: Barbarian
   level: 4
   traits:

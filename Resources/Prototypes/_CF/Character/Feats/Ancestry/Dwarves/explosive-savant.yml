@@ -2,8 +2,8 @@
 # source: Carpfinder Guns & Gears
 - type: cfFeat
   id: CFExplosiveSavant
-  name: "Explosive Savant"
-  description: "Ancestry weapons count as a simpler group for proficiency. Not applied in combat yet."
+  name: cf-feat-explosive-savant
+  description: cf-feat-explosive-savant-desc
   ancestry: Dwarf
   level: 1
   rarity: Uncommon

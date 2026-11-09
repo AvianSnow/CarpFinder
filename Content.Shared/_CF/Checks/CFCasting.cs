@@ -16,7 +16,7 @@ public static class CFCasting
 {
     /// <summary>
     /// Spell attack and spell DC. The class's spellcasting ability, or the best mental ability for a
-    /// creature without a casting class. Trained proficiency until classes track spell proficiency ranks.
+    /// creature without a casting class. Everyone is trained until a feature raises <see cref="CFDefense.SpellRank"/>.
     /// </summary>
     public static CFCastingStats Spellcasting(
         IPrototypeManager prototypes,
@@ -47,7 +47,7 @@ public static class CFCasting
             }
         }
 
-        return FromAbility(combat.Level, abilities.GetModifier(ability));
+        return FromAbility(combat.Level, abilities.GetModifier(ability), CFDefense.SpellRank(combat));
     }
 
     /// <summary>Class DC: 10 + key ability modifier + proficiency.</summary>
@@ -63,7 +63,7 @@ public static class CFCasting
         if (combat.ClassId != null && prototypes.TryIndex(combat.ClassId, out CFClassPrototype? cls))
             ability = cls.KeyAbility;
 
-        return FromAbility(combat.Level, abilities.GetModifier(ability));
+        return FromAbility(combat.Level, abilities.GetModifier(ability), CFDefense.ClassDcRank(combat));
     }
 
     /// <summary>A fixed DC (hazards, items). The matching attack bonus is DC − 10.</summary>
@@ -78,9 +78,9 @@ public static class CFCasting
         return Math.Max(1, (level + 1) / 2);
     }
 
-    private static CFCastingStats FromAbility(int level, int abilityMod)
+    private static CFCastingStats FromAbility(int level, int abilityMod, CFProficiencyRank rank)
     {
-        var proficiency = CFAttributeMath.ProficiencyBonus(level, trained: true);
+        var proficiency = CFSkills.ProficiencyBonus(level, rank);
         return new CFCastingStats(abilityMod + proficiency, 10 + abilityMod + proficiency, abilityMod);
     }
 }

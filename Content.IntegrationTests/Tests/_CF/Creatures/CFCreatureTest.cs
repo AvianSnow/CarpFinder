@@ -10,6 +10,7 @@ using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Weapons.Melee;
 using Robust.Shared.GameObjects;
+using Robust.Shared.Map;
 using Robust.Shared.Maths;
 using Robust.Shared.Prototypes;
 
@@ -57,6 +58,9 @@ public sealed class CFCreatureTest : GameTest
         new object[] { "CFMobHuntingSpider", 1, 17, 16, 6, 9, 5, 7, 9, 2, 1, 6 },
         new object[] { "CFMobSewerOoze", 1, 8, 40, 9, 1, 3, 3, 9, 1, 1, 6 },
         new object[] { "CFMobVelociraptor", 1, 16, 20, 5, 7, 4, 6, 8, 3, 1, 6 },
+        new object[] { "CFMobSkeletonguardMelee", -1, 16, 4, 2, 8, 2, 2, 6, 2, 1, 4 },
+        new object[] { "CFMobSkeletonguardRanged", -1, 16, 4, 2, 8, 2, 2, 6, 2, 1, 4 },
+        new object[] { "CFMobKoboldTrapper", 2, 18, 32, 5, 11, 8, 7, 7, 1, 1, 4 },
     };
 
     [TestCaseSource(nameof(StatBlocks))]
@@ -81,7 +85,7 @@ public sealed class CFCreatureTest : GameTest
                 Assert.That(CFDefense.SaveModifier(prototypes, combat, abilities, CFDefenseType.Reflex), Is.EqualTo(reflex));
                 Assert.That(CFDefense.SaveModifier(prototypes, combat, abilities, CFDefenseType.Will), Is.EqualTo(will));
                 Assert.That(CFDefense.PerceptionModifier(prototypes, combat, abilities), Is.EqualTo(perception));
-                Assert.That(CFMelee.AttackBonus(abilities, combat, stats, true), Is.EqualTo(attack));
+                Assert.That(CFMelee.AttackBonus(abilities, combat, stats, CFProficiencyRank.Trained), Is.EqualTo(attack));
                 Assert.That(CFMelee.DamageBonus(abilities, stats, combat), Is.EqualTo(damage));
                 Assert.That(stats.DamageDice, Is.EqualTo(dice));
                 Assert.That(stats.DamageDie, Is.EqualTo(die));
@@ -135,6 +139,50 @@ public sealed class CFCreatureTest : GameTest
 
             Assert.That(SEntMan.System<MobStateSystem>().IsDead(hero), Is.False);
             Assert.That(SEntMan.GetComponent<CFCombatantComponent>(hero).Dying, Is.GreaterThan(0));
+        });
+    }
+
+    /// <summary>A CF rule change: PF2e leaves the target unconscious at 0 HP.</summary>
+    [Test]
+    public async Task StabilizeWakesTheDyingAtOneHp()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            var caster = SEntMan.SpawnEntity("CFCreatureTestHero", _map.Local(0, 0));
+            var patient = SEntMan.SpawnEntity("CFCreatureTestHero", _map.Local(1, 0));
+            var combat = SEntMan.GetComponent<CFCombatantComponent>(patient);
+            var effects = SEntMan.System<CFEffectSystem>();
+            var spell = SEntMan.SpawnEntity("CFStabilize", MapCoordinates.Nullspace);
+
+            effects.DealDamage(caster, patient, 1000, "Slashing", false);
+            Assert.That(combat.Dying, Is.GreaterThan(0));
+
+            effects.DeliverToTarget(spell, caster, patient);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(combat.CurrentHp, Is.EqualTo(1));
+                Assert.That(combat.Dying, Is.Zero);
+                Assert.That(combat.Wounded, Is.Zero, "The spell does not add wounded.");
+                Assert.That(SEntMan.System<MobStateSystem>().IsAlive(patient));
+            });
+        });
+    }
+
+    [Test]
+    public async Task StabilizeLeavesTheHealthyAlone()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            var caster = SEntMan.SpawnEntity("CFCreatureTestHero", _map.Local(0, 0));
+            var patient = SEntMan.SpawnEntity("CFCreatureTestHero", _map.Local(1, 0));
+            var spell = SEntMan.SpawnEntity("CFStabilize", MapCoordinates.Nullspace);
+
+            SEntMan.System<CFEffectSystem>().DeliverToTarget(spell, caster, patient);
+
+            Assert.That(SEntMan.GetComponent<CFCombatantComponent>(patient).CurrentHp, Is.EqualTo(500));
         });
     }
 

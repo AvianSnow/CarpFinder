@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens High Seas
 - type: cfFeat
   id: CFFriendoftheSea
-  name: "Friend of the Sea"
-  description: "Also grants Pet. TBA - action will be added"
+  name: cf-feat-friendofthe-sea
+  description: cf-feat-friendofthe-sea-desc
   ancestry: Elf
   level: 1
   traits:

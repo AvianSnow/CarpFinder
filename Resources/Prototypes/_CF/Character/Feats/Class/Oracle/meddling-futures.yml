@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFMeddlingFutures
-  name: "Meddling Futures"
-  description: "Free action. This feature will be implemented later."
+  name: cf-feat-meddling-futures
+  description: cf-feat-meddling-futures-desc
   class: Oracle
   level: 2
   traits:

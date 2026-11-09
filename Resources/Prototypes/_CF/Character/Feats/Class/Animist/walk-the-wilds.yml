@@ -2,8 +2,8 @@
 # source: Carpfinder War of Immortals
 - type: cfFeat
   id: CFWalktheWilds
-  name: "Walk the Wilds"
-  description: "This feature will be implemented later."
+  name: cf-feat-walkthe-wilds
+  description: cf-feat-walkthe-wilds-desc
   class: Animist
   level: 4
   traits:

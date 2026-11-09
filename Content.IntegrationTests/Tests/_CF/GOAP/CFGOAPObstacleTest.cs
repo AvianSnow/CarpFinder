@@ -1,6 +1,6 @@
 using Content.IntegrationTests.Fixtures;
 using Content.IntegrationTests.Tests.CF;
-using Content.IntegrationTests.Tests.CF.GOAP.Debug;
+using Content.IntegrationTests.Tests.CF.GOAP.DecisionLog;
 using Content.Server.CF.GOAP;
 using Content.Server.CF.GOAP.Encounters;
 using Content.Server.CF.GOAP.Steering;
@@ -24,7 +24,7 @@ namespace Content.IntegrationTests.Tests.CF.GOAP;
 /// <summary>Advanced NPCs getting through doors and glass, with real movement and real Strikes.</summary>
 [TestFixture]
 [TestOf(typeof(CFGOAPSystem))]
-public sealed class CFGOAPObstacleTest : CFGOAPDebugLoggedTest
+public sealed class CFGOAPObstacleTest : CFGOAPLoggedTest
 {
     private const int Extreme = 60;
 

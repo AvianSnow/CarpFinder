@@ -2,8 +2,8 @@
 # source: Carpfinder Howl of the Wild
 - type: cfFeat
   id: CFScatterSwarm
-  name: "Scatter Swarm"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-scatter-swarm
+  description: cf-feat-scatter-swarm-desc
   class: Witch
   level: 2
   traits:

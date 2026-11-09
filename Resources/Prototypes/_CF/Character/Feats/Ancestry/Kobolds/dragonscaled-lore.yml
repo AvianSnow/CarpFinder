@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Draconic Codex
 - type: cfFeat
   id: CFDragonscaledLore
-  name: "Dragonscaled Lore"
-  description: "Requires dragonscaled kobold heritage. Lore: Dragon Lore. Trained in Intimidation. Trained in a skill of your choice. That choice is not recorded yet."
+  name: cf-feat-dragonscaled-lore
+  description: cf-feat-dragonscaled-lore-desc
   ancestry: Kobold
   level: 1
   traits:

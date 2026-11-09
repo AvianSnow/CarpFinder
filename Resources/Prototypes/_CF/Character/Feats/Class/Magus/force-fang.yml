@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFForceFang
-  name: "Force Fang"
-  description: "Requires focus pool."
+  name: cf-feat-force-fang
+  description: cf-feat-force-fang-desc
   class: Magus
   level: 2
   traits:

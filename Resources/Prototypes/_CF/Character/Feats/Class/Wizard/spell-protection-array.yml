@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFSpellProtectionArray
-  name: "Spell Protection Array"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-spell-protection-array
+  description: cf-feat-spell-protection-array-desc
   class: Wizard
   level: 4
   traits:

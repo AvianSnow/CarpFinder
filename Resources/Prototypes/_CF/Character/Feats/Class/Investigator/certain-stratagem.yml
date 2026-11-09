@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFCertainStratagem
-  name: "Certain Stratagem"
-  description: "This feature will be implemented later."
+  name: cf-feat-certain-stratagem
+  description: cf-feat-certain-stratagem-desc
   class: Investigator
   level: 2
   traits:

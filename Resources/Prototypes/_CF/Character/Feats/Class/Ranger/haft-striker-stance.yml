@@ -2,8 +2,8 @@
 # source: Carpfinder War of Immortals
 - type: cfFeat
   id: CFHaftStrikerStanceRanger
-  name: "Haft Striker Stance"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-haft-striker-stance-ranger
+  description: cf-feat-haft-striker-stance-ranger-desc
   class: Ranger
   level: 4
   traits:

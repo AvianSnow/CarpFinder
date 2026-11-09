@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Tian Xia Character Guide
 - type: cfFeat
   id: CFCharmedSleep
-  name: "Charmed Sleep"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-charmed-sleep
+  description: cf-feat-charmed-sleep-desc
   ancestry: Sprite
   level: 1
   traits:

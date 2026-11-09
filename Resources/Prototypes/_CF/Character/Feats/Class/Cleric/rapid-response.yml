@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFRapidResponse
-  name: "Rapid Response"
-  description: "+10 circumstance bonus to Speed. Reaction. This feature will be implemented later."
+  name: cf-feat-rapid-response
+  description: cf-feat-rapid-response-desc
   class: Cleric
   level: 2
   traits:

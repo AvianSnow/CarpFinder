@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFGrovel
-  name: "Grovel"
-  description: "Requires trained in Deception. Costs 1 action. TBA - action will be added"
+  name: cf-feat-grovel
+  description: cf-feat-grovel-desc
   ancestry: Kobold
   level: 5
   traits:

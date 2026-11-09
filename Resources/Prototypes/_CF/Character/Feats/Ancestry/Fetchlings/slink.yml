@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Cheliax, Infernal Inheritance
 - type: cfFeat
   id: CFSlink
-  name: "Slink"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-slink
+  description: cf-feat-slink-desc
   ancestry: Fetchling
   level: 1
   traits:

@@ -91,6 +91,12 @@ public sealed partial class CFConditionComponent : Component
 
     public TimeSpan StupefiedUntil;
 
+    /// <summary>Sickened value. The penalties themselves are timed bonuses. This is what the HUD names.</summary>
+    [DataField, AutoNetworkedField]
+    public int SickenedValue;
+
+    public TimeSpan SickenedUntil;
+
     public TimeSpan ConcealedUntil;
 
     public TimeSpan SanctuaryUntil;

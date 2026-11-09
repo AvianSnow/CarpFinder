@@ -2,10 +2,13 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFDoubleSlice
-  name: "Double Slice"
-  description: "Right-click one creature with a melee weapon in each hand: one Strike with each, at your current multiple attack penalty. The second takes -2 unless it is agile. Costs 2 actions."
+  name: cf-feat-double-slice
+  description: cf-feat-double-slice-desc
   class: Fighter
   level: 1
   traits:
     - "Fighter"
   action: Action
+  grants:
+    - !type:CFGrantOption
+      option: DoubleSlice

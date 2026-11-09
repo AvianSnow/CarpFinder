@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFAdaptedCantrip
-  name: "Adapted Cantrip"
-  description: "Requires spellcasting class feature."
+  name: cf-feat-adapted-cantrip
+  description: cf-feat-adapted-cantrip-desc
   ancestry: Human
   level: 1
   traits:

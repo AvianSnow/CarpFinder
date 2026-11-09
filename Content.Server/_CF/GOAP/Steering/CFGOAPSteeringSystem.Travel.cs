@@ -70,7 +70,8 @@ public sealed partial class CFGOAPSteeringSystem
 
     /// <summary>
     /// Close enough, and the field reaches it. A field that has not been built for this place yet gets its chance:
-    /// it may stand a few tiles from the goal but a long walk round.
+    /// it may stand a few tiles from the goal but a long walk round. A field built with no arrows reaches nothing, which
+    /// is how a sealed place shows up, so it does not get another chance.
     /// </summary>
     private bool FieldWillDo(Entity<CFGOAPSteeringComponent> ent, Vector2 place, bool alone)
     {
@@ -78,7 +79,7 @@ public sealed partial class CFGOAPSteeringSystem
             return false;
 
         var field = alone ? ent.Comp.OwnField : FieldOf(ent);
-        var built = !field.Away && field.Arrows.Count > 0 && (field.Goal - place).Length() < FieldGoalSlack;
+        var built = !field.Away && field.NextBuild > TimeSpan.Zero && (field.Goal - place).Length() < FieldGoalSlack;
         return !built || TryGetArrow(ent, field, out _);
     }
 

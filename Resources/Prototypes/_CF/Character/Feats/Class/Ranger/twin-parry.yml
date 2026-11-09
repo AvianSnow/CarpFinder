@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFTwinParryRanger
-  name: "Twin Parry"
-  description: "Changes a modifier. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-twin-parry-ranger
+  description: cf-feat-twin-parry-ranger-desc
   class: Ranger
   level: 4
   traits:

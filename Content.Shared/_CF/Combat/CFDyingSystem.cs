@@ -2,6 +2,7 @@ using Content.Shared.Body.Components;
 using Content.Shared.Body.Systems;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Checks;
+using Content.Shared.CF.Effects;
 using Content.Shared.CF.Preferences;
 using Content.Shared.Damage;
 using Content.Shared.Damage.Components;
@@ -31,6 +32,7 @@ public sealed partial class CFDyingSystem : EntitySystem
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private CFBonusSystem _bonuses = default!;
     [Dependency] private MobStateSystem _mobState = default!;
     [Dependency] private MobThresholdSystem _mobThresholds = default!;
     [Dependency] private DamageableSystem _damageable = default!;
@@ -124,17 +126,15 @@ public sealed partial class CFDyingSystem : EntitySystem
     }
 
     /// <summary>
-    /// The stabilize spell: dying drops to 0 and the creature stays unconscious at 0 HP. No check.
+    /// The stabilize spell: a dying creature wakes at 1 HP, with no check and no wounded.
+    /// PF2e leaves it unconscious at 0 HP. CF changes that for balance.
     /// </summary>
-    public void Stabilize(EntityUid target)
+    public void Stabilize(EntityUid target, EntityUid? healer = null)
     {
-        if (TryComp(target, out CFCombatantComponent? combat))
-        {
-            combat.Dying = 0;
-            Dirty(target, combat);
-        }
+        if (!TryComp(target, out CFCombatantComponent? combat) || !CanStabilize(target, combat))
+            return;
 
-        RemComp<CFDyingTrackerComponent>(target);
+        ReviveAtOneHitPoint(target, combat, healer, gainWounded: false);
         _popup.PopupEntity(Loc.GetString("cf-spell-stabilize"), target);
     }
 
@@ -206,7 +206,7 @@ public sealed partial class CFDyingSystem : EntitySystem
     /// </summary>
     public void RestoreHitPoints(EntityUid target, int amount, EntityUid? healer = null)
     {
-        if (amount <= 0)
+        if (amount <= 0 || HasComp<CFVoidHealingComponent>(target))
             return;
 
         // Healing / potions cannot revive the dead.
@@ -239,6 +239,18 @@ public sealed partial class CFDyingSystem : EntitySystem
         _ = healedCf;
     }
 
+    /// <summary>A long rest: full hit points and no wounded. The dead and dying get nothing.</summary>
+    public void RestoreFully(EntityUid target)
+    {
+        if (!TryComp(target, out CFCombatantComponent? combat) || !_mobState.IsAlive(target))
+            return;
+
+        combat.CurrentHp = combat.MaxHp;
+        combat.Wounded = 0;
+        Dirty(target, combat);
+        SyncSs14FromHp(target, combat);
+    }
+
     /// <summary>
     /// Medicine Stabilize — on success, clears dying, sets CF HP to 1, wipes SS14 damage, and wakes Alive.
     /// (SS14 crit thresholds don't model "unconscious at 0 HP", so we revive to 1 HP instead.)
@@ -266,16 +278,13 @@ public sealed partial class CFDyingSystem : EntitySystem
             return;
         }
 
-        CFClassPrototype? cls = null;
-        if (healerCombat.ClassId != null)
-            _prototypes.TryIndex(healerCombat.ClassId, out cls);
-
-        CFBackgroundPrototype? background = null;
-        if (healerCombat.BackgroundId != null)
-            _prototypes.TryIndex(healerCombat.BackgroundId, out background);
-
-        var rank = CFSkills.GetSkillRank(cls, background, "Medicine", healerCombat.TrainedSkills);
-        var bonus = CFSkills.SkillModifier(healerAbilities.AbilityModifiers, CFAbility.Wisdom, healerCombat.Level, rank);
+        var bonus = CFDefense.SkillModifier(
+            _prototypes,
+            healerCombat,
+            healerAbilities,
+            "Medicine",
+            CFAbility.Wisdom,
+            _bonuses.Total(healer, CFBonusStat.SkillChecks, skill: "Medicine"));
         var dc = CFDyingTrackerComponent.BaseStabilizeDc + patient.Dying;
         var d20 = _random.Next(1, 21);
         var degree = CFDegrees.DegreeOfSuccess(d20, bonus, dc);
@@ -309,12 +318,16 @@ public sealed partial class CFDyingSystem : EntitySystem
     /// Clear dying, set CF HP to 1, wipe SS14 damage/bleed, and force Alive.
     /// Refuses fully dead targets.
     /// </summary>
-    public void ReviveAtOneHitPoint(EntityUid target, CFCombatantComponent combatant, EntityUid? healer = null)
+    public void ReviveAtOneHitPoint(
+        EntityUid target,
+        CFCombatantComponent combatant,
+        EntityUid? healer = null,
+        bool gainWounded = true)
     {
         if (_mobState.IsDead(target))
             return;
 
-        LoseDying(target, combatant, gainWounded: true);
+        LoseDying(target, combatant, gainWounded);
         combatant.CurrentHp = 1;
         Dirty(target, combatant);
 

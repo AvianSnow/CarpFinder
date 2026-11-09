@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFVersatileSignature
-  name: "Versatile Signature"
-  description: "Requires polymath muse."
+  name: cf-feat-versatile-signature
+  description: cf-feat-versatile-signature-desc
   class: Bard
   level: 4
   traits:

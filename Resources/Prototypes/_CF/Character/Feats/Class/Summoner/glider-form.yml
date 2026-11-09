@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFGliderForm
-  name: "Glider Form"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-glider-form
+  description: cf-feat-glider-form-desc
   class: Summoner
   level: 1
   traits:

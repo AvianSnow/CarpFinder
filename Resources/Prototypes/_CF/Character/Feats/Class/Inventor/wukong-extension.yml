@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Tian Xia Character Guide
 - type: cfFeat
   id: CFWukongExtension
-  name: "Wukong Extension"
-  description: "Requires weapon innovation. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-wukong-extension
+  description: cf-feat-wukong-extension-desc
   class: Inventor
   level: 2
   rarity: Uncommon

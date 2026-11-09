@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFUnfetteredHalfling
-  name: "Unfettered Halfling"
-  description: "Improves Saving Throw results. Not applied in play yet. Improves Skill Check results. Not applied in play yet. Improves Attack Roll results. Not applied in play yet."
+  name: cf-feat-unfettered-halfling
+  description: cf-feat-unfettered-halfling-desc
   ancestry: Halfling
   level: 1
   traits:

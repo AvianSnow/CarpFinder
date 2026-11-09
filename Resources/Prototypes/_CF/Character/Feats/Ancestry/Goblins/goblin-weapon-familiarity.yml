@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFGoblinWeaponFamiliarity
-  name: "Goblin Weapon Familiarity"
-  description: "Ancestry weapons count as a simpler group for proficiency. Not applied in combat yet."
+  name: cf-feat-goblin-weapon-familiarity
+  description: cf-feat-goblin-weapon-familiarity-desc
   ancestry: Goblin
   level: 1
   traits:

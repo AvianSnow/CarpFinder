@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens High Seas
 - type: cfFeat
   id: CFBounceBoost
-  name: "Bounce Boost"
-  description: "Requires trained in Athletics. Reaction. TBA - action will be added"
+  name: cf-feat-bounce-boost
+  description: cf-feat-bounce-boost-desc
   ancestry: Tripkee
   level: 1
   traits:

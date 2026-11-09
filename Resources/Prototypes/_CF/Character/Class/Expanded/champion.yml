@@ -36,6 +36,9 @@
     - level: 1
       name: "Cause"
       description: "When an ally within 15 feet is hit, you can Strike the attacker if they are in your reach. Uses your reaction."
+      grants:
+        - !type:CFGrantOption
+          option: Champion
     - level: 1
       name: "Deity (Champion)"
       description: "This feature will be implemented later."
@@ -45,6 +48,9 @@
     - level: 1
       name: "Shield Block"
       description: "While your shield is raised, you can spend your reaction to block 5 damage."
+      grants:
+        - !type:CFGrantOption
+          option: ShieldBlock
     - level: 3
       name: "Blessing of the Devoted"
       description: "This feature will be implemented later."

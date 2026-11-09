@@ -2,8 +2,8 @@
 # source: Carpfinder Guns & Gears
 - type: cfFeat
   id: CFGadgetSpecialist
-  name: "Gadget Specialist"
-  description: "Requires expert in Crafting."
+  name: cf-feat-gadget-specialist
+  description: cf-feat-gadget-specialist-desc
   class: Inventor
   level: 4
   traits:

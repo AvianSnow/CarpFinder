@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFVigorousHealth
-  name: "Vigorous Health"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-vigorous-health
+  description: cf-feat-vigorous-health-desc
   ancestry: Hobgoblin
   level: 1
   traits:

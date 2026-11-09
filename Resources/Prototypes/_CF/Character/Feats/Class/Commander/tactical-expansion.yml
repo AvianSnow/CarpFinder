@@ -2,8 +2,8 @@
 # source: Carpfinder Battlecry!
 - type: cfFeat
   id: CFTacticalExpansion
-  name: "Tactical Expansion"
-  description: "Grants an item. This feature will be implemented later."
+  name: cf-feat-tactical-expansion
+  description: cf-feat-tactical-expansion-desc
   class: Commander
   level: 2
   traits:

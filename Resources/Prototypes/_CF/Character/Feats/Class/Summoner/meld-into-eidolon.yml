@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFMeldintoEidolon
-  name: "Meld into Eidolon"
-  description: "Costs 3 actions. This feature will be implemented later."
+  name: cf-feat-meldinto-eidolon
+  description: cf-feat-meldinto-eidolon-desc
   class: Summoner
   level: 1
   traits:

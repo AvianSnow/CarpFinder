@@ -2,8 +2,8 @@
 # source: Carpfinder Dark Archive (Remastered)
 - type: cfFeat
   id: CFSacralLordChampion
-  name: "Sacral Lord"
-  description: "Requires trained in Occultism or Religion. +1 circumstance bonus to Skill Check. This feature will be implemented later."
+  name: cf-feat-sacral-lord-champion
+  description: cf-feat-sacral-lord-champion-desc
   class: Champion
   level: 4
   rarity: Rare

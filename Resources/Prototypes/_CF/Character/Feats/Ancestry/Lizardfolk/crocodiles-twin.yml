@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Tian Xia Character Guide
 - type: cfFeat
   id: CFCrocodilesTwin
-  name: "Crocodile's Twin"
-  description: "Requires bakuwa lizardfolk heritage or makari lizardfolk heritage."
+  name: cf-feat-crocodiles-twin
+  description: cf-feat-crocodiles-twin-desc
   ancestry: Lizardfolk
   level: 1
   traits:

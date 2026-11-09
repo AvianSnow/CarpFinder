@@ -2,8 +2,8 @@
 # source: Carpfinder Guns & Gears
 - type: cfFeat
   id: CFDongunEducation
-  name: "Dongun Education"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-dongun-education
+  description: cf-feat-dongun-education-desc
   ancestry: Dwarf
   level: 1
   rarity: Uncommon

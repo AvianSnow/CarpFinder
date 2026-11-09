@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFBackupRunicEnhancement
-  name: "Backup Runic Enhancement"
-  description: "Requires trained in Arcana, Nature, Occultism, or Religion."
+  name: cf-feat-backup-runic-enhancement
+  description: cf-feat-backup-runic-enhancement-desc
   class: Runesmith
   level: 1
   traits:

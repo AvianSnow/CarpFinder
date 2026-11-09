@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Tian Xia Character Guide
 - type: cfFeat
   id: CFRushingGoatStance
-  name: "Rushing Goat Stance"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-rushing-goat-stance
+  description: cf-feat-rushing-goat-stance-desc
   class: Monk
   level: 1
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFExpansiveSpellstrike
-  name: "Expansive Spellstrike"
-  description: "Requires Spellstrike."
+  name: cf-feat-expansive-spellstrike
+  description: cf-feat-expansive-spellstrike-desc
   class: Magus
   level: 2
   traits:

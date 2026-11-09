@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFClimbingClaws
-  name: "Climbing Claws"
-  description: "Climb Speed 10 feet. Not applied in play yet."
+  name: cf-feat-climbing-claws
+  description: cf-feat-climbing-claws-desc
   ancestry: Catfolk
   level: 5
   traits:

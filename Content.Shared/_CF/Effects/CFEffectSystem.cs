@@ -33,7 +33,6 @@ public sealed partial class CFEffectSystem : EntitySystem
 {
     [Dependency] private INetManager _net = default!;
     [Dependency] private IRobustRandom _random = default!;
-    private static readonly ProtoId<CFTraitPrototype> FearTrait = "Fear";
 
     [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
@@ -49,7 +48,6 @@ public sealed partial class CFEffectSystem : EntitySystem
     [Dependency] private CFBonusSystem _bonuses = default!;
     [Dependency] private CFCombatBridgeSystem _bridge = default!;
     [Dependency] private CFDyingSystem _dying = default!;
-    [Dependency] private CFShieldSystem _shields = default!;
 
     public override void Update(float frameTime)
     {
@@ -305,7 +303,7 @@ public sealed partial class CFEffectSystem : EntitySystem
         }
         else if (check != null && check.Defense != CFDefenseType.None)
         {
-            args.Degree = RollDefense(target, check.Defense, stats.Dc, source);
+            args.Degree = _conditions.RollDefense(target, check.Defense, stats.Dc, out _, args.Traits);
             landed = !args.Degree.IsSuccess();
         }
 
@@ -343,6 +341,7 @@ public sealed partial class CFEffectSystem : EntitySystem
             Position = position,
             Defense = check?.Defense ?? CFDefenseType.None,
             BasicSave = check?.BasicSave ?? false,
+            Traits = SourceTraits(source),
             Rank = context.Rank,
             HeightenSteps = steps,
             Dc = stats.Dc,
@@ -406,10 +405,7 @@ public sealed partial class CFEffectSystem : EntitySystem
         if (_bridge.TryEnsureCombatTarget(target, out var defender, out _, out _))
             armorClass = defender.ArmorClass;
 
-        armorClass += _bonuses.Total(target, CFBonusStat.ArmorClass);
-        armorClass += _shields.RaisedBonus(target);
-        armorClass -= _conditions.Frightened(target);
-        armorClass -= _conditions.Clumsy(target);
+        armorClass += _conditions.ArmorClassModifier(target);
         armorClass -= check.TargetAcPenalty;
 
         attackBonus += check.AttackModifier;
@@ -428,52 +424,17 @@ public sealed partial class CFEffectSystem : EntitySystem
         return CFDegrees.DegreeOfSuccess(d20, attackBonus, armorClass);
     }
 
-    /// <summary>The target's save or Perception check against the DC.</summary>
-    public CFDegree RollDefense(EntityUid target, CFDefenseType defense, int dc, EntityUid? source = null)
+    /// <summary>A source's traits: those on the entity, and for a spell those on its prototype.</summary>
+    public HashSet<ProtoId<CFTraitPrototype>> SourceTraits(EntityUid source)
     {
-        var combat = CompOrNull<CFCombatantComponent>(target);
-        var abilities = CompOrNull<CFAbilityScoreComponent>(target);
-        var frightened = _conditions.Frightened(target);
-        int modifier;
-        if (defense == CFDefenseType.Perception)
-        {
-            modifier = CFDefense.PerceptionModifier(
-                _prototypes,
-                combat,
-                abilities,
-                _bonuses.Total(target, CFBonusStat.Perception),
-                frightened);
-        }
-        else
-        {
-            var status = SaveBonus(target, source);
-            if (defense == CFDefenseType.Reflex)
-                status -= _conditions.Clumsy(target);
+        var traits = new HashSet<ProtoId<CFTraitPrototype>>();
+        if (TryComp(source, out CFTraitComponent? own))
+            traits.UnionWith(own.Traits);
 
-            modifier = CFDefense.SaveModifier(_prototypes, combat, abilities, defense, status, frightened);
-        }
+        if (TryComp(source, out CFSpellComponent? spell) && _prototypes.TryIndex(spell.Spell, out CFSpellPrototype? proto))
+            traits.UnionWith(proto.Traits);
 
-        return CFDefense.Roll(_random, modifier, dc);
-    }
-
-    /// <summary>Bonuses to a save against this source, counting those that only work against fear.</summary>
-    public int SaveBonus(EntityUid target, EntityUid? source)
-    {
-        return _bonuses.Total(target, CFBonusStat.Saves, IsFear(source) ? CFBonusStat.SavesVsFear : null);
-    }
-
-    /// <summary>Whether a spell or other source has the fear trait.</summary>
-    public bool IsFear(EntityUid? source)
-    {
-        if (source is not { } uid)
-            return false;
-
-        if (TryComp(uid, out CFTraitComponent? traits) && traits.HasTrait(FearTrait))
-            return true;
-
-        return TryComp(uid, out CFSpellComponent? spell)
-               && _prototypes.TryIndex(spell.Spell, out CFSpellPrototype? proto)
-               && proto.Traits.Contains(FearTrait);
+        return traits;
     }
 
     #endregion

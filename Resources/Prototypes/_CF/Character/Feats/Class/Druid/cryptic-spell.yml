@@ -2,8 +2,8 @@
 # source: Carpfinder Dark Archive (Remastered)
 - type: cfFeat
   id: CFCrypticSpell
-  name: "Cryptic Spell"
-  description: "Changes an item. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-cryptic-spell
+  description: cf-feat-cryptic-spell-desc
   class: Druid
   level: 4
   traits:

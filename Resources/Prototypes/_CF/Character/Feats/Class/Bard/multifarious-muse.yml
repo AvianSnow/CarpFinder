@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFMultifariousMuse
-  name: "Multifarious Muse"
-  description: "Grants an item. This feature will be implemented later."
+  name: cf-feat-multifarious-muse
+  description: cf-feat-multifarious-muse-desc
   class: Bard
   level: 2
   traits:

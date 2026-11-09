@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Tian Xia Character Guide
 - type: cfFeat
   id: CFBrinyBeverage
-  name: "Briny Beverage"
-  description: "Requires kijimuna gnome heritage."
+  name: cf-feat-briny-beverage
+  description: cf-feat-briny-beverage-desc
   ancestry: Gnome
   level: 5
   traits:

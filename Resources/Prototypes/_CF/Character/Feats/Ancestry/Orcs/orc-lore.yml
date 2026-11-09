@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFOrcLore
-  name: "Orc Lore"
-  description: "Lore: Orc Lore. Trained in Athletics and Survival."
+  name: cf-feat-orc-lore
+  description: cf-feat-orc-lore-desc
   ancestry: Orc
   level: 1
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder War of Immortals
 - type: cfFeat
   id: CFSteelonSteel
-  name: "Steel on Steel"
-  description: "Grants Ringing Challenge. Changes an item. This feature will be implemented later."
+  name: cf-feat-steelon-steel
+  description: cf-feat-steelon-steel-desc
   class: Exemplar
   level: 4
   traits:

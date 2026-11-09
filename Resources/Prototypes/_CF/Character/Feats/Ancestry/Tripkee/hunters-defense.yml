@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFHuntersDefense
-  name: "Hunter's Defense"
-  description: "Requires trained in Nature. Reaction. TBA - action will be added"
+  name: cf-feat-hunters-defense
+  description: cf-feat-hunters-defense-desc
   ancestry: Tripkee
   level: 1
   traits:

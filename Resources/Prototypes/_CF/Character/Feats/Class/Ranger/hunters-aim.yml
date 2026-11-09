@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFHuntersAim
-  name: "Hunter's Aim"
-  description: "+2 circumstance bonus to Ranged Strike Attack Roll. Costs 2 actions. This feature will be implemented later."
+  name: cf-feat-hunters-aim
+  description: cf-feat-hunters-aim-desc
   class: Ranger
   level: 2
   traits:

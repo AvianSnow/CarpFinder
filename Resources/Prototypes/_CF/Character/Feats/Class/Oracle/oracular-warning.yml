@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFOracularWarning
-  name: "Oracular Warning"
-  description: "Free action. This feature will be implemented later."
+  name: cf-feat-oracular-warning
+  description: cf-feat-oracular-warning-desc
   class: Oracle
   level: 1
   traits:

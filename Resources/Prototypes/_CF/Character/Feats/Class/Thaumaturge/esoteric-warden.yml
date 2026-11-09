@@ -2,8 +2,8 @@
 # source: Carpfinder Dark Archive (Remastered)
 - type: cfFeat
   id: CFEsotericWarden
-  name: "Esoteric Warden"
-  description: "Requires Exploit Vulnerability."
+  name: cf-feat-esoteric-warden
+  description: cf-feat-esoteric-warden-desc
   class: Thaumaturge
   level: 2
   traits:

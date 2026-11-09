@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFRuntsage
-  name: "Runtsage"
-  description: "Also grants Adopted Ancestry. Grants an item. Not added in play yet. TBA - action will be added"
+  name: cf-feat-runtsage
+  description: cf-feat-runtsage-desc
   ancestry: Hobgoblin
   level: 5
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFTinkeringFingers
-  name: "Tinkering Fingers"
-  description: "Trained in Crafting."
+  name: cf-feat-tinkering-fingers
+  description: cf-feat-tinkering-fingers-desc
   ancestry: Ratfolk
   level: 1
   traits:

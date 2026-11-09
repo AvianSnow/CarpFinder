@@ -2,8 +2,8 @@
 # source: Carpfinder Dark Archive (Remastered)
 - type: cfFeat
   id: CFMentalBalm
-  name: "Mental Balm"
-  description: "Changes an item. This feature will be implemented later."
+  name: cf-feat-mental-balm
+  description: cf-feat-mental-balm-desc
   class: Psychic
   level: 2
   traits:

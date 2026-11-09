@@ -2,8 +2,8 @@
 # source: Carpfinder Battlecry!
 - type: cfFeat
   id: CFAcclimatedMount
-  name: "Acclimated Mount"
-  description: "Requires Faithful Steed and trained in Survival."
+  name: cf-feat-acclimated-mount
+  description: cf-feat-acclimated-mount-desc
   class: Champion
   level: 4
   traits:

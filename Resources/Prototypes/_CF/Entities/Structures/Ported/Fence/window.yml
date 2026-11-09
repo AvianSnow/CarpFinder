@@ -43,7 +43,7 @@
     key: CFfencebig
     states:
     - !type:CornerSpriteSmoothing
-      mask: [ CFfencebig, CFwall ]
+      mask: [ CFfencebig, CFWall ]
       base: fence
 
 - type: entity

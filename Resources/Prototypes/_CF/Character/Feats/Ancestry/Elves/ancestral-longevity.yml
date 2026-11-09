@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFAncestralLongevity
-  name: "Ancestral Longevity"
-  description: "Requires at least 100 years old. Trained in a skill of your choice. That choice is not recorded yet."
+  name: cf-feat-ancestral-longevity
+  description: cf-feat-ancestral-longevity-desc
   ancestry: Elf
   level: 1
   traits:

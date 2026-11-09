@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFCatsLuck
-  name: "Cat's Luck"
-  description: "Free action. TBA - action will be added"
+  name: cf-feat-cats-luck
+  description: cf-feat-cats-luck-desc
   ancestry: Catfolk
   level: 1
   traits:
