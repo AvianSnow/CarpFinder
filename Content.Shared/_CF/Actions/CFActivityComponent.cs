@@ -10,7 +10,6 @@ public enum CFActivityKind : byte
     Spellstrike,
     Anthem,
     SuddenCharge,
-    PointBlank,
     Leap,
     ConstructTrap,
 }

@@ -66,8 +66,13 @@ Built on 6 November 2026, except where marked. Tests: `CFGrantTest`. What change
 
 Most action feats share one of a few shapes, so build the shape once. An action is an entity with `CFActivity` and the usual `CFTargeting`, `CFCheck` and `CFDegreeEffects`. Do not write a new resolver.
 
-- [ ] Stances (21 feats). One at a time, ending when it ends or the creature leaves it.
-- [ ] Flourishes (35). One per turn, on a refill of the action pool. Vicious Swing already has a version of this rule.
+- [x] Stances (21 feats). `CFStance` on an action, parented on `CFActStanceBase` in `Actions/stances.yml`, run by `CFStanceSystem`. Built on 9 November 2026, with Point-Blank, Mountain, Crane, Dragon and Tiger. The other 16 stances are filled in their waves. Tests: `CFStanceTest`.
+  - One at a time, and another stance action waits 6 seconds. Using the same action again is Dismiss, which costs its action and does not wait.
+  - It ends on being knocked out, when armor breaks an unarmored requirement, or on another stance action. Real time has no encounters, so it does not end when a fight does.
+  - [ ] Asleep and Unconscious from a condition do not end a stance yet, only falling to Critical or Dead does.
+  - [ ] Not seen in a real client: the action button lighting up while in a stance.
+  - [ ] Stances with other requirements have no check yet, such as Mountain's touching the ground, or a weapon a stance needs.
+- [x] Flourishes (36). Add `CFFlourish` to an action. `CFActionPoolSystem` allows one until the pool is next full. Flurry of Blows and Sudden Charge use it, and Vicious Swing keeps its code path. The rest are filled in their waves.
 - [ ] Spellshape (34). Changes the next spell cast.
 - [ ] Reactions (57). One trigger list, spending the reaction through `TrySpendReaction`. Reactions stay automatic and off the wheel.
 - [ ] Auras and emanations, for champion and bard features, on `CFAreaEffect`.

@@ -25,7 +25,7 @@ Everything below is under `Content.Shared/_CF/`.
 
 | Folder | Holds | Start at |
 |---|---|---|
-| `Actions/` | Action stamina, multiple attack penalty, radial activities, Shove, Disarm, Grapple, Escape, marks, standing | `CFActionPoolSystem`, `CFActivitySystem`, `CFManeuverSystem` |
+| `Actions/` | Action stamina, multiple attack penalty, radial activities, stances, flourishes, Shove, Disarm, Grapple, Escape, marks, standing | `CFActionPoolSystem`, `CFActivitySystem`, `CFStanceSystem`, `CFManeuverSystem` |
 | `Afflictions/` | Staged afflictions such as Alcohol. Poisons and diseases can use the same pieces. | `CFAfflictionSystem` |
 | `Alchemy/` | Drinkable and feedable potions | `CFAlchemicalItemSystem` |
 | `Character/` | Prototypes for ancestry, class, feat, heritage, background, spell; skill and attribute math; `Grants/`, what an option gives a character | `CFAttributeMath`, `CFSkills`, `CFCharacterFeatureSystem` |

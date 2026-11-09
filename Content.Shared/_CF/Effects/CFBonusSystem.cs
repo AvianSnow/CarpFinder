@@ -102,13 +102,15 @@ public sealed partial class CFBonusSystem : EntitySystem
     /// A bonus from a character option that never runs out. It is never merged with another entry, because
     /// two untyped bonuses from two feats both count.
     /// </summary>
+    /// <param name="source">Set this if the bonus can end, then call <see cref="RemoveBonusesFrom"/>.</param>
     public void AddPermanentBonus(
         EntityUid uid,
         CFBonusStat stat,
         CFBonusType type,
         int value,
         ProtoId<CFTraitPrototype>? trait = null,
-        string? skill = null)
+        string? skill = null,
+        string? source = null)
     {
         if (value == 0)
             return;
@@ -122,8 +124,22 @@ public sealed partial class CFBonusSystem : EntitySystem
             Expires = TimeSpan.MaxValue,
             Trait = trait,
             Skill = skill,
+            Source = source,
         });
         Dirty(uid, comp);
+
+        if (stat == CFBonusStat.Speed)
+            _speed.RefreshMovementSpeedModifiers(uid);
+    }
+
+    /// <summary>Ends every bonus added with this <paramref name="source"/>.</summary>
+    public void RemoveBonusesFrom(EntityUid uid, string source)
+    {
+        if (!TryComp(uid, out CFBonusesComponent? comp) || comp.Bonuses.RemoveAll(bonus => bonus.Source == source) == 0)
+            return;
+
+        Dirty(uid, comp);
+        _speed.RefreshMovementSpeedModifiers(uid);
     }
 
     /// <summary>

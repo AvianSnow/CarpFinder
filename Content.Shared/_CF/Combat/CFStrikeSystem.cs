@@ -58,6 +58,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
     [Dependency] private CFShieldSystem _shields = default!;
     [Dependency] private CFStealthSystem _stealth = default!;
     [Dependency] private CFEffectSystem _effects = default!;
+    [Dependency] private CFStanceSystem _stances = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private SharedAudioSystem _audio = default!;
     [Dependency] private ThrownItemSystem _thrownItems = default!;
@@ -382,6 +383,17 @@ public sealed partial class CFStrikeSystem : EntitySystem
     {
         var proficiency = CFWeaponCategory.Unarmed.Proficiency();
         TryComp(user, out CFCombatOptionsComponent? opt);
+        if (_stances.Current(user)?.Attack is { } stance)
+        {
+            var traits = CFWeaponTraits.From(_prototypes, stance.Traits) with { Unarmed = true };
+
+            // Powerful Fist makes every unarmed attack lethal here, stances included.
+            if (opt is { PowerfulFist: true })
+                traits = traits with { Nonlethal = false };
+
+            return new CFStrikeWeaponStats(stance.Dice, stance.Die, stance.DamageType, proficiency, traits);
+        }
+
         if (opt is { NaturalDie: > 0 })
         {
             var die = opt.PowerfulFist ? Math.Max(opt.NaturalDie, 6) : opt.NaturalDie;
@@ -559,6 +571,14 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (!_factions.CanHarm(user, target))
             return false;
 
+        if (weaponUid != user && _stances.Current(user) is { OnlyStanceStrikes: true })
+        {
+            if (_net.IsServer)
+                _popup.PopupEntity(Loc.GetString("cf-stance-only-strikes"), user, user);
+
+            return false;
+        }
+
         if (_conditions.IsCalmed(user) || _conditions.IsCharmedAgainst(user, target))
         {
             _popup.PopupEntity(Loc.GetString("cf-cond-cannot-harm"), user, user);
@@ -612,7 +632,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
         var ignoreVolley = false;
         var pointBlank = 0;
         TryComp(user, out CFCombatOptionsComponent? style);
-        if (weapon.Ranged && style is { PointBlank: true })
+        if (weapon.Ranged && _stances.Current(user) is { PointBlank: true })
         {
             var first = weapon.RangeIncrementFeet > 0 ? weapon.RangeIncrementFeet : 30;
             if (distanceFeet <= first)

@@ -1,0 +1,97 @@
+# Stances. What one does is data on CFStance, and CFStanceSystem runs it. Grant one with CFGrantAction.
+
+- type: entity
+  abstract: true
+  parent: CFActivityInstant
+  id: CFActStanceBase
+  categories: [ HideSpawnMenu ]
+
+- type: entity
+  parent: CFActStanceBase
+  id: CFActPointBlank
+  name: Point-Blank Stance
+  description: Ignore volley and gain +2 damage with ranged Strikes inside the first range increment.
+  components:
+  - type: CFStance
+    pointBlank: true
+
+# Player Core 2, page 118 and 119. What the game cannot do yet is marked TBA in feats-class.ftl.
+- type: entity
+  parent: CFActStanceBase
+  id: CFActMountainStance
+  name: Mountain Stance
+  description: While unarmored, +4 item bonus to AC, but no Dexterity to AC and 5 feet less Speed. Your only Strikes are 1d8 bludgeoning falling stone attacks.
+  components:
+  - type: CFStance
+    requiresUnarmored: true
+    onlyStanceStrikes: true
+    dexCap: 0
+    bonuses:
+    - stat: ArmorClass
+      type: Item
+      value: 4
+    - stat: Speed
+      type: Untyped
+      value: -5
+    attack:
+      die: 8
+      damageType: Bludgeoning
+      traits:
+      - Forceful
+      - Nonlethal
+      - Unarmed
+
+- type: entity
+  parent: CFActStanceBase
+  id: CFActCraneStance
+  name: Crane Stance
+  description: While unarmored, +1 circumstance bonus to AC. Your only Strikes are 1d6 bludgeoning crane wing attacks.
+  components:
+  - type: CFStance
+    requiresUnarmored: true
+    onlyStanceStrikes: true
+    bonuses:
+    - stat: ArmorClass
+      type: Circumstance
+      value: 1
+    attack:
+      die: 6
+      damageType: Bludgeoning
+      traits:
+      - Agile
+      - Finesse
+      - Nonlethal
+      - Unarmed
+
+- type: entity
+  parent: CFActStanceBase
+  id: CFActDragonStance
+  name: Dragon Stance
+  description: While unarmored, your fists become 1d10 bludgeoning dragon tail attacks.
+  components:
+  - type: CFStance
+    requiresUnarmored: true
+    attack:
+      die: 10
+      damageType: Bludgeoning
+      traits:
+      - Backswing
+      - Nonlethal
+      - Unarmed
+
+- type: entity
+  parent: CFActStanceBase
+  id: CFActTigerStance
+  name: Tiger Stance
+  description: While unarmored, your fists become 1d8 slashing tiger claw attacks.
+  components:
+  - type: CFStance
+    requiresUnarmored: true
+    attack:
+      die: 8
+      damageType: Slashing
+      traits:
+      - Agile
+      - Finesse
+      - Nonlethal
+      - Unarmed

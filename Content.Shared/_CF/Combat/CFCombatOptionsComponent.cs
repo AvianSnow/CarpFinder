@@ -60,9 +60,6 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public bool YoureNext;
 
-    [DataField, AutoNetworkedField]
-    public bool PointBlank;
-
     /// <summary>A healer's toolkit used in hand in combat mode heals for one action.</summary>
     [DataField, AutoNetworkedField]
     public bool BattleMedicine;

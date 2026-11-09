@@ -1,3 +1,4 @@
+using Content.Shared.CF.Actions;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Effects;
@@ -27,6 +28,7 @@ public sealed partial class CFArmorSystem : EntitySystem
     [Dependency] private Content.Shared.Hands.EntitySystems.SharedHandsSystem _hands = default!;
     [Dependency] private MovementSpeedModifierSystem _speed = default!;
     [Dependency] private CFBonusSystem _bonuses = default!;
+    [Dependency] private CFStanceSystem _stances = default!;
     [Dependency] private CFEncumbranceSystem _encumbrance = default!;
 
     /// <summary>The armor worn in an inventory slot. Held armor does not count. The highest AC bonus wins.</summary>
@@ -135,6 +137,9 @@ public sealed partial class CFArmorSystem : EntitySystem
             proficiency = armor.Comp.Proficiency;
             worn = armor.Owner;
         }
+
+        if (_stances.Current(mob)?.DexCap is { } stanceCap)
+            dexCap = Math.Min(dexCap ?? stanceCap, stanceCap);
 
         var rank = CFDefense.ArmorRank(_prototypes, combat, proficiency);
         combat.ArmorClass = CFAttributeMath.ComputeAc(abilities.AbilityModifiers, combat.Level, rank, acBonus, dexCap);

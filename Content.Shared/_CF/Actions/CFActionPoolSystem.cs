@@ -153,6 +153,22 @@ public sealed partial class CFActionPoolSystem : EntitySystem
         Dirty(uid, pool);
     }
 
+    [SubscribeLocalEvent]
+    private void OnFlourishAttempt(Entity<CFFlourishComponent> ent, ref ActionAttemptEvent args)
+    {
+        if (CanFlourish(args.User))
+            return;
+
+        args.Cancelled = true;
+        args.Reason = Loc.GetString("cf-act-flourish-used");
+    }
+
+    [SubscribeLocalEvent]
+    private void OnFlourishPerformed(Entity<CFFlourishComponent> ent, ref ActionPerformedEvent args)
+    {
+        MarkFlourish(args.Performer);
+    }
+
     /// <summary>Whether a flourish is still available. A creature with no pool always can.</summary>
     public bool CanFlourish(EntityUid uid)
     {

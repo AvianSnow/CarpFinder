@@ -77,6 +77,7 @@
   components:
   - type: CFActivity
     kind: Flurry
+  - type: CFFlourish
 
 - type: entity
   parent: CFActivityTarget
@@ -110,15 +111,7 @@
     actions: 2
   - type: CFActivity
     kind: SuddenCharge
-
-- type: entity
-  parent: CFActivityInstant
-  id: CFActPointBlank
-  name: Point-Blank Stance
-  description: Ignore volley and gain +2 damage with ranged Strikes inside the first range increment.
-  components:
-  - type: CFActivity
-    kind: PointBlank
+  - type: CFFlourish
 
 - type: entity
   parent: CFActivityInstant

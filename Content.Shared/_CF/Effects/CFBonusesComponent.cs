@@ -59,6 +59,10 @@ public sealed partial class CFActiveBonus
     /// <summary>When set on <see cref="CFBonusStat.SkillChecks"/>, this only counts for this skill.</summary>
     [DataField]
     public string? Skill;
+
+    /// <summary>What added a bonus that can end early, such as a stance. See <see cref="CFBonusSystem.RemoveBonusesFrom"/>.</summary>
+    [DataField]
+    public string? Source;
 }
 
 /// <summary>One save result that becomes a degree better, such as a success against fear.</summary>

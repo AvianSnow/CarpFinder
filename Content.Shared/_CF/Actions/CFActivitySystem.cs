@@ -70,11 +70,6 @@ public sealed partial class CFActivitySystem : EntitySystem
                 args.Cancelled = true;
                 args.Reason = Loc.GetString("cf-act-leap-cannot");
                 break;
-            case CFActivityKind.Flurry or CFActivityKind.SuddenCharge
-                when !_actions.CanFlourish(args.User):
-                args.Cancelled = true;
-                args.Reason = Loc.GetString("cf-act-flourish-used");
-                break;
             case CFActivityKind.ConstructTrap when !_traps.CanConstruct(args.User):
                 args.Cancelled = true;
                 args.Reason = Loc.GetString("cf-trap-cannot");
@@ -96,9 +91,6 @@ public sealed partial class CFActivitySystem : EntitySystem
         {
             case CFActivityKind.Rage:
                 ToggleRage(args.Performer);
-                break;
-            case CFActivityKind.PointBlank:
-                TogglePointBlank(args.Performer);
                 break;
             case CFActivityKind.Anthem:
                 Anthem(args.Performer);
@@ -131,14 +123,12 @@ public sealed partial class CFActivitySystem : EntitySystem
         switch (ent.Comp.Kind)
         {
             case CFActivityKind.Flurry:
-                _actions.MarkFlourish(args.Performer);
                 Flurry(args.Performer, args.Target);
                 break;
             case CFActivityKind.Spellstrike:
                 Spellstrike(args.Performer, args.Target);
                 break;
             case CFActivityKind.SuddenCharge:
-                _actions.MarkFlourish(args.Performer);
                 StrikeHeld(args.Performer, args.Target);
                 break;
         }
@@ -152,14 +142,6 @@ public sealed partial class CFActivitySystem : EntitySystem
         opt.Raging = !opt.Raging;
         Dirty(user, opt);
         _popup.PopupEntity(Loc.GetString(opt.Raging ? "cf-act-rage-start" : "cf-act-rage-end"), user, user);
-    }
-
-    private void TogglePointBlank(EntityUid user)
-    {
-        var opt = EnsureComp<CFCombatOptionsComponent>(user);
-        opt.PointBlank = !opt.PointBlank;
-        Dirty(user, opt);
-        _popup.PopupEntity(Loc.GetString(opt.PointBlank ? "cf-act-point-blank" : "cf-act-point-blank-end"), user, user);
     }
 
     public void Mark(EntityUid user, EntityUid target, bool prey)
