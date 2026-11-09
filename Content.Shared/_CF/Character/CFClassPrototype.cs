@@ -54,6 +54,14 @@ public sealed partial class CFClassPrototype : IPrototype
     /// <summary>True for classes that follow a deity. The builder then offers a <see cref="CFDeityPrototype"/>.</summary>
     [DataField]
     public bool UsesDeity;
+
+    /// <summary>Levels with a skill feat on top of the even levels every class has. A Rogue has 1, 3 and 5.</summary>
+    [DataField]
+    public List<int> BonusSkillFeats = new();
+
+    /// <summary>Levels with a skill increase on top of the odd levels from 3 that every class has. A Rogue has 2 and 4.</summary>
+    [DataField]
+    public List<int> BonusSkillIncreases = new();
 }
 
 /// <summary>One class feature gained by the given level. Later levels are not imported.</summary>
@@ -80,6 +88,9 @@ public sealed partial class CFClassFeature
     /// <summary>What this gives a character when <see cref="Level"/> is reached. See <see cref="CFGrant"/>.</summary>
     [DataField]
     public List<CFGrant> Grants = new();
+
+    /// <summary>True when none of this feature works yet. One with part of its rules working only says which part in its text.</summary>
+    public bool Unfinished => Grants.Count == 0 && Choices.Count == 0 && Description.Contains("TBA");
 }
 
 /// <summary>

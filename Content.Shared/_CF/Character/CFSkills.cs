@@ -139,6 +139,15 @@ public static class CFSkills
         if (level >= 5 && build.SkillIncreaseLevel5?.Id == skillId)
             increases++;
 
+        if (cls != null)
+        {
+            foreach (var bonusLevel in cls.BonusSkillIncreases)
+            {
+                if (bonusLevel <= level && build.BonusSkillIncreases.GetValueOrDefault(bonusLevel) == skillId)
+                    increases++;
+            }
+        }
+
         return RaiseRank(GetSkillRank(cls, background, skillId, trained), increases);
     }
 
@@ -164,6 +173,11 @@ public static class CFSkills
         var result = new List<CFFeatPrototype>();
         if (level >= 1)
         {
+            foreach (var id in BackgroundFeats(prototypes, build))
+            {
+                AddFeat(prototypes, result, id, _ => true);
+            }
+
             AddFeat(prototypes, result, build.AncestryFeat, feat => feat.Fits(ancestryId, 1));
             AddFeat(prototypes, result, build.ClassFeat, feat => feat.FitsClass(classId, 1) && CFClassChoices.MeetsRequirement(prototypes, build, feat));
         }
@@ -185,7 +199,92 @@ public static class CFSkills
 
         if (level >= 5)
             AddFeat(prototypes, result, build.AncestryFeatLevel5, feat => feat.Fits(ancestryId, 5));
+
+        if (classId != null && prototypes.TryIndex<CFClassPrototype>(classId, out var cls))
+        {
+            foreach (var bonusLevel in cls.BonusSkillFeats)
+            {
+                if (bonusLevel <= level && build.BonusSkillFeats.TryGetValue(bonusLevel, out var id))
+                    AddFeat(prototypes, result, new ProtoId<CFFeatPrototype>(id), feat => feat.FitsSkillSlot(bonusLevel));
+            }
+        }
+
         return result;
+    }
+
+    /// <summary>The feats the build's background gives.</summary>
+    public static IReadOnlyList<ProtoId<CFFeatPrototype>> BackgroundFeats(IPrototypeManager prototypes, CFCharacterBuildData build)
+    {
+        return build.Background is { } id && prototypes.TryIndex(id, out CFBackgroundPrototype? background)
+            ? background.SkillFeats
+            : Array.Empty<ProtoId<CFFeatPrototype>>();
+    }
+
+    /// <summary>
+    /// Clears the skill and general feat slots the build no longer qualifies for, and extra slots its class does not have.
+    /// Dropping a feat can cost a later one the skill it trained, so this repeats until nothing changes.
+    /// </summary>
+    /// <returns>Whether anything was cleared.</returns>
+    public static bool DropUnqualifiedFeats(IPrototypeManager prototypes, CFCharacterBuildData build, string? ancestryId)
+    {
+        CFClassPrototype? cls = null;
+        if (build.Class is { } classId)
+            prototypes.TryIndex(classId, out cls);
+
+        var dropped = false;
+        foreach (var level in build.BonusSkillIncreases.Keys.ToList())
+        {
+            if (cls?.BonusSkillIncreases.Contains(level) == true)
+                continue;
+
+            build.BonusSkillIncreases.Remove(level);
+            dropped = true;
+        }
+
+        var given = BackgroundFeats(prototypes, build).Select(id => id.Id).ToHashSet();
+        bool Bad(string? id, int level)
+        {
+            return id != null
+                   && (given.Contains(id)
+                       || !prototypes.TryIndex<CFFeatPrototype>(id, out var feat)
+                       || !Qualifies(prototypes, build, ancestryId, feat, level));
+        }
+
+        bool again;
+        do
+        {
+            again = false;
+            if (Bad(build.SkillFeatLevel2?.Id, 2))
+            {
+                build.SkillFeatLevel2 = null;
+                again = true;
+            }
+
+            if (Bad(build.GeneralFeatLevel3?.Id, 3))
+            {
+                build.GeneralFeatLevel3 = null;
+                again = true;
+            }
+
+            if (Bad(build.SkillFeatLevel4?.Id, 4))
+            {
+                build.SkillFeatLevel4 = null;
+                again = true;
+            }
+
+            foreach (var (level, id) in build.BonusSkillFeats.ToList())
+            {
+                if (cls?.BonusSkillFeats.Contains(level) == true && !Bad(id, level))
+                    continue;
+
+                build.BonusSkillFeats.Remove(level);
+                again = true;
+            }
+
+            dropped |= again;
+        } while (again);
+
+        return dropped;
     }
 
     private static void AddFeat(
@@ -196,7 +295,8 @@ public static class CFSkills
     {
         if (id != null
             && prototypes.TryIndex(id.Value, out CFFeatPrototype? feat)
-            && fits(feat))
+            && fits(feat)
+            && !result.Exists(other => other.ID == feat.ID))
             result.Add(feat);
     }
 

@@ -1,6 +1,7 @@
 using Content.Shared.Actions;
 using Content.Shared.CF.Character.Grants;
 using Content.Shared.CF.Combat;
+using Content.Shared.CF.Languages;
 using Content.Shared.CF.Spells;
 using Content.Shared.CF.Traits;
 using Content.Shared.Overlays;
@@ -196,6 +197,18 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
             if (_prototypes.HasIndex<CFSpellPrototype>(pick.Value))
             {
                 GrantSpell(mob, pick.Value);
+                continue;
+            }
+
+            if (_prototypes.HasIndex<CFLanguagePrototype>(pick.Value))
+            {
+                var languages = EnsureComp<CFLanguagesComponent>(mob);
+                if (!languages.Known.Contains(pick.Value))
+                {
+                    languages.Known.Add(pick.Value);
+                    Dirty(mob, languages);
+                }
+
                 continue;
             }
 

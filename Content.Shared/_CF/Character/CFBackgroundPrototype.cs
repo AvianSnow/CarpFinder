@@ -31,4 +31,8 @@ public sealed partial class CFBackgroundPrototype : IPrototype
     /// <summary>What this gives a character. See <see cref="CFGrant"/>.</summary>
     [DataField]
     public List<CFGrant> Grants = new();
+
+    /// <summary>Feats a character has from level 1 for taking this background. They need no qualifying.</summary>
+    [DataField]
+    public List<ProtoId<CFFeatPrototype>> SkillFeats = new();
 }

@@ -1,5 +1,6 @@
 using System.Linq;
 using Content.Shared.CF.Combat;
+using Content.Shared.CF.Languages;
 using Content.Shared.CF.Preferences;
 using Robust.Shared.Prototypes;
 
@@ -62,6 +63,9 @@ public static class CFOptionChoices
     {
         if (choice.Kind == CFOptionChoiceKind.WeaponGroup)
             return Enum.GetNames<CFWeaponGroup>().ToList();
+
+        if (choice.Kind == CFOptionChoiceKind.Language)
+            return CFLanguageRules.Pickable(prototypes, null).Select(language => language.ID).ToList();
 
         if (choice.Kind == CFOptionChoiceKind.Skill)
         {

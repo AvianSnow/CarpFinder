@@ -1,3 +1,4 @@
+using Content.Shared.Bed.Sleep;
 using Content.Shared.CF.Character;
 using Content.Shared.Actions.Events;
 using Content.Shared.CF.Combat;
@@ -132,6 +133,20 @@ public sealed partial class CFStanceSystem : EntitySystem
     {
         if (_net.IsServer && args.NewMobState != MobState.Alive)
             Leave(args.Target);
+    }
+
+    [SubscribeLocalEvent]
+    private void OnFellAsleep(Entity<CFActiveStanceComponent> ent, ref SleepStateChangedEvent args)
+    {
+        if (_net.IsServer && args.FellAsleep)
+            Leave(ent);
+    }
+
+    [SubscribeLocalEvent]
+    private void OnPutToSleep(Entity<CFActiveStanceComponent> ent, ref CFPutToSleepEvent args)
+    {
+        if (_net.IsServer)
+            Leave(ent);
     }
 
     [SubscribeLocalEvent]

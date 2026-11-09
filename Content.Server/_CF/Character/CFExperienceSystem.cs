@@ -228,6 +228,9 @@ public sealed partial class CFExperienceSystem : EntitySystem
         if (!string.IsNullOrEmpty(increase))
             combat.SkillIncreases.Add(increase);
 
+        if (xp.BonusSkillIncreases.TryGetValue(combat.Level, out var bonusIncrease))
+            combat.SkillIncreases.Add(bonusIncrease);
+
         if (combat.Level != 5 || !TryComp(mob, out CFAbilityScoreComponent? abilities))
             return false;
 
@@ -276,6 +279,9 @@ public sealed partial class CFExperienceSystem : EntitySystem
 
         if (!string.IsNullOrEmpty(general))
             feats.Add(general);
+
+        if (xp.BonusSkillFeats.TryGetValue(level, out var bonus))
+            feats.Add(bonus);
 
         return feats;
     }

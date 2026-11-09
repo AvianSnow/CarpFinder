@@ -59,7 +59,7 @@ public sealed class CFCharacterSetupTest : GameTest
         var role = new RoleLoadout("JobCFAlpha");
         role.SelectedLoadouts["CFGearBasics"] = new List<Loadout> { new() { Prototype = Potion } };
         var build = profile.CFBuild.Clone();
-        build.LoadoutCopies[Potion] = copies;
+        CFCoins.SetCopies(build, "JobCFAlpha", Potion, copies);
         return profile.WithLoadout(role).WithCFBuild(build);
     }
 
@@ -147,6 +147,30 @@ public sealed class CFCharacterSetupTest : GameTest
     }
 
     [Test]
+    public async Task ExtraCopiesBelongToOneJob()
+    {
+        int alpha = 0, beta = -1;
+        List<(string Item, int Count)> copies = default!;
+        await Server.WaitPost(() =>
+        {
+            var profile = WithPotions(2);
+            alpha = CFCoins.CopiesOf(profile.CFBuild, "JobCFAlpha", Potion);
+            beta = CFCoins.CopiesOf(profile.CFBuild, "JobCFBeta", Potion);
+
+            var role = new RoleLoadout("JobCFBeta");
+            role.SelectedLoadouts["CFGearBasics"] = new List<Loadout> { new() { Prototype = Potion } };
+            copies = CFCoins.AffordableCopies(profile.WithLoadout(role), "CFBeta", Prototypes, out _);
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(alpha, Is.EqualTo(2));
+            Assert.That(beta, Is.Zero);
+            Assert.That(copies, Is.Empty, "The other job owns the loadout but bought no spares.");
+        });
+    }
+
+    [Test]
     public async Task ACheatedCartIsCutToWhatThePurseHolds()
     {
         List<(string Item, int Count)> copies = default!;
@@ -195,7 +219,9 @@ public sealed class CFCharacterSetupTest : GameTest
         {
             var serialization = Server.ResolveDependency<ISerializationManager>();
             build = new CFCharacterBuildData();
-            build.LoadoutCopies[Potion] = 4;
+            CFCoins.SetCopies(build, "JobCFAlpha", Potion, 4);
+            build.BonusSkillFeats[3] = "CFAssurance";
+            build.BonusSkillIncreases[2] = "Athletics";
 
             // The database stores the build as JSON, which is the step that has lost data before.
             var json = serialization.WriteValue(build, notNullableOverride: true).ToJsonNode();

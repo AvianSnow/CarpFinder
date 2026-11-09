@@ -39,16 +39,31 @@ public static class CFCoins
         left -= Spent(role, prototypes);
         foreach (var (loadout, _) in OwnedLoadouts(role, prototypes))
         {
-            left -= LoadoutPrice(prototypes, loadout) * CopiesOf(profile.CFBuild, loadout.ID);
+            left -= LoadoutPrice(prototypes, loadout) * CopiesOf(profile.CFBuild, roleId, loadout.ID);
         }
 
         return left;
     }
 
-    /// <summary>Extra copies bought of a loadout, past the first.</summary>
-    public static int CopiesOf(CFCharacterBuildData build, string loadoutId)
+    /// <summary>Extra copies bought of a loadout for one job's <c>roleLoadout</c>, past the first.</summary>
+    public static int CopiesOf(CFCharacterBuildData build, string roleId, string loadoutId)
     {
-        return Math.Clamp(build.LoadoutCopies.GetValueOrDefault(loadoutId), 0, MaxCopies);
+        return Math.Clamp(build.LoadoutCopies.GetValueOrDefault(CopiesKey(roleId, loadoutId)), 0, MaxCopies);
+    }
+
+    /// <summary>Sets a job's extra copies of a loadout. Zero removes the entry.</summary>
+    public static void SetCopies(CFCharacterBuildData build, string roleId, string loadoutId, int copies)
+    {
+        var key = CopiesKey(roleId, loadoutId);
+        if (copies <= 0)
+            build.LoadoutCopies.Remove(key);
+        else
+            build.LoadoutCopies[key] = copies;
+    }
+
+    private static string CopiesKey(string roleId, string loadoutId)
+    {
+        return $"{roleId}/{loadoutId}";
     }
 
     /// <summary>
@@ -63,14 +78,18 @@ public static class CFCoins
     {
         var given = new List<(string Item, int Count)>();
         left = StartingCopper(profile.CFBuild.Level);
-        if (string.IsNullOrEmpty(jobId) || !profile.Loadouts.TryGetValue(LoadoutSystem.GetJobPrototype(jobId), out var role))
+        if (string.IsNullOrEmpty(jobId))
+            return given;
+
+        var roleId = LoadoutSystem.GetJobPrototype(jobId);
+        if (!profile.Loadouts.TryGetValue(roleId, out var role))
             return given;
 
         left -= Spent(role, prototypes);
         foreach (var (loadout, item) in OwnedLoadouts(role, prototypes))
         {
             var price = LoadoutPrice(prototypes, loadout);
-            var copies = CopiesOf(profile.CFBuild, loadout.ID);
+            var copies = CopiesOf(profile.CFBuild, roleId, loadout.ID);
             if (price <= 0 || copies <= 0 || left < price)
                 continue;
 

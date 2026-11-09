@@ -160,7 +160,9 @@
   requiresSkill: Medicine
   requiresRank: Trained
   action: Action
-  pendingAction: true
+  grants:
+  - !type:CFGrantOption
+    option: BattleMedicine
 
 - type: cfFeat
   id: CFBattlePlanner
@@ -812,7 +814,9 @@
   - "Trained in Society"
   requiresSkill: Society
   requiresRank: Trained
-  pendingAction: true
+  choices:
+  - kind: Language
+    count: 2
 
 - type: cfFeat
   id: CFNaturalMedicine

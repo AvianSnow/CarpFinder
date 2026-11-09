@@ -40,7 +40,7 @@
       description: "Recall Knowledge about haunts, curses and strange creatures: TBA"
     - level: 1
       name: "Exploit Vulnerability"
-      description: "Exploit Vulnerability is on your action wheel. The creature is off-guard to you and your Strikes deal 2 extra damage."
+      description: "Point at an enemy to Exploit Vulnerability. The creature is off-guard to you and your Strikes deal 2 extra damage."
       grants:
         - !type:CFGrantOption
           option: Exploit

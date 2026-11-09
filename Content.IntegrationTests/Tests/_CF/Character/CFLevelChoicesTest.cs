@@ -6,6 +6,7 @@ using Content.Server.CF.Character;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Combat;
+using Content.Shared.CF.Languages;
 using Content.Shared.CF.Preferences;
 using Content.Shared.Preferences;
 using Robust.Shared.GameObjects;
@@ -217,6 +218,106 @@ public sealed class CFLevelChoicesTest : GameTest
                 }), "Four, all different.");
                 Assert.That(SEntMan.GetComponent<CFCombatantComponent>(hero).Level, Is.EqualTo(1), "Everyone starts at level 1.");
             });
+        });
+    }
+
+    private CFFeatPrototype PlainSkillFeat(params string[] except)
+    {
+        return Server.ProtoMan.EnumeratePrototypes<CFFeatPrototype>()
+            .First(feat => feat.FitsSkillSlot(1) && feat.RequiresSkill == null && feat.Grants.Count == 0 && !except.Contains(feat.ID));
+    }
+
+    [Test]
+    public async Task ARogueHasItsExtraSlotsAndOthersDoNot()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            var first = PlainSkillFeat();
+            var third = PlainSkillFeat(first.ID);
+            CFCharacterBuildData Build(string cls)
+            {
+                var build = new CFCharacterBuildData { Class = cls };
+                build.BonusSkillFeats[1] = first.ID;
+                build.BonusSkillFeats[3] = third.ID;
+                build.BonusSkillFeats[2] = third.ID;
+                build.BonusSkillIncreases[2] = "Stealth";
+                return build;
+            }
+
+            var spawn = SEntMan.System<CFCharacterSpawnSystem>();
+            var rogue = SEntMan.SpawnEntity("MobHuman", _map.Local(0, 0));
+            spawn.ApplyBuild(rogue, HumanoidCharacterProfile.DefaultWithSpecies().WithCFBuild(Build("Rogue")));
+            var fighter = SEntMan.SpawnEntity("MobHuman", _map.Local(1, 0));
+            spawn.ApplyBuild(fighter, HumanoidCharacterProfile.DefaultWithSpecies().WithCFBuild(Build("Fighter")));
+
+            var xp = SEntMan.GetComponent<CFExperienceComponent>(rogue);
+            var combat = SEntMan.GetComponent<CFCombatantComponent>(rogue);
+            var fighterXp = SEntMan.GetComponent<CFExperienceComponent>(fighter);
+            Assert.Multiple(() =>
+            {
+                Assert.That(xp.BonusSkillFeats.Keys, Is.EqualTo(new[] { 3 }), "Level 1's is applied at spawn, and level 2 is not a bonus level.");
+                Assert.That(combat.SkillIncreases, Is.Empty, "Level 2 has not come yet.");
+                Assert.That(fighterXp.BonusSkillFeats, Is.Empty);
+                Assert.That(fighterXp.BonusSkillIncreases, Is.Empty);
+            });
+
+            LevelTo(rogue, 2);
+            Assert.That(combat.SkillIncreases, Is.EqualTo(new[] { "Stealth" }));
+        });
+    }
+
+    [Test]
+    public async Task ABackgroundsFeatCannotBeTakenAgainAndTeachesLanguages()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            var background = Server.ProtoMan.EnumeratePrototypes<CFBackgroundPrototype>()
+                .First(proto => proto.SkillFeats.Count == 1 && proto.SkillFeats[0].Id == "CFMultilingual");
+            var build = new CFCharacterBuildData { Background = background.ID, GeneralFeatLevel3 = "CFMultilingual" };
+            build.OptionPicks.Add(new CFOptionPick { Source = "CFMultilingual", Slot = 0, Value = "Draconic" });
+            build.OptionPicks.Add(new CFOptionPick { Source = "CFMultilingual", Slot = 1, Value = "Alghollthu" });
+
+            var hero = SEntMan.SpawnEntity("MobHuman", _map.Local(0, 0));
+            SEntMan.System<CFCharacterSpawnSystem>().ApplyBuild(hero, HumanoidCharacterProfile.DefaultWithSpecies().WithCFBuild(build));
+
+            var known = SEntMan.GetComponent<CFLanguagesComponent>(hero).Known;
+            Assert.Multiple(() =>
+            {
+                Assert.That(known.Any(language => language.Id == "Draconic"), "The feat teaches it at level 1, with no Society needed.");
+                Assert.That(known.Any(language => language.Id == "Alghollthu"), Is.False, "Only common languages can be picked.");
+                Assert.That(SEntMan.GetComponent<CFExperienceComponent>(hero).GeneralFeatLevel3, Is.Null, "It already has this feat.");
+            });
+        });
+    }
+
+    [Test]
+    public async Task LosingARankClearsTheFeatThatNeededIt()
+    {
+        var keptWhileRanked = false;
+        var droppedAfter = false;
+        CFCharacterBuildData build = default!;
+        await Server.WaitPost(() =>
+        {
+            var feat = Server.ProtoMan.EnumeratePrototypes<CFFeatPrototype>()
+                .First(f => f.FitsSkillSlot(4) && f.RequiresSkill != null && f.RequiresRank == CFProficiencyRank.Expert);
+            var skill = feat.RequiresSkill!.Value.Id;
+            build = new CFCharacterBuildData { Class = "Rogue", SkillFeatLevel4 = feat.ID, SkillIncreaseLevel3 = skill };
+            build.ClassTrainedSkills.Add(skill);
+
+            CFSkills.DropUnqualifiedFeats(Server.ProtoMan, build, null);
+            keptWhileRanked = build.SkillFeatLevel4 != null;
+
+            build.SkillIncreaseLevel3 = null;
+            droppedAfter = CFSkills.DropUnqualifiedFeats(Server.ProtoMan, build, null);
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(keptWhileRanked, Is.True);
+            Assert.That(droppedAfter, Is.True);
+            Assert.That(build.SkillFeatLevel4, Is.Null);
         });
     }
 

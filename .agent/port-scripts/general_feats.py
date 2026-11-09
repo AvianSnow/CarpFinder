@@ -16,6 +16,11 @@ RANKS = {'trained': 'Trained', 'expert': 'Expert', 'master': 'Master', 'legendar
 SKILLS = ('Acrobatics', 'Arcana', 'Athletics', 'Crafting', 'Deception', 'Diplomacy', 'Intimidation', 'Lore', 'Medicine',
           'Nature', 'Occultism', 'Performance', 'Religion', 'Society', 'Stealth', 'Survival', 'Thievery')
 ACTIONS = {'Single Action': 'Action', 'Two Actions': 'Action', 'Three Actions': 'Action', 'Reaction': 'Reaction', 'Free Action': 'Free'}
+# Feats that do something, and the YAML that says what. Everything else is written as pendingAction.
+WORKING = {
+    'Battle Medicine': ['  grants:', '  - !type:CFGrantOption', '    option: BattleMedicine'],
+    'Multilingual': ['  choices:', '  - kind: Language', '    count: 2'],
+}
 
 
 def fetch():
@@ -93,7 +98,7 @@ def main():
             lines += [f'  requiresSkill: {rank[0]}', f'  requiresRank: {rank[1]}']
         if feat.get('actions') in ACTIONS:
             lines.append(f'  action: {ACTIONS[feat["actions"]]}')
-        lines += ['  pendingAction: true', '']
+        lines += WORKING.get(name, ['  pendingAction: true']) + ['']
 
     with open(OUT, 'w', encoding='utf-8', newline='\n') as f:
         f.write('\n'.join(lines).rstrip('\n') + '\n')

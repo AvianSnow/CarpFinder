@@ -33,7 +33,7 @@
   features:
     - level: 1
       name: "Devise a Stratagem"
-      description: "Devise a Stratagem is on your action wheel. Your next Strike against that creature uses the stored d20."
+      description: "Point at an enemy to Devise a Stratagem. Your next Strike against that creature uses the stored d20."
       grants:
         - !type:CFGrantOption
           option: Devise

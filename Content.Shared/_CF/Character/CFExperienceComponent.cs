@@ -47,6 +47,14 @@ public sealed partial class CFExperienceComponent : Component
     [DataField, AutoNetworkedField]
     public string? SkillIncreaseLevel5;
 
+    /// <summary>Skill feats a class gives on top of the usual ones, by level. Level 1's is applied at spawn.</summary>
+    [DataField]
+    public Dictionary<int, string> BonusSkillFeats = new();
+
+    /// <summary>Skill increases a class gives on top of the usual ones, by level.</summary>
+    [DataField]
+    public Dictionary<int, string> BonusSkillIncreases = new();
+
     [DataField, AutoNetworkedField]
     public List<CFAbility> AbilityBoostsLevel5 = new();
 

@@ -296,12 +296,13 @@ public sealed class CFGrantTest : GameTest
     }
 
     [Test]
-    public async Task ABackgroundCanStillGrantBattleMedicine()
+    public async Task ABackgroundGivesItsSkillFeat()
     {
         _map = await CFDevMap.Load(Pair, Footprint);
         await Server.WaitAssertion(() =>
         {
-            var background = Server.ProtoMan.EnumeratePrototypes<CFBackgroundPrototype>().First(proto => proto.Grants.Count > 0);
+            var background = Server.ProtoMan.EnumeratePrototypes<CFBackgroundPrototype>()
+                .First(proto => proto.SkillFeats.Any(feat => feat.Id == "CFBattleMedicine"));
             var hero = SEntMan.SpawnEntity("MobHuman", _map.Local(0, 0));
             var build = new CFCharacterBuildData { Background = background.ID };
             SEntMan.System<CFCharacterSpawnSystem>().ApplyBuild(hero, HumanoidCharacterProfile.DefaultWithSpecies().WithCFBuild(build));

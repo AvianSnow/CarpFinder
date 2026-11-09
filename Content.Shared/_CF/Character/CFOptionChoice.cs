@@ -7,6 +7,7 @@ public enum CFOptionChoiceKind : byte
     Cantrip,
     Skill,
     WeaponGroup,
+    Language,
 }
 
 /// <summary>

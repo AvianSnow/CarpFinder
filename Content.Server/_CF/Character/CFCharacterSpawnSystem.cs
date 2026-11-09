@@ -174,9 +174,12 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         _armor.RefreshArmorClass(mob);
         var ancestryId = sheet.Ancestry?.ID;
         var classId = sheet.Class?.ID;
-        var chosenFeats = CFSkills.SelectedFeats(_prototypes, profile.CFBuild, ancestryId, classId, 1);
+        // The build comes from a client, so a feat it cannot have goes before anything reads it.
+        var checkedBuild = profile.CFBuild.Clone();
+        CFSkills.DropUnqualifiedFeats(_prototypes, checkedBuild, ancestryId);
+        var chosenFeats = CFSkills.SelectedFeats(_prototypes, checkedBuild, ancestryId, classId, 1);
         var speedBonus = 0;
-        combatant.TrainedSkills = CFSkills.CollectTrainedSkills(_prototypes, profile.CFBuild, ancestryId, classId, 1);
+        combatant.TrainedSkills = CFSkills.CollectTrainedSkills(_prototypes, checkedBuild, ancestryId, classId, 1);
         var xp = EnsureComp<CFExperienceComponent>(mob);
         xp.Xp = 0;
         xp.AncestryFeat = IdOf(profile.CFBuild.AncestryFeat);
@@ -184,14 +187,20 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         xp.ClassFeatLevel2 = ChoiceFeat(profile.CFBuild, profile.CFBuild.ClassFeatLevel2);
         xp.ClassFeatLevel4 = ChoiceFeat(profile.CFBuild, profile.CFBuild.ClassFeatLevel4);
         xp.AncestryFeatLevel5 = IdOf(profile.CFBuild.AncestryFeatLevel5);
-        xp.SkillFeatLevel2 = QualifiedFeat(profile.CFBuild, ancestryId, profile.CFBuild.SkillFeatLevel2, 2, skillSlot: true);
-        xp.GeneralFeatLevel3 = QualifiedFeat(profile.CFBuild, ancestryId, profile.CFBuild.GeneralFeatLevel3, 3, skillSlot: false);
-        xp.SkillFeatLevel4 = QualifiedFeat(profile.CFBuild, ancestryId, profile.CFBuild.SkillFeatLevel4, 4, skillSlot: true);
-        xp.SkillIncreaseLevel3 = KnownSkill(profile.CFBuild.SkillIncreaseLevel3);
-        xp.SkillIncreaseLevel5 = KnownSkill(profile.CFBuild.SkillIncreaseLevel5);
+        xp.SkillFeatLevel2 = QualifiedFeat(checkedBuild, ancestryId, checkedBuild.SkillFeatLevel2, 2, skillSlot: true);
+        xp.GeneralFeatLevel3 = QualifiedFeat(checkedBuild, ancestryId, checkedBuild.GeneralFeatLevel3, 3, skillSlot: false);
+        xp.SkillFeatLevel4 = QualifiedFeat(checkedBuild, ancestryId, checkedBuild.SkillFeatLevel4, 4, skillSlot: true);
+        xp.SkillIncreaseLevel3 = KnownSkill(checkedBuild.SkillIncreaseLevel3);
+        xp.SkillIncreaseLevel5 = KnownSkill(checkedBuild.SkillIncreaseLevel5);
+        xp.BonusSkillFeats = checkedBuild.BonusSkillFeats
+            .Where(pair => pair.Key > 1 && QualifiedFeat(checkedBuild, ancestryId, new ProtoId<CFFeatPrototype>(pair.Value), pair.Key, skillSlot: true) != null)
+            .ToDictionary(pair => pair.Key, pair => pair.Value);
+        xp.BonusSkillIncreases = checkedBuild.BonusSkillIncreases
+            .Where(pair => _prototypes.HasIndex<CFAbilitySkillPrototype>(pair.Value))
+            .ToDictionary(pair => pair.Key, pair => pair.Value);
         xp.AbilityBoostsLevel5 = profile.CFBuild.AbilityBoostsLevel5.Distinct().Take(CFAttributeMath.LevelFiveBoostCount).ToList();
         xp.ClassChoices = CFClassChoices.Selected(_prototypes, profile.CFBuild).Select(choice => choice.ID).ToList();
-        xp.OptionPicks = CFOptionChoices.Valid(_prototypes, profile.CFBuild, ancestryId);
+        xp.OptionPicks = CFOptionChoices.Valid(_prototypes, checkedBuild, ancestryId);
         xp.SpellPicks = profile.CFBuild.Spells.Select(spell => spell.Copy()).ToList();
         Dirty(mob, xp);
         combatant.LoreNames.Clear();

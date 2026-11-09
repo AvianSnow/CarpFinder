@@ -5,6 +5,7 @@ using Content.Shared.ActionBlocker;
 using Content.Shared.Actions;
 using Content.Shared.Actions.Components;
 using Content.Shared.Actions.Events;
+using Content.Shared.Bed.Sleep;
 using Content.Shared.CF.Actions;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Combat;
@@ -253,6 +254,41 @@ public sealed class CFStanceTest : GameTest
             Assert.That(before, Is.True);
             Assert.That(after, Is.False);
             Assert.That(bonus, Is.Zero);
+        });
+    }
+
+    [Test]
+    public async Task FallingAsleepEndsAStanceAndParalysisDoesNot()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        var asleep = true;
+        var paralyzed = false;
+        var slept = true;
+        await Server.WaitPost(() =>
+        {
+            var conditions = SEntMan.System<CFConditionSystem>();
+
+            var sleeper = Hero();
+            Use(sleeper, Grant(sleeper, Crane));
+            conditions.ApplyCondition(sleeper, CFConditionKind.Asleep, 0, 5f, sleeper, 0);
+            asleep = Stances.Current(sleeper) != null;
+
+            var stiff = Hero();
+            Use(stiff, Grant(stiff, Crane));
+            conditions.ApplyCondition(stiff, CFConditionKind.Paralyzed, 0, 5f, stiff, 0);
+            paralyzed = Stances.Current(stiff) != null;
+
+            var bedded = Hero();
+            Use(bedded, Grant(bedded, Crane));
+            SEntMan.System<SleepingSystem>().TrySleeping(bedded);
+            slept = Stances.Current(bedded) != null;
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(asleep, Is.False, "The asleep condition is falling unconscious.");
+            Assert.That(slept, Is.False, "So is stock sleep, in a bed or from the action.");
+            Assert.That(paralyzed, Is.True, "Paralyzed is not knocked out.");
         });
     }
 

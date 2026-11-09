@@ -146,11 +146,20 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
     public List<string> PetGear = new();
 
     /// <summary>
-    /// Copies bought past the first, by loadout id. The first copy is the stock loadout, which is equipped at spawn.
-    /// These go in the character's hands and bag. It comes from a client, so spawning checks it against the purse.
+    /// Copies bought past the first, per job and loadout: read it through <c>CFCoins.CopiesOf</c>. The first copy is the
+    /// stock loadout, which is equipped at spawn. These go in the character's hands and bag. It comes from a client, so
+    /// spawning checks it against the purse.
     /// </summary>
     [DataField]
     public Dictionary<string, int> LoadoutCopies = new();
+
+    /// <summary>Skill feats from levels where the class gives an extra one, by level. See <see cref="CFClassPrototype.BonusSkillFeats"/>.</summary>
+    [DataField]
+    public Dictionary<int, string> BonusSkillFeats = new();
+
+    /// <summary>The same for skill increases. See <see cref="CFClassPrototype.BonusSkillIncreases"/>.</summary>
+    [DataField]
+    public Dictionary<int, string> BonusSkillIncreases = new();
 
     public CFCharacterBuildData Clone()
     {
@@ -187,6 +196,8 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
             PetBarding = PetBarding,
             PetGear = PetGear.ToList(),
             LoadoutCopies = new Dictionary<string, int>(LoadoutCopies),
+            BonusSkillFeats = new Dictionary<int, string>(BonusSkillFeats),
+            BonusSkillIncreases = new Dictionary<int, string>(BonusSkillIncreases),
         };
     }
 
@@ -226,7 +237,11 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
                && PetBarding == other.PetBarding
                && PetGear.SequenceEqual(other.PetGear)
                && LoadoutCopies.Count == other.LoadoutCopies.Count
-               && LoadoutCopies.All(pair => other.LoadoutCopies.GetValueOrDefault(pair.Key) == pair.Value);
+               && LoadoutCopies.All(pair => other.LoadoutCopies.GetValueOrDefault(pair.Key) == pair.Value)
+               && BonusSkillFeats.Count == other.BonusSkillFeats.Count
+               && BonusSkillFeats.All(pair => other.BonusSkillFeats.GetValueOrDefault(pair.Key) == pair.Value)
+               && BonusSkillIncreases.Count == other.BonusSkillIncreases.Count
+               && BonusSkillIncreases.All(pair => other.BonusSkillIncreases.GetValueOrDefault(pair.Key) == pair.Value);
     }
 
     public override bool Equals(object? obj)
@@ -270,6 +285,8 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
         foreach (var spell in Spells)
             hash.Add(spell);
         hash.Add(LoadoutCopies.Count);
+        hash.Add(BonusSkillFeats.Count);
+        hash.Add(BonusSkillIncreases.Count);
         hash.Add(PetId);
         hash.Add(PetName);
         hash.Add(PetBarding);

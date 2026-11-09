@@ -137,7 +137,7 @@ public sealed class BuilderShopTab : BoxContainer
         if (_profile == null
             || _prototypes == null
             || _onChanged == null
-            || !CFBuilderRole.TryGet(_profile, _jobOverride, _session, _prototypes, out _, out var roleLoadout))
+            || !CFBuilderRole.TryGet(_profile, _jobOverride, _session, _prototypes, out var roleProto, out var roleLoadout))
         {
             return;
         }
@@ -158,7 +158,7 @@ public sealed class BuilderShopTab : BoxContainer
             }
 
             if (copies > 0)
-                build.LoadoutCopies[line.Prototype] = Math.Min(CFCoins.CopiesOf(build, line.Prototype) + copies, CFCoins.MaxCopies);
+                CFCoins.SetCopies(build, roleProto.ID, line.Prototype, Math.Min(CFCoins.CopiesOf(build, roleProto.ID, line.Prototype) + copies, CFCoins.MaxCopies));
         }
 
         _onChanged(_profile.WithLoadout(roleLoadout).WithCFBuild(build));

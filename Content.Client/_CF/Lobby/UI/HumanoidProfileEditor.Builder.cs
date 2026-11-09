@@ -41,6 +41,7 @@ public sealed partial class HumanoidProfileEditor
         SkillFeatLevel2,
         GeneralFeatLevel3,
         SkillFeatLevel4,
+        BonusSkillFeat,
         ClassChoice,
         Deity,
     }
@@ -51,9 +52,13 @@ public sealed partial class HumanoidProfileEditor
         Language,
         IncreaseLevel3,
         IncreaseLevel5,
+        BonusIncrease,
         Background,
         Class,
     }
+
+    /// <summary>Which level's extra slot <see cref="BuilderSelection.BonusSkillFeat"/> or the bonus increase is for.</summary>
+    private int _bonusLevel;
 
     /// <summary>The character has been accepted, so everything past the first step is shown.</summary>
     private bool _setupAccepted;
@@ -117,6 +122,11 @@ public sealed partial class HumanoidProfileEditor
         Level2SkillFeatSlot.OnPressed += _ => ShowGeneralFeatSelection(BuilderSelection.SkillFeatLevel2, 2);
         Level3GeneralFeatSlot.OnPressed += _ => ShowGeneralFeatSelection(BuilderSelection.GeneralFeatLevel3, 3);
         Level4SkillFeatSlot.OnPressed += _ => ShowGeneralFeatSelection(BuilderSelection.SkillFeatLevel4, 4);
+        Level1BonusSkillFeatSlot.OnPressed += _ => ShowGeneralFeatSelection(BuilderSelection.BonusSkillFeat, 1);
+        Level3BonusSkillFeatSlot.OnPressed += _ => ShowGeneralFeatSelection(BuilderSelection.BonusSkillFeat, 3);
+        Level5BonusSkillFeatSlot.OnPressed += _ => ShowGeneralFeatSelection(BuilderSelection.BonusSkillFeat, 5);
+        Level2BonusSkillIncreaseSlot.OnPressed += _ => ShowSkillIncrease(2, bonus: true);
+        Level4BonusSkillIncreaseSlot.OnPressed += _ => ShowSkillIncrease(4, bonus: true);
         Level3SkillIncreaseSlot.OnPressed += _ => ShowSkillIncrease(3);
         Level5SkillIncreaseSlot.OnPressed += _ => ShowSkillIncrease(5);
         Level5BoostsSlot.OnPressed += _ => ShowLevelBoosts();
@@ -182,6 +192,8 @@ public sealed partial class HumanoidProfileEditor
         if (Profile == null)
             return;
 
+        // Any change here can cost a later feat its skill rank.
+        CFSkills.DropUnqualifiedFeats(_prototypeManager, build, CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species)?.ID);
         Profile = Profile.WithCFBuild(build);
         SetDirty();
         UpdateBuilderSummary();
@@ -244,6 +256,9 @@ public sealed partial class HumanoidProfileEditor
         if (_prototypeManager.TryIndex<CFSpellPrototype>(value, out var spell))
             return spell.Name;
 
+        if (_prototypeManager.TryIndex<CFLanguagePrototype>(value, out var language))
+            return Loc.GetString(language.Name);
+
         return SkillLabelMap().GetValueOrDefault(value, value);
     }
 
@@ -278,6 +293,7 @@ public sealed partial class HumanoidProfileEditor
                 {
                     CFOptionChoiceKind.Cantrip => "cf-character-builder-option-cantrip",
                     CFOptionChoiceKind.WeaponGroup => "cf-character-builder-option-weapon-group",
+                    CFOptionChoiceKind.Language => "cf-character-builder-option-language",
                     _ => "cf-character-builder-option-skill",
                 }),
                 Allowed = allowed,
@@ -498,6 +514,13 @@ public sealed partial class HumanoidProfileEditor
                 SetBuild(next);
                 break;
             }
+            case BuilderSelection.BonusSkillFeat:
+            {
+                var next = CurrentBuild();
+                next.BonusSkillFeats[_bonusLevel] = id;
+                SetBuild(next);
+                break;
+            }
             case BuilderSelection.AncestryFeatLevel5:
             {
                 var next = CurrentBuild();
@@ -640,7 +663,12 @@ public sealed partial class HumanoidProfileEditor
 
         var lines = new List<string> { text };
         foreach (var feature in cls.Features.OrderBy(feature => feature.Level).ThenBy(feature => feature.Name, StringComparer.Ordinal))
-            lines.Add($"Level {feature.Level}: {feature.Name}. {feature.Description}");
+        {
+            var name = feature.Unfinished
+                ? Loc.GetString("cf-character-builder-feat-tba", ("name", feature.Name))
+                : feature.Name;
+            lines.Add($"Level {feature.Level}: {name}. {feature.Description}");
+        }
 
         return string.Join("\n", lines);
     }
@@ -843,10 +871,16 @@ public sealed partial class HumanoidProfileEditor
         {
             BuilderSelection.SkillFeatLevel2 => build.SkillFeatLevel2?.Id,
             BuilderSelection.GeneralFeatLevel3 => build.GeneralFeatLevel3?.Id,
+            BuilderSelection.BonusSkillFeat => build.BonusSkillFeats.GetValueOrDefault(level),
             _ => build.SkillFeatLevel4?.Id,
         };
 
+        if (slot == BuilderSelection.BonusSkillFeat)
+            _bonusLevel = level;
+
         var taken = new HashSet<string?> { build.SkillFeatLevel2?.Id, build.GeneralFeatLevel3?.Id, build.SkillFeatLevel4?.Id };
+        taken.UnionWith(build.BonusSkillFeats.Values);
+        taken.UnionWith(CFSkills.BackgroundFeats(_prototypeManager, build).Select(id => id.Id));
         taken.Remove(selected);
         _pendingId = selected;
 
@@ -885,12 +919,15 @@ public sealed partial class HumanoidProfileEditor
     }
 
     /// <summary>One skill to raise a rank, from those still below Expert before this level.</summary>
-    private void ShowSkillIncrease(int level)
+    private void ShowSkillIncrease(int level, bool bonus = false)
     {
         if (Profile == null)
             return;
 
-        _skillMode = level == 3 ? SkillAssignMode.IncreaseLevel3 : SkillAssignMode.IncreaseLevel5;
+        _bonusLevel = level;
+        _skillMode = bonus
+            ? SkillAssignMode.BonusIncrease
+            : level == 3 ? SkillAssignMode.IncreaseLevel3 : SkillAssignMode.IncreaseLevel5;
         var build = CurrentBuild();
         var ancestryId = CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species)?.ID;
         var allowed = new List<string>();
@@ -904,7 +941,9 @@ public sealed partial class HumanoidProfileEditor
             labels[skill.ID] = Loc.GetString(skill.Name);
         }
 
-        var current = level == 3 ? build.SkillIncreaseLevel3?.Id : build.SkillIncreaseLevel5?.Id;
+        var current = bonus
+            ? build.BonusSkillIncreases.GetValueOrDefault(level)
+            : level == 3 ? build.SkillIncreaseLevel3?.Id : build.SkillIncreaseLevel5?.Id;
         var slots = new List<SkillSlotDefinition>
         {
             new()
@@ -1528,6 +1567,29 @@ public sealed partial class HumanoidProfileEditor
             : Loc.GetString(slot);
     }
 
+    /// <summary>The extra skill feat and increase slots show only for a class that has them at that level.</summary>
+    private void UpdateBonusSlots(CFCharacterBuildData build)
+    {
+        CFClassPrototype? cls = null;
+        if (build.Class is { } classId)
+            _prototypeManager.TryIndex(classId, out cls);
+
+        foreach (var (button, level) in new[] { (Level1BonusSkillFeatSlot, 1), (Level3BonusSkillFeatSlot, 3), (Level5BonusSkillFeatSlot, 5) })
+        {
+            button.Visible = cls?.BonusSkillFeats.Contains(level) == true;
+            button.Text = FeatSlotText(
+                "cf-character-builder-skill-feat",
+                build.BonusSkillFeats.TryGetValue(level, out var feat) ? new ProtoId<CFFeatPrototype>(feat) : (ProtoId<CFFeatPrototype>?) null);
+        }
+
+        foreach (var (button, level) in new[] { (Level2BonusSkillIncreaseSlot, 2), (Level4BonusSkillIncreaseSlot, 4) })
+        {
+            button.Visible = cls?.BonusSkillIncreases.Contains(level) == true;
+            button.Text = SkillSlotText(
+                build.BonusSkillIncreases.TryGetValue(level, out var skill) ? new ProtoId<CFAbilitySkillPrototype>(skill) : (ProtoId<CFAbilitySkillPrototype>?) null);
+        }
+    }
+
     private string SkillSlotText(ProtoId<CFAbilitySkillPrototype>? skill)
     {
         var slot = Loc.GetString("cf-character-builder-skill-increase");
@@ -1647,7 +1709,14 @@ public sealed partial class HumanoidProfileEditor
             return;
         }
 
-        if (_skillMode is SkillAssignMode.IncreaseLevel3 or SkillAssignMode.IncreaseLevel5)
+        if (_skillMode == SkillAssignMode.BonusIncrease)
+        {
+            if (selections.TryGetValue("increase", out var bonusIncrease) && bonusIncrease != null)
+                build.BonusSkillIncreases[_bonusLevel] = bonusIncrease;
+            else
+                build.BonusSkillIncreases.Remove(_bonusLevel);
+        }
+        else if (_skillMode is SkillAssignMode.IncreaseLevel3 or SkillAssignMode.IncreaseLevel5)
         {
             selections.TryGetValue("increase", out var increase);
             if (_skillMode == SkillAssignMode.IncreaseLevel3)
@@ -1811,6 +1880,7 @@ public sealed partial class HumanoidProfileEditor
         Level4SkillFeatSlot.Text = FeatSlotText("cf-character-builder-skill-feat", build.SkillFeatLevel4);
         Level3SkillIncreaseSlot.Text = SkillSlotText(build.SkillIncreaseLevel3);
         Level5SkillIncreaseSlot.Text = SkillSlotText(build.SkillIncreaseLevel5);
+        UpdateBonusSlots(build);
         Level5BoostsSlot.Text = build.AbilityBoostsLevel5.Count >= CFAttributeMath.LevelFiveBoostCount
             ? Loc.GetString("cf-character-builder-level-boosts-done")
             : Loc.GetString("cf-character-builder-level-boosts");

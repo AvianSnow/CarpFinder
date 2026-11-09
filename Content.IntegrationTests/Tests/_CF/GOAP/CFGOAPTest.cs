@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Content.IntegrationTests.Fixtures;
 using Content.IntegrationTests.Tests.CF;
@@ -6,6 +7,7 @@ using Content.Server.CF.GOAP;
 using Content.Server.CF.GOAP.Influence;
 using Content.Server.CF.GOAP.Nodes;
 using Content.Server.CF.GOAP.Steering;
+using Content.Server.CF.GOAP.Steps;
 using Content.Server.NPC.Systems;
 using Content.Shared.CCVar;
 using Content.Shared.CF.Actions;
@@ -106,6 +108,43 @@ public sealed class CFGOAPTest : CFGOAPLoggedTest
         }
 
         return plan;
+    }
+
+    [TestCase("Demoralize")]
+    [TestCase("Feint")]
+    public async Task AManeuverWaitsForTheThinkingTimerLikeAStrike(string id)
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        var waited = false;
+        var done = false;
+        float full = 0f, whileThinking = 0f, after = 0f;
+        await Server.WaitPost(() =>
+        {
+            var boss = Boss();
+            boss.Comp.Target = Hero(1);
+            SEntMan.GetComponent<CFCombatantComponent>(boss).TrainedSkills.Add("Deception");
+            var pool = SEntMan.GetComponent<CFActionPoolComponent>(boss);
+            var step = SEntMan.System<CFGOAPManeuverStepSystem>();
+            var action = Server.ProtoMan.Index<CFGOAPActionPrototype>(id);
+            pool.Stamina = 3f;
+
+            full = pool.Stamina;
+            waited = !step.Run(boss, action);
+            whileThinking = pool.Stamina;
+
+            // Set rather than waited for, because the running brain would act on its own during real ticks.
+            pool.ThinkingUntil = SGameTiming.CurTime - TimeSpan.FromMilliseconds(1);
+            done = step.Run(boss, action);
+            after = pool.Stamina;
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(waited, Is.True, "The first try only starts the timer.");
+            Assert.That(whileThinking, Is.EqualTo(full), "Nothing is spent while thinking.");
+            Assert.That(done, Is.True);
+            Assert.That(after, Is.LessThan(full), "It acts once the timer has run out.");
+        });
     }
 
     [Test]

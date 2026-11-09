@@ -116,6 +116,10 @@ public sealed partial class CFConditionComponent : Component
     public Dictionary<EntityUid, TimeSpan> OffGuardUntil = new();
 }
 
+/// <summary>Raised on a creature the asleep condition has just knocked out. Stock sleep has its own event.</summary>
+[ByRefEvent]
+public readonly record struct CFPutToSleepEvent;
+
 /// <summary>Conditions an effect can apply through <see cref="CFConditionSystem.ApplyCondition"/>.</summary>
 public enum CFConditionKind : byte
 {

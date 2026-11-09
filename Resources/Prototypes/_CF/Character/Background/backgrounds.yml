@@ -1,10 +1,12 @@
 # Carpfinder backgrounds other than Acrobat and Acolyte (those two files stay as-is).
 # The attribute list is the restricted boost. The builder always adds one free boost.
-# A Lore subcategory uses the Lore skill. Skill feats are named here and are not granted.
+# A Lore subcategory uses the Lore skill. `skillFeats` are granted at level 1. Some feats named in a description are from other books and have no match.
 - type: cfBackground
   id: cf-background-academic-scion
   name: cf-background-academic-scion
   description: cf-background-description-academic-scion
+  skillFeats:
+    - CFArcaneSense
   rarity: Uncommon
   trainedSkills:
     - Arcana
@@ -17,6 +19,8 @@
   id: cf-background-academy-dropout
   name: cf-background-academy-dropout
   description: cf-background-description-academy-dropout
+  skillFeats:
+    - CFDubiousKnowledge
   trainedSkills:
     - Arcana
     - Lore
@@ -28,9 +32,8 @@
   id: cf-background-acupuncturist
   name: cf-background-acupuncturist
   description: cf-background-description-acupuncturist
-  grants:
-    - !type:CFGrantOption
-      option: BattleMedicine
+  skillFeats:
+    - CFBattleMedicine
   rarity: Uncommon
   trainedSkills:
     - Medicine
@@ -43,6 +46,8 @@
   id: cf-background-aiudara-seeker
   name: cf-background-aiudara-seeker
   description: cf-background-description-aiudara-seeker
+  skillFeats:
+    - CFQuickIdentification
   rarity: Rare
   trainedSkills:
     - Arcana
@@ -55,6 +60,8 @@
   id: cf-background-alkenstar-outlaw
   name: cf-background-alkenstar-outlaw
   description: cf-background-description-alkenstar-outlaw
+  skillFeats:
+    - CFSubtleTheft
   rarity: Uncommon
   trainedSkills:
     - Thievery
@@ -67,6 +74,8 @@
   id: cf-background-alkenstar-sojourner
   name: cf-background-alkenstar-sojourner
   description: cf-background-description-alkenstar-sojourner
+  skillFeats:
+    - CFStreetwise
   rarity: Uncommon
   trainedSkills:
     - Society
@@ -79,6 +88,8 @@
   id: cf-background-alkenstar-tinker
   name: cf-background-alkenstar-tinker
   description: cf-background-description-alkenstar-tinker
+  skillFeats:
+    - CFAlchemicalCrafting
   trainedSkills:
     - Crafting
     - Lore
@@ -101,6 +112,8 @@
   id: cf-background-almas-clerk
   name: cf-background-almas-clerk
   description: cf-background-description-almas-clerk
+  skillFeats:
+    - CFGleanContents
   rarity: Uncommon
   trainedSkills:
     - Society
@@ -128,6 +141,8 @@
   id: cf-background-animal-whisperer
   name: cf-background-animal-whisperer
   description: cf-background-description-animal-whisperer
+  skillFeats:
+    - CFTrainAnimal
   trainedSkills:
     - Nature
   abilityBoosts:
@@ -149,6 +164,8 @@
   id: cf-background-anti-tech-activist
   name: cf-background-anti-tech-activist
   description: cf-background-description-anti-tech-activist
+  skillFeats:
+    - CFGroupCoercion
   trainedSkills:
     - Intimidation
     - Lore
@@ -160,6 +177,8 @@
   id: cf-background-archaeologist
   name: cf-background-archaeologist
   description: cf-background-description-archaeologist
+  skillFeats:
+    - CFAdditionalLore
   trainedSkills:
     - Society
     - Lore
@@ -171,6 +190,8 @@
   id: cf-background-artisan
   name: cf-background-artisan
   description: cf-background-description-artisan
+  skillFeats:
+    - CFSpecialtyCrafting
   trainedSkills:
     - Crafting
     - Lore
@@ -182,6 +203,8 @@
   id: cf-background-artist
   name: cf-background-artist
   description: cf-background-description-artist
+  skillFeats:
+    - CFSpecialtyCrafting
   trainedSkills:
     - Crafting
     - Lore
@@ -193,6 +216,8 @@
   id: cf-background-aspiring-free-captain
   name: cf-background-aspiring-free-captain
   description: cf-background-description-aspiring-free-captain
+  skillFeats:
+    - CFGroupCoercion
   trainedSkills:
     - Intimidation
     - Lore
@@ -204,6 +229,8 @@
   id: cf-background-aspiring-river-monarch
   name: cf-background-aspiring-river-monarch
   description: cf-background-description-aspiring-river-monarch
+  skillFeats:
+    - CFCourtlyGraces
   trainedSkills:
     - Society
     - Lore
@@ -215,6 +242,8 @@
   id: cf-background-astrologer
   name: cf-background-astrologer
   description: cf-background-description-astrologer
+  skillFeats:
+    - CFOddityIdentification
   trainedSkills:
     - Occultism
     - Lore
@@ -237,6 +266,8 @@
   id: cf-background-atteran-rancher
   name: cf-background-atteran-rancher
   description: cf-background-description-atteran-rancher
+  skillFeats:
+    - CFTrainAnimal
   trainedSkills:
     - Nature
     - Lore
@@ -260,6 +291,8 @@
   id: cf-background-bachuan-revolutionary
   name: cf-background-bachuan-revolutionary
   description: cf-background-description-bachuan-revolutionary
+  skillFeats:
+    - CFSignLanguage
   rarity: Uncommon
   trainedSkills:
     - Society
@@ -272,6 +305,8 @@
   id: cf-background-back-alley-doctor
   name: cf-background-back-alley-doctor
   description: cf-background-description-back-alley-doctor
+  skillFeats:
+    - CFRiskySurgery
   trainedSkills:
     - Medicine
     - Lore
@@ -283,6 +318,8 @@
   id: cf-background-bandit
   name: cf-background-bandit
   description: cf-background-description-bandit
+  skillFeats:
+    - CFGroupCoercion
   trainedSkills:
     - Intimidation
     - Lore
@@ -309,6 +346,8 @@
   id: cf-background-barber
   name: cf-background-barber
   description: cf-background-description-barber
+  skillFeats:
+    - CFRiskySurgery
   trainedSkills:
     - Medicine
     - Lore
@@ -320,6 +359,8 @@
   id: cf-background-barkeep
   name: cf-background-barkeep
   description: cf-background-description-barkeep
+  skillFeats:
+    - CFHobnobber
   trainedSkills:
     - Diplomacy
     - Lore
@@ -331,6 +372,8 @@
   id: cf-background-barrister
   name: cf-background-barrister
   description: cf-background-description-barrister
+  skillFeats:
+    - CFGroupImpression
   trainedSkills:
     - Diplomacy
     - Lore
@@ -353,6 +396,8 @@
   id: cf-background-bekyar-restorer
   name: cf-background-bekyar-restorer
   description: cf-background-description-bekyar-restorer
+  skillFeats:
+    - CFGroupImpression
   trainedSkills:
     - Diplomacy
     - Lore
@@ -364,6 +409,8 @@
   id: cf-background-belkzen-slayer
   name: cf-background-belkzen-slayer
   description: cf-background-description-belkzen-slayer
+  skillFeats:
+    - CFIntimidatingGlare
   trainedSkills:
     - Intimidation
     - Lore
@@ -375,6 +422,8 @@
   id: cf-background-bellflower-agent
   name: cf-background-bellflower-agent
   description: cf-background-description-bellflower-agent
+  skillFeats:
+    - CFExperiencedSmuggler
   trainedSkills:
     - Stealth
     - Lore
@@ -386,6 +435,8 @@
   id: cf-background-black-market-smuggler
   name: cf-background-black-market-smuggler
   description: cf-background-description-black-market-smuggler
+  skillFeats:
+    - CFExperiencedSmuggler
   trainedSkills:
     - Stealth
     - Lore
@@ -408,6 +459,8 @@
   id: cf-background-bonuwat-wavetouched
   name: cf-background-bonuwat-wavetouched
   description: cf-background-description-bonuwat-wavetouched
+  skillFeats:
+    - CFUnderwaterMarauder
   trainedSkills:
     - Athletics
     - Lore
@@ -419,6 +472,8 @@
   id: cf-background-bookkeeper
   name: cf-background-bookkeeper
   description: cf-background-description-bookkeeper
+  skillFeats:
+    - CFEyeForNumbers
   trainedSkills:
     - Society
     - Lore
@@ -430,6 +485,8 @@
   id: cf-background-bounty-hunter
   name: cf-background-bounty-hunter
   description: cf-background-description-bounty-hunter
+  skillFeats:
+    - CFExperiencedTracker
   trainedSkills:
     - Survival
     - Lore
@@ -441,6 +498,8 @@
   id: cf-background-bright-lion
   name: cf-background-bright-lion
   description: cf-background-description-bright-lion
+  skillFeats:
+    - CFLieToMe
   trainedSkills:
     - Deception
     - Lore
@@ -452,6 +511,8 @@
   id: cf-background-cannoneer
   name: cf-background-cannoneer
   description: cf-background-description-cannoneer
+  skillFeats:
+    - CFHeftyHauler
   trainedSkills:
     - Athletics
     - Lore
@@ -463,6 +524,8 @@
   id: cf-background-charlatan
   name: cf-background-charlatan
   description: cf-background-description-charlatan
+  skillFeats:
+    - CFCharmingLiar
   trainedSkills:
     - Deception
     - Lore
@@ -474,6 +537,8 @@
   id: cf-background-chelish-rebel
   name: cf-background-chelish-rebel
   description: cf-background-description-chelish-rebel
+  skillFeats:
+    - CFStreetwise
   trainedSkills:
     - Society
     - Lore
@@ -485,6 +550,8 @@
   id: cf-background-child-of-the-puddles
   name: cf-background-child-of-the-puddles
   description: cf-background-description-child-of-the-puddles
+  skillFeats:
+    - CFSteadyBalance
   trainedSkills:
     - Acrobatics
     - Lore
@@ -508,6 +575,8 @@
   id: cf-background-child-of-westcrown
   name: cf-background-child-of-westcrown
   description: cf-background-description-child-of-westcrown
+  skillFeats:
+    - CFGroupImpression
   trainedSkills:
     - Diplomacy
     - Lore
@@ -530,6 +599,8 @@
   id: cf-background-circuit-judge
   name: cf-background-circuit-judge
   description: cf-background-description-circuit-judge
+  skillFeats:
+    - CFLieToMe
   rarity: Uncommon
   trainedSkills:
     - Deception
@@ -542,6 +613,8 @@
   id: cf-background-clockfighter
   name: cf-background-clockfighter
   description: cf-background-description-clockfighter
+  skillFeats:
+    - CFExperiencedProfessional
   trainedSkills:
     - Crafting
     - Lore
@@ -553,6 +626,8 @@
   id: cf-background-clockwork-researcher
   name: cf-background-clockwork-researcher
   description: cf-background-description-clockwork-researcher
+  skillFeats:
+    - CFCrafterSAppraisal
   trainedSkills:
     - Society
     - Lore
@@ -564,6 +639,8 @@
   id: cf-background-codebreaker
   name: cf-background-codebreaker
   description: cf-background-description-codebreaker
+  skillFeats:
+    - CFGleanContents
   trainedSkills:
     - Society
     - Lore
@@ -584,6 +661,8 @@
   id: cf-background-concordance-scout
   name: cf-background-concordance-scout
   description: cf-background-description-concordance-scout
+  skillFeats:
+    - CFHobnobber
   rarity: Uncommon
   trainedSkills:
     - Diplomacy
@@ -595,6 +674,8 @@
   id: cf-background-convocation-scout
   name: cf-background-convocation-scout
   description: cf-background-description-convocation-scout
+  skillFeats:
+    - CFGroupImpression
   rarity: Uncommon
   trainedSkills:
     - Diplomacy
@@ -607,6 +688,8 @@
   id: cf-background-cook
   name: cf-background-cook
   description: cf-background-description-cook
+  skillFeats:
+    - CFSeasoned
   trainedSkills:
     - Survival
     - Lore
@@ -618,6 +701,8 @@
   id: cf-background-courier
   name: cf-background-courier
   description: cf-background-description-courier
+  skillFeats:
+    - CFGleanContents
   trainedSkills:
     - Society
     - Lore
@@ -629,6 +714,8 @@
   id: cf-background-criminal
   name: cf-background-criminal
   description: cf-background-description-criminal
+  skillFeats:
+    - CFExperiencedSmuggler
   trainedSkills:
     - Stealth
     - Lore
@@ -640,6 +727,8 @@
   id: cf-background-crystal-healer
   name: cf-background-crystal-healer
   description: cf-background-description-crystal-healer
+  skillFeats:
+    - CFNaturalMedicine
   trainedSkills:
     - Nature
     - Lore
@@ -651,6 +740,8 @@
   id: cf-background-cultist
   name: cf-background-cultist
   description: cf-background-description-cultist
+  skillFeats:
+    - CFSchooledInSecrets
   trainedSkills:
     - Occultism
     - Lore
@@ -662,6 +753,8 @@
   id: cf-background-curandero
   name: cf-background-curandero
   description: cf-background-description-curandero
+  skillFeats:
+    - CFInoculation
   trainedSkills:
     - Medicine
     - Lore
@@ -685,6 +778,8 @@
   id: cf-background-cursed-family
   name: cf-background-cursed-family
   description: cf-background-description-cursed-family
+  skillFeats:
+    - CFOddityIdentification
   trainedSkills:
     - Occultism
     - Lore
@@ -707,6 +802,8 @@
   id: cf-background-deckhand
   name: cf-background-deckhand
   description: cf-background-description-deckhand
+  skillFeats:
+    - CFCatFall
   trainedSkills:
     - Acrobatics
     - Lore
@@ -718,6 +815,8 @@
   id: cf-background-deep-sea-diver
   name: cf-background-deep-sea-diver
   description: cf-background-description-deep-sea-diver
+  skillFeats:
+    - CFUnderwaterMarauder
   trainedSkills:
     - Athletics
     - Lore
@@ -729,6 +828,8 @@
   id: cf-background-demon-slayer
   name: cf-background-demon-slayer
   description: cf-background-description-demon-slayer
+  skillFeats:
+    - CFRecognizeSpell
   trainedSkills:
     - Religion
     - Lore
@@ -740,6 +841,8 @@
   id: cf-background-dendrologist
   name: cf-background-dendrologist
   description: cf-background-description-dendrologist
+  skillFeats:
+    - CFTerrainExpertise
   trainedSkills:
     - Survival
     - Lore
@@ -751,6 +854,8 @@
   id: cf-background-deputy
   name: cf-background-deputy
   description: cf-background-description-deputy
+  skillFeats:
+    - CFExperiencedTracker
   trainedSkills:
     - Survival
     - Lore
@@ -762,6 +867,8 @@
   id: cf-background-desert-tracker
   name: cf-background-desert-tracker
   description: cf-background-description-desert-tracker
+  skillFeats:
+    - CFExperiencedTracker
   trainedSkills:
     - Survival
     - Lore
@@ -773,6 +880,8 @@
   id: cf-background-detective
   name: cf-background-detective
   description: cf-background-description-detective
+  skillFeats:
+    - CFStreetwise
   trainedSkills:
     - Society
     - Lore
@@ -784,6 +893,8 @@
   id: cf-background-diobel-pearl-diver
   name: cf-background-diobel-pearl-diver
   description: cf-background-description-diobel-pearl-diver
+  skillFeats:
+    - CFUnderwaterMarauder
   trainedSkills:
     - Athletics
     - Lore
@@ -808,6 +919,8 @@
   id: cf-background-disciple-of-the-gear
   name: cf-background-disciple-of-the-gear
   description: cf-background-description-disciple-of-the-gear
+  skillFeats:
+    - CFQuickRepair
   trainedSkills:
     - Crafting
   abilityBoosts:
@@ -842,6 +955,8 @@
   id: cf-background-driver
   name: cf-background-driver
   description: cf-background-description-driver
+  skillFeats:
+    - CFAssurance
   trainedSkills:
     - Acrobatics
   abilityBoosts:
@@ -852,6 +967,8 @@
   id: cf-background-droskari-disciple
   name: cf-background-droskari-disciple
   description: cf-background-description-droskari-disciple
+  skillFeats:
+    - CFSkillTraining
   trainedSkills:
     - Lore
   abilityBoosts:
@@ -862,6 +979,8 @@
   id: cf-background-eagle-hunter
   name: cf-background-eagle-hunter
   description: cf-background-description-eagle-hunter
+  skillFeats:
+    - CFTrainAnimal
   rarity: Rare
   trainedSkills:
     - Nature
@@ -874,6 +993,8 @@
   id: cf-background-early-explorer
   name: cf-background-early-explorer
   description: cf-background-description-early-explorer
+  skillFeats:
+    - CFForager
   trainedSkills:
     - Survival
     - Lore
@@ -896,6 +1017,8 @@
   id: cf-background-eidolon-contact
   name: cf-background-eidolon-contact
   description: cf-background-description-eidolon-contact
+  skillFeats:
+    - CFDubiousKnowledge
   trainedSkills:
     - Arcana
     - Lore
@@ -916,6 +1039,8 @@
   id: cf-background-emissary
   name: cf-background-emissary
   description: cf-background-description-emissary
+  skillFeats:
+    - CFMultilingual
   trainedSkills:
     - Society
     - Lore
@@ -949,6 +1074,8 @@
   id: cf-background-entertainer
   name: cf-background-entertainer
   description: cf-background-description-entertainer
+  skillFeats:
+    - CFFascinatingPerformance
   trainedSkills:
     - Performance
     - Lore
@@ -960,6 +1087,8 @@
   id: cf-background-faction-opportunist
   name: cf-background-faction-opportunist
   description: cf-background-description-faction-opportunist
+  skillFeats:
+    - CFHobnobber
   trainedSkills:
     - Diplomacy
     - Lore
@@ -971,6 +1100,8 @@
   id: cf-background-false-medium
   name: cf-background-false-medium
   description: cf-background-description-false-medium
+  skillFeats:
+    - CFDeceptiveWorship
   trainedSkills:
     - Occultism
     - Lore
@@ -993,6 +1124,8 @@
   id: cf-background-farmsteader
   name: cf-background-farmsteader
   description: cf-background-description-farmsteader
+  skillFeats:
+    - CFForager
   trainedSkills:
     - Survival
     - Lore
@@ -1028,6 +1161,8 @@
   id: cf-background-feral-child
   name: cf-background-feral-child
   description: cf-background-description-feral-child
+  skillFeats:
+    - CFForager
   rarity: Rare
   trainedSkills:
     - Nature
@@ -1052,9 +1187,8 @@
   id: cf-background-field-medic
   name: cf-background-field-medic
   description: cf-background-description-field-medic
-  grants:
-    - !type:CFGrantOption
-      option: BattleMedicine
+  skillFeats:
+    - CFBattleMedicine
   trainedSkills:
     - Medicine
     - Lore
@@ -1066,6 +1200,8 @@
   id: cf-background-fightbreaker
   name: cf-background-fightbreaker
   description: cf-background-description-fightbreaker
+  skillFeats:
+    - CFGroupImpression
   trainedSkills:
     - Diplomacy
     - Lore
@@ -1077,6 +1213,8 @@
   id: cf-background-finadar-leshy
   name: cf-background-finadar-leshy
   description: cf-background-description-finadar-leshy
+  skillFeats:
+    - CFIntimidatingGlare
   trainedSkills:
     - Intimidation
     - Lore
@@ -1088,6 +1226,8 @@
   id: cf-background-final-blade-survivor
   name: cf-background-final-blade-survivor
   description: cf-background-description-final-blade-survivor
+  skillFeats:
+    - CFCharmingLiar
   trainedSkills:
     - Deception
     - Lore
@@ -1110,6 +1250,8 @@
   id: cf-background-fire-warden
   name: cf-background-fire-warden
   description: cf-background-description-fire-warden
+  skillFeats:
+    - CFBreathControl
   trainedSkills:
     - Athletics
     - Lore
@@ -1121,6 +1263,8 @@
   id: cf-background-fireworks-performer
   name: cf-background-fireworks-performer
   description: cf-background-description-fireworks-performer
+  skillFeats:
+    - CFFascinatingPerformance
   trainedSkills:
     - Performance
     - Lore
@@ -1132,6 +1276,8 @@
   id: cf-background-former-aspis-agent
   name: cf-background-former-aspis-agent
   description: cf-background-description-former-aspis-agent
+  skillFeats:
+    - CFGroupCoercion
   trainedSkills:
     - Intimidation
     - Lore
@@ -1143,6 +1289,8 @@
   id: cf-background-fortune-teller
   name: cf-background-fortune-teller
   description: cf-background-description-fortune-teller
+  skillFeats:
+    - CFOddityIdentification
   trainedSkills:
     - Occultism
     - Lore
@@ -1154,6 +1302,8 @@
   id: cf-background-freed-slave-of-absalom
   name: cf-background-freed-slave-of-absalom
   description: cf-background-description-freed-slave-of-absalom
+  skillFeats:
+    - CFStreetwise
   trainedSkills:
     - Society
     - Lore
@@ -1165,6 +1315,8 @@
   id: cf-background-free-spirit
   name: cf-background-free-spirit
   description: cf-background-description-free-spirit
+  skillFeats:
+    - CFForager
   trainedSkills:
     - Survival
     - Lore
@@ -1176,6 +1328,8 @@
   id: cf-background-friendly-darkmoon-kobold
   name: cf-background-friendly-darkmoon-kobold
   description: cf-background-description-friendly-darkmoon-kobold
+  skillFeats:
+    - CFGroupImpression
   rarity: Rare
   trainedSkills:
     - Diplomacy
@@ -1188,6 +1342,8 @@
   id: cf-background-friend-of-greensteeples
   name: cf-background-friend-of-greensteeples
   description: cf-background-description-friend-of-greensteeples
+  skillFeats:
+    - CFAssurance
   rarity: Uncommon
   trainedSkills:
     - Deception
@@ -1200,6 +1356,8 @@
   id: cf-background-gambler
   name: cf-background-gambler
   description: cf-background-description-gambler
+  skillFeats:
+    - CFLieToMe
   trainedSkills:
     - Deception
     - Lore
@@ -1211,6 +1369,8 @@
   id: cf-background-geb-crusader
   name: cf-background-geb-crusader
   description: cf-background-description-geb-crusader
+  skillFeats:
+    - CFStudentOfTheCanon
   trainedSkills:
     - Religion
     - Lore
@@ -1233,6 +1393,8 @@
   id: cf-background-ghostwriter
   name: cf-background-ghostwriter
   description: cf-background-description-ghostwriter
+  skillFeats:
+    - CFExperiencedProfessional
   rarity: Uncommon
   trainedSkills:
     - Society
@@ -1245,6 +1407,8 @@
   id: cf-background-gladiator
   name: cf-background-gladiator
   description: cf-background-description-gladiator
+  skillFeats:
+    - CFImpressivePerformance
   trainedSkills:
     - Performance
     - Lore
@@ -1256,6 +1420,8 @@
   id: cf-background-glorianas-fixer
   name: cf-background-glorianas-fixer
   description: cf-background-description-glorianas-fixer
+  skillFeats:
+    - CFSubtleTheft
   rarity: Uncommon
   trainedSkills:
     - Thievery
@@ -1279,6 +1445,8 @@
   id: cf-background-gold-falls-regular
   name: cf-background-gold-falls-regular
   description: cf-background-description-gold-falls-regular
+  skillFeats:
+    - CFImpressivePerformance
   rarity: Uncommon
   trainedSkills:
     - Performance
@@ -1291,6 +1459,8 @@
   id: cf-background-goldhand-arms-dealer
   name: cf-background-goldhand-arms-dealer
   description: cf-background-description-goldhand-arms-dealer
+  skillFeats:
+    - CFGroupImpression
   rarity: Uncommon
   trainedSkills:
     - Diplomacy
@@ -1303,6 +1473,8 @@
   id: cf-background-gossip
   name: cf-background-gossip
   description: cf-background-description-gossip
+  skillFeats:
+    - CFHobnobber
   trainedSkills:
     - Diplomacy
   abilityBoosts:
@@ -1313,6 +1485,8 @@
   id: cf-background-grand-council-bureaucrat
   name: cf-background-grand-council-bureaucrat
   description: cf-background-description-grand-council-bureaucrat
+  skillFeats:
+    - CFGroupImpression
   trainedSkills:
     - Diplomacy
     - Lore
@@ -1324,6 +1498,8 @@
   id: cf-background-grave-robber
   name: cf-background-grave-robber
   description: cf-background-description-grave-robber
+  skillFeats:
+    - CFExperiencedSmuggler
   trainedSkills:
     - Stealth
     - Lore
@@ -1335,6 +1511,8 @@
   id: cf-background-guard
   name: cf-background-guard
   description: cf-background-description-guard
+  skillFeats:
+    - CFQuickCoercion
   trainedSkills:
     - Intimidation
     - Lore
@@ -1346,6 +1524,8 @@
   id: cf-background-guest-of-sedeq-lodge
   name: cf-background-guest-of-sedeq-lodge
   description: cf-background-description-guest-of-sedeq-lodge
+  skillFeats:
+    - CFRecognizeSpell
   rarity: Uncommon
   trainedSkills:
     - Arcana
@@ -1358,6 +1538,8 @@
   id: cf-background-gunsmith
   name: cf-background-gunsmith
   description: cf-background-description-gunsmith
+  skillFeats:
+    - CFQuickRepair
   trainedSkills:
     - Crafting
     - Lore
@@ -1382,6 +1564,8 @@
   id: cf-background-harrow-led
   name: cf-background-harrow-led
   description: cf-background-description-harrow-led
+  skillFeats:
+    - CFDubiousKnowledge
   trainedSkills:
     - Occultism
     - Lore
@@ -1408,6 +1592,8 @@
   id: cf-background-haunted-citizen
   name: cf-background-haunted-citizen
   description: cf-background-description-haunted-citizen
+  skillFeats:
+    - CFNoCauseForAlarm
   trainedSkills:
     - Diplomacy
   abilityBoosts:
@@ -1418,6 +1604,8 @@
   id: cf-background-herbalist
   name: cf-background-herbalist
   description: cf-background-description-herbalist
+  skillFeats:
+    - CFNaturalMedicine
   trainedSkills:
     - Nature
     - Lore
@@ -1429,6 +1617,8 @@
   id: cf-background-hermean-expatriate
   name: cf-background-hermean-expatriate
   description: cf-background-description-hermean-expatriate
+  skillFeats:
+    - CFSkillTraining
   trainedSkills:
     - Society
     - Lore
@@ -1440,6 +1630,9 @@
   id: cf-background-hermean-heritor
   name: cf-background-hermean-heritor
   description: cf-background-description-hermean-heritor
+  skillFeats:
+    - CFMultilingual
+    - CFAssurance
   rarity: Rare
   trainedSkills:
     - Society
@@ -1452,6 +1645,8 @@
   id: cf-background-hermit
   name: cf-background-hermit
   description: cf-background-description-hermit
+  skillFeats:
+    - CFDubiousKnowledge
   trainedSkills:
     - Nature
     - Lore
@@ -1463,6 +1658,8 @@
   id: cf-background-highborn-snoop
   name: cf-background-highborn-snoop
   description: cf-background-description-highborn-snoop
+  skillFeats:
+    - CFCourtlyGraces
   trainedSkills:
     - Society
     - Lore
@@ -1474,6 +1671,8 @@
   id: cf-background-hired-killer
   name: cf-background-hired-killer
   description: cf-background-description-hired-killer
+  skillFeats:
+    - CFTerrainStalker
   trainedSkills:
     - Stealth
     - Lore
@@ -1485,6 +1684,8 @@
   id: cf-background-hookclaw-digger
   name: cf-background-hookclaw-digger
   description: cf-background-description-hookclaw-digger
+  skillFeats:
+    - CFImproviseTool
   rarity: Rare
   trainedSkills:
     - Crafting
@@ -1497,6 +1698,8 @@
   id: cf-background-hounded-thief
   name: cf-background-hounded-thief
   description: cf-background-description-hounded-thief
+  skillFeats:
+    - CFPickpocket
   trainedSkills:
     - Thievery
     - Lore
@@ -1508,6 +1711,8 @@
   id: cf-background-hunter
   name: cf-background-hunter
   description: cf-background-description-hunter
+  skillFeats:
+    - CFSurveyWildlife
   trainedSkills:
     - Survival
     - Lore
@@ -1519,6 +1724,8 @@
   id: cf-background-inlander
   name: cf-background-inlander
   description: cf-background-description-inlander
+  skillFeats:
+    - CFSurveyWildlife
   trainedSkills:
     - Survival
     - Lore
@@ -1530,6 +1737,8 @@
   id: cf-background-insurgent
   name: cf-background-insurgent
   description: cf-background-description-insurgent
+  skillFeats:
+    - CFLengthyDiversion
   trainedSkills:
     - Deception
     - Lore
@@ -1541,6 +1750,8 @@
   id: cf-background-iolite-trainee-hobgoblin
   name: cf-background-iolite-trainee-hobgoblin
   description: cf-background-description-iolite-trainee-hobgoblin
+  skillFeats:
+    - CFSignLanguage
   trainedSkills:
     - Society
     - Lore
@@ -1552,6 +1763,8 @@
   id: cf-background-issian-partisan
   name: cf-background-issian-partisan
   description: cf-background-description-issian-partisan
+  skillFeats:
+    - CFCharmingLiar
   trainedSkills:
     - Deception
     - Lore
@@ -1563,6 +1776,8 @@
   id: cf-background-jeweler
   name: cf-background-jeweler
   description: cf-background-description-jeweler
+  skillFeats:
+    - CFCrafterSAppraisal
   trainedSkills:
     - Crafting
     - Lore
@@ -1574,6 +1789,8 @@
   id: cf-background-junk-collector
   name: cf-background-junk-collector
   description: cf-background-description-junk-collector
+  skillFeats:
+    - CFCrafterSAppraisal
   trainedSkills:
     - Crafting
   abilityBoosts:
@@ -1584,6 +1801,8 @@
   id: cf-background-junker
   name: cf-background-junker
   description: cf-background-description-junker
+  skillFeats:
+    - CFHeftyHauler
   trainedSkills:
     - Athletics
   abilityBoosts:
@@ -1606,6 +1825,8 @@
   id: cf-background-kalistrade-follower
   name: cf-background-kalistrade-follower
   description: cf-background-description-kalistrade-follower
+  skillFeats:
+    - CFBargainHunter
   trainedSkills:
     - Diplomacy
     - Lore
@@ -1617,6 +1838,8 @@
   id: cf-background-kyonin-emissary
   name: cf-background-kyonin-emissary
   description: cf-background-description-kyonin-emissary
+  skillFeats:
+    - CFMultilingual
   trainedSkills:
     - Society
     - Lore
@@ -1628,6 +1851,8 @@
   id: cf-background-laborer
   name: cf-background-laborer
   description: cf-background-description-laborer
+  skillFeats:
+    - CFHeftyHauler
   trainedSkills:
     - Athletics
     - Lore
@@ -1639,9 +1864,8 @@
   id: cf-background-lastwall-survivor
   name: cf-background-lastwall-survivor
   description: cf-background-description-lastwall-survivor
-  grants:
-    - !type:CFGrantOption
-      option: BattleMedicine
+  skillFeats:
+    - CFBattleMedicine
   trainedSkills:
     - Medicine
     - Lore
@@ -1653,6 +1877,8 @@
   id: cf-background-legacy-of-the-hammer
   name: cf-background-legacy-of-the-hammer
   description: cf-background-description-legacy-of-the-hammer
+  skillFeats:
+    - CFConcealingLegerdemain
   rarity: Uncommon
   trainedSkills:
     - Thievery
@@ -1665,6 +1891,8 @@
   id: cf-background-legendary-parents
   name: cf-background-legendary-parents
   description: cf-background-description-legendary-parents
+  skillFeats:
+    - CFGroupCoercion
   rarity: Rare
   trainedSkills:
     - Intimidation
@@ -1677,6 +1905,8 @@
   id: cf-background-lesser-scion
   name: cf-background-lesser-scion
   description: cf-background-description-lesser-scion
+  skillFeats:
+    - CFHobnobber
   trainedSkills:
     - Diplomacy
     - Lore
@@ -1688,6 +1918,8 @@
   id: cf-background-library-dweller
   name: cf-background-library-dweller
   description: cf-background-description-library-dweller
+  skillFeats:
+    - CFAdditionalLore
   rarity: Uncommon
   trainedSkills:
     - Occultism
@@ -1700,6 +1932,8 @@
   id: cf-background-lost-and-alone
   name: cf-background-lost-and-alone
   description: cf-background-description-lost-and-alone
+  skillFeats:
+    - CFIntimidatingGlare
   trainedSkills:
     - Intimidation
     - Lore
@@ -1722,6 +1956,8 @@
   id: cf-background-magaambya-academic
   name: cf-background-magaambya-academic
   description: cf-background-description-magaambya-academic
+  skillFeats:
+    - CFRecognizeSpell
   trainedSkills:
     - Arcana
     - Lore
@@ -1744,6 +1980,8 @@
   id: cf-background-magical-merchant
   name: cf-background-magical-merchant
   description: cf-background-description-magical-merchant
+  skillFeats:
+    - CFCrafterSAppraisal
   trainedSkills:
     - Crafting
     - Lore
@@ -1755,6 +1993,8 @@
   id: cf-background-magical-misfit
   name: cf-background-magical-misfit
   description: cf-background-description-magical-misfit
+  skillFeats:
+    - CFTrickMagicItem
   trainedSkills:
     - Arcana
     - Lore
@@ -1766,6 +2006,8 @@
   id: cf-background-mammoth-speaker
   name: cf-background-mammoth-speaker
   description: cf-background-description-mammoth-speaker
+  skillFeats:
+    - CFTrainAnimal
   trainedSkills:
     - Nature
     - Lore
@@ -1777,6 +2019,8 @@
   id: cf-background-mana-wastes-refugee
   name: cf-background-mana-wastes-refugee
   description: cf-background-description-mana-wastes-refugee
+  skillFeats:
+    - CFTrickMagicItem
   trainedSkills:
     - Arcana
     - Lore
@@ -1810,6 +2054,8 @@
   id: cf-background-mechanic
   name: cf-background-mechanic
   description: cf-background-description-mechanic
+  skillFeats:
+    - CFQuickRepair
   trainedSkills:
     - Crafting
     - Lore
@@ -1832,6 +2078,8 @@
   id: cf-background-medicinal-clocksmith
   name: cf-background-medicinal-clocksmith
   description: cf-background-description-medicinal-clocksmith
+  skillFeats:
+    - CFRiskySurgery
   trainedSkills:
     - Medicine
     - Lore
@@ -1843,6 +2091,8 @@
   id: cf-background-menagerie-dung-sweeper
   name: cf-background-menagerie-dung-sweeper
   description: cf-background-description-menagerie-dung-sweeper
+  skillFeats:
+    - CFTrainAnimal
   trainedSkills:
     - Nature
     - Lore
@@ -1865,6 +2115,8 @@
   id: cf-background-merchant
   name: cf-background-merchant
   description: cf-background-description-merchant
+  skillFeats:
+    - CFBargainHunter
   trainedSkills:
     - Diplomacy
     - Lore
@@ -1876,6 +2128,8 @@
   id: cf-background-miner
   name: cf-background-miner
   description: cf-background-description-miner
+  skillFeats:
+    - CFTerrainExpertise
   trainedSkills:
     - Survival
     - Lore
@@ -1887,6 +2141,8 @@
   id: cf-background-missionary
   name: cf-background-missionary
   description: cf-background-description-missionary
+  skillFeats:
+    - CFGroupImpression
   trainedSkills:
     - Diplomacy
     - Lore
@@ -1898,6 +2154,8 @@
   id: cf-background-molthuni-mercenary
   name: cf-background-molthuni-mercenary
   description: cf-background-description-molthuni-mercenary
+  skillFeats:
+    - CFExperiencedProfessional
   trainedSkills:
     - Athletics
     - Lore
@@ -1921,6 +2179,8 @@
   id: cf-background-musical-prodigy
   name: cf-background-musical-prodigy
   description: cf-background-description-musical-prodigy
+  skillFeats:
+    - CFVirtuosicPerformer
   trainedSkills:
     - Performance
     - Lore
@@ -1932,6 +2192,8 @@
   id: cf-background-mystic-tutor
   name: cf-background-mystic-tutor
   description: cf-background-description-mystic-tutor
+  skillFeats:
+    - CFRecognizeSpell
   rarity: Rare
   trainedSkills:
     - Arcana
@@ -1944,6 +2206,8 @@
   id: cf-background-necromancers-apprentice
   name: cf-background-necromancers-apprentice
   description: cf-background-description-necromancers-apprentice
+  skillFeats:
+    - CFQuickIdentification
   trainedSkills:
     - Arcana
     - Lore
@@ -1955,6 +2219,8 @@
   id: cf-background-nexian-mystic
   name: cf-background-nexian-mystic
   description: cf-background-description-nexian-mystic
+  skillFeats:
+    - CFArcaneSense
   trainedSkills:
     - Arcana
     - Lore
@@ -1966,6 +2232,8 @@
   id: cf-background-night-watch
   name: cf-background-night-watch
   description: cf-background-description-night-watch
+  skillFeats:
+    - CFQuickCoercion
   trainedSkills:
     - Intimidation
   abilityBoosts:
@@ -1976,6 +2244,8 @@
   id: cf-background-nirmathi-guerrilla
   name: cf-background-nirmathi-guerrilla
   description: cf-background-description-nirmathi-guerrilla
+  skillFeats:
+    - CFTerrainStalker
   trainedSkills:
     - Stealth
     - Lore
@@ -1987,6 +2257,8 @@
   id: cf-background-noble
   name: cf-background-noble
   description: cf-background-description-noble
+  skillFeats:
+    - CFCourtlyGraces
   trainedSkills:
     - Society
     - Lore
@@ -2020,6 +2292,8 @@
   id: cf-background-occult-librarian
   name: cf-background-occult-librarian
   description: cf-background-description-occult-librarian
+  skillFeats:
+    - CFSchooledInSecrets
   trainedSkills:
     - Occultism
     - Lore
@@ -2031,6 +2305,8 @@
   id: cf-background-ocean-diver
   name: cf-background-ocean-diver
   description: cf-background-description-ocean-diver
+  skillFeats:
+    - CFUnderwaterMarauder
   rarity: Uncommon
   trainedSkills:
     - Athletics
@@ -2043,6 +2319,8 @@
   id: cf-background-oenopion-ooze-tender
   name: cf-background-oenopion-ooze-tender
   description: cf-background-description-oenopion-ooze-tender
+  skillFeats:
+    - CFDubiousKnowledge
   trainedSkills:
     - Crafting
     - Lore
@@ -2054,9 +2332,8 @@
   id: cf-background-once-bitten
   name: cf-background-once-bitten
   description: cf-background-description-once-bitten
-  grants:
-    - !type:CFGrantOption
-      option: BattleMedicine
+  skillFeats:
+    - CFBattleMedicine
   trainedSkills:
     - Medicine
     - Lore
@@ -2068,6 +2345,8 @@
   id: cf-background-onyx-trader
   name: cf-background-onyx-trader
   description: cf-background-description-onyx-trader
+  skillFeats:
+    - CFMultilingual
   trainedSkills:
     - Society
     - Lore
@@ -2079,6 +2358,8 @@
   id: cf-background-osirionologist
   name: cf-background-osirionologist
   description: cf-background-description-osirionologist
+  skillFeats:
+    - CFOddityIdentification
   trainedSkills:
     - Occultism
     - Lore
@@ -2090,6 +2371,8 @@
   id: cf-background-osprey-barnraiser
   name: cf-background-osprey-barnraiser
   description: cf-background-description-osprey-barnraiser
+  skillFeats:
+    - CFNaturalMedicine
   rarity: Rare
   trainedSkills:
     - Nature
@@ -2102,6 +2385,8 @@
   id: cf-background-osprey-fisher
   name: cf-background-osprey-fisher
   description: cf-background-description-osprey-fisher
+  skillFeats:
+    - CFQuickRepair
   rarity: Rare
   trainedSkills:
     - Crafting
@@ -2114,6 +2399,8 @@
   id: cf-background-osprey-scion
   name: cf-background-osprey-scion
   description: cf-background-description-osprey-scion
+  skillFeats:
+    - CFHobnobber
   rarity: Rare
   trainedSkills:
     - Diplomacy
@@ -2126,6 +2413,8 @@
   id: cf-background-osprey-scout
   name: cf-background-osprey-scout
   description: cf-background-description-osprey-scout
+  skillFeats:
+    - CFExperiencedTracker
   rarity: Rare
   trainedSkills:
     - Survival
@@ -2138,6 +2427,8 @@
   id: cf-background-osprey-scribe
   name: cf-background-osprey-scribe
   description: cf-background-description-osprey-scribe
+  skillFeats:
+    - CFStreetwise
   rarity: Rare
   trainedSkills:
     - Society
@@ -2150,6 +2441,8 @@
   id: cf-background-osprey-spellcaster
   name: cf-background-osprey-spellcaster
   description: cf-background-description-osprey-spellcaster
+  skillFeats:
+    - CFQuickIdentification
   rarity: Rare
   trainedSkills:
     - Arcana
@@ -2161,6 +2454,8 @@
   id: cf-background-osprey-warrior
   name: cf-background-osprey-warrior
   description: cf-background-description-osprey-warrior
+  skillFeats:
+    - CFHeftyHauler
   rarity: Rare
   trainedSkills:
     - Athletics
@@ -2184,6 +2479,8 @@
   id: cf-background-outrider
   name: cf-background-outrider
   description: cf-background-description-outrider
+  skillFeats:
+    - CFExpressRider
   trainedSkills:
     - Nature
     - Lore
@@ -2195,6 +2492,8 @@
   id: cf-background-ozem-experience
   name: cf-background-ozem-experience
   description: cf-background-description-ozem-experience
+  skillFeats:
+    - CFCourtlyGraces
   trainedSkills:
     - Society
     - Lore
@@ -2206,6 +2505,8 @@
   id: cf-background-party-scholar
   name: cf-background-party-scholar
   description: cf-background-description-party-scholar
+  skillFeats:
+    - CFCharmingLiar
   rarity: Uncommon
   trainedSkills:
     - Deception
@@ -2218,6 +2519,8 @@
   id: cf-background-carpfinder-hopeful
   name: cf-background-carpfinder-hopeful
   description: cf-background-description-carpfinder-hopeful
+  skillFeats:
+    - CFAdditionalLore
   trainedSkills:
     - Society
     - Lore
@@ -2229,6 +2532,8 @@
   id: cf-background-carpfinder-recruiter
   name: cf-background-carpfinder-recruiter
   description: cf-background-description-carpfinder-recruiter
+  skillFeats:
+    - CFGroupImpression
   trainedSkills:
     - Diplomacy
     - Lore
@@ -2240,6 +2545,8 @@
   id: cf-background-perfection-seeker
   name: cf-background-perfection-seeker
   description: cf-background-description-perfection-seeker
+  skillFeats:
+    - CFCatFall
   trainedSkills:
     - Acrobatics
     - Lore
@@ -2251,6 +2558,8 @@
   id: cf-background-pilgrim
   name: cf-background-pilgrim
   description: cf-background-description-pilgrim
+  skillFeats:
+    - CFPilgrimSToken
   trainedSkills:
     - Religion
     - Lore
@@ -2262,6 +2571,8 @@
   id: cf-background-pillar
   name: cf-background-pillar
   description: cf-background-description-pillar
+  skillFeats:
+    - CFAdditionalLore
   trainedSkills:
     - Medicine
     - Lore
@@ -2273,6 +2584,9 @@
   id: cf-background-planar-migrant
   name: cf-background-planar-migrant
   description: cf-background-description-planar-migrant
+  skillFeats:
+    - CFHeftyHauler
+    - CFPrescientPlanner
   rarity: Rare
   trainedSkills:
     - Athletics
@@ -2284,6 +2598,8 @@
   id: cf-background-plant-whisperer
   name: cf-background-plant-whisperer
   description: cf-background-description-plant-whisperer
+  skillFeats:
+    - CFNaturalMedicine
   trainedSkills:
     - Nature
     - Lore
@@ -2295,6 +2611,8 @@
   id: cf-background-press-ganged-g-g
   name: cf-background-press-ganged-g-g
   description: cf-background-description-press-ganged-g-g
+  skillFeats:
+    - CFArmorAssist
   rarity: Uncommon
   trainedSkills:
     - Athletics
@@ -2307,6 +2625,8 @@
   id: cf-background-press-ganged-lowg
   name: cf-background-press-ganged-lowg
   description: cf-background-description-press-ganged-lowg
+  skillFeats:
+    - CFExperiencedProfessional
   trainedSkills:
     - Society
     - Lore
@@ -2318,6 +2638,8 @@
   id: cf-background-printer
   name: cf-background-printer
   description: cf-background-description-printer
+  skillFeats:
+    - CFMultilingual
   trainedSkills:
     - Society
     - Lore
@@ -2329,6 +2651,8 @@
   id: cf-background-prisoner
   name: cf-background-prisoner
   description: cf-background-description-prisoner
+  skillFeats:
+    - CFExperiencedSmuggler
   trainedSkills:
     - Stealth
     - Lore
@@ -2351,6 +2675,8 @@
   id: cf-background-purveyor-of-the-bizarre
   name: cf-background-purveyor-of-the-bizarre
   description: cf-background-description-purveyor-of-the-bizarre
+  skillFeats:
+    - CFQuickIdentification
   trainedSkills:
     - Arcana
     - Lore
@@ -2362,6 +2688,8 @@
   id: cf-background-pyre-tender
   name: cf-background-pyre-tender
   description: cf-background-description-pyre-tender
+  skillFeats:
+    - CFAlchemicalCrafting
   trainedSkills:
     - Crafting
     - Lore
@@ -2373,6 +2701,8 @@
   id: cf-background-quick
   name: cf-background-quick
   description: cf-background-description-quick
+  skillFeats:
+    - CFCharmingLiar
   trainedSkills:
     - Deception
     - Lore
@@ -2396,6 +2726,8 @@
   id: cf-background-raised-by-belief
   name: cf-background-raised-by-belief
   description: cf-background-description-raised-by-belief
+  skillFeats:
+    - CFAssurance
   abilityBoosts:
     - Strength
     - Dexterity
@@ -2408,6 +2740,8 @@
   id: cf-background-razmiran-faithful
   name: cf-background-razmiran-faithful
   description: cf-background-description-razmiran-faithful
+  skillFeats:
+    - CFGroupCoercion
   trainedSkills:
     - Intimidation
     - Lore
@@ -2428,6 +2762,8 @@
   id: cf-background-reclaimed
   name: cf-background-reclaimed
   description: cf-background-description-reclaimed
+  skillFeats:
+    - CFGroupCoercion
   trainedSkills:
     - Intimidation
     - Lore
@@ -2439,6 +2775,8 @@
   id: cf-background-reclaimer-investigator
   name: cf-background-reclaimer-investigator
   description: cf-background-description-reclaimer-investigator
+  skillFeats:
+    - CFOddityIdentification
   trainedSkills:
     - Occultism
     - Lore
@@ -2450,6 +2788,8 @@
   id: cf-background-refugee-fall-of-plaguestone
   name: cf-background-refugee-fall-of-plaguestone
   description: cf-background-description-refugee-fall-of-plaguestone
+  skillFeats:
+    - CFForager
   trainedSkills:
     - Survival
     - Lore
@@ -2461,6 +2801,8 @@
   id: cf-background-refugee-pc2
   name: cf-background-refugee-pc2
   description: cf-background-description-refugee-pc2
+  skillFeats:
+    - CFStreetwise
   trainedSkills:
     - Society
     - Lore
@@ -2472,6 +2814,8 @@
   id: cf-background-relentless-dedication
   name: cf-background-relentless-dedication
   description: cf-background-description-relentless-dedication
+  skillFeats:
+    - CFCannyAcumen
   rarity: Rare
   trainedSkills:
     - Lore
@@ -2483,6 +2827,8 @@
   id: cf-background-remittance-agent
   name: cf-background-remittance-agent
   description: cf-background-description-remittance-agent
+  skillFeats:
+    - CFExperiencedProfessional
   trainedSkills:
     - Society
   abilityBoosts:
@@ -2493,6 +2839,8 @@
   id: cf-background-respected-mentor
   name: cf-background-respected-mentor
   description: cf-background-description-respected-mentor
+  skillFeats:
+    - CFFascinatingPerformance
   rarity: Uncommon
   trainedSkills:
     - Performance
@@ -2505,6 +2853,9 @@
   id: cf-background-returned
   name: cf-background-returned
   description: cf-background-description-returned
+  skillFeats:
+    - CFDiehard
+    - CFAdditionalLore
   rarity: Rare
   trainedSkills:
     - Lore
@@ -2528,6 +2879,8 @@
   id: cf-background-rivethun-adherent
   name: cf-background-rivethun-adherent
   description: cf-background-description-rivethun-adherent
+  skillFeats:
+    - CFRecognizeSpell
   trainedSkills:
     - Occultism
     - Lore
@@ -2539,6 +2892,8 @@
   id: cf-background-root-worker
   name: cf-background-root-worker
   description: cf-background-description-root-worker
+  skillFeats:
+    - CFRootMagic
   trainedSkills:
     - Occultism
     - Lore
@@ -2550,6 +2905,8 @@
   id: cf-background-rostland-partisan
   name: cf-background-rostland-partisan
   description: cf-background-description-rostland-partisan
+  skillFeats:
+    - CFGroupImpression
   trainedSkills:
     - Diplomacy
     - Lore
@@ -2561,6 +2918,8 @@
   id: cf-background-royalty
   name: cf-background-royalty
   description: cf-background-description-royalty
+  skillFeats:
+    - CFCourtlyGraces
   rarity: Rare
   trainedSkills:
     - Society
@@ -2572,6 +2931,8 @@
   id: cf-background-ruby-phoenix-enthusiast
   name: cf-background-ruby-phoenix-enthusiast
   description: cf-background-description-ruby-phoenix-enthusiast
+  skillFeats:
+    - CFCombatClimber
   trainedSkills:
     - Athletics
     - Lore
@@ -2583,6 +2944,8 @@
   id: cf-background-runaway-noble
   name: cf-background-runaway-noble
   description: cf-background-description-runaway-noble
+  skillFeats:
+    - CFBonMot
   rarity: Uncommon
   trainedSkills:
     - Diplomacy
@@ -2594,6 +2957,8 @@
   id: cf-background-runner
   name: cf-background-runner
   description: cf-background-description-runner
+  skillFeats:
+    - CFQuickJump
   trainedSkills:
     - Athletics
     - Lore
@@ -2605,6 +2970,8 @@
   id: cf-background-saboteur
   name: cf-background-saboteur
   description: cf-background-description-saboteur
+  skillFeats:
+    - CFConcealingLegerdemain
   trainedSkills:
     - Thievery
     - Lore
@@ -2616,6 +2983,8 @@
   id: cf-background-sailor
   name: cf-background-sailor
   description: cf-background-description-sailor
+  skillFeats:
+    - CFUnderwaterMarauder
   trainedSkills:
     - Athletics
     - Lore
@@ -2627,6 +2996,8 @@
   id: cf-background-saloon-entertainer
   name: cf-background-saloon-entertainer
   description: cf-background-description-saloon-entertainer
+  skillFeats:
+    - CFVirtuosicPerformer
   trainedSkills:
     - Performance
   abilityBoosts:
@@ -2637,6 +3008,8 @@
   id: cf-background-sandswept-survivor
   name: cf-background-sandswept-survivor
   description: cf-background-description-sandswept-survivor
+  skillFeats:
+    - CFTerrainExpertise
   rarity: Uncommon
   trainedSkills:
     - Survival
@@ -2649,9 +3022,8 @@
   id: cf-background-sarkorian-reclaimer
   name: cf-background-sarkorian-reclaimer
   description: cf-background-description-sarkorian-reclaimer
-  grants:
-    - !type:CFGrantOption
-      option: BattleMedicine
+  skillFeats:
+    - CFBattleMedicine
   trainedSkills:
     - Medicine
     - Lore
@@ -2663,6 +3035,8 @@
   id: cf-background-sarkorian-survivor
   name: cf-background-sarkorian-survivor
   description: cf-background-description-sarkorian-survivor
+  skillFeats:
+    - CFForager
   trainedSkills:
     - Survival
     - Lore
@@ -2685,6 +3059,8 @@
   id: cf-background-savior-of-air
   name: cf-background-savior-of-air
   description: cf-background-description-savior-of-air
+  skillFeats:
+    - CFCatFall
   trainedSkills:
     - Acrobatics
     - Lore
@@ -2696,6 +3072,8 @@
   id: cf-background-scavenger
   name: cf-background-scavenger
   description: cf-background-description-scavenger
+  skillFeats:
+    - CFForager
   trainedSkills:
     - Survival
     - Lore
@@ -2718,6 +3096,8 @@
   id: cf-background-scholar-of-the-ancients
   name: cf-background-scholar-of-the-ancients
   description: cf-background-description-scholar-of-the-ancients
+  skillFeats:
+    - CFQuickIdentification
   trainedSkills:
     - Arcana
     - Lore
@@ -2729,6 +3109,8 @@
   id: cf-background-scholar-of-the-sky-key
   name: cf-background-scholar-of-the-sky-key
   description: cf-background-description-scholar-of-the-sky-key
+  skillFeats:
+    - CFQuickRepair
   trainedSkills:
     - Crafting
     - Lore
@@ -2740,9 +3122,8 @@
   id: cf-background-school-medic
   name: cf-background-school-medic
   description: cf-background-description-school-medic
-  grants:
-    - !type:CFGrantOption
-      option: BattleMedicine
+  skillFeats:
+    - CFBattleMedicine
   rarity: Uncommon
   trainedSkills:
     - Medicine
@@ -2767,6 +3148,8 @@
   id: cf-background-scout
   name: cf-background-scout
   description: cf-background-description-scout
+  skillFeats:
+    - CFForager
   trainedSkills:
     - Survival
     - Lore
@@ -2778,9 +3161,8 @@
   id: cf-background-secular-medic
   name: cf-background-secular-medic
   description: cf-background-description-secular-medic
-  grants:
-    - !type:CFGrantOption
-      option: BattleMedicine
+  skillFeats:
+    - CFBattleMedicine
   trainedSkills:
     - Medicine
     - Lore
@@ -2804,6 +3186,8 @@
   id: cf-background-senghor-sailor
   name: cf-background-senghor-sailor
   description: cf-background-description-senghor-sailor
+  skillFeats:
+    - CFQuickRepair
   trainedSkills:
     - Crafting
     - Lore
@@ -2815,6 +3199,8 @@
   id: cf-background-sentinel-reflectance
   name: cf-background-sentinel-reflectance
   description: cf-background-description-sentinel-reflectance
+  skillFeats:
+    - CFNoCauseForAlarm
   trainedSkills:
     - Diplomacy
     - Lore
@@ -2826,6 +3212,8 @@
   id: cf-background-servant
   name: cf-background-servant
   description: cf-background-description-servant
+  skillFeats:
+    - CFReadLips
   trainedSkills:
     - Society
     - Lore
@@ -2837,6 +3225,8 @@
   id: cf-background-sewer-dragon
   name: cf-background-sewer-dragon
   description: cf-background-description-sewer-dragon
+  skillFeats:
+    - CFSnareCrafting
   trainedSkills:
     - Crafting
     - Lore
@@ -2848,6 +3238,8 @@
   id: cf-background-shadow-haunted
   name: cf-background-shadow-haunted
   description: cf-background-description-shadow-haunted
+  skillFeats:
+    - CFQuickCoercion
   trainedSkills:
     - Intimidation
     - Lore
@@ -2859,6 +3251,8 @@
   id: cf-background-shadow-lodge-defector
   name: cf-background-shadow-lodge-defector
   description: cf-background-description-shadow-lodge-defector
+  skillFeats:
+    - CFLieToMe
   trainedSkills:
     - Deception
     - Lore
@@ -2870,6 +3264,8 @@
   id: cf-background-shadow-war-survivor
   name: cf-background-shadow-war-survivor
   description: cf-background-description-shadow-war-survivor
+  skillFeats:
+    - CFStreetwise
   trainedSkills:
     - Society
     - Lore
@@ -2881,6 +3277,8 @@
   id: cf-background-sheriff
   name: cf-background-sheriff
   description: cf-background-description-sheriff
+  skillFeats:
+    - CFGroupCoercion
   rarity: Uncommon
   trainedSkills:
     - Intimidation
@@ -2893,6 +3291,8 @@
   id: cf-background-shoanti-name-bearer
   name: cf-background-shoanti-name-bearer
   description: cf-background-description-shoanti-name-bearer
+  skillFeats:
+    - CFCombatClimber
   trainedSkills:
     - Athletics
     - Lore
@@ -2904,6 +3304,8 @@
   id: cf-background-shory-seeker
   name: cf-background-shory-seeker
   description: cf-background-description-shory-seeker
+  skillFeats:
+    - CFSpecialtyCrafting
   trainedSkills:
     - Crafting
     - Lore
@@ -2930,6 +3332,8 @@
   id: cf-background-silk-farmer
   name: cf-background-silk-farmer
   description: cf-background-description-silk-farmer
+  skillFeats:
+    - CFSpecialtyCrafting
   rarity: Uncommon
   trainedSkills:
     - Crafting
@@ -2942,6 +3346,8 @@
   id: cf-background-sky-rider
   name: cf-background-sky-rider
   description: cf-background-description-sky-rider
+  skillFeats:
+    - CFCatFall
   trainedSkills:
     - Acrobatics
     - Lore
@@ -2953,6 +3359,8 @@
   id: cf-background-sodden-scavenger
   name: cf-background-sodden-scavenger
   description: cf-background-description-sodden-scavenger
+  skillFeats:
+    - CFForager
   trainedSkills:
     - Survival
     - Lore
@@ -2977,6 +3385,8 @@
   id: cf-background-spell-seeker
   name: cf-background-spell-seeker
   description: cf-background-description-spell-seeker
+  skillFeats:
+    - CFRecognizeSpell
   trainedSkills:
     - Arcana
     - Lore
@@ -2988,6 +3398,8 @@
   id: cf-background-spotter
   name: cf-background-spotter
   description: cf-background-description-spotter
+  skillFeats:
+    - CFTerrainStalker
   trainedSkills:
     - Stealth
     - Lore
@@ -2999,6 +3411,8 @@
   id: cf-background-squire
   name: cf-background-squire
   description: cf-background-description-squire
+  skillFeats:
+    - CFArmorAssist
   trainedSkills:
     - Athletics
     - Lore
@@ -3034,6 +3448,8 @@
   id: cf-background-storm-survivor
   name: cf-background-storm-survivor
   description: cf-background-description-storm-survivor
+  skillFeats:
+    - CFForager
   trainedSkills:
     - Survival
     - Lore
@@ -3045,6 +3461,8 @@
   id: cf-background-streetfood-vendor
   name: cf-background-streetfood-vendor
   description: cf-background-description-streetfood-vendor
+  skillFeats:
+    - CFSeasoned
   trainedSkills:
     - Lore
   abilityBoosts:
@@ -3055,6 +3473,8 @@
   id: cf-background-street-preacher
   name: cf-background-street-preacher
   description: cf-background-description-street-preacher
+  skillFeats:
+    - CFDubiousKnowledge
   trainedSkills:
     - Religion
     - Lore
@@ -3066,6 +3486,8 @@
   id: cf-background-street-urchin
   name: cf-background-street-urchin
   description: cf-background-description-street-urchin
+  skillFeats:
+    - CFPickpocket
   trainedSkills:
     - Thievery
     - Lore
@@ -3077,6 +3499,8 @@
   id: cf-background-student-of-magic
   name: cf-background-student-of-magic
   description: cf-background-description-student-of-magic
+  skillFeats:
+    - CFRecognizeSpell
   trainedSkills:
     - Arcana
     - Lore
@@ -3088,6 +3512,8 @@
   id: cf-background-sun-dancer
   name: cf-background-sun-dancer
   description: cf-background-description-sun-dancer
+  skillFeats:
+    - CFFascinatingPerformance
   rarity: Rare
   trainedSkills:
     - Performance
@@ -3099,6 +3525,8 @@
   id: cf-background-surge-investigator
   name: cf-background-surge-investigator
   description: cf-background-description-surge-investigator
+  skillFeats:
+    - CFTerrainExpertise
   rarity: Rare
   trainedSkills:
     - Nature
@@ -3111,6 +3539,8 @@
   id: cf-background-taldan-schemer
   name: cf-background-taldan-schemer
   description: cf-background-description-taldan-schemer
+  skillFeats:
+    - CFHobnobber
   trainedSkills:
     - Diplomacy
     - Lore
@@ -3122,6 +3552,8 @@
   id: cf-background-tall-tale
   name: cf-background-tall-tale
   description: cf-background-description-tall-tale
+  skillFeats:
+    - CFImpressivePerformance
   rarity: Rare
   trainedSkills:
     - Performance
@@ -3144,6 +3576,8 @@
   id: cf-background-tax-collector
   name: cf-background-tax-collector
   description: cf-background-description-tax-collector
+  skillFeats:
+    - CFQuickCoercion
   trainedSkills:
     - Intimidation
     - Lore
@@ -3155,6 +3589,8 @@
   id: cf-background-teacher
   name: cf-background-teacher
   description: cf-background-description-teacher
+  skillFeats:
+    - CFExperiencedProfessional
   trainedSkills:
     - Performance
     - Lore
@@ -3166,6 +3602,8 @@
   id: cf-background-teamster
   name: cf-background-teamster
   description: cf-background-description-teamster
+  skillFeats:
+    - CFTrainAnimal
   trainedSkills:
     - Nature
     - Lore
@@ -3177,9 +3615,8 @@
   id: cf-background-tech-reliant
   name: cf-background-tech-reliant
   description: cf-background-description-tech-reliant
-  grants:
-    - !type:CFGrantOption
-      option: BattleMedicine
+  skillFeats:
+    - CFBattleMedicine
   rarity: Rare
   trainedSkills:
     - Crafting
@@ -3192,6 +3629,8 @@
   id: cf-background-thassilonian-delver
   name: cf-background-thassilonian-delver
   description: cf-background-description-thassilonian-delver
+  skillFeats:
+    - CFArcaneSense
   trainedSkills:
     - Arcana
     - Lore
@@ -3203,6 +3642,8 @@
   id: cf-background-thassilonian-traveler
   name: cf-background-thassilonian-traveler
   description: cf-background-description-thassilonian-traveler
+  skillFeats:
+    - CFDubiousKnowledge
   trainedSkills:
     - Arcana
     - Lore
@@ -3214,6 +3655,8 @@
   id: cf-background-thrill-seeker
   name: cf-background-thrill-seeker
   description: cf-background-description-thrill-seeker
+  skillFeats:
+    - CFCombatClimber
   trainedSkills:
     - Athletics
     - Lore
@@ -3225,6 +3668,8 @@
   id: cf-background-thrune-loyalist
   name: cf-background-thrune-loyalist
   description: cf-background-description-thrune-loyalist
+  skillFeats:
+    - CFStudentOfTheCanon
   trainedSkills:
     - Religion
     - Lore
@@ -3236,6 +3681,8 @@
   id: cf-background-thuvian-unifier
   name: cf-background-thuvian-unifier
   description: cf-background-description-thuvian-unifier
+  skillFeats:
+    - CFQuickCoercion
   trainedSkills:
     - Intimidation
     - Lore
@@ -3259,6 +3706,8 @@
   id: cf-background-tiffin-box-deliverer
   name: cf-background-tiffin-box-deliverer
   description: cf-background-description-tiffin-box-deliverer
+  skillFeats:
+    - CFStreetwise
   rarity: Uncommon
   trainedSkills:
     - Society
@@ -3282,6 +3731,8 @@
   id: cf-background-tinker
   name: cf-background-tinker
   description: cf-background-description-tinker
+  skillFeats:
+    - CFSpecialtyCrafting
   trainedSkills:
     - Crafting
     - Lore
@@ -3304,6 +3755,8 @@
   id: cf-background-touched-by-dahak
   name: cf-background-touched-by-dahak
   description: cf-background-description-touched-by-dahak
+  skillFeats:
+    - CFTitanWrestler
   rarity: Rare
   trainedSkills:
     - Athletics
@@ -3327,6 +3780,8 @@
   id: cf-background-trade-consortium-underling
   name: cf-background-trade-consortium-underling
   description: cf-background-description-trade-consortium-underling
+  skillFeats:
+    - CFExperiencedProfessional
   trainedSkills:
     - Society
     - Lore
@@ -3338,6 +3793,8 @@
   id: cf-background-trailblazer
   name: cf-background-trailblazer
   description: cf-background-description-trailblazer
+  skillFeats:
+    - CFTerrainExpertise
   trainedSkills:
     - Survival
     - Lore
@@ -3349,6 +3806,8 @@
   id: cf-background-translator
   name: cf-background-translator
   description: cf-background-description-translator
+  skillFeats:
+    - CFMultilingual
   trainedSkills:
     - Society
     - Lore
@@ -3360,6 +3819,8 @@
   id: cf-background-traveling-gourmand
   name: cf-background-traveling-gourmand
   description: cf-background-description-traveling-gourmand
+  skillFeats:
+    - CFForager
   rarity: Uncommon
   trainedSkills:
     - Survival
@@ -3383,6 +3844,8 @@
   id: cf-background-ulfen-raider
   name: cf-background-ulfen-raider
   description: cf-background-description-ulfen-raider
+  skillFeats:
+    - CFIntimidatingGlare
   trainedSkills:
     - Intimidation
     - Lore
@@ -3394,6 +3857,8 @@
   id: cf-background-undersea-enthusiast
   name: cf-background-undersea-enthusiast
   description: cf-background-description-undersea-enthusiast
+  skillFeats:
+    - CFUnderwaterMarauder
   trainedSkills:
     - Athletics
     - Lore
@@ -3405,6 +3870,8 @@
   id: cf-background-undertaker
   name: cf-background-undertaker
   description: cf-background-description-undertaker
+  skillFeats:
+    - CFForensicAcumen
   trainedSkills:
     - Medicine
   abilityBoosts:
@@ -3426,6 +3893,8 @@
   id: cf-background-unremarkable
   name: cf-background-unremarkable
   description: cf-background-description-unremarkable
+  skillFeats:
+    - CFLengthyDiversion
   trainedSkills:
     - Deception
     - Lore
@@ -3437,6 +3906,8 @@
   id: cf-background-ustalavic-academic
   name: cf-background-ustalavic-academic
   description: cf-background-description-ustalavic-academic
+  skillFeats:
+    - CFSkillTraining
   trainedSkills:
     - Crafting
     - Lore
@@ -3448,6 +3919,8 @@
   id: cf-background-varisian-wanderer
   name: cf-background-varisian-wanderer
   description: cf-background-description-varisian-wanderer
+  skillFeats:
+    - CFFascinatingPerformance
   trainedSkills:
     - Performance
     - Lore
@@ -3459,6 +3932,8 @@
   id: cf-background-vidrian-reformer
   name: cf-background-vidrian-reformer
   description: cf-background-description-vidrian-reformer
+  skillFeats:
+    - CFHobnobber
   trainedSkills:
     - Diplomacy
     - Lore
@@ -3470,6 +3945,8 @@
   id: cf-background-wandering-preacher
   name: cf-background-wandering-preacher
   description: cf-background-description-wandering-preacher
+  skillFeats:
+    - CFPilgrimSToken
   trainedSkills:
     - Religion
   abilityBoosts:
@@ -3480,6 +3957,8 @@
   id: cf-background-ward
   name: cf-background-ward
   description: cf-background-description-ward
+  skillFeats:
+    - CFFascinatingPerformance
   trainedSkills:
     - Performance
     - Lore
@@ -3503,6 +3982,8 @@
   id: cf-background-warrior
   name: cf-background-warrior
   description: cf-background-description-warrior
+  skillFeats:
+    - CFIntimidatingGlare
   trainedSkills:
     - Intimidation
     - Lore
@@ -3514,6 +3995,8 @@
   id: cf-background-waste-walker
   name: cf-background-waste-walker
   description: cf-background-description-waste-walker
+  skillFeats:
+    - CFForager
   trainedSkills:
     - Survival
     - Lore
@@ -3525,6 +4008,8 @@
   id: cf-background-weaver
   name: cf-background-weaver
   description: cf-background-description-weaver
+  skillFeats:
+    - CFSpecialtyCrafting
   trainedSkills:
     - Crafting
   abilityBoosts:
@@ -3535,6 +4020,8 @@
   id: cf-background-whispering-way-scion
   name: cf-background-whispering-way-scion
   description: cf-background-description-whispering-way-scion
+  skillFeats:
+    - CFStudentOfTheCanon
   trainedSkills:
     - Religion
     - Lore
@@ -3546,6 +4033,8 @@
   id: cf-background-wildwood-local
   name: cf-background-wildwood-local
   description: cf-background-description-wildwood-local
+  skillFeats:
+    - CFNaturalMedicine
   trainedSkills:
     - Nature
     - Lore
@@ -3568,6 +4057,8 @@
   id: cf-background-winters-child
   name: cf-background-winters-child
   description: cf-background-description-winters-child
+  skillFeats:
+    - CFArcaneSense
   trainedSkills:
     - Arcana
     - Lore
@@ -3590,6 +4081,8 @@
   id: cf-background-witch-wary
   name: cf-background-witch-wary
   description: cf-background-description-witch-wary
+  skillFeats:
+    - CFOddityIdentification
   trainedSkills:
     - Occultism
     - Lore
@@ -3601,6 +4094,8 @@
   id: cf-background-wonder-taster
   name: cf-background-wonder-taster
   description: cf-background-description-wonder-taster
+  skillFeats:
+    - CFAlchemicalCrafting
   trainedSkills:
     - Crafting
     - Lore
@@ -3612,6 +4107,8 @@
   id: cf-background-working-student
   name: cf-background-working-student
   description: cf-background-description-working-student
+  skillFeats:
+    - CFStreetwise
   rarity: Uncommon
   trainedSkills:
     - Society

@@ -202,6 +202,9 @@
   name: cf-heritage-nomadic-halfling
   description: cf-heritage-nomadic-halfling-desc
   ancestries: [Halfling]
+  choices:
+    - kind: Language
+      count: 2
 
 - type: cfHeritage
   id: TwilightHalfling

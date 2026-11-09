@@ -75,7 +75,7 @@ Details: `character-builder.md`.
 There are no turns. `CFActionPoolComponent` stands in for them.
 
 - Each creature holds `MaxActions` (default 3) of stamina and regains one every `RegenSeconds` (default 1.2) with a player in the body, or every `NpcRegenSeconds` (default 1.5) without one.
-- An NPC waits `CFCombatant.ThinkingTimer` (default 1 second) before each attack on a creature. `CFActionPoolSystem.StillThinking` checks it where a swing or shot is attempted, so stock HTN and GOAP both get it.
+- An NPC waits `CFCombatant.ThinkingTimer` (default 1 second) before each attack on a creature. `CFActionPoolSystem.StillThinking` checks it where a swing or shot is attempted, so stock HTN and GOAP both get it. GOAP's Demoralize and Feint ask it too.
 - An action on the wheel pays through `CFRadialSlotComponent`. An activity outside the wheel calls `CFActionPoolSystem.TrySpendActions`.
 - A full pool counts as a new turn. `CFTurnRefilledEvent` fires, frightened eases, reactions come back, and `MapAttacks` clears.
 - Anything PF2e times "until your next turn" uses a fixed 6 seconds instead.

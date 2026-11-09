@@ -27,7 +27,7 @@ Complaints from a playtest, noted on 9 November 2026. These come before everythi
 
 - [x] All mobs have a pool cooldown of 1.5 seconds, stock HTN mobs as well as GOAP ones (`NpcRegenSeconds`). Players stay at 1.2. A monster with a player in it counts as a player.
 - [x] All mobs get a `ThinkingTimer`, default 1 second, which gives them a moment to think about their next attack. It is checked where a Strike or shot is attempted, so both AIs get it. Swings at doors and other obstacles do not wait.
-- [ ] Demoralize and Feint from GOAP do not wait for it.
+- [x] Demoralize and Feint from GOAP wait for it as well (`CFGOAPManeuverStepSystem`). Tests: `CFGOAPTest`.
 - [x] `thinkingTimer` is a field on `CFCombatant` in each creature's YAML, so it can differ per mob. A smarter mob with higher reflex, such as a boss, thinks faster. Every creature uses the default until someone sets one.
 
 ### Medical kit
@@ -45,7 +45,7 @@ Built on 9 November 2026. Tests: `CFCharacterSetupTest`.
 - [x] The ABCJ panel is Ancestry, Sprite, Background, Class, Job, Accept. Everything else stays hidden until Accept, which also saves.
 - [x] The shop in Character Setup uses the merchant layout, with search and a quantity. It only sells what the job's loadouts offer, not a merchant's whole catalogue.
 - [x] Everyone starts in clothes and shoes, with an adventurer's kit on their back: a backpack holding rope, a torch, flint and steel, a ration and a canteen of water. The kit is where extra copies go. Striking the flint on a torch has not been tried in a real client.
-- [ ] Extra copies are stored per character, not per job, so a job that owns the same item shares the count.
+- [x] Extra copies are stored per job (`CFCoins.CopiesOf`), so two jobs that sell the same item do not share a count. Tests: `CFCharacterSetupTest`.
 
 ## Step 1: Make character options work
 
@@ -53,26 +53,23 @@ Players can pick hundreds of options that do nothing. This step gives them effec
 
 ### Where it stands
 
-Measured on 6 November 2026. `python3 .agent/port-scripts/feature_scan.py` prints these numbers, per class and ancestry.
+Measured on 9 November 2026. `python3 .agent/port-scripts/feature_scan.py` prints these numbers, per class and ancestry.
 
 | Option | Total | Works | Does nothing yet |
 |---|---|---|---|
-| Class feats | 586 | 16, and 2 in part | 568. 481 of them say only "will be implemented later" |
-| Ancestry feats | 255 | 30, and 7 in part | 218 |
-| Class features | 176 | About 35 | 140 are placeholders |
-| Heritages | 149 | 20 | 129 are a line of text |
+| Class feats | 585 | 111, and 2 in part | 472, each with its own note and `TBA` |
+| Ancestry feats | 255 | 70, and 6 in part | 179 |
+| Class features | 181 | No placeholders are left | The parts still missing say `TBA` |
+| Heritages | 149 | 67 | 82 |
 | Ancestries | 23 | Boosts, HP, Speed, size, darkvision, languages | Traits are labels |
-| General and skill feats | 131 | 0 | Pickable in the builder, marked `(TBA)`. They have no effects yet |
-| Backgrounds | 324 | Boosts and skills | 261 name a skill feat, from 74 different feats, and none is granted. Only Battle Medicine works |
+| General and skill feats | 131 | 2 | Pickable in the builder, marked `(TBA)`. Battle Medicine and Multilingual work (the scan only counts grants, so it says 1) |
+| Backgrounds | 324 | Boosts, skills and the skill feat they name | 259 grant one, but few of those feats do anything yet (1e) |
 | Spells | 62 | 57 | Figment, Know the Way, Sigil, Animal Form, Dispel Magic are popups. Prestidigitation has its own system and works |
-| Focus spells | 0 | | Hexes, compositions, devotion spells and the rest do not exist |
-
-Some class feature text is wrong. Divine Font says it grants slots, and no code does. Hunt Prey, Exploit Vulnerability, Devise a Stratagem and Inspire Courage still say they are on the wheel. Fix each one in its wave.
+| Focus spells | | The pipeline works (1f) | Filled class by class. Many hexes, compositions and domain spells are still `TBA` |
 
 ### What blocks it
 
-1. **Subclasses have almost no options yet.** The storage and the builder button are built (1c), but only the Rogue has options. About a third of the level 1 class features need one.
-2. **The rules text is not in the repo.** The 481 placeholder feats and 140 placeholder features were imported with their text removed, so each needs reading on Archives of Nethys.
+Neither of the original blockers is left. Subclass options exist for every class that has them (1g), and the placeholder feats and features now carry their own notes or `TBA`. What is left is building each `TBA`, and `CFFeatureCoverageTest` stops new placeholders coming back.
 
 ### 1a. One pipeline for what an option grants
 
@@ -87,7 +84,7 @@ Built on 6 November 2026, except where marked. Tests: `CFGrantTest`. What change
 - [x] A hook that lets a grant change a save's degree, matching `AdjustDefense`: `CFBonusSystem.UpgradeSave`, called from `CFConditionSystem.RollDefense`.
 - [x] Traits on `CFEffectArgs`, read from the source, so any check can ask what it is rolling against.
 - [ ] A bonus against a trait only counts on saves and Perception. Attacks and AC have no source traits to read.
-- [ ] Nothing checks the ids in `CFGrantProficiency`, so a typo does nothing. `CFFeatureCoverageTest` in 1g should.
+- [x] The ids in `CFGrantProficiency` are checked by `CFFeatureCoverageTest`, so a typo fails a test.
 - [ ] Low-light vision is a dimmer darkvision overlay, chosen by eye and not seen in a real client.
 
 | Grant | What it does | First uses |
@@ -112,7 +109,7 @@ Most action feats share one of a few shapes, so build the shape once. An action 
 - [x] Stances (21 feats). `CFStance` on an action, parented on `CFActStanceBase` in `Actions/stances.yml`, run by `CFStanceSystem`. Built on 9 November 2026, with Point-Blank, Mountain, Crane, Dragon and Tiger. The other 16 stances are filled in their waves. Tests: `CFStanceTest`.
   - One at a time, and another stance action waits 6 seconds. Using the same action again is Dismiss, which costs its action and does not wait.
   - It ends on being knocked out, when armor breaks an unarmored requirement, or on another stance action. Real time has no encounters, so it does not end when a fight does.
-  - [ ] Asleep and Unconscious from a condition do not end a stance yet, only falling to Critical or Dead does.
+  - [x] Falling asleep ends a stance, from the condition or stock sleep. Paralyzed does not, because it is not being knocked out. Tests: `CFStanceTest`.
   - [ ] Not seen in a real client: the action button lighting up while in a stance.
   - [ ] Stances with other requirements have no check yet, such as Mountain's touching the ground, or a weapon a stance needs.
 - [x] Flourishes (36). Add `CFFlourish` to an action. `CFActionPoolSystem` allows one until the pool is next full. Flurry of Blows and Sudden Charge use it, and Vicious Swing keeps its code path. The rest are filled in their waves.
@@ -134,7 +131,7 @@ Most action feats share one of a few shapes, so build the shape once. An action 
 - [x] Auras. `CFAura` on a creature and `CFAuraEffect` entries, added with `!type:CFGrantAura`, run by `CFAuraSystem`. Built on 9 November 2026 for the Champion's aura, with Aura of Courage, Aura of Despair, Divine Health and Shields of the Spirit. Tests: `CFAuraTest`.
   - It looks up who is inside 4 times a second, through `CFEffectSystem.CollectArea`, only for creatures that have an aura. It is not a physics sensor: a 15-foot sensor would make the problems in `ss14rules.md` about the flanking sensor much worse, and would be a circle where emanations are tiles.
   - "At the end of your turn" is every 6 seconds, on the owner's own timer. A placeholder: the timing will probably change.
-  - [ ] Not seen in a real client. Nothing draws the aura's edge yet.
+  - [ ] Not seen in a real client, nor is its border (`CFAuraOverlaySystem`).
   - [ ] Bard compositions, Hampering Stance and Channeled Protection can use this when their waves come. A choice of when to suppress the aura is not built.
 
 ### 1c. Subclasses
@@ -156,9 +153,9 @@ All of this is picked in the lobby and stored on `CFCharacterBuildData`, the way
 - [x] Builder slots for levels 2 to 5: skill increases at 3 and 5, ability boosts at 5, a general feat at 3, and skill feats at 2 and 4.
 - [x] The same choices copied to `CFExperienceComponent` at spawn, checked again there because they come from a client, and applied by `LevelUp`.
 - [x] Run class features from `LevelUp` when their level is reached.
-- [ ] The feat a background names, at level 1.
-- [ ] Extra slots for classes that get more: a Rogue gets a skill feat every level and a skill increase from level 2.
-- [ ] Changing a skill pick can leave a later feat the build no longer qualifies for. It is dropped at spawn with no warning, so the builder should clear it or say so.
+- [x] The feat a background names, at level 1: `skillFeats` on `cfBackground`, read through `CFSkills.SelectedFeats`. It needs no qualifying and cannot be taken again in a slot. Three backgrounds name two feats and get both, which has not been checked against the rules (Hermean Heritor and the ones with Hefty Hauler or Diehard). Contract Negotiator and Ravening's Desperation are from other books and are not granted.
+- [x] Extra slots for classes that get more: `bonusSkillFeats` and `bonusSkillIncreases` on `cfClass`. Only the Rogue has them (skill feats at 1, 3, 5 and increases at 2, 4). Not clicked in a real client. Check whether the Investigator should too.
+- [x] Changing a pick clears any later feat the build no longer qualifies for (`CFSkills.DropUnqualifiedFeats`), in the builder and again at spawn. Changing ancestry goes around it, so that case is only caught at spawn. Tests: `CFLevelChoicesTest`.
 - [x] Spell slots grow with level. `laterSlots` on a class's `spellcasting` holds its Spells per Day table from Archives of Nethys, `GrowSpellbook` applies it on level up, and the builder offers every slot through level 5. Tests: `CFSpellSlotTest`. A pick only counts once the slot for it has arrived, by its order in that rank. A Wizard's curriculum slot is not built, and Divine Font's extra slots stay at rank 1 where the table moves them to the highest rank.
 - [ ] The level cap stays at 5, so spells stop at rank 3.
 
@@ -166,9 +163,9 @@ All of this is picked in the lobby and stored on `CFCharacterBuildData`, the way
 
 `Feats/General/feats.yml` holds 131 feats through level 4 from Player Core, Player Core 2 and GM Core, with the site's one line summaries. `.agent/port-scripts/general_feats.py` rewrites that file from Archives of Nethys, so put fixes in the script. Of 74 feats backgrounds name, 65 match by name.
 
-- [ ] Grants for them, in the waves. Battle Medicine moves from a grant on 8 backgrounds to a feat.
+- [ ] Grants for them, in the waves. Battle Medicine and Multilingual work so far. `general_feats.py` keeps those in `WORKING`.
 - [ ] Prerequisites beyond one skill rank are text, not enforced. 90 feats have a rank the game checks.
-- [ ] The 9 background feats with no match: spelling (`Lie To Me`), two feats in one line, or from other books.
+- [ ] The 2 background feats with no match, from other books: Contract Negotiator and Ravening's Desperation.
 
 ### 1f. Spells
 
@@ -187,19 +184,19 @@ Do 1a to 1d first, then work through these. For each entry: read it on Archives 
 | Wave | Options | Feats |
 |---|---|---|
 | 1 | Ancestries and heritages. Mostly grants, and no subclass needed. Worked through on 9 November 2026. Heritages: 60 have working effects and 77 are marked `TBA`. Ancestry feats: 38 new ones work, and the rest are marked. Entries that only had `TBA` added still need their text checked against the rules when each is built. Tests: `CFHeritageTest`, `CFAncestryFeatTest` | 255, and 149 heritages |
-| | Wave 1 waits on: granting a skill feat, climb, swim and fly, a rule for choosing another ancestry's feats, and a `cfFeat` that needs a heritage (prerequisites are text) | |
+| | Wave 1 waits on: climb, swim and fly, a rule for choosing another ancestry's feats, and a `cfFeat` that needs a heritage (prerequisites are text) | |
 | 2 | Fighter, Rogue, Ranger. First pass on 9 November 2026: class features, Hunter's Edge, Sneak Attack limits and 9 passive feats work, and the rest say `TBA`. Tests: `CFWave2Test`. Strike actions: `CFStrikeAction` in `Actions/strikes.yml`, with Intimidating Strike, Dual-Handed Assault, Lunge, Head Stomp, Twin Takedown and Hunter's Aim (tests: `CFStrikeActionTest`). Still to do: Strikes that hit several targets (Swipe, Quick Reversal, Double Shot), Strikes that add a maneuver (Brutish Shove, Slam Down, Sleek Reposition, Combat Grab), and two shots from a bow that holds one arrow (Hunted Shot) | 81 |
 | 3 | Cleric, Wizard, Bard, Druid, Witch. Started on 9 November 2026: focus spells, all subclasses as choices, and class features that are rank raises. Most subclasses are still mostly `TBA`: their feats and focus spells. Feats worked through on 9 November 2026: 15 work, and the rest say `TBA`, mostly waiting on composition spells, domains, familiars, battle forms and the Witch's lessons. Feats that need a muse, order, racket or doctrine now require it (`requiresChoice`). Tests: `CFWave3Test` | 105 |
 | 4 | Barbarian, Champion, Monk, Swashbuckler, Investigator, Alchemist, Sorcerer, Oracle. First pass on 9 November 2026: every subclass is a choice, level 1 to 5 class features are done or say `TBA`, every feat has its own note, and 22 more feats work. Tests: `CFWave4Test`. A Sorcerer's bloodline sets its tradition (`tradition` on `cfClassChoice`). Still to do: Alchemist versatile vials and Quick Alchemy, blood magic and bloodline focus spells, Oracle curses and revelation spells, temporary Hit Points and a time limit on Rage, and Intelligence on a stored Devise a Stratagem roll. Witch patrons could set their tradition the same way | 179 |
-| 5 | Magus, Thaumaturge, Gunslinger, Inventor, Psychic, Commander, Guardian, Necromancer, Animist, Exemplar, Runesmith. First pass on 9 November 2026: subclasses that mean something today are choices, level 1 to 5 class features are done or say `TBA`, and every feat has its own note. Tests: `CFWave5Test`. Most of this wave waits on whole systems that do not exist: firearms, implements, innovations, psi amps, tactics and the banner, thralls, apparitions, ikons, runes, Taunt and recharging Spellstrike. Ikons, apparitions and tactics are not choices yet, because picking one would do nothing | 197 |
+| 5 | Magus, Thaumaturge, Gunslinger, Inventor, Psychic, Commander, Guardian, Necromancer, Animist, Exemplar, Runesmith. First pass on 9 November 2026: subclasses that mean something today are choices, level 1 to 5 class features are done or say `TBA`, and every feat has its own note. Tests: `CFWave5Test`. The systems this wave waited on are built: see the list below, which also says what each still lacks | 197 |
 | 6 | Summoner. First pass on 9 November 2026. An eidolon is a companion ordered by pointing, and a ghost role so another player can take it: `CFEidolonServerSystem`, `Companions/eidolons.yml`, and three builder slots in `Choices/summoner.yml` (type, key attribute, attack). Hit Points are one pool, kept in step by comparing both bodies each tick. It has its own action pool, where the rules share one, because a second player would otherwise be spending the Summoner's actions. It stays within 100 feet. Tests: `CFEidolonTest`. All 15 types set a tradition, skills and attributes. Every type uses one placeholder body. Furious Strike, Tendril Strike and Dragon Breath work, the Ooze's resistance and the Undead's void healing work, and the other types' abilities say `TBA`. Not built: the second attack and the primary attack's traits, Act Together, Share Senses, runes and gear on eidolons, and most evolution feats | 23 |
 
 Witch familiars, Druid animal companions and Summoner eidolons all lean on `cfPet`, and "Companions have no inventory" under Step 4 gets in their way.
 
 - [x] Feats with no effect show `(TBA)` in the builder's lists.
 - [x] Heritages show `(TBA)` in the builder when they have no effect at all. One with part of its rules working keeps its name and says which part is `TBA` in its text. Tests: `CFHeritageTest`.
-- [ ] Mark unfinished class features too. A feat with `grants` is finished unless it sets `pendingAction`. One without goes by its placeholder text.
-- [ ] `CFFeatureCoverageTest`: fails if a finished class has a placeholder, and if a `grants` entry cannot be read.
+- [x] Unfinished class features show `(TBA)` in the class's description in the builder, when nothing about them works yet (`CFClassFeature.Unfinished`). Not seen in a real client.
+- [x] `CFFeatureCoverageTest`: fails on a placeholder in any class, on a class feat with no effect and no `TBA`, on a mistyped proficiency, and on an option in the files that did not load.
 - [x] Kineticist is not included, and its stray feat file is gone.
 
 ### Systems Wave 5 is waiting on
@@ -245,7 +242,7 @@ Built on 6 November 2026. `Content.Shared/_CF/Languages`, and `CFSpeech` in `Con
 
 - [ ] Radio is not translated. `EntitySpokeEvent` still carries the real words, so a radio or anything else listening to it hears them.
 - [ ] Show known languages on the character sheet.
-- [ ] `CFGrantLanguage`, for Multilingual and other feats that teach one.
+- [x] Multilingual and Nomadic Halfling teach languages through a `Language` entry in `choices`, so the player picks. Only common languages are offered. `CFGrantLanguage` was not needed. Tests: `CFLevelChoicesTest`.
 - [ ] Recount the extra languages when Intelligence rises at level 5.
 - [ ] Give monsters that talk a `CFLanguages`. Without one, a creature speaks plainly and understands everything.
 - [ ] Every monster can now be played, so a player in a rat or a skeleton talks in plain words. Animals and mindless undead need a way to make noise only.
@@ -262,12 +259,12 @@ Built on 6 November 2026. `CFLongRestSystem`. Tests: `CFLongRestTest`.
 
 Left from re-importing the other machine's lost work. Details of what was rebuilt are in `roadmapold.md`.
 
-1. Fix the `Chemicals` guide failure under Known bugs.
-2. Recipes: `python3 .agent/port-scripts/recipes.py` makes 59 more recipes with formulas. The output was removed before the push because it was never linted, so generate it, lint it, then run `CFCraftingTest`. Known limits: stack groups use the plain material, so birch planks do not count. Cooking recipes wait for a station. 73 results are not ported (clothing, backpacks, vials, CP14's key and lock items). 4 need an unported ingredient: Screwdriver, ElfPlushie, AgaricPlushie, SkeletonPlushie.
-3. The Phase 3 weapons mostly have no recipe, because CP14 made them from modular parts. They need recipes of our own.
-4. `Sharp` was dropped from 2 items (the component was renamed upstream). `ToggleableLightVisuals` was dropped from 1. Find the replacements.
-5. Swap `CFSiteWallStone` back to `CFWallStone`. Add a test for the cost of standing up.
-6. Update `codebase.md` and `ss14rules.md` with the new folders and the engine differences from the port.
+- [x] The `Chemicals` guide failure. That entry no longer exists, and all 57 guide entries pass.
+- [x] Recipes: the 59 from `recipes.py` are in `recipes_ported.yml`. Known limits: stack groups use the plain material, so birch planks do not count. Cooking recipes wait for a station. 73 results are not ported (clothing, backpacks, vials, CP14's key and lock items). 4 need an unported ingredient: Screwdriver, ElfPlushie, AgaricPlushie, SkeletonPlushie.
+- [x] Recipes of our own for the Phase 3 weapons, in `recipes_weapons.yml`.
+- [x] `Sharp` has no replacement: butchering goes through the kitchen spike. `ToggleableLightVisuals` is now `ToggleableVisuals`. Both are in `ss14rules.md`.
+- [x] `CFSiteWallStone` is back to `CFWallStone`. Standing has a test: `StandingCostsOneActionAndWaitsForIt`.
+- [x] `codebase.md` and `ss14rules.md` have the new folders and the engine differences from the port.
 
 ### Check before trusting
 
@@ -297,7 +294,7 @@ The rule for what comes over, and how, is under Phase 3b in `roadmapold.md`: RPG
 - [ ] Tools, materials, keys and locks (Pick a Lock / Force Open).
   - Still to do for locks: portable lock items, repairing a broken toolkit, and shoddy improvised picks. A critical Force Open unlocks but does not swing the door open.
 - [ ] Workbenches and recipes on the PF2e Crafting rules.
-  - Recipes: 21 of CP14's 179 are in `Resources/Prototypes/_CF/Crafting/recipes.yml`. The rest make items this branch does not have, so add them as those items land. `CFWorkbench` itself has no recipes yet, because all 37 of its results are missing. The 8 vampire recipes stay out. The cooking table waits for cooking.
+  - Recipes: `recipes.yml` and `recipes_ported.yml` hold what CP14 had and this branch can make. Add the rest as their items land. `CFWorkbench` itself has no recipes yet, because all 37 of its results are missing. The 8 vampire recipes stay out. The cooking table waits for cooking.
   - Not done: Alchemical Crafting and Magical Crafting feat checks (no such recipes yet), batches of consumables, repairing items, `CP14StackGroup` and solution requirements, and reverse-engineering formulas.
 - [ ] Creatures with PF2e stat blocks. `importcreatures.md` is the guide.
   - Each creature has one Strike, its first printed melee Strike. A second Strike needs a way to pick between attacks. Special abilities wait for the planned better AI, not for this row. They are not in: Grab, venom and disease, Ferocity, charges, Pack Attack, Filth Wave, the ooze's extra acid. The stat block comment on each creature lists what is missing. Immunity to critical hits and precision is not in either.
@@ -316,7 +313,7 @@ The rule for what comes over, and how, is under Phase 3b in `roadmapold.md`: RPG
 Smaller gaps found while building the earlier phases. Take them when the system is next touched.
 
 - [ ] `CFDcSource.Item` (needs item level, Phase 2). Line of effect is a `CFTargeting` flag but no spell turns it on yet.
-- [ ] Damage type fields are still strings (`damageType: slashing`) on weapons and pets. Spells now use `ProtoId<CFDamageTypePrototype>` with PascalCase ids (Phase 1). Convert weapons and pets when Phase 2 rewrites them.
+- [ ] Damage type fields are still strings on pets (`CFPetPrototype.Damage`). Spells and weapons use `ProtoId<CFDamageTypePrototype>` with PascalCase ids. Convert pets when companions are next touched.
 - [ ] 16 `_CF` systems subscribe in `Initialize()` instead of with `[SubscribeLocalEvent]` attributes. Convert each one when that system is next touched, not as a bulk change.
 - [ ] Critical specialization effects by group (later; needs class features).
 - [ ] Give the `Trip` weapon trait a use, such as counting as an extra shove.
@@ -428,7 +425,6 @@ The labels are the sections of Phase 6 in `roadmapold.md`, which has the design.
 - `CFGOAPEncounterTest.ItChoosesToFlankThenRunsThenHides` sometimes shows as `Skipped` in a full CF run and passes on its own. It runs no game ticks, so the cause is not movement. The failure message is lost, so the cause is unknown.
 - `CFSkeletonguardTest.OutOfArrowsItDropsTheBowAndUsesItsClaws` fails in every full CF run (it stops 2.4 away, and the test wants under 2) and passes alone, so it depends on what ran before it.
 - `RainWatersExposedCrops` is unreliable, not just in a full run. On 6 November 2026 it showed as `Skipped` in two full runs, then failed once and passed once on its own. The failure message was not captured, so the cause is unknown. It only touches weather and plants, not the AI.
-- `GuideEntryPrototypeTests.Validate("Chemicals")` fails with `Hit style update limit. Queued: 1073` from `RecipesContainer`. The guide now has so many recipes that the UI warns while building it, and the test treats that warning as an error. Not investigated further.
 - `CFProneTest.NpcWithNoRoomKeepsTryingToStand` fails now and then. The same error also hit `NpcStandsOnceItHasAnAction`: an NPC's stand-up attempt adds a `StatusEffectContainerComponent` to a mob that is already being deleted, and the assert surfaces in the next test's setup. Left alone on purpose. It only affects stock NPCs now. GOAP NPCs are the only ones planned to crawl away, and that is not built.
 
 ## Later

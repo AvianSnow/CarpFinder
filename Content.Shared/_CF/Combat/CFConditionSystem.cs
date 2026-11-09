@@ -885,6 +885,8 @@ public sealed partial class CFConditionSystem : EntitySystem
                 break;
             case CFConditionKind.Asleep:
                 KnockOutFor(target, seconds, "cf-spell-sleep");
+                var asleep = new CFPutToSleepEvent();
+                RaiseLocalEvent(target, ref asleep);
                 break;
             case CFConditionKind.Paralyzed:
                 KnockOutFor(target, seconds, "cf-spell-paralyze");

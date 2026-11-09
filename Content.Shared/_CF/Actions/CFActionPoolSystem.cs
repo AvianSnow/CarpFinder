@@ -268,6 +268,19 @@ public sealed partial class CFActionPoolSystem : EntitySystem
             args.Cancel();
     }
 
+    /// <summary>For an NPC's action against a creature that is not a swing or a shot, such as Demoralize.</summary>
+    public bool StillThinking(EntityUid uid)
+    {
+        return TryComp(uid, out CFActionPoolComponent? pool) && StillThinking(uid, pool);
+    }
+
+    /// <summary>The NPC has acted, so its next attack starts a new wait.</summary>
+    public void FinishThinking(EntityUid uid)
+    {
+        if (TryComp(uid, out CFActionPoolComponent? pool))
+            pool.ThinkingUntil = TimeSpan.Zero;
+    }
+
     /// <summary>
     /// The AI has already chosen to attack by the time it gets here, so this one check covers stock HTN and GOAP.
     /// The first attempt starts the timer, and the attack goes ahead once it has run out.
