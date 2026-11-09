@@ -36,17 +36,27 @@
       description: "Choose how you make your living with the Rogue's Racket button."
     - level: 1
       name: "Sneak Attack"
-      description: "Melee Strikes against an off-guard creature deal extra precision damage."
+      description: "Agile or finesse attacks and ranged weapons deal extra precision damage to off-guard creatures. A thrown weapon must be agile or finesse."
       grants:
         - !type:CFGrantOption
           option: SneakAttack
     - level: 1
       name: "Surprise Attack"
-      description: "This feature will be implemented later."
+      description: "Being off-guard to you before a creature has acted: TBA"
     - level: 3
       name: "Deny Advantage"
-      description: "This feature will be implemented later."
+      description: "You are not off-guard to flanking creatures of your level or lower. The same for hidden creatures: TBA"
+      grants:
+        - !type:CFGrantOption
+          option: DenyAdvantage
     - level: 5
       name: "Weapon Tricks"
-      description: "This feature will be implemented later."
+      description: "Expert with simple weapons, martial weapons and unarmed attacks. Critical specialization against off-guard targets: TBA"
+      grants:
+        - !type:CFGrantProficiency
+          proficiencies:
+            - SimpleWeapons
+            - MartialWeapons
+            - Unarmed
+          rank: Expert
   # Class key-attribute boost is applied from keyAbility in code (PF2e).

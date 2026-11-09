@@ -9,4 +9,10 @@
   traits:
     - "Ranger"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-feat-disrupt-prey
+        trigger: EnemyLeftReach
+        strikes: true
+        preyOnly: true

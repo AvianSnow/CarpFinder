@@ -10,3 +10,6 @@
     - "Rogue"
   prerequisites:
     - "thief racket"
+  grants:
+    - !type:CFGrantOption
+      option: UnbalancingBlow

@@ -8,3 +8,6 @@
   level: 2
   traits:
     - "Rogue"
+  grants:
+    - !type:CFGrantOption
+      option: StrongArm

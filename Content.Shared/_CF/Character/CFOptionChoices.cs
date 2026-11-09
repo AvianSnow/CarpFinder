@@ -1,4 +1,5 @@
 using System.Linq;
+using Content.Shared.CF.Combat;
 using Content.Shared.CF.Preferences;
 using Robust.Shared.Prototypes;
 
@@ -33,6 +34,15 @@ public static class CFOptionChoices
             AddSlots(result, choice.ID, choice.Name, choice.Choices);
         }
 
+        if (build.Class is { } classId && prototypes.TryIndex(classId, out CFClassPrototype? cls))
+        {
+            foreach (var feature in cls.Features)
+            {
+                if (feature.Level <= level && feature.Choices.Count > 0 && feature.ChoiceTitle is { } title)
+                    AddSlots(result, FeatureSource(cls, feature), title, feature.Choices);
+            }
+        }
+
         foreach (var feat in CFSkills.SelectedFeats(prototypes, build, ancestryId, build.Class?.Id, level))
         {
             AddSlots(result, feat.ID, feat.Name, feat.Choices);
@@ -41,9 +51,18 @@ public static class CFOptionChoices
         return result;
     }
 
+    /// <summary>What a class feature's picks are stored under.</summary>
+    public static string FeatureSource(CFClassPrototype cls, CFClassFeature feature)
+    {
+        return $"class:{cls.ID}:{feature.Name}";
+    }
+
     /// <summary>The ids a choice can be answered with.</summary>
     public static List<string> Allowed(IPrototypeManager prototypes, CFOptionChoice choice)
     {
+        if (choice.Kind == CFOptionChoiceKind.WeaponGroup)
+            return Enum.GetNames<CFWeaponGroup>().ToList();
+
         if (choice.Kind == CFOptionChoiceKind.Skill)
         {
             return choice.Skills.Count > 0

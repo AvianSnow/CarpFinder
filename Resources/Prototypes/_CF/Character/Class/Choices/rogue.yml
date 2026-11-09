@@ -31,6 +31,8 @@
       proficiencies:
         - MediumArmor
       rank: Trained
+    - !type:CFGrantOption
+      option: AnyWeaponSneak
 
 - type: cfClassChoice
   id: Scoundrel

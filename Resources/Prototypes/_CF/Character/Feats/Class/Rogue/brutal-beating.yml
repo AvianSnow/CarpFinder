@@ -13,3 +13,6 @@
     - "Rogue"
   prerequisites:
     - "ruffian racket"
+  grants:
+    - !type:CFGrantOption
+      option: BrutalBeating

@@ -81,6 +81,7 @@ cf-character-builder-option-choice = { $name }: { $picks }
 cf-character-builder-option-choose = Choose
 cf-character-builder-option-cantrip = Cantrip
 cf-character-builder-option-skill = Skill
+cf-character-builder-option-weapon-group = Weapon group
 cf-character-builder-option-help = Choose what this option gives you.
 cf-character-builder-deity-selected = Deity: { $name }
 cf-character-builder-deity-tba = Deity: TBA

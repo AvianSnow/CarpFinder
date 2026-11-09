@@ -40,6 +40,19 @@ public static class CFMelee
         return step == 0 ? 0 : step == 1 ? -5 : -10;
     }
 
+    /// <summary>The Flurry edge: −3 and −6 against prey instead of −5 and −10, or −2 and −4 with an agile weapon.</summary>
+    public static int PreyFlurryPenalty(int penalty)
+    {
+        return penalty switch
+        {
+            -5 => -3,
+            -10 => -6,
+            -4 => -2,
+            -8 => -4,
+            _ => penalty,
+        };
+    }
+
     public static bool InReach(float distance) => distance <= MeleeRange;
 
     public static float TilesToFeet(float tiles) => tiles * FeetPerTile;

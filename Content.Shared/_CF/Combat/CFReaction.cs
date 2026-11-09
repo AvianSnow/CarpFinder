@@ -88,6 +88,10 @@ public sealed partial class CFReaction
     [DataField]
     public ProtoId<CFTraitPrototype>? Trait;
 
+    /// <summary>Only against the creature this one is hunting.</summary>
+    [DataField]
+    public bool PreyOnly;
+
     /// <summary>A free action with a trigger. It does not use the creature's reaction.</summary>
     [DataField]
     public bool Free;

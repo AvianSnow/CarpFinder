@@ -8,3 +8,6 @@
   level: 4
   traits:
     - "Rogue"
+  grants:
+    - !type:CFGrantOption
+      option: DreadStriker

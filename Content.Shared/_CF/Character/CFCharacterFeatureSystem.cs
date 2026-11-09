@@ -45,8 +45,12 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
     {
         foreach (var feature in cls.Features)
         {
-            if (feature.Level <= level)
-                Apply(mob, feature.Grants, $"class:{cls.ID}:{feature.Level}:{feature.Name}");
+            if (feature.Level > level)
+                continue;
+
+            Apply(mob, feature.Grants, $"class:{cls.ID}:{feature.Level}:{feature.Name}");
+            if (feature.Choices.Count > 0)
+                ApplyOptionPicks(mob, CFOptionChoices.FeatureSource(cls, feature));
         }
     }
 
@@ -161,6 +165,12 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
                 continue;
             }
 
+            if (Enum.IsDefined(typeof(CFWeaponGroup), pick.Value))
+            {
+                RaiseProficiency(mob, pick.Value, CFProficiencyRank.Master);
+                continue;
+            }
+
             var combat = EnsureComp<CFCombatantComponent>(mob);
             if (combat.TrainedSkills.Contains(pick.Value))
                 continue;
@@ -272,6 +282,45 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
                 break;
             case CFCombatOption.ViciousSwing:
                 options.ViciousSwing = true;
+                break;
+            case CFCombatOption.AnyWeaponSneak:
+                options.AnyWeaponSneak = true;
+                break;
+            case CFCombatOption.PreyPrecision:
+                options.PreyPrecision = true;
+                break;
+            case CFCombatOption.PreyFlurry:
+                options.PreyFlurry = true;
+                break;
+            case CFCombatOption.PreyOutwit:
+                options.PreyOutwit = true;
+                break;
+            case CFCombatOption.Bravery:
+                options.Bravery = true;
+                break;
+            case CFCombatOption.DenyAdvantage:
+                options.DenyAdvantage = true;
+                break;
+            case CFCombatOption.DreadStriker:
+                options.DreadStriker = true;
+                break;
+            case CFCombatOption.BrutalBeating:
+                options.BrutalBeating = true;
+                break;
+            case CFCombatOption.UnbalancingBlow:
+                options.UnbalancingBlow = true;
+                break;
+            case CFCombatOption.FarShot:
+                options.FarShot = true;
+                break;
+            case CFCombatOption.StrongArm:
+                options.StrongArm = true;
+                break;
+            case CFCombatOption.FreeStep:
+                options.FreeStep = true;
+                break;
+            case CFCombatOption.FreeStepWithShield:
+                options.FreeStepWithShield = true;
                 break;
             case CFCombatOption.ShakesOffFear:
                 options.ShakesOffFear = true;

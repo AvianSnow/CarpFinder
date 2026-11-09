@@ -235,9 +235,12 @@ public sealed partial class HumanoidProfileEditor
             definitions.Add(new SkillSlotDefinition
             {
                 Id = slot.Slot.ToString(),
-                Label = Loc.GetString(slot.Choice.Kind == CFOptionChoiceKind.Cantrip
-                    ? "cf-character-builder-option-cantrip"
-                    : "cf-character-builder-option-skill"),
+                Label = Loc.GetString(slot.Choice.Kind switch
+                {
+                    CFOptionChoiceKind.Cantrip => "cf-character-builder-option-cantrip",
+                    CFOptionChoiceKind.WeaponGroup => "cf-character-builder-option-weapon-group",
+                    _ => "cf-character-builder-option-skill",
+                }),
                 Allowed = allowed,
                 Labels = allowed.ToDictionary(id => id, OptionLabel),
                 Selected = build.OptionPicks.FirstOrDefault(p => p.Source == source && p.Slot == slot.Slot)?.Value,

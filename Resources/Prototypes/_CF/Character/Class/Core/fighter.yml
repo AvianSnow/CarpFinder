@@ -46,8 +46,20 @@
           option: ShieldBlock
     - level: 3
       name: "Bravery"
-      description: "This feature will be implemented later."
+      description: "Expert in Will saves. A success against fear becomes a critical success, and frightened is 1 lower whenever you gain it."
+      grants:
+        - !type:CFGrantProficiency
+          proficiencies:
+            - Will
+          rank: Expert
+        - !type:CFGrantSaveUpgrade
+          trait: Fear
+        - !type:CFGrantOption
+          option: Bravery
     - level: 5
       name: "Fighter Weapon Mastery"
-      description: "This feature will be implemented later."
+      description: "Choose a weapon group. You become a master with it. Advanced weapons should only reach expert, and critical specialization: TBA"
+      choiceTitle: cf-class-feature-weapon-mastery
+      choices:
+        - kind: WeaponGroup
   # Class key-attribute boost is applied from keyAbility in code (PF2e).

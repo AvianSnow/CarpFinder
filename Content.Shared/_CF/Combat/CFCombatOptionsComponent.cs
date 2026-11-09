@@ -15,6 +15,58 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public bool FinesseDexterity;
 
+    /// <summary>Sneak Attack works with any weapon within the die limits (Ruffian).</summary>
+    [DataField, AutoNetworkedField]
+    public bool AnyWeaponSneak;
+
+    /// <summary>The first hit on your prey each turn deals 1d8 precision (Precision edge).</summary>
+    [DataField, AutoNetworkedField]
+    public bool PreyPrecision;
+
+    /// <summary>Multiple attack penalty is smaller against your prey (Flurry edge).</summary>
+    [DataField, AutoNetworkedField]
+    public bool PreyFlurry;
+
+    /// <summary>+1 circumstance AC against your prey (Outwit edge).</summary>
+    [DataField, AutoNetworkedField]
+    public bool PreyOutwit;
+
+    /// <summary>Frightened is 1 lower whenever you gain it.</summary>
+    [DataField, AutoNetworkedField]
+    public bool Bravery;
+
+    /// <summary>Not off-guard to flanking creatures of your level or lower.</summary>
+    [DataField, AutoNetworkedField]
+    public bool DenyAdvantage;
+
+    /// <summary>Frightened creatures are off-guard to you.</summary>
+    [DataField, AutoNetworkedField]
+    public bool DreadStriker;
+
+    /// <summary>A critical hit that deals damage frightens the target.</summary>
+    [DataField, AutoNetworkedField]
+    public bool BrutalBeating;
+
+    /// <summary>A critical hit that deals damage leaves the target off-guard to you.</summary>
+    [DataField, AutoNetworkedField]
+    public bool UnbalancingBlow;
+
+    /// <summary>Range increments are doubled.</summary>
+    [DataField, AutoNetworkedField]
+    public bool FarShot;
+
+    /// <summary>Thrown range increments are 10 feet longer.</summary>
+    [DataField, AutoNetworkedField]
+    public bool StrongArm;
+
+    /// <summary>Walking out of reach needs no action (Mobility).</summary>
+    [DataField, AutoNetworkedField]
+    public bool FreeStep;
+
+    /// <summary>Walking out of reach needs no action while your shield is raised (Shielded Stride).</summary>
+    [DataField, AutoNetworkedField]
+    public bool FreeStepWithShield;
+
     /// <summary>Frightened eases by 2 each turn instead of 1 (Dwarven Doughtiness).</summary>
     [DataField, AutoNetworkedField]
     public bool ShakesOffFear;
@@ -188,6 +240,19 @@ public enum CFCombatOption : byte
     FinesseDexterity,
     ShakesOffFear,
     IgnoresArmorSpeed,
+    AnyWeaponSneak,
+    PreyPrecision,
+    PreyFlurry,
+    PreyOutwit,
+    Bravery,
+    DenyAdvantage,
+    DreadStriker,
+    BrutalBeating,
+    UnbalancingBlow,
+    FarShot,
+    StrongArm,
+    FreeStep,
+    FreeStepWithShield,
 }
 
 public enum CFPointMark : byte

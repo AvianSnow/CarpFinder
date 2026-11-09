@@ -69,6 +69,14 @@ public sealed partial class CFClassFeature
     [DataField]
     public string Description { get; private set; } = "";
 
+    /// <summary>What the player picks for this feature, in the lobby.</summary>
+    [DataField]
+    public List<CFOptionChoice> Choices = new();
+
+    /// <summary>The title of the pick screen, when this has <see cref="Choices"/>.</summary>
+    [DataField]
+    public LocId? ChoiceTitle;
+
     /// <summary>What this gives a character when <see cref="Level"/> is reached. See <see cref="CFGrant"/>.</summary>
     [DataField]
     public List<CFGrant> Grants = new();

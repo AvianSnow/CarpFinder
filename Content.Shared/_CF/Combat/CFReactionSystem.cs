@@ -101,8 +101,12 @@ public sealed partial class CFReactionSystem : EntitySystem
 
         foreach (var known in reactions.Known)
         {
-            if (known.Reaction.Trigger == CFReactionTrigger.EnemyLeftReach && CanFire(watcher, known))
+            if (known.Reaction.Trigger == CFReactionTrigger.EnemyLeftReach
+                && (!known.Reaction.PreyOnly || options.Prey == mover)
+                && CanFire(watcher, known))
+            {
                 return true;
+            }
         }
 
         return false;
@@ -131,6 +135,12 @@ public sealed partial class CFReactionSystem : EntitySystem
     /// <summary>A Step costs 1 action. False if the mover cannot pay, and is then caught like anyone else.</summary>
     private bool TryPayForStep(EntityUid mover)
     {
+        if (TryComp(mover, out CFCombatOptionsComponent? options)
+            && (options.FreeStep || options.FreeStepWithShield && _shields.TryGetRaisedShield(mover, out _)))
+        {
+            return true;
+        }
+
         var pool = CompOrNull<CFActionPoolComponent>(mover);
         var now = _timing.CurTime;
         if (pool != null && now < pool.StepCoveredUntil)
@@ -168,8 +178,13 @@ public sealed partial class CFReactionSystem : EntitySystem
 
         foreach (var known in reactions.Known)
         {
-            if (known.Reaction.Trigger != CFReactionTrigger.EnemyLeftReach || !known.Reaction.Strikes || !TrySpend(watcher, known))
+            if (known.Reaction.Trigger != CFReactionTrigger.EnemyLeftReach
+                || !known.Reaction.Strikes
+                || known.Reaction.PreyOnly && CompOrNull<CFCombatOptionsComponent>(watcher)?.Prey != mover
+                || !TrySpend(watcher, known))
+            {
                 continue;
+            }
 
             _strikes.ReactionStrike(watcher, mover);
             return;

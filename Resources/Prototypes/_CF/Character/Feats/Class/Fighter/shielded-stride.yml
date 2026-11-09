@@ -8,3 +8,6 @@
   level: 4
   traits:
     - "Fighter"
+  grants:
+    - !type:CFGrantOption
+      option: FreeStepWithShield

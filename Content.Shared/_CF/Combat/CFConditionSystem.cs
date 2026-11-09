@@ -200,6 +200,9 @@ public sealed partial class CFConditionSystem : EntitySystem
 
     public void ApplyFrightened(EntityUid target, int value)
     {
+        if (CompOrNull<CFCombatOptionsComponent>(target)?.Bravery == true && --value <= 0)
+            return;
+
         if (value <= 0)
             return;
 

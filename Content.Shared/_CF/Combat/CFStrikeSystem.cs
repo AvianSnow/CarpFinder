@@ -461,10 +461,41 @@ public sealed partial class CFStrikeSystem : EntitySystem
             acPenalty = DownedAcPenalty;
         else if (!isObject && _conditions.IsProne(target))
             acPenalty = CFFlanking.OffGuardAcPenalty;
-        else if ((melee || unseen) && !isObject && (_flanking.IsOffGuardTo(target, user) || _conditions.IsOffGuardTo(target, user)))
+        else if (!isObject && IsOffGuardForStrike(user, target, melee, unseen))
             acPenalty = CFFlanking.OffGuardAcPenalty;
 
-        return defender.ArmorClass - acPenalty + _conditions.ArmorClassModifier(target);
+        return defender.ArmorClass - acPenalty + _conditions.ArmorClassModifier(target) + OutwitBonus(user, target);
+    }
+
+    /// <summary>Whether this target is off-guard to this attacker, for a Strike made this way.</summary>
+    private bool IsOffGuardForStrike(EntityUid user, EntityUid target, bool melee, bool unseen)
+    {
+        if (CompOrNull<CFCombatOptionsComponent>(user)?.DreadStriker == true && _conditions.Frightened(target) > 0)
+            return true;
+
+        if (_conditions.IsOffGuardTo(target, user))
+            return true;
+
+        // Flanking only helps an attack made from up close, or by someone the target cannot see.
+        return (melee || unseen) && _flanking.IsOffGuardTo(target, user) && !DeniesFlanking(user, target);
+    }
+
+    /// <summary>Deny Advantage: flankers of the target's level or lower get nothing from it.</summary>
+    private bool DeniesFlanking(EntityUid user, EntityUid target)
+    {
+        return CompOrNull<CFCombatOptionsComponent>(target)?.DenyAdvantage == true
+               && TryComp(user, out CFCombatantComponent? attacker)
+               && TryComp(target, out CFCombatantComponent? defender)
+               && attacker.Level <= defender.Level;
+    }
+
+    /// <summary>The Outwit edge: +1 circumstance AC against the ranger's prey, if nothing already gives as much.</summary>
+    private int OutwitBonus(EntityUid user, EntityUid target)
+    {
+        if (!TryComp(target, out CFCombatOptionsComponent? style) || !style.PreyOutwit || style.Prey != user)
+            return 0;
+
+        return Math.Max(0, 1 - Math.Max(_shields.RaisedBonus(target), _bonuses.TotalOfType(target, CFBonusStat.ArmorClass, CFBonusType.Circumstance)));
     }
 
     /// <summary>
@@ -637,6 +668,14 @@ public sealed partial class CFStrikeSystem : EntitySystem
         var ignoreVolley = false;
         var pointBlank = 0;
         TryComp(user, out CFCombatOptionsComponent? style);
+        if (style is { PreyFlurry: true } && style.Prey == target)
+            mapPenalty = CFMelee.PreyFlurryPenalty(mapPenalty);
+
+        if (weapon.Ranged && style is { FarShot: true })
+            weapon = weapon with { RangeIncrementFeet = weapon.RangeIncrementFeet * 2 };
+
+        if (weapon.ThrownStrike && style is { StrongArm: true })
+            weapon = weapon with { RangeIncrementFeet = weapon.RangeIncrementFeet + 10 };
         if (weapon.Ranged && _stances.Current(user) is { PointBlank: true })
         {
             var first = weapon.RangeIncrementFeet > 0 ? weapon.RangeIncrementFeet : 30;
@@ -722,7 +761,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
             {
                 var extra = bonusDamage;
                 if (!skipPrecision)
-                    extra += Precision(user, target, style, melee, isObject, criticalHit);
+                    extra += Precision(user, target, style, weapon, melee, unseen, isObject);
 
                 if (weapon.Traits.Backstabber && !isObject
                     && (_flanking.IsOffGuardTo(target, user) || _conditions.IsOffGuardTo(target, user)))
@@ -778,6 +817,15 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (hit && !alreadyDown)
             ApplyPropertyRunes(user, target, weaponUid, degree);
 
+        if (criticalHit && damage > 0 && !isObject && style != null)
+        {
+            if (style.BrutalBeating)
+                _conditions.ApplyFrightened(target, 1);
+
+            if (style.UnbalancingBlow)
+                _conditions.SetOffGuardTo(target, user, 6f);
+        }
+
         if (riders)
             ApplyRiders(user, target, style, degree, mapPenalty, weaponUid, isObject, exacting);
 
@@ -826,17 +874,16 @@ public sealed partial class CFStrikeSystem : EntitySystem
         EntityUid user,
         EntityUid target,
         CFCombatOptionsComponent? style,
+        CFStrikeWeaponStats weapon,
         bool melee,
-        bool isObject,
-        bool critical)
+        bool unseen,
+        bool isObject)
     {
-        _ = critical;
-        if (style == null || isObject || !melee)
+        if (style == null || isObject)
             return 0;
 
         var total = 0;
-        var offGuard = _flanking.IsOffGuardTo(target, user) || _conditions.IsOffGuardTo(target, user);
-        if (style.SneakAttack && offGuard)
+        if (style.SneakAttack && SneakAttackFits(style, weapon) && (IsOffGuardForStrike(user, target, melee, unseen) || _conditions.IsProne(target)))
         {
             var level = TryComp(user, out CFCombatantComponent? combat) ? combat.Level : 1;
             var sneak = Math.Max(1, (level + 3) / 4);
@@ -844,17 +891,32 @@ public sealed partial class CFStrikeSystem : EntitySystem
                 total += _random.Next(1, 7);
         }
 
-        if (style.Prey == target && !style.PreyHitThisTurn)
+        if (style.PreyPrecision && style.Prey == target && !style.PreyHitThisTurn)
         {
             total += _random.Next(1, 9);
             style.PreyHitThisTurn = true;
             Dirty(user, style);
         }
 
-        if (style.Panache && style.PanacheStyle)
+        if (melee && style.Panache && style.PanacheStyle)
             total += 2;
 
         return Math.Max(0, total);
+    }
+
+    /// <summary>
+    /// Sneak Attack needs an agile or finesse attack, or a ranged weapon. A thrown weapon counts only if agile or finesse. A
+    /// Ruffian can also use a simple weapon up to d8, or a martial or advanced one up to d6.
+    /// </summary>
+    public static bool SneakAttackFits(CFCombatOptionsComponent style, CFStrikeWeaponStats weapon)
+    {
+        if (weapon.Agile || weapon.Finesse || weapon.Ranged && !weapon.ThrownStrike)
+            return true;
+
+        if (!style.AnyWeaponSneak || weapon.Traits.Unarmed)
+            return false;
+
+        return weapon.DamageDie <= (weapon.Proficiency == CFWeaponCategory.Simple.Proficiency() ? 8 : 6);
     }
 
     private int ApplyShieldBlock(EntityUid target, int damage)
