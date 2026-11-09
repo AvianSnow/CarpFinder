@@ -99,7 +99,6 @@ Built on 9 November 2026. `CFClassChoices` decides what counts as a valid pick. 
 - [x] Rogue's rackets, in `Class/Choices/rogue.yml`. The Thief is finished. The others give their skills, armor and key attribute, and the rest is marked `TBA`.
 - [ ] Deity content: our own gods, `TBA`. There are no `cfDeity` entries yet, so the builder shows a disabled `Deity: TBA` button for classes that follow one.
 - [ ] A racket always sets the key attribute. The rules say the player can choose it, so a Ruffian cannot keep Dexterity.
-- [ ] Mastermind's second skill from a short list needs a pick in the builder.
 - [ ] Sneak Attack works with every melee weapon. It should need agile or finesse, also work at range, and the Ruffian's weapon rule depends on that limit.
 - [ ] Fill each class's choices in its wave.
 
@@ -140,7 +139,7 @@ Do 1a to 1d first, then work through these. For each entry: read it on Archives 
 | Wave | Options | Feats |
 |---|---|---|
 | 1 | Ancestries and heritages. Mostly grants, and no subclass needed. Worked through on 9 November 2026. Heritages: 60 have working effects and 77 are marked `TBA`. Ancestry feats: 38 new ones work, and the rest are marked. Entries that only had `TBA` added still need their text checked against the rules when each is built. Tests: `CFHeritageTest`, `CFAncestryFeatTest` | 255, and 149 heritages |
-| | Wave 1 waits on: picking a cantrip or skill for a feat, granting a skill feat, climb, swim and fly, a rule for choosing another ancestry's feats, and a `cfFeat` that needs a heritage (prerequisites are text) | |
+| | Wave 1 waits on: granting a skill feat, climb, swim and fly, a rule for choosing another ancestry's feats, and a `cfFeat` that needs a heritage (prerequisites are text) | |
 | 2 | Fighter, Rogue, Ranger | 81 |
 | 3 | Cleric, Wizard, Bard, Druid, Witch | 105 |
 | 4 | Barbarian, Champion, Monk, Swashbuckler, Investigator, Alchemist, Sorcerer, Oracle | 179 |

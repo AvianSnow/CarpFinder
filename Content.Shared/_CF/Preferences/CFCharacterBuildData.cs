@@ -32,6 +32,10 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
     [DataField]
     public ProtoId<CFDeityPrototype>? Deity;
 
+    /// <summary>Cantrips and skills chosen for feats, heritages and subclasses. Read them through <see cref="CFOptionChoices"/>.</summary>
+    [DataField]
+    public List<CFOptionPick> OptionPicks = new();
+
     /// <summary>Level 1 ancestry feat. Must match the ancestry and be no higher than <see cref="Level"/>.</summary>
     [DataField]
     public ProtoId<CFFeatPrototype>? AncestryFeat;
@@ -150,6 +154,7 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
             Heritage = Heritage,
             ClassChoices = ClassChoices.ToList(),
             Deity = Deity,
+            OptionPicks = OptionPicks.Select(pick => pick.Copy()).ToList(),
             AncestryFeat = AncestryFeat,
             ClassFeat = ClassFeat,
             ClassFeatLevel2 = ClassFeatLevel2,
@@ -187,6 +192,7 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
                && Heritage == other.Heritage
                && ClassChoices.SequenceEqual(other.ClassChoices)
                && Deity == other.Deity
+               && OptionPicks.SequenceEqual(other.OptionPicks)
                && AncestryFeat == other.AncestryFeat
                && ClassFeat == other.ClassFeat
                && ClassFeatLevel2 == other.ClassFeatLevel2
@@ -227,6 +233,8 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
         foreach (var choice in ClassChoices)
             hash.Add(choice);
         hash.Add(Deity);
+        foreach (var pick in OptionPicks)
+            hash.Add(pick);
         hash.Add(AncestryFeat);
         hash.Add(ClassFeat);
         hash.Add(ClassFeatLevel2);
@@ -257,6 +265,43 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
         foreach (var gear in PetGear)
             hash.Add(gear);
         return hash.ToHashCode();
+    }
+}
+
+/// <summary>One answer to a <see cref="CFOptionChoice"/>.</summary>
+[DataDefinition]
+[Serializable, NetSerializable]
+public sealed partial class CFOptionPick : IEquatable<CFOptionPick>
+{
+    /// <summary>The id of the feat, heritage or subclass option the choice belongs to.</summary>
+    [DataField]
+    public string Source = string.Empty;
+
+    [DataField]
+    public int Slot;
+
+    /// <summary>A spell id or a skill id.</summary>
+    [DataField]
+    public string Value = string.Empty;
+
+    public CFOptionPick Copy()
+    {
+        return new CFOptionPick { Source = Source, Slot = Slot, Value = Value };
+    }
+
+    public bool Equals(CFOptionPick? other)
+    {
+        return other != null && Source == other.Source && Slot == other.Slot && Value == other.Value;
+    }
+
+    public override bool Equals(object? obj)
+    {
+        return obj is CFOptionPick other && Equals(other);
+    }
+
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(Source, Slot, Value);
     }
 }
 

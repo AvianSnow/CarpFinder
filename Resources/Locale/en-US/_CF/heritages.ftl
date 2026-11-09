@@ -25,13 +25,13 @@ cf-heritage-woodland-elf-desc = You climb plants faster, and you can Take Cover 
 cf-heritage-chameleon-gnome = Chameleon Gnome
 cf-heritage-chameleon-gnome-desc = You can shift your colors. Matching the area gives you a bonus to Stealth. TBA
 cf-heritage-fey-touched-gnome = Fey-Touched Gnome
-cf-heritage-fey-touched-gnome-desc = You gain the fey trait and one primal cantrip you can swap once each day. TBA
+cf-heritage-fey-touched-gnome-desc = Choose one primal cantrip. You can cast it at will. Swapping it each day, and the fey trait: TBA
 cf-heritage-sensate-gnome = Sensate Gnome
 cf-heritage-sensate-gnome-desc = Imprecise scent out to 30 feet. The bonus to find creatures by scent: TBA
 cf-heritage-umbral-gnome = Umbral Gnome
 cf-heritage-umbral-gnome-desc = You can see in darkness.
 cf-heritage-wellspring-gnome = Wellspring Gnome
-cf-heritage-wellspring-gnome-desc = Choose arcane, divine, or occult. You gain one cantrip of that tradition, and later gnome spells use it too. TBA
+cf-heritage-wellspring-gnome-desc = Choose one arcane, divine or occult cantrip. You can cast it at will. Later gnome spells using that tradition: TBA
 
 cf-heritage-charhide-goblin = Charhide Goblin
 cf-heritage-charhide-goblin-desc = Fire resistance equal to half your level (at least 1). Persistent fire being easier to end: TBA
@@ -58,7 +58,7 @@ cf-heritage-wildwood-halfling = Wildwood Halfling
 cf-heritage-wildwood-halfling-desc = Plants and fungi do not count as difficult terrain for you. TBA
 
 cf-heritage-skilled-human = Skilled Human
-cf-heritage-skilled-human-desc = You become trained in one skill, and an expert in that skill at 5th level. TBA
+cf-heritage-skilled-human-desc = You become trained in one skill of your choice. Becoming an expert in it at level 5: TBA
 cf-heritage-versatile-human = Versatile Human
 cf-heritage-versatile-human-desc = You gain one general feat you qualify for. TBA
 
@@ -144,7 +144,7 @@ cf-heritage-dragonscaled-kobold-desc = Ancestry Hit Points are 10 instead of 6, 
 cf-heritage-elementheart-kobold = Elementheart Kobold
 cf-heritage-elementheart-kobold-desc = Choose an element. You gain resistance to its damage equal to half your level. TBA
 cf-heritage-spellhorn-kobold = Spellhorn Kobold
-cf-heritage-spellhorn-kobold-desc = One arcane cantrip at will. Charisma is your spellcasting ability for it. TBA
+cf-heritage-spellhorn-kobold-desc = Choose one arcane cantrip. You can cast it at will.
 cf-heritage-strongjaw-kobold = Strongjaw Kobold
 cf-heritage-strongjaw-kobold-desc = Your jaws are a finesse unarmed attack that deals 1d6 piercing damage.
 cf-heritage-tunnelflood-kobold = Tunnelflood Kobold

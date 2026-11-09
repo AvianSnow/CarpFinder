@@ -99,6 +99,7 @@
                                 <BoxContainer Name="ClassChoiceSlots" Orientation="Vertical" HorizontalExpand="True" />
                                 <Button Name="DeitySlot" Visible="False" HorizontalExpand="True" />
                                 <Button Name="ClassFeatSlot" ToggleMode="True" Text="{Loc 'cf-character-builder-class-feat-slot'}" HorizontalExpand="True" />
+                                <BoxContainer Name="OptionChoiceSlots" Orientation="Vertical" HorizontalExpand="True" />
                             </BoxContainer>
                         </PanelContainer>
                         <PanelContainer StyleClasses="PanelDark">

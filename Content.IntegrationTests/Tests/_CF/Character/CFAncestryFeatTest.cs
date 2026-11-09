@@ -329,7 +329,7 @@ public sealed class CFAncestryFeatTest : GameTest
             var loc = Server.ResolveDependency<ILocalizationManager>();
             foreach (var feat in Server.ProtoMan.EnumeratePrototypes<CFFeatPrototype>().Where(feat => feat.Ancestry != null))
             {
-                var works = feat.Grants.Count > 0 || feat.TrainedSkills.Count > 0 || feat.Lores.Count > 0 || feat.NaturalDie > 0 || feat.SpeedBonus > 0;
+                var works = feat.Grants.Count > 0 || feat.Choices.Count > 0 || feat.TrainedSkills.Count > 0 || feat.Lores.Count > 0 || feat.NaturalDie > 0 || feat.SpeedBonus > 0;
                 var text = loc.GetString(feat.Description);
                 if (!works && !text.Contains("TBA") && !text.Contains("implemented later") && !text.Contains("ot applied in play"))
                     unmarked.Add(feat.ID);

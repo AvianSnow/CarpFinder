@@ -59,6 +59,10 @@ public sealed partial class CFFeatPrototype : IPrototype
     [DataField]
     public List<string> Lores = new();
 
+    /// <summary>What the player picks when taking this.</summary>
+    [DataField]
+    public List<CFOptionChoice> Choices = new();
+
     /// <summary>Feet added to land Speed. Applied when the feat is chosen.</summary>
     [DataField]
     public int SpeedBonus;

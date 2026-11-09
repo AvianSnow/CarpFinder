@@ -8,3 +8,7 @@
   level: 1
   traits:
     - "Elf"
+  choices:
+    - kind: Cantrip
+      traditions:
+        - Arcane

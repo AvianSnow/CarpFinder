@@ -831,6 +831,7 @@ namespace Content.Shared.Preferences
                 CFBuild.Class = null;
 
             CFClassChoices.Sanitize(prototypeManager, CFBuild);
+            CFBuild.OptionPicks = CFOptionChoices.Valid(prototypeManager, CFBuild, CFAttributeMath.FindAncestry(prototypeManager, Species)?.ID);
 
             if (!string.IsNullOrEmpty(CFBuild.PetId) && !prototypeManager.HasIndex<CFPetPrototype>(CFBuild.PetId))
                 CFBuild.PetId = "";

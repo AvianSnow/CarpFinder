@@ -47,6 +47,7 @@ public sealed partial class HumanoidProfileEditor
 
     private enum SkillAssignMode
     {
+        OptionChoice,
         Language,
         IncreaseLevel3,
         IncreaseLevel5,
@@ -56,6 +57,9 @@ public sealed partial class HumanoidProfileEditor
 
     private BuilderSelection _selection = BuilderSelection.Ancestry;
     private SkillAssignMode _skillMode;
+
+    /// <summary>The option whose choices the skill view is showing.</summary>
+    private string _optionSource = string.Empty;
 
     /// <summary>True while the boost view shows level 5's boosts, not level 1's.</summary>
     private bool _levelBoosts;
@@ -148,8 +152,103 @@ public sealed partial class HumanoidProfileEditor
     {
         var id = _pendingId;
         ClosePicker();
-        if (id != null)
-            OnBuilderOptionSelected(id);
+        if (id == null)
+            return;
+
+        OnBuilderOptionSelected(id);
+
+        // A new option that needs a cantrip or skill asks for it straight away. It can be changed later from its button.
+        if (Profile != null
+            && OptionSlots(CurrentBuild()).Any(slot => slot.Source == id)
+            && CurrentBuild().OptionPicks.All(pick => pick.Source != id))
+        {
+            ShowOptionChoices(id);
+        }
+    }
+
+    private List<CFOptionSlot> OptionSlots(CFCharacterBuildData build)
+    {
+        return Profile == null
+            ? new List<CFOptionSlot>()
+            : CFOptionChoices.Slots(_prototypeManager, build, CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species)?.ID);
+    }
+
+    /// <summary>One button for each option in the build that has something to choose.</summary>
+    private void RefreshOptionChoiceSlots(CFCharacterBuildData build)
+    {
+        OptionChoiceSlots.RemoveAllChildren();
+        foreach (var group in OptionSlots(build).GroupBy(slot => slot.Source))
+        {
+            var source = group.Key;
+            var picks = group
+                .Select(slot => build.OptionPicks.FirstOrDefault(p => p.Source == slot.Source && p.Slot == slot.Slot))
+                .Where(pick => pick != null)
+                .Select(pick => OptionLabel(pick!.Value))
+                .ToList();
+            var button = new Button
+            {
+                Text = Loc.GetString(
+                    "cf-character-builder-option-choice",
+                    ("name", Loc.GetString(group.First().SourceName)),
+                    ("picks", picks.Count == group.Count()
+                        ? string.Join(", ", picks)
+                        : Loc.GetString("cf-character-builder-option-choose"))),
+                HorizontalExpand = true,
+            };
+            button.OnPressed += _ => ShowOptionChoices(source);
+            OptionChoiceSlots.AddChild(button);
+        }
+    }
+
+    private string OptionLabel(string value)
+    {
+        if (_prototypeManager.TryIndex<CFSpellPrototype>(value, out var spell))
+            return spell.Name;
+
+        return SkillLabelMap().GetValueOrDefault(value, value);
+    }
+
+    private void ShowOptionChoices(string source)
+    {
+        var build = CurrentBuild();
+        var slots = OptionSlots(build).Where(slot => slot.Source == source).ToList();
+        if (Profile == null || slots.Count == 0)
+            return;
+
+        _skillMode = SkillAssignMode.OptionChoice;
+        _optionSource = source;
+
+        // Skills the character already has are not offered, and neither is one this option is about to replace.
+        var ownPicks = build.OptionPicks.Where(pick => pick.Source == source).Select(pick => pick.Value).ToHashSet();
+        var ancestry = CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species)?.ID;
+        var trained = CFSkills.CollectTrainedSkills(_prototypeManager, build, ancestry, build.Class?.Id, CFExperienceComponent.MaxLevel).ToHashSet();
+        if (build.Class is { } classId && _prototypeManager.TryIndex(classId, out CFClassPrototype? cls))
+            trained.UnionWith(cls.Proficiencies.Skills.Trained);
+
+        var definitions = new List<SkillSlotDefinition>();
+        foreach (var slot in slots)
+        {
+            var allowed = CFOptionChoices.Allowed(_prototypeManager, slot.Choice)
+                .Where(id => slot.Choice.Kind != CFOptionChoiceKind.Skill || ownPicks.Contains(id) || !trained.Contains(id))
+                .OrderBy(OptionLabel, StringComparer.CurrentCultureIgnoreCase)
+                .ToList();
+            definitions.Add(new SkillSlotDefinition
+            {
+                Id = slot.Slot.ToString(),
+                Label = Loc.GetString(slot.Choice.Kind == CFOptionChoiceKind.Cantrip
+                    ? "cf-character-builder-option-cantrip"
+                    : "cf-character-builder-option-skill"),
+                Allowed = allowed,
+                Labels = allowed.ToDictionary(id => id, OptionLabel),
+                Selected = build.OptionPicks.FirstOrDefault(p => p.Source == source && p.Slot == slot.Slot)?.Value,
+            });
+        }
+
+        SkillView.Show(
+            Loc.GetString(slots[0].SourceName),
+            Loc.GetString("cf-character-builder-option-help"),
+            definitions);
+        OpenSkillView();
     }
 
     private void ClosePicker()
@@ -642,6 +741,7 @@ public sealed partial class HumanoidProfileEditor
         var name = Loc.GetString(heritage.Name);
         var unfinished = heritage.Grants.Count == 0
                          && heritage.TrainedSkills.Count == 0
+                         && heritage.Choices.Count == 0
                          && heritage is { HitPoints: 0, Speed: 0, Size: null, Darkvision: false, UpgradeVision: false }
                          && Loc.GetString(heritage.Description).Contains("TBA");
         return unfinished ? Loc.GetString("cf-character-builder-feat-tba", ("name", name)) : name;
@@ -654,6 +754,7 @@ public sealed partial class HumanoidProfileEditor
         var text = Loc.GetString(feat.Description);
         var unfinished = feat.PendingAction
                          || feat.Grants.Count == 0
+                            && feat.Choices.Count == 0
                             && (text.Contains("implemented later")
                                 || text.Contains("TBA")
                                 || text.Contains("ot applied in play"));
@@ -1476,6 +1577,21 @@ public sealed partial class HumanoidProfileEditor
         var selections = SkillView.GetSelections();
         var build = CurrentBuild();
 
+        if (_skillMode == SkillAssignMode.OptionChoice)
+        {
+            build.OptionPicks.RemoveAll(pick => pick.Source == _optionSource);
+            foreach (var (slot, value) in selections)
+            {
+                if (value != null)
+                    build.OptionPicks.Add(new CFOptionPick { Source = _optionSource, Slot = int.Parse(slot), Value = value });
+            }
+
+            build.ClassTrainedSkills.RemoveAll(skill => selections.Values.Contains(skill.Id));
+            ClosePicker();
+            SetBuild(build);
+            return;
+        }
+
         if (_skillMode is SkillAssignMode.IncreaseLevel3 or SkillAssignMode.IncreaseLevel5)
         {
             selections.TryGetValue("increase", out var increase);
@@ -1583,6 +1699,7 @@ public sealed partial class HumanoidProfileEditor
             heritageName = Loc.GetString(chosenHeritage.Name);
         HeritageSlot.Text = Loc.GetString("cf-character-builder-heritage-selected", ("name", heritageName));
         RefreshClassChoiceSlots(build);
+        RefreshOptionChoiceSlots(build);
 
         var featName = Loc.GetString("cf-character-builder-none");
         if (build.AncestryFeat != null && _prototypeManager.TryIndex(build.AncestryFeat.Value, out CFFeatPrototype? chosenFeat))

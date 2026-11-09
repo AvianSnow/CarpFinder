@@ -9,6 +9,13 @@
   keyAbility: Intelligence
   trainedSkills:
     - Society
+  choices:
+    - kind: Skill
+      skills:
+        - Arcana
+        - Nature
+        - Occultism
+        - Religion
 
 - type: cfClassChoice
   id: Ruffian

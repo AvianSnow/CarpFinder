@@ -8,3 +8,7 @@
   level: 1
   traits:
     - "Gnome"
+  choices:
+    - kind: Cantrip
+      traditions:
+        - Primal

@@ -226,6 +226,7 @@ public static class CFSkills
 
         result.AddRange(CFClassChoices.TrainedSkills(prototypes, build));
         result.AddRange(HeritageSkills(prototypes, build, ancestryId));
+        result.AddRange(CFOptionChoices.TrainedSkills(prototypes, build, ancestryId, level));
 
         foreach (var feat in SelectedFeats(prototypes, build, ancestryId, classId, level))
         {

@@ -279,6 +279,7 @@ public sealed class CFHeritageTest : GameTest
             {
                 var works = heritage.Grants.Count > 0
                             || heritage.TrainedSkills.Count > 0
+                            || heritage.Choices.Count > 0
                             || heritage is { Darkvision: true } or { UpgradeVision: true } or { HitPoints: > 0 } or { Speed: > 0 } or { Size: not null };
                 if (!works && !loc.GetString(heritage.Description).Contains("TBA"))
                     unmarked.Add(heritage.ID);

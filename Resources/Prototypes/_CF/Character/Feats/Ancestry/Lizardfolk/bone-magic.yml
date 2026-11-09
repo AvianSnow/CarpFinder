@@ -8,3 +8,8 @@
   level: 1
   traits:
     - "Lizardfolk"
+  choices:
+    - kind: Cantrip
+      traditions:
+        - Occult
+        - Primal

@@ -58,6 +58,21 @@ public sealed class CFBuildSaveTest : GameTest
     }
 
     [Test]
+    public async Task ChosenCantripsAndSkillsAreSaved()
+    {
+        var build = new CFCharacterBuildData { AncestryFeat = "CFNaturalSkill" };
+        build.OptionPicks.Add(new CFOptionPick { Source = "CFNaturalSkill", Slot = 1, Value = "Athletics" });
+
+        var loaded = await SaveAndLoad(build);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(loaded.Equals(build));
+            Assert.That(build.Clone().Equals(build), "A copy keeps them too, or the Save button would light up.");
+        });
+    }
+
+    [Test]
     public async Task AnEmptyBuildLoads()
     {
         var build = new CFCharacterBuildData();

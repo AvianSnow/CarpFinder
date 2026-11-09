@@ -157,6 +157,7 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         xp.SkillIncreaseLevel5 = KnownSkill(profile.CFBuild.SkillIncreaseLevel5);
         xp.AbilityBoostsLevel5 = profile.CFBuild.AbilityBoostsLevel5.Distinct().Take(CFAttributeMath.LevelFiveBoostCount).ToList();
         xp.ClassChoices = CFClassChoices.Selected(_prototypes, profile.CFBuild).Select(choice => choice.ID).ToList();
+        xp.OptionPicks = CFOptionChoices.Valid(_prototypes, profile.CFBuild, ancestryId);
         Dirty(mob, xp);
         combatant.LoreNames.Clear();
         foreach (var chosen in chosenFeats)
@@ -299,7 +300,10 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
             _features.Apply(mob, ancestry.Grants, $"ancestry:{ancestry.ID}");
 
         if (heritage != null)
+        {
             _features.Apply(mob, heritage.Grants, $"heritage:{heritage.ID}");
+            _features.ApplyOptionPicks(mob, heritage.ID);
+        }
 
         if (_prototypes.Resolve(profile.CFBuild.Background, out var background))
             _features.Apply(mob, background.Grants, $"background:{background.ID}");
@@ -308,7 +312,10 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
             _features.ApplyClassFeatures(mob, cls, 1);
 
         foreach (var choice in CFClassChoices.Selected(_prototypes, profile.CFBuild))
+        {
             _features.ApplyClassChoice(mob, choice, 1);
+            _features.ApplyOptionPicks(mob, choice.ID);
+        }
 
         if (CFClassChoices.SelectedDeity(_prototypes, profile.CFBuild) is { } deity)
             _features.Apply(mob, deity.Grants, $"deity:{deity.ID}");
@@ -363,6 +370,7 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         Dirty(mob, combat);
         Dirty(mob, options);
         _features.Apply(mob, feat.Grants, $"feat:{feat.ID}");
+        _features.ApplyOptionPicks(mob, feat.ID);
     }
 
     /// <summary>Armor class follows the new level. Hit points are changed by the level-up itself.</summary>

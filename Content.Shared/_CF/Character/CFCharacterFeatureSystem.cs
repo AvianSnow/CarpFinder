@@ -144,6 +144,32 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
         _actions.AddAction(mob, action);
     }
 
+    /// <summary>Gives what the player chose for an option, once that option is gained.</summary>
+    public void ApplyOptionPicks(EntityUid mob, string source)
+    {
+        if (!TryComp(mob, out CFExperienceComponent? xp))
+            return;
+
+        foreach (var pick in xp.OptionPicks)
+        {
+            if (pick.Source != source)
+                continue;
+
+            if (_prototypes.HasIndex<CFSpellPrototype>(pick.Value))
+            {
+                GrantSpell(mob, pick.Value);
+                continue;
+            }
+
+            var combat = EnsureComp<CFCombatantComponent>(mob);
+            if (combat.TrainedSkills.Contains(pick.Value))
+                continue;
+
+            combat.TrainedSkills.Add(pick.Value);
+            Dirty(mob, combat);
+        }
+    }
+
     /// <summary>A natural attack replaces the fist, but a smaller one does not replace a bigger one the character has.</summary>
     public void GrantUnarmedAttack(EntityUid mob, int dice, int die, string damageType, bool finesse, bool agile)
     {

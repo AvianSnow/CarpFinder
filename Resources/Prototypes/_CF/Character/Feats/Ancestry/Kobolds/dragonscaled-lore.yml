@@ -15,3 +15,10 @@
     - Intimidation
   lores:
     - "Dragon Lore"
+  choices:
+    - kind: Skill
+      skills:
+        - Arcana
+        - Nature
+        - Occultism
+        - Religion

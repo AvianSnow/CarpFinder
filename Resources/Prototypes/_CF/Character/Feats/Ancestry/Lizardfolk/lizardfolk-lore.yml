@@ -9,5 +9,9 @@
   traits:
     - "Lizardfolk"
   trainedSkills:
-    - Nature
     - Survival
+  choices:
+    - kind: Skill
+      skills:
+        - Nature
+        - Occultism

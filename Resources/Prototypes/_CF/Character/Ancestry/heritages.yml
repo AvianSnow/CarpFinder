@@ -97,6 +97,10 @@
   name: cf-heritage-fey-touched-gnome
   description: cf-heritage-fey-touched-gnome-desc
   ancestries: [Gnome]
+  choices:
+    - kind: Cantrip
+      traditions:
+        - Primal
 
 - type: cfHeritage
   id: SensateGnome
@@ -120,6 +124,12 @@
   name: cf-heritage-wellspring-gnome
   description: cf-heritage-wellspring-gnome-desc
   ancestries: [Gnome]
+  choices:
+    - kind: Cantrip
+      traditions:
+        - Arcane
+        - Divine
+        - Occult
 
 - type: cfHeritage
   id: CharhideGoblin
@@ -213,6 +223,8 @@
   name: cf-heritage-skilled-human
   description: cf-heritage-skilled-human-desc
   ancestries: [Human]
+  choices:
+    - kind: Skill
 
 - type: cfHeritage
   id: VersatileHuman
@@ -524,6 +536,10 @@
   name: cf-heritage-spellhorn-kobold
   description: cf-heritage-spellhorn-kobold-desc
   ancestries: [Kobold]
+  choices:
+    - kind: Cantrip
+      traditions:
+        - Arcane
 
 - type: cfHeritage
   id: StrongjawKobold

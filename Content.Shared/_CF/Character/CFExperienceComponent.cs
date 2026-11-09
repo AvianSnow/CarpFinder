@@ -50,6 +50,10 @@ public sealed partial class CFExperienceComponent : Component
     [DataField, AutoNetworkedField]
     public List<CFAbility> AbilityBoostsLevel5 = new();
 
+    /// <summary>Cantrips and skills chosen for options, checked at spawn. Each is applied when its option is gained.</summary>
+    [DataField, AutoNetworkedField]
+    public List<CFOptionPick> OptionPicks = new();
+
     /// <summary>Subclass picks, checked at spawn. Their later features run on level up.</summary>
     [DataField, AutoNetworkedField]
     public List<string> ClassChoices = new();

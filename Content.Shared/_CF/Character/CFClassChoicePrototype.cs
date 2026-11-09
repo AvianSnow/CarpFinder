@@ -41,6 +41,10 @@ public sealed partial class CFClassChoicePrototype : IPrototype
     [DataField]
     public List<ProtoId<CFAbilitySkillPrototype>> TrainedSkills = new();
 
+    /// <summary>What the player picks when taking this.</summary>
+    [DataField]
+    public List<CFOptionChoice> Choices = new();
+
     /// <summary>What this gives at level 1. See <see cref="CFGrant"/>.</summary>
     [DataField]
     public List<CFGrant> Grants = new();
