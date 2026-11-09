@@ -53,6 +53,8 @@ public sealed class CFGrantTest : GameTest
         ["CFSnaggingStrike"] = (o => o.SnaggingStrike, null),
         ["CFViciousSwing"] = (o => o.ViciousSwing, null),
         ["CFPointBlankStance"] = (_ => true, "CFActPointBlank"),
+        ["CFReachSpellWizard"] = (_ => true, "CFActReachSpell"),
+        ["CFWidenSpellWizard"] = (_ => true, "CFActWidenSpell"),
         ["CFMountainStance"] = (_ => true, "CFActMountainStance"),
         ["CFCraneStance"] = (_ => true, "CFActCraneStance"),
         ["CFDragonStance"] = (_ => true, "CFActDragonStance"),

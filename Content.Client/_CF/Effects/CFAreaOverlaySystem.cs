@@ -1,3 +1,4 @@
+using Content.Shared.CF.Spells;
 using System.Numerics;
 using Content.Client.UserInterface.Systems.Actions;
 using Content.Shared.CF.Effects;
@@ -18,6 +19,7 @@ namespace Content.Client.CF.Effects;
 public sealed partial class CFAreaOverlaySystem : EntitySystem
 {
     [Dependency] private IOverlayManager _overlays = default!;
+    [Dependency] private CFSpellshapeSystem _spellshapes = default!;
     [Dependency] private IEyeManager _eye = default!;
     [Dependency] private IInputManager _input = default!;
     [Dependency] private IPlayerManager _player = default!;
@@ -59,7 +61,7 @@ public sealed partial class CFAreaOverlaySystem : EntitySystem
 
         var tiles = CFAreaGrid.Collect(
             area.Shape,
-            area.SizeFeet,
+            area.SizeFeet + _spellshapes.ExtraAreaFeet(action, player.Value, area),
             _maps.WorldToLocal(grid, gridComp, casterMap.Position),
             _maps.WorldToLocal(grid, gridComp, mouse.Position),
             gridComp.TileSize,

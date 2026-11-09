@@ -51,7 +51,7 @@ Everything below is under `Content.Shared/_CF/`.
 | `Crafting/` | Recipes, formulas, Craft DCs. The workbench logic is server-side. | `CFCraftingRules`, `CFWorkbenchSystem` |
 | `Preferences/` | The build stored on `HumanoidCharacterProfile` | `CFCharacterBuildData` |
 | `Shop/` | Coins, prices, the merchant counter UI. Selling and coin logic are server-side. | `CFCoins`, `CFMerchantSystem`, `CFCoinSystem` |
-| `Spells/` | Paying for a cast, Prestidigitation | `CFSpellSystem` |
+| `Spells/` | Paying for a cast, spellshapes, Prestidigitation | `CFSpellSystem`, `CFSpellshapeSystem` |
 | `Traits/` | `cfTrait` prototypes and `CFTrait` | `CFTraitPrototype` |
 | `Roof/` | Roofs that hide while you stand under them. The hiding is client-side. | `CFRoofComponent` |
 | `Wallmount/` | Wall-only placement | `CFWallmount`, `CFWallRequired` |

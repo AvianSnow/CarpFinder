@@ -22,6 +22,7 @@ public sealed partial class CFSpellSystem : EntitySystem
     [Dependency] private CFConditionSystem _conditions = default!;
     [Dependency] private CFStrikeSystem _strikes = default!;
     [Dependency] private CFEffectSystem _effects = default!;
+    [Dependency] private CFSpellshapeSystem _spellshapes = default!;
 
     [SubscribeLocalEvent]
     private void OnInstant(Entity<CFSpellComponent> spell, ref CFSpellCastInstantEvent args)
@@ -200,6 +201,7 @@ public sealed partial class CFSpellSystem : EntitySystem
     {
         _conditions.NoteAttack(caster);
         _strikes.ReactiveStrike(caster);
+        _spellshapes.Consume(caster);
     }
 
     private bool TrySpend(EntityUid caster, CFSpellComponent spell)

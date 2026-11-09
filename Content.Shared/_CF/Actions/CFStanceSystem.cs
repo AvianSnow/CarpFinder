@@ -1,4 +1,4 @@
-using Content.Shared.Actions;
+using Content.Shared.CF.Character;
 using Content.Shared.Actions.Events;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Effects;
@@ -25,7 +25,7 @@ public sealed partial class CFStanceSystem : EntitySystem
     [Dependency] private INetManager _net = default!;
     [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
-    [Dependency] private SharedActionsSystem _actions = default!;
+    [Dependency] private CFCharacterFeatureSystem _features = default!;
     [Dependency] private CFBonusSystem _bonuses = default!;
     [Dependency] private CFArmorSystem _armor = default!;
 
@@ -111,7 +111,7 @@ public sealed partial class CFStanceSystem : EntitySystem
         }
 
         _armor.RefreshArmorClass(user);
-        SetToggled(user, proto.ID, true);
+        _features.SetActionToggled(user, proto.ID, true);
         _popup.PopupEntity(Loc.GetString("cf-stance-enter", ("name", MetaData(ent).EntityName)), user, user);
     }
 
@@ -124,19 +124,7 @@ public sealed partial class CFStanceSystem : EntitySystem
         Dirty(user, active);
         _bonuses.RemoveBonusesFrom(user, BonusSource);
         _armor.RefreshArmorClass(user);
-        SetToggled(user, id, false);
-    }
-
-    private void SetToggled(EntityUid user, string stanceId, bool toggled)
-    {
-        foreach (var action in _actions.GetActions(user))
-        {
-            if (MetaData(action).EntityPrototype?.ID != stanceId)
-                continue;
-
-            _actions.SetToggled((action, action.Comp), toggled);
-            return;
-        }
+        _features.SetActionToggled(user, id, false);
     }
 
     [SubscribeLocalEvent]

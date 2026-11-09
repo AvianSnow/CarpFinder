@@ -144,6 +144,19 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
         _actions.AddAction(mob, action);
     }
 
+    /// <summary>Lights an action up on the action bar, or turns it off, by its prototype.</summary>
+    public void SetActionToggled(EntityUid mob, EntProtoId action, bool toggled)
+    {
+        foreach (var existing in _actions.GetActions(mob))
+        {
+            if (MetaData(existing).EntityPrototype?.ID != action.Id)
+                continue;
+
+            _actions.SetToggled((existing, existing.Comp), toggled);
+            return;
+        }
+    }
+
     public void SetPointMark(EntityUid mob, CFPointMark mark)
     {
         var options = EnsureComp<CFCombatOptionsComponent>(mob);

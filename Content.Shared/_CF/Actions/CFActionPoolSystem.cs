@@ -378,6 +378,9 @@ public sealed partial class CFActionPoolSystem : EntitySystem
 
         pool.Stamina = Math.Max(0f, pool.Stamina - cost);
         Dirty(uid, pool);
+
+        var spent = new CFActionsSpentEvent(actions);
+        RaiseLocalEvent(uid, ref spent);
     }
 
     private void PopupEmpty(EntityUid uid, CFActionPoolComponent pool)

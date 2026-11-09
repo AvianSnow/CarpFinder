@@ -15,4 +15,6 @@
     - "Witch"
     - "Wizard"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActWidenSpell

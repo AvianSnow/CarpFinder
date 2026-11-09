@@ -32,6 +32,7 @@ namespace Content.Shared.CF.Effects;
 public sealed partial class CFEffectSystem : EntitySystem
 {
     [Dependency] private INetManager _net = default!;
+    [Dependency] private CFSpellshapeSystem _spellshapes = default!;
     [Dependency] private IRobustRandom _random = default!;
 
     [Dependency] private IPrototypeManager _prototypes = default!;
@@ -98,7 +99,7 @@ public sealed partial class CFEffectSystem : EntitySystem
             return false;
 
         var feet = (from.Position - to.Position).Length() * CFAreaGrid.FeetPerTile;
-        if (targeting.RangeFeet > 0 && feet > targeting.RangeFeet + 0.05f)
+        if (targeting.RangeFeet > 0 && feet > targeting.RangeFeet + _spellshapes.ExtraRangeFeet(source, user) + 0.05f)
             return false;
 
         return !targeting.LineOfEffect
@@ -116,7 +117,7 @@ public sealed partial class CFEffectSystem : EntitySystem
             return false;
 
         var feet = (from.Position - point.Position).Length() * CFAreaGrid.FeetPerTile;
-        if (targeting.RangeFeet > 0 && feet > targeting.RangeFeet + 0.05f)
+        if (targeting.RangeFeet > 0 && feet > targeting.RangeFeet + _spellshapes.ExtraRangeFeet(source, user) + 0.05f)
             return false;
 
         return !targeting.LineOfEffect
@@ -204,7 +205,7 @@ public sealed partial class CFEffectSystem : EntitySystem
         var targets = CollectArea(
             user,
             area.Shape,
-            area.SizeFeet,
+            area.SizeFeet + _spellshapes.ExtraAreaFeet(source, user, area),
             origin,
             aim,
             area.StartsAtPoint(),

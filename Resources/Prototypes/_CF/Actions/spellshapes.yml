@@ -1,0 +1,25 @@
+# Spellshapes. Each changes the next spell. What one does is data on CFSpellshape, and CFSpellshapeSystem runs it.
+
+- type: entity
+  abstract: true
+  parent: CFActivityInstant
+  id: CFActSpellshapeBase
+  categories: [ HideSpawnMenu ]
+
+- type: entity
+  parent: CFActSpellshapeBase
+  id: CFActReachSpell
+  name: Reach Spell
+  description: Your next spell with a range reaches 30 feet further. Lost if you spend an action on anything else first.
+  components:
+  - type: CFSpellshape
+    extraRangeFeet: 30
+
+- type: entity
+  parent: CFActSpellshapeBase
+  id: CFActWidenSpell
+  name: Widen Spell
+  description: Your next burst, cone or line spell with no duration gets bigger. Lost if you spend an action on anything else first.
+  components:
+  - type: CFSpellshape
+    widens: true
