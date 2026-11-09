@@ -21,6 +21,7 @@ public static partial class PoolManager
         (CCVars.GameRoleTimers.Name,          "false"),
         (CCVars.GameRoleLoadoutTimers.Name,   "false"),
         (CCVars.GameRoleWhitelist.Name,       "false"),
+        (Content.Shared.CF.CFCVars.RequireCompleteCharacter.Name, "false"), // CarpFinder: stock tests join with a default profile
         (CCVars.GridFill.Name,                "false"),
         (CCVars.PreloadGrids.Name,            "false"),
         (CCVars.ArrivalsShuttles.Name,        "false"),

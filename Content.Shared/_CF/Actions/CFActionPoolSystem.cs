@@ -14,17 +14,21 @@ using Content.Shared.Weapons.Ranged.Components;
 using Content.Shared.Weapons.Ranged.Events;
 using Content.Shared.Weapons.Ranged.Systems;
 using Robust.Shared.Network;
+using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
 
 namespace Content.Shared.CF.Actions;
 
 /// <summary>
-/// Spends action stamina on strikes, shots, and radial activities, then returns one point every 1.8 seconds.
+/// Spends action stamina on strikes, shots, and radial activities, then returns it a point at a time.
 /// This is not <c>StaminaComponent</c>: that pool paralyzes a creature at the cap and is shared with stun weapons.
 /// </summary>
 public sealed partial class CFActionPoolSystem : EntitySystem
 {
+    /// <summary>An NPC that has not tried to attack for this long after it finished thinking starts over.</summary>
+    private static readonly TimeSpan ThinkingLapse = TimeSpan.FromSeconds(0.5);
+
     [Dependency] private CFShieldSystem _shields = default!;
     [Dependency] private CFStealthSystem _stealth = default!;
     [Dependency] private CFWeaponSystem _weapons = default!;
@@ -44,7 +48,8 @@ public sealed partial class CFActionPoolSystem : EntitySystem
         while (query.MoveNext(out var uid, out var pool))
         {
             var max = MaxStamina(pool);
-            if (pool.Stamina >= max || pool.RegenSeconds <= 0f)
+            var regen = RegenSeconds(uid, pool);
+            if (pool.Stamina >= max || regen <= 0f)
             {
                 pool.RegenProgress = 0f;
                 // A full pool is a new turn. MAP does not clear on a partial refill.
@@ -60,11 +65,11 @@ public sealed partial class CFActionPoolSystem : EntitySystem
             }
 
             pool.RegenProgress += frameTime;
-            if (pool.RegenProgress < pool.RegenSeconds)
+            if (pool.RegenProgress < regen)
                 continue;
 
-            var gained = (int) (pool.RegenProgress / pool.RegenSeconds);
-            pool.RegenProgress -= gained * pool.RegenSeconds;
+            var gained = (int) (pool.RegenProgress / regen);
+            pool.RegenProgress -= gained * regen;
             pool.Stamina = Math.Min(max, pool.Stamina + gained);
             var refilled = pool.Stamina >= max;
             if (refilled)
@@ -77,6 +82,12 @@ public sealed partial class CFActionPoolSystem : EntitySystem
             if (refilled)
                 RaiseLocalEvent(uid, new CFTurnRefilledEvent());
         }
+    }
+
+    /// <summary>Seconds this creature takes to regain a point: players and NPCs recover at different speeds.</summary>
+    public float RegenSeconds(EntityUid uid, CFActionPoolComponent pool)
+    {
+        return HasComp<ActorComponent>(uid) ? pool.RegenSeconds : pool.NpcRegenSeconds;
     }
 
     /// <summary>
@@ -245,11 +256,39 @@ public sealed partial class CFActionPoolSystem : EntitySystem
         if (args.Disarm || args.Target == null && args.Weapon == null)
             return;
 
-        if (CanAfford(ent.Comp, 1))
+        if (!CanAfford(ent.Comp, 1))
+        {
+            args.Cancel();
+            PopupEmpty(ent.Owner, ent.Comp);
             return;
+        }
 
-        args.Cancel();
-        PopupEmpty(ent.Owner, ent.Comp);
+        // Swings at doors and other obstacles need no thought. No target at all is an NPC's deliberate miss.
+        if ((args.Target is not { } target || HasComp<MobStateComponent>(target)) && StillThinking(ent, ent.Comp))
+            args.Cancel();
+    }
+
+    /// <summary>
+    /// The AI has already chosen to attack by the time it gets here, so this one check covers stock HTN and GOAP.
+    /// The first attempt starts the timer, and the attack goes ahead once it has run out.
+    /// </summary>
+    private bool StillThinking(EntityUid uid, CFActionPoolComponent pool)
+    {
+        if (!_net.IsServer || HasComp<ActorComponent>(uid))
+            return false;
+
+        var seconds = CompOrNull<CFCombatantComponent>(uid)?.ThinkingTimer ?? 1f;
+        if (seconds <= 0f)
+            return false;
+
+        var now = _timing.CurTime;
+        if (pool.ThinkingUntil == TimeSpan.Zero || now > pool.ThinkingUntil + ThinkingLapse)
+        {
+            pool.ThinkingUntil = now + TimeSpan.FromSeconds(seconds);
+            return true;
+        }
+
+        return now < pool.ThinkingUntil;
     }
 
     [SubscribeLocalEvent]
@@ -258,6 +297,7 @@ public sealed partial class CFActionPoolSystem : EntitySystem
         if (!_timing.IsFirstTimePredicted)
             return;
 
+        ent.Comp.ThinkingUntil = TimeSpan.Zero;
         TrySpend(ent, ent.Comp, 1);
         _stealth.Reveal(ent);
     }
@@ -265,11 +305,15 @@ public sealed partial class CFActionPoolSystem : EntitySystem
     [SubscribeLocalEvent]
     private void OnShotAttempt(Entity<CFActionPoolComponent> ent, ref ShotAttemptedEvent args)
     {
-        if (CanAfford(ent.Comp, ShotCost(args.Used)))
+        if (!CanAfford(ent.Comp, ShotCost(args.Used)))
+        {
+            args.Cancel();
+            PopupEmpty(ent.Owner, ent.Comp);
             return;
+        }
 
-        args.Cancel();
-        PopupEmpty(ent.Owner, ent.Comp);
+        if (StillThinking(ent, ent.Comp))
+            args.Cancel();
     }
 
     [SubscribeLocalEvent]
@@ -278,6 +322,7 @@ public sealed partial class CFActionPoolSystem : EntitySystem
         if (!_timing.IsFirstTimePredicted || !TryComp(args.User, out CFActionPoolComponent? pool))
             return;
 
+        pool.ThinkingUntil = TimeSpan.Zero;
         TrySpend(args.User, pool, ShotCost(weapon));
         if (TryComp(weapon, out CFRangedWeaponComponent? ranged) && ranged.ReloadPrepaid)
         {

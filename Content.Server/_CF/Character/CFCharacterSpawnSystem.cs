@@ -47,6 +47,7 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
     [Dependency] private MetaDataSystem _meta = default!;
     [Dependency] private CFArmorSystem _armor = default!;
     [Dependency] private CFCharacterFeatureSystem _features = default!;
+    [Dependency] private Content.Server.CF.Shop.CFShopSystem _shop = default!;
 
     /// <summary>Carpfinder Speed of 25 feet is the usual human walk.</summary>
     private const float BaselineSpeedFeet = 25f;
@@ -139,8 +140,17 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
 
     private void GrantPurse(EntityUid mob, Content.Shared.Preferences.HumanoidCharacterProfile profile, string? jobId)
     {
+        var copies = CFCoins.AffordableCopies(profile, jobId, _prototypes, out var left);
+        foreach (var (item, count) in copies)
+        {
+            for (var i = 0; i < count; i++)
+            {
+                _shop.GiveOne(mob, item);
+            }
+        }
+
         var purse = EnsureComp<CFPurseComponent>(mob);
-        purse.Copper = CFCoins.Remaining(profile, jobId, _prototypes);
+        purse.Copper = left;
         purse.Seeded = true;
         Dirty(mob, purse);
     }

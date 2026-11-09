@@ -145,6 +145,13 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
     [DataField]
     public List<string> PetGear = new();
 
+    /// <summary>
+    /// Copies bought past the first, by loadout id. The first copy is the stock loadout, which is equipped at spawn.
+    /// These go in the character's hands and bag. It comes from a client, so spawning checks it against the purse.
+    /// </summary>
+    [DataField]
+    public Dictionary<string, int> LoadoutCopies = new();
+
     public CFCharacterBuildData Clone()
     {
         return new CFCharacterBuildData
@@ -179,6 +186,7 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
             PetName = PetName,
             PetBarding = PetBarding,
             PetGear = PetGear.ToList(),
+            LoadoutCopies = new Dictionary<string, int>(LoadoutCopies),
         };
     }
 
@@ -216,7 +224,9 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
                && PetId == other.PetId
                && PetName == other.PetName
                && PetBarding == other.PetBarding
-               && PetGear.SequenceEqual(other.PetGear);
+               && PetGear.SequenceEqual(other.PetGear)
+               && LoadoutCopies.Count == other.LoadoutCopies.Count
+               && LoadoutCopies.All(pair => other.LoadoutCopies.GetValueOrDefault(pair.Key) == pair.Value);
     }
 
     public override bool Equals(object? obj)
@@ -259,6 +269,7 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
             hash.Add(skill);
         foreach (var spell in Spells)
             hash.Add(spell);
+        hash.Add(LoadoutCopies.Count);
         hash.Add(PetId);
         hash.Add(PetName);
         hash.Add(PetBarding);

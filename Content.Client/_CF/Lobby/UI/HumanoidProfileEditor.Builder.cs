@@ -55,6 +55,9 @@ public sealed partial class HumanoidProfileEditor
         Class,
     }
 
+    /// <summary>The character has been accepted, so everything past the first step is shown.</summary>
+    private bool _setupAccepted;
+
     private BuilderSelection _selection = BuilderSelection.Ancestry;
     private SkillAssignMode _skillMode;
 
@@ -126,11 +129,47 @@ public sealed partial class HumanoidProfileEditor
         TabContainer.SetTabTitle(SpellsTabIndex, Loc.GetString("cf-character-builder-spells-tab"));
         TabContainer.SetTabTitle(PetTabIndex, Loc.GetString("cf-character-builder-pet-tab"));
 
+        AcceptCharacterButton.OnPressed += _ => AcceptCharacter();
+
         UpdateBuilderSummary();
+        ApplySetupStage();
         Level2Toggle.OnPressed += _ => Level2Body.Visible = Level2Toggle.Pressed;
         Level3Toggle.OnPressed += _ => Level3Body.Visible = Level3Toggle.Pressed;
         Level4Toggle.OnPressed += _ => Level4Body.Visible = Level4Toggle.Pressed;
         Level5Toggle.OnPressed += _ => Level5Body.Visible = Level5Toggle.Pressed;
+    }
+
+    /// <summary>Levels and the tabs stay hidden until the ancestry, background, class and job are chosen and accepted.</summary>
+    private void ApplySetupStage()
+    {
+        LevelsHeading.Visible = _setupAccepted;
+        LevelsScroll.Visible = _setupAccepted;
+        if (!SelectionView.Visible && !BoostView.Visible && !SkillView.Visible && !JobPane.Visible)
+            EditorPane.Visible = _setupAccepted;
+    }
+
+    private void AcceptCharacter()
+    {
+        if (Profile == null || CFCharacterRequirements.Missing(_prototypeManager, Profile).Count > 0)
+            return;
+
+        ClosePicker();
+        _setupAccepted = true;
+        ApplySetupStage();
+        Save?.Invoke();
+    }
+
+    /// <summary>Accept only lights up once there is nothing left to choose, and says what is if there is.</summary>
+    private void UpdateAcceptButton()
+    {
+        var missing = Profile == null
+            ? new List<LocId>()
+            : CFCharacterRequirements.Missing(_prototypeManager, Profile);
+
+        AcceptCharacterButton.Disabled = Profile == null || missing.Count > 0;
+        AcceptCharacterButton.ToolTip = missing.Count == 0
+            ? null
+            : Loc.GetString("cf-character-missing-tooltip", ("missing", string.Join(", ", missing.Select(id => Loc.GetString(id)))));
     }
 
     private CFCharacterBuildData CurrentBuild()
@@ -262,7 +301,7 @@ public sealed partial class HumanoidProfileEditor
         BoostView.Visible = false;
         SkillView.Visible = false;
         JobPane.Visible = false;
-        EditorPane.Visible = true;
+        EditorPane.Visible = _setupAccepted;
         AncestryButton.Pressed = false;
         BackgroundButton.Pressed = false;
         ClassButton.Pressed = false;
@@ -1683,6 +1722,7 @@ public sealed partial class HumanoidProfileEditor
 
     private void UpdateBuilderSummary()
     {
+        UpdateAcceptButton();
         var ancestry = Loc.GetString("cf-character-builder-none");
         if (Profile != null && _prototypeManager.TryIndex(Profile.Species, out SpeciesPrototype? species))
             ancestry = Loc.GetString(species.Name);
@@ -1700,8 +1740,7 @@ public sealed partial class HumanoidProfileEditor
         var jobName = Loc.GetString("cf-character-builder-none");
         if (Profile != null)
         {
-            var highPriorityJob = Profile.JobPriorities.FirstOrDefault(priority => priority.Value == JobPriority.High).Key;
-            if (!string.IsNullOrEmpty(highPriorityJob) && _prototypeManager.TryIndex<JobPrototype>(highPriorityJob, out var job))
+            if (CFCharacterRequirements.ChosenJob(_prototypeManager, Profile) is { } chosenJob && _prototypeManager.TryIndex(chosenJob, out var job))
                 jobName = job.LocalizedName;
         }
 

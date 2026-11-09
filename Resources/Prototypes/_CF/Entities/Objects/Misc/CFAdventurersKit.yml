@@ -1,0 +1,96 @@
+# What everyone sets out with. Filled the way stock fills its survival and M.R.E. boxes.
+
+- type: entity
+  parent: ClothingBackpack
+  id: CFAdventurersKit
+  name: adventurer's kit
+  description: A backpack packed for the road, with rope, a torch, flint and steel, a ration and water.
+  components:
+  - type: Sprite
+    sprite: _CP14/Clothing/Back/Backpacks/backpack_t1.rsi
+  - type: Clothing
+    sprite: _CP14/Clothing/Back/Backpacks/backpack_t1.rsi
+  - type: EntityTableContainerFill
+    containers:
+      storagebase: !type:AllSelector
+        children:
+        - id: CFRope
+        - id: CFTorch
+        - id: CFLighter
+        - id: CFRation
+        - id: CFCanteenWater
+  - type: CFItem
+    level: 0
+  - type: CFBulk
+    bulk: 0.1 # What is inside counts for itself.
+  - type: CFItemPrice
+    copper: 70 # 7 sp
+
+# Ported from CP14's CP14Lighter.
+- type: entity
+  parent: BaseItem
+  id: CFLighter
+  name: flint and steel
+  description: Strike them together over a torch or anything else that burns.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: _CP14/Objects/Tools/flint.rsi
+    state: icon
+  - type: CFDelayedIgnitionSource
+    enabled: true
+  - type: Tag
+    tags:
+    - CFLighter
+  - type: CFItem
+    level: 0
+  - type: CFBulk
+    bulk: 0.1
+  - type: CFItemPrice
+    copper: 5
+
+- type: entity
+  parent: FoodSnackBase
+  id: CFRation
+  name: ration
+  description: Dried meat wrapped for the road. Filling, if not exciting.
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Consumable/Food/meat.rsi
+    state: sheepmeat_slice_cooked
+  - type: Solution
+    solution:
+      reagents:
+      - ReagentId: Nutriment
+        Quantity: 20
+  - type: FlavorProfile
+    flavors:
+    - meaty
+  - type: CFItem
+    level: 0
+  - type: CFBulk
+    bulk: 0.1
+  - type: CFItemPrice
+    copper: 4
+
+- type: entity
+  parent: FlaskBase
+  id: CFCanteenWater
+  name: canteen
+  description: A dented metal canteen of water.
+  components:
+  - type: Sprite
+    sprite: Objects/Consumable/Drinks/mreflask.rsi
+  - type: Solution
+    solution:
+      reagents:
+      - ReagentId: Water
+        Quantity: 60
+  - type: CFItem
+    level: 0
+  - type: CFBulk
+    bulk: 0.1
+  - type: CFItemPrice
+    copper: 10 # 1 sp

@@ -39,6 +39,7 @@ public sealed class CFStanceTest : GameTest
   id: CFStanceTestHero
   components:
   - type: CFCombatant
+    thinkingTimer: 0
     level: 1
     maxHp: 200
     currentHp: 200

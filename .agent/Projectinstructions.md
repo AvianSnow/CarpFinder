@@ -179,6 +179,8 @@ Class examples: `CFMySystem`, `CFMyServerSystem`, `CFMyClientSystem`, `CFExample
 | Skill proficiency rank | `CFDefense.SkillRank(prototypes, combat, skill)` |
 | Area tiles (burst, cone, emanation, line, square) | `CFAreaGrid.Collect` (`Content.Shared.CF.Effects.Areas`), 1 tile = 5 ft |
 | Damage type data (SS14 type, colour, hit sound) | `cfDamageType` prototypes, resolved with `CFDamageTypes.TryResolve` (`Content.Shared.CF.DamageTypes`). Matching ignores case and checks aliases, so `slashing` resolves to `Slashing`. |
+| Sparkles on a creature for magic or healing | `CFVfxSystem` (`Cast`, `Targeted`, `Healing`). `CFEffectSystem.Heal` already plays them |
+| How long an NPC hesitates before attacking | `thinkingTimer` on `CFCombatant`. A test that attacks with a mob that has no player needs `thinkingTimer: 0`, or its first attempt only starts the timer |
 
 **Porting from crystall-punk-14:** rename every type, file, prototype id and component to the `CF` prefix, use the `Content.*.CF.*` namespace (their `_CP14` folder becomes our `_CF`, but the namespace has no underscore), drop `readonly` from `[Dependency]` fields, and make those classes `partial`. Keep their textures under `Resources/Textures/_CP14` with the original `meta.json` license.
 

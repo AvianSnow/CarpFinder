@@ -6,6 +6,10 @@ namespace Content.Shared.CF;
 [CVarDefs]
 public sealed class CFCVars : CVars
 {
+    /// <summary>A character needs an ancestry, background, class and job before it can ready up or join.</summary>
+    public static readonly CVarDef<bool> RequireCompleteCharacter =
+        CVarDef.Create("cf.require_complete_character", true, CVar.SERVERONLY);
+
     /// <summary>Keeps the HUD deck open instead of closing it 5 seconds after the mouse leaves.</summary>
     public static readonly CVarDef<bool> HudDeckPinned =
         CVarDef.Create("cf.hud_deck_pinned", false, CVar.CLIENTONLY | CVar.ARCHIVE);

@@ -137,7 +137,8 @@ public sealed partial class CFShopSystem : EntitySystem
         return proto.TryGetComponent<ItemComponent>(out _);
     }
 
-    private void GiveOne(EntityUid user, string prototype)
+    /// <summary>Spawns one item into an empty hand, else the backpack, else on the ground nearby.</summary>
+    public void GiveOne(EntityUid user, string prototype)
     {
         var spawned = Spawn(prototype, Transform(user).Coordinates);
         if (TryPutInHand(user, spawned))

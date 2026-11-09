@@ -302,6 +302,7 @@ public sealed partial class CFEffectSystem : EntitySystem
     [Dependency] private CFPsiSystem _psi = default!;
     [Dependency] private CFTauntSystem _taunts = default!;
     [Dependency] private CFReactionSystem _reactions = default!;
+    [Dependency] private CFVfxSystem _vfx = default!;
 
     /// <summary>
     /// Rolls the source's check against one creature and runs its effect lists.
@@ -331,6 +332,9 @@ public sealed partial class CFEffectSystem : EntitySystem
         }
         else if (check != null && check.Defense != CFDefenseType.None)
         {
+            if (HasComp<CFSpellComponent>(source))
+                _vfx.Targeted(target, source);
+
             args.Degree = _conditions.RollDefense(target, check.Defense, stats.Dc + taunted, out _, args.Traits);
             landed = !args.Degree.IsSuccess();
         }

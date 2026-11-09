@@ -34,6 +34,7 @@ once('Tiles/woodplank.yml','itemDrop: CFFloorWoodenPlanks1','itemDrop: CFWoodenP
 once('Tiles/woodplank.yml','itemDrop: CFFloorLucensWoodPlanks','itemDrop: CFWoodenPlanks1')
 once('tools.yml','spawn: CFWeaponShovelIron','spawn: CFShovel')
 once('tools.yml','spawn: CFWeaponHammerIron','spawn: CFLightHammer')
+sub('Ported/Objects/Tools/Entities_Objects_Tools_rope.yml','_CP14/Objects/Tools/rope.rsi','_CE/Objects/Tools/rope.rsi')
 once('Recipes/Construction/Graphs/Structures/Walls/wall_wooden_birch.yml','tool: CFWoodenHammering','tool: CFHammering')
 for a,b in [('CFBeeerBreeze','CFBeerBreeze'),('CFBeeerBlowLaw','CFBeerBlowLaw'),('CFBeeerGerbil','CFBeerGerbil'),('graph: CFWoodenBarrel','graph: CFCraneBarrel')]:
     once('Entities/Structures/Furniture/barrel_crane.yml',a,b)

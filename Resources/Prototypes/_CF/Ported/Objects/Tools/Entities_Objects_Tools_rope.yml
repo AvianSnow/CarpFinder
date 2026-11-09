@@ -11,7 +11,7 @@
     size: Small
     storedRotation: 90
   - type: Handcuff
-    cuffedRSI: _CP14/Objects/Tools/rope.rsi
+    cuffedRSI: _CE/Objects/Tools/rope.rsi
     bodyIconState: body-overlay
     startCuffSound:
       path: /Audio/Items/Handcuffs/rope_start.ogg
@@ -24,7 +24,7 @@
     startBreakoutSound:
       path: /Audio/Items/Handcuffs/rope_takeoff.ogg
   - type: Sprite
-    sprite: _CP14/Objects/Tools/rope.rsi
+    sprite: _CE/Objects/Tools/rope.rsi
     state: icon
   - type: MeleeWeapon
     wideAnimationRotation: 90

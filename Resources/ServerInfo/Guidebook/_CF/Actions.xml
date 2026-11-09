@@ -3,7 +3,7 @@
 Most actions use the controls you already have. They are not on the wheel, so this page lists them. Each one costs 1 action unless it says otherwise.
 
 ## Fighting
-- [bold]Left-click in combat mode:[/bold] Strike.
+- [bold]Left-click in combat mode:[/bold] Strike. Aim roughly toward an enemy in reach and you hit the closest one. Neutral creatures have to be clicked.
 - [bold]Right-click in combat mode:[/bold] a wide swing. With an empty hand, a shield, or a weapon with the shove or disarm trait, it Shoves or Disarms instead. Three shoves in a row knock a target prone.
 - [bold]Use in hand (Z), a weapon with several damage types:[/bold] switches to the next type, for 1 action. The hand panel shows which is set.
 - [bold]Throw a weapon with the thrown trait:[/bold] a ranged Strike at the first enemy it touches. It flies to your cursor, up to six times its range. Past its range you take a penalty, and a spear sticks in what it hits.
@@ -27,7 +27,7 @@ Pick these from the emote wheel. Typing them is only roleplay.
 - [bold]Walk while hidden:[/bold] Sneak. It spends an action every couple of seconds, and the result is secret. Running, or doing anything else, gives you away.
 
 ## Helping
-- [bold]Click a creature with a healer's toolkit:[/bold] Treat Wounds. It takes 30 seconds and needs training in Medicine.
+- [bold]Click a creature with a healer's toolkit:[/bold] Treat Wounds. It takes 12 seconds and 3 actions spread across them, and needs training in Medicine. You hold your patient still until it is done, and if they break free it ends.
 - [bold]Use a healer's toolkit in hand in combat mode:[/bold] Battle Medicine on the nearest hurt ally, if you have the feat.
 - [bold]Right-click an ally, then Aid:[/bold] help with their next check.
 - [bold]Buckle into a bed, then use Sleep:[/bold] a long rest. It restores your Hit Points, spell slots and focus points.

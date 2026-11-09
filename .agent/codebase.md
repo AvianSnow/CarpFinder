@@ -74,7 +74,8 @@ Details: `character-builder.md`.
 
 There are no turns. `CFActionPoolComponent` stands in for them.
 
-- Each creature holds `MaxActions` (default 3) of stamina and regains one every `RegenSeconds` (default 1.45).
+- Each creature holds `MaxActions` (default 3) of stamina and regains one every `RegenSeconds` (default 1.2) with a player in the body, or every `NpcRegenSeconds` (default 1.5) without one.
+- An NPC waits `CFCombatant.ThinkingTimer` (default 1 second) before each attack on a creature. `CFActionPoolSystem.StillThinking` checks it where a swing or shot is attempted, so stock HTN and GOAP both get it.
 - An action on the wheel pays through `CFRadialSlotComponent`. An activity outside the wheel calls `CFActionPoolSystem.TrySpendActions`.
 - A full pool counts as a new turn. `CFTurnRefilledEvent` fires, frightened eases, reactions come back, and `MapAttacks` clears.
 - Anything PF2e times "until your next turn" uses a fixed 6 seconds instead.
@@ -102,7 +103,7 @@ Anything that targets, rolls, and applies effects is data on the source entity: 
 
 | Input | Result | Code |
 |---|---|---|
-| Combat mode, left-click | Strike with the held weapon, fists if the hand is empty, or a shield bash | `CFStrikeSystem` |
+| Combat mode, left-click | Strike with the held weapon, fists if the hand is empty, or a shield bash. Aim assist picks the closest enemy in reach near the cursor's direction | `CFStrikeSystem`, `CFMeleeAimSystem` |
 | Combat mode, right-click, CF weapon | Stock wide swing, resolved as Strikes | `CFStrikeSystem` |
 | Combat mode, right-click, weapon with the `Shove` or `Disarm` trait and no `Sweep` | That maneuver instead of the wide swing | `CFManeuverSystem.OnDisarmAttempt` |
 | Combat mode, right-click, empty hand | Disarm if the target holds something, otherwise Shove | `CFManeuverSystem.OnDisarmAttempt` |
@@ -127,7 +128,7 @@ Anything that targets, rolls, and applies effects is data on the source entity: 
 | Ctrl+right-click while grabbing an enemy | Reposition (1 action) | `CFRepositionSystem` |
 | Hide verb on cover, or a closet closing on you | Hide | `CFStealthSystem.TryHide` |
 | Walk while hidden | Sneak, 1 action per `RegenSeconds` of walking | `CFStealthSystem.TrySneak` |
-| Click a creature with a healer's toolkit | Treat Wounds | `CFMedicineSystem` |
+| Click a creature with a healer's toolkit | Treat Wounds: 12 seconds, 3 actions spread across it, and the patient is held until it ends or they Escape | `CFMedicineSystem` |
 | Use a healer's toolkit in hand, combat mode, feat | Battle Medicine on the nearest hurt ally (1 action) | `CFMedicineSystem` |
 | Aid verb on an ally | Aid (1 action) | `CFManeuverSystem.TryAid` |
 | Sleep action while buckled to a bed | Long rest: full hit points, spell slots and focus | `CFLongRestSystem` |
@@ -217,7 +218,8 @@ All edits carry `// CarpFinder` markers, so `grep -rn CarpFinder Content.Client 
 | Spell requests | `Content.Shared/Actions/ActionEvents.cs`, `SharedActionsSystem.cs` | Bolt count and mode on the perform request |
 | Radial wheel and hotbar | `SimpleRadialMenu.xaml.cs`, `ActionUIController.cs`, `ActionButtonContainer.cs`, `EmotesUIController.cs`, `HandsUIController.cs` | The CF wheel and action HUD: the deck's buttons and lock, greying a spent spell, the item status panels |
 | Game screens | `DefaultGameScreen.xaml(.cs)`, `SeparatedChatGameScreen.xaml(.cs)` | Puts `CFGameHud` bottom centre and lifts the bag windows above it |
-| Melee | `Content.Client/Weapons/Melee/MeleeWeaponSystem.cs` | Right-click maneuvers for shields and trait weapons |
+| Joining a round | `Content.Server/GameTicking/ServerGameTicker.Lobby.cs`, `ServerGameTicker.Spawning.cs` | An unfinished character cannot ready up or spawn |
+| Melee | `Content.Client/Weapons/Melee/MeleeWeaponSystem.cs`, `MeleeWeaponSystem.Effects.cs` | Right-click maneuvers for shields and trait weapons, left-click aim assist, a swing animation half as long |
 | Crafting menu | `Content.Client/Construction/ConstructionSystem.cs`, `Content.Server/Construction/ConstructionSystem.Initial.cs` | The stock menu needs training in Crafting |
 | Characters | `HumanoidCharacterProfile.cs`, `HumanoidVisualLayers.cs` | The PF2e build; pelvis layer for split bodies |
 | NPCs | `Content.Server/NPC/Systems/NPCUtilitySystem.cs` | Faction hostility |

@@ -1,5 +1,6 @@
 using Content.Shared.CF.DamageTypes;
 using Content.Shared.CF.Traits;
+using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared.CF.Effects;
@@ -73,11 +74,15 @@ public sealed partial class CFAuraEffect
 /// <summary>
 /// An emanation that follows a creature. Everything it does is in <see cref="Effects"/>, which <c>CFGrantAura</c> adds to.
 /// </summary>
-[RegisterComponent]
+[RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class CFAuraComponent : Component
 {
-    [DataField]
+    [DataField, AutoNetworkedField]
     public int SizeFeet = 15;
+
+    /// <summary>The aura is doing something right now, so the client draws its border.</summary>
+    [DataField, AutoNetworkedField]
+    public bool Active;
 
     [DataField]
     public List<CFAuraEffect> Effects = new();

@@ -2,6 +2,10 @@
 
 ## Character builder (lobby)
 
+- A new character starts on the ABCJ panel alone: Ancestry, Sprite, Background, Class, Job, Accept. Levels and the Details, Shop, Weapons, Defense, Gear, Spells and Pet tabs stay hidden until Accept, which also saves. `_setupAccepted` holds this, and it is worked out again whenever a profile loads, so a finished character opens with everything showing and there is nothing new stored.
+- `CFCharacterRequirements.Missing` says what a character still needs, for Accept and for the server. Stock's `Passenger` job, which every new profile starts on, does not count as a job, because the builder never lists it. Ancestry is always met, since a new profile starts as Human.
+- The server refuses an unfinished character in `ToggleReady` and in `SpawnPlayer` (`ServerGameTicker.CF.cs`), and says what is missing in chat. It does not apply with no lobby or with random characters. Integration tests turn off `cf.require_complete_character` in `PoolManager.Cvars.cs`.
+
 - Overlay UI lives under `Content.Client/_CF/Lobby/UI/` (see `lobby-overlay.md`).
 - Profile field: `HumanoidCharacterProfile.CFBuild` (`CFCharacterBuildData`) — background, class, heritage, ancestry free boosts, background choice/free boosts, four finishing free boosts, background/class trained skill picks.
 - Ancestry is `Profile.Species` resolved through `cfAncestry` prototypes. Player Core ancestries are Human, Dwarf, Elf, Gnome, Goblin, Halfling, Leshy, and Orc. Player Core 2 adds the uncommon ancestries Catfolk, Hobgoblin, Kholo, Kobold, Lizardfolk, Ratfolk, Tengu, and Tripkee. Lost Omens Ancestry Guide adds Azarketi, Fetchling, and Kitsune (uncommon) and Android, Fleshwarp, Sprite, and Strix (rare). Every ancestry that is not stock Human or Dwarf uses the humanoid sprite (`CFMob*`). Stock and `_CE` species without a `cfAncestry` have `roundStart: false`, so they leave the ancestry list.
@@ -69,7 +73,8 @@
 
 - Prototypes: `Resources/Prototypes/_CF/Loadouts/cf_loadouts.yml`
 - `roleLoadout` ids are `JobCFAlpha` … (must match `Job` + job id).
-- Groups use `editorTab: Weapons|Defense|Gear`. Those tabs list only what was bought. The Shop tab (after Details) buys and sells them at full price.
+- Groups use `editorTab: Weapons|Defense|Gear`. Those tabs list only what was bought, and sell at full price. The Shop tab (after Details) is `CFShopView`, the merchant layout, listing these loadouts. The first copy bought is the loadout itself, equipped at spawn. Further copies are `CFBuild.LoadoutCopies`, handed over at spawn by `CFCoins.AffordableCopies`, which counts them out of the purse because they come from a client.
+- Every CF job has `startingGear: CFCommonClothes`: an outfit, shoes (`Entities/Clothing/CFCommonClothes.yml`) and `CFAdventurersKit` (`Entities/Objects/Misc/CFAdventurersKit.yml`), a backpack filled with `EntityTableContainerFill` the way stock fills its survival box. Stock has one slot for what CP14 splits into shirt and pants, so the outfit draws both with `clothingVisuals`.
 - Starting coin: level 0 is 5 gp, level 1 and up is 15 gp. Stored as copper and shown as pp / gp / sp / cp, rolling up at every 10. Nothing is selected for free (`minLimit` and `defaultSelected` are 0).
 - In-game `CFPurseComponent` is that leftover coin. The character-menu shop, for merchants only (`CFShopAccess`), spends it at full price. Selling at a `CFMerchantCounter` pays half Price, or the full Price for `fullResale` items such as gems. Physical coins move in and out of it through `CFCoinSystem`.
 

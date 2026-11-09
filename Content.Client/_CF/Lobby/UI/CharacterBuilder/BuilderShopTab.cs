@@ -1,9 +1,9 @@
+using Content.Client.CF.Character;
+using Content.Shared.CF.Preferences;
 using Content.Shared.CF.Shop;
-using Content.Shared.Clothing;
 using Content.Shared.Preferences;
 using Content.Shared.Preferences.Loadouts;
 using Content.Shared.Roles;
-using Robust.Client.Graphics;
 using Robust.Client.UserInterface;
 using Robust.Client.UserInterface.Controls;
 using Robust.Shared.Player;
@@ -12,13 +12,16 @@ using Robust.Shared.Prototypes;
 namespace Content.Client.CF.Lobby.UI.CharacterBuilder;
 
 /// <summary>
-/// Character-creation shop. Buying adds a loadout the character spawns with.
-/// Selling removes it and refunds the full price. In-game merchant rates are a later build.
+/// Character-creation shop, on the same view as a merchant's. Buying adds a loadout the character spawns with, and
+/// further copies of it go in their bag. Selling is on the Weapons, Defense and Gear tabs.
 /// </summary>
 public sealed class BuilderShopTab : BoxContainer
 {
-    private readonly Label _purse;
-    private readonly BoxContainer _rows;
+    private readonly CFShopView _shop = new(scanItems: false);
+    private readonly Label _notice;
+
+    /// <summary>Which loadout group each listing belongs to. Listings are keyed by loadout id.</summary>
+    private readonly Dictionary<string, string> _groupOf = new();
 
     private HumanoidCharacterProfile? _profile;
     private JobPrototype? _jobOverride;
@@ -32,27 +35,13 @@ public sealed class BuilderShopTab : BoxContainer
         HorizontalExpand = true;
         VerticalExpand = true;
 
-        _purse = new Label
-        {
-            FontColorOverride = Color.FromHex("#E6C15A"),
-            Margin = new Thickness(10, 10, 10, 4),
-        };
-        AddChild(_purse);
+        _notice = new Label { Visible = false, Margin = new Thickness(10) };
+        AddChild(_notice);
 
-        var scroll = new ScrollContainer
-        {
-            VerticalExpand = true,
-            HorizontalExpand = true,
-        };
-        _rows = new BoxContainer
-        {
-            Orientation = LayoutOrientation.Vertical,
-            HorizontalExpand = true,
-            Margin = new Thickness(10, 0, 10, 10),
-            SeparationOverride = 4,
-        };
-        scroll.AddChild(_rows);
-        AddChild(scroll);
+        _shop.PurseSource = Purse;
+        _shop.Checkout = Buy;
+        _shop.HideCancel();
+        AddChild(_shop);
     }
 
     public void Rebuild(
@@ -83,143 +72,109 @@ public sealed class BuilderShopTab : BoxContainer
         Paint();
     }
 
-    private void Paint()
+    private int Purse()
     {
-        _rows.RemoveAllChildren();
         if (_profile == null || _prototypes == null)
-        {
-            _purse.Text = CFCoins.FormatWallet(CFCoins.StartingCopper(1));
-            return;
-        }
+            return CFCoins.StartingCopper(1);
 
         var job = _jobOverride ?? CFBuilderRole.PreferredJob(_profile, _prototypes);
-        var remaining = CFCoins.Remaining(_profile, job.ID, _prototypes);
-        _purse.Text = CFCoins.FormatWallet(remaining);
+        return CFCoins.Remaining(_profile, job.ID, _prototypes);
+    }
 
-        if (!CFBuilderRole.TryGet(_profile, _jobOverride, _session, _prototypes, out var roleProto, out var roleLoadout))
+    private void Paint()
+    {
+        _groupOf.Clear();
+        var listings = new List<CFShopListing>();
+        _notice.Visible = false;
+        if (_profile != null && _prototypes != null)
         {
-            _rows.AddChild(new Label { Text = Loc.GetString("cf-character-builder-no-role-loadout") });
-            return;
-        }
-
-        var matched = false;
-        foreach (var groupId in roleProto.Groups)
-        {
-            if (!_prototypes.Resolve(groupId, out var group))
-                continue;
-
-            if (group.Hidden)
-                continue;
-
-            if (!string.Equals(group.EditorTab, LoadoutEditorTabs.Weapons, StringComparison.OrdinalIgnoreCase)
-                && !string.Equals(group.EditorTab, LoadoutEditorTabs.Defense, StringComparison.OrdinalIgnoreCase)
-                && !string.Equals(group.EditorTab, LoadoutEditorTabs.Gear, StringComparison.OrdinalIgnoreCase))
-                continue;
-
-            var listed = false;
-            foreach (var loadoutId in group.Loadouts)
+            if (CFBuilderRole.TryGet(_profile, _jobOverride, _session, _prototypes, out var role, out _))
             {
-                if (!_prototypes.TryIndex(loadoutId, out var loadout))
-                    continue;
-
-                var price = CFCoins.LoadoutPrice(_prototypes, loadout);
-                if (price <= 0)
-                    continue;
-
-                if (!listed)
+                foreach (var groupId in role.Groups)
                 {
-                    listed = true;
-                    matched = true;
-                    _rows.AddChild(new Label
-                    {
-                        Text = Loc.GetString(group.Name),
-                        StyleClasses = { "LabelHeading" },
-                        Margin = new Thickness(0, 8, 0, 4),
-                    });
+                    AddGroup(groupId, listings);
                 }
-
-                _rows.AddChild(OfferRow(roleLoadout, group.ID, loadout, price, remaining));
+            }
+            else
+            {
+                _notice.Text = Loc.GetString("cf-character-builder-no-role-loadout");
+                _notice.Visible = true;
             }
         }
 
-        if (!matched)
-            _rows.AddChild(new Label { Text = Loc.GetString("cf-character-builder-no-loadouts") });
+        _shop.SetListings(listings);
     }
 
-    private Control OfferRow(RoleLoadout roleLoadout, string groupId, LoadoutPrototype loadout, int price, int remaining)
+    private void AddGroup(ProtoId<LoadoutGroupPrototype> groupId, List<CFShopListing> listings)
     {
-        var owned = false;
-        if (roleLoadout.SelectedLoadouts.TryGetValue(groupId, out var picks))
+        if (!_prototypes!.Resolve(groupId, out var group) || group.Hidden)
+            return;
+
+        if (!string.Equals(group.EditorTab, LoadoutEditorTabs.Weapons, StringComparison.OrdinalIgnoreCase)
+            && !string.Equals(group.EditorTab, LoadoutEditorTabs.Defense, StringComparison.OrdinalIgnoreCase)
+            && !string.Equals(group.EditorTab, LoadoutEditorTabs.Gear, StringComparison.OrdinalIgnoreCase))
         {
-            foreach (var pick in picks)
+            return;
+        }
+
+        foreach (var loadoutId in group.Loadouts)
+        {
+            if (!_prototypes.TryIndex(loadoutId, out var loadout)
+                || CFCoins.LoadoutItem(loadout) is not { } item
+                || !_prototypes.TryIndex<EntityPrototype>(item, out var proto)
+                || CFCoins.EntityPrice(proto) <= 0)
             {
-                if (pick.Prototype == loadout.ID)
-                {
-                    owned = true;
-                    break;
-                }
+                continue;
             }
+
+            _groupOf[loadout.ID] = group.ID;
+            listings.Add(CFShopView.ToListing(proto, loadout.ID));
         }
-
-        var row = new BoxContainer
-        {
-            Orientation = LayoutOrientation.Horizontal,
-            HorizontalExpand = true,
-            SeparationOverride = 8,
-        };
-
-        row.AddChild(new Label
-        {
-            Text = IoCManager.Resolve<IEntityManager>().System<LoadoutSystem>().GetName(loadout),
-            HorizontalExpand = true,
-            ClipText = true,
-        });
-        row.AddChild(new Label
-        {
-            Text = CFCoins.FormatPrice(price),
-            MinWidth = 90,
-            Align = Label.AlignMode.Right,
-        });
-
-        var button = new Button
-        {
-            Text = Loc.GetString(owned ? "cf-character-builder-shop-sell" : "cf-character-builder-shop-buy"),
-            MinWidth = 70,
-            Disabled = !owned && remaining < price,
-        };
-        var id = loadout.ID;
-        var capturedGroup = groupId;
-        button.OnPressed += _ => Commit(id, capturedGroup, add: !owned);
-        row.AddChild(button);
-        return row;
     }
 
-    private void Commit(string loadoutId, string groupId, bool add)
+    private void Buy(List<CFShopPurchaseLine> lines)
     {
-        if (_profile == null || _prototypes == null || _onChanged == null)
-            return;
-
-        if (!CFBuilderRole.TryGet(_profile, _jobOverride, _session, _prototypes, out _, out var roleLoadout))
-            return;
-
-        if (!_prototypes.TryIndex<LoadoutPrototype>(loadoutId, out var loadout))
-            return;
-
-        if (add)
-        {
-            var job = _jobOverride ?? CFBuilderRole.PreferredJob(_profile, _prototypes);
-            var remaining = CFCoins.Remaining(_profile, job.ID, _prototypes);
-            if (remaining < CFCoins.LoadoutPrice(_prototypes, loadout))
-                return;
-
-            if (!roleLoadout.AddLoadout(groupId, loadoutId, _prototypes))
-                return;
-        }
-        else if (!roleLoadout.RemoveLoadout(groupId, loadoutId, _prototypes))
+        if (_profile == null
+            || _prototypes == null
+            || _onChanged == null
+            || !CFBuilderRole.TryGet(_profile, _jobOverride, _session, _prototypes, out _, out var roleLoadout))
         {
             return;
         }
 
-        _onChanged(_profile.WithLoadout(roleLoadout));
+        var build = _profile.CFBuild.Clone();
+        foreach (var line in lines)
+        {
+            if (!_groupOf.TryGetValue(line.Prototype, out var group))
+                continue;
+
+            var copies = Math.Max(1, line.Quantity);
+            if (!Owns(roleLoadout, group, line.Prototype))
+            {
+                if (!roleLoadout.AddLoadout(group, line.Prototype, _prototypes))
+                    continue;
+
+                copies--;
+            }
+
+            if (copies > 0)
+                build.LoadoutCopies[line.Prototype] = Math.Min(CFCoins.CopiesOf(build, line.Prototype) + copies, CFCoins.MaxCopies);
+        }
+
+        _onChanged(_profile.WithLoadout(roleLoadout).WithCFBuild(build));
+    }
+
+    private static bool Owns(RoleLoadout role, string group, string loadout)
+    {
+        if (!role.SelectedLoadouts.TryGetValue(group, out var picks))
+            return false;
+
+        foreach (var pick in picks)
+        {
+            if (pick.Prototype == loadout)
+                return true;
+        }
+
+        return false;
     }
 }

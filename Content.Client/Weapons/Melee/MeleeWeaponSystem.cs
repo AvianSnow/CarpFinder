@@ -208,6 +208,19 @@ public sealed partial class MeleeWeaponSystem : SharedMeleeWeaponSystem
     {
         var attackerPos = TransformSystem.GetMapCoordinates(attacker);
 
+        // CarpFinder: a swing in the general direction hits the closest enemy, even with the cursor past the weapon's reach
+        if (_stateManager.CurrentState is GameplayStateBase aimScreen)
+        {
+            var clicked = aimScreen.GetClickedEntity(mousePos);
+            if (!Interaction.CombatModeCanHandInteract(attacker, clicked)
+                && EntityManager.System<Content.Shared.CF.Combat.CFMeleeAimSystem>().TryPick(attacker, clicked, mousePos, meleeComponent.Range, out var assisted))
+            {
+                RaisePredictiveEvent(new LightAttackEvent(GetNetEntity(assisted), GetNetEntity(weaponUid), GetNetCoordinates(Transform(assisted).Coordinates)));
+                return;
+            }
+        }
+        // CarpFinder end
+
         if (mousePos.MapId != attackerPos.MapId || (attackerPos.Position - mousePos.Position).Length() > meleeComponent.Range)
             return;
 

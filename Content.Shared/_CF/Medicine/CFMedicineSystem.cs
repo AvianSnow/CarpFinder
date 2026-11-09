@@ -35,6 +35,22 @@ public sealed partial class CFPatientComponent : Component
     public Dictionary<EntityUid, TimeSpan> BattleMedicineUntil = new();
 }
 
+/// <summary>On a healer partway through Treat Wounds. Removed when it ends, however it ends.</summary>
+[RegisterComponent]
+public sealed partial class CFTreatingComponent : Component
+{
+    public EntityUid Patient;
+
+    public DoAfterId? DoAfter;
+
+    /// <summary>The healer holds the patient still, so the treatment ends if the patient breaks free.</summary>
+    public bool HoldsPatient;
+
+    public int ActionsLeft;
+
+    public TimeSpan NextAction;
+}
+
 [Serializable, NetSerializable]
 public sealed partial class CFTreatWoundsDoAfterEvent : SimpleDoAfterEvent;
 
@@ -46,8 +62,10 @@ public sealed partial class CFMedicineSystem : EntitySystem
 {
     private const string Skill = "Medicine";
 
-    /// <summary>10 minutes printed. Everything here is scaled by the same 1/20 so a fight can pause for it.</summary>
-    private const float TreatSeconds = 30f;
+    /// <summary>10 minutes printed. Short enough to do in a fight, at a cost of 3 actions spread across it.</summary>
+    private const float TreatSeconds = 12f;
+
+    private const int TreatActions = 3;
 
     private const int Dice = 2;
     private const int CriticalDice = 4;
@@ -72,6 +90,39 @@ public sealed partial class CFMedicineSystem : EntitySystem
     [Dependency] private CFConditionSystem _conditions = default!;
     [Dependency] private CFEffectSystem _effects = default!;
     [Dependency] private CFFactionSystem _factions = default!;
+    [Dependency] private CFVfxSystem _vfx = default!;
+
+    private static TimeSpan TreatActionEvery => TimeSpan.FromSeconds(TreatSeconds / TreatActions);
+
+    public override void Update(float frameTime)
+    {
+        if (!_net.IsServer)
+            return;
+
+        var now = _timing.CurTime;
+        var query = EntityQueryEnumerator<CFTreatingComponent>();
+        while (query.MoveNext(out var uid, out var treating))
+        {
+            if (treating.HoldsPatient && !IsHolding(uid, treating.Patient))
+            {
+                _doAfter.Cancel(treating.DoAfter);
+                continue;
+            }
+
+            if (treating.ActionsLeft <= 0 || now < treating.NextAction)
+                continue;
+
+            if (!_actions.TrySpendActions(uid, 1))
+            {
+                _doAfter.Cancel(treating.DoAfter);
+                continue;
+            }
+
+            treating.ActionsLeft--;
+            treating.NextAction += TreatActionEvery;
+            _vfx.Healing(treating.Patient);
+        }
+    }
 
     [SubscribeLocalEvent]
     private void OnAfterInteract(Entity<CFHealersToolkitComponent> ent, ref AfterInteractEvent args)
@@ -89,31 +140,87 @@ public sealed partial class CFMedicineSystem : EntitySystem
             return;
         }
 
+        TryStartTreatment(ent, args.User, target);
+    }
+
+    /// <summary>
+    /// Starts Treat Wounds. The healer holds the patient still, and the patient can try to Escape, which ends it.
+    /// The first of its actions is paid now and the rest as it goes, so running out of actions also ends it.
+    /// </summary>
+    public bool TryStartTreatment(EntityUid toolkit, EntityUid user, EntityUid target)
+    {
+        var position = _transform.GetWorldPosition(user);
+        if (target != user && !CFFlanking.InReach(position, _transform.GetWorldPosition(target), CFFlanking.DefaultReachFeet))
+        {
+            _popup.PopupEntity(Loc.GetString("cf-medicine-too-far"), target, user);
+            return false;
+        }
+
+        if (!_actions.CanAffordActions(user, 1))
+        {
+            _popup.PopupEntity(Loc.GetString("cf-action-not-enough"), user, user);
+            return false;
+        }
+
         var doAfter = new DoAfterArgs(
             EntityManager,
-            args.User,
+            user,
             TreatSeconds,
             new CFTreatWoundsDoAfterEvent(),
-            eventTarget: ent,
+            eventTarget: toolkit,
             target: target,
-            used: ent)
+            used: toolkit)
         {
             BreakOnMove = true,
             BreakOnDamage = true,
             NeedHand = true,
         };
-        _doAfter.TryStartDoAfter(doAfter);
+
+        if (!_doAfter.TryStartDoAfter(doAfter, out var id) || !_net.IsServer)
+            return id != null;
+
+        _actions.TrySpendActions(user, 1);
+        var treating = EnsureComp<CFTreatingComponent>(user);
+        treating.Patient = target;
+        treating.DoAfter = id;
+        treating.ActionsLeft = TreatActions - 1;
+        treating.NextAction = _timing.CurTime + TreatActionEvery;
+        treating.HoldsPatient = target != user && !_conditions.Ensure(target).Grabbed;
+        if (treating.HoldsPatient)
+            _conditions.ApplyGrabbed(target, user);
+
+        _vfx.Healing(target);
+        return true;
+    }
+
+    private bool IsHolding(EntityUid healer, EntityUid patient)
+    {
+        return TryComp(patient, out CFConditionComponent? condition) && condition.Grabbed && condition.Grabber == healer;
     }
 
     [SubscribeLocalEvent]
     private void OnTreated(Entity<CFHealersToolkitComponent> ent, ref CFTreatWoundsDoAfterEvent args)
     {
+        if (_net.IsServer)
+            EndTreatment(args.User);
+
         if (args.Handled || args.Cancelled || args.Target is not { } target)
             return;
 
         args.Handled = true;
         if (_net.IsServer)
             TreatWounds(args.User, target);
+    }
+
+    private void EndTreatment(EntityUid healer)
+    {
+        if (!TryComp(healer, out CFTreatingComponent? treating))
+            return;
+
+        if (treating.HoldsPatient && IsHolding(healer, treating.Patient))
+            _conditions.ReleaseGrab(treating.Patient);
+
+        RemCompDeferred<CFTreatingComponent>(healer);
     }
 
     [SubscribeLocalEvent]

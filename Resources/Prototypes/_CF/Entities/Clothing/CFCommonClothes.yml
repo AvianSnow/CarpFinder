@@ -1,0 +1,51 @@
+# What everyone starts in. Art is CP14's, which has separate shirt and pants slots. Stock has one, so the
+# outfit draws both pieces there.
+
+- type: entity
+  parent: Clothing
+  id: CFClothingCommonOutfit
+  name: common clothes
+  description: A plain shirt and trousers.
+  components:
+  - type: Sprite
+    sprite: _CP14/Clothing/Shirt/Roles/General/Shirts/white.rsi
+    state: icon
+  - type: Clothing
+    slots:
+    - innerclothing
+    clothingVisuals:
+      jumpsuit:
+      - sprite: _CP14/Clothing/Pants/brown.rsi
+        state: equipped-PANTS
+      - sprite: _CP14/Clothing/Shirt/Roles/General/Shirts/white.rsi
+        state: equipped-SHIRT
+  - type: CFItem
+    level: 0
+  - type: CFBulk
+    bulk: 0.1
+  - type: CFItemPrice
+    copper: 10 # 1 sp
+
+- type: entity
+  parent: ClothingShoesBase
+  id: CFClothingCommonShoes
+  name: common shoes
+  description: Worn leather shoes.
+  components:
+  - type: Sprite
+    sprite: _CP14/Clothing/Shoes/black.rsi
+  - type: Clothing
+    sprite: _CP14/Clothing/Shoes/black.rsi
+  - type: CFItem
+    level: 0
+  - type: CFBulk
+    bulk: 0.1
+  - type: CFItemPrice
+    copper: 5
+
+- type: startingGear
+  id: CFCommonClothes
+  equipment:
+    jumpsuit: CFClothingCommonOutfit
+    shoes: CFClothingCommonShoes
+    back: CFAdventurersKit

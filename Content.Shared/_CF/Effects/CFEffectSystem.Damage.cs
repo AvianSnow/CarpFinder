@@ -158,6 +158,10 @@ public sealed partial class CFEffectSystem
 
         _dying.RestoreHitPoints(target, amount, user);
         ShowNumber(target, CFDegree.Success, amount, "Vitality");
+
+        _vfx.Healing(target);
+        if (user != target)
+            _vfx.Healing(user);
     }
 
     /// <summary>The floating "miss" number for an attack that missed or a save that took nothing.</summary>

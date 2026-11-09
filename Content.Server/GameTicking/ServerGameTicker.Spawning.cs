@@ -164,6 +164,11 @@ namespace Content.Server.GameTicking
             if (DummyTicker)
                 return;
 
+            // CarpFinder: late joins and forced round starts end up here too. The player stays in the lobby.
+            if (!CFCharacterCanJoin(player, character))
+                return;
+            // CarpFinder end
+
             if (station == EntityUid.Invalid)
             {
                 var stations = GetSpawnableStations();

@@ -28,6 +28,7 @@ public sealed partial class CFSpellSystem : EntitySystem
     [Dependency] private CFStrikeSystem _strikes = default!;
     [Dependency] private CFEffectSystem _effects = default!;
     [Dependency] private CFSpellshapeSystem _spellshapes = default!;
+    [Dependency] private CFVfxSystem _vfx = default!;
 
     [SubscribeLocalEvent]
     private void OnInstant(Entity<CFSpellComponent> spell, ref CFSpellCastInstantEvent args)
@@ -36,7 +37,7 @@ public sealed partial class CFSpellSystem : EntitySystem
             return;
 
         args.Handled = true;
-        if (!_net.IsServer || !TrySpend(args.Performer, spell.Comp))
+        if (!_net.IsServer || !TrySpendCast(args.Performer, spell))
             return;
 
         _psi.NoteCast(args.Performer, spell);
@@ -72,7 +73,7 @@ public sealed partial class CFSpellSystem : EntitySystem
         if (!_net.IsServer || !CanCastAt(spell, args.Performer, args.Target))
             return;
 
-        if (!TrySpend(args.Performer, spell.Comp))
+        if (!TrySpendCast(args.Performer, spell))
             return;
 
         _psi.NoteCast(args.Performer, spell);
@@ -98,7 +99,7 @@ public sealed partial class CFSpellSystem : EntitySystem
             return;
         }
 
-        if (!TrySpend(args.Performer, spell.Comp))
+        if (!TrySpendCast(args.Performer, spell))
             return;
 
         _psi.NoteCast(args.Performer, spell);
@@ -141,7 +142,7 @@ public sealed partial class CFSpellSystem : EntitySystem
 
         var trick = new CFModeTargetEvent(args.Performer, args.Target, mode.Chosen);
         RaiseLocalEvent(spell, ref trick);
-        if (!trick.Success || !TrySpend(args.Performer, spell.Comp))
+        if (!trick.Success || !TrySpendCast(args.Performer, spell))
             return;
 
         args.Handled = true;
@@ -170,7 +171,7 @@ public sealed partial class CFSpellSystem : EntitySystem
         var opening = false;
         if (bolts.PayThisShot)
         {
-            if (!TrySpend(args.Performer, spell.Comp))
+            if (!TrySpendCast(args.Performer, spell))
                 return;
 
             bolts.VolleyLeft = bolts.ClampedBolts;
@@ -213,6 +214,18 @@ public sealed partial class CFSpellSystem : EntitySystem
             _strikes.ReactiveStrike(caster);
 
         _spellshapes.Consume(caster);
+    }
+
+    /// <summary>Pays for the cast and shows it, unless the spell is being cast subtly.</summary>
+    private bool TrySpendCast(EntityUid caster, Entity<CFSpellComponent> spell)
+    {
+        if (!TrySpend(caster, spell.Comp))
+            return false;
+
+        if (!_spellshapes.IsSubtle(caster))
+            _vfx.Cast(caster, spell);
+
+        return true;
     }
 
     private bool TrySpend(EntityUid caster, CFSpellComponent spell)

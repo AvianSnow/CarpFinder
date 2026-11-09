@@ -38,6 +38,13 @@ public sealed partial class CFCombatantComponent : Component
     [DataField, AutoNetworkedField]
     public int StrikeAdjustment;
 
+    /// <summary>
+    /// Seconds an NPC takes to think before each attack on a creature. A clever or quick creature, such as a boss,
+    /// sets this lower. 0 means it never hesitates. It does not apply while a player is in the body.
+    /// </summary>
+    [DataField]
+    public float ThinkingTimer = 1f;
+
     /// <summary>Stat block Fortitude. Null means work it out from the class, or Commoner stats without one.</summary>
     [DataField, AutoNetworkedField]
     public int? PrintedFortitude;

@@ -73,7 +73,7 @@ public sealed class CFThrownWeaponTest : GameTest
         SEntMan.GetComponent<CFAbilityScoreComponent>(hero).AbilityModifiers[CFAbility.Dexterity] = dexterity;
 
         // Nothing refills, so the pool and MAP can be read after the flight.
-        Pool(hero).RegenSeconds = 100000f;
+        Pool(hero).NpcRegenSeconds = 100000f;
         return hero;
     }
 

@@ -301,7 +301,7 @@ public sealed class CFManeuverTest : GameTest
         var mob = Mob("CFManeuverHero", x);
         var pool = SEntMan.EnsureComponent<CFActionPoolComponent>(mob);
         pool.Stamina = stamina;
-        pool.RegenSeconds = 1000f;
+        pool.NpcRegenSeconds = 1000f;
         Conditions.KnockProne(mob);
         return mob;
     }

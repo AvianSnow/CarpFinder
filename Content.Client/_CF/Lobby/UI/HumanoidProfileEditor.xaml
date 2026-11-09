@@ -76,9 +76,11 @@
                 <PanelContainer Name="ABC" StyleClasses="PanelDeep" HorizontalExpand="True">
                     <BoxContainer Name="CharacterBuilderChoices" Orientation="Vertical"  SeparationOverride="4" HorizontalExpand="True" >
                         <Button Name="AncestryButton" ToggleMode="True" HorizontalExpand="True" />
+                        <Button Name="SpriteSlot" ToggleMode="True" Text="{Loc 'cf-character-builder-sprite-slot'}" HorizontalExpand="True" />
                         <Button Name="BackgroundButton" ToggleMode="True" HorizontalExpand="True" />
                         <Button Name="ClassButton" ToggleMode="True" HorizontalExpand="True" />
                         <Button Name="JobButton" ToggleMode="True" HorizontalExpand="True" />
+                        <Button Name="AcceptCharacterButton" Text="{Loc 'cf-character-builder-accept'}" HorizontalExpand="True" />
                     </BoxContainer>
                 </PanelContainer>
                 <Label Name="LevelsHeading" Text="{Loc 'cf-character-builder-levels'}" HorizontalAlignment="Center" FontColorOverride="#E6C15A" />
@@ -94,7 +96,6 @@
                                     <Button Name="LanguagesButton" Text="{Loc 'cf-character-builder-languages'}" />
                                 </GridContainer>
                                 <Button Name="HeritageSlot" ToggleMode="True" Text="{Loc 'cf-character-builder-heritage-slot'}" HorizontalExpand="True" />
-                                <Button Name="SpriteSlot" ToggleMode="True" Text="{Loc 'cf-character-builder-sprite-slot'}" HorizontalExpand="True" />
                                 <Button Name="AncestryFeatSlot" ToggleMode="True" Text="{Loc 'cf-character-builder-ancestry-feat-slot'}" HorizontalExpand="True" />
                                 <BoxContainer Name="ClassChoiceSlots" Orientation="Vertical" HorizontalExpand="True" />
                                 <Button Name="DeitySlot" Visible="False" HorizontalExpand="True" />

@@ -24,6 +24,12 @@ public sealed partial class CFShopView : BoxContainer
     public event Action? OnAccept;
     public event Action? OnCancel;
 
+    /// <summary>Where the coins come from when this is not a merchant's shop in play.</summary>
+    public Func<int>? PurseSource;
+
+    /// <summary>Takes the accepted lines instead of sending them to a merchant.</summary>
+    public Action<List<CFShopPurchaseLine>>? Checkout;
+
     [Dependency] private IEntityManager _entities = default!;
     [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private IPlayerManager _player = default!;
@@ -35,11 +41,19 @@ public sealed partial class CFShopView : BoxContainer
     private bool _ascending = true;
     private bool _matchAllTraits = true;
 
-    public CFShopView()
+    public CFShopView() : this(true)
+    {
+    }
+
+    /// <param name="scanItems">
+    /// False when the caller sets its own listings. Every row spawns a preview entity, so a whole catalog is not free.
+    /// </param>
+    public CFShopView(bool scanItems)
     {
         RobustXamlLoader.Load(this);
         IoCManager.InjectDependencies(this);
-        _listings = ScanItems();
+        if (scanItems)
+            _listings = ScanItems();
 
         SortDropdown.AddItem(Loc.GetString("cf-shop-sort-level"));
         SortDropdown.AddItem(Loc.GetString("cf-shop-sort-name"));
@@ -85,6 +99,14 @@ public sealed partial class CFShopView : BoxContainer
                 return;
             }
 
+            if (Checkout != null)
+            {
+                _cart.Clear();
+                _qty.Clear();
+                Checkout(lines);
+                return;
+            }
+
             _entities.RaisePredictiveEvent(new CFShopPurchaseEvent { Lines = lines });
             _cart.Clear();
             Refresh();
@@ -100,6 +122,13 @@ public sealed partial class CFShopView : BoxContainer
         _listings = listings;
         _cart.Clear();
         Refresh();
+    }
+
+    public int ListingCount => _listings.Count;
+
+    public void HideCancel()
+    {
+        CancelButton.Visible = false;
     }
 
     public IReadOnlyList<CFShopListing> Cart()
@@ -199,6 +228,9 @@ public sealed partial class CFShopView : BoxContainer
 
     private int ReadPurse()
     {
+        if (PurseSource != null)
+            return PurseSource();
+
         if (_player.LocalEntity is not { } uid)
             return CFCoins.StartingCopper(1);
 
@@ -367,7 +399,7 @@ public sealed partial class CFShopView : BoxContainer
             HorizontalExpand = false,
             Stretch = SpriteView.StretchMode.Fit,
         };
-        icon.SetPrototype(listing.Id);
+        icon.SetPrototype(listing.Icon ?? listing.Id);
 
         var name = new Label
         {
@@ -478,7 +510,8 @@ public sealed partial class CFShopView : BoxContainer
         return catalog;
     }
 
-    private static CFShopListing ToListing(EntityPrototype proto)
+    /// <param name="listingId">What the row is bought as, when that is not the entity itself.</param>
+    public static CFShopListing ToListing(EntityPrototype proto, string? listingId = null)
     {
         var traits = new List<string>();
         if (proto.TryGetComponent<CFTraitComponent>(out var traitComp))
@@ -501,7 +534,8 @@ public sealed partial class CFShopView : BoxContainer
 
         return new CFShopListing
         {
-            Id = proto.ID,
+            Id = listingId ?? proto.ID,
+            Icon = proto.ID,
             Name = proto.Name,
             Description = proto.Description,
             Level = level,

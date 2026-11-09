@@ -176,6 +176,14 @@ public sealed partial class ServerGameTicker
             return;
         }
 
+        // CarpFinder: an unfinished character cannot ready up. The status message unpresses the client's button.
+        if (ready && !CFCharacterCanJoin(player, GetPlayerProfile(player)))
+        {
+            RaiseNetworkEvent(GetStatusMsg(player), player.Channel);
+            return;
+        }
+        // CarpFinder end
+
         _playerGameStatuses[player.UserId] = ready ? PlayerGameStatus.ReadyToPlay : PlayerGameStatus.NotReadyToPlay;
         RaiseNetworkEvent(GetStatusMsg(player), player.Channel);
         // update server info to reflect new ready count

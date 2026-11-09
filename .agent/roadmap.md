@@ -4,6 +4,49 @@ Ordered plan for the next stretch of work. Each step builds on the one before it
 
 Source of rules: https://2e.aonprd.com/ (Remaster). Source of structure and assets: `C:\project\crystall-punk-14` (**read-only**: copy from it, never edit it).
 
+## Do first: playtest feedback
+
+Complaints from a playtest, noted on 9 November 2026. These come before everything else on this roadmap. Built on 9 November 2026. Tests: `CFPlaytestFeedbackTest`.
+
+- [ ] Not seen in a real client: the sparkles and their colours, the aura border, the faster swing, and aim assist with a real mouse.
+
+### Spell effects
+
+- [x] A creature targeted by a spell with a save gets sparkle particles, coloured by the type of spell. `CFVfxSystem`, with the colour from the spell's damage type, or from its traits if it deals none.
+- [x] A caster gets particles while casting, so people around them can tell. A subtle spell shows none.
+- [x] Healing puts healing sparkles on both the healer and the one being healed. It is in `CFEffectSystem.Heal`, so anything that heals gets them.
+- [x] An aura has a hard line where it ends, drawn as a magic border. `CFAuraOverlaySystem`. It is only drawn while the aura is doing something.
+
+### Combat
+
+- [x] Melee aim assist. `CFMeleeAimSystem`: a left-click hits the closest enemy in reach within 60 degrees of the cursor, wherever the cursor is. Clicking an enemy in reach still hits that enemy. Neutral creatures and hidden ones have to be clicked. Right-click maneuvers do not use it.
+- [x] Action pool cooldown goes to 1.2 seconds (`RegenSeconds`). It was really 1, not the 1.45 the docs said, so players are a little slower than before.
+- [x] Cut the melee hit animation in half, so it is much faster.
+
+### GOAP
+
+- [x] All mobs have a pool cooldown of 1.5 seconds, stock HTN mobs as well as GOAP ones (`NpcRegenSeconds`). Players stay at 1.2. A monster with a player in it counts as a player.
+- [x] All mobs get a `ThinkingTimer`, default 1 second, which gives them a moment to think about their next attack. It is checked where a Strike or shot is attempted, so both AIs get it. Swings at doors and other obstacles do not wait.
+- [ ] Demoralize and Feint from GOAP do not wait for it.
+- [x] `thinkingTimer` is a field on `CFCombatant` in each creature's YAML, so it can differ per mob. A smarter mob with higher reflex, such as a boss, thinks faster. Every creature uses the default until someone sets one.
+
+### Medical kit
+
+- [x] A medic healing someone with a kit force grapples them, so they cannot run away. There is no roll. The patient can still break out of it with Escape, which ends the treatment.
+- [x] Rebalance: healing someone takes 12 seconds and costs 3 actions, one every 4 seconds starting at once. Running out of actions ends it.
+- [x] The creature being healed gets the magic healing sparkles here too, at each of the 3 actions and when it heals.
+
+### Character setup
+
+Built on 9 November 2026. Tests: `CFCharacterSetupTest`.
+
+- [ ] Not seen in a real client: the ABCJ panel and Accept, the shop inside Character Setup, and how the clothes look on each body.
+- [x] A character cannot ready up or join without an ancestry, background, class and job. Late join still opens the job list first, and is refused when a job is picked.
+- [x] The ABCJ panel is Ancestry, Sprite, Background, Class, Job, Accept. Everything else stays hidden until Accept, which also saves.
+- [x] The shop in Character Setup uses the merchant layout, with search and a quantity. It only sells what the job's loadouts offer, not a merchant's whole catalogue.
+- [x] Everyone starts in clothes and shoes, with an adventurer's kit on their back: a backpack holding rope, a torch, flint and steel, a ration and a canteen of water. The kit is where extra copies go. Striking the flint on a torch has not been tried in a real client.
+- [ ] Extra copies are stored per character, not per job, so a job that owns the same item shares the count.
+
 ## Step 1: Make character options work
 
 Players can pick hundreds of options that do nothing. This step gives them effects.
@@ -328,6 +371,7 @@ The labels are the sections of Phase 6 in `roadmapold.md`, which has the design.
 **6g. Verify**
 
 - [ ] A purpose-built test map. See proposal 1 in `ai-testing.md`, which covers this and the corridor, side room and closet.
+- [ ] Measure how much slower GOAP is than stock HTN, with the same mobs on the same map. The result decides whether CF mobs can all move to GOAP. Today ordinary mobs stay on stock HTN.
 
 **6h. Encounters**
 

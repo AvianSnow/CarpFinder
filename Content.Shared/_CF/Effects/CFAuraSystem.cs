@@ -42,6 +42,7 @@ public sealed partial class CFAuraSystem : EntitySystem
         var aura = EnsureComp<CFAuraComponent>(uid);
         aura.Effects.AddRange(effects);
         aura.SizeFeet = Math.Max(aura.SizeFeet, sizeFeet);
+        Dirty(uid, aura);
     }
 
     /// <summary>True if a living creature is inside this creature's aura right now.</summary>
@@ -132,6 +133,7 @@ public sealed partial class CFAuraSystem : EntitySystem
         // Both lists come from one lookup each, however many effects use them.
         List<EntityUid>? allies = null;
         List<EntityUid>? enemies = null;
+        var active = false;
 
         for (var index = 0; index < aura.Effects.Count; index++)
         {
@@ -142,6 +144,7 @@ public sealed partial class CFAuraSystem : EntitySystem
             var current = new HashSet<EntityUid>();
             if (alive && NeedsMet(uid, aura, effect))
             {
+                active = true;
                 var list = effect.Affects == CFAuraAffects.Allies
                     ? allies ??= Collect(uid, aura, origin, CFTargetFilter.Allies)
                     : enemies ??= Collect(uid, aura, origin, CFTargetFilter.Enemies);
@@ -171,6 +174,12 @@ public sealed partial class CFAuraSystem : EntitySystem
 
         if (ease)
             aura.NextEase = now + EaseEvery;
+
+        if (aura.Active != active)
+        {
+            aura.Active = active;
+            Dirty(uid, aura);
+        }
     }
 
     private bool NeedsMet(EntityUid uid, CFAuraComponent aura, CFAuraEffect effect)

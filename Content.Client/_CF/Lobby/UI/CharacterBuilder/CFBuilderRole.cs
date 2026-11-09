@@ -1,4 +1,4 @@
-using System.Linq;
+using Content.Shared.CF.Preferences;
 using Content.Shared.Clothing;
 using Content.Shared.GameTicking;
 using Content.Shared.Preferences;
@@ -42,8 +42,6 @@ public static class CFBuilderRole
 
     public static JobPrototype PreferredJob(HumanoidCharacterProfile profile, IPrototypeManager prototypes)
     {
-        var highPriorityJob = profile.JobPriorities.FirstOrDefault(pair => pair.Value == JobPriority.High).Key;
-        var jobId = string.IsNullOrEmpty(highPriorityJob) ? GameTicker.FallbackOverflowJob : highPriorityJob;
-        return prototypes.Index<JobPrototype>(jobId);
+        return prototypes.Index(CFCharacterRequirements.ChosenJob(prototypes, profile) ?? GameTicker.FallbackOverflowJob);
     }
 }

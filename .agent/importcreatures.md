@@ -64,6 +64,7 @@ The role needs no AI work. Stock HTN sleeps while a player is in the body and wa
 | Languages | `CFLanguages` `known` | Only for a creature that talks. Without it, it speaks plainly and understands everything |
 | Recall Knowledge DC | Nothing | It comes from level. Say if a creature's printed DC differs |
 | HP bar | `MobThresholds` | `0: Alive`, `HP - 1: Critical`, `HP: Dead`. Required for the mirror in `CFDyingSystem` |
+| How long it thinks before each attack | `CFCombatant` `thinkingTimer` | Our number, not from the book. Default 1 second. Set it lower for a clever or quick creature, such as a boss |
 
 ## AI
 

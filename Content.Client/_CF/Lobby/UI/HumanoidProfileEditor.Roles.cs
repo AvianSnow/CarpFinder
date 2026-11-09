@@ -168,7 +168,7 @@ public sealed partial class HumanoidProfileEditor
                     Margin = new Thickness(3f, 3f, 0f, 0f),
                 };
 
-                if (!_prototypeManager.TryIndex<RoleLoadoutPrototype>(LoadoutSystem.GetJobPrototype(job.ID), out _))
+                if (!_setupAccepted || !_prototypeManager.TryIndex<RoleLoadoutPrototype>(LoadoutSystem.GetJobPrototype(job.ID), out _))
                     loadoutWindowBtn.Disabled = true;
                 else
                     loadoutWindowBtn.OnPressed += _ => FocusGearTab(job);

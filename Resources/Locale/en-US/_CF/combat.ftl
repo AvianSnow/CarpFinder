@@ -144,6 +144,7 @@ cf-stealth-diversion = You draw their eyes away.
 cf-stealth-diversion-fail = No one falls for it.
 cf-medicine-immune = They cannot be helped that way again yet.
 cf-medicine-untrained = You need training in Medicine.
+cf-medicine-too-far = You need to be next to them.
 cf-medicine-fail = The treatment does no good.
 cf-medicine-harm = The treatment makes it worse.
 cf-act-reposition-fail = You cannot move them.

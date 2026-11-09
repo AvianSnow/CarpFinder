@@ -105,7 +105,7 @@ public sealed partial class CFStealthSystem : EntitySystem
             }
 
             stealth.SneakProgress += frameTime;
-            if (stealth.SneakProgress < pool.RegenSeconds)
+            if (stealth.SneakProgress < _actions.RegenSeconds(uid, pool))
                 continue;
 
             stealth.SneakProgress = 0f;

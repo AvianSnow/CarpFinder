@@ -25,9 +25,16 @@ public sealed partial class CFActionPoolComponent : Component
     [DataField, AutoNetworkedField]
     public float Stamina = -1f;
 
-    /// <summary>Seconds to regain one point of stamina.</summary>
+    /// <summary>Seconds to regain one point of stamina while a player is in the body.</summary>
     [DataField, AutoNetworkedField]
-    public float RegenSeconds = 1f;
+    public float RegenSeconds = 1.2f;
+
+    /// <summary>Seconds to regain one point of stamina with no player in the body.</summary>
+    [DataField, AutoNetworkedField]
+    public float NpcRegenSeconds = 1.5f;
+
+    /// <summary>When an NPC has finished thinking about its next attack. Zero means it has not started.</summary>
+    public TimeSpan ThinkingUntil;
 
     /// <summary>
     /// Strikes and spell attacks already made since this pool was last full.
