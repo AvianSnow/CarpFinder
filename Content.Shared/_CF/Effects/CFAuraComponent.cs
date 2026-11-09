@@ -19,6 +19,7 @@ public enum CFAuraNeeds : byte
 
     HoldingRegalia,
     HoldingLantern,
+    HasBanner,
 }
 
 /// <summary>One thing an aura does to the creatures inside it. See <see cref="CFAuraSystem"/>.</summary>

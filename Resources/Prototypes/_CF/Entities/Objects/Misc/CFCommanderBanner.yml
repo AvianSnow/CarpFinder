@@ -1,0 +1,19 @@
+# A Commander's banner. CFTacticSystem looks for it on the Commander.
+
+- type: entity
+  parent: BaseItem
+  id: CFCommanderBanner
+  name: commander's banner
+  description: A battle standard. While you carry it, you and allies within 30 feet have +1 to Will saves against fear, and you can signal tactics.
+  components:
+  - type: Sprite
+    sprite: Objects/Misc/Handy_Flags/blank_handy_flag.rsi
+    state: icon
+  - type: Item
+    size: Small
+    sprite: Objects/Misc/Handy_Flags/blank_handy_flag.rsi
+  - type: CFCommanderBanner
+  - type: CFBulk
+    bulk: 0.1
+  - type: CFItemPrice
+    copper: 100

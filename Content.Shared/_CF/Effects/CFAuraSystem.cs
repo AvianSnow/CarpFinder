@@ -1,4 +1,5 @@
 using Content.Shared.Actions.Events;
+using Content.Shared.CF.Actions;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Effects.Areas;
@@ -32,6 +33,7 @@ public sealed partial class CFAuraSystem : EntitySystem
     [Dependency] private CFEffectSystem _effects = default!;
     [Dependency] private CFShieldSystem _shields = default!;
     [Dependency] private CFImplementSystem _implements = default!;
+    [Dependency] private CFTacticSystem _tactics = default!;
 
     /// <param name="sizeFeet">A larger emanation than the aura has. 0 leaves it alone.</param>
     public void Add(EntityUid uid, IEnumerable<CFAuraEffect> effects, int sizeFeet = 0)
@@ -177,6 +179,7 @@ public sealed partial class CFAuraSystem : EntitySystem
             CFAuraNeeds.SpiritShields => _timing.CurTime < aura.SpiritShieldsUntil && _shields.TryGetRaisedShield(uid, out _),
             CFAuraNeeds.HoldingRegalia => _implements.IsHolding(uid, CFImplementKind.Regalia),
             CFAuraNeeds.HoldingLantern => _implements.IsHolding(uid, CFImplementKind.Lantern),
+            CFAuraNeeds.HasBanner => _tactics.HasBanner(uid),
             _ => true,
         };
     }

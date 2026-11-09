@@ -35,10 +35,28 @@
   features:
     - level: 1
       name: "Commander's Banner"
-      description: "A banner that inspires allies near it: TBA"
+      description: "You start with a banner. While you carry it, you and allies within 30 feet have +1 status bonus to Will saves against fear. If it is destroyed or stolen, allies frightened: TBA"
+      grants:
+        - !type:CFGrantItem
+          item: CFCommanderBanner
+        - !type:CFGrantWhile
+          while: HasBanner
+          stat: Will
+          type: Status
+          value: 1
+          trait: Fear
+        - !type:CFGrantAura
+          sizeFeet: 30
+          effects:
+            - affects: Allies
+              needs: HasBanner
+              stat: Will
+              type: Status
+              value: 1
+              trait: Fear
     - level: 1
       name: "Drilled Reactions"
-      description: "Give an ally an extra reaction with a tactic. Tactics are not built yet: TBA"
+      description: "Answering one of your tactics never spends a squad member's reaction, so there is nothing to track."
     - level: 1
       name: "Shield Block"
       description: "You can spend your reaction to block damage with a raised shield."
@@ -47,10 +65,10 @@
           option: ShieldBlock
     - level: 1
       name: "Tactics"
-      description: "Coordinated maneuvers for your allies, from a folio: TBA"
+      description: "Choose three tactics in the builder. Your squad is you and your 2 + Intelligence nearest allies within 30 feet, and you need your banner. A folio of five and swapping tactics: TBA"
     - level: 3
       name: "Warfare Expertise"
-      description: "Expert in Warfare Lore: TBA"
+      description: "Expert in Warfare Lore. Warfare Lore does not exist as a skill yet: TBA"
     - level: 5
       name: "Military Expertise"
       description: "Expert with simple weapons, martial weapons and unarmed attacks. Critical specialization: TBA"
