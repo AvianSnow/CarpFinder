@@ -145,6 +145,7 @@ Class examples: `CFMySystem`, `CFMyServerSystem`, `CFMyClientSystem`, `CFExample
 | An advanced NPC (mini boss, special encounter) | Add `CFGOAPBrain` as a second parent. Do not use it for ordinary mobs: stock HTN stays their AI. Set `CFGOAP.profile` to a `cfGoapProfile` and `CFGOAP.tactics` to a `goapTactics` |
 | A stance or a flourish | A stance is an action parented on `CFActStanceBase` with a `CFStance` (`Resources/Prototypes/_CF/Actions/stances.yml`). A flourish is any action with `CFFlourish`. Grant either with `CFGrantAction` |
 | An option where the player picks a cantrip or skill | A `choices` list on the `cfFeat`, `cfHeritage` or `cfClassChoice`. Read answers through `CFOptionChoices`, not `CFBuild.OptionPicks` directly |
+| An action that is a Strike with something extra | An action parented on `CFActStrikeBase` with a `CFStrikeAction` (`Resources/Prototypes/_CF/Actions/strikes.yml`). Say what it needs and put effects in `onHit` and `onCritical` |
 | A spellshape | An action parented on `CFActSpellshapeBase` with a `CFSpellshape` (`Resources/Prototypes/_CF/Actions/spellshapes.yml`). Grant it with `CFGrantAction` |
 | A reaction | A `CFGrantReaction` with a `CFReaction` (trigger, requirements, what it does). `CFReactionSystem` runs it and spends the creature's one reaction. Add a trigger there rather than a new flag on `CFCombatOptionsComponent` |
 | Actions for code with no player | `CFManeuverSystem.CanUse` and `TryUse` with a `CFBasicAction`, `CFStrikeSystem.TryFeatStrike` |

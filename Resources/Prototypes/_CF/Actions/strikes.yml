@@ -1,0 +1,94 @@
+# Actions that are a Strike with something extra. CFStrikeActionSystem runs them.
+
+- type: entity
+  abstract: true
+  parent: CFActivityTarget
+  id: CFActStrikeBase
+  categories: [ HideSpawnMenu ]
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActIntimidatingStrike
+  name: Intimidating Strike
+  description: A melee Strike. If it deals damage the target is frightened 1, or frightened 2 on a critical hit. Costs 2 actions.
+  components:
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFStrikeAction
+    onHit:
+    - !type:CFApplyConditionEffect
+      condition: Frightened
+      value: 1
+    onCritical:
+    - !type:CFApplyConditionEffect
+      condition: Frightened
+      value: 2
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActDualHandedAssault
+  name: Dual-Handed Assault
+  description: Strike with a one-handed weapon gripped in both hands for a moment, so it hits harder. Needs a free hand. A flourish.
+  components:
+  - type: CFFlourish
+  - type: CFStrikeAction
+    twoHandedGrip: true
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActLunge
+  name: Lunge
+  description: A melee Strike with 5 feet more reach.
+  components:
+  - type: TargetAction
+    range: 3
+  - type: CFStrikeAction
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActHeadStomp
+  name: Head Stomp
+  description: An unarmed Strike against a prone creature. On a hit it is stupefied 1, or 2 on a critical hit, and off-guard.
+  components:
+  - type: CFStrikeAction
+    unarmedOnly: true
+    proneTarget: true
+    effectsNeedDamage: false
+    onHit:
+    - !type:CFApplyConditionEffect
+      condition: Stupefied
+      value: 1
+      durationSeconds: 6
+    - !type:CFOffGuardEffect {}
+    onCritical:
+    - !type:CFApplyConditionEffect
+      condition: Stupefied
+      value: 2
+      durationSeconds: 6
+    - !type:CFOffGuardEffect {}
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActTwinTakedown
+  name: Twin Takedown
+  description: Strike your prey once with the weapon in each hand. A flourish.
+  components:
+  - type: CFFlourish
+  - type: CFStrikeAction
+    twoWeapons: true
+    preyOnly: true
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActHuntersAim
+  name: Hunter's Aim
+  description: A ranged Strike at your prey with +2 to the attack roll. Costs 2 actions and an arrow.
+  components:
+  - type: TargetAction
+    range: 200
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFStrikeAction
+    ranged: true
+    preyOnly: true
+    attackBonus: 2

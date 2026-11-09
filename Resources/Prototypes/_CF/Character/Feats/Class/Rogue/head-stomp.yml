@@ -9,4 +9,6 @@
   traits:
     - "Rogue"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActHeadStomp

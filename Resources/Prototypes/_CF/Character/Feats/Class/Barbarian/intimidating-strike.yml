@@ -13,4 +13,6 @@
     - "Fighter"
     - "Mental"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActIntimidatingStrike

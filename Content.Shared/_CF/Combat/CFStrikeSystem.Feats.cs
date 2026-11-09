@@ -86,7 +86,7 @@ public sealed partial class CFStrikeSystem
     }
 
     /// <summary>A melee weapon in another hand. A shield counts, because every shield can bash.</summary>
-    private bool TryOffHandWeapon(EntityUid user, EntityUid main, out CFStrikeWeaponStats stats, out EntityUid offHand)
+    public bool TryOffHandWeapon(EntityUid user, EntityUid main, out CFStrikeWeaponStats stats, out EntityUid offHand)
     {
         stats = default!;
         offHand = default;

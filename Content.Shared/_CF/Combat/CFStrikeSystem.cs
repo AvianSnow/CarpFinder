@@ -308,7 +308,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
         int bonusDamage = 0,
         bool countMap = true,
         int? fixedMap = null,
-        bool skipPrecision = false)
+        bool skipPrecision = false,
+        Action<CFDegree, int>? resolved = null)
     {
         if (_strikeDepth > 2)
             return false;
@@ -337,7 +338,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
                 extraDice,
                 finisher,
                 bonusDamage,
-                skipPrecision: skipPrecision);
+                skipPrecision: skipPrecision,
+                resolved: resolved);
         }
         finally
         {
@@ -602,7 +604,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
         int bonusDamage = 0,
         bool riders = false,
         bool exacting = false,
-        bool skipPrecision = false)
+        bool skipPrecision = false,
+        Action<CFDegree, int>? resolved = null)
     {
         if (!_factions.CanHarm(user, target))
             return false;
@@ -837,6 +840,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
         RaiseNetworkEvent(
             new CFCombatNumberEvent(GetNetEntity(target), degree, damage, rolled.DamageType),
             Filter.Pvs(target));
+        resolved?.Invoke(degree, damage);
         return hit;
     }
 

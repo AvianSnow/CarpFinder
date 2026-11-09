@@ -9,4 +9,6 @@
   traits:
     - "Fighter"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActLunge
