@@ -91,6 +91,14 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public bool WeaponImplement;
 
+    /// <summary>When this creature last cast a spell. Unleash Psyche needs a recent one.</summary>
+    [DataField]
+    public TimeSpan LastSpellCast;
+
+    /// <summary>Unleash Psyche cannot be used again before this time.</summary>
+    [DataField]
+    public TimeSpan NextUnleash;
+
     /// <summary>A finisher that drops its target gives panache back.</summary>
     [DataField, AutoNetworkedField]
     public bool FinishingFollowThrough;

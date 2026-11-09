@@ -38,6 +38,27 @@ public sealed partial class CFEffectSystem
             : 0;
     }
 
+    /// <summary>What the cast behind these effects is amped with, or null.</summary>
+    public CFPsiCantripComponent? AmpOf(CFEffectArgs args)
+    {
+        return _psi.Amped(args.Source);
+    }
+
+    /// <summary>A duration, or the amp's replacement for it.</summary>
+    public float Duration(CFEffectArgs args, float seconds)
+    {
+        return AmpOf(args) is { AmpDurationSeconds: > 0 } amp ? amp.AmpDurationSeconds : seconds;
+    }
+
+    /// <summary>What an Unleashed Psyche adds to a damaging spell with no duration: double its rank.</summary>
+    public int UnleashBonus(CFEffectArgs args)
+    {
+        if (!HasComp<CFUnleashedComponent>(args.User) || !TryComp(args.Source, out CFSpellComponent? spell) || !_spellshapes.HasNoDuration(args.Source))
+            return 0;
+
+        return 2 * (spell.Rank > 0 ? spell.Rank : CFCasting.CantripRank(CompOrNull<CFCombatantComponent>(args.User)?.Level ?? 1));
+    }
+
     public int Roll(int dice, int die, int flat)
     {
         return Roll(_random, dice, die, flat, critical: false);

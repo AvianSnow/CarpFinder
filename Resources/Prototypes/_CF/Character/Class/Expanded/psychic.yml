@@ -37,10 +37,15 @@
   features:
     - level: 1
       name: "Conscious Mind"
-      description: "Choose a conscious mind in the builder. Its granted spells: TBA"
+      description: "Choose a conscious mind in the builder. It teaches your psi cantrips and sometimes a rank 1 spell."
     - level: 1
       name: "Psi Cantrips and Amps"
-      description: "Psi cantrips, and spending Focus Points to amp them: TBA"
+      description: "You have 2 Focus Points, and Amp is on your action wheel: it makes your next psi cantrip stronger and spends a Focus Point. Which cantrips you have comes from your conscious mind. Amps from feats: TBA"
+      grants:
+        - !type:CFGrantFocusPoints
+          count: 2
+        - !type:CFGrantAction
+          action: CFActAmp
     - level: 1
       name: "Psychic Spellcasting"
       description: "Level 1 cantrips and spell slots are on the spell sheet."
@@ -49,16 +54,22 @@
       description: "Level 1 cantrips and spell slots are on the spell sheet."
     - level: 1
       name: "Subconscious Mind"
-      description: "Choose a subconscious mind in the builder. It sets your key attribute."
+      description: "Choose a subconscious mind in the builder. It sets your key attribute and gives you a psyche action, used while Unleashed."
     - level: 1
       name: "Unleash Psyche"
-      description: "Unleash your mind for extra spell damage: TBA"
+      description: "Free action, within 6 seconds of casting a spell. For 12 seconds, damaging spells with no duration deal double their rank more. You are stupefied 1 for 12 seconds after, and cannot Unleash again until the backlash has passed."
+      grants:
+        - !type:CFGrantAction
+          action: CFActUnleashPsyche
     - level: 3
       name: "Signature Spells"
       description: "Heighten chosen spells freely. Casting from a higher slot does not exist yet: TBA"
     - level: 5
       name: "Clarity of Focus"
-      description: "One more Focus Point for amps. Amps do not exist yet: TBA"
+      description: "One more Focus Point."
+      grants:
+        - !type:CFGrantFocusPoints
+          count: 1
     - level: 5
       name: "Precognitive Reflexes"
       description: "Expert in Reflex saves."

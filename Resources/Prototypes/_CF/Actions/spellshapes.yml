@@ -50,3 +50,15 @@
   components:
   - type: CFSpellshape
     subtle: true
+
+- type: entity
+  parent: CFActSpellshapeBase
+  id: CFActAmp
+  name: Amp
+  description: Your next psi cantrip is amped, and spends a Focus Point as you cast it.
+  components:
+  - type: CFRadialSlot
+    group: Free
+    actions: 0
+  - type: CFSpellshape
+    amp: true

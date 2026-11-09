@@ -158,3 +158,67 @@
       die: 4
       damageType: Electricity
       diceEveryLevels: 2
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActUnleashPsyche
+  name: Unleash Psyche
+  description: For 12 seconds, damaging spells with no duration deal double their rank more. Needs a spell cast in the last 6 seconds. Stupefied 1 for 12 seconds after.
+  components:
+  - type: CFRadialSlot
+    group: Free
+    actions: 0
+  - type: CFUnleashAction
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActCalculateThreats
+  name: Calculate Threats
+  description: While Unleashed, +2 circumstance bonus to AC and Reflex for 6 seconds.
+  components:
+  - type: CFNeedsUnleashed
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFBonusEffect
+      stat: ArmorClass
+      type: Circumstance
+      value: 2
+      durationSeconds: 6
+    - !type:CFBonusEffect
+      stat: Reflex
+      type: Circumstance
+      value: 2
+      durationSeconds: 6
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActFadeIntoDaydreams
+  name: Fade into Daydreams
+  description: While Unleashed, you are concealed for 6 seconds.
+  components:
+  - type: CFNeedsUnleashed
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFApplyConditionEffect
+      condition: Concealed
+      durationSeconds: 6
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActRestoreTheMind
+  name: Restore the Mind
+  description: While Unleashed, an ally within 30 feet regains 2 Hit Points plus double your level. Once every 10 minutes.
+  components:
+  - type: Action
+    useDelay: 600
+  - type: TargetAction
+    range: 6.25
+  - type: CFNeedsUnleashed
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFHealEffect
+      flat: 2
+      perLevel: 2

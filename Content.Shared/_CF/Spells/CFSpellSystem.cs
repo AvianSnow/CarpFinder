@@ -17,6 +17,7 @@ namespace Content.Shared.CF.Spells;
 public sealed partial class CFSpellSystem : EntitySystem
 {
     [Dependency] private CFActivitySystem _activities = default!;
+    [Dependency] private CFPsiSystem _psi = default!;
     [Dependency] private INetManager _net = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
@@ -35,6 +36,8 @@ public sealed partial class CFSpellSystem : EntitySystem
         args.Handled = true;
         if (!_net.IsServer || !TrySpend(args.Performer, spell.Comp))
             return;
+
+        _psi.NoteCast(args.Performer, spell);
 
         // An emanation (bless) centers on the caster. Anything else affects the caster.
         if (HasComp<CFAreaEffectComponent>(spell))
@@ -70,6 +73,7 @@ public sealed partial class CFSpellSystem : EntitySystem
         if (!TrySpend(args.Performer, spell.Comp))
             return;
 
+        _psi.NoteCast(args.Performer, spell);
         _effects.DeliverToTarget(spell, args.Performer, args.Target);
         FinishCast(args.Performer);
     }
@@ -95,6 +99,7 @@ public sealed partial class CFSpellSystem : EntitySystem
         if (!TrySpend(args.Performer, spell.Comp))
             return;
 
+        _psi.NoteCast(args.Performer, spell);
         _effects.ResolveArea(spell, args.Performer, aim);
         FinishCast(args.Performer);
     }

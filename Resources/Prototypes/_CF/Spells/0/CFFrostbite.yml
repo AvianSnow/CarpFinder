@@ -1,4 +1,4 @@
-﻿- type: entity
+- type: entity
   parent: CFSpellTarget
   id: CFFrostbite
   name: Frostbite
@@ -14,6 +14,9 @@
   - type: CFSpell
     spell: Frostbite
     rank: 0
+  - type: CFPsiCantrip
+    ampDice: 3
+    ampHeightenDice: 2
   - type: CFTargeting
     rangeFeet: 60
   - type: CFCheck

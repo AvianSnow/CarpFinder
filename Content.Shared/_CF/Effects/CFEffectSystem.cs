@@ -149,15 +149,16 @@ public sealed partial class CFEffectSystem : EntitySystem
         }
 
         ResolveTarget(source, user, target);
-        if (targeting is { ExtraTargets: > 0 })
-            ChainTargets(source, user, target, targeting);
+        var extra = (targeting?.ExtraTargets ?? 0) + (_psi.Amped(source)?.AmpExtraTargets ?? 0);
+        if (targeting != null && extra > 0)
+            ChainTargets(source, user, target, targeting, extra);
     }
 
-    private void ChainTargets(EntityUid source, EntityUid user, EntityUid first, CFTargetingComponent targeting)
+    private void ChainTargets(EntityUid source, EntityUid user, EntityUid first, CFTargetingComponent targeting, int extra)
     {
         var origin = _transform.GetMapCoordinates(user);
         var reach = Math.Max(1f, targeting.RangeFeet / CFAreaGrid.FeetPerTile);
-        var left = targeting.ExtraTargets;
+        var left = extra;
         foreach (var uid in _lookup.GetEntitiesInRange(origin, reach))
         {
             if (uid == user || uid == first || !HasComp<MobStateComponent>(uid))
@@ -298,6 +299,7 @@ public sealed partial class CFEffectSystem : EntitySystem
     private const float TouchFeet = 7.5f;
 
     [Dependency] private CFAuraSystem _auras = default!;
+    [Dependency] private CFPsiSystem _psi = default!;
     [Dependency] private CFTauntSystem _taunts = default!;
     [Dependency] private CFReactionSystem _reactions = default!;
 
@@ -312,6 +314,10 @@ public sealed partial class CFEffectSystem : EntitySystem
 
         var check = CompOrNull<CFCheckComponent>(source);
         var args = BuildArgs(source, user, target, Transform(target).Coordinates, check, out var stats);
+
+        var amp = _psi.Amped(source);
+        if (amp is { AmpOffGuard: true } && user != target)
+            _conditions.SetOffGuardTo(target, user, 6f);
 
         // A taunted creature takes this on the attack or the DC of anything aimed past its taunter.
         var taunted = check != null && check.Defense != CFDefenseType.None ? _taunts.NoteAttack(user, target) : 0;
@@ -330,6 +336,19 @@ public sealed partial class CFEffectSystem : EntitySystem
         }
 
         RunDegreeEffects(source, args, landed);
+        if (amp != null)
+        {
+            Run(amp.AmpEffects, args);
+            Run(args.Degree switch
+                {
+                    CFDegree.CriticalSuccess => amp.AmpCritical,
+                    CFDegree.Success => amp.AmpSuccess,
+                    CFDegree.Failure => amp.AmpFailure,
+                    _ => amp.AmpCriticalFailure,
+                },
+                args);
+        }
+
         return landed;
     }
 

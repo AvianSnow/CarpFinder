@@ -232,6 +232,18 @@ public sealed partial class CFGrantFocusSpell : CFGrant
     }
 }
 
+/// <summary>Focus Points with no focus spell attached, as a Psychic's, and the Refocus action.</summary>
+public sealed partial class CFGrantFocusPoints : CFGrant
+{
+    [DataField]
+    public int Count = 1;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        entities.System<CFCharacterFeatureSystem>().AddFocusPoints(args.Mob, Count);
+    }
+}
+
 /// <summary>Gear placed at the character's feet.</summary>
 public sealed partial class CFGrantItem : CFGrant
 {

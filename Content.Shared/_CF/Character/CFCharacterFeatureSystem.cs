@@ -153,6 +153,14 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
         return true;
     }
 
+    public void AddFocusPoints(EntityUid mob, int count)
+    {
+        var book = EnsureComp<CFSpellbookComponent>(mob);
+        book.FocusPoints = Math.Min(CFFocusSystem.MaxFocusPoints, book.FocusPoints + count);
+        Dirty(mob, book);
+        GrantAction(mob, "CFActRefocus");
+    }
+
     public void GrantFocusSpell(EntityUid mob, ProtoId<CFSpellPrototype> spell)
     {
         GrantSpell(mob, spell);

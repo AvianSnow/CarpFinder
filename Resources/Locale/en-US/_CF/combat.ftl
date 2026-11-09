@@ -85,6 +85,9 @@ cf-spell-needs-shield = You need a shield in hand for that.
 cf-act-spellstrike-spent = You have to recharge Spellstrike first.
 cf-act-spellstrike-ready = Spellstrike is ready.
 cf-act-taunt = Taunted!
+cf-psi-cannot-unleash = You need to have just cast a spell, and your mind needs to have settled.
+cf-psi-unleashed = Psyche unleashed!
+cf-psi-needs-unleashed = Your Psyche has to be Unleashed.
 cf-implement-needed = You need your implement in hand.
 cf-damage-mode-status = Damage: [color={$color}]{$type}[/color]
 cf-damage-mode-changed = Now dealing {$type}.

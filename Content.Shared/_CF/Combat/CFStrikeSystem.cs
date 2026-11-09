@@ -1,3 +1,4 @@
+using Content.Shared.CF.Spells;
 using Content.Shared.CF.Items;
 using System.Numerics;
 using Content.Shared.CF.Actions;
@@ -954,6 +955,15 @@ public sealed partial class CFStrikeSystem : EntitySystem
                 total += 2;
             else if (gun.Group == CFWeaponGroup.Firearm)
                 total += _random.Next(1, 5);
+        }
+
+        if (TryComp(target, out CFGlimpsedComponent? glimpsed)
+            && _timing.CurTime < glimpsed.Until
+            && glimpsed.Caster != user
+            && !_factions.CanHarm(glimpsed.Caster, user))
+        {
+            total += glimpsed.Bonus;
+            RemCompDeferred(target, glimpsed);
         }
 
         if (usedStratagem && style.StrategicStrike)

@@ -1,3 +1,4 @@
+using Content.Shared.CF.Spells;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.DamageTypes;
 using Robust.Shared.Prototypes;
@@ -69,7 +70,8 @@ public sealed partial class CFDamageEffect : CFEffect
         }
 
         var critical = multiplier >= 2f;
-        var dice = Dice + HeightenDice * args.HeightenSteps;
+        var amp = system.AmpOf(args);
+        var dice = (amp is { AmpDice: > 0 } ? amp.AmpDice : Dice) + (amp is { AmpHeightenDice: > 0 } ? amp.AmpHeightenDice : HeightenDice) * args.HeightenSteps;
         if (DiceEveryLevels > 0)
             dice += ((entities.GetComponentOrNull<CFCombatantComponent>(args.User)?.Level ?? 1) - 1) / DiceEveryLevels;
 
@@ -78,7 +80,7 @@ public sealed partial class CFDamageEffect : CFEffect
         // An effect that only adds persistent damage (a flaming rune's critical) deals nothing up front.
         if (dice > 0 || flat > 0)
         {
-            var rolled = system.Roll(dice, system.SpellDie(args, Die), flat + system.DamageBonus(args.User) + system.PotencyBonus(args));
+            var rolled = system.Roll(dice, system.SpellDie(args, amp is { AmpDie: > 0 } ? amp.AmpDie : Die), flat + system.DamageBonus(args.User) + system.PotencyBonus(args) + system.UnleashBonus(args));
             var amount = multiplier < 1f ? (int) (rolled * multiplier) : rolled * (int) multiplier;
             system.DealDamage(args.User, target, amount, DamageType, critical);
         }

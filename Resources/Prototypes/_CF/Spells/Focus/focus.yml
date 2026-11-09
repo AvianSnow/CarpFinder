@@ -269,3 +269,178 @@
   targets: 1 creature
   summary: Your attack becomes pure force and deals 1d4+1 force damage. It recharges Spellstrike.
   heightened: Damage increases by 1d4+1 per 2 ranks.
+
+# Psi cantrips with no spell list. A Psychic's conscious mind grants them.
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFImaginaryWeapon
+  name: Imaginary Weapon
+  description: A weapon of force. A melee spell attack for 2d6 force damage. Amped, it strikes two creatures.
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+  - type: CFSpell
+    spell: ImaginaryWeapon
+    rank: 0
+  - type: CFPsiCantrip
+    ampExtraTargets: 1
+    ampHeightenDice: 2
+  - type: CFTargeting
+    rangeFeet: 5
+    touch: true
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFCheck
+    defense: ArmorClass
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 2
+      die: 6
+      damageType: Force
+      heightenDice: 1
+    criticalSuccess:
+    - !type:CFForcedMovementEffect
+      feet: 10
+
+- type: entity
+  parent: CFSpellArea
+  id: CFTelekineticRend
+  name: Telekinetic Rend
+  description: Creatures in the area take 1d6 bludgeoning, basic Fortitude. Amped, they also take 1d6 slashing.
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+  - type: CFSpell
+    spell: TelekineticRend
+    rank: 0
+  - type: CFPsiCantrip
+    ampEffects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 6
+      damageType: Slashing
+      heightenDice: 1
+  - type: CFTargeting
+    rangeFeet: 60
+  - type: CFAreaEffect
+    shape: Burst
+    sizeFeet: 10
+  - type: CFHeighten
+    baseRank: 1
+    interval: 2
+  - type: CFCheck
+    defense: Fortitude
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 6
+      damageType: Bludgeoning
+      heightenDice: 1
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFThermalStasis
+  name: Thermal Stasis
+  description: A creature resists 2 fire and 2 cold for 6 seconds. Amped, for a minute.
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: ThermalStasis
+    rank: 0
+  - type: CFPsiCantrip
+    ampDurationSeconds: 60
+  - type: CFTargeting
+    rangeFeet: 60
+    filter: All
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFResistanceEffect
+      damageType: Fire
+      amount: 2
+      heightenAmount: 2
+      durationSeconds: 6
+    - !type:CFResistanceEffect
+      damageType: Cold
+      amount: 2
+      heightenAmount: 2
+      durationSeconds: 6
+  - type: EntityTargetAction
+    canTargetSelf: true
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFGlimpseWeakness
+  name: Glimpse Weakness
+  description: The first ally to hit the target deals 1 + the spell's rank in precision damage. Amped, 1d4+1.
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: GlimpseWeakness
+    rank: 0
+  - type: CFPsiCantrip
+  - type: CFTargeting
+    rangeFeet: 60
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFGlimpseEffect
+
+- type: cfSpell
+  id: ImaginaryWeapon
+  name: Imaginary Weapon
+  rank: 0
+  traits: [Attack, Cantrip, Concentrate, Force, Manipulate]
+  actionCost: Two
+  range: touch
+  targets: 1 creature
+  defense: AC
+  summary: A melee spell attack for 2d6 force damage. Amped, it strikes two creatures.
+  heightened: Damage increases by 1d6 per rank.
+
+- type: cfSpell
+  id: TelekineticRend
+  name: Telekinetic Rend
+  rank: 0
+  traits: [Cantrip, Concentrate, Manipulate]
+  actionCost: Two
+  range: 60 feet
+  targets: a 10-foot burst
+  defense: basic Fortitude
+  summary: Creatures take 1d6 bludgeoning. Amped, they also take 1d6 slashing.
+  heightened: Damage increases by 1d6 per 2 ranks.
+
+- type: cfSpell
+  id: ThermalStasis
+  name: Thermal Stasis
+  rank: 0
+  traits: [Cantrip, Concentrate]
+  actionCost: One
+  range: 60 feet
+  targets: 1 creature
+  summary: The target resists 2 fire and 2 cold for 6 seconds. Amped, for a minute.
+  heightened: Each resistance increases by 2 per rank.
+
+- type: cfSpell
+  id: GlimpseWeakness
+  name: Glimpse Weakness
+  rank: 0
+  traits: [Cantrip, Concentrate]
+  actionCost: One
+  range: 60 feet
+  targets: 1 creature
+  summary: The first ally to hit the target deals extra precision damage.
+  heightened: Amped, 1d4+1 more per 2 ranks.

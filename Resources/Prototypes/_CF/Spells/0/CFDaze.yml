@@ -1,4 +1,4 @@
-﻿- type: entity
+- type: entity
   parent: CFSpellTarget
   id: CFDaze
   name: Daze
@@ -14,6 +14,30 @@
   - type: CFSpell
     spell: Daze
     rank: 0
+  - type: CFPsiCantrip
+    ampDice: 1
+    ampDie: 10
+    ampHeightenDice: 2
+    ampFailure:
+    - !type:CFBonusEffect
+      stat: Will
+      type: Status
+      value: -1
+      durationSeconds: 6
+    - !type:CFWeaknessEffect
+      damageType: Mental
+      amount: 1
+      durationSeconds: 6
+    ampCriticalFailure:
+    - !type:CFBonusEffect
+      stat: Will
+      type: Status
+      value: -1
+      durationSeconds: 6
+    - !type:CFWeaknessEffect
+      damageType: Mental
+      amount: 3
+      durationSeconds: 6
   - type: CFTargeting
     rangeFeet: 60
   - type: CFCheck

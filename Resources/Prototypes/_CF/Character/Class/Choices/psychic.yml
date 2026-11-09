@@ -5,6 +5,11 @@
   slot: cf-class-choice-conscious
   name: cf-class-choice-consciousthedistantgrasp
   description: cf-class-choice-consciousthedistantgrasp-desc
+  grants:
+    - !type:CFGrantSpell
+      spell: TelekineticProjectile
+    - !type:CFGrantSpell
+      spell: TelekineticRend
 
 - type: cfClassChoice
   id: ConsciousTheInfiniteEye
@@ -12,6 +17,15 @@
   slot: cf-class-choice-conscious
   name: cf-class-choice-conscioustheinfiniteeye
   description: cf-class-choice-conscioustheinfiniteeye-desc
+  grants:
+    - !type:CFGrantSpell
+      spell: DetectMagic
+    - !type:CFGrantSpell
+      spell: Guidance
+    - !type:CFGrantSpell
+      spell: GlimpseWeakness
+    - !type:CFGrantSpell
+      spell: SureStrike
 
 - type: cfClassChoice
   id: ConsciousTheOscillatingWave
@@ -19,6 +33,15 @@
   slot: cf-class-choice-conscious
   name: cf-class-choice-conscioustheoscillatingwave
   description: cf-class-choice-conscioustheoscillatingwave-desc
+  grants:
+    - !type:CFGrantSpell
+      spell: Frostbite
+    - !type:CFGrantSpell
+      spell: Ignition
+    - !type:CFGrantSpell
+      spell: ThermalStasis
+    - !type:CFGrantSpell
+      spell: BreatheFire
 
 - type: cfClassChoice
   id: ConsciousTheSilentWhisper
@@ -26,6 +49,9 @@
   slot: cf-class-choice-conscious
   name: cf-class-choice-consciousthesilentwhisper
   description: cf-class-choice-consciousthesilentwhisper-desc
+  grants:
+    - !type:CFGrantSpell
+      spell: Daze
 
 - type: cfClassChoice
   id: ConsciousTheTangibleDream
@@ -33,6 +59,13 @@
   slot: cf-class-choice-conscious
   name: cf-class-choice-consciousthetangibledream
   description: cf-class-choice-consciousthetangibledream-desc
+  grants:
+    - !type:CFGrantSpell
+      spell: Figment
+    - !type:CFGrantSpell
+      spell: Shield
+    - !type:CFGrantSpell
+      spell: ImaginaryWeapon
 
 - type: cfClassChoice
   id: ConsciousTheUnboundStep
@@ -40,6 +73,9 @@
   slot: cf-class-choice-conscious
   name: cf-class-choice-conscioustheunboundstep
   description: cf-class-choice-conscioustheunboundstep-desc
+  grants:
+    - !type:CFGrantSpell
+      spell: PhaseBolt
 
 - type: cfClassChoice
   id: SubconsciousEmotionalAcceptance
@@ -48,6 +84,9 @@
   name: cf-class-choice-subconsciousemotionalacceptance
   description: cf-class-choice-subconsciousemotionalacceptance-desc
   keyAbility: Charisma
+  grants:
+    - !type:CFGrantAction
+      action: CFActRestoreTheMind
 
 - type: cfClassChoice
   id: SubconsciousGatheredLore
@@ -64,6 +103,9 @@
   name: cf-class-choice-subconsciousprecisediscipline
   description: cf-class-choice-subconsciousprecisediscipline-desc
   keyAbility: Intelligence
+  grants:
+    - !type:CFGrantAction
+      action: CFActCalculateThreats
 
 - type: cfClassChoice
   id: SubconsciousWanderingReverie
@@ -72,3 +114,6 @@
   name: cf-class-choice-subconsciouswanderingreverie
   description: cf-class-choice-subconsciouswanderingreverie-desc
   keyAbility: Charisma
+  grants:
+    - !type:CFGrantAction
+      action: CFActFadeIntoDaydreams

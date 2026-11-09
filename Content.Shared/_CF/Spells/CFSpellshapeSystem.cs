@@ -58,6 +58,11 @@ public sealed partial class CFSpellshapeSystem : EntitySystem
         };
     }
 
+    public bool IsAmping(EntityUid user)
+    {
+        return Current(user) is { Amp: true };
+    }
+
     public bool IsSubtle(EntityUid user)
     {
         return Current(user) is { Subtle: true };
@@ -82,7 +87,7 @@ public sealed partial class CFSpellshapeSystem : EntitySystem
         return proto.TryComp<CFSpellshapeComponent>(out var shape, Factory) ? shape : null;
     }
 
-    private bool HasNoDuration(EntityUid source)
+    public bool HasNoDuration(EntityUid source)
     {
         if (!TryComp(source, out CFSpellComponent? spell) || !_prototypes.TryIndex(spell.Spell, out var proto))
             return false;

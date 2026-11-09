@@ -253,27 +253,27 @@ cf-class-choice-innovationweapon-desc = Building the innovation: TBA
 
 cf-class-choice-conscious = Conscious Mind
 cf-class-choice-consciousthedistantgrasp = The Distant Grasp
-cf-class-choice-consciousthedistantgrasp-desc = Its granted spells and psi cantrips: TBA
+cf-class-choice-consciousthedistantgrasp-desc = Psi cantrips: telekinetic projectile and telekinetic rend. Telekinetic hand and its rank 1 spell: TBA
 cf-class-choice-conscioustheinfiniteeye = The Infinite Eye
-cf-class-choice-conscioustheinfiniteeye-desc = Its granted spells and psi cantrips: TBA
+cf-class-choice-conscioustheinfiniteeye-desc = Psi cantrips: detect magic, guidance and glimpse weakness. You also know sure strike. Amps for detect magic and guidance: TBA
 cf-class-choice-conscioustheoscillatingwave = The Oscillating Wave
-cf-class-choice-conscioustheoscillatingwave-desc = Its granted spells and psi cantrips: TBA
+cf-class-choice-conscioustheoscillatingwave-desc = Psi cantrips: frostbite, ignition and thermal stasis. You also know breathe fire. Alternating fire and cold: TBA
 cf-class-choice-consciousthesilentwhisper = The Silent Whisper
-cf-class-choice-consciousthesilentwhisper-desc = Its granted spells and psi cantrips: TBA
+cf-class-choice-consciousthesilentwhisper-desc = Psi cantrip: daze, at any range your spell reaches. Message, forbidden thought and its rank 1 spell: TBA
 cf-class-choice-consciousthetangibledream = The Tangible Dream
-cf-class-choice-consciousthetangibledream-desc = Its granted spells and psi cantrips: TBA
+cf-class-choice-consciousthetangibledream-desc = Psi cantrips: figment, shield and imaginary weapon. Amps for figment and shield, and its rank 1 spell: TBA
 cf-class-choice-conscioustheunboundstep = The Unbound Step
-cf-class-choice-conscioustheunboundstep-desc = Its granted spells and psi cantrips: TBA
+cf-class-choice-conscioustheunboundstep-desc = Psi cantrip: phase bolt. Warp step, distortion lens and its rank 1 spell: TBA
 
 cf-class-choice-subconscious = Subconscious Mind
 cf-class-choice-subconsciousemotionalacceptance = Emotional Acceptance
-cf-class-choice-subconsciousemotionalacceptance-desc = Charisma is your key attribute. Its Unleash Psyche benefit: TBA
+cf-class-choice-subconsciousemotionalacceptance-desc = Charisma is your key attribute. Restore the Mind heals an ally while you are Unleashed. Its bonus against mental effects: TBA
 cf-class-choice-subconsciousgatheredlore = Gathered Lore
-cf-class-choice-subconsciousgatheredlore-desc = Intelligence is your key attribute. Its Unleash Psyche benefit: TBA
+cf-class-choice-subconsciousgatheredlore-desc = Intelligence is your key attribute. Recall the Teachings: TBA
 cf-class-choice-subconsciousprecisediscipline = Precise Discipline
-cf-class-choice-subconsciousprecisediscipline-desc = Intelligence is your key attribute. Its Unleash Psyche benefit: TBA
+cf-class-choice-subconsciousprecisediscipline-desc = Intelligence is your key attribute. Calculate Threats gives +2 to AC and Reflex while you are Unleashed.
 cf-class-choice-subconsciouswanderingreverie = Wandering Reverie
-cf-class-choice-subconsciouswanderingreverie-desc = Charisma is your key attribute. Its Unleash Psyche benefit: TBA
+cf-class-choice-subconsciouswanderingreverie-desc = Charisma is your key attribute. Fade into Daydreams conceals you while you are Unleashed.
 
 cf-class-choice-fascination = Grim Fascination
 cf-class-choice-fascinationblood = Blood

@@ -25,7 +25,7 @@ public sealed partial class CFResistanceEffect : CFEffect
             return;
 
         var amount = Amount + HeightenAmount * args.HeightenSteps;
-        entities.System<CFBonusSystem>().AddResistance(target, DamageType, amount, weakness: false, DurationSeconds);
+        entities.System<CFBonusSystem>().AddResistance(target, DamageType, amount, weakness: false, entities.System<CFEffectSystem>().Duration(args, DurationSeconds));
         entities.System<SharedPopupSystem>().PopupEntity(
             Loc.GetString("cf-cond-resist", ("type", DamageType.Id), ("amount", amount)),
             target);

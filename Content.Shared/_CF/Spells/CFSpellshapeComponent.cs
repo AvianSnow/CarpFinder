@@ -19,6 +19,10 @@ public sealed partial class CFSpellshapeComponent : Component
     [DataField]
     public bool Subtle;
 
+    /// <summary>Amps the next psi cantrip, which spends a Focus Point. See <see cref="CFPsiSystem"/>.</summary>
+    [DataField]
+    public bool Amp;
+
     /// <summary>Makes a burst, cone or line with no duration bigger (Widen Spell).</summary>
     [DataField]
     public bool Widens;

@@ -1,4 +1,4 @@
-﻿- type: entity
+- type: entity
   parent: CFSpellProjectile
   id: CFTelekineticProjectile
   name: Telekinetic Projectile
@@ -14,6 +14,14 @@
   - type: CFSpell
     spell: TelekineticProjectile
     rank: 0
+  - type: CFPsiCantrip
+    ampHeightenDice: 2
+    ampSuccess:
+    - !type:CFForcedMovementEffect
+      feet: 5
+    ampCritical:
+    - !type:CFForcedMovementEffect
+      feet: 10
   - type: CFTargeting
     rangeFeet: 30
   - type: CFCheck
