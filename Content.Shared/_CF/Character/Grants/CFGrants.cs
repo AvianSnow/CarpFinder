@@ -3,6 +3,7 @@ using Content.Shared.CF.Combat;
 using Content.Shared.CF.DamageTypes;
 using Content.Shared.CF.Effects;
 using Content.Shared.CF.Traits;
+using Content.Shared.CF.ZLevels;
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared.CF.Character.Grants;
@@ -173,6 +174,43 @@ public sealed partial class CFGrantAction : CFGrant
     public override void Apply(IEntityManager entities, CFGrantArgs args)
     {
         entities.System<CFCharacterFeatureSystem>().GrantAction(args.Mob, Action);
+    }
+}
+
+/// <summary>A natural attack, such as jaws or claws. It replaces the fist, unless the character already has a bigger die.</summary>
+public sealed partial class CFGrantUnarmedAttack : CFGrant
+{
+    [DataField]
+    public int Dice = 1;
+
+    [DataField(required: true)]
+    public int Die;
+
+    [DataField(required: true)]
+    public string DamageType = string.Empty;
+
+    [DataField]
+    public bool Finesse;
+
+    [DataField]
+    public bool Agile;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        entities.System<CFCharacterFeatureSystem>().GrantUnarmedAttack(args.Mob, Dice, Die, DamageType, Finesse, Agile);
+    }
+}
+
+/// <summary>Falling never hurts this character.</summary>
+public sealed partial class CFGrantSafeFall : CFGrant
+{
+    /// <summary>It only works with a hand free.</summary>
+    [DataField]
+    public bool NeedsFreeHand;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        entities.EnsureComponent<CFSafeFallComponent>(args.Mob).NeedsFreeHand = NeedsFreeHand;
     }
 }
 

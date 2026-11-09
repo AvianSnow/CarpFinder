@@ -8,3 +8,11 @@
   level: 1
   traits:
     - "Hobgoblin"
+  grants:
+    - !type:CFGrantWeaponFamiliarity
+      traits:
+      - Hobgoblin
+      weapons:
+      - CFLongbow
+      - CFLongsword
+      - CFShortbow

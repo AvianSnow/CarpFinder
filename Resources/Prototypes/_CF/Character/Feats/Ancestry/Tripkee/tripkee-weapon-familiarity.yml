@@ -8,3 +8,9 @@
   level: 1
   traits:
     - "Tripkee"
+  grants:
+    - !type:CFGrantWeaponFamiliarity
+      weapons:
+      - CFShortbow
+      - CFDart
+      - CFHatchet

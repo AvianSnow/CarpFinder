@@ -8,3 +8,9 @@
   level: 1
   traits:
     - "Kobold"
+  grants:
+    - !type:CFGrantWeaponFamiliarity
+      traits:
+      - Kobold
+      weapons:
+      - CFPick

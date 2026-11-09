@@ -225,6 +225,7 @@ public static class CFSkills
             result.Add(skill.Id);
 
         result.AddRange(CFClassChoices.TrainedSkills(prototypes, build));
+        result.AddRange(HeritageSkills(prototypes, build, ancestryId));
 
         foreach (var feat in SelectedFeats(prototypes, build, ancestryId, classId, level))
         {
@@ -233,6 +234,23 @@ public static class CFSkills
         }
 
         return result.Distinct(StringComparer.Ordinal).ToList();
+    }
+
+    /// <summary>Skills trained by the build's heritage, if it fits the ancestry.</summary>
+    public static List<string> HeritageSkills(IPrototypeManager prototypes, CFCharacterBuildData build, string? ancestryId)
+    {
+        var result = new List<string>();
+        if (build.Heritage is not { } id
+            || !prototypes.TryIndex(id, out CFHeritagePrototype? heritage)
+            || !heritage.Fits(ancestryId))
+        {
+            return result;
+        }
+
+        foreach (var skill in heritage.TrainedSkills)
+            result.Add(skill.Id);
+
+        return result;
     }
 
     public static List<ProtoId<CFAbilitySkillPrototype>> BackgroundSkillSlots(CFBackgroundPrototype background)

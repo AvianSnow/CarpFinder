@@ -10,4 +10,13 @@
     - "Catfolk"
     - "Fortune"
   action: Free
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-feat-cats-luck
+        trigger: SaveWouldFail
+        rerolls: true
+        keepsBetter: true
+        free: true
+        save: Reflex
+        perDay: 1

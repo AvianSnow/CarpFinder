@@ -281,6 +281,8 @@ public sealed partial class HumanoidProfileEditor
             {
                 var next = CurrentBuild();
                 next.Heritage = id;
+                if (_prototypeManager.TryIndex<CFHeritagePrototype>(id, out var pickedHeritage))
+                    next.ClassTrainedSkills.RemoveAll(skill => pickedHeritage.TrainedSkills.Contains(skill));
                 SetBuild(next);
                 if (Profile != null
                     && CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species) is { } ancestry
@@ -634,6 +636,17 @@ public sealed partial class HumanoidProfileEditor
         OpenPicker();
     }
 
+    /// <summary>A heritage's name, marked if it has no effect in play yet.</summary>
+    private static string HeritageName(CFHeritagePrototype heritage)
+    {
+        var name = Loc.GetString(heritage.Name);
+        var unfinished = heritage.Grants.Count == 0
+                         && heritage.TrainedSkills.Count == 0
+                         && heritage is { HitPoints: 0, Speed: 0, Size: null, Darkvision: false, UpgradeVision: false }
+                         && Loc.GetString(heritage.Description).Contains("TBA");
+        return unfinished ? Loc.GetString("cf-character-builder-feat-tba", ("name", name)) : name;
+    }
+
     /// <summary>A feat's name, marked if it has no effect in play yet.</summary>
     private static string FeatName(CFFeatPrototype feat)
     {
@@ -817,7 +830,7 @@ public sealed partial class HumanoidProfileEditor
             options.Add(new Pf2eListEntry
             {
                 Id = heritage.ID,
-                Name = Loc.GetString(heritage.Name),
+                Name = HeritageName(heritage),
                 Rarity = heritage.Rarity,
                 Traits = traits,
                 Description = Loc.GetString(heritage.Description),
@@ -1406,6 +1419,9 @@ public sealed partial class HumanoidProfileEditor
             blocked.Add(skill);
 
         foreach (var skill in CFClassChoices.TrainedSkills(_prototypeManager, build))
+            blocked.Add(skill);
+
+        foreach (var skill in CFSkills.HeritageSkills(_prototypeManager, build, CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species)?.ID))
             blocked.Add(skill);
 
         if (build.BackgroundTrainedSkills.Count > 0)

@@ -139,7 +139,8 @@ Do 1a to 1d first, then work through these. For each entry: read it on Archives 
 
 | Wave | Options | Feats |
 |---|---|---|
-| 1 | Ancestries and heritages. Mostly grants, and no subclass needed | 255, and 129 heritages |
+| 1 | Ancestries and heritages. Mostly grants, and no subclass needed. Worked through on 9 November 2026. Heritages: 60 have working effects and 77 are marked `TBA`. Ancestry feats: 38 new ones work, and the rest are marked. Entries that only had `TBA` added still need their text checked against the rules when each is built. Tests: `CFHeritageTest`, `CFAncestryFeatTest` | 255, and 149 heritages |
+| | Wave 1 waits on: picking a cantrip or skill for a feat, granting a skill feat, climb, swim and fly, a rule for choosing another ancestry's feats, and a `cfFeat` that needs a heritage (prerequisites are text) | |
 | 2 | Fighter, Rogue, Ranger | 81 |
 | 3 | Cleric, Wizard, Bard, Druid, Witch | 105 |
 | 4 | Barbarian, Champion, Monk, Swashbuckler, Investigator, Alchemist, Sorcerer, Oracle | 179 |
@@ -149,7 +150,8 @@ Do 1a to 1d first, then work through these. For each entry: read it on Archives 
 Witch familiars, Druid animal companions and Summoner eidolons all lean on `cfPet`, and "Companions have no inventory" under Step 4 gets in their way.
 
 - [x] Feats with no effect show `(TBA)` in the builder's lists.
-- [ ] Mark unfinished heritages and class features too. A feat with `grants` is finished unless it sets `pendingAction`. One without goes by its placeholder text.
+- [x] Heritages show `(TBA)` in the builder when they have no effect at all. One with part of its rules working keeps its name and says which part is `TBA` in its text. Tests: `CFHeritageTest`.
+- [ ] Mark unfinished class features too. A feat with `grants` is finished unless it sets `pendingAction`. One without goes by its placeholder text.
 - [ ] `CFFeatureCoverageTest`: fails if a finished class has a placeholder, and if a `grants` entry cannot be read.
 - [ ] Kineticist is not included, but one feat file for it exists. Remove it.
 

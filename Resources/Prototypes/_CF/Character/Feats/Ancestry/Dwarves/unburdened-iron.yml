@@ -8,3 +8,6 @@
   level: 1
   traits:
     - "Dwarf"
+  grants:
+    - !type:CFGrantOption
+      option: IgnoresArmorSpeed

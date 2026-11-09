@@ -8,3 +8,11 @@
   level: 1
   traits:
     - "Elf"
+  grants:
+    - !type:CFGrantBonus
+      stat: Saves
+      type: Circumstance
+      value: 1
+      trait: Emotion
+    - !type:CFGrantSaveUpgrade
+      trait: Emotion

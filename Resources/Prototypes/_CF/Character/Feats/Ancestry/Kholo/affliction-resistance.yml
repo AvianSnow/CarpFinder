@@ -8,3 +8,18 @@
   level: 5
   traits:
     - "Kholo"
+  grants:
+    - !type:CFGrantBonus
+      stat: Saves
+      type: Circumstance
+      value: 1
+      trait: Disease
+    - !type:CFGrantBonus
+      stat: Saves
+      type: Circumstance
+      value: 1
+      trait: Poison
+    - !type:CFGrantSaveUpgrade
+      trait: Disease
+    - !type:CFGrantSaveUpgrade
+      trait: Poison

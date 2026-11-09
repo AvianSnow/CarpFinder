@@ -8,3 +8,9 @@
   level: 1
   traits:
     - "Halfling"
+  grants:
+    - !type:CFGrantWeaponFamiliarity
+      traits:
+      - Halfling
+      weapons:
+      - CFSling

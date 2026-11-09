@@ -15,6 +15,14 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public bool FinesseDexterity;
 
+    /// <summary>Frightened eases by 2 each turn instead of 1 (Dwarven Doughtiness).</summary>
+    [DataField, AutoNetworkedField]
+    public bool ShakesOffFear;
+
+    /// <summary>Worn armor does not reduce Speed (Unburdened Iron).</summary>
+    [DataField, AutoNetworkedField]
+    public bool IgnoresArmorSpeed;
+
     [DataField, AutoNetworkedField]
     public bool CanRage;
 
@@ -178,6 +186,8 @@ public enum CFCombatOption : byte
     TwinFeint,
     ViciousSwing,
     FinesseDexterity,
+    ShakesOffFear,
+    IgnoresArmorSpeed,
 }
 
 public enum CFPointMark : byte

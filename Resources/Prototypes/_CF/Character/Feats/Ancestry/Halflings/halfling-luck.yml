@@ -10,4 +10,11 @@
     - "Fortune"
     - "Halfling"
   action: Free
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-feat-halfling-luck
+        trigger: SaveWouldFail
+        rerolls: true
+        free: true
+        perDay: 1

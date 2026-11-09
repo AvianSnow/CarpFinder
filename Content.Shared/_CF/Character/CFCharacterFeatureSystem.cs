@@ -144,6 +144,21 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
         _actions.AddAction(mob, action);
     }
 
+    /// <summary>A natural attack replaces the fist, but a smaller one does not replace a bigger one the character has.</summary>
+    public void GrantUnarmedAttack(EntityUid mob, int dice, int die, string damageType, bool finesse, bool agile)
+    {
+        var options = EnsureComp<CFCombatOptionsComponent>(mob);
+        if (die <= options.NaturalDie)
+            return;
+
+        options.NaturalDice = dice;
+        options.NaturalDie = die;
+        options.NaturalType = damageType;
+        options.NaturalFinesse = finesse;
+        options.NaturalAgile = agile;
+        Dirty(mob, options);
+    }
+
     /// <summary>Lights an action up on the action bar, or turns it off, by its prototype.</summary>
     public void SetActionToggled(EntityUid mob, EntProtoId action, bool toggled)
     {
@@ -231,6 +246,12 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
                 break;
             case CFCombatOption.ViciousSwing:
                 options.ViciousSwing = true;
+                break;
+            case CFCombatOption.ShakesOffFear:
+                options.ShakesOffFear = true;
+                break;
+            case CFCombatOption.IgnoresArmorSpeed:
+                options.IgnoresArmorSpeed = true;
                 break;
             case CFCombatOption.FinesseDexterity:
                 options.FinesseDexterity = true;

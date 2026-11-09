@@ -8,3 +8,11 @@
   level: 1
   traits:
     - "Lizardfolk"
+  grants:
+    - !type:CFGrantBonus
+      stat: Saves
+      type: Circumstance
+      value: 1
+      trait: Disease
+    - !type:CFGrantSaveUpgrade
+      trait: Disease

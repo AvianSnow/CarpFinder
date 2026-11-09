@@ -9,3 +9,11 @@
   rarity: Uncommon
   traits:
     - "Dwarf"
+  grants:
+    - !type:CFGrantBonus
+      stat: Saves
+      type: Circumstance
+      value: 1
+      trait: Visual
+    - !type:CFGrantSaveUpgrade
+      trait: Visual

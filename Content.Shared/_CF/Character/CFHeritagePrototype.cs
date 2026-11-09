@@ -49,6 +49,10 @@ public sealed partial class CFHeritagePrototype : IPrototype
     [DataField]
     public bool UpgradeVision;
 
+    /// <summary>Skills this heritage trains. Kept apart from grants so the builder does not offer them as class skill picks.</summary>
+    [DataField]
+    public List<ProtoId<CFAbilitySkillPrototype>> TrainedSkills = new();
+
     /// <summary>What this gives a character. See <see cref="CFGrant"/>.</summary>
     [DataField]
     public List<CFGrant> Grants = new();

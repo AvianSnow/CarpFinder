@@ -8,3 +8,10 @@
   level: 1
   traits:
     - "Elf"
+  grants:
+    - !type:CFGrantWeaponFamiliarity
+      weapons:
+      - CFCrossbow
+      - CFHeavyCrossbow
+      - CFDagger
+      - CFSpear

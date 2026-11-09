@@ -10,4 +10,10 @@
     - "Concentrate"
     - "Orc"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-feat-orc-superstition
+        trigger: SaveWouldFail
+        saveBonus: 1
+        trait: Magical

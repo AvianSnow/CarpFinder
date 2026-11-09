@@ -8,3 +8,11 @@
   level: 5
   traits:
     - "Catfolk"
+  grants:
+    - !type:CFGrantBonus
+      stat: Saves
+      type: Circumstance
+      value: 2
+      trait: Disease
+    - !type:CFGrantSaveUpgrade
+      trait: Disease

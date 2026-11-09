@@ -1,3 +1,7 @@
+using Content.Shared.CF.Checks;
+using Content.Shared.CF.Traits;
+using Robust.Shared.Prototypes;
+
 namespace Content.Shared.CF.Combat;
 
 /// <summary>What sets off a reaction.</summary>
@@ -67,6 +71,26 @@ public sealed partial class CFReaction
     /// <summary>Enters a rage, for a creature that can.</summary>
     [DataField]
     public bool EntersRage;
+
+    /// <summary>With <see cref="CFReactionTrigger.SaveWouldFail"/>, rolls a failed save again.</summary>
+    [DataField]
+    public bool Rerolls;
+
+    /// <summary>With <see cref="Rerolls"/>, the better result counts. Otherwise the new roll stands, even if worse.</summary>
+    [DataField]
+    public bool KeepsBetter;
+
+    /// <summary>Only for this save. Null means any.</summary>
+    [DataField]
+    public CFDefenseType? Save;
+
+    /// <summary>Only against a source with this trait.</summary>
+    [DataField]
+    public ProtoId<CFTraitPrototype>? Trait;
+
+    /// <summary>A free action with a trigger. It does not use the creature's reaction.</summary>
+    [DataField]
+    public bool Free;
 
     /// <summary>Makes a melee Strike against the creature that set it off.</summary>
     [DataField]

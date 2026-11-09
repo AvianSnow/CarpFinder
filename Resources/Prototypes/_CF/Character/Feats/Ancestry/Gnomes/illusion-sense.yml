@@ -8,3 +8,14 @@
   level: 1
   traits:
     - "Gnome"
+  grants:
+    - !type:CFGrantBonus
+      stat: Perception
+      type: Circumstance
+      value: 1
+      trait: Illusion
+    - !type:CFGrantBonus
+      stat: Will
+      type: Circumstance
+      value: 1
+      trait: Illusion

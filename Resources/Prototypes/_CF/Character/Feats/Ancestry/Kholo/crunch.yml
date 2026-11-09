@@ -8,3 +8,7 @@
   level: 1
   traits:
     - "Kholo"
+  grants:
+    - !type:CFGrantUnarmedAttack
+      die: 8
+      damageType: Piercing

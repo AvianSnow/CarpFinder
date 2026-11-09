@@ -12,12 +12,19 @@
   name: cf-heritage-death-warden-dwarf
   description: cf-heritage-death-warden-dwarf-desc
   ancestries: [Dwarf]
+  grants:
+    - !type:CFGrantSaveUpgrade
+      trait: Void
 
 - type: cfHeritage
   id: ForgeDwarf
   name: cf-heritage-forge-dwarf
   description: cf-heritage-forge-dwarf-desc
   ancestries: [Dwarf]
+  grants:
+    - !type:CFGrantResistance
+      damageType: Fire
+      halfLevel: true
 
 - type: cfHeritage
   id: RockDwarf
@@ -30,6 +37,10 @@
   name: cf-heritage-strong-blooded-dwarf
   description: cf-heritage-strong-blooded-dwarf-desc
   ancestries: [Dwarf]
+  grants:
+    - !type:CFGrantResistance
+      damageType: Poison
+      halfLevel: true
 
 - type: cfHeritage
   id: AncientElf
@@ -42,6 +53,10 @@
   name: cf-heritage-arctic-elf
   description: cf-heritage-arctic-elf-desc
   ancestries: [Elf]
+  grants:
+    - !type:CFGrantResistance
+      damageType: Cold
+      halfLevel: true
 
 - type: cfHeritage
   id: CavernElf
@@ -55,6 +70,9 @@
   name: cf-heritage-seer-elf
   description: cf-heritage-seer-elf-desc
   ancestries: [Elf]
+  grants:
+    - !type:CFGrantSpell
+      spell: DetectMagic
 
 - type: cfHeritage
   id: WhisperElf
@@ -85,6 +103,10 @@
   name: cf-heritage-sensate-gnome
   description: cf-heritage-sensate-gnome-desc
   ancestries: [Gnome]
+  grants:
+    - !type:CFGrantSense
+      sense: Scent
+      rangeFeet: 30
 
 - type: cfHeritage
   id: UmbralGnome
@@ -104,6 +126,10 @@
   name: cf-heritage-charhide-goblin
   description: cf-heritage-charhide-goblin-desc
   ancestries: [Goblin]
+  grants:
+    - !type:CFGrantResistance
+      damageType: Fire
+      halfLevel: true
 
 - type: cfHeritage
   id: IrongutGoblin
@@ -116,12 +142,21 @@
   name: cf-heritage-razortooth-goblin
   description: cf-heritage-razortooth-goblin-desc
   ancestries: [Goblin]
+  grants:
+    - !type:CFGrantUnarmedAttack
+      die: 6
+      damageType: Piercing
+      finesse: true
 
 - type: cfHeritage
   id: SnowGoblin
   name: cf-heritage-snow-goblin
   description: cf-heritage-snow-goblin-desc
   ancestries: [Goblin]
+  grants:
+    - !type:CFGrantResistance
+      damageType: Cold
+      halfLevel: true
 
 - type: cfHeritage
   id: UnbreakableGoblin
@@ -135,6 +170,9 @@
   name: cf-heritage-gutsy-halfling
   description: cf-heritage-gutsy-halfling-desc
   ancestries: [Halfling]
+  grants:
+    - !type:CFGrantSaveUpgrade
+      trait: Emotion
 
 - type: cfHeritage
   id: HillockHalfling
@@ -160,6 +198,9 @@
   name: cf-heritage-twilight-halfling
   description: cf-heritage-twilight-halfling-desc
   ancestries: [Halfling]
+  grants:
+    - !type:CFGrantSense
+      sense: LowLightVision
 
 - type: cfHeritage
   id: WildwoodHalfling
@@ -184,6 +225,11 @@
   name: cf-heritage-cactus-leshy
   description: cf-heritage-cactus-leshy-desc
   ancestries: [Leshy]
+  grants:
+    - !type:CFGrantUnarmedAttack
+      die: 6
+      damageType: Piercing
+      finesse: true
 
 - type: cfHeritage
   id: FruitLeshy
@@ -209,6 +255,8 @@
   name: cf-heritage-leaf-leshy
   description: cf-heritage-leaf-leshy-desc
   ancestries: [Leshy]
+  grants:
+    - !type:CFGrantSafeFall
 
 - type: cfHeritage
   id: LotusLeshy
@@ -241,6 +289,8 @@
   name: cf-heritage-battle-ready-orc
   description: cf-heritage-battle-ready-orc-desc
   ancestries: [Orc]
+  trainedSkills:
+  - Intimidation
 
 - type: cfHeritage
   id: DeepOrc
@@ -253,6 +303,20 @@
   name: cf-heritage-grave-orc
   description: cf-heritage-grave-orc-desc
   ancestries: [Orc]
+  grants:
+    - !type:CFGrantResistance
+      damageType: Void
+      halfLevel: true
+    - !type:CFGrantBonus
+      stat: Saves
+      type: Circumstance
+      value: 1
+      trait: Death
+    - !type:CFGrantBonus
+      stat: Saves
+      type: Circumstance
+      value: 1
+      trait: Void
 
 - type: cfHeritage
   id: HoldScarredOrc
@@ -266,24 +330,42 @@
   name: cf-heritage-rainfall-orc
   description: cf-heritage-rainfall-orc-desc
   ancestries: [Orc]
+  grants:
+    - !type:CFGrantBonus
+      stat: Saves
+      type: Circumstance
+      value: 1
+      trait: Disease
 
 - type: cfHeritage
   id: WinterOrc
   name: cf-heritage-winter-orc
   description: cf-heritage-winter-orc-desc
   ancestries: [Orc]
+  trainedSkills:
+  - Survival
 
 - type: cfHeritage
   id: ClawedCatfolk
   name: cf-heritage-clawed-catfolk
   description: cf-heritage-clawed-catfolk-desc
   ancestries: [Catfolk]
+  grants:
+    - !type:CFGrantUnarmedAttack
+      die: 6
+      damageType: Slashing
+      finesse: true
+      agile: true
 
 - type: cfHeritage
   id: HuntingCatfolk
   name: cf-heritage-hunting-catfolk
   description: cf-heritage-hunting-catfolk-desc
   ancestries: [Catfolk]
+  grants:
+    - !type:CFGrantSense
+      sense: Scent
+      rangeFeet: 30
 
 - type: cfHeritage
   id: JungleCatfolk
@@ -296,6 +378,9 @@
   name: cf-heritage-liminal-catfolk
   description: cf-heritage-liminal-catfolk-desc
   ancestries: [Catfolk]
+  grants:
+    - !type:CFGrantSpell
+      spell: DetectMagic
 
 - type: cfHeritage
   id: NineLivesCatfolk
@@ -314,6 +399,10 @@
   name: cf-heritage-winter-catfolk
   description: cf-heritage-winter-catfolk-desc
   ancestries: [Catfolk]
+  grants:
+    - !type:CFGrantResistance
+      damageType: Cold
+      halfLevel: true
 
 - type: cfHeritage
   id: ElfbaneHobgoblin
@@ -338,6 +427,10 @@
   name: cf-heritage-smokeworker-hobgoblin
   description: cf-heritage-smokeworker-hobgoblin-desc
   ancestries: [Hobgoblin]
+  grants:
+    - !type:CFGrantResistance
+      damageType: Fire
+      halfLevel: true
 
 - type: cfHeritage
   id: WarmarchHobgoblin
@@ -357,6 +450,8 @@
   description: cf-heritage-ant-kholo-desc
   ancestries: [Kholo]
   size: Small
+  trainedSkills:
+  - Deception
 
 - type: cfHeritage
   id: CaveKholo
@@ -383,18 +478,27 @@
   name: cf-heritage-sweetbreath-kholo
   description: cf-heritage-sweetbreath-kholo-desc
   ancestries: [Kholo]
+  trainedSkills:
+  - Diplomacy
 
 - type: cfHeritage
   id: WinterKholo
   name: cf-heritage-winter-kholo
   description: cf-heritage-winter-kholo-desc
   ancestries: [Kholo]
+  grants:
+    - !type:CFGrantResistance
+      damageType: Cold
+      halfLevel: true
 
 - type: cfHeritage
   id: WitchKholo
   name: cf-heritage-witch-kholo
   description: cf-heritage-witch-kholo-desc
   ancestries: [Kholo]
+  grants:
+    - !type:CFGrantSpell
+      spell: Figment
 
 - type: cfHeritage
   id: CavernstalkerKobold
@@ -426,6 +530,11 @@
   name: cf-heritage-strongjaw-kobold
   description: cf-heritage-strongjaw-kobold-desc
   ancestries: [Kobold]
+  grants:
+    - !type:CFGrantUnarmedAttack
+      die: 6
+      damageType: Piercing
+      finesse: true
 
 - type: cfHeritage
   id: TunnelfloodKobold
@@ -450,6 +559,8 @@
   name: cf-heritage-cloudleaper-lizardfolk
   description: cf-heritage-cloudleaper-lizardfolk-desc
   ancestries: [Lizardfolk]
+  grants:
+    - !type:CFGrantSafeFall
 
 - type: cfHeritage
   id: FrilledLizardfolk
@@ -462,6 +573,10 @@
   name: cf-heritage-sandstrider-lizardfolk
   description: cf-heritage-sandstrider-lizardfolk-desc
   ancestries: [Lizardfolk]
+  grants:
+    - !type:CFGrantResistance
+      damageType: Fire
+      halfLevel: true
 
 - type: cfHeritage
   id: UnseenLizardfolk
@@ -499,24 +614,49 @@
   name: cf-heritage-longsnout-rat
   description: cf-heritage-longsnout-rat-desc
   ancestries: [Ratfolk]
+  grants:
+    - !type:CFGrantSense
+      sense: Scent
+      rangeFeet: 30
 
 - type: cfHeritage
   id: SewerRat
   name: cf-heritage-sewer-rat
   description: cf-heritage-sewer-rat-desc
   ancestries: [Ratfolk]
+  grants:
+    - !type:CFGrantSaveUpgrade
+      trait: Disease
+    - !type:CFGrantSaveUpgrade
+      trait: Poison
+    - !type:CFGrantBonus
+      stat: Saves
+      type: Circumstance
+      value: 1
+      trait: Disease
+    - !type:CFGrantBonus
+      stat: Saves
+      type: Circumstance
+      value: 1
+      trait: Poison
 
 - type: cfHeritage
   id: ShadowRat
   name: cf-heritage-shadow-rat
   description: cf-heritage-shadow-rat-desc
   ancestries: [Ratfolk]
+  trainedSkills:
+  - Intimidation
 
 - type: cfHeritage
   id: SnowRat
   name: cf-heritage-snow-rat
   description: cf-heritage-snow-rat-desc
   ancestries: [Ratfolk]
+  grants:
+    - !type:CFGrantResistance
+      damageType: Cold
+      halfLevel: true
 
 - type: cfHeritage
   id: TunnelRat
@@ -535,30 +675,50 @@
   name: cf-heritage-jinxed-tengu
   description: cf-heritage-jinxed-tengu-desc
   ancestries: [Tengu]
+  grants:
+    - !type:CFGrantSaveUpgrade
+      trait: Curse
+    - !type:CFGrantSaveUpgrade
+      trait: Misfortune
 
 - type: cfHeritage
   id: MountainkeeperTengu
   name: cf-heritage-mountainkeeper-tengu
   description: cf-heritage-mountainkeeper-tengu-desc
   ancestries: [Tengu]
+  grants:
+    - !type:CFGrantSpell
+      spell: VitalityLash
 
 - type: cfHeritage
   id: SkybornTengu
   name: cf-heritage-skyborn-tengu
   description: cf-heritage-skyborn-tengu-desc
   ancestries: [Tengu]
+  grants:
+    - !type:CFGrantSafeFall
 
 - type: cfHeritage
   id: StormtossedTengu
   name: cf-heritage-stormtossed-tengu
   description: cf-heritage-stormtossed-tengu-desc
   ancestries: [Tengu]
+  grants:
+    - !type:CFGrantResistance
+      damageType: Electricity
+      halfLevel: true
 
 - type: cfHeritage
   id: TalonedTengu
   name: cf-heritage-taloned-tengu
   description: cf-heritage-taloned-tengu-desc
   ancestries: [Tengu]
+  grants:
+    - !type:CFGrantUnarmedAttack
+      die: 4
+      damageType: Slashing
+      finesse: true
+      agile: true
 
 - type: cfHeritage
   id: WavediverTengu
@@ -596,31 +756,53 @@
   description: cf-heritage-thickskin-tripkee-desc
   ancestries: [Tripkee]
   hitPoints: 8
+  grants:
+    - !type:CFGrantBonus
+      stat: Saves
+      type: Circumstance
+      value: 1
+      trait: Disease
+    - !type:CFGrantBonus
+      stat: Saves
+      type: Circumstance
+      value: 1
+      trait: Poison
 
 - type: cfHeritage
   id: WindwebTripkee
   name: cf-heritage-windweb-tripkee
   description: cf-heritage-windweb-tripkee-desc
   ancestries: [Tripkee]
+  grants:
+    - !type:CFGrantSafeFall
+      needsFreeHand: true
 
 - type: cfHeritage
   id: AncientScaleAzarketi
   name: cf-heritage-ancient-scale-azarketi
   description: cf-heritage-ancient-scale-azarketi-desc
   ancestries: [Azarketi]
+  darkvision: true
 
 - type: cfHeritage
   id: BenthicAzarketi
   name: cf-heritage-benthic-azarketi
   description: cf-heritage-benthic-azarketi-desc
   ancestries: [Azarketi]
-  darkvision: true
+  grants:
+    - !type:CFGrantResistance
+      damageType: Cold
+      halfLevel: true
 
 - type: cfHeritage
   id: InuredAzarketi
   name: cf-heritage-inured-azarketi
   description: cf-heritage-inured-azarketi-desc
   ancestries: [Azarketi]
+  grants:
+    - !type:CFGrantResistance
+      damageType: Poison
+      halfLevel: true
 
 - type: cfHeritage
   id: MistbreathAzarketi
@@ -657,18 +839,24 @@
   name: cf-heritage-artisan-android
   description: cf-heritage-artisan-android-desc
   ancestries: [Android]
+  trainedSkills:
+  - Crafting
 
 - type: cfHeritage
   id: ImpersonatorAndroid
   name: cf-heritage-impersonator-android
   description: cf-heritage-impersonator-android-desc
   ancestries: [Android]
+  trainedSkills:
+  - Deception
 
 - type: cfHeritage
   id: LaborerAndroid
   name: cf-heritage-laborer-android
   description: cf-heritage-laborer-android-desc
   ancestries: [Android]
+  trainedSkills:
+  - Athletics
 
 - type: cfHeritage
   id: PolyglotAndroid
@@ -681,6 +869,12 @@
   name: cf-heritage-warrior-android
   description: cf-heritage-warrior-android-desc
   ancestries: [Android]
+  grants:
+    - !type:CFGrantProficiency
+      proficiencies:
+      - SimpleWeapons
+      - MartialWeapons
+      rank: Trained
 
 - type: cfHeritage
   id: BrightFetchling
@@ -705,6 +899,9 @@
   name: cf-heritage-resolute-fetchling
   description: cf-heritage-resolute-fetchling-desc
   ancestries: [Fetchling]
+  grants:
+    - !type:CFGrantSaveUpgrade
+      trait: Emotion
 
 - type: cfHeritage
   id: WispFetchling
@@ -753,6 +950,11 @@
   name: cf-heritage-earthly-wilds-kitsune
   description: cf-heritage-earthly-wilds-kitsune-desc
   ancestries: [Kitsune]
+  grants:
+    - !type:CFGrantUnarmedAttack
+      die: 6
+      damageType: Piercing
+      finesse: true
 
 - type: cfHeritage
   id: EmptySkyKitsune
@@ -765,6 +967,10 @@
   name: cf-heritage-frozen-wind-kitsune
   description: cf-heritage-frozen-wind-kitsune-desc
   ancestries: [Kitsune]
+  grants:
+    - !type:CFGrantResistance
+      damageType: Cold
+      halfLevel: true
 
 - type: cfHeritage
   id: Draxie
@@ -809,18 +1015,27 @@
   name: cf-heritage-nightglider-strix
   description: cf-heritage-nightglider-strix-desc
   ancestries: [Strix]
+  darkvision: true
 
 - type: cfHeritage
   id: PredatorStrix
   name: cf-heritage-predator-strix
   description: cf-heritage-predator-strix-desc
   ancestries: [Strix]
+  grants:
+    - !type:CFGrantUnarmedAttack
+      die: 4
+      damageType: Slashing
+      finesse: true
+      agile: true
 
 - type: cfHeritage
   id: ScavengerStrix
   name: cf-heritage-scavenger-strix
   description: cf-heritage-scavenger-strix-desc
   ancestries: [Strix]
+  trainedSkills:
+  - Survival
 
 - type: cfHeritage
   id: ShorelineStrix
@@ -840,6 +1055,9 @@
   description: cf-heritage-changeling-desc
   rarity: Uncommon
   upgradeVision: true
+  grants:
+    - !type:CFGrantSense
+      sense: LowLightVision
 
 - type: cfHeritage
   id: Nephilim
@@ -847,18 +1065,27 @@
   description: cf-heritage-nephilim-desc
   rarity: Uncommon
   upgradeVision: true
+  grants:
+    - !type:CFGrantSense
+      sense: LowLightVision
 
 - type: cfHeritage
   id: Aiuvarin
   name: cf-heritage-aiuvarin
   description: cf-heritage-aiuvarin-desc
   rarity: Uncommon
+  grants:
+    - !type:CFGrantSense
+      sense: LowLightVision
 
 - type: cfHeritage
   id: Dromaar
   name: cf-heritage-dromaar
   description: cf-heritage-dromaar-desc
   rarity: Uncommon
+  grants:
+    - !type:CFGrantSense
+      sense: LowLightVision
 
 - type: cfHeritage
   id: Dhampir
@@ -866,12 +1093,18 @@
   description: cf-heritage-dhampir-desc
   rarity: Uncommon
   upgradeVision: true
+  grants:
+    - !type:CFGrantSense
+      sense: LowLightVision
 
 - type: cfHeritage
   id: Dragonblood
   name: cf-heritage-dragonblood
   description: cf-heritage-dragonblood-desc
   rarity: Uncommon
+  grants:
+    - !type:CFGrantSaveUpgrade
+      trait: Fear
 
 - type: cfHeritage
   id: Duskwalker
@@ -879,18 +1112,29 @@
   description: cf-heritage-duskwalker-desc
   rarity: Uncommon
   upgradeVision: true
+  grants:
+    - !type:CFGrantSense
+      sense: LowLightVision
 
 - type: cfHeritage
   id: Ifrit
   name: cf-heritage-ifrit
   description: cf-heritage-ifrit-desc
   rarity: Uncommon
+  grants:
+    - !type:CFGrantResistance
+      damageType: Fire
+      halfLevel: true
 
 - type: cfHeritage
   id: Oread
   name: cf-heritage-oread
   description: cf-heritage-oread-desc
   rarity: Uncommon
+  upgradeVision: true
+  grants:
+    - !type:CFGrantSense
+      sense: LowLightVision
 
 - type: cfHeritage
   id: Suli

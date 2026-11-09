@@ -93,7 +93,9 @@ public sealed partial class CFArmorSystem : EntitySystem
     public int SpeedPenalty(EntityUid mob)
     {
         var penalty = 0;
-        if (TryGetWornArmor(mob, out var armor) && armor.Comp.SpeedPenalty < 0)
+        if (TryGetWornArmor(mob, out var armor)
+            && armor.Comp.SpeedPenalty < 0
+            && CompOrNull<CFCombatOptionsComponent>(mob)?.IgnoresArmorSpeed != true)
         {
             penalty = armor.Comp.SpeedPenalty;
             if (MeetsStrength(mob, armor.Comp))

@@ -8,3 +8,14 @@
   level: 1
   traits:
     - "Gnome"
+  grants:
+    - !type:CFGrantBonus
+      stat: Perception
+      type: Circumstance
+      value: 2
+      trait: Fey
+    - !type:CFGrantBonus
+      stat: Saves
+      type: Circumstance
+      value: 2
+      trait: Fey

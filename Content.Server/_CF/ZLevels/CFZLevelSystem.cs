@@ -205,7 +205,7 @@ public sealed partial class CFZLevelSystem : EntitySystem
 
         _transform.SetMapCoordinates(creature, new MapCoordinates(position, map));
 
-        var damage = CFFallRules.Damage(feet);
+        var damage = FallsSafely(creature) ? 0 : CFFallRules.Damage(feet);
         if (damage > 0)
         {
             _effects.DealDamage(creature, creature, damage, CFDamageTypes.Bludgeoning, false);
@@ -213,6 +213,12 @@ public sealed partial class CFZLevelSystem : EntitySystem
         }
 
         return feet;
+    }
+
+    public bool FallsSafely(EntityUid creature)
+    {
+        return TryComp(creature, out CFSafeFallComponent? safe)
+               && (!safe.NeedsFreeHand || _hands.CountFreeHands(creature) > 0);
     }
 
     private bool HasFloor(MapId map, System.Numerics.Vector2 position)

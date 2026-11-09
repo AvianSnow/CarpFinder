@@ -8,3 +8,9 @@
   level: 1
   traits:
     - "Hobgoblin"
+  grants:
+    - !type:CFGrantBonus
+      stat: Saves
+      type: Circumstance
+      value: 1
+      trait: Fear

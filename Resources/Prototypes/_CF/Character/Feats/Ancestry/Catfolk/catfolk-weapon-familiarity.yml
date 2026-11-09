@@ -8,3 +8,10 @@
   level: 1
   traits:
     - "Catfolk"
+  grants:
+    - !type:CFGrantWeaponFamiliarity
+      traits:
+      - Catfolk
+      weapons:
+      - CFScimitar
+      - CFSickle

@@ -12,7 +12,10 @@ using Content.Shared.Movement.Pulling.Components;
 using Content.Shared.Popups;
 using Content.Shared.Throwing;
 using Robust.Shared.Network;
+using Content.Shared.CF.Traits;
 using Robust.Shared.Physics.Systems;
+using Robust.Shared.Prototypes;
+using Robust.Shared.Random;
 using Robust.Shared.Timing;
 
 namespace Content.Shared.CF.Combat;
@@ -39,6 +42,7 @@ public sealed partial class CFReactionSystem : EntitySystem
     [Dependency] private CFFlankingSystem _flanking = default!;
     [Dependency] private CFConditionSystem _conditions = default!;
     [Dependency] private CFDyingSystem _dying = default!;
+    [Dependency] private IRobustRandom _random = default!;
     [Dependency] private CFFactionSystem _factions = default!;
     [Dependency] private CFStrikeSystem _strikes = default!;
     [Dependency] private SharedPhysicsSystem _physics = default!;
@@ -244,8 +248,16 @@ public sealed partial class CFReactionSystem : EntitySystem
         return bestDegree;
     }
 
-    /// <summary>Gives a saving throw the chance of being improved. Fires only if the result gets better.</summary>
-    public CFDegree AnswerSave(EntityUid uid, CFDefenseType defense, int d20, int modifier, int dc, ref int total, CFDegree degree)
+    /// <summary>Gives a saving throw the chance of being improved. Fires only if that could help.</summary>
+    public CFDegree AnswerSave(
+        EntityUid uid,
+        CFDefenseType defense,
+        int d20,
+        int modifier,
+        int dc,
+        ref int total,
+        CFDegree degree,
+        HashSet<ProtoId<CFTraitPrototype>>? traits = null)
     {
         if (defense is not (CFDefenseType.Fortitude or CFDefenseType.Reflex or CFDefenseType.Will)
             || !TryComp(uid, out CFReactionsComponent? reactions))
@@ -256,8 +268,31 @@ public sealed partial class CFReactionSystem : EntitySystem
         var existing = Math.Max(0, _bonuses.TotalOfType(uid, CFBonusStat.Saves, CFBonusType.Circumstance));
         foreach (var known in reactions.Known)
         {
-            var gain = known.Reaction.SaveBonus - existing;
-            if (known.Reaction.Trigger != CFReactionTrigger.SaveWouldFail || gain <= 0 || !CanFire(uid, known))
+            var reaction = known.Reaction;
+            if (reaction.Trigger != CFReactionTrigger.SaveWouldFail
+                || reaction.Save is { } only && only != defense
+                || reaction.Trait is { } trait && traits?.Contains(trait) != true
+                || !CanFire(uid, known))
+            {
+                continue;
+            }
+
+            if (reaction.Rerolls)
+            {
+                if (degree.IsSuccess() || !TrySpend(uid, known))
+                    continue;
+
+                var second = _random.Next(1, 21);
+                var rerolled = CFDegrees.DegreeOfSuccess(second, modifier, dc);
+                if (reaction.KeepsBetter && rerolled <= degree)
+                    return degree;
+
+                total = second + modifier;
+                return rerolled;
+            }
+
+            var gain = reaction.SaveBonus - existing;
+            if (gain <= 0)
                 continue;
 
             var result = CFDegrees.DegreeOfSuccess(d20, modifier + gain, dc);
@@ -265,7 +300,7 @@ public sealed partial class CFReactionSystem : EntitySystem
                 continue;
 
             total += gain;
-            if (known.Reaction.GainsPanache && result is CFDegree.Success or CFDegree.CriticalSuccess)
+            if (reaction.GainsPanache && result.IsSuccess())
                 GainPanache(uid);
 
             return result;
@@ -343,7 +378,7 @@ public sealed partial class CFReactionSystem : EntitySystem
         return (known.Reaction.PerDay <= 0 || known.UsedToday < known.Reaction.PerDay)
                && _mobState.IsAlive(uid)
                && TryComp(uid, out CFCombatOptionsComponent? options)
-               && options.ReactionSpent == 0;
+               && (known.Reaction.Free || options.ReactionSpent == 0);
     }
 
     private bool TrySpend(EntityUid uid, CFKnownReaction known)
@@ -351,8 +386,12 @@ public sealed partial class CFReactionSystem : EntitySystem
         if (!CanFire(uid, known) || !TryComp(uid, out CFCombatOptionsComponent? options))
             return false;
 
-        options.ReactionSpent = CFReactions.Granted;
-        Dirty(uid, options);
+        if (!known.Reaction.Free)
+        {
+            options.ReactionSpent = CFReactions.Granted;
+            Dirty(uid, options);
+        }
+
         known.UsedToday++;
         if (_net.IsServer)
             _popup.PopupEntity(Loc.GetString(known.Reaction.Name), uid);

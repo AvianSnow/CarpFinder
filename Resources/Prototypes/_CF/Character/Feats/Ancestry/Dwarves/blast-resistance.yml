@@ -9,3 +9,10 @@
   rarity: Uncommon
   traits:
     - "Dwarf"
+  grants:
+    - !type:CFGrantResistance
+      damageType: Fire
+      amount: 3
+    - !type:CFGrantResistance
+      damageType: Sonic
+      amount: 3

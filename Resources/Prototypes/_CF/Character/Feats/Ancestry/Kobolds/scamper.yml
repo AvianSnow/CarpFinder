@@ -8,6 +8,5 @@
   level: 1
   traits:
     - "Kobold"
-  speedBonus: 5
   action: Action
   pendingAction: true

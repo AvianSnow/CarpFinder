@@ -9,4 +9,10 @@
   traits:
     - "Leshy"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-feat-leshy-superstition
+        trigger: SaveWouldFail
+        saveBonus: 1
+        trait: Magical

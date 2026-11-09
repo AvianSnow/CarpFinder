@@ -8,3 +8,8 @@
   level: 1
   traits:
     - "Hobgoblin"
+  grants:
+    - !type:CFGrantSaveUpgrade
+      trait: Disease
+    - !type:CFGrantSaveUpgrade
+      trait: Poison

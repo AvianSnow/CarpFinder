@@ -8,3 +8,7 @@
   level: 1
   traits:
     - "Kholo"
+  grants:
+    - !type:CFGrantSense
+      sense: Scent
+      rangeFeet: 30

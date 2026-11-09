@@ -134,6 +134,9 @@
   - cf-trait-elf
   - cf-trait-humanoid
   - cf-trait-low-light-vision
+  grants:
+  - !type:CFGrantSense
+    sense: LowLightVision
 
 - type: cfAncestry
   id: Gnome
@@ -164,6 +167,9 @@
   - cf-trait-gnome
   - cf-trait-humanoid
   - cf-trait-low-light-vision
+  grants:
+  - !type:CFGrantSense
+    sense: LowLightVision
 
 - type: cfAncestry
   id: Halfling
@@ -230,6 +236,9 @@
   - cf-trait-leshy
   - cf-trait-plant
   - cf-trait-low-light-vision
+  grants:
+  - !type:CFGrantSense
+    sense: LowLightVision
 
 - type: cfAncestry
   id: Orc
@@ -299,6 +308,9 @@
   - cf-trait-humanoid
   - cf-trait-low-light-vision
   - cf-trait-land-on-your-feet
+  grants:
+  - !type:CFGrantSense
+    sense: LowLightVision
 
 - type: cfAncestry
   id: Hobgoblin
@@ -359,6 +371,12 @@
   - cf-trait-humanoid
   - cf-trait-low-light-vision
   - cf-trait-bite
+  grants:
+  - !type:CFGrantSense
+    sense: LowLightVision
+  - !type:CFGrantUnarmedAttack
+    die: 6
+    damageType: Piercing
 
 - type: cfAncestry
   id: Kobold
@@ -431,6 +449,12 @@
   - cf-trait-humanoid
   - cf-trait-claws
   - cf-trait-hold-breath
+  grants:
+  - !type:CFGrantUnarmedAttack
+    die: 4
+    damageType: Slashing
+    finesse: true
+    agile: true
 
 - type: cfAncestry
   id: Ratfolk
@@ -465,6 +489,14 @@
   - cf-trait-humanoid
   - cf-trait-low-light-vision
   - cf-trait-sharp-teeth
+  grants:
+  - !type:CFGrantSense
+    sense: LowLightVision
+  - !type:CFGrantUnarmedAttack
+    die: 4
+    damageType: Piercing
+    finesse: true
+    agile: true
 
 - type: cfAncestry
   id: Tengu
@@ -512,6 +544,13 @@
   - cf-trait-humanoid
   - cf-trait-low-light-vision
   - cf-trait-sharp-beak
+  grants:
+  - !type:CFGrantSense
+    sense: LowLightVision
+  - !type:CFGrantUnarmedAttack
+    die: 6
+    damageType: Piercing
+    finesse: true
 
 - type: cfAncestry
   id: Tripkee
@@ -542,6 +581,9 @@
   - cf-trait-humanoid
   - cf-trait-low-light-vision
   - cf-trait-natural-climber
+  grants:
+  - !type:CFGrantSense
+    sense: LowLightVision
 
 - type: cfAncestry
   id: Azarketi
@@ -578,6 +620,9 @@
   - cf-trait-low-light-vision
   - cf-trait-hydration
   - cf-trait-swim
+  grants:
+  - !type:CFGrantSense
+    sense: LowLightVision
 
 - type: cfAncestry
   id: Android
@@ -613,6 +658,9 @@
   - cf-trait-low-light-vision
   - cf-trait-constructed
   - cf-trait-emotionally-unaware
+  grants:
+  - !type:CFGrantSense
+    sense: LowLightVision
 
 - type: cfAncestry
   id: Fetchling
@@ -671,6 +719,9 @@
   - cf-trait-humanoid
   - cf-trait-low-light-vision
   - cf-trait-unusual-anatomy
+  grants:
+  - !type:CFGrantSense
+    sense: LowLightVision
 
 - type: cfAncestry
   id: Kitsune
@@ -701,6 +752,9 @@
   - cf-trait-humanoid
   - cf-trait-low-light-vision
   - cf-trait-change-shape
+  grants:
+  - !type:CFGrantSense
+    sense: LowLightVision
 
 - type: cfAncestry
   id: Sprite
@@ -731,6 +785,9 @@
   - cf-trait-fey
   - cf-trait-low-light-vision
   - cf-trait-magical-strikes
+  grants:
+  - !type:CFGrantSense
+    sense: LowLightVision
 
 - type: cfAncestry
   id: Strix
@@ -778,3 +835,6 @@
   - cf-trait-humanoid
   - cf-trait-low-light-vision
   - cf-trait-wings
+  grants:
+  - !type:CFGrantSense
+    sense: LowLightVision

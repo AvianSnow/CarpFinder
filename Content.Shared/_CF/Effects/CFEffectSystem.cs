@@ -432,7 +432,10 @@ public sealed partial class CFEffectSystem : EntitySystem
         if (TryComp(source, out CFTraitComponent? own))
             traits.UnionWith(own.Traits);
 
-        if (TryComp(source, out CFSpellComponent? spell) && _prototypes.TryIndex(spell.Spell, out CFSpellPrototype? proto))
+        if (TryComp(source, out CFSpellComponent? spell))
+            traits.Add("Magical");
+
+        if (spell != null && _prototypes.TryIndex(spell.Spell, out CFSpellPrototype? proto))
             traits.UnionWith(proto.Traits);
 
         return traits;

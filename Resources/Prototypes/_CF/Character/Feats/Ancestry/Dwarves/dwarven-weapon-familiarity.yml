@@ -8,3 +8,11 @@
   level: 1
   traits:
     - "Dwarf"
+  grants:
+    - !type:CFGrantWeaponFamiliarity
+      traits:
+      - Dwarf
+      weapons:
+      - CFBattleAxe
+      - CFPick
+      - CFWarhammer

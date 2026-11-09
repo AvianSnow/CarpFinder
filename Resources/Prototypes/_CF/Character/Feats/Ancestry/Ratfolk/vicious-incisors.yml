@@ -8,3 +8,9 @@
   level: 1
   traits:
     - "Ratfolk"
+  grants:
+    - !type:CFGrantUnarmedAttack
+      die: 6
+      damageType: Piercing
+      finesse: true
+      agile: true
