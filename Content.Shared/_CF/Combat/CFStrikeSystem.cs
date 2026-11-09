@@ -720,6 +720,9 @@ public sealed partial class CFStrikeSystem : EntitySystem
         var targetAc = ArmorClassAgainst(user, target, defender, melee, unseen, isObject, alreadyDown);
 
         var rolled = weapon with { DamageType = ChooseDamageType(target, weapon) };
+        if (style is { HumbleStrikes: true } && weapon.Proficiency == CFWeaponCategory.Simple.Proficiency())
+            rolled = rolled with { DamageDie = Math.Min(12, rolled.DamageDie + 2) };
+
         if (extraDice > 0)
             rolled = rolled with { DamageDice = rolled.DamageDice + extraDice };
 
@@ -926,6 +929,9 @@ public sealed partial class CFStrikeSystem : EntitySystem
         // Precise Strike. A finisher has already spent the panache by the time it gets here.
         if (melee && style.PanacheStyle && (weapon.Agile || weapon.Finesse))
             total += finisher ? _random.Next(1, 7) + _random.Next(1, 7) : 2;
+
+        if (style.SlingerPrecision && !melee && CompOrNull<CFWeaponComponent>(weapon.Item)?.Group == CFWeaponGroup.Crossbow)
+            total += 2;
 
         if (usedStratagem && style.StrategicStrike)
         {

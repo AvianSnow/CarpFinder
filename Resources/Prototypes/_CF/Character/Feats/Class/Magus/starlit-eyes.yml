@@ -10,3 +10,5 @@
     - "Magus"
   prerequisites:
     - "starlit span hybrid study"
+  requiresChoice:
+    - StudyStarlitSpan

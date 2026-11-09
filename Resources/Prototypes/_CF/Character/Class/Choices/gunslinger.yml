@@ -1,0 +1,55 @@
+# CarpFinder: Gunslinger ways.
+- type: cfClassChoice
+  id: WayDrifter
+  class: Gunslinger
+  slot: cf-class-choice-way
+  name: cf-class-choice-waydrifter
+  description: cf-class-choice-waydrifter-desc
+  trainedSkills:
+    - Acrobatics
+
+- type: cfClassChoice
+  id: WayPistolero
+  class: Gunslinger
+  slot: cf-class-choice-way
+  name: cf-class-choice-waypistolero
+  description: cf-class-choice-waypistolero-desc
+  choices:
+    - kind: Skill
+      skills:
+        - Deception
+        - Intimidation
+
+- type: cfClassChoice
+  id: WaySniper
+  class: Gunslinger
+  slot: cf-class-choice-way
+  name: cf-class-choice-waysniper
+  description: cf-class-choice-waysniper-desc
+  trainedSkills:
+    - Stealth
+
+- type: cfClassChoice
+  id: WaySpellshot
+  class: Gunslinger
+  slot: cf-class-choice-way
+  name: cf-class-choice-wayspellshot
+  description: cf-class-choice-wayspellshot-desc
+
+- type: cfClassChoice
+  id: WayTriggerbrand
+  class: Gunslinger
+  slot: cf-class-choice-way
+  name: cf-class-choice-waytriggerbrand
+  description: cf-class-choice-waytriggerbrand-desc
+  trainedSkills:
+    - Thievery
+
+- type: cfClassChoice
+  id: WayVanguard
+  class: Gunslinger
+  slot: cf-class-choice-way
+  name: cf-class-choice-wayvanguard
+  description: cf-class-choice-wayvanguard-desc
+  trainedSkills:
+    - Athletics

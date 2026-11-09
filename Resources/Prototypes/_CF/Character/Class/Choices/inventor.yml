@@ -1,0 +1,21 @@
+# CarpFinder: Inventor innovations.
+- type: cfClassChoice
+  id: InnovationArmor
+  class: Inventor
+  slot: cf-class-choice-innovation
+  name: cf-class-choice-innovationarmor
+  description: cf-class-choice-innovationarmor-desc
+
+- type: cfClassChoice
+  id: InnovationConstruct
+  class: Inventor
+  slot: cf-class-choice-innovation
+  name: cf-class-choice-innovationconstruct
+  description: cf-class-choice-innovationconstruct-desc
+
+- type: cfClassChoice
+  id: InnovationWeapon
+  class: Inventor
+  slot: cf-class-choice-innovation
+  name: cf-class-choice-innovationweapon
+  description: cf-class-choice-innovationweapon-desc

@@ -35,14 +35,39 @@
   features:
     - level: 1
       name: "Gunslinger's Way"
-      description: "This feature will be implemented later."
+      description: "Choose a way in the builder. It trains a skill. Its deeds and reload actions: TBA"
     - level: 1
       name: "Slinger's Precision"
-      description: "This feature will be implemented later."
+      description: "Expert with crossbows, and your crossbow Strikes deal 2 extra precision damage. Firearms do not exist yet: TBA"
+      grants:
+        - !type:CFGrantProficiency
+          proficiencies:
+            - Crossbow
+          rank: Expert
+        - !type:CFGrantOption
+          option: SlingerPrecision
     - level: 3
       name: "Stubborn"
-      description: "This feature will be implemented later."
+      description: "Expert in Will saves. A second save against being controlled: TBA"
+      grants:
+        - !type:CFGrantProficiency
+          proficiencies:
+            - Will
+          rank: Expert
     - level: 5
       name: "Gunslinger Weapon Mastery"
-      description: "This feature will be implemented later."
+      description: "Master with crossbows and firearms, and expert with simple weapons, martial weapons and unarmed attacks. Critical specialization: TBA"
+      grants:
+        - !type:CFGrantProficiency
+          proficiencies:
+            - Crossbow
+            - SimpleFirearms
+            - MartialFirearms
+          rank: Master
+        - !type:CFGrantProficiency
+          proficiencies:
+            - SimpleWeapons
+            - MartialWeapons
+            - Unarmed
+          rank: Expert
   # Class key-attribute boost is applied from keyAbility in code (PF2e).

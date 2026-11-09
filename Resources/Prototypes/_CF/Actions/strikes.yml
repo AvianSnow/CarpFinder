@@ -103,3 +103,25 @@
     finisher: true
     onHit:
     - !type:CFOffGuardEffect
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActMegatonStrike
+  name: Megaton Strike
+  description: A melee Strike with one extra damage die. Costs 2 actions.
+  components:
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFStrikeAction
+    extraDice: 1
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActSetUpStrike
+  name: Set-Up Strike
+  description: A melee Strike. On a hit, the target is off-guard for 6 seconds.
+  components:
+  - type: CFStrikeAction
+    effectsNeedDamage: false
+    onHit:
+    - !type:CFOffGuardEffect

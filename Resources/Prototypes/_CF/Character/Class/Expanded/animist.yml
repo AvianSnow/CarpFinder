@@ -44,11 +44,16 @@
       description: "Level 1 cantrips and spell slots are on the spell sheet."
     - level: 1
       name: "Animistic Practice"
-      description: "This feature will be implemented later."
+      description: "Choose a practice in the builder. Its invocations need apparitions: TBA"
     - level: 1
       name: "Apparition Attunement"
-      description: "This feature will be implemented later."
+      description: "Attune to spirits for extra spells. Apparitions are not built yet: TBA"
     - level: 3
       name: "Fortitude Expertise"
-      description: "This feature will be implemented later."
+      description: "Expert in Fortitude saves."
+      grants:
+        - !type:CFGrantProficiency
+          proficiencies:
+            - Fortitude
+          rank: Expert
   # Class key-attribute boost is applied from keyAbility in code (PF2e).

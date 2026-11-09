@@ -37,6 +37,10 @@ public sealed partial class CFStrikeActionComponent : Component
     [DataField]
     public bool Finisher;
 
+    /// <summary>More weapon damage dice on this Strike.</summary>
+    [DataField]
+    public int ExtraDice;
+
     /// <summary>Added to the attack roll.</summary>
     [DataField]
     public int AttackBonus;

@@ -27,6 +27,7 @@ public sealed partial class CFBonusSystem : EntitySystem
     [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private CFActionPoolSystem _actions = default!;
+    [Dependency] private CFArmorSystem _armor = default!;
     [Dependency] private CFEffectSystem _effects = default!;
     [Dependency] private MovementSpeedModifierSystem _speed = default!;
 
@@ -416,27 +417,46 @@ public sealed partial class CFBonusSystem : EntitySystem
     /// </summary>
     public int ModifyDamage(EntityUid target, string damageType, int damage)
     {
-        if (damage <= 0 || !TryComp(target, out CFResistancesComponent? comp) || comp.Entries.Count == 0)
+        if (damage <= 0)
             return damage;
 
-        var resist = 0;
+        var resist = GuardianArmorResistance(target, damageType);
         var weak = 0;
-        foreach (var entry in comp.Entries)
+        if (TryComp(target, out CFResistancesComponent? comp))
         {
-            if (!CFDamageTypes.Same(_prototypes, entry.DamageType, damageType))
-                continue;
+            foreach (var entry in comp.Entries)
+            {
+                if (!CFDamageTypes.Same(_prototypes, entry.DamageType, damageType))
+                    continue;
 
-            var amount = entry.Amount;
-            if (entry.HalfLevel)
-                amount = Math.Max(amount, Math.Max(1, (CompOrNull<CFCombatantComponent>(target)?.Level ?? 1) / 2));
+                var amount = entry.Amount;
+                if (entry.HalfLevel)
+                    amount = Math.Max(amount, Math.Max(1, (CompOrNull<CFCombatantComponent>(target)?.Level ?? 1) / 2));
 
-            if (entry.Weakness)
-                weak = Math.Max(weak, amount);
-            else
-                resist = Math.Max(resist, amount);
+                if (entry.Weakness)
+                    weak = Math.Max(weak, amount);
+                else
+                    resist = Math.Max(resist, amount);
+            }
         }
 
         return Math.Max(0, damage + weak - resist);
+    }
+
+    /// <summary>1 + half the creature's level, against physical damage, for a Guardian in medium or heavy armor.</summary>
+    private int GuardianArmorResistance(EntityUid target, string damageType)
+    {
+        if (CompOrNull<CFCombatOptionsComponent>(target)?.GuardianArmor != true
+            || !_armor.TryGetWornArmor(target, out var armor)
+            || armor.Comp.Category is not (CFArmorCategory.Medium or CFArmorCategory.Heavy)
+            || !CFDamageTypes.Same(_prototypes, CFDamageTypes.Bludgeoning, damageType)
+            && !CFDamageTypes.Same(_prototypes, "Piercing", damageType)
+            && !CFDamageTypes.Same(_prototypes, "Slashing", damageType))
+        {
+            return 0;
+        }
+
+        return 1 + (CompOrNull<CFCombatantComponent>(target)?.Level ?? 1) / 2;
     }
 
     private void ExpireResistances(TimeSpan now)

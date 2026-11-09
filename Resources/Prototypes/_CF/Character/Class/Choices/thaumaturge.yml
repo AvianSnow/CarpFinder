@@ -1,0 +1,77 @@
+# CarpFinder: Thaumaturge implements.
+- type: cfClassChoice
+  id: ImplementAmulet
+  class: Thaumaturge
+  slot: cf-class-choice-implement
+  name: cf-class-choice-implementamulet
+  description: cf-class-choice-implementamulet-desc
+
+- type: cfClassChoice
+  id: ImplementBell
+  class: Thaumaturge
+  slot: cf-class-choice-implement
+  name: cf-class-choice-implementbell
+  description: cf-class-choice-implementbell-desc
+
+- type: cfClassChoice
+  id: ImplementCenser
+  class: Thaumaturge
+  slot: cf-class-choice-implement
+  name: cf-class-choice-implementcenser
+  description: cf-class-choice-implementcenser-desc
+
+- type: cfClassChoice
+  id: ImplementChalice
+  class: Thaumaturge
+  slot: cf-class-choice-implement
+  name: cf-class-choice-implementchalice
+  description: cf-class-choice-implementchalice-desc
+
+- type: cfClassChoice
+  id: ImplementLantern
+  class: Thaumaturge
+  slot: cf-class-choice-implement
+  name: cf-class-choice-implementlantern
+  description: cf-class-choice-implementlantern-desc
+
+- type: cfClassChoice
+  id: ImplementMirror
+  class: Thaumaturge
+  slot: cf-class-choice-implement
+  name: cf-class-choice-implementmirror
+  description: cf-class-choice-implementmirror-desc
+
+- type: cfClassChoice
+  id: ImplementRegalia
+  class: Thaumaturge
+  slot: cf-class-choice-implement
+  name: cf-class-choice-implementregalia
+  description: cf-class-choice-implementregalia-desc
+
+- type: cfClassChoice
+  id: ImplementShield
+  class: Thaumaturge
+  slot: cf-class-choice-implement
+  name: cf-class-choice-implementshield
+  description: cf-class-choice-implementshield-desc
+
+- type: cfClassChoice
+  id: ImplementTome
+  class: Thaumaturge
+  slot: cf-class-choice-implement
+  name: cf-class-choice-implementtome
+  description: cf-class-choice-implementtome-desc
+
+- type: cfClassChoice
+  id: ImplementWand
+  class: Thaumaturge
+  slot: cf-class-choice-implement
+  name: cf-class-choice-implementwand
+  description: cf-class-choice-implementwand-desc
+
+- type: cfClassChoice
+  id: ImplementWeapon
+  class: Thaumaturge
+  slot: cf-class-choice-implement
+  name: cf-class-choice-implementweapon
+  description: cf-class-choice-implementweapon-desc

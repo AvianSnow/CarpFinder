@@ -12,3 +12,5 @@
     - "Magus"
   prerequisites:
     - "unfurling brocade hybrid study"
+  requiresChoice:
+    - StudyUnfurlingBrocade

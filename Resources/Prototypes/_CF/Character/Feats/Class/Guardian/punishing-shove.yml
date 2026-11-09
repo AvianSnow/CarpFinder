@@ -10,3 +10,6 @@
     - "Guardian"
   prerequisites:
     - "trained in Athletics"
+  grants:
+    - !type:CFGrantOption
+      option: PunishingShove

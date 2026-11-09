@@ -15,3 +15,5 @@
     - "armor innovation"
   action: Action
   pendingAction: true
+  requiresChoice:
+    - InnovationArmor

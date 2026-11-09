@@ -363,6 +363,18 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
             case CFCombatOption.PanacheManeuvers:
                 options.PanacheManeuvers = true;
                 break;
+            case CFCombatOption.SlingerPrecision:
+                options.SlingerPrecision = true;
+                break;
+            case CFCombatOption.PunishingShove:
+                options.PunishingShove = true;
+                break;
+            case CFCombatOption.HumbleStrikes:
+                options.HumbleStrikes = true;
+                break;
+            case CFCombatOption.GuardianArmor:
+                options.GuardianArmor = true;
+                break;
             case CFCombatOption.HealingHands:
                 options.HealingHands = true;
                 break;

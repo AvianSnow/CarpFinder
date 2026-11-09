@@ -35,20 +35,30 @@
   features:
     - level: 1
       name: "Commander's Banner"
-      description: "This feature will be implemented later."
+      description: "A banner that inspires allies near it: TBA"
     - level: 1
       name: "Drilled Reactions"
-      description: "This feature will be implemented later."
+      description: "Give an ally an extra reaction with a tactic. Tactics are not built yet: TBA"
     - level: 1
       name: "Shield Block"
-      description: "This feature will be implemented later."
+      description: "You can spend your reaction to block damage with a raised shield."
+      grants:
+        - !type:CFGrantOption
+          option: ShieldBlock
     - level: 1
       name: "Tactics"
-      description: "This feature will be implemented later."
+      description: "Coordinated maneuvers for your allies, from a folio: TBA"
     - level: 3
       name: "Warfare Expertise"
-      description: "This feature will be implemented later."
+      description: "Expert in Warfare Lore: TBA"
     - level: 5
       name: "Military Expertise"
-      description: "This feature will be implemented later."
+      description: "Expert with simple weapons, martial weapons and unarmed attacks. Critical specialization: TBA"
+      grants:
+        - !type:CFGrantProficiency
+          proficiencies:
+            - SimpleWeapons
+            - MartialWeapons
+            - Unarmed
+          rank: Expert
   # Class key-attribute boost is applied from keyAbility in code (PF2e).

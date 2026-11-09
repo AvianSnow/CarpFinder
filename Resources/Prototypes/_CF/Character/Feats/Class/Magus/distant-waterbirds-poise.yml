@@ -14,3 +14,5 @@
     - "Spellstrike"
   action: Reaction
   pendingAction: true
+  requiresChoice:
+    - StudyAloofFirmament

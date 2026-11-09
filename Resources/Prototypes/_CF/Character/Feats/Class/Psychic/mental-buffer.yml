@@ -8,4 +8,7 @@
   level: 1
   traits:
     - "Psychic"
-  pendingAction: true
+  grants:
+    - !type:CFGrantResistance
+      damageType: Mental
+      halfLevel: true

@@ -35,26 +35,41 @@
   features:
     - level: 1
       name: "Explode"
-      description: "This feature will be implemented later."
+      description: "Explosions from your innovation: TBA"
     - level: 1
       name: "Innovation"
-      description: "This feature will be implemented later."
+      description: "Choose an innovation in the builder. Building each one: TBA"
     - level: 1
       name: "Overdrive"
-      description: "This feature will be implemented later."
+      description: "Push your devices for extra damage: TBA"
     - level: 1
       name: "Peerless Inventor"
-      description: "This feature will be implemented later."
+      description: "The Inventor skill feat: TBA"
     - level: 1
       name: "Shield Block"
-      description: "This feature will be implemented later."
+      description: "You can spend your reaction to block damage with a raised shield."
+      grants:
+        - !type:CFGrantOption
+          option: ShieldBlock
     - level: 3
       name: "Expert Overdrive"
-      description: "This feature will be implemented later."
+      description: "Expert in Crafting. Better Overdrive: TBA"
+      grants:
+        - !type:CFGrantProficiency
+          proficiencies:
+            - Crafting
+          rank: Expert
     - level: 3
       name: "Reconfigure"
-      description: "This feature will be implemented later."
+      description: "Change your innovation in downtime: TBA"
     - level: 5
       name: "Inventor Weapon Expertise"
-      description: "This feature will be implemented later."
+      description: "Expert with simple weapons, martial weapons and unarmed attacks. Critical specialization: TBA"
+      grants:
+        - !type:CFGrantProficiency
+          proficiencies:
+            - SimpleWeapons
+            - MartialWeapons
+            - Unarmed
+          rank: Expert
   # Class key-attribute boost is applied from keyAbility in code (PF2e).

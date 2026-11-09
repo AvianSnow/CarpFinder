@@ -13,3 +13,5 @@
     - "volatile spark hybrid study"
   action: Action
   pendingAction: true
+  requiresChoice:
+    - StudyVolatileSpark

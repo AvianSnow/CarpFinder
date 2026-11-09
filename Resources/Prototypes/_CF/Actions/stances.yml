@@ -208,3 +208,15 @@
       - DeadlyD10
       - Finesse
       - Unarmed
+
+- type: entity
+  parent: CFActStanceBase
+  id: CFActArcaneCascade
+  name: Arcane Cascade
+  description: Your melee Strikes deal 1 more damage.
+  components:
+  - type: CFStance
+    bonuses:
+    - stat: MeleeDamage
+      type: Untyped
+      value: 1

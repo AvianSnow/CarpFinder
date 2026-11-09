@@ -1,0 +1,42 @@
+# CarpFinder: Necromancer choices. Both need thralls.
+- type: cfClassChoice
+  id: FascinationBlood
+  class: Necromancer
+  slot: cf-class-choice-fascination
+  name: cf-class-choice-fascinationblood
+  description: cf-class-choice-fascinationblood-desc
+
+- type: cfClassChoice
+  id: FascinationBone
+  class: Necromancer
+  slot: cf-class-choice-fascination
+  name: cf-class-choice-fascinationbone
+  description: cf-class-choice-fascinationbone-desc
+
+- type: cfClassChoice
+  id: FascinationFlesh
+  class: Necromancer
+  slot: cf-class-choice-fascination
+  name: cf-class-choice-fascinationflesh
+  description: cf-class-choice-fascinationflesh-desc
+
+- type: cfClassChoice
+  id: FascinationSpirit
+  class: Necromancer
+  slot: cf-class-choice-fascination
+  name: cf-class-choice-fascinationspirit
+  description: cf-class-choice-fascinationspirit-desc
+
+- type: cfClassChoice
+  id: MethodPuppeteer
+  class: Necromancer
+  slot: cf-class-choice-fatal-method
+  name: cf-class-choice-methodpuppeteer
+  description: cf-class-choice-methodpuppeteer-desc
+
+- type: cfClassChoice
+  id: MethodReaper
+  class: Necromancer
+  slot: cf-class-choice-fatal-method
+  name: cf-class-choice-methodreaper
+  description: cf-class-choice-methodreaper-desc

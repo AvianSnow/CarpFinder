@@ -12,3 +12,5 @@
     - "Arcane Cascade"
     - "twisting tree hybrid study"
   pendingAction: true
+  requiresChoice:
+    - StudyTwistingTree

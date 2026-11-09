@@ -11,4 +11,6 @@
   prerequisites:
     - "armor, construct, or weapon innovation"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActMegatonStrike

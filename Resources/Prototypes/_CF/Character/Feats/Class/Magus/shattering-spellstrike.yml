@@ -15,3 +15,5 @@
     - "Spellstrike"
   action: Action
   pendingAction: true
+  requiresChoice:
+    - StudyResurgentMaelstrom

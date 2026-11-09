@@ -8,4 +8,6 @@
   level: 1
   traits:
     - "Magus"
-  pendingAction: true
+  grants:
+    - !type:CFGrantOption
+      option: PowerfulFist

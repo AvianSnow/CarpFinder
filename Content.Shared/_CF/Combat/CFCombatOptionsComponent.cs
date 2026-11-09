@@ -67,6 +67,22 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public bool CrushingGrab;
 
+    /// <summary>Crossbow Strikes deal 2 extra precision damage.</summary>
+    [DataField, AutoNetworkedField]
+    public bool SlingerPrecision;
+
+    /// <summary>A successful Shove also deals the shover's Strength modifier in bludgeoning damage.</summary>
+    [DataField, AutoNetworkedField]
+    public bool PunishingShove;
+
+    /// <summary>A simple weapon's damage die is one step larger.</summary>
+    [DataField, AutoNetworkedField]
+    public bool HumbleStrikes;
+
+    /// <summary>In medium or heavy armor, physical damage is reduced by 1 + half the creature's level.</summary>
+    [DataField, AutoNetworkedField]
+    public bool GuardianArmor;
+
     /// <summary>A finisher that drops its target gives panache back.</summary>
     [DataField, AutoNetworkedField]
     public bool FinishingFollowThrough;
@@ -308,6 +324,10 @@ public enum CFCombatOption : byte
     StrategicStrike,
     SorcerousPotency,
     PanacheManeuvers,
+    SlingerPrecision,
+    PunishingShove,
+    HumbleStrikes,
+    GuardianArmor,
 }
 
 public enum CFPointMark : byte

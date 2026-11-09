@@ -155,6 +155,14 @@ public sealed partial class CFManeuverSystem : EntitySystem
         _conditions.ReleaseGrab(target);
         _conditions.Push(user, target, degree == CFDegree.CriticalSuccess ? 10 : 5);
         _conditions.GainManeuverPanache(user);
+        if (CompOrNull<CFCombatOptionsComponent>(user)?.PunishingShove == true
+            && TryComp(user, out CFAbilityScoreComponent? abilities))
+        {
+            var strength = abilities.GetModifier(CFAbility.Strength);
+            if (strength > 0)
+                _effects.DealDamage(user, target, degree == CFDegree.CriticalSuccess ? strength * 2 : strength, CFDamageTypes.Bludgeoning, critical: false);
+        }
+
         _popup.PopupEntity(Loc.GetString("cf-act-shove"), target);
         _conditions.NoteShove(target);
     }

@@ -12,3 +12,5 @@
     - "sparkling targe hybrid study"
   action: Reaction
   pendingAction: true
+  requiresChoice:
+    - StudySparklingTarge

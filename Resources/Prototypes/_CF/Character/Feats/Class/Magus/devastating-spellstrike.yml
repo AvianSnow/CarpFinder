@@ -13,3 +13,5 @@
     - "Spellstrike"
   action: Action
   pendingAction: true
+  requiresChoice:
+    - StudyInexorableIron

@@ -1,0 +1,74 @@
+# CarpFinder: Psychic minds.
+- type: cfClassChoice
+  id: ConsciousTheDistantGrasp
+  class: Psychic
+  slot: cf-class-choice-conscious
+  name: cf-class-choice-consciousthedistantgrasp
+  description: cf-class-choice-consciousthedistantgrasp-desc
+
+- type: cfClassChoice
+  id: ConsciousTheInfiniteEye
+  class: Psychic
+  slot: cf-class-choice-conscious
+  name: cf-class-choice-conscioustheinfiniteeye
+  description: cf-class-choice-conscioustheinfiniteeye-desc
+
+- type: cfClassChoice
+  id: ConsciousTheOscillatingWave
+  class: Psychic
+  slot: cf-class-choice-conscious
+  name: cf-class-choice-conscioustheoscillatingwave
+  description: cf-class-choice-conscioustheoscillatingwave-desc
+
+- type: cfClassChoice
+  id: ConsciousTheSilentWhisper
+  class: Psychic
+  slot: cf-class-choice-conscious
+  name: cf-class-choice-consciousthesilentwhisper
+  description: cf-class-choice-consciousthesilentwhisper-desc
+
+- type: cfClassChoice
+  id: ConsciousTheTangibleDream
+  class: Psychic
+  slot: cf-class-choice-conscious
+  name: cf-class-choice-consciousthetangibledream
+  description: cf-class-choice-consciousthetangibledream-desc
+
+- type: cfClassChoice
+  id: ConsciousTheUnboundStep
+  class: Psychic
+  slot: cf-class-choice-conscious
+  name: cf-class-choice-conscioustheunboundstep
+  description: cf-class-choice-conscioustheunboundstep-desc
+
+- type: cfClassChoice
+  id: SubconsciousEmotionalAcceptance
+  class: Psychic
+  slot: cf-class-choice-subconscious
+  name: cf-class-choice-subconsciousemotionalacceptance
+  description: cf-class-choice-subconsciousemotionalacceptance-desc
+  keyAbility: Charisma
+
+- type: cfClassChoice
+  id: SubconsciousGatheredLore
+  class: Psychic
+  slot: cf-class-choice-subconscious
+  name: cf-class-choice-subconsciousgatheredlore
+  description: cf-class-choice-subconsciousgatheredlore-desc
+  keyAbility: Intelligence
+
+- type: cfClassChoice
+  id: SubconsciousPreciseDiscipline
+  class: Psychic
+  slot: cf-class-choice-subconscious
+  name: cf-class-choice-subconsciousprecisediscipline
+  description: cf-class-choice-subconsciousprecisediscipline-desc
+  keyAbility: Intelligence
+
+- type: cfClassChoice
+  id: SubconsciousWanderingReverie
+  class: Psychic
+  slot: cf-class-choice-subconscious
+  name: cf-class-choice-subconsciouswanderingreverie
+  description: cf-class-choice-subconsciouswanderingreverie-desc
+  keyAbility: Charisma

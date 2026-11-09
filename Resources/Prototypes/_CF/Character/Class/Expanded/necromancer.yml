@@ -39,29 +39,39 @@
   features:
     - level: 1
       name: "Fatal Method"
-      description: "This feature will be implemented later."
+      description: "Choose a fatal method in the builder. Thralls are not built yet: TBA"
     - level: 1
       name: "Grave Spells"
-      description: "This feature will be implemented later."
+      description: "Focus spells that use thralls. Thralls are not built yet: TBA"
     - level: 1
       name: "Grim Fascination"
-      description: "This feature will be implemented later."
+      description: "Choose a grim fascination in the builder. Thralls are not built yet: TBA"
     - level: 1
       name: "Mastery of Life and Death"
-      description: "This feature will be implemented later."
+      description: "Swap void and vitality on your spells: TBA"
     - level: 1
       name: "Necromancer Spellcasting"
       description: "Level 1 cantrips and spell slots are on the spell sheet."
     - level: 1
       name: "Undead Lore"
-      description: "This feature will be implemented later."
+      description: "Recall Knowledge about undead: TBA"
     - level: 3
       name: "Inevitable Return"
-      description: "This feature will be implemented later."
+      description: "Raise a thrall from a fresh corpse. Thralls are not built yet: TBA"
     - level: 3
       name: "Mental Wards"
-      description: "This feature will be implemented later."
+      description: "Expert in Will saves. Better results against undead minds: TBA"
+      grants:
+        - !type:CFGrantProficiency
+          proficiencies:
+            - Will
+          rank: Expert
     - level: 5
       name: "Reflex Expertise"
-      description: "This feature will be implemented later."
+      description: "Expert in Reflex saves."
+      grants:
+        - !type:CFGrantProficiency
+          proficiencies:
+            - Reflex
+          rank: Expert
   # Class key-attribute boost is applied from keyAbility in code (PF2e).

@@ -146,7 +146,7 @@ public sealed partial class CFStrikeActionSystem : EntitySystem
             Dirty(user, options);
         }
 
-        var hit = _strikes.PerformStrike(user, target, stats, weapon, melee: true, attackPenalty: action.AttackBonus, finisher: action.Finisher, resolved: Resolved);
+        var hit = _strikes.PerformStrike(user, target, stats, weapon, melee: true, attackPenalty: action.AttackBonus, extraDice: action.ExtraDice, finisher: action.Finisher, resolved: Resolved);
         if (action.TwoWeapons && _strikes.TryOffHandWeapon(user, weapon, out var off, out var offHand))
             _strikes.PerformStrike(user, target, off, offHand, melee: true, attackPenalty: action.AttackBonus, skipPrecision: hit, resolved: Resolved);
     }

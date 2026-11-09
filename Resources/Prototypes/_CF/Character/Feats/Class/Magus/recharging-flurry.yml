@@ -12,3 +12,5 @@
     - "twofold tine hybrid study"
   action: Action
   pendingAction: true
+  requiresChoice:
+    - StudyTwofoldTine

@@ -12,3 +12,5 @@
   prerequisites:
     - "armor innovation"
   pendingAction: true
+  requiresChoice:
+    - InnovationArmor

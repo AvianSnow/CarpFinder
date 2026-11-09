@@ -1,0 +1,70 @@
+# CarpFinder: Magus hybrid studies.
+- type: cfClassChoice
+  id: StudyAloofFirmament
+  class: Magus
+  slot: cf-class-choice-hybrid-study
+  name: cf-class-choice-studyalooffirmament
+  description: cf-class-choice-studyalooffirmament-desc
+
+- type: cfClassChoice
+  id: StudyInexorableIron
+  class: Magus
+  slot: cf-class-choice-hybrid-study
+  name: cf-class-choice-studyinexorableiron
+  description: cf-class-choice-studyinexorableiron-desc
+
+- type: cfClassChoice
+  id: StudyLaughingShadow
+  class: Magus
+  slot: cf-class-choice-hybrid-study
+  name: cf-class-choice-studylaughingshadow
+  description: cf-class-choice-studylaughingshadow-desc
+
+- type: cfClassChoice
+  id: StudyResurgentMaelstrom
+  class: Magus
+  slot: cf-class-choice-hybrid-study
+  name: cf-class-choice-studyresurgentmaelstrom
+  description: cf-class-choice-studyresurgentmaelstrom-desc
+
+- type: cfClassChoice
+  id: StudySparklingTarge
+  class: Magus
+  slot: cf-class-choice-hybrid-study
+  name: cf-class-choice-studysparklingtarge
+  description: cf-class-choice-studysparklingtarge-desc
+
+- type: cfClassChoice
+  id: StudyStarlitSpan
+  class: Magus
+  slot: cf-class-choice-hybrid-study
+  name: cf-class-choice-studystarlitspan
+  description: cf-class-choice-studystarlitspan-desc
+
+- type: cfClassChoice
+  id: StudyTwistingTree
+  class: Magus
+  slot: cf-class-choice-hybrid-study
+  name: cf-class-choice-studytwistingtree
+  description: cf-class-choice-studytwistingtree-desc
+
+- type: cfClassChoice
+  id: StudyTwofoldTine
+  class: Magus
+  slot: cf-class-choice-hybrid-study
+  name: cf-class-choice-studytwofoldtine
+  description: cf-class-choice-studytwofoldtine-desc
+
+- type: cfClassChoice
+  id: StudyUnfurlingBrocade
+  class: Magus
+  slot: cf-class-choice-hybrid-study
+  name: cf-class-choice-studyunfurlingbrocade
+  description: cf-class-choice-studyunfurlingbrocade-desc
+
+- type: cfClassChoice
+  id: StudyVolatileSpark
+  class: Magus
+  slot: cf-class-choice-hybrid-study
+  name: cf-class-choice-studyvolatilespark
+  description: cf-class-choice-studyvolatilespark-desc

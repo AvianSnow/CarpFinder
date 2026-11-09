@@ -1,0 +1,28 @@
+# CarpFinder: Animist practices.
+- type: cfClassChoice
+  id: PracticeLiturgist
+  class: Animist
+  slot: cf-class-choice-practice
+  name: cf-class-choice-practiceliturgist
+  description: cf-class-choice-practiceliturgist-desc
+
+- type: cfClassChoice
+  id: PracticeMedium
+  class: Animist
+  slot: cf-class-choice-practice
+  name: cf-class-choice-practicemedium
+  description: cf-class-choice-practicemedium-desc
+
+- type: cfClassChoice
+  id: PracticeSeer
+  class: Animist
+  slot: cf-class-choice-practice
+  name: cf-class-choice-practiceseer
+  description: cf-class-choice-practiceseer-desc
+
+- type: cfClassChoice
+  id: PracticeShaman
+  class: Animist
+  slot: cf-class-choice-practice
+  name: cf-class-choice-practiceshaman
+  description: cf-class-choice-practiceshaman-desc

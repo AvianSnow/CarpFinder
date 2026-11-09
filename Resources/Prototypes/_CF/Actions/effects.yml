@@ -49,11 +49,32 @@
   parent: CFActivityTarget
   id: CFActNudgeScales
   name: Nudge the Scales
-  description: Heal a creature for 2 Hit Points plus double your level.
+  description: Heal a creature within 30 feet for 2 Hit Points plus double your level.
   components:
+  - type: TargetAction
+    range: 6.25
   - type: CFEffectAction
   - type: CFDegreeEffects
     effects:
     - !type:CFHealEffect
       flat: 2
       perLevel: 2
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActPsiBurst
+  name: Psi Burst
+  description: A creature within 30 feet takes 1d4 bludgeoning, basic Reflex. The damage grows at levels 3 and 5.
+  components:
+  - type: TargetAction
+    range: 6.25
+  - type: CFEffectAction
+  - type: CFCheck
+    defense: Reflex
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 4
+      damageType: Bludgeoning
+      diceEveryLevels: 2

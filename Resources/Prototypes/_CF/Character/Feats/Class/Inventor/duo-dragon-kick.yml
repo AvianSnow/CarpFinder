@@ -12,3 +12,5 @@
     - "construct innovation"
   action: Action
   pendingAction: true
+  requiresChoice:
+    - InnovationConstruct

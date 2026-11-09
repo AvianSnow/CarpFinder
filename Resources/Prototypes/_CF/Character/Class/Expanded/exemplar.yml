@@ -35,17 +35,30 @@
   features:
     - level: 1
       name: "Divine Spark and Ikons"
-      description: "This feature will be implemented later."
+      description: "A divine spark you move between three ikons. Ikons are not built yet: TBA"
     - level: 1
       name: "Humble Strikes"
-      description: "This feature will be implemented later."
+      description: "With a simple weapon, your damage die is one step larger."
+      grants:
+        - !type:CFGrantOption
+          option: HumbleStrikes
     - level: 1
       name: "Shield Block"
-      description: "This feature will be implemented later."
+      description: "You can spend your reaction to block damage with a raised shield."
+      grants:
+        - !type:CFGrantOption
+          option: ShieldBlock
     - level: 3
       name: "Root Epithet"
-      description: "This feature will be implemented later."
+      description: "An epithet that changes your ikons. Ikons are not built yet: TBA"
     - level: 5
       name: "Weapon Expertise"
-      description: "This feature will be implemented later."
+      description: "Expert with simple weapons, martial weapons and unarmed attacks."
+      grants:
+        - !type:CFGrantProficiency
+          proficiencies:
+            - SimpleWeapons
+            - MartialWeapons
+            - Unarmed
+          rank: Expert
   # Class key-attribute boost is applied from keyAbility in code (PF2e).

@@ -12,3 +12,5 @@
   prerequisites:
     - "expert overdrive"
     - "weapon innovation"
+  requiresChoice:
+    - InnovationWeapon
