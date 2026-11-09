@@ -1,0 +1,102 @@
+# Focus spells. Each costs a Focus Point and heightens to half the caster's level, rounded up, so rank is 0 on the action.
+# Grant one with CFGrantFocusSpell.
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFTempestSurge
+  name: Tempest Surge
+  description: A storm deals 1d12 electricity to a creature, basic Reflex. On a failure it is also clumsy 2 for a round. Costs a Focus Point.
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+  - type: CFSpell
+    spell: TempestSurge
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFCheck
+    defense: Reflex
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 12
+      damageType: Electricity
+      heightenDice: 1
+    failure:
+    - !type:CFApplyConditionEffect
+      condition: Clumsy
+      value: 2
+      durationSeconds: 6
+    criticalFailure:
+    - !type:CFApplyConditionEffect
+      condition: Clumsy
+      value: 2
+      durationSeconds: 6
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFForceBolt
+  name: Force Bolt
+  description: A bolt of force that always hits for 1d4+1. Costs a Focus Point.
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+  - type: CFSpell
+    spell: ForceBolt
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+  - type: CFHeighten
+    baseRank: 1
+    interval: 2
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 4
+      flat: 1
+      damageType: Force
+      heightenDice: 1
+      heightenFlat: 1
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActRefocus
+  name: Refocus
+  description: Spend 10 minutes on the world clock to regain 1 Focus Point. Moving or being hurt interrupts it.
+  components:
+  - type: CFRefocus
+  - type: CFRadialSlot
+    group: Free
+
+# The list of spells hides these from the builder: an empty traditions list is on nobody's spell list.
+- type: cfSpell
+  id: TempestSurge
+  name: Tempest Surge
+  rank: 1
+  traits: [Concentrate, Electricity, Manipulate]
+  actionCost: Two
+  range: 30 feet
+  targets: 1 creature
+  defense: basic Reflex
+  summary: A storm deals 1d12 electricity damage. On a failure the target is also clumsy 2 for 1 round.
+  heightened: Damage increases by 1d12 per rank.
+
+- type: cfSpell
+  id: ForceBolt
+  name: Force Bolt
+  rank: 1
+  traits: [Concentrate, Force, Manipulate]
+  actionCost: One
+  range: 30 feet
+  targets: 1 creature
+  summary: A bolt of force automatically hits for 1d4+1 force damage.
+  heightened: Damage increases by 1d4+1 every 2 ranks.

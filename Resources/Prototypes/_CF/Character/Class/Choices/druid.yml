@@ -1,0 +1,40 @@
+# CarpFinder: Druid orders, Player Core.
+- type: cfClassChoice
+  id: OrderAnimal
+  class: Druid
+  slot: cf-class-choice-order
+  name: cf-class-choice-order-animal
+  description: cf-class-choice-order-animal-desc
+  trainedSkills:
+  - Athletics
+
+- type: cfClassChoice
+  id: OrderLeaf
+  class: Druid
+  slot: cf-class-choice-order
+  name: cf-class-choice-order-leaf
+  description: cf-class-choice-order-leaf-desc
+  trainedSkills:
+  - Diplomacy
+
+- type: cfClassChoice
+  id: OrderStorm
+  class: Druid
+  slot: cf-class-choice-order
+  name: cf-class-choice-order-storm
+  description: cf-class-choice-order-storm-desc
+  trainedSkills:
+  - Acrobatics
+  grants:
+  - !type:CFGrantFocusSpell
+    spell: TempestSurge
+
+- type: cfClassChoice
+  id: OrderUntamed
+  class: Druid
+  slot: cf-class-choice-order
+  name: cf-class-choice-order-untamed
+  description: cf-class-choice-order-untamed-desc
+  trainedSkills:
+  - Intimidation
+

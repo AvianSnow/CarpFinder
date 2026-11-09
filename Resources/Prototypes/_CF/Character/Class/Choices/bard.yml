@@ -1,0 +1,38 @@
+# CarpFinder: Bard muses, Player Core.
+- type: cfClassChoice
+  id: MuseEnigma
+  class: Bard
+  slot: cf-class-choice-muse
+  name: cf-class-choice-muse-enigma
+  description: cf-class-choice-muse-enigma-desc
+  grants:
+  - !type:CFGrantSpell
+    spell: SureStrike
+
+- type: cfClassChoice
+  id: MuseMaestro
+  class: Bard
+  slot: cf-class-choice-muse
+  name: cf-class-choice-muse-maestro
+  description: cf-class-choice-muse-maestro-desc
+  grants:
+  - !type:CFGrantSpell
+    spell: Soothe
+
+- type: cfClassChoice
+  id: MusePolymath
+  class: Bard
+  slot: cf-class-choice-muse
+  name: cf-class-choice-muse-polymath
+  description: cf-class-choice-muse-polymath-desc
+
+- type: cfClassChoice
+  id: MuseWarrior
+  class: Bard
+  slot: cf-class-choice-muse
+  name: cf-class-choice-muse-warrior
+  description: cf-class-choice-muse-warrior-desc
+  grants:
+  - !type:CFGrantSpell
+    spell: Fear
+

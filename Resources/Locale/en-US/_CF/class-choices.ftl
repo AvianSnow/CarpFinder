@@ -19,3 +19,61 @@ cf-class-choice-edge-precision = Precision
 cf-class-choice-edge-precision-desc = The first time you hit your prey each turn, you deal 1d8 extra precision damage.
 
 cf-class-feature-weapon-mastery = Fighter Weapon Mastery
+
+cf-class-choice-muse = Muse
+cf-class-choice-muse-enigma = Enigma
+cf-class-choice-muse-enigma-desc = You learn sure strike as a spell. The Bardic Lore feat: TBA
+cf-class-choice-muse-maestro = Maestro
+cf-class-choice-muse-maestro-desc = You learn soothe as a spell. The Lingering Composition feat: TBA
+cf-class-choice-muse-polymath = Polymath
+cf-class-choice-muse-polymath-desc = The Versatile Performance feat and the phantasmal minion spell: TBA
+cf-class-choice-muse-warrior = Warrior
+cf-class-choice-muse-warrior-desc = You learn fear as a spell. The Martial Performance feat: TBA
+
+cf-class-choice-doctrine = Doctrine
+cf-class-choice-doctrine-cloistered = Cloistered Cleric
+cf-class-choice-doctrine-cloistered-desc = At level 3 you become an expert in Fortitude saves. The Domain Initiate feat at level 1: TBA
+cf-class-choice-doctrine-warpriest = Warpriest
+cf-class-choice-doctrine-warpriest-desc = Trained in light and medium armor, expert in Fortitude saves, and Shield Block. At level 3 you are trained in martial weapons. Deadly Simplicity: TBA
+
+cf-class-choice-order = Druidic Order
+cf-class-choice-order-animal = Animal
+cf-class-choice-order-animal-desc = You are trained in Athletics. The Animal Companion feat and heal animal: TBA
+cf-class-choice-order-leaf = Leaf
+cf-class-choice-order-leaf-desc = You are trained in Diplomacy. The Leshy Familiar feat and its order spell: TBA
+cf-class-choice-order-storm = Storm
+cf-class-choice-order-storm-desc = You are trained in Acrobatics and can cast tempest surge as a focus spell. The Storm Born feat: TBA
+cf-class-choice-order-untamed = Untamed
+cf-class-choice-order-untamed-desc = You are trained in Intimidation. The Untamed Form feat and its order spell: TBA
+
+cf-class-choice-school = Arcane School
+cf-class-choice-school-ars-grammatica = School of Ars Grammatica
+cf-class-choice-school-ars-grammatica-desc = The school's focus spell and extra curriculum slot: TBA
+cf-class-choice-school-battle-magic = School of Battle Magic
+cf-class-choice-school-battle-magic-desc = You can cast force bolt as a focus spell. The school's extra curriculum slot: TBA
+cf-class-choice-school-boundary = School of the Boundary
+cf-class-choice-school-boundary-desc = The school's focus spell and extra curriculum slot: TBA
+cf-class-choice-school-civic-wizardry = School of Civic Wizardry
+cf-class-choice-school-civic-wizardry-desc = The school's focus spell and extra curriculum slot: TBA
+cf-class-choice-school-mentalism = School of Mentalism
+cf-class-choice-school-mentalism-desc = The school's focus spell and extra curriculum slot: TBA
+cf-class-choice-school-protean-form = School of Protean Form
+cf-class-choice-school-protean-form-desc = The school's focus spell and extra curriculum slot: TBA
+cf-class-choice-school-unified-theory = School of Unified Magical Theory
+cf-class-choice-school-unified-theory-desc = The school's focus spell and extra curriculum slot: TBA
+
+cf-class-choice-patron = Patron
+cf-class-choice-patron-faiths-flamekeeper = Faith's Flamekeeper
+cf-class-choice-patron-faiths-flamekeeper-desc = The patron's tradition, hex cantrip and familiar gift: TBA
+cf-class-choice-patron-inscribed-one = The Inscribed One
+cf-class-choice-patron-inscribed-one-desc = The patron's tradition, hex cantrip and familiar gift: TBA
+cf-class-choice-patron-resentment = The Resentment
+cf-class-choice-patron-resentment-desc = The patron's tradition, hex cantrip and familiar gift: TBA
+cf-class-choice-patron-silence-in-snow = Silence in Snow
+cf-class-choice-patron-silence-in-snow-desc = The patron's tradition, hex cantrip and familiar gift: TBA
+cf-class-choice-patron-spinner-of-threads = Spinner of Threads
+cf-class-choice-patron-spinner-of-threads-desc = The patron's tradition, hex cantrip and familiar gift: TBA
+cf-class-choice-patron-starless-shadow = Starless Shadow
+cf-class-choice-patron-starless-shadow-desc = The patron's tradition, hex cantrip and familiar gift: TBA
+cf-class-choice-patron-wilding-steward = Wilding Steward
+cf-class-choice-patron-wilding-steward-desc = The patron's tradition, hex cantrip and familiar gift: TBA

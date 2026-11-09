@@ -1,0 +1,53 @@
+# CarpFinder: Wizard arcane schools, Player Core.
+- type: cfClassChoice
+  id: SchoolArsGrammatica
+  class: Wizard
+  slot: cf-class-choice-school
+  name: cf-class-choice-school-ars-grammatica
+  description: cf-class-choice-school-ars-grammatica-desc
+
+- type: cfClassChoice
+  id: SchoolBattleMagic
+  class: Wizard
+  slot: cf-class-choice-school
+  name: cf-class-choice-school-battle-magic
+  description: cf-class-choice-school-battle-magic-desc
+  grants:
+  - !type:CFGrantFocusSpell
+    spell: ForceBolt
+
+- type: cfClassChoice
+  id: SchoolBoundary
+  class: Wizard
+  slot: cf-class-choice-school
+  name: cf-class-choice-school-boundary
+  description: cf-class-choice-school-boundary-desc
+
+- type: cfClassChoice
+  id: SchoolCivicWizardry
+  class: Wizard
+  slot: cf-class-choice-school
+  name: cf-class-choice-school-civic-wizardry
+  description: cf-class-choice-school-civic-wizardry-desc
+
+- type: cfClassChoice
+  id: SchoolMentalism
+  class: Wizard
+  slot: cf-class-choice-school
+  name: cf-class-choice-school-mentalism
+  description: cf-class-choice-school-mentalism-desc
+
+- type: cfClassChoice
+  id: SchoolProteanForm
+  class: Wizard
+  slot: cf-class-choice-school
+  name: cf-class-choice-school-protean-form
+  description: cf-class-choice-school-protean-form-desc
+
+- type: cfClassChoice
+  id: SchoolUnifiedTheory
+  class: Wizard
+  slot: cf-class-choice-school
+  name: cf-class-choice-school-unified-theory
+  description: cf-class-choice-school-unified-theory-desc
+

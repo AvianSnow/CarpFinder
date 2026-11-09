@@ -35,17 +35,22 @@
   features:
     - level: 1
       name: "Familiar (Witch)"
-      description: "This feature will be implemented later."
+      description: "Your patron's familiar: TBA"
     - level: 1
       name: "Hexes"
-      description: "This feature will be implemented later."
+      description: "Hex spells: TBA"
     - level: 1
       name: "Patron"
-      description: "This feature will be implemented later."
+      description: "Choose yours with the Patron button."
     - level: 1
       name: "Witch Spellcasting"
       description: "Level 1 cantrips and spell slots are on the spell sheet."
     - level: 5
       name: "Magical Fortitude"
-      description: "This feature will be implemented later."
+      description: "Expert in Fortitude saves."
+      grants:
+        - !type:CFGrantProficiency
+          proficiencies:
+            - Fortitude
+          rank: Expert
   # Class key-attribute boost is applied from keyAbility in code (PF2e).

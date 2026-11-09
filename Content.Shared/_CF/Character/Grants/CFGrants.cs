@@ -146,6 +146,18 @@ public sealed partial class CFGrantSpell : CFGrant
     }
 }
 
+/// <summary>A focus spell. It adds a Focus Point to the character's pool, up to 3, and the Refocus action.</summary>
+public sealed partial class CFGrantFocusSpell : CFGrant
+{
+    [DataField(required: true)]
+    public ProtoId<CFSpellPrototype> Spell;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        entities.System<CFCharacterFeatureSystem>().GrantFocusSpell(args.Mob, Spell);
+    }
+}
+
 /// <summary>Gear placed at the character's feet.</summary>
 public sealed partial class CFGrantItem : CFGrant
 {

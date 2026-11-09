@@ -206,6 +206,19 @@ public sealed partial class CFSpellSystem : EntitySystem
 
     private bool TrySpend(EntityUid caster, CFSpellComponent spell)
     {
+        if (spell.Focus)
+        {
+            if (!TryComp<CFSpellbookComponent>(caster, out var pool) || CFFocusSystem.Remaining(pool) <= 0)
+            {
+                _popup.PopupEntity(Loc.GetString("cf-spell-no-focus"), caster, caster);
+                return false;
+            }
+
+            pool.FocusSpent++;
+            Dirty(caster, pool);
+            return true;
+        }
+
         if (!HasSlot(caster, spell))
         {
             if (spell.Rank > 0)
@@ -232,6 +245,9 @@ public sealed partial class CFSpellSystem : EntitySystem
     /// <summary>True when this cast can spend one slot of the spell's rank. Cantrips and creatures without a book always can.</summary>
     public bool HasSlot(EntityUid caster, CFSpellComponent spell)
     {
+        if (spell.Focus)
+            return TryComp<CFSpellbookComponent>(caster, out var pool) && CFFocusSystem.Remaining(pool) > 0;
+
         if (spell.Rank <= 0 || !TryComp<CFSpellbookComponent>(caster, out var book))
             return true;
 

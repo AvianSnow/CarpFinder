@@ -126,7 +126,7 @@ All of this is picked in the lobby and stored on `CFCharacterBuildData`, the way
 - [ ] Dispel Magic, which needs PF2e counteract rules.
 - [ ] Animal Form, which needs a battle form.
 - [ ] Figment, Sigil and Know the Way. Give each something real to do, or flavour and `TBA`.
-- [ ] Focus spells: a `Focus` spell kind, refilling focus points, and one focus spell per class that has them. `CFSpellbook.FocusPoints` exists and only the Animist sets it.
+- [x] Focus spells: `focus: true` on `CFSpell` and `CFGrantFocusSpell`, up to 3 Focus Points, refilled by a long rest. Refocus gives one back after 10 world minutes (2.5 real minutes at the default clock), and moving or being hurt interrupts it. In `Spells/Focus/`. Tempest Surge and Force Bolt are the first ones. Tests: `CFFocusTest`.
 - [ ] Casting from a higher slot. Slotted spells only resolve at their own rank today, so heightening does not work for them.
 - [ ] Signature Spells, and Divine Font's slots.
 - [ ] Compare each spell's effects with its text. The scan only finds spells with no effect at all, not spells with part of one.
@@ -140,7 +140,7 @@ Do 1a to 1d first, then work through these. For each entry: read it on Archives 
 | 1 | Ancestries and heritages. Mostly grants, and no subclass needed. Worked through on 9 November 2026. Heritages: 60 have working effects and 77 are marked `TBA`. Ancestry feats: 38 new ones work, and the rest are marked. Entries that only had `TBA` added still need their text checked against the rules when each is built. Tests: `CFHeritageTest`, `CFAncestryFeatTest` | 255, and 149 heritages |
 | | Wave 1 waits on: granting a skill feat, climb, swim and fly, a rule for choosing another ancestry's feats, and a `cfFeat` that needs a heritage (prerequisites are text) | |
 | 2 | Fighter, Rogue, Ranger. First pass on 9 November 2026: class features, Hunter's Edge, Sneak Attack limits and 9 passive feats work, and the rest say `TBA`. Tests: `CFWave2Test`. Strike actions: `CFStrikeAction` in `Actions/strikes.yml`, with Intimidating Strike, Dual-Handed Assault, Lunge, Head Stomp, Twin Takedown and Hunter's Aim (tests: `CFStrikeActionTest`). Still to do: Strikes that hit several targets (Swipe, Quick Reversal, Double Shot), Strikes that add a maneuver (Brutish Shove, Slam Down, Sleek Reposition, Combat Grab), and two shots from a bow that holds one arrow (Hunted Shot) | 81 |
-| 3 | Cleric, Wizard, Bard, Druid, Witch | 105 |
+| 3 | Cleric, Wizard, Bard, Druid, Witch. Started on 9 November 2026: focus spells, all subclasses as choices, and class features that are rank raises. Most subclasses are still mostly `TBA`: their feats and focus spells. The 105 feats are not worked through yet | 105 |
 | 4 | Barbarian, Champion, Monk, Swashbuckler, Investigator, Alchemist, Sorcerer, Oracle | 179 |
 | 5 | Magus, Thaumaturge, Gunslinger, Inventor, Psychic, Commander, Guardian, Necromancer, Animist, Exemplar, Runesmith | 197 |
 | 6 | Summoner. Its eidolon is a second body, and it needs companions finished first | 23 |

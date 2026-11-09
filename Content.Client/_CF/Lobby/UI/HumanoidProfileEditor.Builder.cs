@@ -738,6 +738,19 @@ public sealed partial class HumanoidProfileEditor
         OpenPicker();
     }
 
+    /// <summary>A subclass option's name, marked if it has no effect in play yet.</summary>
+    private static string ClassChoiceName(CFClassChoicePrototype choice)
+    {
+        var name = Loc.GetString(choice.Name);
+        var unfinished = choice.Grants.Count == 0
+                         && choice.Features.Count == 0
+                         && choice.Choices.Count == 0
+                         && choice.TrainedSkills.Count == 0
+                         && choice.KeyAbility == null
+                         && Loc.GetString(choice.Description).Contains("TBA");
+        return unfinished ? Loc.GetString("cf-character-builder-feat-tba", ("name", name)) : name;
+    }
+
     /// <summary>A heritage's name, marked if it has no effect in play yet.</summary>
     private static string HeritageName(CFHeritagePrototype heritage)
     {
@@ -1035,7 +1048,7 @@ public sealed partial class HumanoidProfileEditor
             options.Add(new Pf2eListEntry
             {
                 Id = choice.ID,
-                Name = Loc.GetString(choice.Name),
+                Name = ClassChoiceName(choice),
                 Rarity = choice.Rarity,
                 Traits = choice.KeyAbility is { } key
                     ? Loc.GetString("cf-character-builder-class-key-ability", ("ability", AbilityName(key)))

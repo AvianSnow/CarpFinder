@@ -1,6 +1,7 @@
 using Content.Shared.Actions;
 using Content.Shared.CF.Character.Grants;
 using Content.Shared.CF.Combat;
+using Content.Shared.CF.Spells;
 using Content.Shared.CF.Traits;
 using Content.Shared.Overlays;
 using Robust.Shared.Prototypes;
@@ -134,6 +135,15 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
 
         GrantAction(mob, action);
         return true;
+    }
+
+    public void GrantFocusSpell(EntityUid mob, ProtoId<CFSpellPrototype> spell)
+    {
+        GrantSpell(mob, spell);
+        var book = EnsureComp<CFSpellbookComponent>(mob);
+        book.FocusPoints = Math.Min(CFFocusSystem.MaxFocusPoints, book.FocusPoints + 1);
+        Dirty(mob, book);
+        GrantAction(mob, "CFActRefocus");
     }
 
     /// <summary>Adds an action, unless another option has already granted it.</summary>

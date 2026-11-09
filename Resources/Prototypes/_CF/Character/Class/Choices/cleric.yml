@@ -1,0 +1,43 @@
+# CarpFinder: Cleric doctrines, Player Core.
+- type: cfClassChoice
+  id: DoctrineCloistered
+  class: Cleric
+  slot: cf-class-choice-doctrine
+  name: cf-class-choice-doctrine-cloistered
+  description: cf-class-choice-doctrine-cloistered-desc
+  features:
+  - level: 3
+    name: Second Doctrine
+    grants:
+    - !type:CFGrantProficiency
+      proficiencies:
+      - Fortitude
+      rank: Expert
+
+- type: cfClassChoice
+  id: DoctrineWarpriest
+  class: Cleric
+  slot: cf-class-choice-doctrine
+  name: cf-class-choice-doctrine-warpriest
+  description: cf-class-choice-doctrine-warpriest-desc
+  grants:
+  - !type:CFGrantProficiency
+    proficiencies:
+    - LightArmor
+    - MediumArmor
+    rank: Trained
+  - !type:CFGrantProficiency
+    proficiencies:
+    - Fortitude
+    rank: Expert
+  - !type:CFGrantOption
+    option: ShieldBlock
+  features:
+  - level: 3
+    name: Second Doctrine
+    grants:
+    - !type:CFGrantProficiency
+      proficiencies:
+      - MartialWeapons
+      rank: Trained
+

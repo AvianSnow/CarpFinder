@@ -17,6 +17,10 @@ public sealed partial class CFSpellComponent : Component
     [DataField, AutoNetworkedField]
     public ProtoId<CFSpellPrototype> Spell;
 
+    /// <summary>Costs a Focus Point instead of a slot. It uses the cantrip rank rule, so <see cref="Rank"/> stays 0.</summary>
+    [DataField, AutoNetworkedField]
+    public bool Focus;
+
     /// <summary>0 is a cantrip: it does not spend a slot and heightens to half the caster's level.</summary>
     [DataField, AutoNetworkedField]
     public int Rank;
