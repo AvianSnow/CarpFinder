@@ -1,3 +1,5 @@
+using System.Linq;
+using Content.Shared.CF.Preferences;
 using Content.Shared.CF.Traits;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
@@ -121,13 +123,38 @@ public static class CFSpellSlots
         if (casting.Cantrips > 0)
             ranks.Add(new CFSpellRankSlots(0, casting.Cantrips));
 
-        for (var i = 0; i < casting.Slots.Count; i++)
+        // Everything is chosen in the lobby, so the builder offers what the character will have by the last level.
+        var slots = casting.SlotsAt(CFExperienceComponent.MaxLevel);
+        for (var i = 0; i < slots.Count; i++)
         {
-            if (casting.Slots[i] > 0)
-                ranks.Add(new CFSpellRankSlots(i + 1, casting.Slots[i]));
+            if (slots[i] > 0)
+                ranks.Add(new CFSpellRankSlots(i + 1, slots[i]));
         }
 
         return ranks;
+    }
+
+    /// <summary>
+    /// The builder picks a character has by the time it has these slots: the first of each rank, up to that rank's slots.
+    /// A build comes from a client, so a spell above its slot's rank is left out.
+    /// </summary>
+    public static List<CFSpellPick> Within(IEnumerable<CFSpellPick> picks, IReadOnlyList<int> slots, IPrototypeManager prototypes)
+    {
+        var result = new List<CFSpellPick>();
+        var taken = new int[slots.Count];
+        foreach (var pick in picks.OrderBy(spell => spell.Rank).ThenBy(spell => spell.Index))
+        {
+            if (!pick.HasSpell || pick.Rank < 0 || pick.Rank >= slots.Count)
+                continue;
+
+            if (!prototypes.TryIndex(pick.Spell, out var spell) || spell.Rank > pick.Rank || taken[pick.Rank] >= slots[pick.Rank])
+                continue;
+
+            taken[pick.Rank]++;
+            result.Add(pick);
+        }
+
+        return result;
     }
 
     public static string ActionSymbols(CFSpellActionCost cost)

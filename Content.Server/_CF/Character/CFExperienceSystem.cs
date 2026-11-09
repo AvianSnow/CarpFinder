@@ -199,7 +199,10 @@ public sealed partial class CFExperienceSystem : EntitySystem
         }
 
         if (cls != null)
+        {
+            _spawn.GrowSpellbook(mob, cls, combat.Level, xp);
             _features.ApplyClassFeatures(mob, cls, combat.Level);
+        }
 
         foreach (var choiceId in xp.ClassChoices)
         {

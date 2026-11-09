@@ -36,6 +36,11 @@
     cantrips: 2
     slots:
       - 1
+    laterSlots:
+      - [ 2 ]
+      - [ 2, 1 ]
+      - [ 2, 2 ]
+      - [ 2, 2, 1 ]
     prepared: true
   features:
     - level: 1
@@ -60,19 +65,7 @@
           proficiencies:
             - Fortitude
           rank: Expert
-    - level: 2
-      name: "Apparition Slot"
-      description: "Another apparition spell slot."
-      grants:
-        - !type:CFGrantApparitionSlots
-          rank: 1
     - level: 3
-      name: "Apparition Slot"
-      description: "Another apparition spell slot."
-      grants:
-        - !type:CFGrantApparitionSlots
-          rank: 2
-    - level: 4
       name: "Apparition Slot"
       description: "Another apparition spell slot."
       grants:

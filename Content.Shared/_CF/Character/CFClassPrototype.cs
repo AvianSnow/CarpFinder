@@ -100,6 +100,27 @@ public sealed partial class CFSpellcasting
     [DataField]
     public List<int> Slots = new();
 
+    /// <summary>Slots per rank at each level from 2, one list per level. Empty means <see cref="Slots"/> at every level.</summary>
+    [DataField]
+    public List<List<int>> LaterSlots = new();
+
+    /// <summary>Slots per rank at a level, starting from rank 1.</summary>
+    public List<int> SlotsAt(int level)
+    {
+        if (level <= 1 || LaterSlots.Count == 0)
+            return Slots;
+
+        return LaterSlots[Math.Min(level - 2, LaterSlots.Count - 1)];
+    }
+
+    /// <summary>The same with cantrips at index 0, as <see cref="CFSpellbookComponent.Slots"/> holds them.</summary>
+    public List<int> AllSlotsAt(int level)
+    {
+        var all = new List<int> { Cantrips };
+        all.AddRange(SlotsAt(level));
+        return all;
+    }
+
     [DataField]
     public int FocusPoints;
 

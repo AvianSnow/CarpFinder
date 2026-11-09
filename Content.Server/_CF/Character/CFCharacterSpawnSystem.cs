@@ -182,6 +182,7 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         xp.AbilityBoostsLevel5 = profile.CFBuild.AbilityBoostsLevel5.Distinct().Take(CFAttributeMath.LevelFiveBoostCount).ToList();
         xp.ClassChoices = CFClassChoices.Selected(_prototypes, profile.CFBuild).Select(choice => choice.ID).ToList();
         xp.OptionPicks = CFOptionChoices.Valid(_prototypes, profile.CFBuild, ancestryId);
+        xp.SpellPicks = profile.CFBuild.Spells.Select(spell => spell.Copy()).ToList();
         Dirty(mob, xp);
         combatant.LoreNames.Clear();
         foreach (var chosen in chosenFeats)
@@ -208,7 +209,7 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         Dirty(mob, languages);
         _actionPool.Ensure(mob);
         ApplySpellbook(mob, profile, sheet.Class);
-        GrantSpellActions(mob, profile);
+        GrantSpellActions(mob, profile, sheet.Class);
         ApplyFeatures(mob, profile, sheet.Ancestry, heritage, sheet.Class, chosenFeats);
     }
 
@@ -260,13 +261,71 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
     /// <summary>
     /// Known spells become radial actions when a matching <c>CF{spell}</c> entity exists.
     /// </summary>
-    private void GrantSpellActions(EntityUid mob, Content.Shared.Preferences.HumanoidCharacterProfile profile)
+    private void GrantSpellActions(EntityUid mob, Content.Shared.Preferences.HumanoidCharacterProfile profile, CFClassPrototype? cls)
     {
+        if (cls?.Spellcasting is { } casting)
+        {
+            // Picks for later levels wait for GrowSpellbook. A spell with no slot of its rank would otherwise be at will.
+            foreach (var pick in CFSpellSlots.Within(profile.CFBuild.Spells, casting.AllSlotsAt(1), _prototypes))
+            {
+                _features.GrantSpell(mob, pick.Spell);
+            }
+
+            return;
+        }
+
         foreach (var pick in profile.CFBuild.Spells)
         {
             if (pick.HasSpell && pick.Rank >= 0)
                 _features.GrantSpell(mob, pick.Spell);
         }
+    }
+
+    /// <summary>
+    /// Gives a caster its new level's slots, and the spells picked for them in the lobby. A prepared caster has them ready at once,
+    /// as well as planned for its next long rest.
+    /// </summary>
+    public void GrowSpellbook(EntityUid mob, CFClassPrototype cls, int level, CFExperienceComponent xp)
+    {
+        if (cls.Spellcasting is not { } casting || !TryComp(mob, out CFSpellbookComponent? book))
+            return;
+
+        var before = casting.AllSlotsAt(level - 1);
+        var after = casting.AllSlotsAt(level);
+        var known = CFSpellSlots.Within(xp.SpellPicks, before, _prototypes);
+        foreach (var pick in CFSpellSlots.Within(xp.SpellPicks, after, _prototypes))
+        {
+            if (known.Exists(old => old.Rank == pick.Rank && old.Index == pick.Index))
+                continue;
+
+            _features.GrantSpell(mob, pick.Spell);
+            if (!casting.Prepared || pick.Rank <= 0)
+                continue;
+
+            if (!book.Repertoire.Contains(pick.Spell))
+                book.Repertoire.Add(pick.Spell);
+
+            book.PreparedSlots.Add(new CFPreparedSlot(pick.Spell, pick.Rank));
+            book.PlannedSlots.Add(new CFPreparedSlot(pick.Spell, pick.Rank));
+        }
+
+        // A spare slot, such as Divine Font's, stays on top of what the table gives.
+        for (var rank = 0; rank < after.Count; rank++)
+        {
+            var spare = rank < before.Count && rank < book.Slots.Count ? book.Slots[rank] - before[rank] : 0;
+            if (rank < book.Slots.Count)
+                book.Slots[rank] = after[rank] + spare;
+            else
+                book.Slots.Add(after[rank]);
+        }
+
+        book.PreparableSlots = new List<int>(after);
+        while (book.Expended.Count < book.Slots.Count)
+        {
+            book.Expended.Add(0);
+        }
+
+        Dirty(mob, book);
     }
 
     /// <summary>
@@ -312,7 +371,7 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
     }
 
     /// <summary>A prepared caster starts with one charge per spell picked in the lobby, and plans the same for its next long rest.</summary>
-    private static void ApplyPrepared(
+    private void ApplyPrepared(
         CFSpellbookComponent book,
         Content.Shared.Preferences.HumanoidCharacterProfile profile,
         CFSpellcasting casting)
@@ -326,19 +385,14 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         if (!casting.Prepared)
             return;
 
-        var used = new int[book.Slots.Count];
-        foreach (var pick in profile.CFBuild.Spells)
+        foreach (var pick in CFSpellSlots.Within(profile.CFBuild.Spells, book.Slots, _prototypes))
         {
-            if (!pick.HasSpell || pick.Rank <= 0 || pick.Rank >= book.Slots.Count)
+            if (pick.Rank <= 0)
                 continue;
 
             if (!book.Repertoire.Contains(pick.Spell))
                 book.Repertoire.Add(pick.Spell);
 
-            if (used[pick.Rank] >= book.Slots[pick.Rank])
-                continue;
-
-            used[pick.Rank]++;
             book.PreparedSlots.Add(new CFPreparedSlot(pick.Spell, pick.Rank, pick.Expended));
             book.PlannedSlots.Add(new CFPreparedSlot(pick.Spell, pick.Rank));
         }

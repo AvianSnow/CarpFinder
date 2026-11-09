@@ -57,4 +57,8 @@ public sealed partial class CFExperienceComponent : Component
     /// <summary>Subclass picks, checked at spawn. Their later features run on level up.</summary>
     [DataField, AutoNetworkedField]
     public List<string> ClassChoices = new();
+
+    /// <summary>The spells picked in the lobby, for the slots that arrive at later levels.</summary>
+    [DataField]
+    public List<CFSpellPick> SpellPicks = new();
 }

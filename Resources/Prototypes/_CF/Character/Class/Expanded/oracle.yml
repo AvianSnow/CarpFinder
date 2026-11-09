@@ -35,6 +35,11 @@
     cantrips: 5
     slots:
       - 3
+    laterSlots:
+      - [ 4 ]
+      - [ 4, 3 ]
+      - [ 4, 4 ]
+      - [ 4, 4, 3 ]
   features:
     - level: 1
       name: "Mystery"

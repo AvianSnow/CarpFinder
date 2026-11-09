@@ -34,6 +34,11 @@
     cantrips: 5
     slots:
       - 2
+    laterSlots:
+      - [ 3 ]
+      - [ 3, 2 ]
+      - [ 3, 3 ]
+      - [ 3, 3, 2 ]
     prepared: true
   features:
     - level: 1
