@@ -1290,3 +1290,110 @@
   range: self
   targets: none
   summary: "+1 status to Perception while sustained. The second bonus, free Seek, Recall Knowledge and the price: TBA."
+
+# Link spells: a Summoner's focus spells and cantrips, which work on their eidolon.
+
+- type: entity
+  parent: CFSpellInstant
+  id: CFBoostEidolon
+  name: Boost Eidolon
+  description: "+2 status to your eidolon's damage for 6 seconds."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: BoostEidolon
+    rank: 0
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFOnEidolonEffect
+      effects:
+      - !type:CFBonusEffect
+        stat: Damage
+        type: Status
+        value: 2
+        durationSeconds: 6
+
+- type: entity
+  parent: CFSpellInstant
+  id: CFReinforceEidolon
+  name: Reinforce Eidolon
+  description: "+1 status to your eidolon's AC and saves for 6 seconds."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: ReinforceEidolon
+    rank: 0
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFOnEidolonEffect
+      effects:
+      - !type:CFBonusEffect
+        stat: ArmorClass
+        type: Status
+        value: 1
+        durationSeconds: 6
+      - !type:CFBonusEffect
+        stat: Saves
+        type: Status
+        value: 1
+        durationSeconds: 6
+
+- type: entity
+  parent: CFSpellInstant
+  id: CFEvolutionSurge
+  name: Evolution Surge
+  description: "+20 feet status to your eidolon's Speed for a minute. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 2
+  - type: CFSpell
+    spell: EvolutionSurge
+    rank: 0
+    focus: true
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFOnEidolonEffect
+      effects:
+      - !type:CFBonusEffect
+        stat: Speed
+        type: Status
+        value: 20
+        durationSeconds: 60
+
+- type: cfSpell
+  id: BoostEidolon
+  name: Boost Eidolon
+  rank: 0
+  traits: [Cantrip, Concentrate]
+  actionCost: One
+  range: 100 feet
+  targets: your eidolon
+  summary: "+2 status to your eidolon's damage for 6 seconds."
+
+- type: cfSpell
+  id: ReinforceEidolon
+  name: Reinforce Eidolon
+  rank: 0
+  traits: [Cantrip, Concentrate]
+  actionCost: One
+  range: 100 feet
+  targets: your eidolon
+  summary: "+1 status to your eidolon's AC and saves for 6 seconds. Its resistance: TBA."
+
+- type: cfSpell
+  id: EvolutionSurge
+  name: Evolution Surge
+  rank: 1
+  traits: [Concentrate, Manipulate]
+  actionCost: Two
+  range: 100 feet
+  targets: your eidolon
+  summary: "+20 feet status to your eidolon's Speed for a minute. The other evolutions: TBA."

@@ -11,4 +11,6 @@
     - "Evolution"
     - "Summoner"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActDefendSummoner

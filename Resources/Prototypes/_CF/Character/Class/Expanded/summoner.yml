@@ -39,13 +39,21 @@
   features:
     - level: 1
       name: "Eidolon"
-      description: "Your eidolon, a second body. Eidolons are not built yet: TBA"
+      description: "Choose your eidolon, its key attribute and its attack in the builder. Manifest Eidolon brings it to your side. You share Hit Points, and it stays within 100 feet. Point at an enemy to send it, and a ghost can take it over. Act Together and Share Senses: TBA"
+      grants:
+        - !type:CFGrantAction
+          action: CFActManifestEidolon
     - level: 1
       name: "Evolution Feat"
-      description: "A feat for your eidolon. Eidolons are not built yet: TBA"
+      description: "You pick an evolution feat for your eidolon, as your level 1 class feat."
     - level: 1
       name: "Link Spells"
-      description: "Focus spells that work through your eidolon. Eidolons are not built yet: TBA"
+      description: "You know Boost Eidolon and Evolution Surge."
+      grants:
+        - !type:CFGrantSpell
+          spell: BoostEidolon
+        - !type:CFGrantFocusSpell
+          spell: EvolutionSurge
     - level: 1
       name: "Spell Repertoire"
       description: "Level 1 cantrips and spell slots are on the spell sheet."
@@ -54,11 +62,16 @@
       description: "Level 1 cantrips and spell slots are on the spell sheet."
     - level: 3
       name: "Shared Vigilance"
-      description: "Expert Perception for you and your eidolon. Eidolons are not built yet: TBA"
+      description: "Expert in Perception, for you and your eidolon."
+      grants:
+        - !type:CFGrantProficiency
+          proficiencies:
+            - Perception
+          rank: Expert
     - level: 3
       name: "Signature Spells"
       description: "Heighten chosen spells freely. Casting from a higher slot does not exist yet: TBA"
     - level: 5
       name: "Eidolon Unarmed Expertise"
-      description: "Better unarmed attacks for your eidolon. Eidolons are not built yet: TBA"
+      description: "Your eidolon is expert with its unarmed attacks."
   # Class key-attribute boost is applied from keyAbility in code (PF2e).

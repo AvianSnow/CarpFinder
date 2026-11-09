@@ -1,0 +1,59 @@
+# A Summoner's eidolon. CFEidolonServerSystem spawns it and sets its name, statistics and attack from the Summoner's build.
+# Every type shares the placeholder companion sprite for now. It is a companion ordered by pointing, and a ghost can take it over.
+
+- type: entity
+  parent: [ SimpleMobBase, CFCompanionBase ]
+  id: CFEidolon
+  name: eidolon
+  description: A being from beyond, bound to its Summoner's life.
+  suffix: Companion
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    layers:
+    - map: ["enum.DamageStateVisualLayers.Base"]
+      state: companion
+      sprite: _CF/Mobs/companion-default.rsi
+  - type: DamageStateVisuals
+    states:
+      Alive:
+        Base: companion
+      Critical:
+        Base: dead
+      Dead:
+        Base: dead
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      100: Dead
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: InputMover
+  - type: MobMover
+  - type: CombatMode
+  - type: GhostRole
+    prob: 1
+    name: cf-eidolon-ghost-name
+    description: cf-eidolon-ghost-description
+    rules: cf-eidolon-ghost-rules
+    makeSentient: true
+    allowMovement: true
+    allowSpeech: true
+  - type: GhostTakeoverAvailable
+  - type: CFActionPool
+  - type: CFAbilityScore
+  - type: CFCombatant
+    level: 1
+    armorClass: 15
+    maxHp: 10
+    currentHp: 10
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 8
+    naturalType: bludgeoning
+    naturalFinesse: false
+    naturalAgile: false

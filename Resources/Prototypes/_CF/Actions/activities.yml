@@ -172,3 +172,102 @@
   - type: Action
     useDelay: 6
   - type: CFCircleOfSpiritsAction
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActManifestEidolon
+  name: Manifest Eidolon
+  description: Brings your eidolon into the world beside you, or sends it back. It stays within 100 feet, and shares your Hit Points. Costs 3 actions.
+  components:
+  - type: CFRadialSlot
+    actions: 3
+  - type: CFManifestEidolonAction
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActFuriousStrike
+  name: Furious Strike
+  description: Your eidolon makes a Strike with an extra die and +1 damage. It has to be able to reach the target. Costs 2 actions.
+  components:
+  - type: TargetAction
+    range: 20
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFEidolonStrikeAction
+    extraDice: 1
+    bonusDamage: 1
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTendrilStrike
+  name: Tendril Strike
+  description: Your eidolon makes a Strike with 5 feet more reach. Costs 1 action.
+  components:
+  - type: TargetAction
+    range: 20
+  - type: CFEidolonStrikeAction
+    extraReachFeet: 5
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActDragonBreath
+  name: Dragon Breath
+  description: "Your eidolon breathes a 30-foot cone of fire at the nearest enemy: 1d6, and 1d6 more at level 3 and every 2 levels after, basic Reflex against your spell DC. Costs 2 actions."
+  components:
+  - type: Action
+    useDelay: 15
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFOnEidolonEffect
+      effects:
+      - !type:CFThrallBlastEffect
+        shape: Cone
+        sizeFeet: 30
+        defense: Reflex
+        destroys: false
+        effects:
+        - !type:CFDamageEffect
+          dice: 1
+          die: 6
+          damageType: Fire
+          diceEveryLevels: 2
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActDefendSummoner
+  name: Defend Summoner
+  description: Your eidolon guards you. +2 circumstance to AC for 6 seconds. It should only count while you are within its reach, TBA. Costs 1 action.
+  components:
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: ArmorClass
+      type: Circumstance
+      value: 2
+      durationSeconds: 6
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActTandemMovement
+  name: Tandem Movement
+  description: You and your eidolon each get +10 feet Speed for 3 seconds, standing in for the Stride. Costs 1 action.
+  components:
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: Speed
+      type: Status
+      value: 10
+      durationSeconds: 3
+    - !type:CFOnEidolonEffect
+      effects:
+      - !type:CFBonusEffect
+        stat: Speed
+        type: Status
+        value: 10
+        durationSeconds: 3

@@ -154,6 +154,7 @@ Class examples: `CFMySystem`, `CFMyServerSystem`, `CFMyClientSystem`, `CFExample
 | Amping a psi cantrip | `CFPsiCantrip` on the spell's action, with what the amp changes. `CFPsiSystem` spends the Focus Point |
 | A Commander's tactic | An action with `CFTacticAction` in `Resources/Prototypes/_CF/Actions/tactics.yml`, and a `cfClassChoice` entry per tactic slot. `CFTacticSystem.Squad` says who answers |
 | Something that needs an Inventor's innovation | `CFInnovation` on the item or construct, `CFInventorSystem.IsUsing`, and `unstable: true` on a `CFStrikeAction` |
+| A Summoner's eidolon | `Choices/summoner.yml` with `!type:CFGrantEidolon`. `CFOnEidolonEffect` runs effects on the manifested eidolon. An eidolon ability the Summoner orders is an action with `CFEidolonStrikeAction`, or `CFEffectAction` |
 | A rune that goes on an item at a workbench | A `craftingRecipe` with `attachRune: true`, a `CFRuneItem` on its result and a `CFRuneTargetRequirement` (`count: 0`) in `Crafting/rune_recipes.yml`. `CFRuneSystem.CanAttach` says what can hold it |
 | A Runesmith rune | A `cfRune` in `Combat/runes.yml` and a `CFActTrace` action in `Actions/runes.yml`. The action's `CFCheck` and `CFDegreeEffects` are what invoking it does |
 | An Exemplar's ikon | A `cfIkon` in `Combat/ikons.yml`, a `CFActShift` action and a `CFActTrans` action with `CFIkonTranscendence` in `Actions/ikons.yml`, and `!type:CFGrantIkon` on a `cfClassChoice` |

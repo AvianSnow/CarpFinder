@@ -293,6 +293,75 @@ public sealed partial class CFGrantApparitionSlots : CFGrant
     }
 }
 
+/// <summary>What a Summoner's eidolon is. See <see cref="CFEidolonLinkComponent"/>.</summary>
+public sealed partial class CFGrantEidolon : CFGrant
+{
+    [DataField(required: true)]
+    public string Name = string.Empty;
+
+    [DataField]
+    public int Constitution;
+
+    [DataField]
+    public int Intelligence;
+
+    [DataField]
+    public int Wisdom;
+
+    [DataField]
+    public int Charisma;
+
+    [DataField]
+    public int SpeedFeet = 25;
+
+    [DataField]
+    public ProtoId<CFDamageTypePrototype>? Resistance;
+
+    [DataField]
+    public bool VoidHealing;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        var link = entities.EnsureComponent<CFEidolonLinkComponent>(args.Mob);
+        link.Name = Name;
+        link.Constitution = Constitution;
+        link.Intelligence = Intelligence;
+        link.Wisdom = Wisdom;
+        link.Charisma = Charisma;
+        link.SpeedFeet = SpeedFeet;
+        link.Resistance = Resistance;
+        link.VoidHealing = VoidHealing;
+    }
+}
+
+/// <summary>An eidolon's key attribute and the damage its attack deals.</summary>
+public sealed partial class CFGrantEidolonBuild : CFGrant
+{
+    /// <summary>Null leaves the key attribute alone.</summary>
+    [DataField]
+    public bool? DexterityKey;
+
+    /// <summary>Empty leaves the attack alone.</summary>
+    [DataField]
+    public string AttackType = string.Empty;
+
+    /// <summary>Feet added to the eidolon's Speed.</summary>
+    [DataField]
+    public int ExtraSpeed;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        var link = entities.EnsureComponent<CFEidolonLinkComponent>(args.Mob);
+        if (DexterityKey is { } dexterity)
+            link.DexterityKey = dexterity;
+
+        if (AttackType.Length > 0)
+            link.AttackType = AttackType;
+
+        link.ExtraSpeed += ExtraSpeed;
+    }
+}
+
 /// <summary>Recipes the character knows without reading a formula, such as a Runesmith's.</summary>
 public sealed partial class CFGrantFormulas : CFGrant
 {

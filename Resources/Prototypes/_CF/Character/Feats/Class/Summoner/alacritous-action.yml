@@ -9,3 +9,6 @@
   traits:
     - "Evolution"
     - "Summoner"
+  grants:
+    - !type:CFGrantEidolonBuild
+      extraSpeed: 10
