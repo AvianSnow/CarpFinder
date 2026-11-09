@@ -58,6 +58,7 @@ CF has no `NetMessage` of its own. Prefer `[Serializable, NetSerializable]` even
 
 One directed component + event pair. A second subscriber throws `Duplicate Subscriptions` at startup.
 
+- A system's subscriptions to one event must all have the same `before:` and `after:`, even on different components, or every game start throws `uses different ordering constraints`.
 - `MobStateComponent` + `MobStateChangedEvent` is already taken by `SharedStunSystem`. Subscribe to the broadcast, not the component.
 - `MobStateChangedEvent` has no `[ByRefEvent]`. Existing handlers are by-value. A `ref` handler throws `Attempted to subscribe by-ref and by-value to the same broadcast event`.
 - `ProjectileComponent` + `BeforeProjectileHitEvent` is already handled by `CFStrikeSystem`. Do not add another subscriber. Party blocks and strike resolution belong in that handler.

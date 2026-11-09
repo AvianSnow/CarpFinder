@@ -82,6 +82,9 @@ public sealed partial class CFStrikeActionSystem : EntitySystem
         if (action.Unstable && !_inventor.CanUseUnstable(user))
             return "cf-inventor-unstable-cannot";
 
+        if (action.DifferentTarget && CompOrNull<CFActionPoolComponent>(user)?.LastStrikeTarget == target)
+            return "cf-strike-action-needs-another";
+
         if (action.NeedsIgnoredTaunt && !_taunts.HasIgnored(target, user))
             return "cf-strike-action-needs-ignored-taunt";
 
@@ -156,9 +159,12 @@ public sealed partial class CFStrikeActionSystem : EntitySystem
             Dirty(user, options);
         }
 
-        var hit = _strikes.PerformStrike(user, target, stats, weapon, melee: true, attackPenalty: action.AttackBonus, extraDice: action.ExtraDice, finisher: action.Finisher, resolved: Resolved);
+        var hit = _strikes.PerformStrike(user, target, stats, weapon, melee: true, attackPenalty: action.AttackBonus, extraDice: action.ExtraDice, bonusDamage: action.BonusPerDie * (stats.DamageDice + action.ExtraDice), finisher: action.Finisher, resolved: Resolved);
         if (action.TwoWeapons && _strikes.TryOffHandWeapon(user, weapon, out var off, out var offHand))
             _strikes.PerformStrike(user, target, off, offHand, melee: true, attackPenalty: action.AttackBonus, skipPrecision: hit, resolved: Resolved);
+
+        if (action.Twice)
+            _strikes.PerformStrike(user, target, stats, weapon, melee: true, attackPenalty: action.AttackBonus - (stats.Agile ? 0 : 2), skipPrecision: hit, resolved: Resolved);
 
         if (action.Unstable)
             _inventor.RollUnstable(user);

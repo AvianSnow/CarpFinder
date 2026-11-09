@@ -34,6 +34,7 @@ public sealed partial class CFAuraSystem : EntitySystem
     [Dependency] private CFShieldSystem _shields = default!;
     [Dependency] private CFImplementSystem _implements = default!;
     [Dependency] private CFTacticSystem _tactics = default!;
+    [Dependency] private CFIkonSystem _ikons = default!;
 
     /// <param name="sizeFeet">A larger emanation than the aura has. 0 leaves it alone.</param>
     public void Add(EntityUid uid, IEnumerable<CFAuraEffect> effects, int sizeFeet = 0)
@@ -180,6 +181,7 @@ public sealed partial class CFAuraSystem : EntitySystem
             CFAuraNeeds.HoldingRegalia => _implements.IsHolding(uid, CFImplementKind.Regalia),
             CFAuraNeeds.HoldingLantern => _implements.IsHolding(uid, CFImplementKind.Lantern),
             CFAuraNeeds.HasBanner => _tactics.HasBanner(uid),
+            CFAuraNeeds.Immanence => _ikons.IsEmpowered(uid, effect.Ikon),
             _ => true,
         };
     }

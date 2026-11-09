@@ -1,0 +1,538 @@
+# Exemplar actions: moving the spark, and each ikon's transcendence. CFIkonSystem runs them.
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActShiftBarrowsEdge
+  name: "Shift to Barrow's Edge"
+  description: "Moves your spark here, or back to your soul if it is here already. A melee slashing or piercing weapon. 1 spirit per die, 3 if the target is below half its Hit Points."
+  components:
+  - type: CFShiftImmanenceAction
+    ikon: BarrowsEdge
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActTransBarrowsEdge
+  name: "Drink of my Foes"
+  description: "Spark Transcendence, then the spark moves to your next ikon. Regain half the damage of the Strike you just landed."
+  components:
+  - type: CFRadialSlot
+    actions: 1
+  - type: CFIkonTranscendence
+    ikon: BarrowsEdge
+    needsLastHit: true
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFIkonEffect
+      deed: DrinkOfMyFoes
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActShiftGleamingBlade
+  name: "Shift to Gleaming Blade"
+  description: "Moves your spark here, or back to your soul if it is here already. A sword or knife, or a slashing unarmed attack. 2 spirit per die."
+  components:
+  - type: CFShiftImmanenceAction
+    ikon: GleamingBlade
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActTransGleamingBlade
+  name: "Flowing Spirit Strike"
+  description: "Spark Transcendence, then the spark moves to your next ikon. Strike the same target twice, the second at -2 unless agile. Their damage is not combined or turned to spirit yet: TBA."
+  components:
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFIkonTranscendence
+    ikon: GleamingBlade
+  - type: CFStrikeAction
+    twice: true
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActShiftHandsOfTheWildling
+  name: "Shift to Hands of the Wildling"
+  description: "Moves your spark here, or back to your soul if it is here already. Unarmed attacks. 1 spirit splash per die."
+  components:
+  - type: CFShiftImmanenceAction
+    ikon: HandsOfTheWildling
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTransHandsOfTheWildling
+  name: "Feral Swing"
+  description: "Spark Transcendence, then the spark moves to your next ikon. A 15-foot cone of spirit damage equal to your Strike, basic Reflex against your class DC."
+  components:
+  - type: CFRadialSlot
+    actions: 2
+  - type: TargetAction
+    range: 3.5
+  - type: CFIkonTranscendence
+    ikon: HandsOfTheWildling
+    area: true
+  - type: CFAreaEffect
+    shape: Cone
+    sizeFeet: 15
+  - type: CFCheck
+    defense: Reflex
+    dcSource: Class
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFIkonStrikeDamageEffect
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActShiftMortalHarvest
+  name: "Shift to Mortal Harvest"
+  description: "Moves your spark here, or back to your soul if it is here already. An axe, flail or polearm. 1 persistent spirit per die."
+  components:
+  - type: CFShiftImmanenceAction
+    ikon: MortalHarvest
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActTransMortalHarvest
+  name: "Reap the Field"
+  description: "Spark Transcendence, then the spark moves to your next ikon. Strike a different creature after landing a Strike. The Stride: TBA."
+  components:
+  - type: CFRadialSlot
+    actions: 1
+  - type: CFIkonTranscendence
+    ikon: MortalHarvest
+    needsLastHit: true
+  - type: CFStrikeAction
+    differentTarget: true
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActShiftNobleBranch
+  name: "Shift to Noble Branch"
+  description: "Moves your spark here, or back to your soul if it is here already. A spear or polearm. Staves: TBA. 2 spirit per die."
+  components:
+  - type: CFShiftImmanenceAction
+    ikon: NobleBranch
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActTransNobleBranch
+  name: "Strike, Breathe, Rend"
+  description: "Spark Transcendence, then the spark moves to your next ikon. The target of the Strike you just landed takes spirit damage equal to your weapon dice."
+  components:
+  - type: CFRadialSlot
+    actions: 1
+  - type: CFIkonTranscendence
+    ikon: NobleBranch
+    needsLastHit: true
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFIkonEffect
+      deed: StrikeBreatheRend
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActShiftShadowSheath
+  name: "Shift to Shadow Sheath"
+  description: "Moves your spark here, or back to your soul if it is here already. A thrown weapon. 2 spirit per die, 3 if the target is off-guard. Drawing copies, and its transcendence: TBA."
+  components:
+  - type: CFShiftImmanenceAction
+    ikon: ShadowSheath
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActShiftStarshot
+  name: "Shift to Starshot"
+  description: "Moves your spark here, or back to your soul if it is here already. A ranged weapon. 1 spirit splash per die."
+  components:
+  - type: CFShiftImmanenceAction
+    ikon: Starshot
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTransStarshot
+  name: "Giant-Felling Comet"
+  description: "Spark Transcendence, then the spark moves to your next ikon. A 5-foot burst of spirit damage equal to your Strike, basic Reflex against your class DC. Ammunition and the penalty for larger creatures: TBA."
+  components:
+  - type: CFRadialSlot
+    actions: 2
+  - type: TargetAction
+    range: 12.5
+  - type: CFIkonTranscendence
+    ikon: Starshot
+    area: true
+  - type: CFTargeting
+    rangeFeet: 60
+  - type: CFAreaEffect
+    shape: Burst
+    sizeFeet: 5
+  - type: CFCheck
+    defense: Reflex
+    dcSource: Class
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFIkonStrikeDamageEffect
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActShiftTitansBreaker
+  name: "Shift to Titan's Breaker"
+  description: "Moves your spark here, or back to your soul if it is here already. A club, hammer or axe, or a bludgeoning unarmed attack. 2 spirit per die."
+  components:
+  - type: CFShiftImmanenceAction
+    ikon: TitansBreaker
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActTransTitansBreaker
+  name: "Fracture Mountains"
+  description: "Spark Transcendence, then the spark moves to your next ikon. A Strike with an extra weapon die and 2 more spirit per die. It counting as two attacks: TBA."
+  components:
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFIkonTranscendence
+    ikon: TitansBreaker
+  - type: CFStrikeAction
+    extraDice: 1
+    bonusPerDie: 2
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActShiftUnfailingBow
+  name: "Shift to Unfailing Bow"
+  description: "Moves your spark here, or back to your soul if it is here already. A ranged weapon. 1 spirit per die, 1d4 per die on a critical hit."
+  components:
+  - type: CFShiftImmanenceAction
+    ikon: UnfailingBow
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActTransUnfailingBow
+  name: "Arrow Splits Arrow"
+  description: "Spark Transcendence, then the spark moves to your next ikon. Shoot again after landing a shot. Using the same d20 roll: TBA."
+  components:
+  - type: CFRadialSlot
+    actions: 1
+  - type: CFIkonTranscendence
+    ikon: UnfailingBow
+    needsLastHit: true
+  - type: CFStrikeAction
+    ranged: true
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActShiftEyeCatchingSpot
+  name: "Shift to Eye-Catching Spot"
+  description: "Moves your spark here, or back to your soul if it is here already. +1 circumstance to AC. The rule only counts against melee attacks."
+  components:
+  - type: CFShiftImmanenceAction
+    ikon: EyeCatchingSpot
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTransEyeCatchingSpot
+  name: "Captivating Charm"
+  description: "Spark Transcendence, then the spark moves to your next ikon. A creature within 30 feet that fails a Will save is calmed for 6 seconds. The rule is fascinated, which does not exist yet."
+  components:
+  - type: CFRadialSlot
+    actions: 2
+  - type: TargetAction
+    range: 6.5
+  - type: CFIkonTranscendence
+    ikon: EyeCatchingSpot
+  - type: CFEffectAction
+  - type: CFCheck
+    defense: Will
+    basicSave: false
+    dcSource: Class
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFApplyConditionEffect
+      condition: Calmed
+      durationSeconds: 6
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActShiftGazeSharpAsSteel
+  name: "Shift to Gaze Sharp as Steel"
+  description: "Moves your spark here, or back to your soul if it is here already. +1 status to Perception. The +2 to AC against ranged attacks: TBA."
+  components:
+  - type: CFShiftImmanenceAction
+    ikon: GazeSharpAsSteel
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActTransGazeSharpAsSteel
+  name: "A Moment Unending"
+  description: "Spark Transcendence, then the spark moves to your next ikon. Your next Strike to hit in 12 seconds deals 1d6 more."
+  components:
+  - type: CFRadialSlot
+    actions: 1
+  - type: CFIkonTranscendence
+    ikon: GazeSharpAsSteel
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFIkonEffect
+      deed: MomentUnending
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActShiftScarOfTheSurvivor
+  name: "Shift to Scar of the Survivor"
+  description: "Moves your spark here, or back to your soul if it is here already. +1 status to Fortitude. Diehard: TBA."
+  components:
+  - type: CFShiftImmanenceAction
+    ikon: ScarOfTheSurvivor
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActTransScarOfTheSurvivor
+  name: "No Scar but This"
+  description: "Spark Transcendence, then the spark moves to your next ikon. Regain 1d8 Hit Points, and 1d8 more at level 3 and every 2 levels after."
+  components:
+  - type: CFRadialSlot
+    actions: 1
+  - type: CFIkonTranscendence
+    ikon: ScarOfTheSurvivor
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFIkonEffect
+      deed: NoScarButThis
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActShiftBandsOfImprisonment
+  name: "Shift to Bands of Imprisonment"
+  description: "Moves your spark here, or back to your soul if it is here already. +1 status to Will, and mental resistance of half your level. Its transcendence: TBA."
+  components:
+  - type: CFShiftImmanenceAction
+    ikon: BandsOfImprisonment
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActShiftFetchingBangles
+  name: "Shift to Fetching Bangles"
+  description: "Moves your spark here, or back to your soul if it is here already. Its aura and its transcendence: TBA."
+  components:
+  - type: CFShiftImmanenceAction
+    ikon: FetchingBangles
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActShiftHornOfPlenty
+  name: "Shift to Horn of Plenty"
+  description: "Moves your spark here, or back to your soul if it is here already. Stored elixirs and its transcendence: TBA."
+  components:
+  - type: CFShiftImmanenceAction
+    ikon: HornOfPlenty
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActShiftMirroredAegis
+  name: "Shift to Mirrored Aegis"
+  description: "Moves your spark here, or back to your soul if it is here already. Needs a shield in hand. You and allies within 15 feet have +1 status to AC."
+  components:
+  - type: CFShiftImmanenceAction
+    ikon: MirroredAegis
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActTransMirroredAegis
+  name: "Raise the Walls"
+  description: "Spark Transcendence, then the spark moves to your next ikon. +1 status to AC and Reflex for a minute, for you and allies within 15 feet. The rule is you and one ally, and raises the shield."
+  components:
+  - type: CFRadialSlot
+    actions: 1
+  - type: CFIkonTranscendence
+    ikon: MirroredAegis
+    area: true
+  - type: CFAreaEffect
+    shape: Emanation
+    sizeFeet: 15
+    includeSelf: true
+    filter: Allies
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: ArmorClass
+      type: Status
+      value: 1
+    - !type:CFBonusEffect
+      stat: Reflex
+      type: Status
+      value: 1
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActShiftSkybearersBelt
+  name: "Shift to Skybearer's Belt"
+  description: "Moves your spark here, or back to your soul if it is here already. +1 circumstance to Athletics. The rule only counts for maneuvers. Its transcendence: TBA."
+  components:
+  - type: CFShiftImmanenceAction
+    ikon: SkybearersBelt
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActShiftThousandLeagueSandals
+  name: "Shift to Thousand-League Sandals"
+  description: "Moves your spark here, or back to your soul if it is here already. +10 feet status to Speed."
+  components:
+  - type: CFShiftImmanenceAction
+    ikon: ThousandLeagueSandals
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActTransThousandLeagueSandals
+  name: "Marathon Dash"
+  description: "Spark Transcendence, then the spark moves to your next ikon. +10 feet Speed for 3 seconds, for you and allies within 10 feet. It stands in for the Stride."
+  components:
+  - type: CFRadialSlot
+    actions: 1
+  - type: CFIkonTranscendence
+    ikon: ThousandLeagueSandals
+    area: true
+  - type: CFAreaEffect
+    shape: Emanation
+    sizeFeet: 10
+    includeSelf: true
+    filter: Allies
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: Speed
+      type: Status
+      value: 10
+      durationSeconds: 3
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActShiftVictorsWreath
+  name: "Shift to Victor's Wreath"
+  description: "Moves your spark here, or back to your soul if it is here already. You and allies within 15 feet have +1 status to attack rolls. Its transcendence: TBA."
+  components:
+  - type: CFShiftImmanenceAction
+    ikon: VictorsWreath
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActShiftSkinHardAsHornBludgeoning
+  name: "Shift to Skin Hard as Horn (Bludgeoning)"
+  description: "Moves your spark here, or back to your soul if it is here already. Bludgeoning resistance of half your level. It should not count against critical hits: TBA."
+  components:
+  - type: CFShiftImmanenceAction
+    ikon: SkinHardAsHornBludgeoning
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActTransSkinHardAsHornBludgeoning
+  name: "Crash against Me"
+  description: "Spark Transcendence, then the spark moves to your next ikon. Bludgeoning resistance equal to your level for 6 seconds."
+  components:
+  - type: CFRadialSlot
+    actions: 1
+  - type: CFIkonTranscendence
+    ikon: SkinHardAsHornBludgeoning
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFIkonEffect
+      deed: CrashAgainstMe
+      ikon: SkinHardAsHornBludgeoning
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActShiftSkinHardAsHornPiercing
+  name: "Shift to Skin Hard as Horn (Piercing)"
+  description: "Moves your spark here, or back to your soul if it is here already. Piercing resistance of half your level. It should not count against critical hits: TBA."
+  components:
+  - type: CFShiftImmanenceAction
+    ikon: SkinHardAsHornPiercing
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActTransSkinHardAsHornPiercing
+  name: "Crash against Me"
+  description: "Spark Transcendence, then the spark moves to your next ikon. Piercing resistance equal to your level for 6 seconds."
+  components:
+  - type: CFRadialSlot
+    actions: 1
+  - type: CFIkonTranscendence
+    ikon: SkinHardAsHornPiercing
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFIkonEffect
+      deed: CrashAgainstMe
+      ikon: SkinHardAsHornPiercing
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActShiftSkinHardAsHornSlashing
+  name: "Shift to Skin Hard as Horn (Slashing)"
+  description: "Moves your spark here, or back to your soul if it is here already. Slashing resistance of half your level. It should not count against critical hits: TBA."
+  components:
+  - type: CFShiftImmanenceAction
+    ikon: SkinHardAsHornSlashing
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActTransSkinHardAsHornSlashing
+  name: "Crash against Me"
+  description: "Spark Transcendence, then the spark moves to your next ikon. Slashing resistance equal to your level for 6 seconds."
+  components:
+  - type: CFRadialSlot
+    actions: 1
+  - type: CFIkonTranscendence
+    ikon: SkinHardAsHornSlashing
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFIkonEffect
+      deed: CrashAgainstMe
+      ikon: SkinHardAsHornSlashing
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActShiftPeltOfTheBeastCold
+  name: "Shift to Pelt of the Beast (Cold)"
+  description: "Moves your spark here, or back to your soul if it is here already. Cold resistance of half your level. Its transcendence: TBA."
+  components:
+  - type: CFShiftImmanenceAction
+    ikon: PeltOfTheBeastCold
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActShiftPeltOfTheBeastElectricity
+  name: "Shift to Pelt of the Beast (Electricity)"
+  description: "Moves your spark here, or back to your soul if it is here already. Electricity resistance of half your level. Its transcendence: TBA."
+  components:
+  - type: CFShiftImmanenceAction
+    ikon: PeltOfTheBeastElectricity
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActShiftPeltOfTheBeastFire
+  name: "Shift to Pelt of the Beast (Fire)"
+  description: "Moves your spark here, or back to your soul if it is here already. Fire resistance of half your level. Its transcendence: TBA."
+  components:
+  - type: CFShiftImmanenceAction
+    ikon: PeltOfTheBeastFire
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActShiftPeltOfTheBeastPoison
+  name: "Shift to Pelt of the Beast (Poison)"
+  description: "Moves your spark here, or back to your soul if it is here already. Poison resistance of half your level. Its transcendence: TBA."
+  components:
+  - type: CFShiftImmanenceAction
+    ikon: PeltOfTheBeastPoison
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActShiftPeltOfTheBeastSonic
+  name: "Shift to Pelt of the Beast (Sonic)"
+  description: "Moves your spark here, or back to your soul if it is here already. Sonic resistance of half your level. Its transcendence: TBA."
+  components:
+  - type: CFShiftImmanenceAction
+    ikon: PeltOfTheBeastSonic

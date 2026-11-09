@@ -69,6 +69,18 @@ public sealed partial class CFStrikeActionComponent : Component
     [DataField]
     public bool EffectsNeedDamage = true;
 
+    /// <summary>Strikes the same target a second time, at -2 unless the weapon is agile.</summary>
+    [DataField]
+    public bool Twice;
+
+    /// <summary>Extra damage for each weapon die.</summary>
+    [DataField]
+    public int BonusPerDie;
+
+    /// <summary>The target must not be the one the last Strike went at.</summary>
+    [DataField]
+    public bool DifferentTarget;
+
     /// <summary>Runs on the target after a hit.</summary>
     [DataField]
     public List<CFEffect> OnHit = new();

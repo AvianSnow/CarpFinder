@@ -1,0 +1,231 @@
+# Exemplar ikons. CFIkonSystem runs them.
+
+- type: cfIkon
+  id: BarrowsEdge
+  name: cf-ikon-barrowsedge
+  shift: CFActShiftBarrowsEdge
+  transcendence: CFActTransBarrowsEdge
+  melee: true
+  damageTypes: [ slashing, piercing ]
+  spiritPerDie: 1
+  belowHalfPerDie: 3
+
+- type: cfIkon
+  id: GleamingBlade
+  name: cf-ikon-gleamingblade
+  shift: CFActShiftGleamingBlade
+  transcendence: CFActTransGleamingBlade
+  melee: true
+  unarmed: true
+  groups: [ Sword, Knife ]
+  spiritPerDie: 2
+
+- type: cfIkon
+  id: HandsOfTheWildling
+  name: cf-ikon-handsofthewildling
+  shift: CFActShiftHandsOfTheWildling
+  transcendence: CFActTransHandsOfTheWildling
+  unarmed: true
+  splashPerDie: 1
+
+- type: cfIkon
+  id: MortalHarvest
+  name: cf-ikon-mortalharvest
+  shift: CFActShiftMortalHarvest
+  transcendence: CFActTransMortalHarvest
+  melee: true
+  groups: [ Axe, Flail, Polearm ]
+  persistentPerDie: 1
+
+- type: cfIkon
+  id: NobleBranch
+  name: cf-ikon-noblebranch
+  shift: CFActShiftNobleBranch
+  transcendence: CFActTransNobleBranch
+  melee: true
+  groups: [ Spear, Polearm ]
+  spiritPerDie: 2
+
+- type: cfIkon
+  id: ShadowSheath
+  name: cf-ikon-shadowsheath
+  shift: CFActShiftShadowSheath
+  thrown: true
+  spiritPerDie: 2
+  offGuardPerDie: 3
+
+- type: cfIkon
+  id: Starshot
+  name: cf-ikon-starshot
+  shift: CFActShiftStarshot
+  transcendence: CFActTransStarshot
+  ranged: true
+  splashPerDie: 1
+
+- type: cfIkon
+  id: TitansBreaker
+  name: cf-ikon-titansbreaker
+  shift: CFActShiftTitansBreaker
+  transcendence: CFActTransTitansBreaker
+  melee: true
+  unarmed: true
+  groups: [ Club, Hammer, Axe ]
+  spiritPerDie: 2
+
+- type: cfIkon
+  id: UnfailingBow
+  name: cf-ikon-unfailingbow
+  shift: CFActShiftUnfailingBow
+  transcendence: CFActTransUnfailingBow
+  ranged: true
+  spiritPerDie: 1
+  criticalDie: 4
+
+- type: cfIkon
+  id: EyeCatchingSpot
+  name: cf-ikon-eyecatchingspot
+  shift: CFActShiftEyeCatchingSpot
+  transcendence: CFActTransEyeCatchingSpot
+  bonuses:
+  - stat: ArmorClass
+    type: Circumstance
+    value: 1
+
+- type: cfIkon
+  id: GazeSharpAsSteel
+  name: cf-ikon-gazesharpassteel
+  shift: CFActShiftGazeSharpAsSteel
+  transcendence: CFActTransGazeSharpAsSteel
+  bonuses:
+  - stat: Perception
+    type: Status
+    value: 1
+
+- type: cfIkon
+  id: ScarOfTheSurvivor
+  name: cf-ikon-scarofthesurvivor
+  shift: CFActShiftScarOfTheSurvivor
+  transcendence: CFActTransScarOfTheSurvivor
+  bonuses:
+  - stat: Fortitude
+    type: Status
+    value: 1
+
+- type: cfIkon
+  id: BandsOfImprisonment
+  name: cf-ikon-bandsofimprisonment
+  shift: CFActShiftBandsOfImprisonment
+  bonuses:
+  - stat: Will
+    type: Status
+    value: 1
+  resistance: Mental
+
+- type: cfIkon
+  id: FetchingBangles
+  name: cf-ikon-fetchingbangles
+  shift: CFActShiftFetchingBangles
+
+- type: cfIkon
+  id: HornOfPlenty
+  name: cf-ikon-hornofplenty
+  shift: CFActShiftHornOfPlenty
+
+- type: cfIkon
+  id: MirroredAegis
+  name: cf-ikon-mirroredaegis
+  shift: CFActShiftMirroredAegis
+  transcendence: CFActTransMirroredAegis
+  shield: true
+  aura:
+  - affects: Allies
+    needs: Immanence
+    ikon: MirroredAegis
+    stat: ArmorClass
+    type: Status
+    value: 1
+  auraFeet: 15
+
+- type: cfIkon
+  id: SkybearersBelt
+  name: cf-ikon-skybearersbelt
+  shift: CFActShiftSkybearersBelt
+  bonuses:
+  - stat: SkillChecks
+    type: Circumstance
+    value: 1
+    skill: Athletics
+
+- type: cfIkon
+  id: ThousandLeagueSandals
+  name: cf-ikon-thousandleaguesandals
+  shift: CFActShiftThousandLeagueSandals
+  transcendence: CFActTransThousandLeagueSandals
+  bonuses:
+  - stat: Speed
+    type: Status
+    value: 10
+
+- type: cfIkon
+  id: VictorsWreath
+  name: cf-ikon-victorswreath
+  shift: CFActShiftVictorsWreath
+  aura:
+  - affects: Allies
+    needs: Immanence
+    ikon: VictorsWreath
+    stat: AttackRoll
+    type: Status
+    value: 1
+  auraFeet: 15
+
+- type: cfIkon
+  id: SkinHardAsHornBludgeoning
+  name: cf-ikon-skinhardashornbludgeoning
+  shift: CFActShiftSkinHardAsHornBludgeoning
+  transcendence: CFActTransSkinHardAsHornBludgeoning
+  resistance: Bludgeoning
+
+- type: cfIkon
+  id: SkinHardAsHornPiercing
+  name: cf-ikon-skinhardashornpiercing
+  shift: CFActShiftSkinHardAsHornPiercing
+  transcendence: CFActTransSkinHardAsHornPiercing
+  resistance: Piercing
+
+- type: cfIkon
+  id: SkinHardAsHornSlashing
+  name: cf-ikon-skinhardashornslashing
+  shift: CFActShiftSkinHardAsHornSlashing
+  transcendence: CFActTransSkinHardAsHornSlashing
+  resistance: Slashing
+
+- type: cfIkon
+  id: PeltOfTheBeastCold
+  name: cf-ikon-peltofthebeastcold
+  shift: CFActShiftPeltOfTheBeastCold
+  resistance: Cold
+
+- type: cfIkon
+  id: PeltOfTheBeastElectricity
+  name: cf-ikon-peltofthebeastelectricity
+  shift: CFActShiftPeltOfTheBeastElectricity
+  resistance: Electricity
+
+- type: cfIkon
+  id: PeltOfTheBeastFire
+  name: cf-ikon-peltofthebeastfire
+  shift: CFActShiftPeltOfTheBeastFire
+  resistance: Fire
+
+- type: cfIkon
+  id: PeltOfTheBeastPoison
+  name: cf-ikon-peltofthebeastpoison
+  shift: CFActShiftPeltOfTheBeastPoison
+  resistance: Poison
+
+- type: cfIkon
+  id: PeltOfTheBeastSonic
+  name: cf-ikon-peltofthebeastsonic
+  shift: CFActShiftPeltOfTheBeastSonic
+  resistance: Sonic

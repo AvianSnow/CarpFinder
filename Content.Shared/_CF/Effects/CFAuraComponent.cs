@@ -20,6 +20,9 @@ public enum CFAuraNeeds : byte
     HoldingRegalia,
     HoldingLantern,
     HasBanner,
+
+    /// <summary>The ikon named by <see cref="CFAuraEffect.Ikon"/> holds the owner's divine spark.</summary>
+    Immanence,
 }
 
 /// <summary>One thing an aura does to the creatures inside it. See <see cref="CFAuraSystem"/>.</summary>
@@ -31,6 +34,10 @@ public sealed partial class CFAuraEffect
 
     [DataField]
     public CFAuraNeeds Needs;
+
+    /// <summary>For <see cref="CFAuraNeeds.Immanence"/>.</summary>
+    [DataField]
+    public string Ikon = string.Empty;
 
     /// <summary>The stat of a bonus that lasts while a creature is inside. Null means no bonus.</summary>
     [DataField]

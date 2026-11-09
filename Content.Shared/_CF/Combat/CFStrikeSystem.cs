@@ -67,6 +67,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
     [Dependency] private CFAuraSystem _auras = default!;
     [Dependency] private CFImplementSystem _implements = default!;
     [Dependency] private CFInventorSystem _inventor = default!;
+    [Dependency] private CFIkonSystem _ikons = default!;
     [Dependency] private CFTauntSystem _taunts = default!;
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
@@ -867,6 +868,9 @@ public sealed partial class CFStrikeSystem : EntitySystem
             }
         }
 
+        if (hit && !alreadyDown && !isObject)
+            _ikons.NoteHit(user, target, rolled, weaponUid, criticalHit, damage);
+
         if (hit && !alreadyDown)
             ApplyPropertyRunes(user, target, weaponUid, degree);
 
@@ -931,6 +935,12 @@ public sealed partial class CFStrikeSystem : EntitySystem
         }
 
         return _reactions.AnswerAttack(target, user, ranged, d20, attackBonus, ref targetAc, degree);
+    }
+
+    /// <summary>Whether the target is off-guard to this attacker, by flanking or by a condition.</summary>
+    public bool IsOffGuardTo(EntityUid target, EntityUid user)
+    {
+        return _flanking.IsOffGuardTo(target, user) || _conditions.IsOffGuardTo(target, user);
     }
 
     private int Precision(

@@ -35,7 +35,7 @@
   features:
     - level: 1
       name: "Divine Spark and Ikons"
-      description: "A divine spark you move between three ikons. Ikons are not built yet: TBA"
+      description: "Choose three ikons in the builder. Your spark starts in the first, and a Shift action moves it. While an ikon holds the spark you get its immanence, and can Spark Transcendence once every 6 seconds."
     - level: 1
       name: "Humble Strikes"
       description: "With a simple weapon, your damage die is one step larger."
@@ -50,7 +50,7 @@
           option: ShieldBlock
     - level: 3
       name: "Root Epithet"
-      description: "An epithet that changes your ikons. Ikons are not built yet: TBA"
+      description: "Choose an epithet in the builder. It trains its skill from level 1, a little early."
     - level: 5
       name: "Weapon Expertise"
       description: "Expert with simple weapons, martial weapons and unarmed attacks."

@@ -292,6 +292,30 @@ public sealed partial class CFGrantApparitionSlots : CFGrant
     }
 }
 
+/// <summary>An ikon for an Exemplar.</summary>
+public sealed partial class CFGrantIkon : CFGrant
+{
+    [DataField(required: true)]
+    public ProtoId<CFIkonPrototype> Ikon;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        entities.System<CFIkonSystem>().Add(args.Mob, Ikon);
+    }
+}
+
+/// <summary>What an Exemplar's root epithet does after a transcendence.</summary>
+public sealed partial class CFGrantEpithet : CFGrant
+{
+    [DataField(required: true)]
+    public CFEpithet Epithet;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        entities.EnsureComponent<CFExemplarComponent>(args.Mob).Epithet = Epithet;
+    }
+}
+
 /// <summary>What a Necromancer's thralls are like.</summary>
 public sealed partial class CFGrantThralls : CFGrant
 {

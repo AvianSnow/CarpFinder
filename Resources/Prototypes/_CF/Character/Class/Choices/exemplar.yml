@@ -1,0 +1,960 @@
+# CarpFinder: an Exemplar picks three ikons, each offered in all three slots, and a root epithet.
+
+- type: cfClassChoice
+  id: FirstBarrowsEdge
+  class: Exemplar
+  slot: cf-class-choice-ikon-first
+  group: BarrowsEdge
+  name: cf-class-choice-firstbarrowsedge
+  description: cf-class-choice-firstbarrowsedge-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: BarrowsEdge
+
+- type: cfClassChoice
+  id: SecondBarrowsEdge
+  class: Exemplar
+  slot: cf-class-choice-ikon-second
+  group: BarrowsEdge
+  name: cf-class-choice-secondbarrowsedge
+  description: cf-class-choice-secondbarrowsedge-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: BarrowsEdge
+
+- type: cfClassChoice
+  id: ThirdBarrowsEdge
+  class: Exemplar
+  slot: cf-class-choice-ikon-third
+  group: BarrowsEdge
+  name: cf-class-choice-thirdbarrowsedge
+  description: cf-class-choice-thirdbarrowsedge-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: BarrowsEdge
+
+- type: cfClassChoice
+  id: FirstGleamingBlade
+  class: Exemplar
+  slot: cf-class-choice-ikon-first
+  group: GleamingBlade
+  name: cf-class-choice-firstgleamingblade
+  description: cf-class-choice-firstgleamingblade-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: GleamingBlade
+
+- type: cfClassChoice
+  id: SecondGleamingBlade
+  class: Exemplar
+  slot: cf-class-choice-ikon-second
+  group: GleamingBlade
+  name: cf-class-choice-secondgleamingblade
+  description: cf-class-choice-secondgleamingblade-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: GleamingBlade
+
+- type: cfClassChoice
+  id: ThirdGleamingBlade
+  class: Exemplar
+  slot: cf-class-choice-ikon-third
+  group: GleamingBlade
+  name: cf-class-choice-thirdgleamingblade
+  description: cf-class-choice-thirdgleamingblade-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: GleamingBlade
+
+- type: cfClassChoice
+  id: FirstHandsOfTheWildling
+  class: Exemplar
+  slot: cf-class-choice-ikon-first
+  group: HandsOfTheWildling
+  name: cf-class-choice-firsthandsofthewildling
+  description: cf-class-choice-firsthandsofthewildling-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: HandsOfTheWildling
+
+- type: cfClassChoice
+  id: SecondHandsOfTheWildling
+  class: Exemplar
+  slot: cf-class-choice-ikon-second
+  group: HandsOfTheWildling
+  name: cf-class-choice-secondhandsofthewildling
+  description: cf-class-choice-secondhandsofthewildling-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: HandsOfTheWildling
+
+- type: cfClassChoice
+  id: ThirdHandsOfTheWildling
+  class: Exemplar
+  slot: cf-class-choice-ikon-third
+  group: HandsOfTheWildling
+  name: cf-class-choice-thirdhandsofthewildling
+  description: cf-class-choice-thirdhandsofthewildling-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: HandsOfTheWildling
+
+- type: cfClassChoice
+  id: FirstMortalHarvest
+  class: Exemplar
+  slot: cf-class-choice-ikon-first
+  group: MortalHarvest
+  name: cf-class-choice-firstmortalharvest
+  description: cf-class-choice-firstmortalharvest-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: MortalHarvest
+
+- type: cfClassChoice
+  id: SecondMortalHarvest
+  class: Exemplar
+  slot: cf-class-choice-ikon-second
+  group: MortalHarvest
+  name: cf-class-choice-secondmortalharvest
+  description: cf-class-choice-secondmortalharvest-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: MortalHarvest
+
+- type: cfClassChoice
+  id: ThirdMortalHarvest
+  class: Exemplar
+  slot: cf-class-choice-ikon-third
+  group: MortalHarvest
+  name: cf-class-choice-thirdmortalharvest
+  description: cf-class-choice-thirdmortalharvest-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: MortalHarvest
+
+- type: cfClassChoice
+  id: FirstNobleBranch
+  class: Exemplar
+  slot: cf-class-choice-ikon-first
+  group: NobleBranch
+  name: cf-class-choice-firstnoblebranch
+  description: cf-class-choice-firstnoblebranch-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: NobleBranch
+
+- type: cfClassChoice
+  id: SecondNobleBranch
+  class: Exemplar
+  slot: cf-class-choice-ikon-second
+  group: NobleBranch
+  name: cf-class-choice-secondnoblebranch
+  description: cf-class-choice-secondnoblebranch-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: NobleBranch
+
+- type: cfClassChoice
+  id: ThirdNobleBranch
+  class: Exemplar
+  slot: cf-class-choice-ikon-third
+  group: NobleBranch
+  name: cf-class-choice-thirdnoblebranch
+  description: cf-class-choice-thirdnoblebranch-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: NobleBranch
+
+- type: cfClassChoice
+  id: FirstShadowSheath
+  class: Exemplar
+  slot: cf-class-choice-ikon-first
+  group: ShadowSheath
+  name: cf-class-choice-firstshadowsheath
+  description: cf-class-choice-firstshadowsheath-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: ShadowSheath
+
+- type: cfClassChoice
+  id: SecondShadowSheath
+  class: Exemplar
+  slot: cf-class-choice-ikon-second
+  group: ShadowSheath
+  name: cf-class-choice-secondshadowsheath
+  description: cf-class-choice-secondshadowsheath-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: ShadowSheath
+
+- type: cfClassChoice
+  id: ThirdShadowSheath
+  class: Exemplar
+  slot: cf-class-choice-ikon-third
+  group: ShadowSheath
+  name: cf-class-choice-thirdshadowsheath
+  description: cf-class-choice-thirdshadowsheath-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: ShadowSheath
+
+- type: cfClassChoice
+  id: FirstStarshot
+  class: Exemplar
+  slot: cf-class-choice-ikon-first
+  group: Starshot
+  name: cf-class-choice-firststarshot
+  description: cf-class-choice-firststarshot-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: Starshot
+
+- type: cfClassChoice
+  id: SecondStarshot
+  class: Exemplar
+  slot: cf-class-choice-ikon-second
+  group: Starshot
+  name: cf-class-choice-secondstarshot
+  description: cf-class-choice-secondstarshot-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: Starshot
+
+- type: cfClassChoice
+  id: ThirdStarshot
+  class: Exemplar
+  slot: cf-class-choice-ikon-third
+  group: Starshot
+  name: cf-class-choice-thirdstarshot
+  description: cf-class-choice-thirdstarshot-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: Starshot
+
+- type: cfClassChoice
+  id: FirstTitansBreaker
+  class: Exemplar
+  slot: cf-class-choice-ikon-first
+  group: TitansBreaker
+  name: cf-class-choice-firsttitansbreaker
+  description: cf-class-choice-firsttitansbreaker-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: TitansBreaker
+
+- type: cfClassChoice
+  id: SecondTitansBreaker
+  class: Exemplar
+  slot: cf-class-choice-ikon-second
+  group: TitansBreaker
+  name: cf-class-choice-secondtitansbreaker
+  description: cf-class-choice-secondtitansbreaker-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: TitansBreaker
+
+- type: cfClassChoice
+  id: ThirdTitansBreaker
+  class: Exemplar
+  slot: cf-class-choice-ikon-third
+  group: TitansBreaker
+  name: cf-class-choice-thirdtitansbreaker
+  description: cf-class-choice-thirdtitansbreaker-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: TitansBreaker
+
+- type: cfClassChoice
+  id: FirstUnfailingBow
+  class: Exemplar
+  slot: cf-class-choice-ikon-first
+  group: UnfailingBow
+  name: cf-class-choice-firstunfailingbow
+  description: cf-class-choice-firstunfailingbow-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: UnfailingBow
+
+- type: cfClassChoice
+  id: SecondUnfailingBow
+  class: Exemplar
+  slot: cf-class-choice-ikon-second
+  group: UnfailingBow
+  name: cf-class-choice-secondunfailingbow
+  description: cf-class-choice-secondunfailingbow-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: UnfailingBow
+
+- type: cfClassChoice
+  id: ThirdUnfailingBow
+  class: Exemplar
+  slot: cf-class-choice-ikon-third
+  group: UnfailingBow
+  name: cf-class-choice-thirdunfailingbow
+  description: cf-class-choice-thirdunfailingbow-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: UnfailingBow
+
+- type: cfClassChoice
+  id: FirstEyeCatchingSpot
+  class: Exemplar
+  slot: cf-class-choice-ikon-first
+  group: EyeCatchingSpot
+  name: cf-class-choice-firsteyecatchingspot
+  description: cf-class-choice-firsteyecatchingspot-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: EyeCatchingSpot
+
+- type: cfClassChoice
+  id: SecondEyeCatchingSpot
+  class: Exemplar
+  slot: cf-class-choice-ikon-second
+  group: EyeCatchingSpot
+  name: cf-class-choice-secondeyecatchingspot
+  description: cf-class-choice-secondeyecatchingspot-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: EyeCatchingSpot
+
+- type: cfClassChoice
+  id: ThirdEyeCatchingSpot
+  class: Exemplar
+  slot: cf-class-choice-ikon-third
+  group: EyeCatchingSpot
+  name: cf-class-choice-thirdeyecatchingspot
+  description: cf-class-choice-thirdeyecatchingspot-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: EyeCatchingSpot
+
+- type: cfClassChoice
+  id: FirstGazeSharpAsSteel
+  class: Exemplar
+  slot: cf-class-choice-ikon-first
+  group: GazeSharpAsSteel
+  name: cf-class-choice-firstgazesharpassteel
+  description: cf-class-choice-firstgazesharpassteel-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: GazeSharpAsSteel
+
+- type: cfClassChoice
+  id: SecondGazeSharpAsSteel
+  class: Exemplar
+  slot: cf-class-choice-ikon-second
+  group: GazeSharpAsSteel
+  name: cf-class-choice-secondgazesharpassteel
+  description: cf-class-choice-secondgazesharpassteel-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: GazeSharpAsSteel
+
+- type: cfClassChoice
+  id: ThirdGazeSharpAsSteel
+  class: Exemplar
+  slot: cf-class-choice-ikon-third
+  group: GazeSharpAsSteel
+  name: cf-class-choice-thirdgazesharpassteel
+  description: cf-class-choice-thirdgazesharpassteel-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: GazeSharpAsSteel
+
+- type: cfClassChoice
+  id: FirstScarOfTheSurvivor
+  class: Exemplar
+  slot: cf-class-choice-ikon-first
+  group: ScarOfTheSurvivor
+  name: cf-class-choice-firstscarofthesurvivor
+  description: cf-class-choice-firstscarofthesurvivor-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: ScarOfTheSurvivor
+
+- type: cfClassChoice
+  id: SecondScarOfTheSurvivor
+  class: Exemplar
+  slot: cf-class-choice-ikon-second
+  group: ScarOfTheSurvivor
+  name: cf-class-choice-secondscarofthesurvivor
+  description: cf-class-choice-secondscarofthesurvivor-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: ScarOfTheSurvivor
+
+- type: cfClassChoice
+  id: ThirdScarOfTheSurvivor
+  class: Exemplar
+  slot: cf-class-choice-ikon-third
+  group: ScarOfTheSurvivor
+  name: cf-class-choice-thirdscarofthesurvivor
+  description: cf-class-choice-thirdscarofthesurvivor-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: ScarOfTheSurvivor
+
+- type: cfClassChoice
+  id: FirstBandsOfImprisonment
+  class: Exemplar
+  slot: cf-class-choice-ikon-first
+  group: BandsOfImprisonment
+  name: cf-class-choice-firstbandsofimprisonment
+  description: cf-class-choice-firstbandsofimprisonment-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: BandsOfImprisonment
+
+- type: cfClassChoice
+  id: SecondBandsOfImprisonment
+  class: Exemplar
+  slot: cf-class-choice-ikon-second
+  group: BandsOfImprisonment
+  name: cf-class-choice-secondbandsofimprisonment
+  description: cf-class-choice-secondbandsofimprisonment-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: BandsOfImprisonment
+
+- type: cfClassChoice
+  id: ThirdBandsOfImprisonment
+  class: Exemplar
+  slot: cf-class-choice-ikon-third
+  group: BandsOfImprisonment
+  name: cf-class-choice-thirdbandsofimprisonment
+  description: cf-class-choice-thirdbandsofimprisonment-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: BandsOfImprisonment
+
+- type: cfClassChoice
+  id: FirstFetchingBangles
+  class: Exemplar
+  slot: cf-class-choice-ikon-first
+  group: FetchingBangles
+  name: cf-class-choice-firstfetchingbangles
+  description: cf-class-choice-firstfetchingbangles-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: FetchingBangles
+
+- type: cfClassChoice
+  id: SecondFetchingBangles
+  class: Exemplar
+  slot: cf-class-choice-ikon-second
+  group: FetchingBangles
+  name: cf-class-choice-secondfetchingbangles
+  description: cf-class-choice-secondfetchingbangles-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: FetchingBangles
+
+- type: cfClassChoice
+  id: ThirdFetchingBangles
+  class: Exemplar
+  slot: cf-class-choice-ikon-third
+  group: FetchingBangles
+  name: cf-class-choice-thirdfetchingbangles
+  description: cf-class-choice-thirdfetchingbangles-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: FetchingBangles
+
+- type: cfClassChoice
+  id: FirstHornOfPlenty
+  class: Exemplar
+  slot: cf-class-choice-ikon-first
+  group: HornOfPlenty
+  name: cf-class-choice-firsthornofplenty
+  description: cf-class-choice-firsthornofplenty-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: HornOfPlenty
+
+- type: cfClassChoice
+  id: SecondHornOfPlenty
+  class: Exemplar
+  slot: cf-class-choice-ikon-second
+  group: HornOfPlenty
+  name: cf-class-choice-secondhornofplenty
+  description: cf-class-choice-secondhornofplenty-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: HornOfPlenty
+
+- type: cfClassChoice
+  id: ThirdHornOfPlenty
+  class: Exemplar
+  slot: cf-class-choice-ikon-third
+  group: HornOfPlenty
+  name: cf-class-choice-thirdhornofplenty
+  description: cf-class-choice-thirdhornofplenty-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: HornOfPlenty
+
+- type: cfClassChoice
+  id: FirstMirroredAegis
+  class: Exemplar
+  slot: cf-class-choice-ikon-first
+  group: MirroredAegis
+  name: cf-class-choice-firstmirroredaegis
+  description: cf-class-choice-firstmirroredaegis-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: MirroredAegis
+
+- type: cfClassChoice
+  id: SecondMirroredAegis
+  class: Exemplar
+  slot: cf-class-choice-ikon-second
+  group: MirroredAegis
+  name: cf-class-choice-secondmirroredaegis
+  description: cf-class-choice-secondmirroredaegis-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: MirroredAegis
+
+- type: cfClassChoice
+  id: ThirdMirroredAegis
+  class: Exemplar
+  slot: cf-class-choice-ikon-third
+  group: MirroredAegis
+  name: cf-class-choice-thirdmirroredaegis
+  description: cf-class-choice-thirdmirroredaegis-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: MirroredAegis
+
+- type: cfClassChoice
+  id: FirstSkybearersBelt
+  class: Exemplar
+  slot: cf-class-choice-ikon-first
+  group: SkybearersBelt
+  name: cf-class-choice-firstskybearersbelt
+  description: cf-class-choice-firstskybearersbelt-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: SkybearersBelt
+
+- type: cfClassChoice
+  id: SecondSkybearersBelt
+  class: Exemplar
+  slot: cf-class-choice-ikon-second
+  group: SkybearersBelt
+  name: cf-class-choice-secondskybearersbelt
+  description: cf-class-choice-secondskybearersbelt-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: SkybearersBelt
+
+- type: cfClassChoice
+  id: ThirdSkybearersBelt
+  class: Exemplar
+  slot: cf-class-choice-ikon-third
+  group: SkybearersBelt
+  name: cf-class-choice-thirdskybearersbelt
+  description: cf-class-choice-thirdskybearersbelt-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: SkybearersBelt
+
+- type: cfClassChoice
+  id: FirstThousandLeagueSandals
+  class: Exemplar
+  slot: cf-class-choice-ikon-first
+  group: ThousandLeagueSandals
+  name: cf-class-choice-firstthousandleaguesandals
+  description: cf-class-choice-firstthousandleaguesandals-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: ThousandLeagueSandals
+
+- type: cfClassChoice
+  id: SecondThousandLeagueSandals
+  class: Exemplar
+  slot: cf-class-choice-ikon-second
+  group: ThousandLeagueSandals
+  name: cf-class-choice-secondthousandleaguesandals
+  description: cf-class-choice-secondthousandleaguesandals-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: ThousandLeagueSandals
+
+- type: cfClassChoice
+  id: ThirdThousandLeagueSandals
+  class: Exemplar
+  slot: cf-class-choice-ikon-third
+  group: ThousandLeagueSandals
+  name: cf-class-choice-thirdthousandleaguesandals
+  description: cf-class-choice-thirdthousandleaguesandals-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: ThousandLeagueSandals
+
+- type: cfClassChoice
+  id: FirstVictorsWreath
+  class: Exemplar
+  slot: cf-class-choice-ikon-first
+  group: VictorsWreath
+  name: cf-class-choice-firstvictorswreath
+  description: cf-class-choice-firstvictorswreath-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: VictorsWreath
+
+- type: cfClassChoice
+  id: SecondVictorsWreath
+  class: Exemplar
+  slot: cf-class-choice-ikon-second
+  group: VictorsWreath
+  name: cf-class-choice-secondvictorswreath
+  description: cf-class-choice-secondvictorswreath-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: VictorsWreath
+
+- type: cfClassChoice
+  id: ThirdVictorsWreath
+  class: Exemplar
+  slot: cf-class-choice-ikon-third
+  group: VictorsWreath
+  name: cf-class-choice-thirdvictorswreath
+  description: cf-class-choice-thirdvictorswreath-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: VictorsWreath
+
+- type: cfClassChoice
+  id: FirstSkinHardAsHornBludgeoning
+  class: Exemplar
+  slot: cf-class-choice-ikon-first
+  group: SkinHardAsHorn
+  name: cf-class-choice-firstskinhardashornbludgeoning
+  description: cf-class-choice-firstskinhardashornbludgeoning-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: SkinHardAsHornBludgeoning
+
+- type: cfClassChoice
+  id: SecondSkinHardAsHornBludgeoning
+  class: Exemplar
+  slot: cf-class-choice-ikon-second
+  group: SkinHardAsHorn
+  name: cf-class-choice-secondskinhardashornbludgeoning
+  description: cf-class-choice-secondskinhardashornbludgeoning-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: SkinHardAsHornBludgeoning
+
+- type: cfClassChoice
+  id: ThirdSkinHardAsHornBludgeoning
+  class: Exemplar
+  slot: cf-class-choice-ikon-third
+  group: SkinHardAsHorn
+  name: cf-class-choice-thirdskinhardashornbludgeoning
+  description: cf-class-choice-thirdskinhardashornbludgeoning-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: SkinHardAsHornBludgeoning
+
+- type: cfClassChoice
+  id: FirstSkinHardAsHornPiercing
+  class: Exemplar
+  slot: cf-class-choice-ikon-first
+  group: SkinHardAsHorn
+  name: cf-class-choice-firstskinhardashornpiercing
+  description: cf-class-choice-firstskinhardashornpiercing-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: SkinHardAsHornPiercing
+
+- type: cfClassChoice
+  id: SecondSkinHardAsHornPiercing
+  class: Exemplar
+  slot: cf-class-choice-ikon-second
+  group: SkinHardAsHorn
+  name: cf-class-choice-secondskinhardashornpiercing
+  description: cf-class-choice-secondskinhardashornpiercing-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: SkinHardAsHornPiercing
+
+- type: cfClassChoice
+  id: ThirdSkinHardAsHornPiercing
+  class: Exemplar
+  slot: cf-class-choice-ikon-third
+  group: SkinHardAsHorn
+  name: cf-class-choice-thirdskinhardashornpiercing
+  description: cf-class-choice-thirdskinhardashornpiercing-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: SkinHardAsHornPiercing
+
+- type: cfClassChoice
+  id: FirstSkinHardAsHornSlashing
+  class: Exemplar
+  slot: cf-class-choice-ikon-first
+  group: SkinHardAsHorn
+  name: cf-class-choice-firstskinhardashornslashing
+  description: cf-class-choice-firstskinhardashornslashing-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: SkinHardAsHornSlashing
+
+- type: cfClassChoice
+  id: SecondSkinHardAsHornSlashing
+  class: Exemplar
+  slot: cf-class-choice-ikon-second
+  group: SkinHardAsHorn
+  name: cf-class-choice-secondskinhardashornslashing
+  description: cf-class-choice-secondskinhardashornslashing-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: SkinHardAsHornSlashing
+
+- type: cfClassChoice
+  id: ThirdSkinHardAsHornSlashing
+  class: Exemplar
+  slot: cf-class-choice-ikon-third
+  group: SkinHardAsHorn
+  name: cf-class-choice-thirdskinhardashornslashing
+  description: cf-class-choice-thirdskinhardashornslashing-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: SkinHardAsHornSlashing
+
+- type: cfClassChoice
+  id: FirstPeltOfTheBeastCold
+  class: Exemplar
+  slot: cf-class-choice-ikon-first
+  group: PeltOfTheBeast
+  name: cf-class-choice-firstpeltofthebeastcold
+  description: cf-class-choice-firstpeltofthebeastcold-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: PeltOfTheBeastCold
+
+- type: cfClassChoice
+  id: SecondPeltOfTheBeastCold
+  class: Exemplar
+  slot: cf-class-choice-ikon-second
+  group: PeltOfTheBeast
+  name: cf-class-choice-secondpeltofthebeastcold
+  description: cf-class-choice-secondpeltofthebeastcold-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: PeltOfTheBeastCold
+
+- type: cfClassChoice
+  id: ThirdPeltOfTheBeastCold
+  class: Exemplar
+  slot: cf-class-choice-ikon-third
+  group: PeltOfTheBeast
+  name: cf-class-choice-thirdpeltofthebeastcold
+  description: cf-class-choice-thirdpeltofthebeastcold-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: PeltOfTheBeastCold
+
+- type: cfClassChoice
+  id: FirstPeltOfTheBeastElectricity
+  class: Exemplar
+  slot: cf-class-choice-ikon-first
+  group: PeltOfTheBeast
+  name: cf-class-choice-firstpeltofthebeastelectricity
+  description: cf-class-choice-firstpeltofthebeastelectricity-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: PeltOfTheBeastElectricity
+
+- type: cfClassChoice
+  id: SecondPeltOfTheBeastElectricity
+  class: Exemplar
+  slot: cf-class-choice-ikon-second
+  group: PeltOfTheBeast
+  name: cf-class-choice-secondpeltofthebeastelectricity
+  description: cf-class-choice-secondpeltofthebeastelectricity-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: PeltOfTheBeastElectricity
+
+- type: cfClassChoice
+  id: ThirdPeltOfTheBeastElectricity
+  class: Exemplar
+  slot: cf-class-choice-ikon-third
+  group: PeltOfTheBeast
+  name: cf-class-choice-thirdpeltofthebeastelectricity
+  description: cf-class-choice-thirdpeltofthebeastelectricity-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: PeltOfTheBeastElectricity
+
+- type: cfClassChoice
+  id: FirstPeltOfTheBeastFire
+  class: Exemplar
+  slot: cf-class-choice-ikon-first
+  group: PeltOfTheBeast
+  name: cf-class-choice-firstpeltofthebeastfire
+  description: cf-class-choice-firstpeltofthebeastfire-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: PeltOfTheBeastFire
+
+- type: cfClassChoice
+  id: SecondPeltOfTheBeastFire
+  class: Exemplar
+  slot: cf-class-choice-ikon-second
+  group: PeltOfTheBeast
+  name: cf-class-choice-secondpeltofthebeastfire
+  description: cf-class-choice-secondpeltofthebeastfire-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: PeltOfTheBeastFire
+
+- type: cfClassChoice
+  id: ThirdPeltOfTheBeastFire
+  class: Exemplar
+  slot: cf-class-choice-ikon-third
+  group: PeltOfTheBeast
+  name: cf-class-choice-thirdpeltofthebeastfire
+  description: cf-class-choice-thirdpeltofthebeastfire-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: PeltOfTheBeastFire
+
+- type: cfClassChoice
+  id: FirstPeltOfTheBeastPoison
+  class: Exemplar
+  slot: cf-class-choice-ikon-first
+  group: PeltOfTheBeast
+  name: cf-class-choice-firstpeltofthebeastpoison
+  description: cf-class-choice-firstpeltofthebeastpoison-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: PeltOfTheBeastPoison
+
+- type: cfClassChoice
+  id: SecondPeltOfTheBeastPoison
+  class: Exemplar
+  slot: cf-class-choice-ikon-second
+  group: PeltOfTheBeast
+  name: cf-class-choice-secondpeltofthebeastpoison
+  description: cf-class-choice-secondpeltofthebeastpoison-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: PeltOfTheBeastPoison
+
+- type: cfClassChoice
+  id: ThirdPeltOfTheBeastPoison
+  class: Exemplar
+  slot: cf-class-choice-ikon-third
+  group: PeltOfTheBeast
+  name: cf-class-choice-thirdpeltofthebeastpoison
+  description: cf-class-choice-thirdpeltofthebeastpoison-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: PeltOfTheBeastPoison
+
+- type: cfClassChoice
+  id: FirstPeltOfTheBeastSonic
+  class: Exemplar
+  slot: cf-class-choice-ikon-first
+  group: PeltOfTheBeast
+  name: cf-class-choice-firstpeltofthebeastsonic
+  description: cf-class-choice-firstpeltofthebeastsonic-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: PeltOfTheBeastSonic
+
+- type: cfClassChoice
+  id: SecondPeltOfTheBeastSonic
+  class: Exemplar
+  slot: cf-class-choice-ikon-second
+  group: PeltOfTheBeast
+  name: cf-class-choice-secondpeltofthebeastsonic
+  description: cf-class-choice-secondpeltofthebeastsonic-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: PeltOfTheBeastSonic
+
+- type: cfClassChoice
+  id: ThirdPeltOfTheBeastSonic
+  class: Exemplar
+  slot: cf-class-choice-ikon-third
+  group: PeltOfTheBeast
+  name: cf-class-choice-thirdpeltofthebeastsonic
+  description: cf-class-choice-thirdpeltofthebeastsonic-desc
+  grants:
+    - !type:CFGrantIkon
+      ikon: PeltOfTheBeastSonic
+
+- type: cfClassChoice
+  id: EpithetBrave
+  class: Exemplar
+  slot: cf-class-choice-epithet
+  name: cf-class-choice-epithetbrave
+  description: cf-class-choice-epithetbrave-desc
+  trainedSkills:
+    - Athletics
+  features:
+    - level: 3
+      name: "The Brave"
+      description: "+10 feet Speed for 3 seconds after a transcendence, standing in for the free Stride."
+      grants:
+        - !type:CFGrantEpithet
+          epithet: Brave
+
+- type: cfClassChoice
+  id: EpithetCunning
+  class: Exemplar
+  slot: cf-class-choice-epithet
+  name: cf-class-choice-epithetcunning
+  description: cf-class-choice-epithetcunning-desc
+  trainedSkills:
+    - Deception
+
+- type: cfClassChoice
+  id: EpithetDeft
+  class: Exemplar
+  slot: cf-class-choice-epithet
+  name: cf-class-choice-epithetdeft
+  description: cf-class-choice-epithetdeft-desc
+  trainedSkills:
+    - Thievery
+
+- type: cfClassChoice
+  id: EpithetMournful
+  class: Exemplar
+  slot: cf-class-choice-epithet
+  name: cf-class-choice-epithetmournful
+  description: cf-class-choice-epithetmournful-desc
+  trainedSkills:
+    - Diplomacy
+
+- type: cfClassChoice
+  id: EpithetProud
+  class: Exemplar
+  slot: cf-class-choice-epithet
+  name: cf-class-choice-epithetproud
+  description: cf-class-choice-epithetproud-desc
+  trainedSkills:
+    - Intimidation
+
+- type: cfClassChoice
+  id: EpithetRadiant
+  class: Exemplar
+  slot: cf-class-choice-epithet
+  name: cf-class-choice-epithetradiant
+  description: cf-class-choice-epithetradiant-desc
+  trainedSkills:
+    - Diplomacy
+  features:
+    - level: 3
+      name: "The Radiant"
+      description: "After a transcendence, an ally within 30 feet regains 2 + double your level in Hit Points, once in 10 minutes each."
+      grants:
+        - !type:CFGrantEpithet
+          epithet: Radiant
