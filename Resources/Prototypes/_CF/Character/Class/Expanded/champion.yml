@@ -6,6 +6,7 @@
   hitPoints: 10
   keyAbility: Dexterity
   hitPointsAbility: Constitution
+  usesDeity: true
   classDC: cf-class-champion
   proficiencies:
     perception:

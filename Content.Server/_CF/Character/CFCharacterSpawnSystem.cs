@@ -136,6 +136,7 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         combatant.CurrentHp = sheet.MaxHp;
         combatant.ClassId = profile.CFBuild.Class?.Id;
         combatant.BackgroundId = profile.CFBuild.Background?.Id;
+        combatant.KeyAbility = sheet.Class == null ? null : CFClassChoices.KeyAbility(_prototypes, profile.CFBuild, sheet.Class);
         _armor.RefreshArmorClass(mob);
         var ancestryId = sheet.Ancestry?.ID;
         var classId = sheet.Class?.ID;
@@ -155,6 +156,7 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         xp.SkillIncreaseLevel3 = KnownSkill(profile.CFBuild.SkillIncreaseLevel3);
         xp.SkillIncreaseLevel5 = KnownSkill(profile.CFBuild.SkillIncreaseLevel5);
         xp.AbilityBoostsLevel5 = profile.CFBuild.AbilityBoostsLevel5.Distinct().Take(CFAttributeMath.LevelFiveBoostCount).ToList();
+        xp.ClassChoices = CFClassChoices.Selected(_prototypes, profile.CFBuild).Select(choice => choice.ID).ToList();
         Dirty(mob, xp);
         combatant.LoreNames.Clear();
         foreach (var chosen in chosenFeats)
@@ -304,6 +306,12 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
 
         if (cls != null)
             _features.ApplyClassFeatures(mob, cls, 1);
+
+        foreach (var choice in CFClassChoices.Selected(_prototypes, profile.CFBuild))
+            _features.ApplyClassChoice(mob, choice, 1);
+
+        if (CFClassChoices.SelectedDeity(_prototypes, profile.CFBuild) is { } deity)
+            _features.Apply(mob, deity.Grants, $"deity:{deity.ID}");
 
         foreach (var feat in feats)
             ApplyFeat(mob, feat, options, adjustSpeed: false);

@@ -103,17 +103,22 @@ public static class CFMelee
 
     /// <summary>
     /// Damage modifier. Melee and thrown add Strength. Propulsive adds half a positive Strength
-    /// (all of a negative one). Other ranged weapons add nothing.
+    /// (all of a negative one). Other ranged weapons add nothing. With <paramref name="finesseDexterity"/>, finesse
+    /// melee Strikes add Dexterity instead when it is higher.
     /// </summary>
     public static int DamageBonus(
         CFAbilityScoreComponent abilities,
         CFStrikeWeaponStats weapon,
-        CFCombatantComponent? combatant = null)
+        CFCombatantComponent? combatant = null,
+        bool finesseDexterity = false)
     {
         if (!weapon.Ranged && combatant?.PrintedDamage is { } printed)
             return printed;
 
         var str = abilities.GetModifier(CFAbility.Strength);
+        if (finesseDexterity && !weapon.Ranged && weapon.Finesse)
+            return Math.Max(str, abilities.GetModifier(CFAbility.Dexterity));
+
         if (!weapon.Ranged || weapon.ThrownStrike)
             return str;
 

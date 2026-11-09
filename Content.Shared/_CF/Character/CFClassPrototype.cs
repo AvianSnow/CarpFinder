@@ -50,6 +50,10 @@ public sealed partial class CFClassPrototype : IPrototype
 
     [DataField]
     public CFRarity Rarity = CFRarity.Common;
+
+    /// <summary>True for classes that follow a deity. The builder then offers a <see cref="CFDeityPrototype"/>.</summary>
+    [DataField]
+    public bool UsesDeity;
 }
 
 /// <summary>One class feature gained by the given level. Later levels are not imported.</summary>

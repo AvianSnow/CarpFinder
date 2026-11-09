@@ -47,6 +47,19 @@ public sealed class CFLocalizationTest : GameTest
                 Check("heritage", heritage.ID, heritage.Name);
                 Check("heritage", heritage.ID, heritage.Description);
             }
+
+            foreach (var choice in Server.ProtoMan.EnumeratePrototypes<CFClassChoicePrototype>())
+            {
+                Check("class choice", choice.ID, choice.Slot);
+                Check("class choice", choice.ID, choice.Name);
+                Check("class choice", choice.ID, choice.Description);
+            }
+
+            foreach (var deity in Server.ProtoMan.EnumeratePrototypes<CFDeityPrototype>())
+            {
+                Check("deity", deity.ID, deity.Name);
+                Check("deity", deity.ID, deity.Description);
+            }
         });
 
         Assert.That(missing, Is.Empty);

@@ -33,7 +33,7 @@
   features:
     - level: 1
       name: "Rogue's Racket"
-      description: "This feature will be implemented later."
+      description: "Choose how you make your living with the Rogue's Racket button."
     - level: 1
       name: "Sneak Attack"
       description: "Melee Strikes against an off-guard creature deal extra precision damage."

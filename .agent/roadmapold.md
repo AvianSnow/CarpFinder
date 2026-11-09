@@ -704,7 +704,7 @@ Running it found two bugs, both fixed:
 - [x] A creature with a clear line home never set off. `Navigate` keeps the steering it has while the line is clear, and `GoHome` starts none. All 24 runs of a sweep ended stuck like this. `HeadingElsewhere` fixes it, and also moves a walk on to the next stop of a route.
 - [x] A creature within 14 tiles of a sealed place stood still for good. An empty field looked like one not built yet, so no route was tried and `NoWay` was never set. This also applied to `GoToLkp` and `CheckNode`.
 
-The decision log was also lost in the move between computers, because `.gitignore` drops any `Debug/` folder. It is rebuilt in `DecisionLog/` with new names. If the old `Debug/` folders are still on the other computer, delete them.
+The decision log was also lost in the move between computers, because `.gitignore` drops any `Debug/` folder. It is rebuilt in `DecisionLog/` with new names. On 9 November 2026 the old `Debug/` copy was merged into it and those folders were removed.
 
 `.agent/ai-trial/CFGOAPMapTrial.cs.txt` is the throwaway trial with `CorridorProbe`, `TileProbe`, `FarAcrossTheMaze` and `GrilleOnly`. To use it, copy it to `Content.IntegrationTests/Tests/_CF/GOAP/CFGOAPMapTrial.cs`, set `CF_TRIAL_OUT` to a folder, and remove it again afterwards. Always check the build printed `Build succeeded` first: `dotnet test --no-build` happily runs the old binary after a failed build.
 

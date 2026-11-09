@@ -6,6 +6,7 @@
   hitPoints: 8
   keyAbility: Wisdom
   hitPointsAbility: Constitution
+  usesDeity: true
   classDC: cf-class-cleric
   proficiencies:
     perception:

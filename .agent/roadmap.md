@@ -28,7 +28,7 @@ Some class feature text is wrong. Divine Font says it grants slots, and no code 
 
 ### What blocks it
 
-1. **Nowhere to store a subclass.** `CFCharacterBuildData` has no field for an Instinct, Racket, Muse, Doctrine, Patron, School, Order or Mystery, and the builder has no button. About a third of the level 1 class features need one.
+1. **Subclasses have almost no options yet.** The storage and the builder button are built (1c), but only the Rogue has options. About a third of the level 1 class features need one.
 2. **The rules text is not in the repo.** The 481 placeholder feats and 140 placeholder features were imported with their text removed, so each needs reading on Archives of Nethys.
 
 ### 1a. One pipeline for what an option grants
@@ -37,7 +37,7 @@ Built on 6 November 2026, except where marked. Tests: `CFGrantTest`. What change
 
 - [x] `CFGrant`: an abstract data class like `CFEffect`, written in YAML as `!type:CFGrantBonus` and so on.
 - [x] A `grants` list on `cfFeat`, `CFClassFeature`, `cfHeritage`, `cfAncestry` and `cfBackground`.
-- [ ] A `grants` list on the class choices, when 1c adds them.
+- [x] A `grants` list on the class choices.
 - [x] `CFCharacterFeatureSystem.Apply(mob, grants, source)`, called at spawn and on level-up.
 - [x] Move both `switch` statements into YAML. The flags on `CFCombatOptionsComponent` stay for now, set by `!type:CFGrantOption`.
 - [x] Permanent bonuses in `CFBonusSystem`, and bonuses that only count against a trait. This replaces `SavesVsFear`.
@@ -74,9 +74,16 @@ Most action feats share one of a few shapes, so build the shape once. An action 
 
 ### 1c. Subclasses
 
-- [ ] A `cfClassChoice` prototype with `grants`, and `ClassChoices` on `CFCharacterBuildData`. Migrate with care: this data is saved.
-- [ ] A button in the builder, using the same list as Heritage.
-- [ ] `cfDeity`, for Cleric and Champion. Deities are data on the character, not a religion system.
+Built on 9 November 2026. `CFClassChoices` decides what counts as a valid pick. Tests: `CFClassChoiceTest`. The builder buttons have not been clicked in a real client.
+
+- [x] A `cfClassChoice` prototype with `grants`, and `ClassChoices` on `CFCharacterBuildData`. No database migration: a build saved without the field loads with an empty list.
+- [x] A button in the builder, using the same list as Heritage. There is one button per `slot` a class has options in, so a class needs only its options.
+- [x] `cfDeity`, for classes with `usesDeity` (Cleric and Champion). Deities are data on the character, not a religion system.
+- [x] Rogue's rackets, in `Class/Choices/rogue.yml`. The Thief is finished. The others give their skills, armor and key attribute, and the rest is marked `TBA`.
+- [ ] Deity content: our own gods, `TBA`. There are no `cfDeity` entries yet, so the builder shows a disabled `Deity: TBA` button for classes that follow one.
+- [ ] A racket always sets the key attribute. The rules say the player can choose it, so a Ruffian cannot keep Dexterity.
+- [ ] Mastermind's second skill from a short list needs a pick in the builder.
+- [ ] Sneak Attack works with every melee weapon. It should need agile or finesse, also work at range, and the Ruffian's weapon rule depends on that limit.
 - [ ] Fill each class's choices in its wave.
 
 ### 1d. Level-up
@@ -135,6 +142,7 @@ Witch familiars, Druid animal companions and Summoner eidolons all lean on `cfPe
 - **Unfinished options are marked in the builder**, not hidden, so a player can see what is coming.
 - **Exploration and downtime options run on the world clock** where that works. Otherwise they keep their flavour text with the word `TBA` on its own, so `TBA` can be searched for later.
 - **Swimming, flying and climbing are `TBA`.** Swimming will be ported from another fork, because SS14 has water entities. Climb speeds are not built, and `CFZLevelClimb` always rolls.
+- **Deities are our own pantheon**, not Golarion's named gods. Speaking to a god is stock SS14 prayer, which sends the message to the admins, so there is no religion system to build.
 - **Languages matter**, for roleplay: talk a goblin out of a fight in its own tongue. See "Languages" below.
 
 ### Languages
@@ -322,6 +330,7 @@ The labels are the sections of Phase 6 in `roadmapold.md`, which has the design.
 
 ## Known bugs
 
+- `CFSkeletonguardTest.OutOfArrowsItDropsTheBowAndUsesItsClaws` fails in every full CF run (it stops 2.4 away, and the test wants under 2) and passes alone, so it depends on what ran before it.
 - `RainWatersExposedCrops` is unreliable, not just in a full run. On 6 November 2026 it showed as `Skipped` in two full runs, then failed once and passed once on its own. The failure message was not captured, so the cause is unknown. It only touches weather and plants, not the AI.
 - `GuideEntryPrototypeTests.Validate("Chemicals")` fails with `Hit style update limit. Queued: 1073` from `RecipesContainer`. The guide now has so many recipes that the UI warns while building it, and the test treats that warning as an error. Not investigated further.
 - `CFProneTest.NpcWithNoRoomKeepsTryingToStand` fails now and then. The same error also hit `NpcStandsOnceItHasAnAction`: an NPC's stand-up attempt adds a `StatusEffectContainerComponent` to a mob that is already being deleted, and the assert surfaces in the next test's setup. Left alone on purpose. It only affects stock NPCs now. GOAP NPCs are the only ones planned to crawl away, and that is not built.

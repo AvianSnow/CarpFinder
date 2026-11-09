@@ -830,6 +830,8 @@ namespace Content.Shared.Preferences
             if (CFBuild.Class is { } classId && !prototypeManager.HasIndex(classId))
                 CFBuild.Class = null;
 
+            CFClassChoices.Sanitize(prototypeManager, CFBuild);
+
             if (!string.IsNullOrEmpty(CFBuild.PetId) && !prototypeManager.HasIndex<CFPetPrototype>(CFBuild.PetId))
                 CFBuild.PetId = "";
 

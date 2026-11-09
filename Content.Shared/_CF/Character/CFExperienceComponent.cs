@@ -49,4 +49,8 @@ public sealed partial class CFExperienceComponent : Component
 
     [DataField, AutoNetworkedField]
     public List<CFAbility> AbilityBoostsLevel5 = new();
+
+    /// <summary>Subclass picks, checked at spawn. Their later features run on level up.</summary>
+    [DataField, AutoNetworkedField]
+    public List<string> ClassChoices = new();
 }

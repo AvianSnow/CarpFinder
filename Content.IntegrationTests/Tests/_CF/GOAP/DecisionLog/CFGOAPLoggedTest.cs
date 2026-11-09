@@ -5,27 +5,39 @@ using Robust.Shared.GameObjects;
 namespace Content.IntegrationTests.Tests.CF.GOAP.DecisionLog;
 
 /// <summary>
-/// DEBUG, to be removed with the decision log. Prints what every brain decided after each test. The runner only shows
-/// that output for a test that failed.
+/// FOR DEBUGGING ONLY, and removed with the decision log. Prints what each brain decided at the end of a test. It writes
+/// for every test, because a failure on the server thread can still look fine here (see <c>ai-testing.md</c>). The test
+/// runner only shows the output of tests that failed, unless asked for more.
 /// </summary>
 public abstract class CFGOAPLoggedTest : GameTest
 {
-    [TearDown]
-    public async Task PrintDecisionLogs()
+    public override async Task DoTeardown()
     {
-        var entities = Pair.Server.EntMan;
-        await Pair.Server.WaitPost(() =>
+        try
         {
-            entities.System<CFGOAPDecisionLogSystem>().WatchAll();
-            var query = entities.AllEntityQueryEnumerator<CFGOAPDecisionLogComponent>();
-            while (query.MoveNext(out var uid, out var log))
+            await Server.WaitPost(PrintDecisionLogs);
+        }
+        catch (Exception e)
+        {
+            // A test that failed can leave the server unable to answer. The real failure still has to come through.
+            TestContext.Out.WriteLine($"No decision log: {e.Message}");
+        }
+
+        await base.DoTeardown();
+    }
+
+    private void PrintDecisionLogs()
+    {
+        SEntMan.System<CFGOAPDecisionLogSystem>().WatchAll();
+
+        var query = SEntMan.AllEntityQueryEnumerator<CFGOAPDecisionLogComponent>();
+        while (query.MoveNext(out var uid, out var log))
+        {
+            TestContext.Out.WriteLine($"Decision log of {SEntMan.ToPrettyString(uid)}:");
+            foreach (var entry in log.Entries)
             {
-                TestContext.Out.WriteLine($"Decisions of {entities.ToPrettyString(uid)}:");
-                foreach (var entry in log.Entries)
-                {
-                    TestContext.Out.WriteLine($"  {entry}");
-                }
+                TestContext.Out.WriteLine($"  {entry}");
             }
-        });
+        }
     }
 }

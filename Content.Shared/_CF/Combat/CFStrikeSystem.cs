@@ -467,7 +467,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
             StandingAttackBonus(user, combat, abilities, weapon, 0f, false),
             _actions.MapPenalty(user, weapon.Agile),
             ArmorClassAgainst(user, target, defender, melee: true, unseen: false, isObject: false, alreadyDown: false),
-            weapon.DamageDice * (weapon.DamageDie + 1) / 2f + CFMelee.DamageBonus(abilities, weapon, combat));
+            weapon.DamageDice * (weapon.DamageDie + 1) / 2f
+            + CFMelee.DamageBonus(abilities, weapon, combat, CompOrNull<CFCombatOptionsComponent>(user)?.FinesseDexterity == true));
         return true;
     }
 
@@ -653,7 +654,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (spellDice > weapon.Striking)
             rolled = rolled with { DamageDice = rolled.DamageDice + spellDice - weapon.Striking, Striking = spellDice };
 
-        var damageMod = CFMelee.DamageBonus(attackerAbilities, rolled, attackerCombat) + pointBlank;
+        var damageMod = CFMelee.DamageBonus(attackerAbilities, rolled, attackerCombat, style?.FinesseDexterity == true) + pointBlank;
         damageMod += CFMelee.ForcefulBonus(rolled, attacksBefore);
         if (melee && style is { Raging: true })
             damageMod += 2;

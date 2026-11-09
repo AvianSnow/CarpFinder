@@ -80,7 +80,7 @@ An agile weapon or an easy target keeps the third swing worthwhile, with no spec
 
 ## Decision log (DEBUG, to be removed)
 
-Every brain gets a `CFGOAPDecisionLogComponent`: the last 64 goal changes, plans, steps, facts by name, targets, reflexes, obstacles, routes and giving up. In a real game, open `CFGOAPDecisionLog` on a creature in VV and read `Entries`. In tests, `CFGOAPLoggedTest` prints it after each test, and the runner shows that for tests that fail.
+Every brain gets a `CFGOAPDecisionLogComponent`: the last 64 goal changes, plans, steps, facts by name, targets, nodes, reflexes, being cornered or hurt, obstacles, routes and giving up. It is for debugging only and will be removed, but it is tracked so it reaches GitHub. In a real game, open `CFGOAPDecisionLog` on a creature in VV and read `Entries`. In tests, `CFGOAPLoggedTest` prints it after each test, and the runner shows that for tests that fail.
 
 The folder must not be called `Debug`: `.gitignore` drops any folder with that name, which lost the first copy of this log.
 

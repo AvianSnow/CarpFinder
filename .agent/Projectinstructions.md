@@ -75,6 +75,8 @@ Reuse the Tools build and target the tests you need; without `-c Tools --no-buil
 dotnet test Content.IntegrationTests/Content.IntegrationTests.csproj -c Tools --no-build --filter "FullyQualifiedName~TestName"
 ```
 
+Real monsters get rebalanced, so a test must not pin their numbers. To check a stat block, compare the monster with its own YAML. To check a rule, make a test-only child prototype with its own fixed numbers, such as `CFCreatureTestBoar`, and keep `Test` in its id so tests that walk every monster skip it.
+
 Pick the lightest test class that covers what changed: search the test files for `[Test]`. Do not run `SpawnAndDirtyAllEntities`, because spawning every entity takes far too long, and do not filter on `EntityTest`, which includes it.
 
 ## Searching
@@ -130,6 +132,7 @@ Class examples: `CFMySystem`, `CFMyServerSystem`, `CFMyClientSystem`, `CFExample
 | Roll a save | `CFConditionSystem.RollDefense`, with the source's traits. Do not roll one with `CFDefense.Roll`, or bonuses against a trait and save upgrades are skipped |
 | Proficiency rank | `CFDefense.SaveRank`, `PerceptionRank`, `AttackRank`, `ArmorRank`, `SkillRank`, `ClassDcRank`, `SpellRank`. `CFWeaponSystem.Rank` for a Strike. Never read a class's lists alone: feats raise ranks too |
 | What a feat, class feature, heritage, ancestry or background gives | A `grants` list of `CFGrant` entries (`Content.Shared/_CF/Character/Grants/CFGrants.cs`), such as `!type:CFGrantBonus`. Do not add a `switch` on an id. `CFCharacterFeatureSystem` runs them |
+| A subclass option (Racket, Instinct, Muse, ...) or a deity | A `cfClassChoice` or `cfDeity` prototype. Read a build's picks through `CFClassChoices`, not from `CFCharacterBuildData` directly |
 | Spell / class / fixed DC and attack bonus | `CFCasting.Spellcasting`, `ClassDc`, `Fixed` (`Content.Shared.CF.Checks`). Cantrip rank: `CFCasting.CantripRank(level)` |
 | Anything that targets, rolls a check, and applies effects (spells, bombs, traps, auras) | Put `CFTargeting`, `CFAreaEffect`, `CFCheck`, `CFDegreeEffects` (and `CFProjectileDelivery`, `CFModeChoice`, `CFHeighten`) on the source, then call `CFEffectSystem.DeliverToTarget` / `ResolveArea` / `ResolveTarget` (`Content.Shared.CF.Effects`). Do not write a new resolver. |
 | Bonuses, fortune, action caps, resistances, persistent damage | `CFBonusSystem` (`AddBonus`, `AddPermanentBonus`, `Total`, `TryConsumeFortune`, `SetActionCap`, `AddResistance`, `AddPermanentResistance`, `ModifyDamage`, `AddPersistent`). A bonus can name a `trait` it counts against, or a `skill` |
@@ -146,7 +149,7 @@ Class examples: `CFMySystem`, `CFMyServerSystem`, `CFMyClientSystem`, `CFExample
 | A creature that builds traps | `CFTrapLayer` with a hazard prototype, and `CFTrapLayerSystem.TryLay`. The trap takes the builder's faction, so allies never set it off. Do not make an AI walk around one. |
 | Locks on doors and containers | Add a grade as a second parent: `parent: [ WoodDoor, CFLockSimple ]`, with `forceDc` and `keyId` on `CFLock`. See `Resources/Prototypes/_CF/Entities/Objects/Tools/locks.yml`. `CFLockSystem` blocks stock lock toggles and opening a locked door; the stock `Lock` alone does not stop a door. |
 | New crafted item | Add a `craftingRecipe` in `Resources/Prototypes/_CF/Crafting/recipes.yml` and a `CFFormula<Id>` item in `Entities/Objects/Formulas/formulas.yml`. Level and rarity come from the result's `CFItem`. Formula prices are the Player Core table by item level. A new station is a `CFBaseWorkbench` child with a `recipeTags` tag. |
-| New monster | Follow `importcreatures.md`. Copy an entry in `Resources/Prototypes/_CF/Entities/Mobs/Creatures/` and set the printed stats from Archives of Nethys. Add its row to `CFCreatureTest.StatBlocks`. Set `diesAtZeroHp: true`. Give it a `GhostRole` name and description, so a player can take it. |
+| New monster | Follow `importcreatures.md`. Copy an entry in `Resources/Prototypes/_CF/Entities/Mobs/Creatures/` and set the printed stats from Archives of Nethys. Set `diesAtZeroHp: true`. Give it a `GhostRole` name and description, so a player can take it. |
 | Any generated map | Call `CFOutdoorsSystem.ApplySkyWorld(map)` first. CF takes place in the sky, on floating islands with airships, not in space, so every generated map needs the breathable air and `Sky` parallax from the `CFSkyWorld` prototype. |
 | Money | `CFShopSystem.Purse(user)` for a seeded purse. Sale value is `CFMerchantSystem.SaleValue(item)`. Set `fullResale: true` on `CFItemPrice` for gems, art objects and raw materials. |
 | Languages | `CFLanguageSystem.Understands`, `TryGetSpoken`, `TrySpeak`. A creature with no `CFLanguages` understands everything |

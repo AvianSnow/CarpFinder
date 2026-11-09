@@ -24,6 +24,14 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
     [DataField]
     public ProtoId<CFHeritagePrototype>? Heritage;
 
+    /// <summary>Subclass picks, one per slot. Read them through <see cref="CFClassChoices"/>, which checks they are valid.</summary>
+    [DataField]
+    public List<ProtoId<CFClassChoicePrototype>> ClassChoices = new();
+
+    /// <summary>The deity of a class that follows one. Read it through <see cref="CFClassChoices"/>.</summary>
+    [DataField]
+    public ProtoId<CFDeityPrototype>? Deity;
+
     /// <summary>Level 1 ancestry feat. Must match the ancestry and be no higher than <see cref="Level"/>.</summary>
     [DataField]
     public ProtoId<CFFeatPrototype>? AncestryFeat;
@@ -140,6 +148,8 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
             Background = Background,
             Class = Class,
             Heritage = Heritage,
+            ClassChoices = ClassChoices.ToList(),
+            Deity = Deity,
             AncestryFeat = AncestryFeat,
             ClassFeat = ClassFeat,
             ClassFeatLevel2 = ClassFeatLevel2,
@@ -175,6 +185,8 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
         return Background == other.Background
                && Class == other.Class
                && Heritage == other.Heritage
+               && ClassChoices.SequenceEqual(other.ClassChoices)
+               && Deity == other.Deity
                && AncestryFeat == other.AncestryFeat
                && ClassFeat == other.ClassFeat
                && ClassFeatLevel2 == other.ClassFeatLevel2
@@ -212,6 +224,9 @@ public sealed partial class CFCharacterBuildData : IEquatable<CFCharacterBuildDa
         hash.Add(Background);
         hash.Add(Class);
         hash.Add(Heritage);
+        foreach (var choice in ClassChoices)
+            hash.Add(choice);
+        hash.Add(Deity);
         hash.Add(AncestryFeat);
         hash.Add(ClassFeat);
         hash.Add(ClassFeatLevel2);

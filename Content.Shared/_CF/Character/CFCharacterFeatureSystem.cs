@@ -50,6 +50,17 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
         }
     }
 
+    /// <summary>A subclass pick's level 1 grants, and every later feature of it reached by <paramref name="level"/>.</summary>
+    public void ApplyClassChoice(EntityUid mob, CFClassChoicePrototype choice, int level)
+    {
+        Apply(mob, choice.Grants, $"choice:{choice.ID}");
+        foreach (var feature in choice.Features)
+        {
+            if (feature.Level <= level)
+                Apply(mob, feature.Grants, $"choice:{choice.ID}:{feature.Level}:{feature.Name}");
+        }
+    }
+
     public void RaiseProficiency(EntityUid mob, string proficiency, CFProficiencyRank rank)
     {
         var combat = EnsureComp<CFCombatantComponent>(mob);
@@ -210,6 +221,9 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
                 break;
             case CFCombatOption.ViciousSwing:
                 options.ViciousSwing = true;
+                break;
+            case CFCombatOption.FinesseDexterity:
+                options.FinesseDexterity = true;
                 break;
         }
 

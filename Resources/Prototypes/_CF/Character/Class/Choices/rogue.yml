@@ -1,0 +1,49 @@
+# CarpFinder: Rogue's Racket, Player Core pages 166 and 167.
+# The rules let these rackets use their attribute as the key attribute. Here the racket always sets it.
+- type: cfClassChoice
+  id: Mastermind
+  class: Rogue
+  slot: cf-class-choice-racket
+  name: cf-class-choice-mastermind
+  description: cf-class-choice-mastermind-desc
+  keyAbility: Intelligence
+  trainedSkills:
+    - Society
+
+- type: cfClassChoice
+  id: Ruffian
+  class: Rogue
+  slot: cf-class-choice-racket
+  name: cf-class-choice-ruffian
+  description: cf-class-choice-ruffian-desc
+  keyAbility: Strength
+  trainedSkills:
+    - Intimidation
+  grants:
+    - !type:CFGrantProficiency
+      proficiencies:
+        - MediumArmor
+      rank: Trained
+
+- type: cfClassChoice
+  id: Scoundrel
+  class: Rogue
+  slot: cf-class-choice-racket
+  name: cf-class-choice-scoundrel
+  description: cf-class-choice-scoundrel-desc
+  keyAbility: Charisma
+  trainedSkills:
+    - Deception
+    - Diplomacy
+
+- type: cfClassChoice
+  id: Thief
+  class: Rogue
+  slot: cf-class-choice-racket
+  name: cf-class-choice-thief
+  description: cf-class-choice-thief-desc
+  trainedSkills:
+    - Thievery
+  grants:
+    - !type:CFGrantOption
+      option: FinesseDexterity

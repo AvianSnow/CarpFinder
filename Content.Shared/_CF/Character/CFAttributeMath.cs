@@ -128,7 +128,7 @@ public static class CFAttributeMath
         }
 
         if (build.Class != null && prototypes.TryIndex(build.Class.Value, out CFClassPrototype? cls))
-            ApplyBoost(mods, cls.KeyAbility);
+            ApplyBoost(mods, CFClassChoices.KeyAbility(prototypes, build, cls));
 
         foreach (var free in build.FreeBoosts)
             ApplyBoost(mods, free);

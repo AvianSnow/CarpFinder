@@ -199,6 +199,12 @@ public sealed partial class CFExperienceSystem : EntitySystem
         if (cls != null)
             _features.ApplyClassFeatures(mob, cls, combat.Level);
 
+        foreach (var choiceId in xp.ClassChoices)
+        {
+            if (_prototypes.TryIndex(choiceId, out CFClassChoicePrototype? choice))
+                _features.ApplyClassChoice(mob, choice, combat.Level);
+        }
+
         _spawn.RefreshArmorClass(mob);
         _popup.PopupEntity(Loc.GetString("cf-xp-level", ("level", combat.Level)), mob, mob);
     }

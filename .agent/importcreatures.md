@@ -12,7 +12,7 @@ Monsters run on stock SS14 HTN. Encounters give them GOAP later, so every creatu
 4. Pick the AI root task (below).
 5. Give it a ghost role (below), so a player can take it.
 6. Write what is not in yet in the comment above the entity, so nobody thinks it was missed.
-7. Add a row to `StatBlocks` in `CFCreatureTest`. Add a test class if the creature has anything more than a natural attack.
+7. `CFCreatureTest.EveryMonsterPlaysByItsOwnStatBlock` covers it with no change, and compares it with its own YAML, so a monster can be rebalanced freely. Add a test class if the creature has anything more than a natural attack.
 8. Check the build printed `Build succeeded`, then run the tests and the linter (`dotnet run --project Content.YAMLLinter -c Tools`).
 9. Update the "Still to port" list under "Creatures with PF2e stat blocks" in `roadmap.md`.
 

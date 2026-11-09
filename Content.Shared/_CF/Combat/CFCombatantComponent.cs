@@ -1,4 +1,5 @@
 using Content.Shared.CF.Character;
+using Content.Shared.CF.Preferences;
 using Content.Shared.CF.Traits;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
@@ -80,6 +81,10 @@ public sealed partial class CFCombatantComponent : Component
 
     [DataField, AutoNetworkedField]
     public string? BackgroundId;
+
+    /// <summary>The key attribute when something other than the class sets it, such as a Rogue's racket.</summary>
+    [DataField, AutoNetworkedField]
+    public CFAbility? KeyAbility;
 
     /// <summary>
     /// Extra trained skills from background picks and free class skill picks

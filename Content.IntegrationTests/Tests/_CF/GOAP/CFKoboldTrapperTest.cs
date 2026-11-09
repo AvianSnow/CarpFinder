@@ -103,7 +103,7 @@ public sealed class CFKoboldTrapperTest : GameTest
 
             Assert.That(SEntMan.System<InventorySystem>().TryGetSlotEntity(trapper, "pocket1", out var pocket), "A kobold needs a pocket for this.");
             Assert.That(SEntMan.GetComponent<MetaDataComponent>(pocket!.Value).EntityPrototype?.ID, Is.EqualTo("CFLightHammer"));
-            Assert.That(trapper.Comp.Charges, Is.EqualTo(6));
+            Assert.That(trapper.Comp.Charges, Is.GreaterThan(0));
         });
     }
 
@@ -127,7 +127,7 @@ public sealed class CFKoboldTrapperTest : GameTest
         {
             var hazard = SEntMan.GetComponent<CFHazardComponent>(trap);
             Assert.That(hazard.Armed, "An ally walking over it must not set it off.");
-            Assert.That(Hp(warrior), Is.EqualTo(7));
+            Assert.That(Hp(warrior), Is.EqualTo(SEntMan.GetComponent<CFCombatantComponent>(warrior).MaxHp));
             Assert.That(SEntMan.System<CFHazardSystem>().IsVictim(trap, warrior), Is.False);
         });
     }
@@ -400,11 +400,13 @@ public sealed class CFKoboldTrapperTest : GameTest
         _map = await CFDevMap.Load(Pair, Footprint);
         EntityUid trapper = default;
         EntityUid hero = default;
+        var startCharges = 0;
 
         await Server.WaitPost(() =>
         {
             trapper = Mob("CFMobKoboldTrapper", 0);
             hero = Mob("CFKoboldTrapperTestHero", 5);
+            startCharges = SEntMan.GetComponent<CFTrapLayerComponent>(trapper).Charges;
             Wake(trapper, hero);
         });
 
@@ -425,7 +427,7 @@ public sealed class CFKoboldTrapperTest : GameTest
             }
         });
 
-        Assert.That(charges, Is.LessThan(6), "It built at least one trap.");
+        Assert.That(charges, Is.LessThan(startCharges), "It built at least one trap.");
         Assert.That(armed, Is.GreaterThan(0), "The trap is on the floor and the kobold did not set it off.");
         Assert.That(hp, Is.LessThan(200), "It shot the adventurer.");
     }

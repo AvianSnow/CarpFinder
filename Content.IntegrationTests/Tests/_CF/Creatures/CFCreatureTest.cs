@@ -1,10 +1,14 @@
+using System;
+using System.Collections.Generic;
 using Content.IntegrationTests.Fixtures;
 using Content.IntegrationTests.Tests.CF;
 using Content.Server.CF.Character;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Combat;
+using Content.Shared.CF.Crafting;
 using Content.Shared.CF.Effects;
+using Content.Shared.CF.Preferences;
 using Content.Shared.CombatMode;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
@@ -16,7 +20,21 @@ using Robust.Shared.Prototypes;
 
 namespace Content.IntegrationTests.Tests.CF.Creatures;
 
-/// <summary>The printed stat blocks, and what makes a monster different from a character.</summary>
+/// <summary>The level table a Recall Knowledge DC comes from. Plain math, so no game runs.</summary>
+[TestFixture]
+public sealed class CFLevelDcTest
+{
+    [Test]
+    public void TheTableStartsWhereTheBookDoes()
+    {
+        Assert.That(CFCraftingRules.LevelDc(-1), Is.EqualTo(13));
+    }
+}
+
+/// <summary>
+/// Stat blocks, and what makes a monster different from a character. Real monsters get rebalanced, so a test here that needs
+/// a particular number uses one of the test copies below, which keep their numbers whatever happens to the original.
+/// </summary>
 [TestFixture]
 [TestOf(typeof(CFStrikeSystem))]
 public sealed class CFCreatureTest : GameTest
@@ -38,6 +56,39 @@ public sealed class CFCreatureTest : GameTest
     currentHp: 500
   - type: CFAbilityScore
   - type: CFExperience
+
+- type: entity
+  parent: CFMobGiantRat
+  id: CFCreatureTestRat
+  components:
+  - type: CFCombatant
+    level: -1
+    maxHp: 8
+    currentHp: 8
+    diesAtZeroHp: true
+
+- type: entity
+  parent: CFMobBoar
+  id: CFCreatureTestBoar
+  components:
+  - type: CFCombatant
+    printedAttack: 10
+    printedDamage: 4
+  - type: CFCombatOptions
+    naturalDice: 2
+    naturalDie: 6
+
+- type: entity
+  parent: CFMobSewerOoze
+  id: CFCreatureTestOoze
+  components:
+  - type: CFCombatant
+    maxHp: 40
+    currentHp: 40
+  - type: CFResistances
+    entries:
+    - damageType: Acid
+      amount: 9999
 ";
 
     private CFDevMap _map = default!;
@@ -48,63 +99,73 @@ public sealed class CFCreatureTest : GameTest
         return (uid, SEntMan.GetComponent<CFCombatantComponent>(uid));
     }
 
-    /// <summary>id, level, AC, HP, Fort, Ref, Will, Perception, attack, damage, dice, die.</summary>
-    private static readonly object[] StatBlocks =
-    {
-        new object[] { "CFMobGiantRat", -1, 15, 8, 6, 7, 3, 5, 7, 1, 1, 6 },
-        new object[] { "CFMobBoar", 2, 15, 40, 10, 5, 8, 8, 10, 4, 2, 6 },
-        new object[] { "CFMobGrizzlyBear", 3, 17, 59, 12, 6, 8, 10, 11, 4, 2, 8 },
-        new object[] { "CFMobGiantFrog", 1, 15, 30, 8, 7, 5, 7, 8, 3, 1, 6 },
-        new object[] { "CFMobHuntingSpider", 1, 17, 16, 6, 9, 5, 7, 9, 2, 1, 6 },
-        new object[] { "CFMobSewerOoze", 1, 8, 40, 9, 1, 3, 3, 9, 1, 1, 6 },
-        new object[] { "CFMobVelociraptor", 1, 16, 20, 5, 7, 4, 6, 8, 3, 1, 6 },
-        new object[] { "CFMobSkeletonguardMelee", -1, 16, 4, 2, 8, 2, 2, 6, 2, 1, 4 },
-        new object[] { "CFMobSkeletonguardRanged", -1, 16, 4, 2, 8, 2, 2, 6, 2, 1, 4 },
-        new object[] { "CFMobKoboldTrapper", 2, 18, 32, 5, 11, 8, 7, 7, 1, 1, 4 },
-    };
-
-    [TestCaseSource(nameof(StatBlocks))]
-    public async Task StatBlockMatchesTheBook(
-        string id, int level, int ac, int hp, int fort, int reflex, int will, int perception, int attack, int damage, int dice, int die)
+    /// <summary>
+    /// Monsters get rebalanced, so this never names a number. Each one is compared with its own YAML: whatever the stat
+    /// block says has to be what the game uses. A new monster is covered without adding anything here.
+    /// </summary>
+    [Test]
+    public async Task EveryMonsterPlaysByItsOwnStatBlock()
     {
         _map = await CFDevMap.Load(Pair, Footprint);
-        await Server.WaitAssertion(() =>
+        var problems = new List<string>();
+        var count = 0;
+        await Server.WaitPost(() =>
         {
-            var (uid, combat) = Creature(id);
-            var abilities = SEntMan.GetComponent<CFAbilityScoreComponent>(uid);
             var prototypes = Server.ProtoMan;
-            var stats = SEntMan.System<CFStrikeSystem>().UnarmedStats(uid);
-
-            Assert.Multiple(() =>
+            var factory = Server.ResolveDependency<IComponentFactory>();
+            foreach (var proto in prototypes.EnumeratePrototypes<EntityPrototype>())
             {
-                Assert.That(combat.Level, Is.EqualTo(level));
-                Assert.That(combat.ArmorClass, Is.EqualTo(ac));
-                Assert.That(combat.MaxHp, Is.EqualTo(hp));
-                Assert.That(combat.CurrentHp, Is.EqualTo(hp));
-                Assert.That(CFDefense.SaveModifier(prototypes, combat, abilities, CFDefenseType.Fortitude), Is.EqualTo(fort));
-                Assert.That(CFDefense.SaveModifier(prototypes, combat, abilities, CFDefenseType.Reflex), Is.EqualTo(reflex));
-                Assert.That(CFDefense.SaveModifier(prototypes, combat, abilities, CFDefenseType.Will), Is.EqualTo(will));
-                Assert.That(CFDefense.PerceptionModifier(prototypes, combat, abilities), Is.EqualTo(perception));
-                Assert.That(CFMelee.AttackBonus(abilities, combat, stats, CFProficiencyRank.Trained), Is.EqualTo(attack));
-                Assert.That(CFMelee.DamageBonus(abilities, stats, combat), Is.EqualTo(damage));
-                Assert.That(stats.DamageDice, Is.EqualTo(dice));
-                Assert.That(stats.DamageDie, Is.EqualTo(die));
-                Assert.That(stats.Traits.Nonlethal, Is.False, "Natural attacks are lethal.");
-            });
+                if (proto.Abstract
+                    || proto.ID.Contains("Test")
+                    || !proto.TryComp<CFCombatantComponent>(out var book, factory)
+                    || !book.DiesAtZeroHp)
+                    continue;
+
+                count++;
+                CheckStatBlock(proto.ID, book, problems);
+            }
         });
+
+        Assert.That(count, Is.GreaterThan(0), "No monsters were found to check.");
+        Assert.That(problems, Is.Empty);
     }
 
-    [Test]
-    public async Task KoboldUsesItsPrintedSaves()
+    private void CheckStatBlock(string id, CFCombatantComponent book, List<string> problems)
     {
-        _map = await CFDevMap.Load(Pair, Footprint);
-        await Server.WaitAssertion(() =>
+        void Same(string what, int? expected, int actual)
         {
-            var (uid, combat) = Creature("CFKoboldWarrior");
-            var abilities = SEntMan.GetComponent<CFAbilityScoreComponent>(uid);
-            Assert.That(CFDefense.SaveModifier(Server.ProtoMan, combat, abilities, CFDefenseType.Reflex), Is.EqualTo(7));
-            Assert.That(CFDefense.PerceptionModifier(Server.ProtoMan, combat, abilities), Is.EqualTo(3));
-        });
+            if (expected != null && expected != actual)
+                problems.Add($"{id}: {what} is {actual} in the game and {expected} in its YAML");
+        }
+
+        var prototypes = Server.ProtoMan;
+        var (uid, combat) = Creature(id);
+        var abilities = SEntMan.GetComponent<CFAbilityScoreComponent>(uid);
+        var stats = SEntMan.System<CFStrikeSystem>().UnarmedStats(uid);
+
+        Same("level", book.Level, combat.Level);
+        Same("AC", book.ArmorClass, combat.ArmorClass);
+        Same("max HP", book.MaxHp, combat.MaxHp);
+        Same("starting HP", combat.MaxHp, combat.CurrentHp);
+        Same("Fortitude", book.PrintedFortitude, CFDefense.SaveModifier(prototypes, combat, abilities, CFDefenseType.Fortitude));
+        Same("Reflex", book.PrintedReflex, CFDefense.SaveModifier(prototypes, combat, abilities, CFDefenseType.Reflex));
+        Same("Will", book.PrintedWill, CFDefense.SaveModifier(prototypes, combat, abilities, CFDefenseType.Will));
+        Same("Perception", book.PrintedPerception, CFDefense.PerceptionModifier(prototypes, combat, abilities));
+        Same("attack", book.PrintedAttack, CFMelee.AttackBonus(abilities, combat, stats, CFProficiencyRank.Trained));
+        Same("damage", book.PrintedDamage, CFMelee.DamageBonus(abilities, stats, combat));
+
+        foreach (var (skill, printed) in book.PrintedSkills)
+        {
+            Same(skill, printed, CFDefense.SkillModifier(prototypes, combat, abilities, skill, CFAbility.Strength));
+        }
+
+        if (!SEntMan.TryGetComponent(uid, out CFCombatOptionsComponent? natural) || natural.NaturalDie <= 0)
+            return;
+
+        Same("damage dice", Math.Max(1, natural.NaturalDice), stats.DamageDice);
+        Same("damage die", natural.NaturalDie, stats.DamageDie);
+        if (stats.Traits.Nonlethal)
+            problems.Add($"{id}: natural attacks are lethal, but this one is nonlethal");
     }
 
     [Test]
@@ -113,7 +174,7 @@ public sealed class CFCreatureTest : GameTest
         _map = await CFDevMap.Load(Pair, Footprint);
         await Server.WaitAssertion(() =>
         {
-            var (rat, combat) = Creature("CFMobGiantRat");
+            var (rat, combat) = Creature("CFCreatureTestRat");
             var hero = SEntMan.SpawnEntity("CFCreatureTestHero", _map.Local(1, 0));
             var xp = SEntMan.GetComponent<CFExperienceComponent>(hero);
             var before = xp.Xp;
@@ -132,7 +193,7 @@ public sealed class CFCreatureTest : GameTest
         _map = await CFDevMap.Load(Pair, Footprint);
         await Server.WaitAssertion(() =>
         {
-            var (rat, _) = Creature("CFMobGiantRat");
+            var (rat, _) = Creature("CFCreatureTestRat");
             var hero = SEntMan.SpawnEntity("CFCreatureTestHero", _map.Local(1, 0));
 
             SEntMan.System<CFEffectSystem>().DealDamage(rat, hero, 1000, "Slashing", false);
@@ -191,7 +252,7 @@ public sealed class CFCreatureTest : GameTest
     {
         _map = await CFDevMap.Load(Pair, Footprint);
         var (ooze, combat) = (default(EntityUid), default(CFCombatantComponent)!);
-        await Server.WaitPost(() => (ooze, combat) = Creature("CFMobSewerOoze"));
+        await Server.WaitPost(() => (ooze, combat) = Creature("CFCreatureTestOoze"));
 
         await Pair.RunTicksSync(5);
 
@@ -212,7 +273,7 @@ public sealed class CFCreatureTest : GameTest
         _map = await CFDevMap.Load(Pair, Footprint);
         await Server.WaitAssertion(() =>
         {
-            var (boar, _) = Creature("CFMobBoar");
+            var (boar, _) = Creature("CFCreatureTestBoar");
             var hero = SEntMan.SpawnEntity("CFCreatureTestHero", _map.Local(1, 0));
             var strikes = SEntMan.System<CFStrikeSystem>();
             var defender = SEntMan.GetComponent<CFCombatantComponent>(hero);
@@ -236,7 +297,7 @@ public sealed class CFCreatureTest : GameTest
 
         await Server.WaitPost(() =>
         {
-            (boar, _) = Creature("CFMobBoar");
+            (boar, _) = Creature("CFCreatureTestBoar");
             hero = SEntMan.SpawnEntity("CFCreatureTestHero", _map.Local(1, 0));
             SEntMan.System<SharedCombatModeSystem>().SetInCombatMode(boar, true);
         });

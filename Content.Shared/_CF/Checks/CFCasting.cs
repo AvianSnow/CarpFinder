@@ -60,7 +60,9 @@ public static class CFCasting
             return CFCastingStats.Untrained;
 
         var ability = CFAbility.Strength;
-        if (combat.ClassId != null && prototypes.TryIndex(combat.ClassId, out CFClassPrototype? cls))
+        if (combat.KeyAbility is { } key)
+            ability = key;
+        else if (combat.ClassId != null && prototypes.TryIndex(combat.ClassId, out CFClassPrototype? cls))
             ability = cls.KeyAbility;
 
         return FromAbility(combat.Level, abilities.GetModifier(ability), CFDefense.ClassDcRank(combat));

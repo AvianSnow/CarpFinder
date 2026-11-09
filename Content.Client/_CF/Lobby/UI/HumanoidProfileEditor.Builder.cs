@@ -41,6 +41,8 @@ public sealed partial class HumanoidProfileEditor
         SkillFeatLevel2,
         GeneralFeatLevel3,
         SkillFeatLevel4,
+        ClassChoice,
+        Deity,
     }
 
     private enum SkillAssignMode
@@ -98,6 +100,7 @@ public sealed partial class HumanoidProfileEditor
         AncestryFeatSlot.OnPressed += _ => ShowAncestryFeatSelection(1);
         Level5FeatSlot.OnPressed += _ => ShowAncestryFeatSelection(5);
         SpriteSlot.OnPressed += _ => ShowSpriteSelection();
+        DeitySlot.OnPressed += _ => ShowDeitySelection();
 
         SkillView.OnClosed += ClosePicker;
         SkillView.OnAccept += AcceptSkillAssignment;
@@ -304,6 +307,21 @@ public sealed partial class HumanoidProfileEditor
                     && _prototypeManager.TryIndex(next.ClassFeatLevel4.Value, out CFFeatPrototype? classFeatLevel4)
                     && !classFeatLevel4.FitsClass(id, 4))
                     next.ClassFeatLevel4 = null;
+                CFClassChoices.Sanitize(_prototypeManager, next);
+                SetBuild(next);
+                break;
+            }
+            case BuilderSelection.ClassChoice:
+            {
+                var next = CurrentBuild();
+                CFClassChoices.Assign(_prototypeManager, next, id);
+                SetBuild(next);
+                break;
+            }
+            case BuilderSelection.Deity:
+            {
+                var next = CurrentBuild();
+                CFClassChoices.AssignDeity(_prototypeManager, next, id);
                 SetBuild(next);
                 break;
             }
@@ -821,6 +839,149 @@ public sealed partial class HumanoidProfileEditor
         OpenPicker();
     }
 
+    /// <summary>One button per subclass slot the class has options in, and one for a deity if it follows one.</summary>
+    private void RefreshClassChoiceSlots(CFCharacterBuildData build)
+    {
+        ClassChoiceSlots.RemoveAllChildren();
+        DeitySlot.Visible = false;
+        if (build.Class is not { } classId || !_prototypeManager.TryIndex(classId, out CFClassPrototype? cls))
+            return;
+
+        var none = Loc.GetString("cf-character-builder-none");
+        var selected = CFClassChoices.Selected(_prototypeManager, build);
+        foreach (var slot in CFClassChoices.Slots(_prototypeManager, classId))
+        {
+            var pick = selected.FirstOrDefault(choice => choice.Slot == slot);
+            var button = new Button
+            {
+                Text = Loc.GetString(
+                    "cf-character-builder-choice-selected",
+                    ("slot", Loc.GetString(slot)),
+                    ("name", pick == null ? none : Loc.GetString(pick.Name))),
+                HorizontalExpand = true,
+            };
+            button.OnPressed += _ => ShowClassChoiceSelection(slot);
+            ClassChoiceSlots.AddChild(button);
+        }
+
+        if (!cls.UsesDeity)
+            return;
+
+        DeitySlot.Visible = true;
+        DeitySlot.Disabled = !_prototypeManager.EnumeratePrototypes<CFDeityPrototype>().Any();
+        if (DeitySlot.Disabled)
+        {
+            DeitySlot.Text = Loc.GetString("cf-character-builder-deity-tba");
+            return;
+        }
+
+        var deity = CFClassChoices.SelectedDeity(_prototypeManager, build);
+        DeitySlot.Text = Loc.GetString(
+            "cf-character-builder-deity-selected",
+            ("name", deity == null ? none : Loc.GetString(deity.Name)));
+    }
+
+    private void ReleaseBuilderSlots()
+    {
+        AncestryButton.Pressed = false;
+        BackgroundButton.Pressed = false;
+        ClassButton.Pressed = false;
+        JobButton.Pressed = false;
+        HeritageSlot.Pressed = false;
+        SpriteSlot.Pressed = false;
+        AncestryFeatSlot.Pressed = false;
+        ClassFeatSlot.Pressed = false;
+        Level2FeatSlot.Pressed = false;
+        Level4FeatSlot.Pressed = false;
+        Level5FeatSlot.Pressed = false;
+    }
+
+    private void ShowClassChoiceSelection(LocId slot)
+    {
+        if (Profile?.CFBuild.Class is not { } classId)
+            return;
+
+        _selection = BuilderSelection.ClassChoice;
+        _prdUrl = ClassPrd;
+        ReleaseBuilderSlots();
+
+        var selected = CFClassChoices.Selected(_prototypeManager, Profile.CFBuild)
+            .FirstOrDefault(choice => choice.Slot == slot)?.ID;
+        _pendingId = selected;
+
+        var labels = SkillLabelMap();
+        var options = new List<Pf2eListEntry>();
+        foreach (var choice in _prototypeManager.EnumeratePrototypes<CFClassChoicePrototype>()
+                     .Where(choice => choice.Class == classId && choice.Slot == slot)
+                     .OrderBy(choice => Loc.GetString(choice.Name), StringComparer.CurrentCultureIgnoreCase))
+        {
+            options.Add(new Pf2eListEntry
+            {
+                Id = choice.ID,
+                Name = Loc.GetString(choice.Name),
+                Rarity = choice.Rarity,
+                Traits = choice.KeyAbility is { } key
+                    ? Loc.GetString("cf-character-builder-class-key-ability", ("ability", AbilityName(key)))
+                    : null,
+                Description = Loc.GetString(choice.Description),
+                Rules = DescribeTrainedSkills(choice.TrainedSkills, labels),
+            });
+        }
+
+        SelectionView.Show(
+            Loc.GetString(slot),
+            Loc.GetString("cf-character-builder-filter-all-choices"),
+            options,
+            selected);
+        OpenPicker();
+    }
+
+    private void ShowDeitySelection()
+    {
+        if (Profile == null)
+            return;
+
+        _selection = BuilderSelection.Deity;
+        _prdUrl = ClassPrd;
+        ReleaseBuilderSlots();
+
+        var selected = CFClassChoices.SelectedDeity(_prototypeManager, Profile.CFBuild)?.ID;
+        _pendingId = selected;
+
+        var labels = SkillLabelMap();
+        var options = new List<Pf2eListEntry>();
+        foreach (var deity in _prototypeManager.EnumeratePrototypes<CFDeityPrototype>()
+                     .OrderBy(deity => Loc.GetString(deity.Name), StringComparer.CurrentCultureIgnoreCase))
+        {
+            options.Add(new Pf2eListEntry
+            {
+                Id = deity.ID,
+                Name = Loc.GetString(deity.Name),
+                Rarity = deity.Rarity,
+                Description = Loc.GetString(deity.Description),
+                Rules = DescribeTrainedSkills(deity.TrainedSkills, labels),
+            });
+        }
+
+        SelectionView.Show(
+            Loc.GetString("cf-character-builder-title-deity"),
+            Loc.GetString("cf-character-builder-filter-all-deities"),
+            options,
+            selected);
+        OpenPicker();
+    }
+
+    private static string? DescribeTrainedSkills(
+        List<ProtoId<CFAbilitySkillPrototype>> skills,
+        IReadOnlyDictionary<string, string> labels)
+    {
+        if (skills.Count == 0)
+            return null;
+
+        var names = skills.Select(skill => labels.GetValueOrDefault(skill.Id, skill.Id));
+        return Loc.GetString("cf-character-builder-choice-trained", ("skills", string.Join(", ", names)));
+    }
+
     private void ShowSpriteSelection()
     {
         if (Profile == null)
@@ -1244,6 +1405,9 @@ public sealed partial class HumanoidProfileEditor
         foreach (var skill in cls.Proficiencies.Skills.Trained)
             blocked.Add(skill);
 
+        foreach (var skill in CFClassChoices.TrainedSkills(_prototypeManager, build))
+            blocked.Add(skill);
+
         if (build.BackgroundTrainedSkills.Count > 0)
         {
             foreach (var skill in build.BackgroundTrainedSkills)
@@ -1402,6 +1566,7 @@ public sealed partial class HumanoidProfileEditor
         if (build.Heritage != null && _prototypeManager.TryIndex(build.Heritage.Value, out CFHeritagePrototype? chosenHeritage))
             heritageName = Loc.GetString(chosenHeritage.Name);
         HeritageSlot.Text = Loc.GetString("cf-character-builder-heritage-selected", ("name", heritageName));
+        RefreshClassChoiceSlots(build);
 
         var featName = Loc.GetString("cf-character-builder-none");
         if (build.AncestryFeat != null && _prototypeManager.TryIndex(build.AncestryFeat.Value, out CFFeatPrototype? chosenFeat))

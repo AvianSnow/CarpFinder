@@ -96,6 +96,8 @@
                                 <Button Name="HeritageSlot" ToggleMode="True" Text="{Loc 'cf-character-builder-heritage-slot'}" HorizontalExpand="True" />
                                 <Button Name="SpriteSlot" ToggleMode="True" Text="{Loc 'cf-character-builder-sprite-slot'}" HorizontalExpand="True" />
                                 <Button Name="AncestryFeatSlot" ToggleMode="True" Text="{Loc 'cf-character-builder-ancestry-feat-slot'}" HorizontalExpand="True" />
+                                <BoxContainer Name="ClassChoiceSlots" Orientation="Vertical" HorizontalExpand="True" />
+                                <Button Name="DeitySlot" Visible="False" HorizontalExpand="True" />
                                 <Button Name="ClassFeatSlot" ToggleMode="True" Text="{Loc 'cf-character-builder-class-feat-slot'}" HorizontalExpand="True" />
                             </BoxContainer>
                         </PanelContainer>

@@ -224,6 +224,8 @@ public static class CFSkills
         foreach (var skill in build.ClassTrainedSkills)
             result.Add(skill.Id);
 
+        result.AddRange(CFClassChoices.TrainedSkills(prototypes, build));
+
         foreach (var feat in SelectedFeats(prototypes, build, ancestryId, classId, level))
         {
             foreach (var skill in feat.TrainedSkills)

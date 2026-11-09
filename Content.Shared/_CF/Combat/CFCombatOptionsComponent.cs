@@ -11,6 +11,10 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public bool SneakAttack;
 
+    /// <summary>Finesse melee Strikes may add Dexterity to damage instead of Strength (the Thief racket).</summary>
+    [DataField, AutoNetworkedField]
+    public bool FinesseDexterity;
+
     [DataField, AutoNetworkedField]
     public bool CanRage;
 
@@ -180,6 +184,7 @@ public enum CFCombatOption : byte
     DoubleSlice,
     TwinFeint,
     ViciousSwing,
+    FinesseDexterity,
 }
 
 public enum CFPointMark : byte
