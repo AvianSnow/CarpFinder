@@ -1,3 +1,6 @@
+using Robust.Shared.Prototypes;
+using Content.Shared.CF.Preferences;
+using Content.Shared.CF.Combat;
 using System.Numerics;
 using Content.Server.NPC.Components;
 using Content.Server.NPC.Systems;
@@ -32,6 +35,7 @@ public sealed partial class CFCompanionSystem : EntitySystem
     private const float PickupRange = 0.6f;
     private const int FetchGiveUp = 45;
 
+    [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private SharedCombatModeSystem _combat = default!;
     [Dependency] private SharedContainerSystem _containers = default!;
@@ -231,6 +235,32 @@ public sealed partial class CFCompanionSystem : EntitySystem
     {
         if (TryComp(companion, out CFCompanionComponent? comp))
             Follow(companion, comp);
+    }
+
+    /// <summary>
+    /// Brings the companions of <paramref name="owner"/> up to its level, from their <c>cfPet</c> tables. Wounds stay as they are:
+    /// a companion gains the new Hit Points on top of what it has left, and one that has fallen gains none until it is back up.
+    /// </summary>
+    public void MatchOwnerLevel(EntityUid owner, CFCombatantComponent ownerCombat)
+    {
+        var query = EntityQueryEnumerator<CFCompanionComponent, CFCombatantComponent>();
+        while (query.MoveNext(out var uid, out var companion, out var combat))
+        {
+            if (companion.Summoner != owner || !_prototypes.TryIndex<CFPetPrototype>(companion.PetId, out var pet))
+                continue;
+
+            var build = new CFCharacterBuildData { Level = ownerCombat.Level, PetBarding = companion.Barding };
+            var block = CFPetMath.Present(pet, build, null);
+            var gained = block.HitPoints - combat.MaxHp;
+
+            combat.Level = block.Level;
+            combat.MaxHp = block.HitPoints;
+            combat.ArmorClass = pet.UsesMaster ? ownerCombat.ArmorClass + CFPetMath.BardingOf(companion.Barding).Bonus : block.ArmorClass;
+            if (combat.CurrentHp > 0 && gained > 0)
+                combat.CurrentHp += gained;
+
+            Dirty(uid, combat);
+        }
     }
 
     public void Bind(EntityUid summoner, EntityUid companion)

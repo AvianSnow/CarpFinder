@@ -24,6 +24,14 @@ public sealed partial class CFCompanionComponent : Component
     [DataField, AutoNetworkedField]
     public bool Following;
 
+    /// <summary>The <c>cfPet</c> this ally was made from, which it levels by. Empty for a summon with no table.</summary>
+    [DataField]
+    public string PetId = string.Empty;
+
+    /// <summary>The barding the ally was given, which counts toward its AC.</summary>
+    [DataField]
+    public string Barding = string.Empty;
+
     /// <summary>Server-only. Frames spent in reach of a fetch item that would not be picked up.</summary>
     public int FetchWaits;
 }

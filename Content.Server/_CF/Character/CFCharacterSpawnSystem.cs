@@ -93,6 +93,12 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         var prototype = _prototypes.HasIndex<EntityPrototype>(pet.Entity) ? pet.Entity : "CFSummon";
         var companion = Spawn(prototype, Transform(mob).Coordinates.Offset(new Vector2(1f, 0f)));
         _companions.Bind(mob, companion);
+        if (TryComp(companion, out CFCompanionComponent? bound))
+        {
+            bound.PetId = pet.ID;
+            bound.Barding = build.PetBarding;
+        }
+
         if (!string.IsNullOrWhiteSpace(build.PetName))
             _meta.SetEntityName(companion, build.PetName.Trim());
 

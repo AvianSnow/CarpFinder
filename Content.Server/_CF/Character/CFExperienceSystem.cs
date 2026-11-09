@@ -1,3 +1,4 @@
+using Content.Server.CF.Companions;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Factions;
@@ -17,6 +18,7 @@ public sealed partial class CFExperienceSystem : EntitySystem
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private CFCharacterSpawnSystem _spawn = default!;
     [Dependency] private CFCharacterFeatureSystem _features = default!;
+    [Dependency] private CFCompanionSystem _companions = default!;
 
     public IEnumerable<string> Factions()
     {
@@ -206,6 +208,7 @@ public sealed partial class CFExperienceSystem : EntitySystem
         }
 
         _spawn.RefreshArmorClass(mob);
+        _companions.MatchOwnerLevel(mob, combat);
         _popup.PopupEntity(Loc.GetString("cf-xp-level", ("level", combat.Level)), mob, mob);
     }
 
