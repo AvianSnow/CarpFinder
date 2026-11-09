@@ -1,0 +1,93 @@
+# An Inventor's construct companion: the prototype construct, Guns & Gears (Remastered) page 32.
+# It calculates modifiers and DCs as a player does. The second attack waits on creatures having two Strikes.
+
+- type: cfPet
+  id: CFPetConstruct
+  name: Clockwork Construct
+  kind: Construct
+  entity: CFCompanionConstruct
+  size: "Small"
+  strength: 3
+  dexterity: 3
+  constitution: 2
+  intelligence: -4
+  wisdom: 1
+  charisma: 0
+  hitPoints: 10
+  description: "A mechanical companion of cogs and gears."
+  speeds:
+    - name: Speed
+      feet: 25
+  senses:
+    - "precise vision"
+    - "imprecise hearing"
+    - "vague touch"
+  attacks:
+    - name: "Fist"
+      die: 8
+      damage: bludgeoning
+    - name: "Blade"
+      die: 6
+      damage: slashing
+      agile: true
+      finesse: true
+
+- type: entity
+  parent: [ MobCleanBot, CFCompanionBase ]
+  id: CFCompanionConstruct
+  name: clockwork construct
+  description: A mechanical companion of cogs and gears.
+  suffix: Companion
+  components:
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: CFInnovation
+  - type: CFCombatant
+    level: 1
+    armorClass: 16
+    maxHp: 18
+    currentHp: 18
+    proficiencyRanks:
+      Unarmed: Trained
+      Unarmored: Trained
+      Fortitude: Trained
+      Reflex: Trained
+      Will: Trained
+      Perception: Trained
+      Acrobatics: Trained
+      Athletics: Trained
+  - type: CFTrait
+    traits:
+    - Construct
+  - type: CFResistances
+    entries:
+    - damageType: Bleed
+      amount: 999
+    - damageType: Poison
+      amount: 999
+    - damageType: Vitality
+      amount: 999
+    - damageType: Void
+      amount: 999
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 3
+      Dexterity: 3
+      Constitution: 2
+      Intelligence: -4
+      Wisdom: 1
+      Charisma: 0
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 8
+    naturalType: bludgeoning
+    naturalFinesse: false
+    naturalAgile: false
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      18: Dead

@@ -35,13 +35,19 @@
   features:
     - level: 1
       name: "Explode"
-      description: "Explosions from your innovation: TBA"
+      description: "Explode is on your action wheel. An unstable action: fire around your innovation, and your innovation may stop working until retuned."
+      grants:
+        - !type:CFGrantAction
+          action: CFActExplode
     - level: 1
       name: "Innovation"
-      description: "Choose an innovation in the builder. Building each one: TBA"
+      description: "Choose an innovation and a modification in the builder. You start with it. Rebuilding one that is destroyed: TBA"
     - level: 1
       name: "Overdrive"
-      description: "Push your devices for extra damage: TBA"
+      description: "Overdrive is on your action wheel. A Crafting check: your Strikes deal half your Intelligence more for a minute, or all of it on a critical success. A critical failure burns you."
+      grants:
+        - !type:CFGrantAction
+          action: CFActOverdrive
     - level: 1
       name: "Peerless Inventor"
       description: "The Inventor skill feat: TBA"
@@ -53,12 +59,14 @@
           option: ShieldBlock
     - level: 3
       name: "Expert Overdrive"
-      description: "Expert in Crafting. Better Overdrive: TBA"
+      description: "Expert in Crafting, and Overdrive adds 1 more damage."
       grants:
         - !type:CFGrantProficiency
           proficiencies:
             - Crafting
           rank: Expert
+        - !type:CFGrantOption
+          option: ExpertOverdrive
     - level: 3
       name: "Reconfigure"
       description: "Change your innovation in downtime: TBA"

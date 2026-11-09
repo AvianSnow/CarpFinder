@@ -222,3 +222,36 @@
     - !type:CFHealEffect
       flat: 2
       perLevel: 2
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActOverdrive
+  name: Overdrive
+  description: A Crafting check. Your Strikes deal extra damage for a minute, based on your Intelligence. Then it needs a minute to cool.
+  components:
+  - type: Action
+    useDelay: 6
+  - type: CFOverdriveAction
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActExplode
+  name: Explode
+  description: Your innovation bursts, dealing 2d6 fire damage around it, basic Reflex, and more at level 3 and up. Costs 2 actions. An unstable action.
+  components:
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFExplodeAction
+  - type: CFAreaEffect
+    shape: Burst
+    sizeFeet: 5
+  - type: CFCheck
+    defense: Reflex
+    dcSource: Class
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 2
+      die: 6
+      damageType: Fire
+      diceFromLevel: true

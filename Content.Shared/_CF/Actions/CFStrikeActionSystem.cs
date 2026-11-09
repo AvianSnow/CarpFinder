@@ -24,6 +24,7 @@ public sealed partial class CFStrikeActionSystem : EntitySystem
     [Dependency] private CFEffectSystem _effects = default!;
     [Dependency] private CFConditionSystem _conditions = default!;
     [Dependency] private CFTauntSystem _taunts = default!;
+    [Dependency] private CFInventorSystem _inventor = default!;
     [Dependency] private CFReloadSystem _reload = default!;
     [Dependency] private CFActivitySystem _activities = default!;
 
@@ -77,6 +78,9 @@ public sealed partial class CFStrikeActionSystem : EntitySystem
 
         if (action.Finisher && CompOrNull<CFCombatOptionsComponent>(user)?.Panache != true)
             return "cf-strike-action-needs-panache";
+
+        if (action.Unstable && !_inventor.CanUseUnstable(user))
+            return "cf-inventor-unstable-cannot";
 
         if (action.NeedsIgnoredTaunt && !_taunts.HasIgnored(target, user))
             return "cf-strike-action-needs-ignored-taunt";
@@ -155,6 +159,9 @@ public sealed partial class CFStrikeActionSystem : EntitySystem
         var hit = _strikes.PerformStrike(user, target, stats, weapon, melee: true, attackPenalty: action.AttackBonus, extraDice: action.ExtraDice, finisher: action.Finisher, resolved: Resolved);
         if (action.TwoWeapons && _strikes.TryOffHandWeapon(user, weapon, out var off, out var offHand))
             _strikes.PerformStrike(user, target, off, offHand, melee: true, attackPenalty: action.AttackBonus, skipPrecision: hit, resolved: Resolved);
+
+        if (action.Unstable)
+            _inventor.RollUnstable(user);
 
         if (action.TauntsTarget)
             _taunts.Taunt(user, target);

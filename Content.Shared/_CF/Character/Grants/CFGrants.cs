@@ -1,3 +1,4 @@
+using Content.Shared.CF.Actions;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.DamageTypes;
@@ -241,6 +242,18 @@ public sealed partial class CFGrantFocusPoints : CFGrant
     public override void Apply(IEntityManager entities, CFGrantArgs args)
     {
         entities.System<CFCharacterFeatureSystem>().AddFocusPoints(args.Mob, Count);
+    }
+}
+
+/// <summary>A resistance that counts while the character wears their armor innovation.</summary>
+public sealed partial class CFGrantInnovationResistance : CFGrant
+{
+    [DataField(required: true)]
+    public CFInnovationResistance Resistance = default!;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        entities.System<CFInventorSystem>().AddResistance(args.Mob, Resistance);
     }
 }
 

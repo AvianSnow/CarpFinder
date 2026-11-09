@@ -389,6 +389,9 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
             case CFCombatOption.WeaponImplement:
                 options.WeaponImplement = true;
                 break;
+            case CFCombatOption.ExpertOverdrive:
+                options.ExpertOverdrive = true;
+                break;
             case CFCombatOption.HealingHands:
                 options.HealingHands = true;
                 break;

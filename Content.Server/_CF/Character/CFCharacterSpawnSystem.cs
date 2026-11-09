@@ -82,6 +82,10 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         {
             pet = FirstPet(CFPetKind.Familiar);
         }
+        else if (CFPetMath.BuildGrants(_prototypes, build, CFPetKind.Construct))
+        {
+            pet = FirstPet(CFPetKind.Construct);
+        }
 
         if (pet == null)
             return;

@@ -65,6 +65,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
     [Dependency] private CFReactionSystem _reactions = default!;
     [Dependency] private CFAuraSystem _auras = default!;
     [Dependency] private CFImplementSystem _implements = default!;
+    [Dependency] private CFInventorSystem _inventor = default!;
     [Dependency] private CFTauntSystem _taunts = default!;
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
@@ -746,6 +747,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
 
         if (style != null && style.Exploited == target)
             damageMod += 2;
+
+        damageMod += _inventor.OverdriveDamage(user);
 
         if (style is { ImplementEmpowerment: true } && _implements.Empowers(user))
             damageMod += 2 * rolled.DamageDice;

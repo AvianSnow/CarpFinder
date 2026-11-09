@@ -34,6 +34,10 @@ public sealed partial class CFDamageEffect : CFEffect
     [DataField]
     public int HeightenFlat;
 
+    /// <summary>At least one die per level of the user, as Explode.</summary>
+    [DataField]
+    public bool DiceFromLevel;
+
     /// <summary>One more die every this many levels of the user, from level 1. 0 means none.</summary>
     [DataField]
     public int DiceEveryLevels;
@@ -72,6 +76,9 @@ public sealed partial class CFDamageEffect : CFEffect
         var critical = multiplier >= 2f;
         var amp = system.AmpOf(args);
         var dice = (amp is { AmpDice: > 0 } ? amp.AmpDice : Dice) + (amp is { AmpHeightenDice: > 0 } ? amp.AmpHeightenDice : HeightenDice) * args.HeightenSteps;
+        if (DiceFromLevel)
+            dice = Math.Max(dice, entities.GetComponentOrNull<CFCombatantComponent>(args.User)?.Level ?? 1);
+
         if (DiceEveryLevels > 0)
             dice += ((entities.GetComponentOrNull<CFCombatantComponent>(args.User)?.Level ?? 1) - 1) / DiceEveryLevels;
 

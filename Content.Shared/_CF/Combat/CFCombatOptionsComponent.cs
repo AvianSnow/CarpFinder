@@ -99,6 +99,10 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField]
     public TimeSpan NextUnleash;
 
+    /// <summary>Overdrive adds 1 more damage.</summary>
+    [DataField, AutoNetworkedField]
+    public bool ExpertOverdrive;
+
     /// <summary>A finisher that drops its target gives panache back.</summary>
     [DataField, AutoNetworkedField]
     public bool FinishingFollowThrough;
@@ -350,6 +354,7 @@ public enum CFCombatOption : byte
     GuardianArmor,
     ImplementEmpowerment,
     WeaponImplement,
+    ExpertOverdrive,
 }
 
 public enum CFPointMark : byte

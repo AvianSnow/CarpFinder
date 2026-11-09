@@ -28,6 +28,7 @@ public sealed partial class CFBonusSystem : EntitySystem
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private CFActionPoolSystem _actions = default!;
     [Dependency] private CFArmorSystem _armor = default!;
+    [Dependency] private CFInventorSystem _inventor = default!;
     [Dependency] private CFEffectSystem _effects = default!;
     [Dependency] private MovementSpeedModifierSystem _speed = default!;
 
@@ -420,7 +421,7 @@ public sealed partial class CFBonusSystem : EntitySystem
         if (damage <= 0)
             return damage;
 
-        var resist = GuardianArmorResistance(target, damageType);
+        var resist = Math.Max(GuardianArmorResistance(target, damageType), _inventor.Resistance(target, damageType));
         var weak = 0;
         if (TryComp(target, out CFResistancesComponent? comp))
         {

@@ -1,0 +1,118 @@
+# An Inventor's innovations. A construct is in Companions/constructs.yml.
+
+- type: entity
+  parent: CFBreastplate
+  id: CFInnovationPowerSuit
+  name: power suit
+  description: A cutting-edge suit of medium armor covered in gizmos. It is your innovation.
+  components:
+  - type: CFInnovation
+  - type: CFArmor
+    category: Medium
+    group: Composite
+    acBonus: 5
+    dexCap: 1
+    checkPenalty: -2
+    speedPenalty: -5
+    strength: 3
+
+- type: entity
+  parent: CFHideArmor
+  id: CFInnovationSubterfugeSuit
+  name: subterfuge suit
+  description: A light, quiet suit of medium armor with hidden gizmos. It is your innovation.
+  components:
+  - type: CFInnovation
+  - type: CFArmor
+    category: Medium
+    group: Composite
+    acBonus: 2
+    dexCap: 4
+    checkPenalty: -1
+    speedPenalty: 0
+    strength: 0
+  - type: CFBulk
+    bulk: 1
+
+- type: entity
+  parent: CFLongsword
+  id: CFInnovationWeaponModular
+  name: modular innovation
+  description: An impossible-looking weapon of gears and mechanisms. It is your innovation.
+  components:
+  - type: CFInnovation
+  - type: CFTrait
+    traits:
+    - VersatileP
+  - type: CFDamageMode
+    types:
+    - Bludgeoning
+    - Piercing
+    - Slashing
+
+- type: entity
+  parent: CFLongsword
+  id: CFInnovationWeaponEntangling
+  name: entangling innovation
+  description: An impossible-looking weapon of gears and mechanisms. It is your innovation.
+  components:
+  - type: CFInnovation
+  - type: CFTrait
+    traits:
+    - Disarm
+    - Grapple
+    - Trip
+    - VersatileP
+
+- type: entity
+  parent: CFLongsword
+  id: CFInnovationWeaponHefty
+  name: hefty innovation
+  description: An impossible-looking weapon of gears and mechanisms. It is your innovation.
+  components:
+  - type: CFInnovation
+  - type: CFTrait
+    traits:
+    - Shove
+    - VersatileB
+    - VersatileP
+
+- type: entity
+  parent: CFLongsword
+  id: CFInnovationWeaponHampering
+  name: hampering innovation
+  description: An impossible-looking weapon of gears and mechanisms. It is your innovation.
+  components:
+  - type: CFInnovation
+  - type: CFTrait
+    traits:
+    - Hampering
+    - Trip
+    - VersatileP
+
+- type: entity
+  parent: CFLongsword
+  id: CFInnovationWeaponWeighted
+  name: weighted innovation
+  description: An impossible-looking weapon of gears and mechanisms. It is your innovation.
+  components:
+  - type: CFInnovation
+  - type: CFTrait
+    traits:
+    - TwoHandD10
+    - VersatileB
+    - VersatileP
+
+- type: entity
+  parent: CFLongsword
+  id: CFInnovationWeaponPacifying
+  name: pacifying innovation
+  description: An impossible-looking weapon of gears and mechanisms. It is your innovation.
+  components:
+  - type: CFInnovation
+  - type: CFTrait
+    traits:
+    - Disarm
+    - Hampering
+    - Nonlethal
+    - VersatileP

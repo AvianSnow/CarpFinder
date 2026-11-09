@@ -114,6 +114,7 @@
     actions: 2
   - type: CFStrikeAction
     extraDice: 1
+    unstable: true
 
 - type: entity
   parent: CFActStrikeBase

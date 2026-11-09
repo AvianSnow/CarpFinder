@@ -57,6 +57,10 @@ public sealed partial class CFStrikeActionComponent : Component
     [DataField]
     public bool Reloads;
 
+    /// <summary>An unstable action: needs the innovation in use, and risks it breaking down.</summary>
+    [DataField]
+    public bool Unstable;
+
     /// <summary>Added to the attack roll.</summary>
     [DataField]
     public int AttackBonus;

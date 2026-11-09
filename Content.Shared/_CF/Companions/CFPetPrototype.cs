@@ -7,6 +7,9 @@ public enum CFPetKind
 {
     Companion,
     Familiar,
+
+    /// <summary>An Inventor's construct companion.</summary>
+    Construct,
 }
 
 /// <summary>

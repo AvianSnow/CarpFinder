@@ -1,3 +1,4 @@
+using Content.Shared.CF.Traits;
 using Content.Shared.CF.Spells;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Combat;
@@ -151,7 +152,8 @@ public sealed partial class CFEffectSystem
 
     public void Heal(EntityUid user, EntityUid target, int amount)
     {
-        if (amount <= 0 || HasComp<CFVoidHealingComponent>(target) || !_bridge.TryEnsureCombatTarget(target, out _, out _, out _))
+        // Constructs are not alive: what heals the living does nothing for them.
+        if (amount <= 0 || HasComp<CFVoidHealingComponent>(target) || CompOrNull<CFTraitComponent>(target)?.HasTrait("Construct") == true || !_bridge.TryEnsureCombatTarget(target, out _, out _, out _))
             return;
 
         _dying.RestoreHitPoints(target, amount, user);

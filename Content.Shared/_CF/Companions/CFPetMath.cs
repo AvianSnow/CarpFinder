@@ -26,6 +26,9 @@ public static class CFPetMath
     /// <summary>The saved build actually has this companion or familiar, not only the option to take one.</summary>
     public static bool BuildGrants(IPrototypeManager prototypes, CFCharacterBuildData build, CFPetKind kind)
     {
+        if (kind == CFPetKind.Construct)
+            return build.ClassChoices.Contains("InnovationConstruct") || build.ClassFeat == "CFPrototypeCompanion";
+
         var companion = kind == CFPetKind.Companion;
         var level = Math.Max(1, build.Level);
         if (build.Class != null && prototypes.TryIndex(build.Class.Value, out CFClassPrototype? cls))
@@ -100,7 +103,7 @@ public static class CFPetMath
         }
 
         var skills = new List<CFPetSkillLine>();
-        if (pet.Kind == CFPetKind.Companion)
+        if (pet.Kind is CFPetKind.Companion or CFPetKind.Construct)
         {
             AddTrainedSkill(skills, pet, level, "Acrobatics", CFAbility.Dexterity);
             AddTrainedSkill(skills, pet, level, "Athletics", CFAbility.Strength);

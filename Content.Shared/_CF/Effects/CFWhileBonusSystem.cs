@@ -21,6 +21,7 @@ public sealed partial class CFWhileBonusSystem : EntitySystem
     [Dependency] private CFBonusSystem _bonuses = default!;
     [Dependency] private CFImplementSystem _implements = default!;
     [Dependency] private CFTacticSystem _tactics = default!;
+    [Dependency] private CFInventorSystem _inventor = default!;
 
     public void Add(EntityUid uid, CFWhileBonus bonus)
     {
@@ -86,6 +87,8 @@ public sealed partial class CFWhileBonusSystem : EntitySystem
             CFBonusWhile.HoldingRegalia => _implements.IsHolding(uid, CFImplementKind.Regalia),
             CFBonusWhile.HoldingLantern => _implements.IsHolding(uid, CFImplementKind.Lantern),
             CFBonusWhile.HasBanner => _tactics.HasBanner(uid),
+            CFBonusWhile.WearingInnovation => _inventor.IsWearing(uid),
+            CFBonusWhile.Overdriven => _inventor.IsOverdriven(uid),
             _ => false,
         };
     }

@@ -12,6 +12,8 @@ public enum CFBonusWhile : byte
     HoldingRegalia,
     HoldingLantern,
     HasBanner,
+    WearingInnovation,
+    Overdriven,
 }
 
 /// <summary>A lasting bonus that only counts while the creature is in a state. See <see cref="CFWhileBonusSystem"/>.</summary>

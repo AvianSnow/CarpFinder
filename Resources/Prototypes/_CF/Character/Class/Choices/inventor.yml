@@ -1,10 +1,24 @@
-# CarpFinder: Inventor innovations.
+# CarpFinder: Inventor innovations, and the modification for one. A character picks one of each.
+
 - type: cfClassChoice
   id: InnovationArmor
   class: Inventor
   slot: cf-class-choice-innovation
   name: cf-class-choice-innovationarmor
   description: cf-class-choice-innovationarmor-desc
+  grants:
+    - !type:CFGrantItem
+      item: CFInnovationPowerSuit
+
+- type: cfClassChoice
+  id: InnovationArmorSubterfuge
+  class: Inventor
+  slot: cf-class-choice-innovation
+  name: cf-class-choice-innovationarmorsubterfuge
+  description: cf-class-choice-innovationarmorsubterfuge-desc
+  grants:
+    - !type:CFGrantItem
+      item: CFInnovationSubterfugeSuit
 
 - type: cfClassChoice
   id: InnovationConstruct
@@ -19,3 +33,165 @@
   slot: cf-class-choice-innovation
   name: cf-class-choice-innovationweapon
   description: cf-class-choice-innovationweapon-desc
+
+- type: cfClassChoice
+  id: ModArmorHarmonicOscillator
+  class: Inventor
+  slot: cf-class-choice-modification
+  name: cf-class-choice-modarmorharmonicoscillator
+  description: cf-class-choice-modarmorharmonicoscillator-desc
+  grants:
+    - !type:CFGrantInnovationResistance
+      resistance:
+        types:
+          - Force
+          - Sonic
+        flat: 3
+
+- type: cfClassChoice
+  id: ModArmorMetallicReactance
+  class: Inventor
+  slot: cf-class-choice-modification
+  name: cf-class-choice-modarmormetallicreactance
+  description: cf-class-choice-modarmormetallicreactance-desc
+  grants:
+    - !type:CFGrantInnovationResistance
+      resistance:
+        types:
+          - Acid
+          - Electricity
+        flat: 3
+
+- type: cfClassChoice
+  id: ModArmorOtherworldlyProtection
+  class: Inventor
+  slot: cf-class-choice-modification
+  name: cf-class-choice-modarmorotherworldlyprotection
+  description: cf-class-choice-modarmorotherworldlyprotection-desc
+  grants:
+    - !type:CFGrantInnovationResistance
+      resistance:
+        types:
+          - Void
+          - Spirit
+        flat: 3
+
+- type: cfClassChoice
+  id: ModArmorPhlogistonicRegulator
+  class: Inventor
+  slot: cf-class-choice-modification
+  name: cf-class-choice-modarmorphlogistonicregulator
+  description: cf-class-choice-modarmorphlogistonicregulator-desc
+  grants:
+    - !type:CFGrantInnovationResistance
+      resistance:
+        types:
+          - Cold
+          - Fire
+        flat: 0
+
+- type: cfClassChoice
+  id: ModArmorSpeedBoosters
+  class: Inventor
+  slot: cf-class-choice-modification
+  name: cf-class-choice-modarmorspeedboosters
+  description: cf-class-choice-modarmorspeedboosters-desc
+  grants:
+    - !type:CFGrantWhile
+      while: WearingInnovation
+      stat: Speed
+      type: Status
+      value: 5
+    - !type:CFGrantWhile
+      while: Overdriven
+      stat: Speed
+      type: Status
+      value: 10
+
+- type: cfClassChoice
+  id: ModArmorMuscularExoskeleton
+  class: Inventor
+  slot: cf-class-choice-modification
+  name: cf-class-choice-modarmormuscularexoskeleton
+  description: cf-class-choice-modarmormuscularexoskeleton-desc
+  grants:
+    - !type:CFGrantWhile
+      while: Overdriven
+      stat: SkillChecks
+      type: Circumstance
+      value: 1
+      skill: Athletics
+
+- type: cfClassChoice
+  id: ModArmorSubtleDampeners
+  class: Inventor
+  slot: cf-class-choice-modification
+  name: cf-class-choice-modarmorsubtledampeners
+  description: cf-class-choice-modarmorsubtledampeners-desc
+  grants:
+    - !type:CFGrantWhile
+      while: Overdriven
+      stat: SkillChecks
+      type: Circumstance
+      value: 1
+      skill: Stealth
+
+- type: cfClassChoice
+  id: ModWeaponModularHead
+  class: Inventor
+  slot: cf-class-choice-modification
+  name: cf-class-choice-modweaponmodularhead
+  description: cf-class-choice-modweaponmodularhead-desc
+  grants:
+    - !type:CFGrantItem
+      item: CFInnovationWeaponModular
+
+- type: cfClassChoice
+  id: ModWeaponEntanglingForm
+  class: Inventor
+  slot: cf-class-choice-modification
+  name: cf-class-choice-modweaponentanglingform
+  description: cf-class-choice-modweaponentanglingform-desc
+  grants:
+    - !type:CFGrantItem
+      item: CFInnovationWeaponEntangling
+
+- type: cfClassChoice
+  id: ModWeaponHeftyComposition
+  class: Inventor
+  slot: cf-class-choice-modification
+  name: cf-class-choice-modweaponheftycomposition
+  description: cf-class-choice-modweaponheftycomposition-desc
+  grants:
+    - !type:CFGrantItem
+      item: CFInnovationWeaponHefty
+
+- type: cfClassChoice
+  id: ModWeaponHamperingSpikes
+  class: Inventor
+  slot: cf-class-choice-modification
+  name: cf-class-choice-modweaponhamperingspikes
+  description: cf-class-choice-modweaponhamperingspikes-desc
+  grants:
+    - !type:CFGrantItem
+      item: CFInnovationWeaponHampering
+
+- type: cfClassChoice
+  id: ModWeaponDynamicWeighting
+  class: Inventor
+  slot: cf-class-choice-modification
+  name: cf-class-choice-modweapondynamicweighting
+  description: cf-class-choice-modweapondynamicweighting-desc
+  grants:
+    - !type:CFGrantItem
+      item: CFInnovationWeaponWeighted
+
+- type: cfClassChoice
+  id: ModWeaponPacificationTools
+  class: Inventor
+  slot: cf-class-choice-modification
+  name: cf-class-choice-modweaponpacificationtools
+  description: cf-class-choice-modweaponpacificationtools-desc
+  grants:
+    - !type:CFGrantItem
+      item: CFInnovationWeaponPacifying
