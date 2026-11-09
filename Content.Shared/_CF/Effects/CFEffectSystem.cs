@@ -284,6 +284,8 @@ public sealed partial class CFEffectSystem : EntitySystem
 
     #region Checks
 
+    [Dependency] private CFAuraSystem _auras = default!;
+
     /// <summary>
     /// Rolls the source's check against one creature and runs its effect lists.
     /// Concealment and blindness force a flat check first. Returns true when the check landed.
@@ -301,6 +303,7 @@ public sealed partial class CFEffectSystem : EntitySystem
         {
             args.Degree = RollAttack(user, target, check, stats.AttackBonus);
             landed = args.Degree.IsSuccess();
+            _auras.NoteAttacked(target, user);
         }
         else if (check != null && check.Defense != CFDefenseType.None)
         {

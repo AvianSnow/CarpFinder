@@ -35,6 +35,11 @@
   additionalSkillTrainings: 2
   features:
     - level: 1
+      name: "Champion's Aura"
+      description: "You are surrounded by a 15-foot emanation. It does nothing by itself, but your feats and devotion spells work through it."
+      grants:
+        - !type:CFGrantAura {}
+    - level: 1
       name: "Cause"
       description: "Choose a cause in the builder. For now every cause has the same reaction: when an ally near you is hit, you can Strike the attacker if it is in your reach. Each cause's own reaction: TBA"
       grants:
@@ -45,7 +50,7 @@
       description: "Deities are our own pantheon, and none exist yet: TBA"
     - level: 1
       name: "Devotion Spells"
-      description: "Choose Lay on Hands or Touch of the Void in the builder. It costs a Focus Point. Shields of the Spirit needs an aura: TBA"
+      description: "Choose Lay on Hands, Touch of the Void or Shields of the Spirit in the builder. It costs a Focus Point."
     - level: 1
       name: "Shield Block"
       description: "While your shield is raised, you can spend your reaction to block 5 damage."

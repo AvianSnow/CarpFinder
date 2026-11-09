@@ -11,3 +11,5 @@
   prerequisites:
     - "shields of the spirit"
   pendingAction: true
+  requiresChoice:
+    - DevotionShieldsOfTheSpirit

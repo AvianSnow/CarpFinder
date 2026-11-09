@@ -193,3 +193,35 @@
   defense: basic Fortitude
   summary: The target takes 1d6 void damage. On a failure it also takes -2 to AC. Healing undead is TBA.
   heightened: Damage increases by 1d6 per rank.
+
+- type: entity
+  parent: CFSpellInstant
+  id: CFShieldsOfTheSpirit
+  name: Shields of the Spirit
+  description: Raise your shield. For 6 seconds, allies in your aura have +1 status bonus to AC, and an enemy that attacks one takes 1d4 spirit damage. Costs a Focus Point.
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: ShieldsOfTheSpirit
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    filter: All
+  - type: CFNeedsShield
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFRaiseSpiritShieldsEffect
+
+- type: cfSpell
+  id: ShieldsOfTheSpirit
+  name: Shields of the Spirit
+  rank: 1
+  traits: [Concentrate, Sanctified, Spirit]
+  actionCost: One
+  range: 15-foot aura
+  targets: allies in your aura
+  summary: Raise your shield. Allies in your aura have +1 status bonus to AC, and an enemy that attacks one takes 1d4 spirit damage.
+  heightened: Damage increases by 1d4 per 2 ranks.

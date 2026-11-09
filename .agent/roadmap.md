@@ -86,8 +86,11 @@ Most action feats share one of a few shapes, so build the shape once. An action 
   - [ ] NPCs do not walk to avoid Reactive Strike. They always run.
   - [ ] Spell attacks do not trigger `AttackWouldHit`. Only Strikes do.
   - [ ] Reactive Strike, Shield Block, Reactive Shield, the Champion's reaction and You're Next are still hard-coded in `CFReactions`. Move them when their class wave comes.
-- [ ] Auras and emanations, for champion and bard features, on `CFAreaEffect`.
-  - Deferred on 9 November 2026: only 4 feats are known to need one (Aura of Courage, Aura of Despair, Hampering Stance, Channeled Protection), and no class feature mentions one. Build it in the Champion wave, when something can use it. One-off emanations already work through `CFAreaEffect`, as Bless does.
+- [x] Auras. `CFAura` on a creature and `CFAuraEffect` entries, added with `!type:CFGrantAura`, run by `CFAuraSystem`. Built on 9 November 2026 for the Champion's aura, with Aura of Courage, Aura of Despair, Divine Health and Shields of the Spirit. Tests: `CFAuraTest`.
+  - It looks up who is inside 4 times a second, through `CFEffectSystem.CollectArea`, only for creatures that have an aura. It is not a physics sensor: a 15-foot sensor would make the problems in `ss14rules.md` about the flanking sensor much worse, and would be a circle where emanations are tiles.
+  - "At the end of your turn" is every 6 seconds, on the owner's own timer. A placeholder: the timing will probably change.
+  - [ ] Not seen in a real client. Nothing draws the aura's edge yet.
+  - [ ] Bard compositions, Hampering Stance and Channeled Protection can use this when their waves come. A choice of when to suppress the aura is not built.
 
 ### 1c. Subclasses
 

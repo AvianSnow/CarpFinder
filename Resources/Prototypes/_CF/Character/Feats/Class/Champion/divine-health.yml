@@ -23,3 +23,15 @@
       trait: Disease
     - !type:CFGrantSaveUpgrade
       trait: Poison
+    - !type:CFGrantAura
+      effects:
+        - affects: Allies
+          stat: Saves
+          type: Status
+          value: 1
+          trait: Disease
+        - affects: Allies
+          stat: Saves
+          type: Status
+          value: 1
+          trait: Poison

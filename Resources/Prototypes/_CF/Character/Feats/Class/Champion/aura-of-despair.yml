@@ -12,3 +12,17 @@
   prerequisites:
     - "champion's aura"
     - "unholy"
+  requiresChoice:
+    - CauseDesecration
+    - CauseIniquity
+    - CauseObedience
+  grants:
+    - !type:CFGrantAura
+      effects:
+        - affects: Enemies
+          stat: Saves
+          type: Circumstance
+          value: -1
+          trait: Fear
+        - affects: Enemies
+          keepsFrightened: true

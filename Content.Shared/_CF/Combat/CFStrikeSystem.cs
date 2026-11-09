@@ -60,6 +60,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
     [Dependency] private CFEffectSystem _effects = default!;
     [Dependency] private CFStanceSystem _stances = default!;
     [Dependency] private CFReactionSystem _reactions = default!;
+    [Dependency] private CFAuraSystem _auras = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private SharedAudioSystem _audio = default!;
     [Dependency] private ThrownItemSystem _thrownItems = default!;
@@ -848,6 +849,9 @@ public sealed partial class CFStrikeSystem : EntitySystem
 
         if (degree == CFDegree.CriticalFailure && !isObject)
             _reactions.AnswerCriticalMiss(target, user);
+
+        if (!isObject)
+            _auras.NoteAttacked(target, user);
 
         PlayStrikeImpact(weaponUid, target, degree, rolled.DamageType, melee || weapon.ThrownStrike);
 

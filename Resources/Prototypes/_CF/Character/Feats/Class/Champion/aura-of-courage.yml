@@ -11,3 +11,15 @@
   prerequisites:
     - "champion's aura"
     - "holy"
+  requiresChoice:
+    - CauseGrandeur
+    - CauseJustice
+    - CauseLiberation
+    - CauseRedemption
+  grants:
+    - !type:CFGrantOption
+      option: Bravery
+    - !type:CFGrantAura
+      effects:
+        - affects: Allies
+          easesFrightened: true

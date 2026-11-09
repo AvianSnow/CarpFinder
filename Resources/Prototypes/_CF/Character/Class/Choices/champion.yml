@@ -67,3 +67,22 @@
   grants:
     - !type:CFGrantFocusSpell
       spell: TouchOfTheVoid
+
+- type: cfClassChoice
+  id: DevotionShieldsOfTheSpirit
+  class: Champion
+  slot: cf-class-choice-devotion
+  name: cf-class-choice-devotionshieldsofthespirit
+  description: cf-class-choice-devotionshieldsofthespirit-desc
+  grants:
+    - !type:CFGrantFocusSpell
+      spell: ShieldsOfTheSpirit
+    - !type:CFGrantAura
+      effects:
+        - affects: Allies
+          needs: SpiritShields
+          stat: ArmorClass
+          type: Status
+          value: 1
+          retaliateDie: 4
+          retaliateType: Spirit

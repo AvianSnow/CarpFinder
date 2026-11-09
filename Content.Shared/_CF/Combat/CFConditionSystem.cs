@@ -173,11 +173,7 @@ public sealed partial class CFConditionSystem : EntitySystem
         if (TryComp(uid, out CFConditionComponent? cond))
         {
             if (cond.Frightened > 0)
-            {
-                cond.Frightened = Math.Max(0, cond.Frightened - (CompOrNull<CFCombatOptionsComponent>(uid)?.ShakesOffFear == true ? 2 : 1));
-                Dirty(uid, cond);
-            }
-
+                ReduceFrightened(uid, CompOrNull<CFCombatOptionsComponent>(uid)?.ShakesOffFear == true ? 2 : 1);
         }
 
         if (!TryComp(uid, out CFCombatOptionsComponent? opt))
@@ -186,6 +182,17 @@ public sealed partial class CFConditionSystem : EntitySystem
         opt.ReactionSpent = 0;
         opt.PreyHitThisTurn = false;
         Dirty(uid, opt);
+    }
+
+    /// <summary>Lowers frightened, but not below 1 while something is holding it there.</summary>
+    public void ReduceFrightened(EntityUid uid, int amount)
+    {
+        if (!TryComp(uid, out CFConditionComponent? cond) || cond.Frightened <= 0)
+            return;
+
+        var floor = _timing.CurTime < cond.FrightenedFloorUntil ? 1 : 0;
+        cond.Frightened = Math.Max(floor, cond.Frightened - amount);
+        Dirty(uid, cond);
     }
 
     public CFConditionComponent Ensure(EntityUid uid)

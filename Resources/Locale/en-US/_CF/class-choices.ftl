@@ -195,3 +195,5 @@ cf-class-choice-mysterytempest = Tempest
 cf-class-choice-mysterytempest-desc = Trained in Nature. Revelation spells and your curse: TBA
 
 cf-reaction-opportune-riposte = Opportune Riposte
+cf-class-choice-devotionshieldsofthespirit = Shields of the Spirit
+cf-class-choice-devotionshieldsofthespirit-desc = Raise your shield. For 6 seconds, allies in your aura have +1 status bonus to AC, and an enemy that attacks one takes 1d4 spirit damage. It costs a Focus Point.

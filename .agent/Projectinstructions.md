@@ -147,6 +147,7 @@ Class examples: `CFMySystem`, `CFMyServerSystem`, `CFMyClientSystem`, `CFExample
 | An option where the player picks a cantrip or skill | A `choices` list on the `cfFeat`, `cfHeritage` or `cfClassChoice`. Read answers through `CFOptionChoices`, not `CFBuild.OptionPicks` directly |
 | A bonus that only counts while raging, with panache, or unarmored | `!type:CFGrantWhile`, run by `CFWhileBonusSystem` |
 | What a Barbarian instinct does to Rage | `!type:CFGrantRage` (`damage`, `attackDie`, `attackType`) |
+| An aura, or something an aura does | `!type:CFGrantAura` with a list of `effects`. `CFAuraSystem` runs them. Do not add a physics sensor for one |
 | An action that only applies effects | An action parented on `CFActivityInstant` or `CFActivityTarget` with `CFEffectAction` and `CFDegreeEffects` (`Resources/Prototypes/_CF/Actions/effects.yml`). Grant it with `CFGrantAction` |
 | A Swashbuckler finisher | A Strike action with `finisher: true` on its `CFStrikeAction`. It needs panache and spends it |
 | An action that is a Strike with something extra | An action parented on `CFActStrikeBase` with a `CFStrikeAction` (`Resources/Prototypes/_CF/Actions/strikes.yml`). Say what it needs and put effects in `onHit` and `onCritical` |

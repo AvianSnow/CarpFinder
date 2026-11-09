@@ -96,6 +96,18 @@ public sealed partial class CFGrantWhile : CFGrant
     }
 }
 
+/// <summary>Gives the creature an aura, or adds to the one it has. With no effects it is an aura that does nothing yet.</summary>
+public sealed partial class CFGrantAura : CFGrant
+{
+    [DataField]
+    public List<CFAuraEffect> Effects = new();
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        entities.System<CFAuraSystem>().Add(args.Mob, Effects);
+    }
+}
+
 /// <summary>What a Barbarian's instinct does to Rage.</summary>
 public sealed partial class CFGrantRage : CFGrant
 {

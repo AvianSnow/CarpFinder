@@ -12,6 +12,10 @@ public sealed partial class CFConditionComponent : Component
     [DataField, AutoNetworkedField]
     public int Frightened;
 
+    /// <summary>Until this time, frightened does not ease by itself below 1 (Aura of Despair).</summary>
+    [DataField]
+    public TimeSpan FrightenedFloorUntil;
+
     [DataField, AutoNetworkedField]
     public bool Grabbed;
 
