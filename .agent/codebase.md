@@ -133,7 +133,7 @@ Anything that targets, rolls, and applies effects is data on the source entity: 
 | Alt+Z with a melee weapon, with panache | Confident Finisher at the enemy being aimed at (1 action) | `CFManeuverSystem.TryFinisher` |
 | Play a held instrument, as a Bard | Courageous Anthem, 1 action every 12 seconds | `CFAnthemSystem` |
 | Radial wheel or hotbar | Activities and spells | `CFActivitySystem`, `CFSpellSystem` |
-| Reactions | Not on the wheel. They resolve in code when triggered. | `CFConditionSystem.TrySpendReaction` |
+| Reactions | Not on the wheel. They fire by themselves, and only when that would change the outcome. | `CFReactionSystem`, and `CFConditionSystem.TrySpendReaction` for the older ones |
 
 Code with no player, such as the AI, uses `CFManeuverSystem.CanUse` and `TryUse` with a `CFBasicAction`, and `CFStrikeSystem.TryFeatStrike`.
 

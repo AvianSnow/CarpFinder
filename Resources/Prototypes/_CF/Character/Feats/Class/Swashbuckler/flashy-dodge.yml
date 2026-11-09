@@ -9,4 +9,12 @@
   traits:
     - "Swashbuckler"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-feat-flashy-dodge
+        trigger: AttackWouldHit
+        acBonus: 2
+        needsToSeeAttacker: true
+        notEncumbered: true
+        gainsPanache: true

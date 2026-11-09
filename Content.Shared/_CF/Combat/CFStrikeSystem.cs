@@ -59,6 +59,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
     [Dependency] private CFStealthSystem _stealth = default!;
     [Dependency] private CFEffectSystem _effects = default!;
     [Dependency] private CFStanceSystem _stances = default!;
+    [Dependency] private CFReactionSystem _reactions = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private SharedAudioSystem _audio = default!;
     [Dependency] private ThrownItemSystem _thrownItems = default!;
@@ -700,7 +701,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
 
         var degree = CFDegrees.DegreeOfSuccess(d20, attackBonus, targetAc);
         if (!isObject)
-            degree = AdjustDefense(target, user, d20, attackBonus, ref targetAc, degree);
+            degree = AdjustDefense(target, user, !melee, d20, attackBonus, ref targetAc, degree);
 
         var damage = 0;
         var criticalHit = degree == CFDegree.CriticalSuccess;
@@ -740,11 +741,14 @@ public sealed partial class CFStrikeSystem : EntitySystem
 
                 if (!isObject && defender.CurrentHp <= 0)
                 {
-                    _popup.PopupEntity(Loc.GetString("cf-combat-strike-defeated"), target, user);
-                    _dying.KnockOut(target, defender, criticalHit, user);
-                    if (weapon.Traits.Nonlethal)
-                        _dying.KnockOutNonlethal(target, defender);
-                    YoureNext(user, target);
+                    if (_dying.KnockOut(target, defender, criticalHit, user))
+                    {
+                        _popup.PopupEntity(Loc.GetString("cf-combat-strike-defeated"), target, user);
+                        if (weapon.Traits.Nonlethal)
+                            _dying.KnockOutNonlethal(target, defender);
+
+                        YoureNext(user, target);
+                    }
                 }
                 else if (isObject && defender.CurrentHp <= 0)
                 {
@@ -762,11 +766,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
                 Dirty(target, defender);
                 MirrorToSs14(user, target, defender, damage, "precision", isObject);
                 RaiseDamaged(target, user, damage);
-                if (defender.CurrentHp <= 0)
-                {
-                    _dying.KnockOut(target, defender, fromCriticalHit: false, user);
+                if (defender.CurrentHp <= 0 && _dying.KnockOut(target, defender, fromCriticalHit: false, user))
                     YoureNext(user, target);
-                }
             }
         }
 
@@ -794,12 +795,12 @@ public sealed partial class CFStrikeSystem : EntitySystem
     private CFDegree AdjustDefense(
         EntityUid target,
         EntityUid user,
+        bool ranged,
         int d20,
         int attackBonus,
         ref int targetAc,
         CFDegree degree)
     {
-        _ = user;
         if (degree is not (CFDegree.Success or CFDegree.CriticalSuccess))
             return degree;
 
@@ -814,13 +815,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
                 return degree;
         }
 
-        if (_conditions.TrySpendReaction(target, CFReactions.Nimble))
-        {
-            targetAc += 2;
-            degree = CFDegrees.DegreeOfSuccess(d20, attackBonus, targetAc);
-        }
-
-        return degree;
+        return _reactions.AnswerAttack(target, user, ranged, d20, attackBonus, ref targetAc, degree);
     }
 
     private int Precision(

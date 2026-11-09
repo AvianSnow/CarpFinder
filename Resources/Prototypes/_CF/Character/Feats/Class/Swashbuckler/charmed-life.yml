@@ -11,4 +11,10 @@
   prerequisites:
     - "Charisma +2"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-feat-charmed-life
+        trigger: SaveWouldFail
+        saveBonus: 2
+        gainsPanache: true

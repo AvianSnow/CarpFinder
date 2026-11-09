@@ -15,6 +15,7 @@ namespace Content.Server.CF.Character;
 public sealed partial class CFLongRestSystem : EntitySystem
 {
     [Dependency] private CFDyingSystem _dying = default!;
+    [Dependency] private CFReactionSystem _reactions = default!;
     [Dependency] private MobStateSystem _mobState = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
 
@@ -36,6 +37,7 @@ public sealed partial class CFLongRestSystem : EntitySystem
     public void LongRest(EntityUid mob)
     {
         _dying.RestoreFully(mob);
+        _reactions.RestoreDaily(mob);
 
         if (TryComp(mob, out CFSpellbookComponent? book))
         {

@@ -9,4 +9,9 @@
   traits:
     - "Barbarian"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-feat-wounded-rage
+        trigger: Damaged
+        entersRage: true

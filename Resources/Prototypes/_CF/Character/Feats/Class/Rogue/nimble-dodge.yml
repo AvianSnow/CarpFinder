@@ -10,5 +10,10 @@
     - "Rogue"
   action: Reaction
   grants:
-    - !type:CFGrantOption
-      option: NimbleDodge
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-feat-nimble-dodge
+        trigger: AttackWouldHit
+        acBonus: 2
+        needsToSeeAttacker: true
+        notEncumbered: true

@@ -42,6 +42,7 @@ public sealed partial class CFConditionSystem : EntitySystem
     private static readonly TimeSpan ShoveWindow = TimeSpan.FromSeconds(6);
 
     [Dependency] private PullingSystem _pulling = default!;
+    [Dependency] private CFReactionSystem _reactions = default!;
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private INetManager _net = default!;
     [Dependency] private IPrototypeManager _prototypes = default!;
@@ -743,7 +744,8 @@ public sealed partial class CFConditionSystem : EntitySystem
         var mod = DefenseModifier(uid, defense, traits);
         var d20 = _random.Next(1, 21);
         total = d20 + mod;
-        return _bonuses.UpgradeSave(uid, defense, CFDegrees.DegreeOfSuccess(d20, mod, dc), traits);
+        var degree = _reactions.AnswerSave(uid, defense, d20, mod, dc, ref total, CFDegrees.DegreeOfSuccess(d20, mod, dc));
+        return _bonuses.UpgradeSave(uid, defense, degree, traits);
     }
 
     /// <summary>A save or Perception as a roll would use it right now.</summary>

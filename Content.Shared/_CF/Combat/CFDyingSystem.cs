@@ -28,6 +28,7 @@ namespace Content.Shared.CF.Combat;
 public sealed partial class CFDyingSystem : EntitySystem
 {
     [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private CFReactionSystem _reactions = default!;
     [Dependency] private INetManager _net = default!;
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private IPrototypeManager _prototypes = default!;
@@ -151,8 +152,9 @@ public sealed partial class CFDyingSystem : EntitySystem
 
     /// <summary>
     /// First time reduced to 0 HP: unconscious + dying (1, or 2 on critical), plus wounded.
+    /// False if a reaction kept the creature up instead.
     /// </summary>
-    public void KnockOut(
+    public bool KnockOut(
         EntityUid target,
         CFCombatantComponent combatant,
         bool fromCriticalHit,
@@ -162,14 +164,18 @@ public sealed partial class CFDyingSystem : EntitySystem
         if (combatant.DiesAtZeroHp)
         {
             Die(target, combatant, origin);
-            return;
+            return true;
         }
+
+        if (_reactions.TrySurviveDrop(target, combatant))
+            return false;
 
         var dying = fromCriticalHit ? 2 : 1;
         dying += combatant.Wounded;
         SetDying(target, combatant, dying, origin, knockedOut: true);
         SyncSs14Critical(target, origin);
         PopupPvs(Loc.GetString("cf-combat-dying-gain", ("value", combatant.Dying)), target, PopupType.MediumCaution);
+        return true;
     }
 
     /// <summary>

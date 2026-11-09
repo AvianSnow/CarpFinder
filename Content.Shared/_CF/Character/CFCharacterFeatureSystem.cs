@@ -195,9 +195,6 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
             case CFCombatOption.BattleMedicine:
                 options.BattleMedicine = true;
                 break;
-            case CFCombatOption.NimbleDodge:
-                options.NimbleDodge = true;
-                break;
             case CFCombatOption.ReactiveShield:
                 options.ReactiveShield = true;
                 break;

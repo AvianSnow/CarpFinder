@@ -52,9 +52,6 @@ public sealed partial class CFCombatOptionsComponent : Component
     public bool Champion;
 
     [DataField, AutoNetworkedField]
-    public bool NimbleDodge;
-
-    [DataField, AutoNetworkedField]
     public bool ReactiveShield;
 
     [DataField, AutoNetworkedField]
@@ -136,7 +133,8 @@ public static class CFReactions
 {
     public const int Strike = 1;
     public const int Block = 2;
-    public const int Nimble = 4;
+    /// <summary>Any reaction from <see cref="CFReactionSystem"/>.</summary>
+    public const int Granted = 4;
     public const int Raise = 8;
     public const int Champion = 16;
     public const int Next = 32;
@@ -147,7 +145,6 @@ public static class CFReactions
         {
             Strike => opt.ReactiveStrike,
             Block => opt.ShieldBlock,
-            Nimble => opt.NimbleDodge,
             Raise => opt.ReactiveShield,
             Champion => opt.Champion,
             Next => opt.YoureNext,
@@ -172,7 +169,6 @@ public enum CFCombatOption : byte
     Champion,
     Anthem,
     BattleMedicine,
-    NimbleDodge,
     ReactiveShield,
     YoureNext,
     TumbleBehind,

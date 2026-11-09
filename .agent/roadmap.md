@@ -59,7 +59,7 @@ Built on 6 November 2026, except where marked. Tests: `CFGrantTest`. What change
 | `CFGrantSpell` | An innate spell or a cantrip. A ranked spell is at will until 1f adds daily uses and focus | Seer Elf, Adapted Cantrip, every focus spell |
 | `CFGrantItem` | Starting gear | Clan Pistol, Alchemist's potions |
 | `CFGrantAction` | Adds an action to the wheel | 236 action and 30 free action feats |
-| `CFGrantReaction` | A trigger and what it does. Not built: it needs the trigger list from 1b | 57 reaction feats |
+| `CFGrantReaction` | A trigger and what it does. See 1b | 63 reaction feats |
 | `CFGrantOption` | Sets a `CFCombatOptionsComponent` flag | Everything already coded |
 
 ### 1b. The shapes actions come in
@@ -74,7 +74,12 @@ Most action feats share one of a few shapes, so build the shape once. An action 
   - [ ] Stances with other requirements have no check yet, such as Mountain's touching the ground, or a weapon a stance needs.
 - [x] Flourishes (36). Add `CFFlourish` to an action. `CFActionPoolSystem` allows one until the pool is next full. Flurry of Blows and Sudden Charge use it, and Vicious Swing keeps its code path. The rest are filled in their waves.
 - [ ] Spellshape (34). Changes the next spell cast.
-- [ ] Reactions (57). One trigger list, spending the reaction through `TrySpendReaction`. Reactions stay automatic and off the wheel.
+- [ ] Reactions (63 feats). `CFGrantReaction` holds a `CFReaction`: a trigger, what has to be true, and what it does. `CFReactionSystem` runs them. Built on 9 November 2026, with Nimble Dodge, Flashy Dodge, Deflect Projectile, Charmed Life, Orc Ferocity and Wounded Rage. Tests: `CFReactionTest`.
+  - Reactions stay automatic and off the wheel. One only fires when it would change the outcome, so it is not wasted, and the character effectively sees the roll first. That is a deliberate change from PF2e.
+  - Triggers so far: `AttackWouldHit`, `SaveWouldFail`, `Damaged`, `WouldDrop`. `perDay` limits are restored by a long rest.
+  - [ ] Triggers still needed: an enemy moving (Stand Still, No Escape, Reactive Pursuit), an ally being attacked or hit, a spell being cast (Counterspell), and a critical hit (Scars of Steel).
+  - [ ] Spell attacks do not trigger `AttackWouldHit`. Only Strikes do.
+  - [ ] Reactive Strike, Shield Block, Reactive Shield, the Champion's reaction and You're Next are still hard-coded in `CFReactions`. Move them when their class wave comes.
 - [ ] Auras and emanations, for champion and bard features, on `CFAreaEffect`.
 
 ### 1c. Subclasses

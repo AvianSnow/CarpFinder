@@ -9,4 +9,13 @@
   traits:
     - "Monk"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-feat-deflect-projectile
+        trigger: AttackWouldHit
+        acBonus: 4
+        rangedOnly: true
+        needsToSeeAttacker: true
+        notOffGuard: true
+        needsFreeHand: true

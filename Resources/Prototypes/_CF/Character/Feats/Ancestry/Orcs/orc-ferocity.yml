@@ -9,4 +9,9 @@
   traits:
     - "Orc"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-feat-orc-ferocity
+        trigger: WouldDrop
+        perDay: 1

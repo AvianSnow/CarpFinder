@@ -1,0 +1,85 @@
+namespace Content.Shared.CF.Combat;
+
+/// <summary>What sets off a reaction.</summary>
+public enum CFReactionTrigger : byte
+{
+    /// <summary>A Strike is about to land on this creature.</summary>
+    AttackWouldHit,
+
+    /// <summary>A saving throw has come up short of a better result.</summary>
+    SaveWouldFail,
+
+    /// <summary>This creature took damage and is still up.</summary>
+    Damaged,
+
+    /// <summary>This creature would drop to 0 Hit Points and would not die outright.</summary>
+    WouldDrop,
+}
+
+/// <summary>
+/// One reaction a character knows: a trigger, what has to be true, and what it does. Written in YAML under
+/// <c>CFGrantReaction</c>. Reactions are automatic. One only fires when it would change the outcome, so it is not wasted.
+/// </summary>
+[DataDefinition]
+public sealed partial class CFReaction
+{
+    /// <summary>Shown over the creature when the reaction fires.</summary>
+    [DataField(required: true)]
+    public LocId Name;
+
+    [DataField(required: true)]
+    public CFReactionTrigger Trigger;
+
+    /// <summary>How many times it can be used between long rests. 0 means no limit.</summary>
+    [DataField]
+    public int PerDay;
+
+    [DataField]
+    public bool RangedOnly;
+
+    [DataField]
+    public bool NeedsToSeeAttacker;
+
+    [DataField]
+    public bool NotEncumbered;
+
+    [DataField]
+    public bool NotOffGuard;
+
+    [DataField]
+    public bool NeedsFreeHand;
+
+    /// <summary>A circumstance bonus to AC against the triggering attack.</summary>
+    [DataField]
+    public int AcBonus;
+
+    /// <summary>A circumstance bonus to the triggering save.</summary>
+    [DataField]
+    public int SaveBonus;
+
+    /// <summary>Gains panache if the attack missed or the save succeeded.</summary>
+    [DataField]
+    public bool GainsPanache;
+
+    /// <summary>Enters a rage, for a creature that can.</summary>
+    [DataField]
+    public bool EntersRage;
+}
+
+/// <summary>The reactions a creature has been granted, and how many daily uses it has spent.</summary>
+[RegisterComponent]
+public sealed partial class CFReactionsComponent : Component
+{
+    [DataField]
+    public List<CFKnownReaction> Known = new();
+}
+
+[DataDefinition]
+public sealed partial class CFKnownReaction
+{
+    [DataField(required: true)]
+    public CFReaction Reaction = default!;
+
+    [DataField]
+    public int UsedToday;
+}

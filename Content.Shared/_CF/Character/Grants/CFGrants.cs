@@ -176,6 +176,18 @@ public sealed partial class CFGrantAction : CFGrant
     }
 }
 
+/// <summary>A reaction: what sets it off and what it does. It fires by itself. See <see cref="CFReaction"/>.</summary>
+public sealed partial class CFGrantReaction : CFGrant
+{
+    [DataField(required: true)]
+    public CFReaction Reaction = default!;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        entities.System<CFReactionSystem>().Add(args.Mob, Reaction);
+    }
+}
+
 /// <summary>Sets a flag or mark on <see cref="CFCombatOptionsComponent"/>, for behaviour that is already coded.</summary>
 public sealed partial class CFGrantOption : CFGrant
 {

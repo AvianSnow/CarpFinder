@@ -62,7 +62,6 @@ public sealed class CFGrantTest : GameTest
         ["CFTwinFeint"] = (o => o.TwinFeint, null),
         ["CFYoureNextRogue"] = (o => o.YoureNext, null),
         ["CFYoureNextSwashbuckler"] = (o => o.YoureNext, null),
-        ["CFNimbleDodge"] = (o => o.NimbleDodge, null),
         ["CFTumbleBehindRogue"] = (o => o.TumbleBehind, null),
         ["CFTumbleBehindSwashbuckler"] = (o => o.TumbleBehind, null),
     };
