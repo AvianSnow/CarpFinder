@@ -51,6 +51,7 @@ public sealed partial class CFReactionSystem : EntitySystem
     [Dependency] private CFFactionSystem _factions = default!;
     [Dependency] private CFStrikeSystem _strikes = default!;
     [Dependency] private CFAuraSystem _auras = default!;
+    [Dependency] private CFImplementSystem _implements = default!;
     [Dependency] private CFTauntSystem _taunts = default!;
     [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private CFEffectSystem _effects = default!;
@@ -192,6 +193,7 @@ public sealed partial class CFReactionSystem : EntitySystem
             if (known.Reaction.Trigger != CFReactionTrigger.EnemyLeftReach
                 || !known.Reaction.Strikes
                 || known.Reaction.PreyOnly && CompOrNull<CFCombatOptionsComponent>(watcher)?.Prey != mover
+                || known.Reaction.ExploitOnly && CompOrNull<CFCombatOptionsComponent>(watcher)?.Exploited != mover
                 || !TrySpend(watcher, known))
             {
                 continue;
@@ -283,6 +285,8 @@ public sealed partial class CFReactionSystem : EntitySystem
         if (amount <= 0 || !_net.IsServer || target == attacker || !_mobState.IsAlive(attacker))
             return amount;
 
+        amount = AnswerExploited(target, attacker, amount);
+
         if (TryComp(target, out CFReactionsComponent? own) && _factions.CanHarm(target, attacker) && _auras.Contains(target, attacker))
         {
             foreach (var known in own.Known)
@@ -315,6 +319,31 @@ public sealed partial class CFReactionSystem : EntitySystem
                     || !CanFire(uid, known)
                     || !_auras.Contains(uid, target)
                     || !_auras.Contains(uid, attacker)
+                    || !TrySpend(uid, known))
+                {
+                    continue;
+                }
+
+                return Protect(uid, target, attacker, known.Reaction, amount);
+            }
+        }
+
+        return amount;
+    }
+
+    /// <summary>An enemy marked with Exploit Vulnerability is about to hurt its marker, or an ally beside them.</summary>
+    private int AnswerExploited(EntityUid target, EntityUid attacker, int amount)
+    {
+        foreach (var (uid, reactions) in _lookup.GetEntitiesInRange<CFReactionsComponent>(Transform(target).Coordinates, AllySearchRange))
+        {
+            if (CompOrNull<CFCombatOptionsComponent>(uid)?.Exploited != attacker || uid != target && _factions.CanHarm(uid, target))
+                continue;
+
+            foreach (var known in reactions.Known)
+            {
+                if (known.Reaction.Trigger != CFReactionTrigger.ExploitedWouldDamage
+                    || !CanFire(uid, known)
+                    || uid != target && (_transform.GetWorldPosition(uid) - _transform.GetWorldPosition(target)).Length() > known.Reaction.RangeFeet / CFMelee.FeetPerTile
                     || !TrySpend(uid, known))
                 {
                     continue;
@@ -536,6 +565,7 @@ public sealed partial class CFReactionSystem : EntitySystem
     private bool CanFire(EntityUid uid, CFKnownReaction known)
     {
         return (known.Reaction.PerDay <= 0 || known.UsedToday < known.Reaction.PerDay)
+               && (known.Reaction.Implement is not { } kind || _implements.IsHolding(uid, kind))
                && _mobState.IsAlive(uid)
                && TryComp(uid, out CFCombatOptionsComponent? options)
                && (known.Reaction.Free || options.ReactionSpent == 0);

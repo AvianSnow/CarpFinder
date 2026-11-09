@@ -85,6 +85,7 @@ cf-spell-needs-shield = You need a shield in hand for that.
 cf-act-spellstrike-spent = You have to recharge Spellstrike first.
 cf-act-spellstrike-ready = Spellstrike is ready.
 cf-act-taunt = Taunted!
+cf-implement-needed = You need your implement in hand.
 cf-damage-mode-status = Damage: [color={$color}]{$type}[/color]
 cf-damage-mode-changed = Now dealing {$type}.
 cf-damage-mode-examine = It is set to deal {$type} damage.

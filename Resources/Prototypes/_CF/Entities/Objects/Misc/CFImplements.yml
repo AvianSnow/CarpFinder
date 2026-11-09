@@ -1,0 +1,167 @@
+# Thaumaturge implements. CFImplementSystem answers what is being held.
+
+- type: entity
+  abstract: true
+  parent: BaseItem
+  id: CFBaseImplement
+  components:
+  - type: Item
+    size: Small
+  - type: CFBulk
+    bulk: 0.1
+  - type: CFItemPrice
+    copper: 100
+
+- type: entity
+  parent: CFBaseImplement
+  id: CFImplementAmulet
+  name: amulet
+  description: A charm carried for protection. An implement.
+  components:
+  - type: Sprite
+    sprite: _CE/Objects/Tools/amulets.rsi
+    state: focus
+  - type: Item
+    size: Small
+    sprite: _CE/Objects/Tools/amulets.rsi
+  - type: CFImplement
+    kind: Amulet
+
+- type: entity
+  parent: CFBaseImplement
+  id: CFImplementBell
+  name: bell
+  description: A small bell that rings true. An implement.
+  components:
+  - type: Sprite
+    sprite: _CE/Objects/Decorations/bell.rsi
+    state: icon
+  - type: Item
+    size: Small
+    sprite: _CE/Objects/Decorations/bell.rsi
+  - type: CFImplement
+    kind: Bell
+
+- type: entity
+  parent: CFBaseImplement
+  id: CFImplementCenser
+  name: censer
+  description: A vessel of smoke and incense. An implement.
+  components:
+  - type: Sprite
+    sprite: Objects/Misc/arabianlamp.rsi
+    state: lamp
+  - type: Item
+    size: Small
+    sprite: Objects/Misc/arabianlamp.rsi
+  - type: CFImplement
+    kind: Censer
+
+- type: entity
+  parent: CFBaseImplement
+  id: CFImplementChalice
+  name: chalice
+  description: A cup that slowly fills by itself. An implement.
+  components:
+  - type: Sprite
+    sprite: _CE/Objects/Consumable/Drinks/goblet.rsi
+    state: gold_goblet
+  - type: Item
+    size: Small
+    sprite: _CE/Objects/Consumable/Drinks/goblet.rsi
+    heldPrefix: gold_goblet
+  - type: CFImplement
+    kind: Chalice
+
+- type: entity
+  parent: CFBaseImplement
+  id: CFImplementLantern
+  name: lantern
+  description: A lantern whose light leaves secrets nowhere to hide. An implement.
+  components:
+  - type: Sprite
+    sprite: _CE/Objects/Tools/lantern.rsi
+    state: icon
+  - type: Item
+    size: Small
+    sprite: _CE/Objects/Tools/lantern.rsi
+  - type: CFImplement
+    kind: Lantern
+  - type: PointLight
+    radius: 4
+    energy: 1
+    color: "#FFDFA0"
+
+- type: entity
+  parent: CFBaseImplement
+  id: CFImplementMirror
+  name: mirror
+  description: A small hand mirror. An implement.
+  components:
+  - type: Sprite
+    sprite: Objects/Weapons/Melee/shields.rsi
+    state: mirror-icon
+  - type: Item
+    size: Small
+    sprite: Objects/Weapons/Melee/shields.rsi
+    heldPrefix: mirror
+  - type: CFImplement
+    kind: Mirror
+
+- type: entity
+  parent: CFBaseImplement
+  id: CFImplementRegalia
+  name: regalia
+  description: An orb of office. An implement.
+  components:
+  - type: Sprite
+    sprite: Objects/Fun/pondering_orb.rsi
+    state: icon
+  - type: Item
+    size: Small
+    sprite: Objects/Fun/pondering_orb.rsi
+  - type: CFImplement
+    kind: Regalia
+
+- type: entity
+  parent: CFBaseImplement
+  id: CFImplementWand
+  name: wand
+  description: A short baton humming with stored magic. An implement.
+  components:
+  - type: Sprite
+    sprite: Objects/Weapons/Guns/Basic/wands.rsi
+    state: fire
+  - type: Item
+    size: Small
+    sprite: Objects/Weapons/Guns/Basic/wands.rsi
+    heldPrefix: wand
+  - type: CFImplement
+    kind: Wand
+
+- type: entity
+  parent: CFBaseImplement
+  id: CFImplementTome
+  name: tome
+  description: Lines of text appear on its pages as you read. An implement.
+  components:
+  - type: Sprite
+    sprite: _CE/Objects/Bureaucracy/books.rsi
+    layers:
+    - state: cover_base
+    - state: decor_frame
+    - state: icon_thaum
+  - type: Item
+    size: Small
+    sprite: _CE/Objects/Bureaucracy/books.rsi
+  - type: CFImplement
+    kind: Tome
+
+- type: entity
+  parent: CFSteelShield
+  id: CFImplementShield
+  name: warding shield
+  description: A shield with symbols of guardianship. An implement.
+  components:
+  - type: CFImplement
+    kind: Shield

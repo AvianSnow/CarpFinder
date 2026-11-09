@@ -1,3 +1,4 @@
+using Content.Shared.CF.Items;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Combat;
@@ -138,6 +139,9 @@ public sealed partial class CFManeuverSystem
             foreach (var option in RecallSkills)
             {
                 var modifier = CFDefense.SkillModifier(_prototypes, combat, abilities, option.Skill, option.Ability, _conditions.SkillBonus(user, option.Skill));
+                if (_implements.IsHolding(user, CFImplementKind.Tome))
+                    modifier += 1;
+
                 if (modifier <= bestModifier)
                     continue;
 

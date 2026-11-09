@@ -1,4 +1,5 @@
 using Content.Shared.CF.Combat;
+using Content.Shared.CF.Items;
 using Robust.Shared.Network;
 using Robust.Shared.Timing;
 
@@ -17,6 +18,7 @@ public sealed partial class CFWhileBonusSystem : EntitySystem
     [Dependency] private INetManager _net = default!;
     [Dependency] private CFArmorSystem _armor = default!;
     [Dependency] private CFBonusSystem _bonuses = default!;
+    [Dependency] private CFImplementSystem _implements = default!;
 
     public void Add(EntityUid uid, CFWhileBonus bonus)
     {
@@ -79,6 +81,8 @@ public sealed partial class CFWhileBonusSystem : EntitySystem
             CFBonusWhile.Raging => CompOrNull<CFCombatOptionsComponent>(uid)?.Raging == true,
             CFBonusWhile.Panache => CompOrNull<CFCombatOptionsComponent>(uid)?.Panache == true,
             CFBonusWhile.Unarmored => !_armor.TryGetWornArmor(uid, out var armor) || armor.Comp.Category == CFArmorCategory.Unarmored,
+            CFBonusWhile.HoldingRegalia => _implements.IsHolding(uid, CFImplementKind.Regalia),
+            CFBonusWhile.HoldingLantern => _implements.IsHolding(uid, CFImplementKind.Lantern),
             _ => false,
         };
     }

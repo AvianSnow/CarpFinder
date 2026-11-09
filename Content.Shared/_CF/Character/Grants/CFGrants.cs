@@ -102,9 +102,13 @@ public sealed partial class CFGrantAura : CFGrant
     [DataField]
     public List<CFAuraEffect> Effects = new();
 
+    /// <summary>Makes the aura at least this wide, in feet.</summary>
+    [DataField]
+    public int SizeFeet;
+
     public override void Apply(IEntityManager entities, CFGrantArgs args)
     {
-        entities.System<CFAuraSystem>().Add(args.Mob, Effects);
+        entities.System<CFAuraSystem>().Add(args.Mob, Effects, SizeFeet);
     }
 }
 

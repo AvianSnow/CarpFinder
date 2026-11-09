@@ -78,3 +78,83 @@
       die: 4
       damageType: Bludgeoning
       diceEveryLevels: 2
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActDrainChalice
+  name: Drain the Chalice
+  description: You or an adjacent ally regain 3 Hit Points per level. The chalice refills in 10 minutes.
+  components:
+  - type: Action
+    useDelay: 600
+  - type: EntityTargetAction
+    canTargetSelf: true
+    whitelist:
+      components:
+      - MobState
+    event: !type:CFActivityTargetEvent
+  - type: CFNeedsImplement
+    kind: Chalice
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFHealEffect
+      perLevel: 3
+
+- type: entity
+  abstract: true
+  parent: CFActivityTarget
+  id: CFActFlingMagicBase
+  components:
+  - type: TargetAction
+    range: 12.25
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFNeedsImplement
+    kind: Wand
+  - type: CFEffectAction
+  - type: CFCheck
+    defense: Reflex
+    dcSource: Class
+
+- type: entity
+  parent: CFActFlingMagicBase
+  id: CFActFlingMagicFire
+  name: Fling Magic
+  description: A creature within 60 feet takes 3d4 fire damage, basic Reflex against your class DC, and 1d4 more at levels 3 and 5. Costs 2 actions.
+  components:
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 3
+      die: 4
+      damageType: Fire
+      diceEveryLevels: 2
+
+- type: entity
+  parent: CFActFlingMagicBase
+  id: CFActFlingMagicCold
+  name: Fling Magic
+  description: A creature within 60 feet takes 3d4 cold damage, basic Reflex against your class DC, and 1d4 more at levels 3 and 5. Costs 2 actions.
+  components:
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 3
+      die: 4
+      damageType: Cold
+      diceEveryLevels: 2
+
+- type: entity
+  parent: CFActFlingMagicBase
+  id: CFActFlingMagicElectricity
+  name: Fling Magic
+  description: A creature within 60 feet takes 3d4 electricity damage, basic Reflex against your class DC, and 1d4 more at levels 3 and 5. Costs 2 actions.
+  components:
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 3
+      die: 4
+      damageType: Electricity
+      diceEveryLevels: 2

@@ -2,6 +2,7 @@ using Content.Shared.Actions.Events;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Effects.Areas;
+using Content.Shared.CF.Items;
 using Content.Shared.Mobs.Systems;
 using Robust.Shared.Network;
 using Robust.Shared.Random;
@@ -30,11 +31,14 @@ public sealed partial class CFAuraSystem : EntitySystem
     [Dependency] private CFConditionSystem _conditions = default!;
     [Dependency] private CFEffectSystem _effects = default!;
     [Dependency] private CFShieldSystem _shields = default!;
+    [Dependency] private CFImplementSystem _implements = default!;
 
-    public void Add(EntityUid uid, IEnumerable<CFAuraEffect> effects)
+    /// <param name="sizeFeet">A larger emanation than the aura has. 0 leaves it alone.</param>
+    public void Add(EntityUid uid, IEnumerable<CFAuraEffect> effects, int sizeFeet = 0)
     {
         var aura = EnsureComp<CFAuraComponent>(uid);
         aura.Effects.AddRange(effects);
+        aura.SizeFeet = Math.Max(aura.SizeFeet, sizeFeet);
     }
 
     /// <summary>True if a living creature is inside this creature's aura right now.</summary>
@@ -171,6 +175,8 @@ public sealed partial class CFAuraSystem : EntitySystem
         return effect.Needs switch
         {
             CFAuraNeeds.SpiritShields => _timing.CurTime < aura.SpiritShieldsUntil && _shields.TryGetRaisedShield(uid, out _),
+            CFAuraNeeds.HoldingRegalia => _implements.IsHolding(uid, CFImplementKind.Regalia),
+            CFAuraNeeds.HoldingLantern => _implements.IsHolding(uid, CFImplementKind.Lantern),
             _ => true,
         };
     }

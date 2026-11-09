@@ -48,10 +48,13 @@
           pointMark: Exploit
     - level: 1
       name: "First Implement and Esoterica"
-      description: "Choose an implement in the builder. What each one does: TBA"
+      description: "Choose an implement in the builder. You start with it, and it gives you its initiate benefit. Esoterica: TBA"
     - level: 1
       name: "Implement's Empowerment"
-      description: "Extra damage while holding an implement. Implements are not items yet: TBA"
+      description: "Strikes deal 2 extra damage per weapon die, with an implement in hand and nothing else in your hands but one one-handed weapon."
+      grants:
+        - !type:CFGrantOption
+          option: ImplementEmpowerment
     - level: 3
       name: "Reflex Expertise"
       description: "Expert in Reflex saves."
@@ -62,7 +65,7 @@
           rank: Expert
     - level: 5
       name: "Second Implement"
-      description: "A second implement: TBA"
+      description: "Choose a second implement in the builder. You gain it at level 5."
     - level: 5
       name: "Weapon Expertise"
       description: "Expert with simple weapons, martial weapons and unarmed attacks."

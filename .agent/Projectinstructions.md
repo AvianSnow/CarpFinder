@@ -150,6 +150,7 @@ Class examples: `CFMySystem`, `CFMyServerSystem`, `CFMyClientSystem`, `CFExample
 | An aura, or something an aura does | `!type:CFGrantAura` with a list of `effects`. `CFAuraSystem` runs them. Do not add a physics sensor for one |
 | Taunting an enemy | An action with `CFTauntAction` (`Resources/Prototypes/_CF/Actions/taunts.yml`), or `tauntsTarget: true` on a `CFStrikeAction`. `CFTauntSystem` runs it |
 | A weapon whose damage type can be switched | `CFDamageMode` with a `types` list. Use in hand cycles it for 1 action, and the hand status shows it. `CFWeaponSystem.TryStats` reads it |
+| Something a Thaumaturge needs in hand | `CFImplement` on the item, `CFImplementSystem.IsHolding`, and `CFNeedsImplement` on an action |
 | An action that only applies effects | An action parented on `CFActivityInstant` or `CFActivityTarget` with `CFEffectAction` and `CFDegreeEffects` (`Resources/Prototypes/_CF/Actions/effects.yml`). Grant it with `CFGrantAction` |
 | A Swashbuckler finisher | A Strike action with `finisher: true` on its `CFStrikeAction`. It needs panache and spends it |
 | An action that is a Strike with something extra | An action parented on `CFActStrikeBase` with a `CFStrikeAction` (`Resources/Prototypes/_CF/Actions/strikes.yml`). Say what it needs and put effects in `onHit` and `onCritical` |

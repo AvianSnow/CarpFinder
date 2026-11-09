@@ -1,4 +1,5 @@
 using Content.Shared.CF.Effects;
+using Content.Shared.CF.Items;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Traits;
 using Robust.Shared.Prototypes;
@@ -34,6 +35,9 @@ public enum CFReactionTrigger : byte
 
     /// <summary>An ally close by is about to take damage. This creature takes it instead.</summary>
     InterceptsDamage,
+
+    /// <summary>The creature this one has Exploited is about to damage it or an ally close by.</summary>
+    ExploitedWouldDamage,
 }
 
 /// <summary>
@@ -100,6 +104,14 @@ public sealed partial class CFReaction
     /// <summary>Only against a source with this trait.</summary>
     [DataField]
     public ProtoId<CFTraitPrototype>? Trait;
+
+    /// <summary>Only against the creature this one has Exploited.</summary>
+    [DataField]
+    public bool ExploitOnly;
+
+    /// <summary>Only while holding this kind of implement.</summary>
+    [DataField]
+    public CFImplementKind? Implement;
 
     /// <summary>Only against the creature this one is hunting.</summary>
     [DataField]

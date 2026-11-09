@@ -16,6 +16,9 @@ public enum CFAuraNeeds : byte
 
     /// <summary>The owner cast Shields of the Spirit and still has the shield raised.</summary>
     SpiritShields,
+
+    HoldingRegalia,
+    HoldingLantern,
 }
 
 /// <summary>One thing an aura does to the creatures inside it. See <see cref="CFAuraSystem"/>.</summary>

@@ -375,6 +375,12 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
             case CFCombatOption.GuardianArmor:
                 options.GuardianArmor = true;
                 break;
+            case CFCombatOption.ImplementEmpowerment:
+                options.ImplementEmpowerment = true;
+                break;
+            case CFCombatOption.WeaponImplement:
+                options.WeaponImplement = true;
+                break;
             case CFCombatOption.HealingHands:
                 options.HealingHands = true;
                 break;

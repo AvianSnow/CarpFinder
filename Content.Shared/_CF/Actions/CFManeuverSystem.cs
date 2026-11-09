@@ -1,3 +1,4 @@
+using Content.Shared.CF.Items;
 using Content.Shared.Actions.Events;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Checks;
@@ -62,6 +63,7 @@ public sealed partial class CFManeuverSystem : EntitySystem
     [Dependency] private CFBonusSystem _bonuses = default!;
     [Dependency] private CFConditionSystem _conditions = default!;
     [Dependency] private CFEffectSystem _effects = default!;
+    [Dependency] private CFImplementSystem _implements = default!;
     [Dependency] private CFFactionSystem _factions = default!;
     [Dependency] private CFWeaponSystem _weapons = default!;
 

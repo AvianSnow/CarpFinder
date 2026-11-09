@@ -83,6 +83,14 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public bool GuardianArmor;
 
+    /// <summary>Strikes deal 2 extra damage per weapon die with an implement in hand.</summary>
+    [DataField, AutoNetworkedField]
+    public bool ImplementEmpowerment;
+
+    /// <summary>Any one-handed weapon held counts as this creature's weapon implement.</summary>
+    [DataField, AutoNetworkedField]
+    public bool WeaponImplement;
+
     /// <summary>A finisher that drops its target gives panache back.</summary>
     [DataField, AutoNetworkedField]
     public bool FinishingFollowThrough;
@@ -332,6 +340,8 @@ public enum CFCombatOption : byte
     PunishingShove,
     HumbleStrikes,
     GuardianArmor,
+    ImplementEmpowerment,
+    WeaponImplement,
 }
 
 public enum CFPointMark : byte

@@ -1,10 +1,43 @@
-# CarpFinder: Thaumaturge implements.
+# CarpFinder: Thaumaturge implements. A character picks a first one, and at level 5 a second.
+
 - type: cfClassChoice
   id: ImplementAmulet
   class: Thaumaturge
   slot: cf-class-choice-implement
   name: cf-class-choice-implementamulet
   description: cf-class-choice-implementamulet-desc
+  grants:
+    - !type:CFGrantItem
+      item: CFImplementAmulet
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-amulets-abeyance
+        trigger: ExploitedWouldDamage
+        implement: Amulet
+        rangeFeet: 15
+        resistFlat: 2
+        resistLevel: true
+
+- type: cfClassChoice
+  id: SecondImplementAmulet
+  class: Thaumaturge
+  slot: cf-class-choice-second-implement
+  name: cf-class-choice-secondimplementamulet
+  description: cf-class-choice-secondimplementamulet-desc
+  features:
+    - level: 5
+      name: Second Implement
+      grants:
+        - !type:CFGrantItem
+          item: CFImplementAmulet
+        - !type:CFGrantReaction
+          reaction:
+            name: cf-reaction-amulets-abeyance
+            trigger: ExploitedWouldDamage
+            implement: Amulet
+            rangeFeet: 15
+            resistFlat: 2
+            resistLevel: true
 
 - type: cfClassChoice
   id: ImplementBell
@@ -12,6 +45,22 @@
   slot: cf-class-choice-implement
   name: cf-class-choice-implementbell
   description: cf-class-choice-implementbell-desc
+  grants:
+    - !type:CFGrantItem
+      item: CFImplementBell
+
+- type: cfClassChoice
+  id: SecondImplementBell
+  class: Thaumaturge
+  slot: cf-class-choice-second-implement
+  name: cf-class-choice-secondimplementbell
+  description: cf-class-choice-secondimplementbell-desc
+  features:
+    - level: 5
+      name: Second Implement
+      grants:
+        - !type:CFGrantItem
+          item: CFImplementBell
 
 - type: cfClassChoice
   id: ImplementCenser
@@ -19,6 +68,22 @@
   slot: cf-class-choice-implement
   name: cf-class-choice-implementcenser
   description: cf-class-choice-implementcenser-desc
+  grants:
+    - !type:CFGrantItem
+      item: CFImplementCenser
+
+- type: cfClassChoice
+  id: SecondImplementCenser
+  class: Thaumaturge
+  slot: cf-class-choice-second-implement
+  name: cf-class-choice-secondimplementcenser
+  description: cf-class-choice-secondimplementcenser-desc
+  features:
+    - level: 5
+      name: Second Implement
+      grants:
+        - !type:CFGrantItem
+          item: CFImplementCenser
 
 - type: cfClassChoice
   id: ImplementChalice
@@ -26,6 +91,26 @@
   slot: cf-class-choice-implement
   name: cf-class-choice-implementchalice
   description: cf-class-choice-implementchalice-desc
+  grants:
+    - !type:CFGrantItem
+      item: CFImplementChalice
+    - !type:CFGrantAction
+      action: CFActDrainChalice
+
+- type: cfClassChoice
+  id: SecondImplementChalice
+  class: Thaumaturge
+  slot: cf-class-choice-second-implement
+  name: cf-class-choice-secondimplementchalice
+  description: cf-class-choice-secondimplementchalice-desc
+  features:
+    - level: 5
+      name: Second Implement
+      grants:
+        - !type:CFGrantItem
+          item: CFImplementChalice
+        - !type:CFGrantAction
+          action: CFActDrainChalice
 
 - type: cfClassChoice
   id: ImplementLantern
@@ -33,6 +118,48 @@
   slot: cf-class-choice-implement
   name: cf-class-choice-implementlantern
   description: cf-class-choice-implementlantern-desc
+  grants:
+    - !type:CFGrantItem
+      item: CFImplementLantern
+    - !type:CFGrantWhile
+      while: HoldingLantern
+      stat: Perception
+      type: Status
+      value: 1
+    - !type:CFGrantAura
+      sizeFeet: 20
+      effects:
+        - affects: Allies
+          needs: HoldingLantern
+          stat: Perception
+          type: Status
+          value: 1
+
+- type: cfClassChoice
+  id: SecondImplementLantern
+  class: Thaumaturge
+  slot: cf-class-choice-second-implement
+  name: cf-class-choice-secondimplementlantern
+  description: cf-class-choice-secondimplementlantern-desc
+  features:
+    - level: 5
+      name: Second Implement
+      grants:
+        - !type:CFGrantItem
+          item: CFImplementLantern
+        - !type:CFGrantWhile
+          while: HoldingLantern
+          stat: Perception
+          type: Status
+          value: 1
+        - !type:CFGrantAura
+          sizeFeet: 20
+          effects:
+            - affects: Allies
+              needs: HoldingLantern
+              stat: Perception
+              type: Status
+              value: 1
 
 - type: cfClassChoice
   id: ImplementMirror
@@ -40,6 +167,22 @@
   slot: cf-class-choice-implement
   name: cf-class-choice-implementmirror
   description: cf-class-choice-implementmirror-desc
+  grants:
+    - !type:CFGrantItem
+      item: CFImplementMirror
+
+- type: cfClassChoice
+  id: SecondImplementMirror
+  class: Thaumaturge
+  slot: cf-class-choice-second-implement
+  name: cf-class-choice-secondimplementmirror
+  description: cf-class-choice-secondimplementmirror-desc
+  features:
+    - level: 5
+      name: Second Implement
+      grants:
+        - !type:CFGrantItem
+          item: CFImplementMirror
 
 - type: cfClassChoice
   id: ImplementRegalia
@@ -47,6 +190,86 @@
   slot: cf-class-choice-implement
   name: cf-class-choice-implementregalia
   description: cf-class-choice-implementregalia-desc
+  grants:
+    - !type:CFGrantItem
+      item: CFImplementRegalia
+    - !type:CFGrantWhile
+      while: HoldingRegalia
+      stat: SkillChecks
+      type: Circumstance
+      value: 1
+      skill: Deception
+    - !type:CFGrantWhile
+      while: HoldingRegalia
+      stat: SkillChecks
+      type: Circumstance
+      value: 1
+      skill: Diplomacy
+    - !type:CFGrantWhile
+      while: HoldingRegalia
+      stat: SkillChecks
+      type: Circumstance
+      value: 1
+      skill: Intimidation
+    - !type:CFGrantWhile
+      while: HoldingRegalia
+      stat: Saves
+      type: Status
+      value: 1
+      trait: Fear
+    - !type:CFGrantAura
+      effects:
+        - affects: Allies
+          needs: HoldingRegalia
+          stat: Saves
+          type: Status
+          value: 1
+          trait: Fear
+
+- type: cfClassChoice
+  id: SecondImplementRegalia
+  class: Thaumaturge
+  slot: cf-class-choice-second-implement
+  name: cf-class-choice-secondimplementregalia
+  description: cf-class-choice-secondimplementregalia-desc
+  features:
+    - level: 5
+      name: Second Implement
+      grants:
+        - !type:CFGrantItem
+          item: CFImplementRegalia
+        - !type:CFGrantWhile
+          while: HoldingRegalia
+          stat: SkillChecks
+          type: Circumstance
+          value: 1
+          skill: Deception
+        - !type:CFGrantWhile
+          while: HoldingRegalia
+          stat: SkillChecks
+          type: Circumstance
+          value: 1
+          skill: Diplomacy
+        - !type:CFGrantWhile
+          while: HoldingRegalia
+          stat: SkillChecks
+          type: Circumstance
+          value: 1
+          skill: Intimidation
+        - !type:CFGrantWhile
+          while: HoldingRegalia
+          stat: Saves
+          type: Status
+          value: 1
+          trait: Fear
+        - !type:CFGrantAura
+          effects:
+            - affects: Allies
+              needs: HoldingRegalia
+              stat: Saves
+              type: Status
+              value: 1
+              trait: Fear
 
 - type: cfClassChoice
   id: ImplementShield
@@ -54,6 +277,26 @@
   slot: cf-class-choice-implement
   name: cf-class-choice-implementshield
   description: cf-class-choice-implementshield-desc
+  grants:
+    - !type:CFGrantItem
+      item: CFImplementShield
+    - !type:CFGrantOption
+      option: ShieldBlock
+
+- type: cfClassChoice
+  id: SecondImplementShield
+  class: Thaumaturge
+  slot: cf-class-choice-second-implement
+  name: cf-class-choice-secondimplementshield
+  description: cf-class-choice-secondimplementshield-desc
+  features:
+    - level: 5
+      name: Second Implement
+      grants:
+        - !type:CFGrantItem
+          item: CFImplementShield
+        - !type:CFGrantOption
+          option: ShieldBlock
 
 - type: cfClassChoice
   id: ImplementTome
@@ -61,13 +304,103 @@
   slot: cf-class-choice-implement
   name: cf-class-choice-implementtome
   description: cf-class-choice-implementtome-desc
+  grants:
+    - !type:CFGrantItem
+      item: CFImplementTome
 
 - type: cfClassChoice
-  id: ImplementWand
+  id: SecondImplementTome
+  class: Thaumaturge
+  slot: cf-class-choice-second-implement
+  name: cf-class-choice-secondimplementtome
+  description: cf-class-choice-secondimplementtome-desc
+  features:
+    - level: 5
+      name: Second Implement
+      grants:
+        - !type:CFGrantItem
+          item: CFImplementTome
+
+- type: cfClassChoice
+  id: ImplementWandFire
   class: Thaumaturge
   slot: cf-class-choice-implement
-  name: cf-class-choice-implementwand
-  description: cf-class-choice-implementwand-desc
+  name: cf-class-choice-implementwandfire
+  description: cf-class-choice-implementwandfire-desc
+  grants:
+    - !type:CFGrantItem
+      item: CFImplementWand
+    - !type:CFGrantAction
+      action: CFActFlingMagicFire
+
+- type: cfClassChoice
+  id: SecondImplementWandFire
+  class: Thaumaturge
+  slot: cf-class-choice-second-implement
+  name: cf-class-choice-secondimplementwandfire
+  description: cf-class-choice-secondimplementwandfire-desc
+  features:
+    - level: 5
+      name: Second Implement
+      grants:
+        - !type:CFGrantItem
+          item: CFImplementWand
+        - !type:CFGrantAction
+          action: CFActFlingMagicFire
+
+- type: cfClassChoice
+  id: ImplementWandCold
+  class: Thaumaturge
+  slot: cf-class-choice-implement
+  name: cf-class-choice-implementwandcold
+  description: cf-class-choice-implementwandcold-desc
+  grants:
+    - !type:CFGrantItem
+      item: CFImplementWand
+    - !type:CFGrantAction
+      action: CFActFlingMagicCold
+
+- type: cfClassChoice
+  id: SecondImplementWandCold
+  class: Thaumaturge
+  slot: cf-class-choice-second-implement
+  name: cf-class-choice-secondimplementwandcold
+  description: cf-class-choice-secondimplementwandcold-desc
+  features:
+    - level: 5
+      name: Second Implement
+      grants:
+        - !type:CFGrantItem
+          item: CFImplementWand
+        - !type:CFGrantAction
+          action: CFActFlingMagicCold
+
+- type: cfClassChoice
+  id: ImplementWandElectricity
+  class: Thaumaturge
+  slot: cf-class-choice-implement
+  name: cf-class-choice-implementwandelectricity
+  description: cf-class-choice-implementwandelectricity-desc
+  grants:
+    - !type:CFGrantItem
+      item: CFImplementWand
+    - !type:CFGrantAction
+      action: CFActFlingMagicElectricity
+
+- type: cfClassChoice
+  id: SecondImplementWandElectricity
+  class: Thaumaturge
+  slot: cf-class-choice-second-implement
+  name: cf-class-choice-secondimplementwandelectricity
+  description: cf-class-choice-secondimplementwandelectricity-desc
+  features:
+    - level: 5
+      name: Second Implement
+      grants:
+        - !type:CFGrantItem
+          item: CFImplementWand
+        - !type:CFGrantAction
+          action: CFActFlingMagicElectricity
 
 - type: cfClassChoice
   id: ImplementWeapon
@@ -75,3 +408,33 @@
   slot: cf-class-choice-implement
   name: cf-class-choice-implementweapon
   description: cf-class-choice-implementweapon-desc
+  grants:
+    - !type:CFGrantOption
+      option: WeaponImplement
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-implements-interruption
+        trigger: EnemyLeftReach
+        implement: Weapon
+        exploitOnly: true
+        strikes: true
+
+- type: cfClassChoice
+  id: SecondImplementWeapon
+  class: Thaumaturge
+  slot: cf-class-choice-second-implement
+  name: cf-class-choice-secondimplementweapon
+  description: cf-class-choice-secondimplementweapon-desc
+  features:
+    - level: 5
+      name: Second Implement
+      grants:
+        - !type:CFGrantOption
+          option: WeaponImplement
+        - !type:CFGrantReaction
+          reaction:
+            name: cf-reaction-implements-interruption
+            trigger: EnemyLeftReach
+            implement: Weapon
+            exploitOnly: true
+            strikes: true
