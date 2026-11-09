@@ -1,3 +1,4 @@
+using Content.Shared.CF.Companions;
 using System.Linq;
 using Content.Shared.Movement.Pulling.Components;
 using Content.Shared.Movement.Pulling.Systems;
@@ -757,6 +758,13 @@ public sealed partial class CFConditionSystem : EntitySystem
         out int total,
         HashSet<ProtoId<CFTraitPrototype>>? traits = null)
     {
+        // A thrall fails every check.
+        if (HasComp<CFThrallComponent>(uid))
+        {
+            total = 0;
+            return CFDegree.Failure;
+        }
+
         var mod = DefenseModifier(uid, defense, traits);
         var d20 = _random.Next(1, 21);
         total = d20 + mod;

@@ -1,3 +1,4 @@
+using Content.Shared.CF.Companions;
 using Content.Shared.CF.Actions;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Combat;
@@ -254,6 +255,34 @@ public sealed partial class CFGrantInnovationResistance : CFGrant
     public override void Apply(IEntityManager entities, CFGrantArgs args)
     {
         entities.System<CFInventorSystem>().AddResistance(args.Mob, Resistance);
+    }
+}
+
+/// <summary>What a Necromancer's thralls are like.</summary>
+public sealed partial class CFGrantThralls : CFGrant
+{
+    /// <summary>Thralls made per casting of Create Thrall, beyond the usual two.</summary>
+    [DataField]
+    public int Extra;
+
+    [DataField]
+    public bool BloodReturns;
+
+    [DataField]
+    public int ExtraSpeed;
+
+    /// <summary>Replaces the thralls' damage type.</summary>
+    [DataField]
+    public string DamageType = string.Empty;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        var necromancer = entities.EnsureComponent<CFNecromancerComponent>(args.Mob);
+        necromancer.ExtraThralls += Extra;
+        necromancer.BloodReturns |= BloodReturns;
+        necromancer.ExtraSpeed += ExtraSpeed;
+        if (DamageType.Length > 0)
+            necromancer.DamageType = DamageType;
     }
 }
 

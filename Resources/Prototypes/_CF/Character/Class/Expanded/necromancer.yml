@@ -39,13 +39,23 @@
   features:
     - level: 1
       name: "Fatal Method"
-      description: "Choose a fatal method in the builder. Thralls are not built yet: TBA"
+      description: "Choose a fatal method in the builder."
     - level: 1
       name: "Grave Spells"
-      description: "Focus spells that use thralls. Thralls are not built yet: TBA"
+      description: "You know Create Thrall and Thrall Charge, can Command a Thrall, and know the Necrotic Bomb grave spell. Your fascination adds another. Regaining Focus by destroying a thrall: TBA"
+      grants:
+        - !type:CFGrantThralls {}
+        - !type:CFGrantSpell
+          spell: CreateThrall
+        - !type:CFGrantSpell
+          spell: ThrallCharge
+        - !type:CFGrantAction
+          action: CFActCommandThrall
+        - !type:CFGrantFocusSpell
+          spell: NecroticBomb
     - level: 1
       name: "Grim Fascination"
-      description: "Choose a grim fascination in the builder. Thralls are not built yet: TBA"
+      description: "Choose a grim fascination in the builder. It gives you a grave spell and improves your thralls."
     - level: 1
       name: "Mastery of Life and Death"
       description: "Swap void and vitality on your spells: TBA"
@@ -57,7 +67,7 @@
       description: "Recall Knowledge about undead: TBA"
     - level: 3
       name: "Inevitable Return"
-      description: "Raise a thrall from a fresh corpse. Thralls are not built yet: TBA"
+      description: "Reaction. A thrall rises from a fresh corpse near you. There is no trigger for a creature dying near you yet: TBA"
     - level: 3
       name: "Mental Wards"
       description: "Expert in Will saves. Better results against undead minds: TBA"

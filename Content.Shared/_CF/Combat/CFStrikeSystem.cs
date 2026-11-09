@@ -1,3 +1,4 @@
+using Content.Shared.CF.Companions;
 using Content.Shared.CF.Spells;
 using Content.Shared.CF.Items;
 using System.Numerics;
@@ -750,6 +751,16 @@ public sealed partial class CFStrikeSystem : EntitySystem
 
         damageMod += _inventor.OverdriveDamage(user);
 
+        // A thrall attacks with its Necromancer's spell attack.
+        if (TryComp(user, out CFThrallComponent? thrall) && TryComp(thrall.Owner, out CFCombatantComponent? masterCombat))
+        {
+            attackBonus = CFCasting.Spellcasting(_prototypes, masterCombat, CompOrNull<CFAbilityScoreComponent>(thrall.Owner)).AttackBonus;
+            for (var i = 0; i < thrall.ChargeDice; i++)
+            {
+                damageMod += _random.Next(1, 7);
+            }
+        }
+
         if (style is { ImplementEmpowerment: true } && _implements.Empowers(user))
             damageMod += 2 * rolled.DamageDice;
 
@@ -781,6 +792,10 @@ public sealed partial class CFStrikeSystem : EntitySystem
             degree = AdjustDefense(target, user, !melee, d20, attackBonus, ref targetAc, degree);
 
         var damage = 0;
+        // Any check against a thrall succeeds.
+        if (degree is CFDegree.Failure or CFDegree.CriticalFailure && !isObject && HasComp<CFThrallComponent>(target))
+            degree = CFDegree.Success;
+
         var criticalHit = degree == CFDegree.CriticalSuccess;
         var hit = degree is CFDegree.Success or CFDegree.CriticalSuccess;
 

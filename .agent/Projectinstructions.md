@@ -154,6 +154,7 @@ Class examples: `CFMySystem`, `CFMyServerSystem`, `CFMyClientSystem`, `CFExample
 | Amping a psi cantrip | `CFPsiCantrip` on the spell's action, with what the amp changes. `CFPsiSystem` spends the Focus Point |
 | A Commander's tactic | An action with `CFTacticAction` in `Resources/Prototypes/_CF/Actions/tactics.yml`, and a `cfClassChoice` entry per tactic slot. `CFTacticSystem.Squad` says who answers |
 | Something that needs an Inventor's innovation | `CFInnovation` on the item or construct, `CFInventorSystem.IsUsing`, and `unstable: true` on a `CFStrikeAction` |
+| A grave spell, or anything a Necromancer casts through a thrall | A spell in `Spells/Focus/focus.yml` with a whitelist of `CFThrall` and a `CFThrallBlastEffect` |
 | An action that only applies effects | An action parented on `CFActivityInstant` or `CFActivityTarget` with `CFEffectAction` and `CFDegreeEffects` (`Resources/Prototypes/_CF/Actions/effects.yml`). Grant it with `CFGrantAction` |
 | A Swashbuckler finisher | A Strike action with `finisher: true` on its `CFStrikeAction`. It needs panache and spends it |
 | An action that is a Strike with something extra | An action parented on `CFActStrikeBase` with a `CFStrikeAction` (`Resources/Prototypes/_CF/Actions/strikes.yml`). Say what it needs and put effects in `onHit` and `onCritical` |

@@ -444,3 +444,422 @@
   targets: 1 creature
   summary: The first ally to hit the target deals extra precision damage.
   heightened: Amped, 1d4+1 more per 2 ranks.
+
+# Grave spells. Each is cast on one of your own thralls.
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFNecroticBomb
+  name: Necrotic Bomb
+  description: A thrall explodes for 1d12 void, basic Fortitude, in 10 feet. Costs a Focus Point.
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 2
+  - type: CFSpell
+    spell: NecroticBomb
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+    filter: All
+  - type: EntityTargetAction
+    whitelist:
+      components:
+      - CFThrall
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFThrallBlastEffect
+      shape: Burst
+      sizeFeet: 10
+      defense: Fortitude
+      effects:
+      - !type:CFDamageEffect
+        dice: 1
+        die: 12
+        damageType: Void
+        heightenDice: 1
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFBoneSpear
+  name: Bone Spear
+  description: "A thrall becomes a spear of bone: 2d6 piercing in a 15-foot line, basic Reflex. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 2
+  - type: CFSpell
+    spell: BoneSpear
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+    filter: All
+  - type: EntityTargetAction
+    whitelist:
+      components:
+      - CFThrall
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFThrallBlastEffect
+      shape: Line
+      sizeFeet: 15
+      defense: Reflex
+      effects:
+      - !type:CFDamageEffect
+        dice: 2
+        die: 6
+        damageType: Piercing
+        heightenDice: 2
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFDeadWeight
+  name: Dead Weight
+  description: A thrall hurls itself on a creature within 15 feet, which is off-guard if it fails a Fortitude save. Costs a Focus Point.
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 2
+  - type: CFSpell
+    spell: DeadWeight
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+    filter: All
+  - type: EntityTargetAction
+    whitelist:
+      components:
+      - CFThrall
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFThrallBlastEffect
+      shape: Burst
+      sizeFeet: 15
+      defense: Fortitude
+      maxTargets: 1
+      basicSave: false
+      success:
+      - !type:CFOffGuardEffect
+      failure:
+      - !type:CFOffGuardEffect
+      criticalFailure:
+      - !type:CFOffGuardEffect
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFBloodInfusion
+  name: Blood Infusion
+  description: A creature within 15 feet of a thrall takes persistent bleed. Fortitude. Costs a Focus Point.
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 2
+  - type: CFSpell
+    spell: BloodInfusion
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+    filter: All
+  - type: EntityTargetAction
+    whitelist:
+      components:
+      - CFThrall
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFThrallBlastEffect
+      shape: Burst
+      sizeFeet: 15
+      defense: Fortitude
+      maxTargets: 1
+      basicSave: false
+      success:
+      - !type:CFDamageEffect
+        damageType: Bleed
+        persistentDice: 0
+        persistentFlat: 1
+        scaleByDegree: false
+      failure:
+      - !type:CFDamageEffect
+        damageType: Bleed
+        persistentDice: 1
+        persistentFlat: 0
+        scaleByDegree: false
+      criticalFailure:
+      - !type:CFDamageEffect
+        damageType: Bleed
+        persistentDice: 2
+        persistentFlat: 0
+        scaleByDegree: false
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFLifeTap
+  name: Life Tap
+  description: A creature within 30 feet of a thrall is drained of life, and you regain Hit Points. Fortitude. Costs a Focus Point.
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 2
+  - type: CFSpell
+    spell: LifeTap
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+    filter: All
+  - type: EntityTargetAction
+    whitelist:
+      components:
+      - CFThrall
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFThrallBlastEffect
+      shape: Burst
+      sizeFeet: 30
+      defense: Fortitude
+      maxTargets: 1
+      basicSave: false
+      success:
+      - !type:CFHealUserEffect
+        perLevel: 2
+      failure:
+      - !type:CFHealUserEffect
+        perLevel: 4
+      criticalFailure:
+      - !type:CFHealUserEffect
+        perLevel: 6
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFDeathlyScream
+  name: Deathly Scream
+  description: "A thrall screams: 1d4 mental in 5 feet, Will, and frightened on a failure. It survives. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: DeathlyScream
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+    filter: All
+  - type: EntityTargetAction
+    whitelist:
+      components:
+      - CFThrall
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFThrallBlastEffect
+      shape: Burst
+      sizeFeet: 5
+      defense: Will
+      destroys: false
+      effects:
+      - !type:CFDamageEffect
+        dice: 1
+        die: 4
+        damageType: Mental
+        heightenDice: 1
+      failure:
+      - !type:CFApplyConditionEffect
+        condition: Frightened
+        value: 1
+      criticalFailure:
+      - !type:CFApplyConditionEffect
+        condition: Frightened
+        value: 2
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFBonyBarrage
+  name: Bony Barrage
+  description: "A thrall shatters: 2d10 piercing in a 30-foot cone, basic Reflex. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 2
+  - type: CFSpell
+    spell: BonyBarrage
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+    filter: All
+  - type: EntityTargetAction
+    whitelist:
+      components:
+      - CFThrall
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFThrallBlastEffect
+      shape: Cone
+      sizeFeet: 30
+      defense: Reflex
+      effects:
+      - !type:CFDamageEffect
+        dice: 2
+        die: 10
+        damageType: Piercing
+        heightenDice: 1
+
+- type: entity
+  parent: CFSpellInstant
+  id: CFCreateThrall
+  name: Create Thrall
+  description: Two thralls rise next to you, for a minute.
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: CreateThrall
+    rank: 0
+  - type: CFTargeting
+    filter: All
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFCreateThrallsEffect
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFThrallCharge
+  name: Thrall Charge
+  description: Your nearest thrall charges a creature, hitting for 1d6 more. 2d6 more from rank 2.
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 2
+  - type: CFSpell
+    spell: ThrallCharge
+    rank: 0
+  - type: CFTargeting
+    rangeFeet: 60
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFChargeThrallEffect
+
+- type: cfSpell
+  id: NecroticBomb
+  name: Necrotic Bomb
+  rank: 1
+  traits: [Concentrate, Manipulate]
+  actionCost: Two
+  range: 30 feet
+  targets: 1 of your thralls
+  summary: A thrall explodes for 1d12 void, basic Fortitude, in 10 feet. Costs a Focus Point.
+
+- type: cfSpell
+  id: BoneSpear
+  name: Bone Spear
+  rank: 1
+  traits: [Concentrate, Manipulate]
+  actionCost: Two
+  range: 30 feet
+  targets: 1 of your thralls
+  summary: "A thrall becomes a spear of bone: 2d6 piercing in a 15-foot line, basic Reflex. Costs a Focus Point."
+
+- type: cfSpell
+  id: DeadWeight
+  name: Dead Weight
+  rank: 1
+  traits: [Concentrate, Manipulate]
+  actionCost: Two
+  range: 30 feet
+  targets: 1 of your thralls
+  summary: A thrall hurls itself on a creature within 15 feet, which is off-guard if it fails a Fortitude save. Costs a Focus Point.
+
+- type: cfSpell
+  id: BloodInfusion
+  name: Blood Infusion
+  rank: 1
+  traits: [Concentrate, Manipulate]
+  actionCost: Two
+  range: 30 feet
+  targets: 1 of your thralls
+  summary: A creature within 15 feet of a thrall takes persistent bleed. Fortitude. Costs a Focus Point.
+
+- type: cfSpell
+  id: LifeTap
+  name: Life Tap
+  rank: 1
+  traits: [Concentrate, Manipulate]
+  actionCost: Two
+  range: 30 feet
+  targets: 1 of your thralls
+  summary: A creature within 30 feet of a thrall is drained of life, and you regain Hit Points. Fortitude. Costs a Focus Point.
+
+- type: cfSpell
+  id: DeathlyScream
+  name: Deathly Scream
+  rank: 1
+  traits: [Concentrate, Manipulate]
+  actionCost: One
+  range: 30 feet
+  targets: 1 of your thralls
+  summary: "A thrall screams: 1d4 mental in 5 feet, Will, and frightened on a failure. It survives. Costs a Focus Point."
+
+- type: cfSpell
+  id: BonyBarrage
+  name: Bony Barrage
+  rank: 1
+  traits: [Concentrate, Manipulate]
+  actionCost: Two
+  range: 30 feet
+  targets: 1 of your thralls
+  summary: "A thrall shatters: 2d10 piercing in a 30-foot cone, basic Reflex. Costs a Focus Point."
+
+- type: cfSpell
+  id: CreateThrall
+  name: Create Thrall
+  rank: 0
+  traits: [Cantrip, Concentrate, Manipulate]
+  actionCost: One
+  range: next to you
+  targets: none
+  summary: Two thralls rise next to you, for a minute.
+
+- type: cfSpell
+  id: ThrallCharge
+  name: Thrall Charge
+  rank: 0
+  traits: [Cantrip, Concentrate, Manipulate]
+  actionCost: Two
+  range: 60 feet
+  targets: 1 creature
+  summary: Your nearest thrall charges a creature, hitting harder.

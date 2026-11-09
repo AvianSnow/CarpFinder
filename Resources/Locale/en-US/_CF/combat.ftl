@@ -85,6 +85,7 @@ cf-spell-needs-shield = You need a shield in hand for that.
 cf-act-spellstrike-spent = You have to recharge Spellstrike first.
 cf-act-spellstrike-ready = Spellstrike is ready.
 cf-act-taunt = Taunted!
+cf-thrall-none = You have no thrall to command.
 cf-inventor-overdrive = Your gizmos go into overdrive.
 cf-inventor-overdrive-critical = Your gizmos go into critical overdrive!
 cf-inventor-overdrive-smoke = Your gizmos whine and start to smoke.

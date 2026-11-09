@@ -1,0 +1,47 @@
+# A Necromancer's thrall: a level -1 mindless undead with 1 Hit Point. CFThrallServerSystem makes and commands them.
+
+- type: entity
+  parent: [ MobSkeletonPerson, CFCompanionBase ]
+  id: CFThrall
+  name: thrall
+  description: A mindless dead thing that does nothing unless commanded. It falls apart after a minute.
+  suffix: Companion
+  components:
+  - type: HTN
+    rootTask:
+      task: CFCompanionCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: InputMover
+  - type: MobMover
+  - type: MovementSpeedModifier
+    baseWalkSpeed: 1.5
+    baseSprintSpeed: 2.7
+  - type: CFThrall
+  - type: CFCombatant
+    level: -1
+    armorClass: 10
+    speedFeet: 15
+    maxHp: 1
+    currentHp: 1
+    diesAtZeroHp: true
+  - type: CFAbilityScore
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 6
+    naturalType: bludgeoning
+    naturalFinesse: false
+    naturalAgile: false
+  - type: CFTrait
+    traits:
+    - Mindless
+    - Undead
+  - type: CFResistances
+    entries:
+    - damageType: Bleed
+      amount: 999
+    - damageType: Mental
+      amount: 999
+    - damageType: Poison
+      amount: 999

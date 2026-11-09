@@ -8,3 +8,6 @@
   level: 4
   traits:
     - "Necromancer"
+  grants:
+    - !type:CFGrantFocusSpell
+      spell: BonyBarrage

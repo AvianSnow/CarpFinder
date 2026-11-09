@@ -8,3 +8,6 @@
   level: 2
   traits:
     - "Necromancer"
+  grants:
+    - !type:CFGrantFocusSpell
+      spell: DeathlyScream

@@ -152,3 +152,13 @@
     actions: 0
   - type: CFActivity
     kind: MagusAnalysis
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActCommandThrall
+  name: Command a Thrall
+  description: Your nearest thrall attacks a creature for 6 seconds, with your spell attack. Costs 1 action.
+  components:
+  - type: TargetAction
+    range: 24.25
+  - type: CFCommandThrallAction

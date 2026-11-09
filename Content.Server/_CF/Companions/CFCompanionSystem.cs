@@ -165,6 +165,20 @@ public sealed partial class CFCompanionSystem : EntitySystem
             Bind(nearest, ent);
     }
 
+    /// <summary>Sends a companion at a creature.</summary>
+    public void OrderAttack(EntityUid companion, EntityUid target)
+    {
+        if (TryComp(companion, out CFCompanionComponent? comp))
+            Order(companion, comp, target);
+    }
+
+    /// <summary>Makes a companion stop what it was ordered to do.</summary>
+    public void StopOrder(EntityUid companion)
+    {
+        if (TryComp(companion, out CFCompanionComponent? comp))
+            Stop(companion, comp);
+    }
+
     private void OnPointed(Entity<CFSummonerComponent> ent, ref AfterPointedAtEvent args)
     {
         var attack = IsOrder(ent.Owner, args.Pointed);
@@ -174,7 +188,8 @@ public sealed partial class CFCompanionSystem : EntitySystem
         var query = EntityQueryEnumerator<CFCompanionComponent>();
         while (query.MoveNext(out var uid, out var comp))
         {
-            if (comp.Summoner != ent.Owner)
+            // A thrall only ever acts when commanded.
+            if (comp.Summoner != ent.Owner || HasComp<CFThrallComponent>(uid))
                 continue;
 
             any = true;
@@ -293,6 +308,13 @@ public sealed partial class CFCompanionSystem : EntitySystem
 
     private void Follow(EntityUid companion, CFCompanionComponent comp)
     {
+        // A thrall stands where it is until it is commanded.
+        if (HasComp<CFThrallComponent>(companion))
+        {
+            Stop(companion, comp);
+            return;
+        }
+
         comp.Following = true;
         comp.Target = EntityUid.Invalid;
         comp.Fetch = EntityUid.Invalid;

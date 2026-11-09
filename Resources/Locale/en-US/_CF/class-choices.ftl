@@ -271,19 +271,19 @@ cf-class-choice-subconsciouswanderingreverie-desc = Charisma is your key attribu
 
 cf-class-choice-fascination = Grim Fascination
 cf-class-choice-fascinationblood = Blood
-cf-class-choice-fascinationblood-desc = Its grave spell and thrall benefit: TBA
+cf-class-choice-fascinationblood-desc = You know Blood Infusion, and regain 1 Hit Point when a thrall is destroyed, 2 from level 5.
 cf-class-choice-fascinationbone = Bone
-cf-class-choice-fascinationbone-desc = Its grave spell and thrall benefit: TBA
+cf-class-choice-fascinationbone-desc = You know Bone Spear, and your thralls have 5 feet more Speed.
 cf-class-choice-fascinationflesh = Flesh
-cf-class-choice-fascinationflesh-desc = Its grave spell and thrall benefit: TBA
+cf-class-choice-fascinationflesh-desc = You know Dead Weight. Its slowed, and difficult terrain from fallen thralls: TBA
 cf-class-choice-fascinationspirit = Spirit
-cf-class-choice-fascinationspirit-desc = Its grave spell and thrall benefit: TBA
+cf-class-choice-fascinationspirit-desc = You know Life Tap, and your thralls deal spirit damage. Drained: TBA
 
 cf-class-choice-fatal-method = Fatal Method
 cf-class-choice-methodpuppeteer = Puppeteer
-cf-class-choice-methodpuppeteer-desc = What this method does with thralls: TBA
+cf-class-choice-methodpuppeteer-desc = Create Thrall makes one more thrall. Consume Thrall: TBA
 cf-class-choice-methodreaper = Reaper
-cf-class-choice-methodreaper-desc = What this method does with thralls: TBA
+cf-class-choice-methodreaper-desc = Trained in martial weapons and medium armor. Thrall Teamwork: TBA
 
 cf-class-choice-practice = Animistic Practice
 cf-class-choice-practiceliturgist = Liturgist
