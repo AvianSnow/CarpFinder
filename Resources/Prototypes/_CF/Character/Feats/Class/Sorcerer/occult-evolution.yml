@@ -11,3 +11,7 @@
     - "Sorcerer"
   prerequisites:
     - "bloodline the grants occult spells"
+  requiresChoice:
+    - BloodlineAberrant
+    - BloodlineHag
+    - BloodlineDraconicOccult

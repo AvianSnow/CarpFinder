@@ -11,3 +11,7 @@
     - "Sorcerer"
   prerequisites:
     - "bloodline that grants primal spells"
+  requiresChoice:
+    - BloodlineElemental
+    - BloodlineFey
+    - BloodlineDraconicPrimal

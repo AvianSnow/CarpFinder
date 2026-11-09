@@ -11,3 +11,5 @@
   prerequisites:
     - "grandeur cause"
   pendingAction: true
+  requiresChoice:
+    - CauseGrandeur

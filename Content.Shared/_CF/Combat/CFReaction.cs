@@ -21,6 +21,9 @@ public enum CFReactionTrigger : byte
 
     /// <summary>An enemy left this creature's reach. Walking out and paying 1 action for a Step avoids it.</summary>
     EnemyLeftReach,
+
+    /// <summary>An enemy within reach critically failed a Strike against this creature.</summary>
+    AttackCriticallyMissed,
 }
 
 /// <summary>

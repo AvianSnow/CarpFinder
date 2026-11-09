@@ -11,3 +11,5 @@
   prerequisites:
     - "obedience cause"
   pendingAction: true
+  requiresChoice:
+    - CauseObedience

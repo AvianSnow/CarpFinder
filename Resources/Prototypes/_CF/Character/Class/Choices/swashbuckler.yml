@@ -1,0 +1,57 @@
+# CarpFinder: Swashbuckler styles, Player Core 2. Perform, Dirty Trick and Bon Mot are not built, so every style also gets panache from Demoralize and Feint.
+- type: cfClassChoice
+  id: StyleBattledancer
+  class: Swashbuckler
+  slot: cf-class-choice-style
+  name: cf-class-choice-stylebattledancer
+  description: cf-class-choice-stylebattledancer-desc
+  trainedSkills:
+    - Performance
+
+- type: cfClassChoice
+  id: StyleBraggart
+  class: Swashbuckler
+  slot: cf-class-choice-style
+  name: cf-class-choice-stylebraggart
+  description: cf-class-choice-stylebraggart-desc
+  trainedSkills:
+    - Intimidation
+
+- type: cfClassChoice
+  id: StyleFencer
+  class: Swashbuckler
+  slot: cf-class-choice-style
+  name: cf-class-choice-stylefencer
+  description: cf-class-choice-stylefencer-desc
+  trainedSkills:
+    - Deception
+
+- type: cfClassChoice
+  id: StyleGymnast
+  class: Swashbuckler
+  slot: cf-class-choice-style
+  name: cf-class-choice-stylegymnast
+  description: cf-class-choice-stylegymnast-desc
+  trainedSkills:
+    - Athletics
+  grants:
+    - !type:CFGrantOption
+      option: PanacheManeuvers
+
+- type: cfClassChoice
+  id: StyleRascal
+  class: Swashbuckler
+  slot: cf-class-choice-style
+  name: cf-class-choice-stylerascal
+  description: cf-class-choice-stylerascal-desc
+  trainedSkills:
+    - Thievery
+
+- type: cfClassChoice
+  id: StyleWit
+  class: Swashbuckler
+  slot: cf-class-choice-style
+  name: cf-class-choice-stylewit
+  description: cf-class-choice-stylewit-desc
+  trainedSkills:
+    - Diplomacy

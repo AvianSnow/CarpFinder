@@ -17,6 +17,7 @@ using Content.Shared.Pointing;
 using Content.Shared.Popups;
 using Content.Shared.Stunnable;
 using Content.Shared.Weapons.Melee;
+using Content.Shared.CF.DamageTypes;
 using Robust.Shared.Network;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
@@ -60,6 +61,7 @@ public sealed partial class CFManeuverSystem : EntitySystem
     [Dependency] private CFActivitySystem _activities = default!;
     [Dependency] private CFBonusSystem _bonuses = default!;
     [Dependency] private CFConditionSystem _conditions = default!;
+    [Dependency] private CFEffectSystem _effects = default!;
     [Dependency] private CFFactionSystem _factions = default!;
     [Dependency] private CFWeaponSystem _weapons = default!;
 
@@ -152,6 +154,7 @@ public sealed partial class CFManeuverSystem : EntitySystem
 
         _conditions.ReleaseGrab(target);
         _conditions.Push(user, target, degree == CFDegree.CriticalSuccess ? 10 : 5);
+        _conditions.GainManeuverPanache(user);
         _popup.PopupEntity(Loc.GetString("cf-act-shove"), target);
         _conditions.NoteShove(target);
     }
@@ -169,6 +172,7 @@ public sealed partial class CFManeuverSystem : EntitySystem
                 break;
             case CFDegree.Success:
                 _bonuses.AddBonus(target, CFBonusStat.AttackRoll, CFBonusType.Circumstance, -2, 6f);
+                _conditions.GainManeuverPanache(user);
                 _popup.PopupEntity(Loc.GetString("cf-act-disarm"), target);
                 break;
             case CFDegree.CriticalFailure:
@@ -222,6 +226,15 @@ public sealed partial class CFManeuverSystem : EntitySystem
         }
 
         _conditions.ApplyGrabbed(target, user);
+        _conditions.GainManeuverPanache(user);
+        if (CompOrNull<CFCombatOptionsComponent>(user)?.CrushingGrab == true
+            && TryComp(user, out CFAbilityScoreComponent? abilities))
+        {
+            var strength = abilities.GetModifier(CFAbility.Strength);
+            if (strength > 0)
+                _effects.DealDamage(user, target, strength, CFDamageTypes.Bludgeoning, critical: false);
+        }
+
         return true;
     }
 

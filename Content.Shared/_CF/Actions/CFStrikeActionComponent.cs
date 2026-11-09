@@ -33,6 +33,10 @@ public sealed partial class CFStrikeActionComponent : Component
     [DataField]
     public bool ProneTarget;
 
+    /// <summary>A finisher: it needs panache, spends it, and adds the finisher's precision damage.</summary>
+    [DataField]
+    public bool Finisher;
+
     /// <summary>Added to the attack roll.</summary>
     [DataField]
     public int AttackBonus;

@@ -41,14 +41,31 @@
           option: PowerfulFist
     - level: 3
       name: "Incredible Movement"
-      description: "This feature will be implemented later."
+      description: "+10 feet status bonus to Speed while you wear no armor."
+      grants:
+        - !type:CFGrantWhile
+          while: Unarmored
+          stat: Speed
+          type: Status
+          value: 10
     - level: 3
       name: "Mystic Strikes"
-      description: "This feature will be implemented later."
+      description: "Your unarmed attacks count as magical. Nothing resists non-magical attacks yet: TBA"
     - level: 5
       name: "Expert Strikes"
-      description: "This feature will be implemented later."
+      description: "Expert with unarmed attacks and simple weapons. Critical specialization: TBA"
+      grants:
+        - !type:CFGrantProficiency
+          proficiencies:
+            - Unarmed
+            - SimpleWeapons
+          rank: Expert
     - level: 5
       name: "Perception Expertise"
-      description: "This feature will be implemented later."
+      description: "Expert in Perception."
+      grants:
+        - !type:CFGrantProficiency
+          proficiencies:
+            - Perception
+          rank: Expert
   # Class key-attribute boost is applied from keyAbility in code (PF2e).

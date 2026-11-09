@@ -612,18 +612,30 @@ public sealed partial class CFConditionSystem : EntitySystem
         if (degree is CFDegree.Success or CFDegree.CriticalSuccess)
         {
             ApplyFrightened(target, degree == CFDegree.CriticalSuccess ? 2 : 1);
-            if (TryComp(user, out CFCombatOptionsComponent? style) && style.PanacheStyle)
-            {
-                style.Panache = true;
-                Dirty(user, style);
-                _popup.PopupEntity(Loc.GetString("cf-act-panache"), user, user);
-            }
-
+            GainPanache(user);
             return true;
         }
 
         _popup.PopupEntity(Loc.GetString("cf-act-demoralize-fail"), user, user);
         return false;
+    }
+
+    /// <summary>Gives panache to a creature with the Panache class feature.</summary>
+    public void GainPanache(EntityUid user)
+    {
+        if (!TryComp(user, out CFCombatOptionsComponent? style) || !style.PanacheStyle || style.Panache)
+            return;
+
+        style.Panache = true;
+        Dirty(user, style);
+        _popup.PopupEntity(Loc.GetString("cf-act-panache"), user, user);
+    }
+
+    /// <summary>Gives panache for a successful Athletics maneuver, to a style that gains it that way.</summary>
+    public void GainManeuverPanache(EntityUid user)
+    {
+        if (CompOrNull<CFCombatOptionsComponent>(user)?.PanacheManeuvers == true)
+            GainPanache(user);
     }
 
     public bool TryFeint(EntityUid user, EntityUid target)
@@ -646,13 +658,7 @@ public sealed partial class CFConditionSystem : EntitySystem
         else
             SetOffGuardTo(target, user, TurnSeconds);
 
-        if (TryComp(user, out CFCombatOptionsComponent? style) && style.PanacheStyle)
-        {
-            style.Panache = true;
-            Dirty(user, style);
-            _popup.PopupEntity(Loc.GetString("cf-act-panache"), user, user);
-        }
-
+        GainPanache(user);
         _popup.PopupEntity(Loc.GetString("cf-act-feint"), target);
         return true;
     }

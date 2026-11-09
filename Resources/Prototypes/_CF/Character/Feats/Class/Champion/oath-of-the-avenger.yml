@@ -12,3 +12,5 @@
   prerequisites:
     - "lay on hands"
   pendingAction: true
+  requiresChoice:
+    - DevotionLayOnHands

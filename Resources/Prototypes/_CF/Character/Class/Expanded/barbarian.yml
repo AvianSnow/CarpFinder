@@ -34,13 +34,13 @@
   features:
     - level: 1
       name: "Instinct"
-      description: "This feature will be implemented later."
+      description: "Choose an instinct in the builder. It changes what your Rage does."
     - level: 1
       name: "Quick-Tempered"
-      description: "This feature will be implemented later."
+      description: "Rage as a free action when a fight begins. Real time has no initiative to set it off: TBA"
     - level: 1
       name: "Rage"
-      description: "Rage is on your action wheel. While raging, melee Strikes deal +2 damage and your AC takes -1."
+      description: "Rage is on your action wheel. While raging, melee Strikes deal +2 damage, or +1 with an agile attack, and your AC takes -1. The temporary Hit Points and the time limit: TBA"
       grants:
         - !type:CFGrantOption
           option: CanRage
@@ -48,8 +48,25 @@
           action: CFActRage
     - level: 3
       name: "Furious Footfalls"
-      description: "This feature will be implemented later."
+      description: "+5 feet status bonus to Speed, or +10 feet while raging."
+      grants:
+        - !type:CFGrantBonus
+          stat: Speed
+          type: Status
+          value: 5
+        - !type:CFGrantWhile
+          while: Raging
+          stat: Speed
+          type: Status
+          value: 10
     - level: 5
       name: "Brutality"
-      description: "This feature will be implemented later."
+      description: "Expert with simple weapons, martial weapons and unarmed attacks. Critical specialization while raging: TBA"
+      grants:
+        - !type:CFGrantProficiency
+          proficiencies:
+            - SimpleWeapons
+            - MartialWeapons
+            - Unarmed
+          rank: Expert
   # Class key-attribute boost is applied from keyAbility in code (PF2e).

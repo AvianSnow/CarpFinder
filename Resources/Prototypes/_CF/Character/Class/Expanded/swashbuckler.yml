@@ -33,35 +33,65 @@
   features:
     - level: 1
       name: "Confident Finisher"
-      description: "Confident Finisher is on your action wheel. It spends panache. A miss still deals 2 precision damage."
+      description: "Confident Finisher is on your action wheel. It spends panache and adds 2d6 precision damage with an agile or finesse weapon. A miss still deals 2 precision damage."
     - level: 1
       name: "Panache"
-      description: "A successful Demoralize or Feint gives you panache."
+      description: "A successful Demoralize, Feint or Tumble Through gives you panache, and so does the action of your style, where the game has it."
       grants:
         - !type:CFGrantOption
           option: PanacheStyle
     - level: 1
       name: "Precise Strike"
-      description: "While you have panache, melee Strikes deal 2 extra precision damage."
+      description: "Melee Strikes with an agile or finesse weapon deal 2 extra precision damage, or 2d6 as part of a finisher."
     - level: 1
       name: "Stylish Combatant"
-      description: "This feature will be implemented later."
+      description: "+5 feet status bonus to Speed while you have panache. The +1 to bravado checks: TBA"
+      grants:
+        - !type:CFGrantWhile
+          while: Panache
+          stat: Speed
+          type: Status
+          value: 5
     - level: 1
       name: "Swashbuckler's Style"
-      description: "This feature will be implemented later."
+      description: "Choose a style in the builder. It trains a skill and adds to what gives you panache."
     - level: 3
       name: "Fortitude Expertise"
-      description: "This feature will be implemented later."
+      description: "Expert in Fortitude saves."
+      grants:
+        - !type:CFGrantProficiency
+          proficiencies:
+            - Fortitude
+          rank: Expert
     - level: 3
       name: "Opportune Riposte"
-      description: "This feature will be implemented later."
+      description: "Reaction, automatic. Strike an enemy in your reach that critically fails a Strike against you. The Disarm option: TBA"
+      grants:
+        - !type:CFGrantReaction
+          reaction:
+            name: cf-reaction-opportune-riposte
+            trigger: AttackCriticallyMissed
+            strikes: true
     - level: 3
       name: "Stylish Tricks"
-      description: "This feature will be implemented later."
+      description: "An extra skill increase and skill feat for Acrobatics or your style skill. The builder has no slots for them: TBA"
     - level: 3
       name: "Vivacious Speed"
-      description: "This feature will be implemented later."
+      description: "+10 feet status bonus to Speed while you have panache. Half of it without panache: TBA"
+      grants:
+        - !type:CFGrantWhile
+          while: Panache
+          stat: Speed
+          type: Status
+          value: 10
     - level: 5
       name: "Weapon Expertise"
-      description: "This feature will be implemented later."
+      description: "Expert with simple weapons, martial weapons and unarmed attacks. Critical specialization: TBA"
+      grants:
+        - !type:CFGrantProficiency
+          proficiencies:
+            - SimpleWeapons
+            - MartialWeapons
+            - Unarmed
+          rank: Expert
   # Class key-attribute boost is applied from keyAbility in code (PF2e).

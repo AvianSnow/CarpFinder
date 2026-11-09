@@ -9,3 +9,9 @@
   traits:
     - "Investigator"
     - "Rogue"
+  grants:
+    - !type:CFGrantBonus
+      stat: Saves
+      type: Circumstance
+      value: 1
+      trait: Trap

@@ -13,4 +13,6 @@
     - "Oracle"
     - "Spirit"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActNudgeScales

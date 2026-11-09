@@ -11,4 +11,6 @@
     - "Divine"
     - "Oracle"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActTranceOfCelerity

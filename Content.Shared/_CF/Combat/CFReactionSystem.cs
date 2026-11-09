@@ -263,6 +263,33 @@ public sealed partial class CFReactionSystem : EntitySystem
         return bestDegree;
     }
 
+    /// <summary>Lets a creature answer an enemy's critical miss, as Opportune Riposte does.</summary>
+    public void AnswerCriticalMiss(EntityUid target, EntityUid attacker)
+    {
+        if (!TryComp(target, out CFReactionsComponent? reactions)
+            || !_mobState.IsAlive(target)
+            || !_mobState.IsAlive(attacker)
+            || !_factions.CanHarm(target, attacker)
+            || !CFFlanking.InReach(_transform.GetWorldPosition(target), _transform.GetWorldPosition(attacker), CFFlanking.DefaultReachFeet))
+        {
+            return;
+        }
+
+        foreach (var known in reactions.Known)
+        {
+            if (known.Reaction.Trigger != CFReactionTrigger.AttackCriticallyMissed
+                || !known.Reaction.Strikes
+                || !CanFire(target, known)
+                || !TrySpend(target, known))
+            {
+                continue;
+            }
+
+            _strikes.ReactionStrike(target, attacker);
+            return;
+        }
+    }
+
     /// <summary>Gives a saving throw the chance of being improved. Fires only if that could help.</summary>
     public CFDegree AnswerSave(
         EntityUid uid,

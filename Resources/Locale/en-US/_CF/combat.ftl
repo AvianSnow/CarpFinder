@@ -80,6 +80,7 @@ cf-spellshape-ready = { $name } is ready for your next spell.
 cf-spellshape-lost = Your spellshape fades.
 cf-strike-action-needs-prey = That is not the creature you are hunting.
 cf-strike-action-needs-prone = The target has to be prone.
+cf-strike-action-needs-panache = You need panache for that.
 cf-strike-action-needs-ranged = You need a ranged weapon in hand.
 cf-strike-action-needs-ammo = Your weapon is not loaded.
 cf-strike-action-no-line = You have no clear shot.

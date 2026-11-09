@@ -9,4 +9,10 @@
   traits:
     - "Champion"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-feat-divine-grace
+        trigger: SaveWouldFail
+        saveBonus: 2
+        trait: Magical

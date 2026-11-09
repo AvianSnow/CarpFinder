@@ -11,4 +11,12 @@
     - "Rage"
   prerequisites:
     - "dragon instinct"
-  pendingAction: true
+  grants:
+    - !type:CFGrantWhile
+      while: Raging
+      stat: Saves
+      type: Status
+      value: 2
+      trait: Emotion
+  requiresChoice:
+    - InstinctDragon

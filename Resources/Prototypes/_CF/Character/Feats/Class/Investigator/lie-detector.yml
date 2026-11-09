@@ -11,3 +11,6 @@
   prerequisites:
     - "empiricism or interrogation methodology"
   pendingAction: true
+  requiresChoice:
+    - MethodEmpiricism
+    - MethodInterrogation

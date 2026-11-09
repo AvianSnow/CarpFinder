@@ -8,4 +8,18 @@
   level: 2
   traits:
     - "Champion"
-  pendingAction: true
+  grants:
+    - !type:CFGrantBonus
+      stat: Saves
+      type: Status
+      value: 2
+      trait: Disease
+    - !type:CFGrantBonus
+      stat: Saves
+      type: Status
+      value: 2
+      trait: Poison
+    - !type:CFGrantSaveUpgrade
+      trait: Disease
+    - !type:CFGrantSaveUpgrade
+      trait: Poison

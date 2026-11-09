@@ -1,0 +1,104 @@
+# CarpFinder: Oracle mysteries, Player Core 2. Granted spells that have no spell in the game yet are left out.
+- type: cfClassChoice
+  id: MysteryAncestors
+  class: Oracle
+  slot: cf-class-choice-mystery
+  name: cf-class-choice-mysteryancestors
+  description: cf-class-choice-mysteryancestors-desc
+  trainedSkills:
+    - Society
+  grants:
+    - !type:CFGrantSpell
+      spell: Guidance
+
+- type: cfClassChoice
+  id: MysteryBattle
+  class: Oracle
+  slot: cf-class-choice-mystery
+  name: cf-class-choice-mysterybattle
+  description: cf-class-choice-mysterybattle-desc
+  trainedSkills:
+    - Athletics
+  grants:
+    - !type:CFGrantSpell
+      spell: Shield
+    - !type:CFGrantSpell
+      spell: SureStrike
+
+- type: cfClassChoice
+  id: MysteryBones
+  class: Oracle
+  slot: cf-class-choice-mystery
+  name: cf-class-choice-mysterybones
+  description: cf-class-choice-mysterybones-desc
+  trainedSkills:
+    - Medicine
+  grants:
+    - !type:CFGrantSpell
+      spell: VoidWarp
+
+- type: cfClassChoice
+  id: MysteryCosmos
+  class: Oracle
+  slot: cf-class-choice-mystery
+  name: cf-class-choice-mysterycosmos
+  description: cf-class-choice-mysterycosmos-desc
+  trainedSkills:
+    - Nature
+  grants:
+    - !type:CFGrantSpell
+      spell: Light
+
+- type: cfClassChoice
+  id: MysteryFlames
+  class: Oracle
+  slot: cf-class-choice-mystery
+  name: cf-class-choice-mysteryflames
+  description: cf-class-choice-mysteryflames-desc
+  trainedSkills:
+    - Acrobatics
+  grants:
+    - !type:CFGrantSpell
+      spell: Ignition
+    - !type:CFGrantSpell
+      spell: BreatheFire
+
+- type: cfClassChoice
+  id: MysteryLife
+  class: Oracle
+  slot: cf-class-choice-mystery
+  name: cf-class-choice-mysterylife
+  description: cf-class-choice-mysterylife-desc
+  trainedSkills:
+    - Medicine
+  grants:
+    - !type:CFGrantSpell
+      spell: VitalityLash
+    - !type:CFGrantSpell
+      spell: Soothe
+
+- type: cfClassChoice
+  id: MysteryLore
+  class: Oracle
+  slot: cf-class-choice-mystery
+  name: cf-class-choice-mysterylore
+  description: cf-class-choice-mysterylore-desc
+  trainedSkills:
+    - Occultism
+  grants:
+    - !type:CFGrantSpell
+      spell: ReadAura
+
+- type: cfClassChoice
+  id: MysteryTempest
+  class: Oracle
+  slot: cf-class-choice-mystery
+  name: cf-class-choice-mysterytempest
+  description: cf-class-choice-mysterytempest-desc
+  trainedSkills:
+    - Nature
+  grants:
+    - !type:CFGrantSpell
+      spell: ElectricArc
+    - !type:CFGrantSpell
+      spell: Thunderstrike

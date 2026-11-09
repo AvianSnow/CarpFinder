@@ -9,4 +9,6 @@
   traits:
     - "Swashbuckler"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActExtravagantParry

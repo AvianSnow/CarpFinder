@@ -1,0 +1,69 @@
+# CarpFinder: Champion causes, Player Core 2. Each cause's own reaction is not built, so all of them use the one on the class.
+- type: cfClassChoice
+  id: CauseDesecration
+  class: Champion
+  slot: cf-class-choice-cause
+  name: cf-class-choice-causedesecration
+  description: cf-class-choice-causedesecration-desc
+
+- type: cfClassChoice
+  id: CauseGrandeur
+  class: Champion
+  slot: cf-class-choice-cause
+  name: cf-class-choice-causegrandeur
+  description: cf-class-choice-causegrandeur-desc
+
+- type: cfClassChoice
+  id: CauseIniquity
+  class: Champion
+  slot: cf-class-choice-cause
+  name: cf-class-choice-causeiniquity
+  description: cf-class-choice-causeiniquity-desc
+
+- type: cfClassChoice
+  id: CauseJustice
+  class: Champion
+  slot: cf-class-choice-cause
+  name: cf-class-choice-causejustice
+  description: cf-class-choice-causejustice-desc
+
+- type: cfClassChoice
+  id: CauseLiberation
+  class: Champion
+  slot: cf-class-choice-cause
+  name: cf-class-choice-causeliberation
+  description: cf-class-choice-causeliberation-desc
+
+- type: cfClassChoice
+  id: CauseObedience
+  class: Champion
+  slot: cf-class-choice-cause
+  name: cf-class-choice-causeobedience
+  description: cf-class-choice-causeobedience-desc
+
+- type: cfClassChoice
+  id: CauseRedemption
+  class: Champion
+  slot: cf-class-choice-cause
+  name: cf-class-choice-causeredemption
+  description: cf-class-choice-causeredemption-desc
+
+- type: cfClassChoice
+  id: DevotionLayOnHands
+  class: Champion
+  slot: cf-class-choice-devotion
+  name: cf-class-choice-devotionlayonhands
+  description: cf-class-choice-devotionlayonhands-desc
+  grants:
+    - !type:CFGrantFocusSpell
+      spell: LayOnHands
+
+- type: cfClassChoice
+  id: DevotionTouchOfTheVoid
+  class: Champion
+  slot: cf-class-choice-devotion
+  name: cf-class-choice-devotiontouchofthevoid
+  description: cf-class-choice-devotiontouchofthevoid-desc
+  grants:
+    - !type:CFGrantFocusSpell
+      spell: TouchOfTheVoid

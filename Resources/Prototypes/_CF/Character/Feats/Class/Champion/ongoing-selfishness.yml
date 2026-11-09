@@ -11,3 +11,5 @@
     - "Champion"
   prerequisites:
     - "desecration cause"
+  requiresChoice:
+    - CauseDesecration

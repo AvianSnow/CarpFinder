@@ -14,3 +14,5 @@
     - "spirit instinct"
   action: Reaction
   pendingAction: true
+  requiresChoice:
+    - InstinctSpirit

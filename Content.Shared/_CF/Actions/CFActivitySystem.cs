@@ -208,9 +208,10 @@ public sealed partial class CFActivitySystem : EntitySystem
         if (!_strikes.TryMeleeWeapon(user, out var stats, out var weapon))
             return;
 
-        _strikes.PerformStrike(user, target, stats, weapon, melee: true, finisher: true);
+        // Spent first, so a finisher that drops its target can earn panache back.
         opt.Panache = false;
         Dirty(user, opt);
+        _strikes.PerformStrike(user, target, stats, weapon, melee: true, finisher: true);
     }
 
     private void StrikeHeld(EntityUid user, EntityUid target)

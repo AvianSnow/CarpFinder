@@ -34,6 +34,10 @@ public sealed partial class CFClassChoicePrototype : IPrototype
     [DataField]
     public CFAbility? KeyAbility;
 
+    /// <summary>Replaces the class's spell tradition, as a Sorcerer's bloodline does.</summary>
+    [DataField]
+    public CFSpellTradition? Tradition;
+
     /// <summary>
     /// Skills this option trains. Kept apart from <see cref="Grants"/> so the builder can see them and not offer them as
     /// class skill picks.

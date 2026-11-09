@@ -13,3 +13,5 @@
     - "animal instinct or untamed order"
   action: Action
   pendingAction: true
+  requiresChoice:
+    - InstinctAnimal

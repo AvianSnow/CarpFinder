@@ -11,3 +11,9 @@
     - "Sorcerer"
   prerequisites:
     - "bloodline that grants divine spells"
+  requiresChoice:
+    - BloodlineAngelic
+    - BloodlineDemonic
+    - BloodlineDiabolic
+    - BloodlineUndead
+    - BloodlineDraconicDivine

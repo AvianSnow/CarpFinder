@@ -11,3 +11,5 @@
   prerequisites:
     - "touch of the void"
   pendingAction: true
+  requiresChoice:
+    - DevotionTouchOfTheVoid

@@ -76,6 +76,22 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
         Dirty(mob, combat);
     }
 
+    /// <summary>What a Barbarian's instinct does to Rage. Only what is set changes.</summary>
+    public void SetRage(EntityUid mob, int damage, int attackDie, string attackType)
+    {
+        var options = EnsureComp<CFCombatOptionsComponent>(mob);
+        if (damage > 0)
+            options.RageDamage = damage;
+
+        if (attackDie > 0)
+        {
+            options.RageAttackDie = attackDie;
+            options.RageAttackType = attackType;
+        }
+
+        Dirty(mob, options);
+    }
+
     public void AddFamiliarity(EntityUid mob, List<EntProtoId> weapons, List<ProtoId<CFTraitPrototype>> traits)
     {
         var combat = EnsureComp<CFCombatantComponent>(mob);
@@ -331,6 +347,24 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
                 break;
             case CFCombatOption.FreeStepWithShield:
                 options.FreeStepWithShield = true;
+                break;
+            case CFCombatOption.RagingThrower:
+                options.RagingThrower = true;
+                break;
+            case CFCombatOption.CrushingGrab:
+                options.CrushingGrab = true;
+                break;
+            case CFCombatOption.FinishingFollowThrough:
+                options.FinishingFollowThrough = true;
+                break;
+            case CFCombatOption.StrategicStrike:
+                options.StrategicStrike = true;
+                break;
+            case CFCombatOption.SorcerousPotency:
+                options.SorcerousPotency = true;
+                break;
+            case CFCombatOption.PanacheManeuvers:
+                options.PanacheManeuvers = true;
                 break;
             case CFCombatOption.HealingHands:
                 options.HealingHands = true;

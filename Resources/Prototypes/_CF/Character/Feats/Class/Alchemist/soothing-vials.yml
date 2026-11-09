@@ -8,3 +8,5 @@
   level: 1
   traits:
     - "Alchemist"
+  requiresChoice:
+    - FieldChirurgeon

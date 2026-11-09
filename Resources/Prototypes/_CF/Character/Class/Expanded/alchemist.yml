@@ -41,11 +41,11 @@
           count: 2
     - level: 1
       name: "Research Field"
-      description: "This feature will be implemented later."
+      description: "Choose a research field in the builder. What each field does needs versatile vials and Quick Alchemy: TBA"
     - level: 5
       name: "Field Discovery"
-      description: "This feature will be implemented later."
+      description: "A benefit from your research field: TBA"
     - level: 5
       name: "Powerful Alchemy"
-      description: "This feature will be implemented later."
+      description: "Infused items use your class DC. Infused items do not exist yet: TBA"
   # Class key-attribute boost is applied from keyAbility in code (PF2e).

@@ -11,3 +11,5 @@
   prerequisites:
     - "justice cause"
   pendingAction: true
+  requiresChoice:
+    - CauseJustice

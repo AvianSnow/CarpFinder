@@ -63,6 +63,26 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public bool FreeStep;
 
+    /// <summary>A successful Grapple also deals the grappler's Strength modifier in bludgeoning damage.</summary>
+    [DataField, AutoNetworkedField]
+    public bool CrushingGrab;
+
+    /// <summary>A finisher that drops its target gives panache back.</summary>
+    [DataField, AutoNetworkedField]
+    public bool FinishingFollowThrough;
+
+    /// <summary>A Strike using a stored Devise a Stratagem roll deals extra precision damage.</summary>
+    [DataField, AutoNetworkedField]
+    public bool StrategicStrike;
+
+    /// <summary>Spells cast from a slot add their rank to damage and healing.</summary>
+    [DataField, AutoNetworkedField]
+    public bool SorcerousPotency;
+
+    /// <summary>Successful Grapples, Shoves, Disarms and Repositions give panache (Gymnast style).</summary>
+    [DataField, AutoNetworkedField]
+    public bool PanacheManeuvers;
+
     /// <summary>Walking out of reach needs no action while your shield is raised (Shielded Stride).</summary>
     [DataField, AutoNetworkedField]
     public bool FreeStepWithShield;
@@ -88,6 +108,21 @@ public sealed partial class CFCombatOptionsComponent : Component
 
     [DataField, AutoNetworkedField]
     public bool Raging;
+
+    /// <summary>What Rage adds to melee damage. Half of it counts with an agile attack.</summary>
+    [DataField, AutoNetworkedField]
+    public int RageDamage = 2;
+
+    /// <summary>The die of the unarmed attack a rage brings, as Animal instinct's jaws do. 0 means none.</summary>
+    [DataField, AutoNetworkedField]
+    public int RageAttackDie;
+
+    [DataField, AutoNetworkedField]
+    public string RageAttackType = string.Empty;
+
+    /// <summary>Thrown weapon Strikes also get the damage from Rage.</summary>
+    [DataField, AutoNetworkedField]
+    public bool RagingThrower;
 
     [DataField, AutoNetworkedField]
     public bool ReactiveStrike;
@@ -263,6 +298,12 @@ public enum CFCombatOption : byte
     StrongArm,
     FreeStep,
     FreeStepWithShield,
+    RagingThrower,
+    CrushingGrab,
+    FinishingFollowThrough,
+    StrategicStrike,
+    SorcerousPotency,
+    PanacheManeuvers,
 }
 
 public enum CFPointMark : byte

@@ -101,3 +101,95 @@
   targets: 1 creature
   summary: A bolt of force automatically hits for 1d4+1 force damage.
   heightened: Damage increases by 1d4+1 every 2 ranks.
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFLayOnHands
+  name: Lay on Hands
+  description: A touch heals a creature for 6 Hit Points, or more when heightened. Costs a Focus Point.
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: LayOnHands
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 5
+    filter: All
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFHealEffect
+      flat: 6
+      heightenFlat: 6
+  - type: EntityTargetAction
+    canTargetSelf: true
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFTouchOfTheVoid
+  name: Touch of the Void
+  description: A touch deals 1d6 void damage, basic Fortitude. On a failure the target also takes -2 to AC for 6 seconds. Costs a Focus Point.
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: TouchOfTheVoid
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 5
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFCheck
+    defense: Fortitude
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 6
+      damageType: Void
+      heightenDice: 1
+    failure:
+    - !type:CFBonusEffect
+      stat: ArmorClass
+      type: Status
+      value: -2
+      durationSeconds: 6
+    criticalFailure:
+    - !type:CFBonusEffect
+      stat: ArmorClass
+      type: Status
+      value: -2
+      durationSeconds: 6
+
+- type: cfSpell
+  id: LayOnHands
+  name: Lay on Hands
+  rank: 1
+  traits: [Healing, Manipulate, Vitality]
+  actionCost: One
+  range: touch
+  targets: 1 creature
+  summary: The target regains 6 Hit Points. Damaging undead and the AC bonus are TBA.
+  heightened: Healing increases by 6 per rank.
+
+- type: cfSpell
+  id: TouchOfTheVoid
+  name: Touch of the Void
+  rank: 1
+  traits: [Manipulate, Void]
+  actionCost: One
+  range: touch
+  targets: 1 creature
+  defense: basic Fortitude
+  summary: The target takes 1d6 void damage. On a failure it also takes -2 to AC. Healing undead is TBA.
+  heightened: Damage increases by 1d6 per rank.

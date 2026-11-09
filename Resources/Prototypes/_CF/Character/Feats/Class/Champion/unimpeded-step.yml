@@ -11,3 +11,5 @@
   prerequisites:
     - "liberation cause"
   pendingAction: true
+  requiresChoice:
+    - CauseLiberation

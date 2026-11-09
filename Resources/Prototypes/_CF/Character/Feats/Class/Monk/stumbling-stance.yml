@@ -12,4 +12,6 @@
   prerequisites:
     - "trained in Deception"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActStumblingStance

@@ -401,6 +401,12 @@ public sealed partial class CFStrikeSystem : EntitySystem
             return new CFStrikeWeaponStats(stance.Dice, stance.Die, stance.DamageType, proficiency, traits);
         }
 
+        if (opt is { Raging: true, RageAttackDie: > 0 })
+        {
+            var traits = CFWeaponTraits.Fist with { Agile = false, Finesse = false, Nonlethal = false };
+            return new CFStrikeWeaponStats(1, opt.RageAttackDie, opt.RageAttackType, proficiency, traits);
+        }
+
         if (opt is { NaturalDie: > 0 })
         {
             var die = opt.PowerfulFist ? Math.Max(opt.NaturalDie, 6) : opt.NaturalDie;
@@ -723,8 +729,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
 
         var damageMod = CFMelee.DamageBonus(attackerAbilities, rolled, attackerCombat, style?.FinesseDexterity == true) + pointBlank;
         damageMod += CFMelee.ForcefulBonus(rolled, attacksBefore);
-        if (melee && style is { Raging: true })
-            damageMod += 2;
+        if (style is { Raging: true } && (melee || style.RagingThrower && weapon.ThrownStrike))
+            damageMod += rolled.Agile ? style.RageDamage / 2 : style.RageDamage;
 
         damageMod += _bonuses.Total(user, CFBonusStat.Damage, melee ? CFBonusStat.MeleeDamage : null);
 
@@ -732,9 +738,11 @@ public sealed partial class CFStrikeSystem : EntitySystem
             damageMod += 2;
 
         var d20 = _random.Next(1, 21);
+        var usedStratagem = false;
 
         if (style != null && style.StratagemTarget == target && style.StratagemRoll > 0)
         {
+            usedStratagem = true;
             d20 = style.StratagemRoll;
             style.StratagemRoll = 0;
             style.StratagemTarget = null;
@@ -764,7 +772,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
             {
                 var extra = bonusDamage;
                 if (!skipPrecision)
-                    extra += Precision(user, target, style, weapon, melee, unseen, isObject);
+                    extra += Precision(user, target, style, weapon, melee, unseen, isObject, finisher, usedStratagem);
 
                 if (weapon.Traits.Backstabber && !isObject
                     && (_flanking.IsOffGuardTo(target, user) || _conditions.IsOffGuardTo(target, user)))
@@ -835,6 +843,12 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (hit && !isObject && !_inChampion)
             ChampionReact(user, target);
 
+        if (finisher && style is { FinishingFollowThrough: true } && !isObject && !alreadyDown && defender.CurrentHp <= 0)
+            _conditions.GainPanache(user);
+
+        if (degree == CFDegree.CriticalFailure && !isObject)
+            _reactions.AnswerCriticalMiss(target, user);
+
         PlayStrikeImpact(weaponUid, target, degree, rolled.DamageType, melee || weapon.ThrownStrike);
 
         RaiseNetworkEvent(
@@ -881,7 +895,9 @@ public sealed partial class CFStrikeSystem : EntitySystem
         CFStrikeWeaponStats weapon,
         bool melee,
         bool unseen,
-        bool isObject)
+        bool isObject,
+        bool finisher,
+        bool usedStratagem)
     {
         if (style == null || isObject)
             return 0;
@@ -902,8 +918,16 @@ public sealed partial class CFStrikeSystem : EntitySystem
             Dirty(user, style);
         }
 
-        if (melee && style.Panache && style.PanacheStyle)
-            total += 2;
+        // Precise Strike. A finisher has already spent the panache by the time it gets here.
+        if (melee && style.PanacheStyle && (weapon.Agile || weapon.Finesse))
+            total += finisher ? _random.Next(1, 7) + _random.Next(1, 7) : 2;
+
+        if (usedStratagem && style.StrategicStrike)
+        {
+            var dice = Math.Max(1, ((CompOrNull<CFCombatantComponent>(user)?.Level ?? 1) + 3) / 4);
+            for (var i = 0; i < dice; i++)
+                total += _random.Next(1, 7);
+        }
 
         return Math.Max(0, total);
     }

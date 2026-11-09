@@ -10,3 +10,5 @@
     - "Investigator"
   prerequisites:
     - "forensic medicine methodology"
+  requiresChoice:
+    - MethodForensicMedicine

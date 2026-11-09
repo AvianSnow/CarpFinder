@@ -92,3 +92,14 @@
     ranged: true
     preyOnly: true
     attackBonus: 2
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActUnbalancingFinisher
+  name: Unbalancing Finisher
+  description: A melee finisher that spends your panache. If it deals damage, the target is off-guard for 6 seconds.
+  components:
+  - type: CFStrikeAction
+    finisher: true
+    onHit:
+    - !type:CFOffGuardEffect

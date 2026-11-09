@@ -118,6 +118,7 @@ public sealed partial class CFManeuverSystem
 
         tumble.ThroughUntil = now + ThroughTime;
         Dirty(user, tumble);
+        _conditions.GainPanache(user);
 
         if (TryComp(user, out CFCombatOptionsComponent? style) && style.TumbleBehind)
         {

@@ -11,4 +11,6 @@
     - "Stance"
     - "Water"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActReflectiveRippleStance

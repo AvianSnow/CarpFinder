@@ -11,3 +11,6 @@
     - "Sorcerer"
   prerequisites:
     - "bloodline that grants arcane spells"
+  requiresChoice:
+    - BloodlineImperial
+    - BloodlineDraconicArcane

@@ -65,6 +65,18 @@ public static class CFClassChoices
             .ToList();
     }
 
+    /// <summary>The tradition a build casts from: its class's, unless one of its options replaces it.</summary>
+    public static CFSpellTradition Tradition(IPrototypeManager prototypes, CFCharacterBuildData build, CFSpellTradition classTradition)
+    {
+        foreach (var choice in Selected(prototypes, build))
+        {
+            if (choice.Tradition is { } tradition)
+                return tradition;
+        }
+
+        return classTradition;
+    }
+
     public static CFAbility KeyAbility(IPrototypeManager prototypes, CFCharacterBuildData build, CFClassPrototype cls)
     {
         foreach (var choice in Selected(prototypes, build))

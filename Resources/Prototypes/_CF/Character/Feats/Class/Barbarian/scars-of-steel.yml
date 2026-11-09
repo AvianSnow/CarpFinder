@@ -13,3 +13,5 @@
     - "Fury Instinct"
   action: Reaction
   pendingAction: true
+  requiresChoice:
+    - InstinctFury

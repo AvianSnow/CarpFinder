@@ -239,7 +239,7 @@ public sealed partial class SpellsTab : BoxContainer
         if (build.Class != null
             && _prototypes.TryIndex(build.Class.Value, out CFClassPrototype? cls)
             && cls.Spellcasting != null)
-            tradition = cls.Spellcasting.Tradition;
+            tradition = CFClassChoices.Tradition(_prototypes, build, cls.Spellcasting.Tradition);
 
         if (pick != null && pick.HasSpell && _prototypes.TryIndex(pick.Spell, out CFSpellPrototype? current) && current.Traditions.Count > 0)
             tradition = current.Traditions[0];

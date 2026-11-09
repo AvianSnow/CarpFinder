@@ -1,0 +1,59 @@
+# Actions that only apply effects. CFEffectActionSystem runs them. Grant one with CFGrantAction.
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActExtravagantParry
+  name: Extravagant Parry
+  description: +1 circumstance bonus to AC for 6 seconds.
+  components:
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFBonusEffect
+      stat: ArmorClass
+      type: Circumstance
+      value: 1
+      durationSeconds: 6
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActTributaryCirculation
+  name: Tributary Circulation
+  description: +2 circumstance bonus to Will saves for 6 seconds.
+  components:
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFBonusEffect
+      stat: Will
+      type: Circumstance
+      value: 2
+      durationSeconds: 6
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActTranceOfCelerity
+  name: Trance of Celerity
+  description: +5 feet status bonus to Speed for a minute.
+  components:
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFBonusEffect
+      stat: Speed
+      type: Status
+      value: 5
+      durationSeconds: 60
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActNudgeScales
+  name: Nudge the Scales
+  description: Heal a creature for 2 Hit Points plus double your level.
+  components:
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFHealEffect
+      flat: 2
+      perLevel: 2

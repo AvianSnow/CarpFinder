@@ -27,6 +27,17 @@ public sealed partial class CFEffectSystem
         return _bonuses.Total(user, CFBonusStat.Damage);
     }
 
+    /// <summary>What Sorcerous Potency adds to a spell cast from a slot: its rank. Cantrips and focus spells get nothing.</summary>
+    public int PotencyBonus(CFEffectArgs args)
+    {
+        return CompOrNull<CFCombatOptionsComponent>(args.User)?.SorcerousPotency == true
+               && TryComp(args.Source, out CFSpellComponent? spell)
+               && !spell.Focus
+               && spell.Rank > 0
+            ? spell.Rank
+            : 0;
+    }
+
     public int Roll(int dice, int die, int flat)
     {
         return Roll(_random, dice, die, flat, critical: false);

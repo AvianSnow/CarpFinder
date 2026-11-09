@@ -11,3 +11,5 @@
   prerequisites:
     - "redemption cause"
   pendingAction: true
+  requiresChoice:
+    - CauseRedemption

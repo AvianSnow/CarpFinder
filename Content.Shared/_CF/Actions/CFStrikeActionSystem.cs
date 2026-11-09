@@ -72,6 +72,9 @@ public sealed partial class CFStrikeActionSystem : EntitySystem
         if (action.ProneTarget && !_conditions.IsProne(target))
             return "cf-strike-action-needs-prone";
 
+        if (action.Finisher && CompOrNull<CFCombatOptionsComponent>(user)?.Panache != true)
+            return "cf-strike-action-needs-panache";
+
         if (action.Ranged)
         {
             if (!TryHeldRanged(user, out _, out var bow))
@@ -136,7 +139,14 @@ public sealed partial class CFStrikeActionSystem : EntitySystem
         if (action.TwoHandedGrip)
             stats = WithTwoHandedGrip(stats);
 
-        var hit = _strikes.PerformStrike(user, target, stats, weapon, melee: true, attackPenalty: action.AttackBonus, resolved: Resolved);
+        // Spent first, so a finisher that drops its target can earn panache back.
+        if (action.Finisher && TryComp(user, out CFCombatOptionsComponent? options))
+        {
+            options.Panache = false;
+            Dirty(user, options);
+        }
+
+        var hit = _strikes.PerformStrike(user, target, stats, weapon, melee: true, attackPenalty: action.AttackBonus, finisher: action.Finisher, resolved: Resolved);
         if (action.TwoWeapons && _strikes.TryOffHandWeapon(user, weapon, out var off, out var offHand))
             _strikes.PerformStrike(user, target, off, offHand, melee: true, attackPenalty: action.AttackBonus, skipPrecision: hit, resolved: Resolved);
     }

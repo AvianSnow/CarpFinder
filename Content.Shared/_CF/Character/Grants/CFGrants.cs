@@ -58,6 +58,64 @@ public sealed partial class CFGrantBonus : CFGrant
     }
 }
 
+/// <summary>A lasting bonus that only counts while raging, with panache, or with no armor on.</summary>
+public sealed partial class CFGrantWhile : CFGrant
+{
+    [DataField(required: true)]
+    public CFBonusWhile While;
+
+    [DataField(required: true)]
+    public CFBonusStat Stat;
+
+    [DataField(required: true)]
+    public CFBonusType Type;
+
+    /// <summary>Negative for a penalty.</summary>
+    [DataField(required: true)]
+    public int Value;
+
+    /// <summary>When set, the bonus only counts against a source with this trait.</summary>
+    [DataField]
+    public ProtoId<CFTraitPrototype>? Trait;
+
+    /// <summary>When set with <see cref="CFBonusStat.SkillChecks"/>, the bonus only counts for this skill.</summary>
+    [DataField]
+    public ProtoId<CFAbilitySkillPrototype>? Skill;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        entities.System<CFWhileBonusSystem>().Add(args.Mob, new CFWhileBonus
+        {
+            While = While,
+            Stat = Stat,
+            Type = Type,
+            Value = Value,
+            Trait = Trait,
+            Skill = Skill?.Id,
+        });
+    }
+}
+
+/// <summary>What a Barbarian's instinct does to Rage.</summary>
+public sealed partial class CFGrantRage : CFGrant
+{
+    /// <summary>Replaces the 2 that Rage adds to melee damage. 0 leaves it alone.</summary>
+    [DataField]
+    public int Damage;
+
+    /// <summary>The die of an unarmed attack the creature has while raging. 0 means none.</summary>
+    [DataField]
+    public int AttackDie;
+
+    [DataField]
+    public string AttackType = string.Empty;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        entities.System<CFCharacterFeatureSystem>().SetRage(args.Mob, Damage, AttackDie, AttackType);
+    }
+}
+
 /// <summary>Makes one result of a save a degree better, such as a success against fear becoming a critical success.</summary>
 public sealed partial class CFGrantSaveUpgrade : CFGrant
 {

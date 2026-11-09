@@ -11,3 +11,5 @@
     - "Investigator"
   prerequisites:
     - "alchemical sciences methodology"
+  requiresChoice:
+    - MethodAlchemicalSciences

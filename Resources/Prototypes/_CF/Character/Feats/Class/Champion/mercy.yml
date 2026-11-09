@@ -10,3 +10,5 @@
     - "Champion"
   prerequisites:
     - "lay on hands"
+  requiresChoice:
+    - DevotionLayOnHands

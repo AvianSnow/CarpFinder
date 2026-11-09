@@ -9,4 +9,10 @@
   traits:
     - "Barbarian"
     - "Rage"
-  pendingAction: true
+  grants:
+    - !type:CFGrantWhile
+      while: Raging
+      stat: SkillChecks
+      type: Status
+      value: 1
+      skill: Athletics

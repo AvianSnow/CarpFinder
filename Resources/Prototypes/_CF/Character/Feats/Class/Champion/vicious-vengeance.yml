@@ -11,3 +11,5 @@
     - "Champion"
   prerequisites:
     - "iniquity cause"
+  requiresChoice:
+    - CauseIniquity

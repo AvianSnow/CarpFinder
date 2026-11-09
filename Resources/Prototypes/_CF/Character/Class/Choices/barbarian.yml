@@ -1,0 +1,64 @@
+# CarpFinder: Barbarian instincts, Player Core 2.
+- type: cfClassChoice
+  id: InstinctAnimal
+  class: Barbarian
+  slot: cf-class-choice-instinct
+  name: cf-class-choice-instinctanimal
+  description: cf-class-choice-instinctanimal-desc
+  grants:
+    - !type:CFGrantRage
+      attackDie: 10
+      attackType: Piercing
+
+- type: cfClassChoice
+  id: InstinctDragon
+  class: Barbarian
+  slot: cf-class-choice-instinct
+  name: cf-class-choice-instinctdragon
+  description: cf-class-choice-instinctdragon-desc
+  grants:
+    - !type:CFGrantRage
+      damage: 4
+
+- type: cfClassChoice
+  id: InstinctFury
+  class: Barbarian
+  slot: cf-class-choice-instinct
+  name: cf-class-choice-instinctfury
+  description: cf-class-choice-instinctfury-desc
+  grants:
+    - !type:CFGrantRage
+      damage: 3
+
+- type: cfClassChoice
+  id: InstinctGiant
+  class: Barbarian
+  slot: cf-class-choice-instinct
+  name: cf-class-choice-instinctgiant
+  description: cf-class-choice-instinctgiant-desc
+
+- type: cfClassChoice
+  id: InstinctSpirit
+  class: Barbarian
+  slot: cf-class-choice-instinct
+  name: cf-class-choice-instinctspirit
+  description: cf-class-choice-instinctspirit-desc
+  grants:
+    - !type:CFGrantRage
+      damage: 3
+
+- type: cfClassChoice
+  id: InstinctSuperstition
+  class: Barbarian
+  slot: cf-class-choice-instinct
+  name: cf-class-choice-instinctsuperstition
+  description: cf-class-choice-instinctsuperstition-desc
+  grants:
+    - !type:CFGrantRage
+      damage: 3
+    - !type:CFGrantWhile
+      while: Raging
+      stat: Saves
+      type: Status
+      value: 2
+      trait: Magical
