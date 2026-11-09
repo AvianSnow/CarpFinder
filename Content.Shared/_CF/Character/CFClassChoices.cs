@@ -22,11 +22,16 @@ public static class CFClassChoices
             if (!prototypes.TryIndex(id, out CFClassChoicePrototype? choice) || choice.Class != classId)
                 continue;
 
-            if (!result.Exists(other => other.Slot == choice.Slot))
+            if (!result.Exists(other => other.Slot == choice.Slot || SameGroup(other, choice)))
                 result.Add(choice);
         }
 
         return result;
+    }
+
+    private static bool SameGroup(CFClassChoicePrototype a, CFClassChoicePrototype b)
+    {
+        return a.Group.Length > 0 && a.Group == b.Group;
     }
 
     /// <summary>Whether the build has a subclass option this feat asks for.</summary>
@@ -114,7 +119,7 @@ public static class CFClassChoices
             return;
 
         build.ClassChoices.RemoveAll(existing =>
-            prototypes.TryIndex(existing, out CFClassChoicePrototype? other) && other.Slot == choice.Slot);
+            prototypes.TryIndex(existing, out CFClassChoicePrototype? other) && (other.Slot == choice.Slot || SameGroup(other, choice)));
         build.ClassChoices.Add(id);
         DropRepeatedPicks(prototypes, build);
         DropFeatsWithoutTheirChoice(prototypes, build);

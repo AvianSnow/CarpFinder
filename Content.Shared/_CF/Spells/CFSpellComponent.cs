@@ -21,6 +21,10 @@ public sealed partial class CFSpellComponent : Component
     [DataField, AutoNetworkedField]
     public bool Focus;
 
+    /// <summary>Using the action again keeps the spell going, without a Focus Point. See <see cref="CFSustain"/>.</summary>
+    [DataField, AutoNetworkedField]
+    public bool Sustained;
+
     /// <summary>A Magus's conflux spell. Casting one recharges Spellstrike.</summary>
     [DataField]
     public bool Conflux;

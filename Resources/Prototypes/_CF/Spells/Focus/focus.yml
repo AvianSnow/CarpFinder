@@ -863,3 +863,430 @@
   range: 60 feet
   targets: 1 creature
   summary: Your nearest thrall charges a creature, hitting harder.
+
+# Vessel spells: an Animist's primary apparition. Using the action again sustains one, with no Focus Point.
+
+- type: entity
+  parent: CFSpellArea
+  id: CFGardenOfHealing
+  name: Garden of Healing
+  description: "Heal 1d4 to everyone within 10 feet. Sustain it to pulse again. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+  - type: CFSpell
+    spell: GardenOfHealing
+    rank: 0
+    focus: true
+    sustained: true
+  - type: CFAreaEffect
+    shape: Emanation
+    sizeFeet: 10
+    includeSelf: true
+    filter: Allies
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFHealEffect
+      dice: 1
+      die: 4
+      heightenDice: 1
+
+- type: entity
+  parent: CFSpellArea
+  id: CFEarthsBile
+  name: Earth's Bile
+  description: "A 10-foot burst of 1d4 fire and 1d4 bludgeoning, basic Reflex. Sustain it to erupt again. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+  - type: CFSpell
+    spell: EarthsBile
+    rank: 0
+    focus: true
+    sustained: true
+  - type: CFTargeting
+    rangeFeet: 30
+  - type: CFAreaEffect
+    shape: Burst
+    sizeFeet: 10
+  - type: CFCheck
+    defense: Reflex
+  - type: CFHeighten
+    baseRank: 1
+    interval: 2
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 4
+      damageType: Fire
+      heightenDice: 1
+    - !type:CFDamageEffect
+      dice: 1
+      die: 4
+      damageType: Bludgeoning
+      heightenDice: 1
+    landed:
+    - !type:CFDamageEffect
+      damageType: Fire
+      persistentFlat: 1
+      scaleByDegree: false
+
+- type: entity
+  parent: CFSpellInstant
+  id: CFEmbodimentOfBattle
+  name: Embodiment of Battle
+  description: "+1 status to attack and damage while sustained. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+  - type: CFSpell
+    spell: EmbodimentOfBattle
+    rank: 0
+    focus: true
+    sustained: true
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: AttackRoll
+      type: Status
+      value: 1
+      durationSeconds: 12
+    - !type:CFBonusEffect
+      stat: Damage
+      type: Status
+      value: 1
+      durationSeconds: 12
+
+- type: entity
+  parent: CFSpellInstant
+  id: CFRiverCarvingMountains
+  name: River Carving Mountains
+  description: "+10 feet Speed while sustained. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+  - type: CFSpell
+    spell: RiverCarvingMountains
+    rank: 0
+    focus: true
+    sustained: true
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: Speed
+      type: Status
+      value: 10
+      durationSeconds: 12
+
+- type: entity
+  parent: CFSpellInstant
+  id: CFStoreTime
+  name: Store Time
+  description: "You get your reaction back, each time you cast or Sustain this. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+  - type: CFSpell
+    spell: StoreTime
+    rank: 0
+    focus: true
+    sustained: true
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFRestoreReactionEffect
+
+- type: entity
+  parent: CFSpellArea
+  id: CFDiscomfitingWhisper
+  name: Discomfiting Whisper
+  description: "Enemies within 5 feet save against Will or take 1d6 void and -2 to attacks for 6 seconds. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+  - type: CFSpell
+    spell: DiscomfitingWhisper
+    rank: 0
+    focus: true
+    sustained: true
+  - type: CFAreaEffect
+    shape: Emanation
+    sizeFeet: 5
+  - type: CFCheck
+    defense: Will
+    basicSave: false
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: AttackRoll
+      type: Status
+      value: -2
+      durationSeconds: 6
+    - !type:CFDamageEffect
+      dice: 1
+      die: 6
+      damageType: Void
+      scaleByDegree: false
+
+- type: entity
+  parent: CFSpellArea
+  id: CFNymphsGrace
+  name: Nymph's Grace
+  description: "Enemies within 10 feet that fail a Will save will not attack for 6 seconds. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+  - type: CFSpell
+    spell: NymphsGrace
+    rank: 0
+    focus: true
+    sustained: true
+  - type: CFAreaEffect
+    shape: Emanation
+    sizeFeet: 10
+  - type: CFCheck
+    defense: Will
+    basicSave: false
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFApplyConditionEffect
+      condition: Calmed
+      durationSeconds: 6
+
+- type: entity
+  parent: CFSpellInstant
+  id: CFTrickstersMirrors
+  name: Trickster's Mirrors
+  description: "You are concealed while sustained. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+  - type: CFSpell
+    spell: TrickstersMirrors
+    rank: 0
+    focus: true
+    sustained: true
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFApplyConditionEffect
+      condition: Concealed
+      durationSeconds: 12
+
+- type: entity
+  parent: CFSpellInstant
+  id: CFDevouringDarkForm
+  name: Devouring Dark Form
+  description: "Your unarmed attack is a tentacle, 1d8 bludgeoning, while sustained. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+  - type: CFSpell
+    spell: DevouringDarkForm
+    rank: 0
+    focus: true
+    sustained: true
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFFormAttackEffect
+      dice: 1
+      die: 8
+      damageType: bludgeoning
+
+- type: entity
+  parent: CFSpellInstant
+  id: CFCrownOfProphets
+  name: Crown of Prophets
+  description: "Your unarmed attack is a bite, 1d6 piercing, agile and finesse, while sustained. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+  - type: CFSpell
+    spell: CrownOfProphets
+    rank: 0
+    focus: true
+    sustained: true
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFFormAttackEffect
+      dice: 1
+      die: 6
+      damageType: piercing
+      finesse: true
+      agile: true
+
+- type: entity
+  parent: CFSpellInstant
+  id: CFGiftOfTheAnemos
+  name: Gift of the Anemos
+  description: "+10 feet Speed for 3 seconds, each time you cast or Sustain this. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+  - type: CFSpell
+    spell: GiftOfTheAnemos
+    rank: 0
+    focus: true
+    sustained: true
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: Speed
+      type: Status
+      value: 10
+      durationSeconds: 3
+
+- type: entity
+  parent: CFSpellInstant
+  id: CFWishMarket
+  name: Wish Market
+  description: "+1 status to Perception while sustained. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+  - type: CFSpell
+    spell: WishMarket
+    rank: 0
+    focus: true
+    sustained: true
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: Perception
+      type: Status
+      value: 1
+      durationSeconds: 12
+
+- type: cfSpell
+  id: GardenOfHealing
+  name: Garden of Healing
+  rank: 1
+  traits: [Concentrate, Manipulate]
+  actionCost: One
+  range: 10-foot emanation
+  targets: none
+  summary: "Heal 1d4 within 10 feet, and again each time you Sustain it."
+
+- type: cfSpell
+  id: EarthsBile
+  name: Earth's Bile
+  rank: 1
+  traits: [Concentrate, Manipulate]
+  actionCost: One
+  range: 30 feet
+  targets: none
+  summary: "A burst of 1d4 fire and 1d4 bludgeoning, and 1 persistent fire on a failed save."
+
+- type: cfSpell
+  id: EmbodimentOfBattle
+  name: Embodiment of Battle
+  rank: 1
+  traits: [Concentrate, Manipulate]
+  actionCost: One
+  range: self
+  targets: none
+  summary: "+1 status to attack and damage while sustained. Martial training, Reactive Strike and the penalty to spells: TBA."
+
+- type: cfSpell
+  id: RiverCarvingMountains
+  name: River Carving Mountains
+  rank: 1
+  traits: [Concentrate, Manipulate]
+  actionCost: One
+  range: self
+  targets: none
+  summary: "+10 feet Speed while sustained. Cover against ranged attacks and difficult terrain: TBA."
+
+- type: cfSpell
+  id: StoreTime
+  name: Store Time
+  rank: 1
+  traits: [Concentrate, Manipulate]
+  actionCost: One
+  range: self
+  targets: none
+  summary: "You get your reaction back each time you cast or Sustain this."
+
+- type: cfSpell
+  id: DiscomfitingWhisper
+  name: Discomfiting Whisper
+  rank: 1
+  traits: [Concentrate, Manipulate]
+  actionCost: One
+  range: 5-foot emanation
+  targets: none
+  summary: "Each enemy within 5 feet that fails a Will save takes 1d6 void and -2 to attacks for 6 seconds. The rule is a second attack roll, and void only if it misses."
+
+- type: cfSpell
+  id: NymphsGrace
+  name: Nymph's Grace
+  rank: 1
+  traits: [Concentrate, Manipulate]
+  actionCost: One
+  range: 10-foot emanation
+  targets: none
+  summary: "Enemies within 10 feet that fail a Will save are calmed for 6 seconds. The rule is confused, which does not exist yet."
+
+- type: cfSpell
+  id: TrickstersMirrors
+  name: Trickster's Mirrors
+  rank: 1
+  traits: [Concentrate, Manipulate]
+  actionCost: One
+  range: self
+  targets: none
+  summary: "You are concealed while sustained. The mirrors themselves, and glass shards: TBA."
+
+- type: cfSpell
+  id: DevouringDarkForm
+  name: Devouring Dark Form
+  rank: 1
+  traits: [Concentrate, Manipulate]
+  actionCost: One
+  range: self
+  targets: none
+  summary: "Your unarmed attack is a tentacle, 1d8 bludgeoning. Its reach, grapple and the shark form: TBA."
+
+- type: cfSpell
+  id: CrownOfProphets
+  name: Crown of Prophets
+  rank: 1
+  traits: [Concentrate, Manipulate]
+  actionCost: One
+  range: self
+  targets: none
+  summary: "Your unarmed attack is a bite, 1d6 piercing, agile and finesse. Free Recall Knowledge and spitting venom: TBA."
+
+- type: cfSpell
+  id: GiftOfTheAnemos
+  name: Gift of the Anemos
+  rank: 1
+  traits: [Concentrate, Manipulate]
+  actionCost: One
+  range: self
+  targets: none
+  summary: "+10 feet Speed for 3 seconds, which stands in for a Step. Shoving, jumping and the off-guard aura: TBA."
+
+- type: cfSpell
+  id: WishMarket
+  name: Wish Market
+  rank: 1
+  traits: [Concentrate, Manipulate]
+  actionCost: One
+  range: self
+  targets: none
+  summary: "+1 status to Perception while sustained. The second bonus, free Seek, Recall Knowledge and the price: TBA."

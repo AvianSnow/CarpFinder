@@ -7,6 +7,7 @@ using Content.Shared.CF.Combat;
 using Content.Shared.CF.Effects;
 using Content.Shared.Popups;
 using Robust.Shared.Network;
+using Robust.Shared.Timing;
 
 namespace Content.Shared.CF.Spells;
 
@@ -19,6 +20,7 @@ public sealed partial class CFSpellSystem : EntitySystem
     [Dependency] private CFActivitySystem _activities = default!;
     [Dependency] private CFPsiSystem _psi = default!;
     [Dependency] private INetManager _net = default!;
+    [Dependency] private IGameTiming _timing = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private SharedActionsSystem _actionDelays = default!;
@@ -217,17 +219,53 @@ public sealed partial class CFSpellSystem : EntitySystem
     {
         if (spell.Focus)
         {
-            if (!TryComp<CFSpellbookComponent>(caster, out var pool) || CFFocusSystem.Remaining(pool) <= 0)
+            if (!TryComp<CFSpellbookComponent>(caster, out var pool))
             {
                 _popup.PopupEntity(Loc.GetString("cf-spell-no-focus"), caster, caster);
                 return false;
             }
+
+            if (spell.Sustained)
+            {
+                switch (CFSustain.State(pool, spell.Spell, _timing.CurTime))
+                {
+                    case CFSustainState.TooSoon:
+                        _popup.PopupEntity(Loc.GetString("cf-spell-sustain-wait"), caster, caster);
+                        return false;
+                    case CFSustainState.Ready:
+                        CFSustain.Renew(pool, spell.Spell, _timing.CurTime);
+                        Dirty(caster, pool);
+                        return true;
+                }
+            }
+
+            if (CFFocusSystem.Remaining(pool) <= 0)
+            {
+                _popup.PopupEntity(Loc.GetString("cf-spell-no-focus"), caster, caster);
+                return false;
+            }
+
+            if (spell.Sustained)
+                CFSustain.Start(pool, spell.Spell, _timing.CurTime);
 
             pool.FocusSpent++;
             if (spell.Conflux)
                 _activities.RechargeSpellstrike(caster);
 
             Dirty(caster, pool);
+            return true;
+        }
+
+        if (TryComp<CFSpellbookComponent>(caster, out var attuned) && CFApparitions.UsesSlot(attuned, spell.Spell, spell.Rank))
+        {
+            if (CFApparitions.Left(attuned, spell.Rank) <= 0)
+            {
+                _popup.PopupEntity(Loc.GetString("cf-spell-no-slots"), caster, caster);
+                return false;
+            }
+
+            CFApparitions.Spend(attuned, spell.Rank);
+            Dirty(caster, attuned);
             return true;
         }
 
@@ -265,7 +303,22 @@ public sealed partial class CFSpellSystem : EntitySystem
     public bool HasSlot(EntityUid caster, CFSpellComponent spell)
     {
         if (spell.Focus)
-            return TryComp<CFSpellbookComponent>(caster, out var pool) && CFFocusSystem.Remaining(pool) > 0;
+        {
+            if (!TryComp<CFSpellbookComponent>(caster, out var pool))
+                return false;
+
+            if (spell.Sustained)
+            {
+                var state = CFSustain.State(pool, spell.Spell, _timing.CurTime);
+                if (state != CFSustainState.None)
+                    return state == CFSustainState.Ready;
+            }
+
+            return CFFocusSystem.Remaining(pool) > 0;
+        }
+
+        if (TryComp<CFSpellbookComponent>(caster, out var attuned) && CFApparitions.UsesSlot(attuned, spell.Spell, spell.Rank))
+            return CFApparitions.Left(attuned, spell.Rank) > 0;
 
         if (spell.Rank <= 0 || !TryComp<CFSpellbookComponent>(caster, out var book))
             return true;

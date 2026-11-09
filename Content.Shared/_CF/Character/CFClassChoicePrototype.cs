@@ -49,6 +49,10 @@ public sealed partial class CFClassChoicePrototype : IPrototype
     [DataField]
     public List<CFOptionChoice> Choices = new();
 
+    /// <summary>A build can only have one option of a group, across slots. Empty means no such limit.</summary>
+    [DataField]
+    public string Group = string.Empty;
+
     /// <summary>What this gives at level 1. See <see cref="CFGrant"/>.</summary>
     [DataField]
     public List<CFGrant> Grants = new();

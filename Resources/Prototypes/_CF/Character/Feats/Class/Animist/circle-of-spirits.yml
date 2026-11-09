@@ -11,4 +11,7 @@
     - "Apparition"
     - "Concentrate"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActCircleOfSpirits
+    - !type:CFGrantFocusPoints {}

@@ -50,6 +50,44 @@ public sealed partial class CFSpellbookComponent : Component
     /// <summary>Spells that may use a spare slot, one <see cref="Slots"/> has and nothing is prepared in. Divine Font's Heal and Harm.</summary>
     [DataField, AutoNetworkedField]
     public List<ProtoId<CFSpellPrototype>> SpareSlotSpells = new();
+
+    /// <summary>An Animist's apparition slots per rank, same indexing as <see cref="Slots"/>. They are spent like a spontaneous caster's.</summary>
+    [DataField, AutoNetworkedField]
+    public List<int> ApparitionSlots = new();
+
+    /// <summary>Apparition slots used per rank.</summary>
+    [DataField, AutoNetworkedField]
+    public List<int> ApparitionExpended = new();
+
+    /// <summary>The spells apparition slots can cast.</summary>
+    [DataField, AutoNetworkedField]
+    public List<ProtoId<CFSpellPrototype>> ApparitionSpells = new();
+
+    /// <summary>Spells with a duration the caster keeps going. See <c>CFSustain</c>.</summary>
+    [DataField, AutoNetworkedField]
+    public List<CFSustainedSpell> Sustaining = new();
+}
+
+/// <summary>A spell being sustained.</summary>
+[DataDefinition, Serializable, NetSerializable]
+public partial struct CFSustainedSpell
+{
+    [DataField]
+    public ProtoId<CFSpellPrototype> Spell;
+
+    [DataField]
+    public TimeSpan Started;
+
+    /// <summary>When it was last cast or sustained.</summary>
+    [DataField]
+    public TimeSpan Last;
+
+    public CFSustainedSpell(ProtoId<CFSpellPrototype> spell, TimeSpan started, TimeSpan last)
+    {
+        Spell = spell;
+        Started = started;
+        Last = last;
+    }
 }
 
 /// <summary>One prepared charge of a spell.</summary>

@@ -5,6 +5,10 @@
   slot: cf-class-choice-practice
   name: cf-class-choice-practiceliturgist
   description: cf-class-choice-practiceliturgist-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActCircleOfSpirits
+    - !type:CFGrantFocusPoints {}
 
 - type: cfClassChoice
   id: PracticeMedium
@@ -19,6 +23,12 @@
   slot: cf-class-choice-practice
   name: cf-class-choice-practiceseer
   description: cf-class-choice-practiceseer-desc
+  grants:
+    - !type:CFGrantBonus
+      stat: Saves
+      type: Status
+      value: 1
+      trait: Undead
 
 - type: cfClassChoice
   id: PracticeShaman

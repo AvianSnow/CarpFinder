@@ -1,3 +1,4 @@
+using Content.Shared.CF.Spells;
 using Content.Shared.CF.Companions;
 using Content.Shared.CF.Actions;
 using Content.Shared.CF.Checks;
@@ -255,6 +256,39 @@ public sealed partial class CFGrantInnovationResistance : CFGrant
     public override void Apply(IEntityManager entities, CFGrantArgs args)
     {
         entities.System<CFInventorSystem>().AddResistance(args.Mob, Resistance);
+    }
+}
+
+/// <summary>An Animist attunes to an apparition: its spells, and its vessel spell if it is the primary one.</summary>
+public sealed partial class CFGrantApparition : CFGrant
+{
+    [DataField]
+    public List<ProtoId<CFSpellPrototype>> Spells = new();
+
+    [DataField]
+    public ProtoId<CFSpellPrototype>? Vessel;
+
+    [DataField]
+    public bool Primary;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        entities.System<CFApparitionSystem>().Attune(args.Mob, Spells, Vessel, Primary);
+    }
+}
+
+/// <summary>Apparition spell slots.</summary>
+public sealed partial class CFGrantApparitionSlots : CFGrant
+{
+    [DataField(required: true)]
+    public int Rank;
+
+    [DataField]
+    public int Count = 1;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        entities.System<CFApparitionSystem>().AddSlots(args.Mob, Rank, Count);
     }
 }
 

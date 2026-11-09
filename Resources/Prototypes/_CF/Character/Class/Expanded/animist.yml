@@ -36,18 +36,22 @@
     cantrips: 2
     slots:
       - 1
-    focusPoints: 1
     prepared: true
   features:
     - level: 1
       name: "Animist & Apparition Spellcasting"
-      description: "Level 1 cantrips and spell slots are on the spell sheet."
+      description: "You prepare divine spells, and also have apparition slots, spent like a spontaneous caster, for the spells your apparitions know."
+      grants:
+        - !type:CFGrantApparitionSlots
+          rank: 1
     - level: 1
       name: "Animistic Practice"
-      description: "Choose a practice in the builder. Its invocations need apparitions: TBA"
+      description: "Choose a practice in the builder."
+
     - level: 1
       name: "Apparition Attunement"
-      description: "Attune to spirits for extra spells. Apparitions are not built yet: TBA"
+      description: "Choose two apparitions in the builder. Each teaches you a Lore and spells, and your primary one gives you its vessel spell. Changing primary when you Refocus: TBA"
+
     - level: 3
       name: "Fortitude Expertise"
       description: "Expert in Fortitude saves."
@@ -56,4 +60,28 @@
           proficiencies:
             - Fortitude
           rank: Expert
+    - level: 2
+      name: "Apparition Slot"
+      description: "Another apparition spell slot."
+      grants:
+        - !type:CFGrantApparitionSlots
+          rank: 1
+    - level: 3
+      name: "Apparition Slot"
+      description: "Another apparition spell slot."
+      grants:
+        - !type:CFGrantApparitionSlots
+          rank: 2
+    - level: 4
+      name: "Apparition Slot"
+      description: "Another apparition spell slot."
+      grants:
+        - !type:CFGrantApparitionSlots
+          rank: 2
+    - level: 5
+      name: "Apparition Slot"
+      description: "Another apparition spell slot."
+      grants:
+        - !type:CFGrantApparitionSlots
+          rank: 3
   # Class key-attribute boost is applied from keyAbility in code (PF2e).

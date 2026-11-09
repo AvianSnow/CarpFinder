@@ -8,3 +8,8 @@
   level: 2
   traits:
     - "Animist"
+  grants:
+    - !type:CFGrantApparition
+      spells:
+        - Heal
+        - Harm

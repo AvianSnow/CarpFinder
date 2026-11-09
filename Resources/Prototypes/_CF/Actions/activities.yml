@@ -162,3 +162,13 @@
   - type: TargetAction
     range: 24.25
   - type: CFCommandThrallAction
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActCircleOfSpirits
+  name: Circle of Spirits
+  description: Your second apparition becomes your primary one, and you swap vessel spells. Costs 1 action, once per round.
+  components:
+  - type: Action
+    useDelay: 6
+  - type: CFCircleOfSpiritsAction

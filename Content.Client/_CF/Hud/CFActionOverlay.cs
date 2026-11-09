@@ -61,6 +61,13 @@ public sealed class CFActionOverlay : Control
             return;
 
         overlay._castable = entities.System<CFSpellSystem>().HasSlot(user, spell);
+        if (!spell.Focus && entities.TryGetComponent(user, out CFSpellbookComponent? attuned) && CFApparitions.UsesSlot(attuned, spell.Spell, spell.Rank))
+        {
+            overlay._ready = CFApparitions.Left(attuned, spell.Rank);
+            overlay._total = CFApparitions.Total(attuned, spell.Rank);
+            return;
+        }
+
         if (spell.Focus || !entities.TryGetComponent(user, out CFSpellbookComponent? book) || !CFPreparedSpells.UsesCharges(book, spell.Spell))
             return;
 

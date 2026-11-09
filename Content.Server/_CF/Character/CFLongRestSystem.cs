@@ -47,6 +47,11 @@ public sealed partial class CFLongRestSystem : EntitySystem
                 book.Expended[rank] = 0;
             }
 
+            for (var rank = 0; rank < book.ApparitionExpended.Count; rank++)
+            {
+                book.ApparitionExpended[rank] = 0;
+            }
+
             CFPreparedSpells.Refresh(book);
             book.FocusSpent = 0;
             Dirty(mob, book);
