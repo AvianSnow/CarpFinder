@@ -68,6 +68,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
     [Dependency] private CFImplementSystem _implements = default!;
     [Dependency] private CFInventorSystem _inventor = default!;
     [Dependency] private CFIkonSystem _ikons = default!;
+    [Dependency] private CFRuneSystem _runes = default!;
     [Dependency] private CFTauntSystem _taunts = default!;
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
@@ -730,6 +731,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (style is { HumbleStrikes: true } && weapon.Proficiency == CFWeaponCategory.Simple.Proficiency())
             rolled = rolled with { DamageDie = Math.Min(12, rolled.DamageDie + 2) };
 
+        extraDice += _runes.NextStrikeDice(user, weapon);
         if (extraDice > 0)
             rolled = rolled with { DamageDice = rolled.DamageDice + extraDice };
 
@@ -869,7 +871,10 @@ public sealed partial class CFStrikeSystem : EntitySystem
         }
 
         if (hit && !alreadyDown && !isObject)
+        {
             _ikons.NoteHit(user, target, rolled, weaponUid, criticalHit, damage);
+            _runes.NoteHit(user, target, rolled, weaponUid);
+        }
 
         if (hit && !alreadyDown)
             ApplyPropertyRunes(user, target, weaponUid, degree);

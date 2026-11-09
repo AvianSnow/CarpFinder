@@ -326,7 +326,7 @@ public sealed partial class CFIkonSystem : EntitySystem
     }
 
     /// <summary>The Strike the Exemplar would make. Returns the weapon, or the Exemplar when striking unarmed.</summary>
-    private EntityUid HeldStats(EntityUid mob, out CFStrikeWeaponStats stats)
+    public EntityUid HeldStats(EntityUid mob, out CFStrikeWeaponStats stats)
     {
         if (_hands.TryGetActiveItem(mob, out var held) && _weapons.TryStats(held.Value, out stats))
             return held.Value;

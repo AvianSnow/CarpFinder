@@ -1,3 +1,4 @@
+using Content.Shared.CF.Crafting;
 using Content.Shared.CF.Spells;
 using Content.Shared.CF.Companions;
 using Content.Shared.CF.Actions;
@@ -289,6 +290,24 @@ public sealed partial class CFGrantApparitionSlots : CFGrant
     public override void Apply(IEntityManager entities, CFGrantArgs args)
     {
         entities.System<CFApparitionSystem>().AddSlots(args.Mob, Rank, Count);
+    }
+}
+
+/// <summary>Recipes the character knows without reading a formula, such as a Runesmith's.</summary>
+public sealed partial class CFGrantFormulas : CFGrant
+{
+    [DataField(required: true)]
+    public List<ProtoId<CFCraftingRecipePrototype>> Recipes = new();
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        var book = entities.EnsureComponent<CFFormulaBookComponent>(args.Mob);
+        foreach (var recipe in Recipes)
+        {
+            book.Known.Add(recipe);
+        }
+
+        entities.Dirty(args.Mob, book);
     }
 }
 

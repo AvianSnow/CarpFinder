@@ -241,3 +241,146 @@
   - type: CFFormula
     recipes:
     - StringFromCotton
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaAttachWeaponPotency1
+  name: formula (attach weapon potency rune (+1))
+  components:
+  - type: CFItemPrice
+    copper: 200
+  - type: CFFormula
+    recipes:
+    - AttachWeaponPotency1
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaAttachStriking
+  name: formula (attach striking rune)
+  components:
+  - type: CFItemPrice
+    copper: 500
+  - type: CFFormula
+    recipes:
+    - AttachStriking
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaAttachArmorPotency1
+  name: formula (attach armor potency rune (+1))
+  components:
+  - type: CFItemPrice
+    copper: 800
+  - type: CFFormula
+    recipes:
+    - AttachArmorPotency1
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaAttachResilient
+  name: formula (attach resilient rune)
+  components:
+  - type: CFItemPrice
+    copper: 2500
+  - type: CFFormula
+    recipes:
+    - AttachResilient
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaAttachFlaming
+  name: formula (attach flaming rune)
+  components:
+  - type: CFItemPrice
+    copper: 2500
+  - type: CFFormula
+    recipes:
+    - AttachFlaming
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaAttachFrost
+  name: formula (attach frost rune)
+  components:
+  - type: CFItemPrice
+    copper: 2500
+  - type: CFFormula
+    recipes:
+    - AttachFrost
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaAttachShock
+  name: formula (attach shock rune)
+  components:
+  - type: CFItemPrice
+    copper: 2500
+  - type: CFFormula
+    recipes:
+    - AttachShock
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaAttachCorrosive
+  name: formula (attach corrosive rune)
+  components:
+  - type: CFItemPrice
+    copper: 2500
+  - type: CFFormula
+    recipes:
+    - AttachCorrosive
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaAttachThundering
+  name: formula (attach thundering rune)
+  components:
+  - type: CFItemPrice
+    copper: 2500
+  - type: CFFormula
+    recipes:
+    - AttachThundering
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaEtchEsvadir
+  name: formula (etch Esvadir)
+  components:
+  - type: CFItemPrice
+    copper: 100
+  - type: CFFormula
+    recipes:
+    - EtchEsvadir
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaEtchHoltrik
+  name: formula (etch Holtrik)
+  components:
+  - type: CFItemPrice
+    copper: 100
+  - type: CFFormula
+    recipes:
+    - EtchHoltrik
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaEtchMarssyl
+  name: formula (etch Marssyl)
+  components:
+  - type: CFItemPrice
+    copper: 100
+  - type: CFFormula
+    recipes:
+    - EtchMarssyl
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaEtchOljinex
+  name: formula (etch Oljinex)
+  components:
+  - type: CFItemPrice
+    copper: 100
+  - type: CFFormula
+    recipes:
+    - EtchOljinex

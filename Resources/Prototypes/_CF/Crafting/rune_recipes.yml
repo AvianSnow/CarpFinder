@@ -1,0 +1,162 @@
+# Attaching runes at a workbench. The weapon or armor stays, and only the rune is used up.
+
+- type: craftingRecipe
+  id: AttachWeaponPotency1
+  tag: CFRecipeWorkbench
+  craftTime: 4
+  attachRune: true
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFRuneItemWeaponPotency1
+  - !type:CFRuneTargetRequirement
+    rune: CFRuneItemWeaponPotency1
+    count: 0
+  result: CFRuneItemWeaponPotency1
+
+- type: craftingRecipe
+  id: AttachStriking
+  tag: CFRecipeWorkbench
+  craftTime: 4
+  attachRune: true
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFRuneItemStriking
+  - !type:CFRuneTargetRequirement
+    rune: CFRuneItemStriking
+    count: 0
+  result: CFRuneItemStriking
+
+- type: craftingRecipe
+  id: AttachArmorPotency1
+  tag: CFRecipeWorkbench
+  craftTime: 4
+  attachRune: true
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFRuneItemArmorPotency1
+  - !type:CFRuneTargetRequirement
+    rune: CFRuneItemArmorPotency1
+    count: 0
+  result: CFRuneItemArmorPotency1
+
+- type: craftingRecipe
+  id: AttachResilient
+  tag: CFRecipeWorkbench
+  craftTime: 4
+  attachRune: true
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFRuneItemResilient
+  - !type:CFRuneTargetRequirement
+    rune: CFRuneItemResilient
+    count: 0
+  result: CFRuneItemResilient
+
+- type: craftingRecipe
+  id: AttachFlaming
+  tag: CFRecipeWorkbench
+  craftTime: 4
+  attachRune: true
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFRuneItemFlaming
+  - !type:CFRuneTargetRequirement
+    rune: CFRuneItemFlaming
+    count: 0
+  result: CFRuneItemFlaming
+
+- type: craftingRecipe
+  id: AttachFrost
+  tag: CFRecipeWorkbench
+  craftTime: 4
+  attachRune: true
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFRuneItemFrost
+  - !type:CFRuneTargetRequirement
+    rune: CFRuneItemFrost
+    count: 0
+  result: CFRuneItemFrost
+
+- type: craftingRecipe
+  id: AttachShock
+  tag: CFRecipeWorkbench
+  craftTime: 4
+  attachRune: true
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFRuneItemShock
+  - !type:CFRuneTargetRequirement
+    rune: CFRuneItemShock
+    count: 0
+  result: CFRuneItemShock
+
+- type: craftingRecipe
+  id: AttachCorrosive
+  tag: CFRecipeWorkbench
+  craftTime: 4
+  attachRune: true
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFRuneItemCorrosive
+  - !type:CFRuneTargetRequirement
+    rune: CFRuneItemCorrosive
+    count: 0
+  result: CFRuneItemCorrosive
+
+- type: craftingRecipe
+  id: AttachThundering
+  tag: CFRecipeWorkbench
+  craftTime: 4
+  attachRune: true
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFRuneItemThundering
+  - !type:CFRuneTargetRequirement
+    rune: CFRuneItemThundering
+    count: 0
+  result: CFRuneItemThundering
+
+- type: craftingRecipe
+  id: EtchEsvadir
+  tag: CFRecipeWorkbench
+  craftTime: 4
+  attachRune: true
+  requirements:
+  - !type:CFRuneTargetRequirement
+    rune: CFRuneEtchEsvadir
+    count: 0
+  result: CFRuneEtchEsvadir
+
+- type: craftingRecipe
+  id: EtchHoltrik
+  tag: CFRecipeWorkbench
+  craftTime: 4
+  attachRune: true
+  requirements:
+  - !type:CFRuneTargetRequirement
+    rune: CFRuneEtchHoltrik
+    count: 0
+  result: CFRuneEtchHoltrik
+
+- type: craftingRecipe
+  id: EtchMarssyl
+  tag: CFRecipeWorkbench
+  craftTime: 4
+  attachRune: true
+  requirements:
+  - !type:CFRuneTargetRequirement
+    rune: CFRuneEtchMarssyl
+    count: 0
+  result: CFRuneEtchMarssyl
+
+- type: craftingRecipe
+  id: EtchOljinex
+  tag: CFRecipeWorkbench
+  craftTime: 4
+  attachRune: true
+  requirements:
+  - !type:CFRuneTargetRequirement
+    rune: CFRuneEtchOljinex
+    count: 0
+  result: CFRuneEtchOljinex

@@ -154,6 +154,8 @@ Class examples: `CFMySystem`, `CFMyServerSystem`, `CFMyClientSystem`, `CFExample
 | Amping a psi cantrip | `CFPsiCantrip` on the spell's action, with what the amp changes. `CFPsiSystem` spends the Focus Point |
 | A Commander's tactic | An action with `CFTacticAction` in `Resources/Prototypes/_CF/Actions/tactics.yml`, and a `cfClassChoice` entry per tactic slot. `CFTacticSystem.Squad` says who answers |
 | Something that needs an Inventor's innovation | `CFInnovation` on the item or construct, `CFInventorSystem.IsUsing`, and `unstable: true` on a `CFStrikeAction` |
+| A rune that goes on an item at a workbench | A `craftingRecipe` with `attachRune: true`, a `CFRuneItem` on its result and a `CFRuneTargetRequirement` (`count: 0`) in `Crafting/rune_recipes.yml`. `CFRuneSystem.CanAttach` says what can hold it |
+| A Runesmith rune | A `cfRune` in `Combat/runes.yml` and a `CFActTrace` action in `Actions/runes.yml`. The action's `CFCheck` and `CFDegreeEffects` are what invoking it does |
 | An Exemplar's ikon | A `cfIkon` in `Combat/ikons.yml`, a `CFActShift` action and a `CFActTrans` action with `CFIkonTranscendence` in `Actions/ikons.yml`, and `!type:CFGrantIkon` on a `cfClassChoice` |
 | An Animist's apparition, or a spell that is sustained | A `cfClassChoice` pair in `Choices/apparitions.yml` with `!type:CFGrantApparition`. `sustained: true` on `CFSpell` for a focus spell that is kept going by using it again (`CFSustain`) |
 | A grave spell, or anything a Necromancer casts through a thrall | A spell in `Spells/Focus/focus.yml` with a whitelist of `CFThrall` and a `CFThrallBlastEffect` |

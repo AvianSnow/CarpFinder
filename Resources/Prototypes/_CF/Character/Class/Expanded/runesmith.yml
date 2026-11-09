@@ -34,10 +34,13 @@
   features:
     - level: 1
       name: "Runes"
-      description: "Trace and invoke magical runes. Runes are not built yet: TBA"
+      description: "Trace a rune on a creature with its action, and set it off with Invoke Rune. Weapon and shield runes can also be etched at a workbench, and last until invoked. Two etched at a time, three from level 5."
+      grants:
+        - !type:CFGrantAction
+          action: CFActInvokeRune
     - level: 1
       name: "Runic Repertoire"
-      description: "The runes you know. Runes are not built yet: TBA"
+      description: "Choose four runes in the builder, and two more that arrive at level 5. The level 5 diacritic runes: TBA"
     - level: 1
       name: "Shield Block"
       description: "You can spend your reaction to block damage with a raised shield."
@@ -46,7 +49,11 @@
           option: ShieldBlock
     - level: 2
       name: "Runic Crafter"
-      description: "Magical Crafting and rune formulas: TBA"
+      description: "You know how to attach weapon potency runes. You learn striking at level 4 and armor potency at level 5. Magical Crafting and property rune formulas: TBA"
+      grants:
+        - !type:CFGrantFormulas
+          recipes:
+            - AttachWeaponPotency1
     - level: 5
       name: "Weapon Expertise"
       description: "Expert with simple weapons, martial weapons and unarmed attacks."
@@ -57,4 +64,18 @@
             - MartialWeapons
             - Unarmed
           rank: Expert
+    - level: 4
+      name: "Runic Crafter: Striking"
+      description: "You learn to attach striking runes."
+      grants:
+        - !type:CFGrantFormulas
+          recipes:
+            - AttachStriking
+    - level: 5
+      name: "Runic Crafter: Armor Potency"
+      description: "You learn to attach armor potency runes."
+      grants:
+        - !type:CFGrantFormulas
+          recipes:
+            - AttachArmorPotency1
   # Class key-attribute boost is applied from keyAbility in code (PF2e).

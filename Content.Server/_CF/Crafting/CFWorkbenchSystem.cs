@@ -34,6 +34,7 @@ public sealed partial class CFWorkbenchSystem : EntitySystem
     [Dependency] private UserInterfaceSystem _ui = default!;
     [Dependency] private CFConditionSystem _conditions = default!;
     [Dependency] private CFCraftingSystem _crafting = default!;
+    [Dependency] private CFRuneSystem _runes = default!;
 
     [SubscribeLocalEvent]
     private void OnFormulaUsed(Entity<CFFormulaComponent> ent, ref UseInHandEvent args)
@@ -91,6 +92,9 @@ public sealed partial class CFWorkbenchSystem : EntitySystem
     /// <summary>The locale id of why <paramref name="user"/> cannot attempt the recipe, or null if they can.</summary>
     public string? BlockedReason(EntityUid user, CFCraftingRecipePrototype recipe)
     {
+        if (recipe.AttachRune && !_runes.CanUseRecipe(user, recipe.Result))
+            return "cf-rune-unknown";
+
         var rank = _crafting.Rank(user);
         if (rank < CFProficiencyRank.Trained)
             return "cf-craft-blocked-untrained";
@@ -248,12 +252,17 @@ public sealed partial class CFWorkbenchSystem : EntitySystem
         var placed = Placed(bench);
         if (success)
         {
+            // Found first, because using the materials up changes what is on the bench.
+            var runeTarget = recipe.AttachRune ? _runes.FindTarget(placed, recipe.Result) : null;
             foreach (var requirement in recipe.Requirements)
             {
                 requirement.Consume(EntityManager, placed, requirement.Count);
             }
 
-            SpawnResults(bench, recipe);
+            if (!recipe.AttachRune)
+                SpawnResults(bench, recipe);
+            else if (runeTarget is { } target)
+                _runes.Attach(target, recipe.Result, user);
         }
         else if (degree == CFDegree.CriticalFailure)
         {

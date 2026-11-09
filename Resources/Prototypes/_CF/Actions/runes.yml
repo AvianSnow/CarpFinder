@@ -1,0 +1,323 @@
+# Runesmith actions. CFRuneSystem runs them.
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActInvokeRune
+  name: Invoke Rune
+  description: Invokes up to two of your runes on a creature within 30 feet, or on what it holds. They fade afterwards.
+  components:
+  - type: TargetAction
+    range: 6.5
+  - type: EntityTargetAction
+    canTargetSelf: true
+  - type: CFInvokeRuneAction
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTraceAtryl
+  name: "Trace Atryl"
+  description: "1 action next to the target, 2 from up to 30 feet away. It lasts 12 seconds. Reducing fire resistance: TBA. Invoke: 1d8 fire, basic Fortitude."
+  components:
+  - type: TargetAction
+    range: 6.5
+  - type: EntityTargetAction
+    canTargetSelf: true
+  - type: CFTraceRuneAction
+    rune: Atryl
+  - type: CFCheck
+    defense: Fortitude
+    dcSource: Class
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 8
+      damageType: Fire
+      diceEveryLevels: 2
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTraceBaruiel
+  name: "Trace Baruiel"
+  description: "1 action next to the target, 2 from up to 30 feet away. It lasts 12 seconds. Easing frightened: TBA. Invoke: TBA."
+  components:
+  - type: TargetAction
+    range: 6.5
+  - type: EntityTargetAction
+    canTargetSelf: true
+  - type: CFTraceRuneAction
+    rune: Baruiel
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTraceCamonica
+  name: "Trace Camonica"
+  description: "1 action next to the target, 2 from up to 30 feet away. It lasts 12 seconds. Damage when the bearer concentrates: TBA. Invoke: 1d4 mental, basic Will, and stupefied on a failure."
+  components:
+  - type: TargetAction
+    range: 6.5
+  - type: EntityTargetAction
+    canTargetSelf: true
+  - type: CFTraceRuneAction
+    rune: Camonica
+  - type: CFCheck
+    defense: Will
+    dcSource: Class
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 4
+      damageType: Mental
+      diceEveryLevels: 2
+    failure:
+    - !type:CFApplyConditionEffect
+      condition: Stupefied
+      value: 1
+      durationSeconds: 6
+    criticalFailure:
+    - !type:CFApplyConditionEffect
+      condition: Stupefied
+      value: 2
+      durationSeconds: 6
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTraceEsvadir
+  name: "Trace Esvadir"
+  description: "1 action next to the target, 2 from up to 30 feet away. It lasts 12 seconds. A piercing or slashing weapon. 2 persistent bleed per die. Invoke: 1d8 slashing to a creature next to the bearer, basic Reflex."
+  components:
+  - type: TargetAction
+    range: 6.5
+  - type: EntityTargetAction
+    canTargetSelf: true
+  - type: CFTraceRuneAction
+    rune: Esvadir
+  - type: CFCheck
+    defense: Reflex
+    dcSource: Class
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 8
+      damageType: Slashing
+      diceEveryLevels: 2
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTraceHoltrik
+  name: "Trace Holtrik"
+  description: "1 action next to the target, 2 from up to 30 feet away. It lasts 12 seconds. The bonus while the shield is raised: TBA. Invoke: the bearer raises its shield, and has +1 status to AC for 6 seconds."
+  components:
+  - type: TargetAction
+    range: 6.5
+  - type: EntityTargetAction
+    canTargetSelf: true
+  - type: CFTraceRuneAction
+    rune: Holtrik
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFRaiseShieldEffect
+    - !type:CFBonusEffect
+      stat: ArmorClass
+      type: Status
+      value: 1
+      durationSeconds: 6
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTraceLedria
+  name: "Trace Ledria"
+  description: "1 action next to the target, 2 from up to 30 feet away. It lasts 12 seconds. +1 status to Deception, Diplomacy and Performance. Invoke: TBA."
+  components:
+  - type: TargetAction
+    range: 6.5
+  - type: EntityTargetAction
+    canTargetSelf: true
+  - type: CFTraceRuneAction
+    rune: Ledria
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTraceLyskel
+  name: "Trace Lyskel"
+  description: "1 action next to the target, 2 from up to 30 feet away. It lasts 12 seconds. -5 feet Speed. Clumsy from moving: TBA. Invoke: 1d4 cold, basic Fortitude. Difficult terrain: TBA."
+  components:
+  - type: TargetAction
+    range: 6.5
+  - type: EntityTargetAction
+    canTargetSelf: true
+  - type: CFTraceRuneAction
+    rune: Lyskel
+  - type: CFCheck
+    defense: Fortitude
+    dcSource: Class
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 4
+      damageType: Cold
+      diceEveryLevels: 2
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTraceMarssyl
+  name: "Trace Marssyl"
+  description: "1 action next to the target, 2 from up to 30 feet away. It lasts 12 seconds. A bludgeoning weapon. 1 bludgeoning splash per die. Invoke: the next Strike to hit deals another die. The push: TBA."
+  components:
+  - type: TargetAction
+    range: 6.5
+  - type: EntityTargetAction
+    canTargetSelf: true
+  - type: CFTraceRuneAction
+    rune: Marssyl
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFRuneNextStrikeEffect
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTraceOljinex
+  name: "Trace Oljinex"
+  description: "1 action next to the target, 2 from up to 30 feet away. It lasts 12 seconds. Hardness against ranged attacks: TBA. Invoke: TBA."
+  components:
+  - type: TargetAction
+    range: 6.5
+  - type: EntityTargetAction
+    canTargetSelf: true
+  - type: CFTraceRuneAction
+    rune: Oljinex
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTracePluuna
+  name: "Trace Pluuna"
+  description: "1 action next to the target, 2 from up to 30 feet away. It lasts 12 seconds. Its light: TBA. Invoke: TBA, because dazzled does not exist yet."
+  components:
+  - type: TargetAction
+    range: 6.5
+  - type: EntityTargetAction
+    canTargetSelf: true
+  - type: CFTraceRuneAction
+    rune: Pluuna
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTraceRanshu
+  name: "Trace Ranshu"
+  description: "1 action next to the target, 2 from up to 30 feet away. It lasts 12 seconds. Damage for standing still: TBA. Invoke: 1d8 electricity, basic Fortitude."
+  components:
+  - type: TargetAction
+    range: 6.5
+  - type: EntityTargetAction
+    canTargetSelf: true
+  - type: CFTraceRuneAction
+    rune: Ranshu
+  - type: CFCheck
+    defense: Fortitude
+    dcSource: Class
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 8
+      damageType: Electricity
+      diceEveryLevels: 2
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTraceRehgog
+  name: "Trace Rehgog"
+  description: "1 action next to the target, 2 from up to 30 feet away. It lasts 12 seconds. Scent: TBA. Invoke: +10 feet Speed for 3 seconds, and the next unarmed Strike to hit deals another die."
+  components:
+  - type: TargetAction
+    range: 6.5
+  - type: EntityTargetAction
+    canTargetSelf: true
+  - type: CFTraceRuneAction
+    rune: Rehgog
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: Speed
+      type: Status
+      value: 10
+      durationSeconds: 3
+    - !type:CFRuneNextStrikeEffect
+      unarmedOnly: true
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTraceSertum
+  name: "Trace Sertum"
+  description: "1 action next to the target, 2 from up to 30 feet away. It lasts 12 seconds. +1 status to Survival. Invoke: +10 feet Speed for 3 seconds, standing in for three Steps."
+  components:
+  - type: TargetAction
+    range: 6.5
+  - type: EntityTargetAction
+    canTargetSelf: true
+  - type: CFTraceRuneAction
+    rune: Sertum
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: Speed
+      type: Status
+      value: 10
+      durationSeconds: 3
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTraceThullax
+  name: "Trace Thullax"
+  description: "1 action next to the target, 2 from up to 30 feet away. It lasts 12 seconds. Reducing physical resistance: TBA. Invoke: 1d6 acid, basic Fortitude, and 1 persistent acid on a critical failure."
+  components:
+  - type: TargetAction
+    range: 6.5
+  - type: EntityTargetAction
+    canTargetSelf: true
+  - type: CFTraceRuneAction
+    rune: Thullax
+  - type: CFCheck
+    defense: Fortitude
+    dcSource: Class
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 6
+      damageType: Acid
+      diceEveryLevels: 2
+    criticalFailure:
+    - !type:CFDamageEffect
+      damageType: Acid
+      persistentFlat: 1
+      scaleByDegree: false
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTraceTilus
+  name: "Trace Tilus"
+  description: "1 action next to the target, 2 from up to 30 feet away. It lasts 12 seconds. +1 status to Society. Sharing a language: TBA. Invoke: TBA."
+  components:
+  - type: TargetAction
+    range: 6.5
+  - type: EntityTargetAction
+    canTargetSelf: true
+  - type: CFTraceRuneAction
+    rune: Tilus
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTraceZohk
+  name: "Trace Zohk"
+  description: "1 action next to the target, 2 from up to 30 feet away. It lasts 12 seconds. Its Speed bonus: TBA. Invoke: TBA, because a teleport is not built."
+  components:
+  - type: TargetAction
+    range: 6.5
+  - type: EntityTargetAction
+    canTargetSelf: true
+  - type: CFTraceRuneAction
+    rune: Zohk

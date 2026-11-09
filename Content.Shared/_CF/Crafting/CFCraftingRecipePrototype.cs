@@ -28,4 +28,8 @@ public sealed partial class CFCraftingRecipePrototype : IPrototype
 
     [DataField]
     public int ResultCount = 1;
+
+    /// <summary>The result is a rune. It is put on a matching item on the bench instead of being made. See <c>CFRuneSystem</c>.</summary>
+    [DataField]
+    public bool AttachRune;
 }
