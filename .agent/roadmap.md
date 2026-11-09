@@ -143,7 +143,8 @@ Built on 9 November 2026. `CFClassChoices` decides what counts as a valid pick. 
 - [x] A button in the builder, using the same list as Heritage. There is one button per `slot` a class has options in, so a class needs only its options.
 - [x] `cfDeity`, for classes with `usesDeity` (Cleric and Champion). Deities are data on the character, not a religion system.
 - [x] Rogue's rackets, in `Class/Choices/rogue.yml`. The Thief is finished. The others give their skills, armor and key attribute, and the rest is marked `TBA`.
-- [ ] Deity content: our own gods, `TBA`. There are no `cfDeity` entries yet, so the builder shows a disabled `Deity: TBA` button for classes that follow one.
+- [x] Seven placeholder gods in `Character/deities.yml`, for Clerics and Champions. Each gives a skill, a favored weapon (`CFGrantWeaponFamiliarity`, which counts it as simple) and what Divine Font casts. Not clicked in a real client. Tests: `CFClassChoiceTest`.
+- [ ] Replace the placeholder names and lore when the setting is written. Domains, bonus spells, edicts and anathema are not built. A Champion's cause is not checked against the deity's holy or unholy side.
 - [x] A Ruffian, Scoundrel or Mastermind picks its key attribute with a `KeyAttribute` entry in `choices`, and keeps the racket's until it does. Not clicked in a real client. Tests: `CFGeneralFeatTest`.
 - [ ] Fill each class's choices in its wave.
 

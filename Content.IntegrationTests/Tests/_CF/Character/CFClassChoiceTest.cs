@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Content.Shared.CF.Character.Grants;
 using Content.IntegrationTests.Fixtures;
 using Content.IntegrationTests.Tests.CF;
 using Content.Server.CF.Character;
@@ -211,6 +212,64 @@ public sealed class CFClassChoiceTest : GameTest
             Assert.That(atFirst, Is.False);
             Assert.That(atTwo, Is.False);
             Assert.That(atThree, Is.True);
+        });
+    }
+
+    [TestCase("Solhara", "Heal")]
+    [TestCase("Ombrix", "Harm")]
+    [TestCase("Vaelis", "Heal,Harm")]
+    public async Task ADeityDecidesWhatItsFontCasts(string deity, string spells)
+    {
+        var map = await CFDevMap.Load(Pair, Footprint);
+        var spare = new List<string>();
+        await Server.WaitPost(() =>
+        {
+            var cleric = Spawn(map, new CFCharacterBuildData { Class = "Cleric", Deity = deity });
+            spare = SEntMan.GetComponent<CFSpellbookComponent>(cleric).SpareSlotSpells.Select(spell => spell.Id).ToList();
+        });
+
+        Assert.That(spare, Is.EquivalentTo(spells.Split(',')));
+    }
+
+    [Test]
+    public async Task AChampionGetsItsDeitysSkillAndWeapon()
+    {
+        var map = await CFDevMap.Load(Pair, Footprint);
+        var trained = new List<string>();
+        var weapons = new List<string>();
+        await Server.WaitPost(() =>
+        {
+            var combat = SEntMan.GetComponent<CFCombatantComponent>(Spawn(map, new CFCharacterBuildData { Class = "Champion", Deity = "Morvane" }));
+            trained = combat.TrainedSkills.ToList();
+            weapons = combat.FamiliarWeapons.Select(weapon => weapon.ToString()).ToList();
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(trained, Does.Contain("Religion"));
+            Assert.That(weapons, Does.Contain("CFStaff"));
+        });
+    }
+
+    [Test]
+    public async Task EveryDeityGivesASkillAndAWeapon()
+    {
+        var incomplete = new List<string>();
+        var count = 0;
+        await Server.WaitPost(() =>
+        {
+            foreach (var deity in Server.ProtoMan.EnumeratePrototypes<CFDeityPrototype>().Where(deity => !deity.ID.Contains("Test")))
+            {
+                count++;
+                if (deity.TrainedSkills.Count == 0 || !deity.Grants.OfType<CFGrantWeaponFamiliarity>().Any(grant => grant.Weapons.Count > 0))
+                    incomplete.Add(deity.ID);
+            }
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(count, Is.GreaterThan(0));
+            Assert.That(incomplete, Is.Empty);
         });
     }
 

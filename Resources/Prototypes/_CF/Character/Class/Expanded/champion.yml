@@ -44,7 +44,7 @@
       description: "Choose a cause in the builder. It gives you your champion's reaction, which fires by itself through your aura."
     - level: 1
       name: "Deity (Champion)"
-      description: "Deities are our own pantheon, and none exist yet: TBA"
+      description: "Choose yours with the Deity button. It trains a skill and gives its favored weapon."
     - level: 1
       name: "Devotion Spells"
       description: "Choose Lay on Hands, Touch of the Void or Shields of the Spirit in the builder. It costs a Focus Point."

@@ -1,0 +1,14 @@
+cf-deity-solhara = Solhara, the Dawn Warden
+cf-deity-solhara-desc = The first light over the clouds, who mends what the night broke. Holy. Font: Heal. Skill: Medicine. Weapon: spear. Domains (Sun, Healing, Mercy): TBA
+cf-deity-keth = Keth Ironvow, the Oathkeeper
+cf-deity-keth-desc = Every sworn word is a chain Keth holds. Holy. Font: Heal. Skill: Society. Weapon: longsword. Domains (Justice, Duty, Protection): TBA
+cf-deity-brannoch = Brannoch of the Hearth-Forge
+cf-deity-brannoch-desc = Patron of smiths, shipwrights and anyone who keeps a fire going. Font: Heal. Skill: Crafting. Weapon: warhammer. Domains (Creation, Earth, Family): TBA
+cf-deity-vaelis = Vaelis, the Windwright
+cf-deity-vaelis-desc = Sailors of the high air pray to Vaelis for a fair wind and a soft landing. Font: Heal or Harm. Skill: Acrobatics. Weapon: shortbow. Domains (Air, Travel, Luck): TBA
+cf-deity-morvane = Morvane, the Last Ferryman
+cf-deity-morvane-desc = All who fall from the sky are carried across, and none are carried back. Font: Heal or Harm. Skill: Religion. Weapon: staff. Domains (Death, Fate, Soul): TBA
+cf-deity-sivri = Sivri, the Smiling Knife
+cf-deity-sivri-desc = Every secret has a price, and Sivri has already collected it. Unholy. Font: Harm. Skill: Stealth. Weapon: dagger. Domains (Secrets, Trickery, Shadow): TBA
+cf-deity-ombrix = Ombrix, the Hollow Crown
+cf-deity-ombrix-desc = A dead king who rules through fear, and who has not finished ruling. Unholy. Font: Harm. Skill: Intimidation. Weapon: greatsword. Domains (Undeath, Tyranny, Might): TBA

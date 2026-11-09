@@ -24,6 +24,10 @@ public sealed partial class CFDeityPrototype : IPrototype
     [DataField]
     public List<ProtoId<CFAbilitySkillPrototype>> TrainedSkills = new();
 
+    /// <summary>What a Cleric's Divine Font slots can cast. Empty means both Heal and Harm.</summary>
+    [DataField]
+    public List<ProtoId<CFSpellPrototype>> DivineFont = new();
+
     /// <summary>What following this deity gives, such as familiarity with its favored weapon.</summary>
     [DataField]
     public List<CFGrant> Grants = new();

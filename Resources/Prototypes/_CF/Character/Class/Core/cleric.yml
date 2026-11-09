@@ -47,10 +47,10 @@
       description: "Level 1 cantrips and spell slots are on the spell sheet."
     - level: 1
       name: "Deity"
-      description: "Your deity and its favored weapon: TBA"
+      description: "Choose yours with the Deity button. It trains a skill and gives its favored weapon."
     - level: 1
       name: "Divine Font"
-      description: "You gain extra rank 1 spell slots equal to 1 plus your Charisma modifier."
+      description: "You gain extra rank 1 spell slots for Heal or Harm, whichever your deity offers."
     - level: 1
       name: "Doctrine"
       description: "Choose yours with the Doctrine button."

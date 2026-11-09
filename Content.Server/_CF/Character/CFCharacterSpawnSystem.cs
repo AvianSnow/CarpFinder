@@ -380,10 +380,17 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         book.FocusSpent = 0;
         if (cls != null && cls.ID == "Cleric" && book.Slots.Count > 1 && TryComp(mob, out CFAbilityScoreComponent? scores))
         {
-            // Divine Font: extra rank 1 slots that only Heal and Harm can use.
+            // Divine Font: extra rank 1 slots for what the deity offers.
             book.Slots[1] += Math.Max(1, scores.GetModifier(CFAbility.Charisma));
-            book.SpareSlotSpells.Add("Heal");
-            book.SpareSlotSpells.Add("Harm");
+            if (CFClassChoices.SelectedDeity(_prototypes, profile.CFBuild) is { DivineFont.Count: > 0 } deity)
+            {
+                book.SpareSlotSpells.AddRange(deity.DivineFont);
+            }
+            else
+            {
+                book.SpareSlotSpells.Add("Heal");
+                book.SpareSlotSpells.Add("Harm");
+            }
         }
 
         Dirty(mob, book);

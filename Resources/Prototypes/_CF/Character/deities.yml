@@ -1,0 +1,78 @@
+# CarpFinder: our own pantheon. Placeholder names and lore, to be replaced when the setting is written.
+# Each gives a skill, a favored weapon and a divine font. An empty divineFont means the follower can use both.
+# Domains are not built, so their names are only in the descriptions.
+
+- type: cfDeity
+  id: Solhara
+  name: cf-deity-solhara
+  description: cf-deity-solhara-desc
+  divineFont: [ Heal ]
+  trainedSkills:
+    - Medicine
+  grants:
+    - !type:CFGrantWeaponFamiliarity
+      weapons: [ CFSpear ]
+
+- type: cfDeity
+  id: Keth
+  name: cf-deity-keth
+  description: cf-deity-keth-desc
+  divineFont: [ Heal ]
+  trainedSkills:
+    - Society
+  grants:
+    - !type:CFGrantWeaponFamiliarity
+      weapons: [ CFLongsword ]
+
+- type: cfDeity
+  id: Brannoch
+  name: cf-deity-brannoch
+  description: cf-deity-brannoch-desc
+  divineFont: [ Heal ]
+  trainedSkills:
+    - Crafting
+  grants:
+    - !type:CFGrantWeaponFamiliarity
+      weapons: [ CFWarhammer ]
+
+- type: cfDeity
+  id: Vaelis
+  name: cf-deity-vaelis
+  description: cf-deity-vaelis-desc
+  trainedSkills:
+    - Acrobatics
+  grants:
+    - !type:CFGrantWeaponFamiliarity
+      weapons: [ CFShortbow ]
+
+- type: cfDeity
+  id: Morvane
+  name: cf-deity-morvane
+  description: cf-deity-morvane-desc
+  trainedSkills:
+    - Religion
+  grants:
+    - !type:CFGrantWeaponFamiliarity
+      weapons: [ CFStaff ]
+
+- type: cfDeity
+  id: Sivri
+  name: cf-deity-sivri
+  description: cf-deity-sivri-desc
+  divineFont: [ Harm ]
+  trainedSkills:
+    - Stealth
+  grants:
+    - !type:CFGrantWeaponFamiliarity
+      weapons: [ CFDagger ]
+
+- type: cfDeity
+  id: Ombrix
+  name: cf-deity-ombrix
+  description: cf-deity-ombrix-desc
+  divineFont: [ Harm ]
+  trainedSkills:
+    - Intimidation
+  grants:
+    - !type:CFGrantWeaponFamiliarity
+      weapons: [ CFGreatsword ]
