@@ -32,6 +32,13 @@ public sealed partial class CFSpellComponent : Component
     /// <summary>0 is a cantrip: it does not spend a slot and heightens to half the caster's level.</summary>
     [DataField, AutoNetworkedField]
     public int Rank;
+
+    /// <summary>The rank of the slot the last cast was paid from. It lives here because a bolt can land after the cast.</summary>
+    [ViewVariables]
+    public int CastRank;
+
+    /// <summary>The rank this cast resolves at: its slot's, when that is above the spell's own.</summary>
+    public int ResolvedRank => Math.Max(Rank, CastRank);
 }
 
 public sealed partial class CFSpellCastInstantEvent : InstantActionEvent

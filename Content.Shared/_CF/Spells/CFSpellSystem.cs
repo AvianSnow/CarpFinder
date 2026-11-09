@@ -123,7 +123,7 @@ public sealed partial class CFSpellSystem : EntitySystem
     {
         if (spell.Comp.Rank > 0)
         {
-            args.Rank = spell.Comp.Rank;
+            args.Rank = spell.Comp.ResolvedRank;
             return;
         }
 
@@ -228,8 +228,9 @@ public sealed partial class CFSpellSystem : EntitySystem
         return true;
     }
 
-    private bool TrySpend(EntityUid caster, CFSpellComponent spell)
+    public bool TrySpend(EntityUid caster, CFSpellComponent spell)
     {
+        spell.CastRank = 0;
         if (spell.Focus)
         {
             if (!TryComp<CFSpellbookComponent>(caster, out var pool))
@@ -297,17 +298,18 @@ public sealed partial class CFSpellSystem : EntitySystem
 
         if (book.Prepared)
         {
-            CFPreparedSpells.Spend(book, spell.Spell, spell.Rank);
+            spell.CastRank = CFPreparedSpells.Spend(book, spell.Spell, spell.Rank);
             Dirty(caster, book);
             return true;
         }
 
-        while (book.Expended.Count <= spell.Rank)
+        spell.CastRank = CFPreparedSpells.SpontaneousRank(book, spell.Spell, spell.Rank);
+        while (book.Expended.Count <= spell.CastRank)
         {
             book.Expended.Add(0);
         }
 
-        book.Expended[spell.Rank]++;
+        book.Expended[spell.CastRank]++;
         Dirty(caster, book);
         return true;
     }
@@ -342,8 +344,7 @@ public sealed partial class CFSpellSystem : EntitySystem
         if (book.Prepared)
             return CFPreparedSpells.CanCast(book, spell.Spell, spell.Rank);
 
-        var spent = spell.Rank < book.Expended.Count ? book.Expended[spell.Rank] : 0;
-        return spent < book.Slots[spell.Rank];
+        return CFPreparedSpells.SpontaneousRank(book, spell.Spell, spell.Rank) > 0;
     }
 
     /// <summary>Burns one slot of a rank without casting a spell, for an ability such as Spellstrike. False if none is left.</summary>

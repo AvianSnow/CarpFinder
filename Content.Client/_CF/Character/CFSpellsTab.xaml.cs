@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Numerics;
 using Content.Client.UserInterface.Systems.Actions;
 using Content.Shared.Actions;
@@ -184,7 +185,7 @@ public sealed partial class CFSpellsTab : BoxContainer
         LayoutContainer.SetPosition(_ghost, _ui.MousePositionScaled.Position);
         var spell = Find(_dragSpell);
         var slot = FindSlot(_ui.MouseGetControl(_input.MouseScreenPosition));
-        var valid = spell != null && slot != null && slot.DropEnabled && slot.Rank == spell.Rank;
+        var valid = spell != null && slot != null && slot.DropEnabled && slot.Rank >= spell.Rank;
         if (_hot == slot)
             return;
 
@@ -201,7 +202,7 @@ public sealed partial class CFSpellsTab : BoxContainer
         var spell = Find(_dragSpell);
         var slot = _hot;
         CancelDrag();
-        if (spell == null || slot == null || !slot.DropEnabled || slot.Rank != spell.Rank)
+        if (spell == null || slot == null || !slot.DropEnabled || slot.Rank < spell.Rank)
             return;
 
         if (!_slots.TryGetValue(slot.Rank, out var row) || slot.Index < 0 || slot.Index >= row.Count)
@@ -216,19 +217,24 @@ public sealed partial class CFSpellsTab : BoxContainer
     private void TryPrepare(string spellId)
     {
         var spell = Find(spellId);
-        if (spell == null || !_slots.TryGetValue(spell.Rank, out var row))
+        if (spell == null)
             return;
 
-        for (var i = 0; i < row.Count; i++)
+        // Its own rank first. A higher slot heightens it, so that is only used when its own are full.
+        foreach (var rank in _slots.Keys.Where(rank => rank >= spell.Rank).OrderBy(rank => rank))
         {
-            if (row[i] != null)
-                continue;
+            var row = _slots[rank];
+            for (var i = 0; i < row.Count; i++)
+            {
+                if (row[i] != null)
+                    continue;
 
-            row[i] = spellId;
-            SendPlan();
-            Rebuild();
-            _popup?.RoomsChanged();
-            return;
+                row[i] = spellId;
+                SendPlan();
+                Rebuild();
+                _popup?.RoomsChanged();
+                return;
+            }
         }
     }
 
@@ -253,12 +259,12 @@ public sealed partial class CFSpellsTab : BoxContainer
 
     private bool HasRoom(int rank)
     {
-        if (!_prepared || !_slots.TryGetValue(rank, out var row))
+        if (!_prepared)
             return false;
 
-        foreach (var id in row)
+        foreach (var (slotRank, row) in _slots)
         {
-            if (id == null)
+            if (slotRank >= rank && row.Contains(null))
                 return true;
         }
 

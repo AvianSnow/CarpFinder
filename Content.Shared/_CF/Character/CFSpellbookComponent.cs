@@ -43,6 +43,10 @@ public sealed partial class CFSpellbookComponent : Component
     [DataField, AutoNetworkedField]
     public List<ProtoId<CFSpellPrototype>> Repertoire = new();
 
+    /// <summary>The ranks a spontaneous caster learned each spell at, one entry per slot it picked the spell for.</summary>
+    [DataField, AutoNetworkedField]
+    public List<CFPreparedSlot> KnownAtRank = new();
+
     /// <summary>How many spells each rank can have prepared, same indexing as <see cref="Slots"/>. Excludes spare slots.</summary>
     [DataField, AutoNetworkedField]
     public List<int> PreparableSlots = new();

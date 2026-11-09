@@ -35,7 +35,7 @@ public sealed partial class CFEffectSystem
                && TryComp(args.Source, out CFSpellComponent? spell)
                && !spell.Focus
                && spell.Rank > 0
-            ? spell.Rank
+            ? spell.ResolvedRank
             : 0;
     }
 

@@ -6,6 +6,7 @@ using Content.Server.CF.Character;
 using Content.Shared.Actions;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Combat;
+using Content.Shared.CF.Effects;
 using Content.Shared.CF.Preferences;
 using Content.Shared.CF.Spells;
 using Content.Shared.Preferences;
@@ -196,6 +197,87 @@ public sealed class CFSpellSlotTest : GameTest
                 Assert.That(CFApparitions.Total(book, 2), Is.EqualTo(1));
                 Assert.That(CFApparitions.Total(book, 3), Is.EqualTo(1));
             });
+        });
+    }
+
+    private CFSpellComponent Action(EntityUid hero, string id)
+    {
+        var action = SEntMan.System<SharedActionsSystem>().GetActions(hero)
+            .First(a => SEntMan.GetComponent<MetaDataComponent>(a).EntityPrototype?.ID == id);
+        return SEntMan.GetComponent<CFSpellComponent>(action);
+    }
+
+    [Test]
+    public async Task APreparedSpellResolvesAtItsSlotHighestFirst()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            var hero = Caster("Wizard", new List<CFSpellPick> { Pick(1, 0, "BreatheFire"), Pick(2, 0, "BreatheFire") });
+            LevelTo(hero, 3);
+            var spells = SEntMan.System<CFSpellSystem>();
+            var action = Action(hero, "CFBreatheFire");
+            var book = SEntMan.GetComponent<CFSpellbookComponent>(hero);
+
+            Assert.That(spells.TrySpend(hero, action));
+            Assert.That(action.ResolvedRank, Is.EqualTo(2));
+            Assert.That(book.Expended[2], Is.EqualTo(1));
+            Assert.That(book.Expended[1], Is.Zero);
+
+            var context = new CFEffectContextEvent(hero);
+            SEntMan.EventBus.RaiseLocalEvent(action.Owner, ref context);
+            Assert.That(context.Rank, Is.EqualTo(2), "This is what the effects read.");
+
+            Assert.That(spells.TrySpend(hero, action));
+            Assert.That(action.ResolvedRank, Is.EqualTo(1));
+            Assert.That(spells.HasSlot(hero, action), Is.False, "Both charges are spent.");
+        });
+    }
+
+    [Test]
+    public async Task ASpontaneousSpellUsesTheHighestRankItIsKnownAt()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            var hero = Caster("Sorcerer", new List<CFSpellPick>
+            {
+                Pick(1, 0, "BreatheFire"),
+                Pick(2, 0, "BreatheFire"),
+                Pick(2, 1, "Sleep"),
+            });
+            LevelTo(hero, 3);
+            var spells = SEntMan.System<CFSpellSystem>();
+            var fire = Action(hero, "CFBreatheFire");
+            var sleep = Action(hero, "CFSleep");
+            var book = SEntMan.GetComponent<CFSpellbookComponent>(hero);
+
+            Assert.That(spells.TrySpend(hero, fire));
+            Assert.That(fire.ResolvedRank, Is.EqualTo(2));
+
+            while (book.Expended[2] < book.Slots[2])
+                book.Expended[2]++;
+
+            Assert.That(spells.TrySpend(hero, fire));
+            Assert.That(fire.ResolvedRank, Is.EqualTo(1), "Rank 2 is used up, and it is known at rank 1 as well.");
+            Assert.That(spells.HasSlot(hero, sleep), Is.False, "Sleep is only known at rank 2, so a rank 1 slot cannot cast it.");
+        });
+    }
+
+    [Test]
+    public async Task APlanCanHeightenButNotPutASpellBelowItsRank()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            var hero = Caster("Wizard");
+            LevelTo(hero, 3);
+            var book = SEntMan.GetComponent<CFSpellbookComponent>(hero);
+            var preparation = SEntMan.System<CFSpellPreparationSystem>();
+            book.Repertoire.Add("Blur");
+
+            Assert.That(preparation.TrySetPlan((hero, book), new List<CFPreparedSlot> { new("Sleep", 2) }));
+            Assert.That(preparation.TrySetPlan((hero, book), new List<CFPreparedSlot> { new("Blur", 1) }), Is.False);
         });
     }
 

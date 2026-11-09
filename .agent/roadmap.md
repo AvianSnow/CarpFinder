@@ -175,7 +175,9 @@ All of this is picked in the lobby and stored on `CFCharacterBuildData`, the way
 - [ ] Animal Form, which needs a battle form.
 - [ ] Figment, Sigil and Know the Way. Give each something real to do, or flavour and `TBA`.
 - [x] Focus spells: `focus: true` on `CFSpell` and `CFGrantFocusSpell`, up to 3 Focus Points, refilled by a long rest. Refocus gives one back after 10 world minutes (2.5 real minutes at the default clock), and moving or being hurt interrupts it. In `Spells/Focus/`. Tempest Surge and Force Bolt are the first ones. Tests: `CFFocusTest`.
-- [ ] Casting from a higher slot. Slotted spells only resolve at their own rank today, so heightening does not work for them.
+- [x] Casting from a higher slot. A spell resolves at the rank of the slot it was paid from (`CFSpellComponent.ResolvedRank`). A prepared caster puts it in a higher slot in the lobby or on the sheet. A spontaneous caster has to learn it at that rank (`KnownAtRank`). Tests: `CFSpellSlotTest`. Not seen in a real client.
+- [ ] With a spell at several ranks, a cast always uses the highest with a slot or charge left. There is no way to choose a lower one yet.
+- [ ] Apparition spells and Divine Font's Heal and Harm still only resolve at their own rank.
 - [ ] Signature Spells. Divine Font's slots work, as rank 1 spare slots for Heal and Harm, but at a fixed rank.
 - [ ] Compare each spell's effects with its text. The scan only finds spells with no effect at all, not spells with part of one.
 
@@ -226,7 +228,7 @@ Built on 9 November 2026, between Waves 3 and 4. How it works is under "Game HUD
 - [ ] The Common tab's icons are stock placeholders. Grapple, Feint, Aid and Recall Knowledge do not look like what they do.
 - [ ] Throw and Stride have no button, because stock's inputs are already the whole action. Reposition and Sneak have none either.
 - [ ] The sheet's Preparation window can overwrite a slot but not empty one.
-- [ ] Prepared casters cannot put a lower-rank spell in a higher slot, because casting from a higher slot does not exist yet (1f).
+- [x] Prepared casters can put a lower-rank spell in a higher slot, by dragging it there. Add uses its own rank first.
 - [ ] No scrolls exist, so nothing has been listed on the Items tab under `CFSpellScroll`.
 
 ### Decided

@@ -67,23 +67,67 @@ public static class CFPreparedSpells
         return !book.Repertoire.Contains(spell);
     }
 
-    /// <summary>Pays for one cast. Call <see cref="CanCast"/> first. A spell granted some other way costs nothing.</summary>
-    public static void Spend(CFSpellbookComponent book, ProtoId<CFSpellPrototype> spell, int rank)
+    /// <summary>
+    /// Pays for one cast, from the highest ready charge when the spell is prepared at several ranks. Call
+    /// <see cref="CanCast"/> first. A spell granted some other way costs nothing.
+    /// </summary>
+    /// <returns>The rank of the slot it used, which is the rank the spell resolves at.</returns>
+    public static int Spend(CFSpellbookComponent book, ProtoId<CFSpellPrototype> spell, int rank)
     {
+        var best = -1;
         for (var i = 0; i < book.PreparedSlots.Count; i++)
         {
             var slot = book.PreparedSlots[i];
-            if (slot.Spell != spell || slot.Spent)
-                continue;
+            if (slot.Spell == spell && !slot.Spent && (best < 0 || slot.Rank > book.PreparedSlots[best].Rank))
+                best = i;
+        }
 
+        if (best >= 0)
+        {
+            var slot = book.PreparedSlots[best];
             slot.Spent = true;
-            book.PreparedSlots[i] = slot;
+            book.PreparedSlots[best] = slot;
             AddExpended(book, slot.Rank);
-            return;
+            return slot.Rank;
         }
 
         if (book.SpareSlotSpells.Contains(spell) && SpareLeft(book, rank) > 0)
             AddExpended(book, rank);
+
+        return rank;
+    }
+
+    /// <summary>
+    /// The rank a spontaneous caster casts this spell at: the highest one it knows the spell at with a slot left. Zero if
+    /// there is none. A spell it did not learn into a slot goes by its own rank.
+    /// </summary>
+    public static int SpontaneousRank(CFSpellbookComponent book, ProtoId<CFSpellPrototype> spell, int baseRank)
+    {
+        var known = false;
+        var best = 0;
+        foreach (var entry in book.KnownAtRank)
+        {
+            if (entry.Spell != spell)
+                continue;
+
+            known = true;
+            if (entry.Rank > best && SlotLeft(book, entry.Rank))
+                best = entry.Rank;
+        }
+
+        if (known)
+            return best;
+
+        return SlotLeft(book, baseRank) ? baseRank : 0;
+    }
+
+    private static bool SlotLeft(CFSpellbookComponent book, int rank)
+    {
+        if (rank <= 0 || rank >= book.Slots.Count)
+            return false;
+
+        var spent = rank < book.Expended.Count ? book.Expended[rank] : 0;
+        return spent < book.Slots[rank];
     }
 
     /// <summary>Spends any one charge of this rank, for abilities that burn a slot without casting. False if none is left.</summary>

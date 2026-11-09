@@ -318,8 +318,14 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
                 continue;
 
             _features.GrantSpell(mob, pick.Spell);
-            if (!casting.Prepared || pick.Rank <= 0)
+            if (pick.Rank <= 0)
                 continue;
+
+            if (!casting.Prepared)
+            {
+                book.KnownAtRank.Add(new CFPreparedSlot(pick.Spell, pick.Rank));
+                continue;
+            }
 
             if (!book.Repertoire.Contains(pick.Spell))
                 book.Repertoire.Add(pick.Spell);
@@ -407,14 +413,18 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         book.PlannedSlots.Clear();
         book.Repertoire.Clear();
         book.SpareSlotSpells.Clear();
+        book.KnownAtRank.Clear();
         book.PreparableSlots = new List<int>(book.Slots);
-        if (!casting.Prepared)
-            return;
-
         foreach (var pick in CFSpellSlots.Within(profile.CFBuild.Spells, book.Slots, _prototypes))
         {
             if (pick.Rank <= 0)
                 continue;
+
+            if (!casting.Prepared)
+            {
+                book.KnownAtRank.Add(new CFPreparedSlot(pick.Spell, pick.Rank));
+                continue;
+            }
 
             if (!book.Repertoire.Contains(pick.Spell))
                 book.Repertoire.Add(pick.Spell);
