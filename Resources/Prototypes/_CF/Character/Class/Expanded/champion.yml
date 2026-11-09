@@ -41,10 +41,7 @@
         - !type:CFGrantAura {}
     - level: 1
       name: "Cause"
-      description: "Choose a cause in the builder. For now every cause has the same reaction: when an ally near you is hit, you can Strike the attacker if it is in your reach. Each cause's own reaction: TBA"
-      grants:
-        - !type:CFGrantOption
-          option: Champion
+      description: "Choose a cause in the builder. It gives you your champion's reaction, which fires by itself through your aura."
     - level: 1
       name: "Deity (Champion)"
       description: "Deities are our own pantheon, and none exist yet: TBA"

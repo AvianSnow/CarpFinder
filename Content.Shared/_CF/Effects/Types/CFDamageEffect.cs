@@ -1,3 +1,4 @@
+using Content.Shared.CF.Combat;
 using Content.Shared.CF.DamageTypes;
 using Robust.Shared.Prototypes;
 
@@ -32,6 +33,10 @@ public sealed partial class CFDamageEffect : CFEffect
     [DataField]
     public int HeightenFlat;
 
+    /// <summary>One more die every this many levels of the user, from level 1. 0 means none.</summary>
+    [DataField]
+    public int DiceEveryLevels;
+
     /// <summary>False when this effect sits in a degree list and should always deal its full roll.</summary>
     [DataField]
     public bool ScaleByDegree = true;
@@ -65,6 +70,9 @@ public sealed partial class CFDamageEffect : CFEffect
 
         var critical = multiplier >= 2f;
         var dice = Dice + HeightenDice * args.HeightenSteps;
+        if (DiceEveryLevels > 0)
+            dice += ((entities.GetComponentOrNull<CFCombatantComponent>(args.User)?.Level ?? 1) - 1) / DiceEveryLevels;
+
         var flat = Flat + HeightenFlat * args.HeightenSteps + (AddAbilityModifier ? args.AbilityModifier : 0);
 
         // An effect that only adds persistent damage (a flaming rune's critical) deals nothing up front.

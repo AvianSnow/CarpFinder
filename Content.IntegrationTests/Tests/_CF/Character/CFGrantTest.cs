@@ -40,7 +40,7 @@ public sealed class CFGrantTest : GameTest
         ["Investigator"] = (o => o.Devise && o.PointMark == CFPointMark.Stratagem, Array.Empty<string>()),
         ["Thaumaturge"] = (o => o.Exploit && o.PointMark == CFPointMark.Exploit, Array.Empty<string>()),
         ["Bard"] = (o => o.Anthem, new[] { "CFActAnthem" }),
-        ["Champion"] = (o => o.Champion && o.ShieldBlock, Array.Empty<string>()),
+        ["Champion"] = (o => o.ShieldBlock, Array.Empty<string>()),
     };
 
     /// <summary>The same for a feat.</summary>

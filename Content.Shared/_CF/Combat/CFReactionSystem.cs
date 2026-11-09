@@ -28,6 +28,10 @@ public sealed partial class CFReactionSystem : EntitySystem
 {
     /// <summary>One Step gets a creature clear of everyone it is leaving at about the same moment.</summary>
     private static readonly TimeSpan StepCovers = TimeSpan.FromSeconds(1);
+    private static readonly TimeSpan MarkLasts = TimeSpan.FromSeconds(6);
+
+    /// <summary>Far enough to find any champion whose 15 foot aura could hold the victim. The aura itself has the last word.</summary>
+    private const float AllySearchRange = 5f;
 
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private CFActionPoolSystem _actions = default!;
@@ -45,6 +49,10 @@ public sealed partial class CFReactionSystem : EntitySystem
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private CFFactionSystem _factions = default!;
     [Dependency] private CFStrikeSystem _strikes = default!;
+    [Dependency] private CFAuraSystem _auras = default!;
+    [Dependency] private CFEffectSystem _effects = default!;
+    [Dependency] private CFManeuverSystem _maneuvers = default!;
+    [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private SharedPhysicsSystem _physics = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
 
@@ -261,6 +269,94 @@ public sealed partial class CFReactionSystem : EntitySystem
             GainPanache(target);
 
         return bestDegree;
+    }
+
+    /// <summary>
+    /// Damage is about to land on <paramref name="target"/>. Its own reaction goes first, then those of champions whose aura
+    /// holds both it and the attacker. Returns the damage that is left. Damage only ever reaches here on the server.
+    /// </summary>
+    public int AnswerDamage(EntityUid target, EntityUid attacker, int amount)
+    {
+        if (amount <= 0 || !_net.IsServer || target == attacker || !_mobState.IsAlive(attacker))
+            return amount;
+
+        if (TryComp(target, out CFReactionsComponent? own) && _factions.CanHarm(target, attacker) && _auras.Contains(target, attacker))
+        {
+            foreach (var known in own.Known)
+            {
+                if (known.Reaction.Trigger != CFReactionTrigger.WouldBeDamaged || !TrySpend(target, known))
+                    continue;
+
+                amount = Protect(target, target, attacker, known.Reaction, amount);
+                break;
+            }
+        }
+
+        foreach (var (uid, reactions) in _lookup.GetEntitiesInRange<CFReactionsComponent>(Transform(target).Coordinates, AllySearchRange))
+        {
+            if (uid == target || uid == attacker || _factions.CanHarm(uid, target) || !_factions.CanHarm(uid, attacker))
+                continue;
+
+            foreach (var known in reactions.Known)
+            {
+                if (known.Reaction.Trigger != CFReactionTrigger.AllyWouldBeDamaged
+                    || !CanFire(uid, known)
+                    || !_auras.Contains(uid, target)
+                    || !_auras.Contains(uid, attacker)
+                    || !TrySpend(uid, known))
+                {
+                    continue;
+                }
+
+                return Protect(uid, target, attacker, known.Reaction, amount);
+            }
+        }
+
+        return amount;
+    }
+
+    private int Protect(EntityUid owner, EntityUid victim, EntityUid attacker, CFReaction reaction, int amount)
+    {
+        var level = CompOrNull<CFCombatantComponent>(owner)?.Level ?? 1;
+        var resist = reaction.ResistFlat + (reaction.ResistLevel ? level : 0) + (reaction.ResistHalfLevel ? level / 2 : 0);
+        amount = Math.Max(0, amount - resist);
+
+        if (reaction.TakesExtraDie > 0)
+        {
+            var dice = 1 + (level - 1) / 4;
+            for (var i = 0; i < dice; i++)
+            {
+                amount += _random.Next(1, reaction.TakesExtraDie + 1);
+            }
+        }
+
+        if (reaction.MarkDamage > 0 && TryComp(owner, out CFCombatOptionsComponent? options))
+        {
+            options.MarkedTarget = attacker;
+            options.MarkedDamage = reaction.MarkDamage;
+            options.MarkedUntil = _timing.CurTime + MarkLasts;
+        }
+
+        if (reaction.FreesAlly && TryComp(victim, out CFConditionComponent? condition) && condition.Grabbed)
+            _maneuvers.TryEscape((victim, condition), free: true);
+
+        if (reaction.OnEnemy.Count > 0)
+        {
+            _effects.Run(reaction.OnEnemy, new CFEffectArgs
+            {
+                User = owner,
+                Source = owner,
+                Target = attacker,
+                Position = Transform(attacker).Coordinates,
+                Degree = CFDegree.Success,
+                Defense = CFDefenseType.None,
+            });
+        }
+
+        if (reaction.Strikes && CFFlanking.InReach(_transform.GetWorldPosition(owner), _transform.GetWorldPosition(attacker), CFFlanking.DefaultReachFeet))
+            _strikes.ReactionStrike(owner, attacker);
+
+        return amount;
     }
 
     /// <summary>Lets a creature answer an enemy's critical miss, as Opportune Riposte does.</summary>

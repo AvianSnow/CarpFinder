@@ -83,6 +83,16 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public bool PanacheManeuvers;
 
+    /// <summary>Who this creature's reaction marked for extra damage. Only the server reads these.</summary>
+    [DataField]
+    public EntityUid? MarkedTarget;
+
+    [DataField]
+    public int MarkedDamage;
+
+    [DataField]
+    public TimeSpan MarkedUntil;
+
     /// <summary>Walking out of reach needs no action while your shield is raised (Shielded Stride).</summary>
     [DataField, AutoNetworkedField]
     public bool FreeStepWithShield;
@@ -150,9 +160,6 @@ public sealed partial class CFCombatOptionsComponent : Component
 
     [DataField, AutoNetworkedField]
     public bool Exploit;
-
-    [DataField, AutoNetworkedField]
-    public bool Champion;
 
     [DataField, AutoNetworkedField]
     public bool ReactiveShield;
@@ -239,7 +246,6 @@ public static class CFReactions
     /// <summary>Any reaction from <see cref="CFReactionSystem"/>.</summary>
     public const int Granted = 4;
     public const int Raise = 8;
-    public const int Champion = 16;
     public const int Next = 32;
 
     public static bool Knows(CFCombatOptionsComponent opt, int bit)
@@ -249,7 +255,6 @@ public static class CFReactions
             Strike => opt.ReactiveStrike,
             Block => opt.ShieldBlock,
             Raise => opt.ReactiveShield,
-            Champion => opt.Champion,
             Next => opt.YoureNext,
             _ => false,
         };
@@ -269,7 +274,6 @@ public enum CFCombatOption : byte
     Spellstrike,
     Devise,
     Exploit,
-    Champion,
     Anthem,
     BattleMedicine,
     ReactiveShield,

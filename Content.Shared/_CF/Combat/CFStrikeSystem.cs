@@ -29,6 +29,7 @@ using Robust.Shared.Physics.Components;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
+using Robust.Shared.Timing;
 
 namespace Content.Shared.CF.Combat;
 
@@ -61,6 +62,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
     [Dependency] private CFStanceSystem _stances = default!;
     [Dependency] private CFReactionSystem _reactions = default!;
     [Dependency] private CFAuraSystem _auras = default!;
+    [Dependency] private IGameTiming _timing = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private SharedAudioSystem _audio = default!;
     [Dependency] private ThrownItemSystem _thrownItems = default!;
@@ -79,8 +81,6 @@ public sealed partial class CFStrikeSystem : EntitySystem
 
     /// <summary>Stops a reaction Strike from starting another reaction Strike.</summary>
     private int _strikeDepth;
-
-    private bool _inChampion;
 
     [SubscribeLocalEvent]
     private void OnCfWeaponHit(Entity<CFMeleeWeaponComponent> weapon, ref MeleeHitEvent args)
@@ -734,6 +734,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
             damageMod += rolled.Agile ? style.RageDamage / 2 : style.RageDamage;
 
         damageMod += _bonuses.Total(user, CFBonusStat.Damage, melee ? CFBonusStat.MeleeDamage : null);
+        if (style != null && style.MarkedTarget == target && _timing.CurTime < style.MarkedUntil)
+            damageMod += style.MarkedDamage;
 
         if (style != null && style.Exploited == target)
             damageMod += 2;
@@ -782,6 +784,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
                 damage = CFMelee.RollStrikeDamage(_random, rolled, damageMod, criticalHit, extra);
                 damage = _bonuses.ModifyDamage(target, rolled.DamageType, damage);
                 damage = ApplyShieldBlock(target, damage);
+                if (!isObject)
+                    damage = _reactions.AnswerDamage(target, user, damage);
 
                 if (isObject && hardness > 0)
                     damage = Math.Max(0, damage - hardness);
@@ -840,9 +844,6 @@ public sealed partial class CFStrikeSystem : EntitySystem
 
         if (riders)
             ApplyRiders(user, target, style, degree, mapPenalty, weaponUid, isObject, exacting);
-
-        if (hit && !isObject && !_inChampion)
-            ChampionReact(user, target);
 
         if (finisher && style is { FinishingFollowThrough: true } && !isObject && !alreadyDown && defender.CurrentHp <= 0)
             _conditions.GainPanache(user);
@@ -992,35 +993,6 @@ public sealed partial class CFStrikeSystem : EntitySystem
             if (degree == CFDegree.CriticalSuccess)
                 _effects.Run(rune.OnCriticalHit, args);
         }
-    }
-
-    private void ChampionReact(EntityUid attacker, EntityUid victim)
-    {
-        if (_inChampion)
-            return;
-
-        _inChampion = true;
-        var origin = _transform.GetMapCoordinates(victim);
-        foreach (var uid in _lookup.GetEntitiesInRange(origin, 3f))
-        {
-            if (uid == victim || uid == attacker || !TryComp(uid, out CFCombatOptionsComponent? opt) || !opt.Champion)
-                continue;
-
-            if (_factions.CanHarm(uid, victim) || !_factions.CanHarm(uid, attacker))
-                continue;
-
-            if (!CFFlanking.InReach(_transform.GetWorldPosition(uid), _transform.GetWorldPosition(attacker), CFFlanking.DefaultReachFeet))
-                continue;
-
-            if (!_conditions.TrySpendReaction(uid, CFReactions.Champion))
-                continue;
-
-            ReactionStrike(uid, attacker);
-            _inChampion = false;
-            return;
-        }
-
-        _inChampion = false;
     }
 
     private void YoureNext(EntityUid user, EntityUid downed)

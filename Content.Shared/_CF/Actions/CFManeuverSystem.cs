@@ -284,12 +284,13 @@ public sealed partial class CFManeuverSystem : EntitySystem
     /// Escape: one action, the best of unarmed attack, Athletics and Acrobatics against the grabber's Athletics DC.
     /// A critical failure blocks another try for a while.
     /// </summary>
-    public bool TryEscape(Entity<CFConditionComponent> ent)
+    /// <param name="free">Costs no action and ignores the wait between attempts, as when a champion frees an ally.</param>
+    public bool TryEscape(Entity<CFConditionComponent> ent, bool free = false)
     {
         var now = _timing.CurTime;
-        if (now < ent.Comp.NextEscape && HasComp<ActorComponent>(ent)
+        if (!free && now < ent.Comp.NextEscape && HasComp<ActorComponent>(ent)
             || ent.Comp.Grabber is not { } grabber
-            || !_actions.TrySpendActions(ent, 1))
+            || !free && !_actions.TrySpendActions(ent, 1))
         {
             return false;
         }

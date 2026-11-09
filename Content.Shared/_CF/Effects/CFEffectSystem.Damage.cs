@@ -96,6 +96,9 @@ public sealed partial class CFEffectSystem
             return;
         }
 
+        if (!isObject)
+            amount = _reactions.AnswerDamage(target, user, amount);
+
         if (amount > 0)
         {
             combat.CurrentHp = Math.Max(0, combat.CurrentHp - amount);

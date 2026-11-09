@@ -1,3 +1,4 @@
+using Content.Shared.CF.Effects;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Traits;
 using Robust.Shared.Prototypes;
@@ -24,6 +25,12 @@ public enum CFReactionTrigger : byte
 
     /// <summary>An enemy within reach critically failed a Strike against this creature.</summary>
     AttackCriticallyMissed,
+
+    /// <summary>An enemy inside this creature's aura is about to damage it.</summary>
+    WouldBeDamaged,
+
+    /// <summary>An enemy is about to damage an ally, and both are inside this creature's aura.</summary>
+    AllyWouldBeDamaged,
 }
 
 /// <summary>
@@ -99,9 +106,37 @@ public sealed partial class CFReaction
     [DataField]
     public bool Free;
 
-    /// <summary>Makes a melee Strike against the creature that set it off.</summary>
+    /// <summary>Makes a melee Strike against the creature that set it off, if it is in reach.</summary>
     [DataField]
     public bool Strikes;
+
+    /// <summary>With a damage trigger, this much comes off the damage.</summary>
+    [DataField]
+    public int ResistFlat;
+
+    /// <summary>The creature's level also comes off the damage.</summary>
+    [DataField]
+    public bool ResistLevel;
+
+    /// <summary>Half the creature's level also comes off the damage.</summary>
+    [DataField]
+    public bool ResistHalfLevel;
+
+    /// <summary>The die of extra damage this creature takes. One die, and one more at levels 5, 9 and 13.</summary>
+    [DataField]
+    public int TakesExtraDie;
+
+    /// <summary>For 6 seconds, this creature's Strikes against the enemy deal this much more.</summary>
+    [DataField]
+    public int MarkDamage;
+
+    /// <summary>The ally rolls to Escape from a grab, for free.</summary>
+    [DataField]
+    public bool FreesAlly;
+
+    /// <summary>Runs on the enemy that set this off.</summary>
+    [DataField]
+    public List<CFEffect> OnEnemy = new();
 }
 
 /// <summary>The reactions a creature has been granted, and how many daily uses it has spent.</summary>

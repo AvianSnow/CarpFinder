@@ -37,6 +37,13 @@ public sealed partial class CFAuraSystem : EntitySystem
         aura.Effects.AddRange(effects);
     }
 
+    /// <summary>True if a living creature is inside this creature's aura right now.</summary>
+    public bool Contains(EntityUid owner, EntityUid other)
+    {
+        return TryComp(owner, out CFAuraComponent? aura)
+               && Collect(owner, aura, _transform.GetMapCoordinates(owner), CFTargetFilter.All).Contains(other);
+    }
+
     /// <summary>Raises a held shield and starts Shields of the Spirit. False if there is no shield to raise.</summary>
     public bool RaiseSpiritShields(EntityUid uid)
     {

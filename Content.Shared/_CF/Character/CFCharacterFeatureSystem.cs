@@ -276,9 +276,6 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
             case CFCombatOption.Exploit:
                 options.Exploit = true;
                 break;
-            case CFCombatOption.Champion:
-                options.Champion = true;
-                break;
             case CFCombatOption.Anthem:
                 options.Anthem = true;
                 break;

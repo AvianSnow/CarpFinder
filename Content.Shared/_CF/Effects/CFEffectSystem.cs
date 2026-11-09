@@ -285,6 +285,7 @@ public sealed partial class CFEffectSystem : EntitySystem
     #region Checks
 
     [Dependency] private CFAuraSystem _auras = default!;
+    [Dependency] private CFReactionSystem _reactions = default!;
 
     /// <summary>
     /// Rolls the source's check against one creature and runs its effect lists.

@@ -1,10 +1,18 @@
-# CarpFinder: Champion causes, Player Core 2. Each cause's own reaction is not built, so all of them use the one on the class.
+# CarpFinder: Champion causes, Player Core 2. The enemy does not get a choice: it always refuses, as a mindless one would.
 - type: cfClassChoice
   id: CauseDesecration
   class: Champion
   slot: cf-class-choice-cause
   name: cf-class-choice-causedesecration
   description: cf-class-choice-causedesecration-desc
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-selfish-shield
+        trigger: WouldBeDamaged
+        resistFlat: 2
+        resistHalfLevel: true
+        markDamage: 1
 
 - type: cfClassChoice
   id: CauseGrandeur
@@ -12,6 +20,13 @@
   slot: cf-class-choice-cause
   name: cf-class-choice-causegrandeur
   description: cf-class-choice-causegrandeur-desc
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-flash-of-grandeur
+        trigger: AllyWouldBeDamaged
+        resistFlat: 2
+        resistLevel: true
 
 - type: cfClassChoice
   id: CauseIniquity
@@ -19,6 +34,20 @@
   slot: cf-class-choice-cause
   name: cf-class-choice-causeiniquity
   description: cf-class-choice-causeiniquity-desc
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-destructive-vengeance
+        trigger: WouldBeDamaged
+        takesExtraDie: 6
+        markDamage: 2
+        onEnemy:
+          - !type:CFDamageEffect
+            dice: 1
+            die: 6
+            damageType: Spirit
+            scaleByDegree: false
+            diceEveryLevels: 4
 
 - type: cfClassChoice
   id: CauseJustice
@@ -26,6 +55,14 @@
   slot: cf-class-choice-cause
   name: cf-class-choice-causejustice
   description: cf-class-choice-causejustice-desc
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-retributive-strike
+        trigger: AllyWouldBeDamaged
+        resistFlat: 2
+        resistLevel: true
+        strikes: true
 
 - type: cfClassChoice
   id: CauseLiberation
@@ -33,6 +70,14 @@
   slot: cf-class-choice-cause
   name: cf-class-choice-causeliberation
   description: cf-class-choice-causeliberation-desc
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-liberating-step
+        trigger: AllyWouldBeDamaged
+        resistFlat: 2
+        resistLevel: true
+        freesAlly: true
 
 - type: cfClassChoice
   id: CauseObedience
@@ -40,6 +85,19 @@
   slot: cf-class-choice-cause
   name: cf-class-choice-causeobedience
   description: cf-class-choice-causeobedience-desc
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-iron-command
+        trigger: WouldBeDamaged
+        markDamage: 1
+        onEnemy:
+          - !type:CFDamageEffect
+            dice: 1
+            die: 6
+            damageType: Mental
+            scaleByDegree: false
+            diceEveryLevels: 4
 
 - type: cfClassChoice
   id: CauseRedemption
@@ -47,6 +105,24 @@
   slot: cf-class-choice-cause
   name: cf-class-choice-causeredemption
   description: cf-class-choice-causeredemption-desc
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-glimpse-of-redemption
+        trigger: AllyWouldBeDamaged
+        resistFlat: 2
+        resistLevel: true
+        onEnemy:
+          - !type:CFBonusEffect
+            stat: AttackRoll
+            type: Status
+            value: -2
+            durationSeconds: 6
+          - !type:CFBonusEffect
+            stat: Damage
+            type: Status
+            value: -2
+            durationSeconds: 6
 
 - type: cfClassChoice
   id: DevotionLayOnHands
