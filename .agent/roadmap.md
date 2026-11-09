@@ -76,8 +76,11 @@ Most action feats share one of a few shapes, so build the shape once. An action 
 - [ ] Spellshape (34). Changes the next spell cast.
 - [ ] Reactions (63 feats). `CFGrantReaction` holds a `CFReaction`: a trigger, what has to be true, and what it does. `CFReactionSystem` runs them. Built on 9 November 2026, with Nimble Dodge, Flashy Dodge, Deflect Projectile, Charmed Life, Orc Ferocity and Wounded Rage. Tests: `CFReactionTest`.
   - Reactions stay automatic and off the wheel. One only fires when it would change the outcome, so it is not wasted, and the character effectively sees the roll first. That is a deliberate change from PF2e.
-  - Triggers so far: `AttackWouldHit`, `SaveWouldFail`, `Damaged`, `WouldDrop`. `perDay` limits are restored by a long rest.
-  - [ ] Triggers still needed: an enemy moving (Stand Still, No Escape, Reactive Pursuit), an ally being attacked or hit, a spell being cast (Counterspell), and a critical hit (Scars of Steel).
+  - Triggers so far: `AttackWouldHit`, `SaveWouldFail`, `Damaged`, `WouldDrop`, `EnemyLeftReach`. `perDay` limits are restored by a long rest.
+  - `EnemyLeftReach` fires when an enemy leaves the reach circle under its own power. Walking out is PF2e's Step: it costs 1 action and does not provoke, and with no actions left it provokes anyway. It is only charged when the watcher could have answered, and one Step covers everyone left within a second. Moving about inside reach does not provoke either, because in real time that would fire on every footstep. Reactive Strike and Stand Still use it. Tests: `CFLeftReachTest`.
+  - [ ] Triggers still needed: an ally being attacked or hit, a spell being cast (Counterspell), and a critical hit (Scars of Steel).
+  - [ ] A response that moves the creature, for No Escape and Reactive Pursuit.
+  - [ ] NPCs do not walk to avoid Reactive Strike. They always run.
   - [ ] Spell attacks do not trigger `AttackWouldHit`. Only Strikes do.
   - [ ] Reactive Strike, Shield Block, Reactive Shield, the Champion's reaction and You're Next are still hard-coded in `CFReactions`. Move them when their class wave comes.
 - [ ] Auras and emanations, for champion and bard features, on `CFAreaEffect`.
@@ -251,7 +254,6 @@ Smaller gaps found while building the earlier phases. Take them when the system 
 - [ ] Darkness does not count as concealment yet. It waits for the `Light` layer (6c).
 - [ ] Recall Knowledge picks a skill by trait once creatures have trait data.
 - [ ] Treat Wounds always uses the highest DC the healer's rank allows. The rule lets them choose.
-- [ ] Reactive Strike does not fire on movement, so Step does nothing yet.
 - [ ] The spin, sprite hiding, instrument, Hide verb, Alt+Z and pointing inputs have only been tested through code, not played in a real client.
 
 ## Step 5: AI
@@ -340,6 +342,7 @@ The labels are the sections of Phase 6 in `roadmapold.md`, which has the design.
 
 ## Known bugs
 
+- `CFGOAPEncounterTest.ItChoosesToFlankThenRunsThenHides` sometimes shows as `Skipped` in a full CF run and passes on its own. It runs no game ticks, so the cause is not movement. The failure message is lost, so the cause is unknown.
 - `CFSkeletonguardTest.OutOfArrowsItDropsTheBowAndUsesItsClaws` fails in every full CF run (it stops 2.4 away, and the test wants under 2) and passes alone, so it depends on what ran before it.
 - `RainWatersExposedCrops` is unreliable, not just in a full run. On 6 November 2026 it showed as `Skipped` in two full runs, then failed once and passed once on its own. The failure message was not captured, so the cause is unknown. It only touches weather and plants, not the AI.
 - `GuideEntryPrototypeTests.Validate("Chemicals")` fails with `Hit style update limit. Queued: 1073` from `RecipesContainer`. The guide now has so many recipes that the UI warns while building it, and the test treats that warning as an error. Not investigated further.

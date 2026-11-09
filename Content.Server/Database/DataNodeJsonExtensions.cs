@@ -42,7 +42,7 @@ public static class DataNodeJsonExtensions
             JsonValueKind.String => new ValueDataNode(element.GetString()),
             JsonValueKind.True => new ValueDataNode("true"),
             JsonValueKind.False => new ValueDataNode("false"),
-            JsonValueKind.Null => new ValueDataNode("null"),
+            JsonValueKind.Null => ValueDataNode.Null(), // CarpFinder: new ValueDataNode("null") is the text "null", which a nullable enum cannot read
             _ => throw new ArgumentOutOfRangeException(nameof(element)),
         };
     }

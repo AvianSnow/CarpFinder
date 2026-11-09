@@ -121,6 +121,8 @@ Anything that targets, rolls, and applies effects is data on the source entity: 
 | Emote wheel, Scream, in combat mode | Demoralize the enemy being aimed at (1 action) | `CFManeuverSystem.TryAimedDemoralize` |
 | Emote wheel, Whistle, in combat mode | Create a Diversion (1 action) | `CFStealthSystem.TryDiversion` |
 | Run into an enemy and keep pushing | Tumble Through (1 action) | `CFManeuverSystem.TryTumble` |
+| Run out of an enemy's reach | Sets off Reactive Strike and the like | `CFReactionSystem.NoteLeftReach` |
+| Walk out of an enemy's reach | Step (1 action, only charged if the enemy could have answered). With no actions left it provokes | `CFReactionSystem.TryPayForStep` |
 | Ctrl+right-click while grabbing an enemy | Reposition (1 action) | `CFRepositionSystem` |
 | Hide verb on cover, or a closet closing on you | Hide | `CFStealthSystem.TryHide` |
 | Walk while hidden | Sneak, 1 action per `RegenSeconds` of walking | `CFStealthSystem.TrySneak` |
@@ -224,6 +226,7 @@ All edits carry `// CarpFinder` markers, so `grep -rn CarpFinder Content.Client 
 | Throwing | `Content.Server/Hands/Systems/HandsSystem.cs` | A thrown weapon's reach comes from its range increments, not the hand's 8 tiles |
 | Tiles | `Tiles/lava.yml`, `liquid_plasma.yml`, `chasm.yml` | The `CFDangerousTile` marker |
 | Chat | `Content.Server/Chat/Systems/ChatSystem.PrivateAPI.cs`, `ChatSystem.Utility.cs` | Each listener hears speech in a language they know, or nonsense |
+| Saved characters | `Content.Server/Database/DataNodeJsonExtensions.cs` | A JSON null is read as a real null, or a build with an unpicked boost fails to load |
 | Maps | `Maps/Test/dev_map.yml`, `Maps/Nonstations/meteor-arena.yml`, `dm01-entryway.yml` | `MapAtmosphere`, so mobs can breathe |
 
 The character editor and character window are swapped with csproj `Compile Remove` rules instead (`Content.Client/Content.Client.csproj`, `lobby-overlay.md`).

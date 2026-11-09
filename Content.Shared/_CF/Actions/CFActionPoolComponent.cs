@@ -37,6 +37,10 @@ public sealed partial class CFActionPoolComponent : Component
     [DataField, AutoNetworkedField]
     public int MapAttacks;
 
+    /// <summary>A Step already paid for covers any other enemy's reach left before this time.</summary>
+    [DataField]
+    public TimeSpan StepCoveredUntil;
+
     /// <summary>A flourish action was used since this pool was last full. Only one is allowed.</summary>
     [DataField, AutoNetworkedField]
     public bool Flourished;

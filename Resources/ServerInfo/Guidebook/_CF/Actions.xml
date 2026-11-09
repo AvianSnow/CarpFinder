@@ -9,6 +9,7 @@ Most actions use the controls you already have. They are not on the wheel, so th
 - [bold]Pull a living enemy:[/bold] Grapple. Press a move key while grabbed to Escape.
 - [bold]Ctrl and right-click while grabbing an enemy:[/bold] Reposition it.
 - [bold]Run into an enemy and keep pushing:[/bold] Tumble Through. It uses Acrobatics against their Reflex. Walking never tumbles.
+- [bold]Run out of an enemy's reach:[/bold] An enemy with Reactive Strike or a similar reaction gets a free Strike at you. Walking out is a Step instead: it costs 1 action and is safe, but with no actions left you are caught anyway.
 
 ## Pointing in combat mode
 - [bold]At an enemy in reach:[/bold] Feint. You need to be trained in Deception. If your class marks enemies, the first point marks and the second Feints.

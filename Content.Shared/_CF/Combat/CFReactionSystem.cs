@@ -1,11 +1,19 @@
+using System.Numerics;
+using Content.Shared.CF.Actions;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Detection;
 using Content.Shared.CF.Effects;
+using Content.Shared.CF.Factions;
 using Content.Shared.CF.Items;
 using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Mobs.Systems;
+using Content.Shared.Movement.Components;
+using Content.Shared.Movement.Pulling.Components;
 using Content.Shared.Popups;
+using Content.Shared.Throwing;
 using Robust.Shared.Network;
+using Robust.Shared.Physics.Systems;
+using Robust.Shared.Timing;
 
 namespace Content.Shared.CF.Combat;
 
@@ -15,6 +23,11 @@ namespace Content.Shared.CF.Combat;
 /// </summary>
 public sealed partial class CFReactionSystem : EntitySystem
 {
+    /// <summary>One Step gets a creature clear of everyone it is leaving at about the same moment.</summary>
+    private static readonly TimeSpan StepCovers = TimeSpan.FromSeconds(1);
+
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private CFActionPoolSystem _actions = default!;
     [Dependency] private INetManager _net = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private SharedHandsSystem _hands = default!;
@@ -26,6 +39,138 @@ public sealed partial class CFReactionSystem : EntitySystem
     [Dependency] private CFFlankingSystem _flanking = default!;
     [Dependency] private CFConditionSystem _conditions = default!;
     [Dependency] private CFDyingSystem _dying = default!;
+    [Dependency] private CFFactionSystem _factions = default!;
+    [Dependency] private CFStrikeSystem _strikes = default!;
+    [Dependency] private SharedPhysicsSystem _physics = default!;
+    [Dependency] private SharedTransformSystem _transform = default!;
+
+    public override void Update(float frameTime)
+    {
+        base.Update(frameTime);
+        if (!_net.IsServer)
+            return;
+
+        var query = EntityQueryEnumerator<CFLeftReachComponent>();
+        while (query.MoveNext(out var uid, out var left))
+        {
+            foreach (var mover in left.Left)
+            {
+                AnswerLeftReach(uid, mover);
+            }
+
+            RemCompDeferred(uid, left);
+        }
+    }
+
+    /// <summary>
+    /// Called when <paramref name="mover"/> leaves the reach circle of <paramref name="watcher"/>. An enemy that could answer
+    /// gets to, unless the mover walked out and could pay for a Step. Being thrown or dragged out does not count, and neither
+    /// does the watcher being the one who walked off.
+    /// </summary>
+    public void NoteLeftReach(EntityUid watcher, EntityUid mover)
+    {
+        if (!_net.IsServer || !CanAnswerLeftReach(watcher, mover) || !LeftByItself(watcher, mover))
+            return;
+
+        if (TryComp(mover, out InputMoverComponent? input) && !input.Sprinting && TryPayForStep(mover))
+            return;
+
+        EnsureComp<CFLeftReachComponent>(watcher).Left.Add(mover);
+    }
+
+    private bool CanAnswerLeftReach(EntityUid watcher, EntityUid mover)
+    {
+        if (!_mobState.IsAlive(watcher)
+            || !_factions.CanHarm(watcher, mover)
+            || _stealth.IsUnseenBy(mover, watcher)
+            || !TryComp(watcher, out CFCombatOptionsComponent? options)
+            || options.ReactionSpent != 0)
+        {
+            return false;
+        }
+
+        if (options.ReactiveStrike)
+            return true;
+
+        if (!TryComp(watcher, out CFReactionsComponent? reactions))
+            return false;
+
+        foreach (var known in reactions.Known)
+        {
+            if (known.Reaction.Trigger == CFReactionTrigger.EnemyLeftReach && CanFire(watcher, known))
+                return true;
+        }
+
+        return false;
+    }
+
+    private bool LeftByItself(EntityUid watcher, EntityUid mover)
+    {
+        if (TerminatingOrDeleted(mover)
+            || !_mobState.IsAlive(mover)
+            || HasComp<ThrownItemComponent>(mover)
+            || TryComp(mover, out PullableComponent? pullable) && pullable.BeingPulled)
+        {
+            return false;
+        }
+
+        var away = _transform.GetWorldPosition(mover) - _transform.GetWorldPosition(watcher);
+        if (away.LengthSquared() <= 0f)
+            return false;
+
+        away = Vector2.Normalize(away);
+        var moverSpeed = Vector2.Dot(_physics.GetMapLinearVelocity(mover), away);
+        var watcherSpeed = Vector2.Dot(_physics.GetMapLinearVelocity(watcher), -away);
+        return moverSpeed > 0f && moverSpeed >= watcherSpeed;
+    }
+
+    /// <summary>A Step costs 1 action. False if the mover cannot pay, and is then caught like anyone else.</summary>
+    private bool TryPayForStep(EntityUid mover)
+    {
+        var pool = CompOrNull<CFActionPoolComponent>(mover);
+        var now = _timing.CurTime;
+        if (pool != null && now < pool.StepCoveredUntil)
+            return true;
+
+        if (!_actions.TrySpendActions(mover, 1, stealthy: true))
+            return false;
+
+        if (pool != null)
+            pool.StepCoveredUntil = now + StepCovers;
+
+        _popup.PopupEntity(Loc.GetString("cf-reaction-step"), mover, mover);
+        return true;
+    }
+
+    private void AnswerLeftReach(EntityUid watcher, EntityUid mover)
+    {
+        if (TerminatingOrDeleted(mover)
+            || !_mobState.IsAlive(watcher)
+            || !_mobState.IsAlive(mover)
+            || !_factions.CanHarm(watcher, mover))
+        {
+            return;
+        }
+
+        if (_conditions.TrySpendReaction(watcher, CFReactions.Strike))
+        {
+            _popup.PopupEntity(Loc.GetString("cf-reaction-reactive-strike"), watcher);
+            _strikes.ReactionStrike(watcher, mover);
+            return;
+        }
+
+        if (!TryComp(watcher, out CFReactionsComponent? reactions))
+            return;
+
+        foreach (var known in reactions.Known)
+        {
+            if (known.Reaction.Trigger != CFReactionTrigger.EnemyLeftReach || !known.Reaction.Strikes || !TrySpend(watcher, known))
+                continue;
+
+            _strikes.ReactionStrike(watcher, mover);
+            return;
+        }
+    }
 
     public void Add(EntityUid uid, CFReaction reaction)
     {

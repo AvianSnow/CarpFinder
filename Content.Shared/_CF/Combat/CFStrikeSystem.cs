@@ -368,12 +368,16 @@ public sealed partial class CFStrikeSystem : EntitySystem
             if (!_conditions.TrySpendReaction(uid, CFReactions.Strike))
                 continue;
 
-            if (!TryMeleeWeapon(uid, out var stats, out var weapon))
-                continue;
-
-            PerformStrike(uid, actor, stats, weapon, melee: true);
+            ReactionStrike(uid, actor);
             return;
         }
+    }
+
+    /// <summary>A melee Strike made as a reaction. It neither takes nor adds to the multiple attack penalty.</summary>
+    public bool ReactionStrike(EntityUid user, EntityUid target)
+    {
+        return TryMeleeWeapon(user, out var stats, out var weapon)
+               && PerformStrike(user, target, stats, weapon, melee: true, countMap: false, fixedMap: 0);
     }
 
     /// <summary>
@@ -917,10 +921,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
             if (!_conditions.TrySpendReaction(uid, CFReactions.Champion))
                 continue;
 
-            if (!TryMeleeWeapon(uid, out var stats, out var weapon))
-                continue;
-
-            PerformStrike(uid, attacker, stats, weapon, melee: true);
+            ReactionStrike(uid, attacker);
             _inChampion = false;
             return;
         }

@@ -31,6 +31,7 @@ namespace Content.Shared.CF.Combat;
 public sealed partial class CFFlankingSystem : EntitySystem
 {
     [Dependency] private INetManager _net = default!;
+    [Dependency] private CFReactionSystem _reactions = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private FixtureSystem _fixtures = default!;
     [Dependency] private SharedHandsSystem _hands = default!;
@@ -146,6 +147,7 @@ public sealed partial class CFFlankingSystem : EntitySystem
             return;
 
         RemoveOverlap(ent.Owner, args.OtherEntity);
+        _reactions.NoteLeftReach(ent.Owner, args.OtherEntity);
     }
 
     [SubscribeLocalEvent]

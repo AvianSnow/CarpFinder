@@ -14,6 +14,9 @@ public enum CFReactionTrigger : byte
 
     /// <summary>This creature would drop to 0 Hit Points and would not die outright.</summary>
     WouldDrop,
+
+    /// <summary>An enemy left this creature's reach. Walking out and paying 1 action for a Step avoids it.</summary>
+    EnemyLeftReach,
 }
 
 /// <summary>
@@ -64,6 +67,10 @@ public sealed partial class CFReaction
     /// <summary>Enters a rage, for a creature that can.</summary>
     [DataField]
     public bool EntersRage;
+
+    /// <summary>Makes a melee Strike against the creature that set it off.</summary>
+    [DataField]
+    public bool Strikes;
 }
 
 /// <summary>The reactions a creature has been granted, and how many daily uses it has spent.</summary>
@@ -72,6 +79,16 @@ public sealed partial class CFReactionsComponent : Component
 {
     [DataField]
     public List<CFKnownReaction> Known = new();
+}
+
+/// <summary>
+/// Enemies that have just run out of this creature's reach, waiting to be answered. The contact that reports it ends inside
+/// the physics step, where a Strike must not deal damage, so <see cref="CFReactionSystem"/> answers on its next update.
+/// </summary>
+[RegisterComponent]
+public sealed partial class CFLeftReachComponent : Component
+{
+    public List<EntityUid> Left = new();
 }
 
 [DataDefinition]
