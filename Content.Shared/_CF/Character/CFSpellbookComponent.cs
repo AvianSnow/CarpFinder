@@ -1,4 +1,6 @@
 using Robust.Shared.GameStates;
+using Robust.Shared.Prototypes;
+using Robust.Shared.Serialization;
 
 namespace Content.Shared.CF.Character;
 
@@ -12,7 +14,10 @@ public sealed partial class CFSpellbookComponent : Component
     [DataField, AutoNetworkedField]
     public List<int> Slots = new();
 
-    /// <summary>Expended slots per rank, same indexing as <see cref="Slots"/>.</summary>
+    /// <summary>
+    /// Expended slots per rank, same indexing as <see cref="Slots"/>.
+    /// A prepared caster's count here matches its spent <see cref="PreparedSlots"/>, plus any spare slots used.
+    /// </summary>
     [DataField, AutoNetworkedField]
     public List<int> Expended = new();
 
@@ -21,4 +26,57 @@ public sealed partial class CFSpellbookComponent : Component
 
     [DataField, AutoNetworkedField]
     public int FocusSpent;
+
+    /// <summary>A prepared caster spends a charge of the exact spell. Anyone else spends a slot of the rank.</summary>
+    [DataField, AutoNetworkedField]
+    public bool Prepared;
+
+    /// <summary>What is prepared right now, one entry per charge. Preparing a spell twice is two entries.</summary>
+    [DataField, AutoNetworkedField]
+    public List<CFPreparedSlot> PreparedSlots = new();
+
+    /// <summary>What the next long rest will prepare. The character sheet's Preparation window edits this.</summary>
+    [DataField, AutoNetworkedField]
+    public List<CFPreparedSlot> PlannedSlots = new();
+
+    /// <summary>The spells this caster can prepare. A spell not on this list was granted some other way, and is at will.</summary>
+    [DataField, AutoNetworkedField]
+    public List<ProtoId<CFSpellPrototype>> Repertoire = new();
+
+    /// <summary>How many spells each rank can have prepared, same indexing as <see cref="Slots"/>. Excludes spare slots.</summary>
+    [DataField, AutoNetworkedField]
+    public List<int> PreparableSlots = new();
+
+    /// <summary>Spells that may use a spare slot, one <see cref="Slots"/> has and nothing is prepared in. Divine Font's Heal and Harm.</summary>
+    [DataField, AutoNetworkedField]
+    public List<ProtoId<CFSpellPrototype>> SpareSlotSpells = new();
+}
+
+/// <summary>One prepared charge of a spell.</summary>
+[DataDefinition, Serializable, NetSerializable]
+public partial struct CFPreparedSlot
+{
+    [DataField]
+    public ProtoId<CFSpellPrototype> Spell;
+
+    /// <summary>The slot's rank, an index of <see cref="CFSpellbookComponent.Slots"/>.</summary>
+    [DataField]
+    public int Rank;
+
+    [DataField]
+    public bool Spent;
+
+    public CFPreparedSlot(ProtoId<CFSpellPrototype> spell, int rank, bool spent = false)
+    {
+        Spell = spell;
+        Rank = rank;
+        Spent = spent;
+    }
+}
+
+/// <summary>Sent by the character sheet. The server checks it, then applies it at the next long rest.</summary>
+[Serializable, NetSerializable]
+public sealed class CFPlanPreparationEvent : EntityEventArgs
+{
+    public List<CFPreparedSlot> Slots = new();
 }

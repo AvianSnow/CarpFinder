@@ -1,0 +1,147 @@
+# Basic actions for the HUD deck's Common tab. Each already has a stock input (see the table in codebase.md), so they stay
+# off the radial wheel and out of the numbered hotbar until a player drags one there. CFManeuverSystem pays for them.
+
+- type: entity
+  abstract: true
+  parent: CFActivityInstant
+  id: CFActBasicInstant
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Action
+    autoPopulate: false
+  - type: CFRadialSlot
+    group: Free
+    actions: 0
+    tab: Common
+    wheel: false
+
+- type: entity
+  abstract: true
+  parent: CFActivityTarget
+  id: CFActBasicTarget
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Action
+    autoPopulate: false
+  - type: CFRadialSlot
+    group: Free
+    actions: 0
+    tab: Common
+    wheel: false
+
+- type: entity
+  parent: CFActBasicTarget
+  id: CFActManeuver
+  name: Shove or Disarm
+  description: Disarms a target holding something, otherwise Shoves it. The weapon in your hand can change which, as with right-click in combat mode.
+  components:
+  - type: Sprite
+    layers:
+    - texture: Interface/Actions/disarm.png
+  - type: CFBasicAction
+    action: Maneuver
+
+- type: entity
+  parent: CFActBasicTarget
+  id: CFActGrapple
+  name: Grapple
+  description: Grab a living enemy and start pulling it. Needs a free hand.
+  components:
+  - type: Sprite
+    layers:
+    - texture: Interface/Actions/harm.png
+  - type: CFBasicAction
+    action: Grapple
+
+- type: entity
+  parent: CFActBasicTarget
+  id: CFActTumble
+  name: Tumble Through
+  description: Roll past an enemy in reach.
+  components:
+  - type: Sprite
+    sprite: Interface/Actions/jump.rsi
+    layers:
+    - state: icon
+  - type: CFBasicAction
+    action: TumbleThrough
+
+- type: entity
+  parent: CFActBasicTarget
+  id: CFActDemoralize
+  name: Demoralize
+  description: Frighten an enemy within 30 feet.
+  components:
+  - type: TargetAction
+    range: 7
+  - type: Sprite
+    layers:
+    - texture: Interface/Actions/scream.png
+  - type: CFBasicAction
+    action: Demoralize
+
+- type: entity
+  parent: CFActBasicTarget
+  id: CFActFeint
+  name: Feint
+  description: Mislead an enemy in reach, leaving it off-guard. Needs trained Deception.
+  components:
+  - type: Sprite
+    layers:
+    - texture: Interface/Actions/harmOff.png
+  - type: CFBasicAction
+    action: Feint
+
+- type: entity
+  parent: CFActBasicTarget
+  id: CFActAid
+  name: Aid
+  description: Help an ally in reach with their next attack or check.
+  components:
+  - type: Sprite
+    layers:
+    - texture: Interface/Actions/manifest.png
+  - type: EntityTargetAction
+    whitelist:
+      components:
+      - CFCombatant
+  - type: CFBasicAction
+    action: Aid
+
+- type: entity
+  parent: CFActBasicTarget
+  id: CFActRecall
+  name: Recall Knowledge
+  description: Try to remember what you know about a creature you can see.
+  components:
+  - type: TargetAction
+    range: 20
+  - type: Sprite
+    layers:
+    - texture: Interface/Actions/shop.png
+  - type: CFBasicAction
+    action: RecallKnowledge
+
+- type: entity
+  parent: CFActBasicInstant
+  id: CFActHide
+  name: Hide
+  description: Slip out of sight behind cover.
+  components:
+  - type: Sprite
+    layers:
+    - texture: Interface/Actions/eyeclose.png
+  - type: CFBasicAction
+    action: Hide
+
+- type: entity
+  parent: CFActBasicInstant
+  id: CFActSeek
+  name: Seek
+  description: Search the area around you for anything hidden.
+  components:
+  - type: Sprite
+    layers:
+    - texture: Interface/Actions/eyeopen.png
+  - type: CFBasicAction
+    action: Seek

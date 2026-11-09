@@ -6,17 +6,17 @@ using Robust.Client.UserInterface.Controls;
 namespace Content.Client.CF.Hud;
 
 /// <summary>
-/// The three saves and Perception, each with its modifier and rank letter, in the action panel.
+/// The three saves and Perception, each with its modifier and rank letter, under Armor Class.
 /// A modifier raised or lowered by anything right now turns green or red.
 /// </summary>
 public sealed class CFDefensePanel : GridContainer
 {
-    /// <summary>In reading order, two to a row.</summary>
+    /// <summary>Top to bottom.</summary>
     public static readonly CFDefenseType[] Shown =
     {
         CFDefenseType.Fortitude,
-        CFDefenseType.Will,
         CFDefenseType.Reflex,
+        CFDefenseType.Will,
         CFDefenseType.Perception,
     };
 
@@ -25,15 +25,15 @@ public sealed class CFDefensePanel : GridContainer
 
     public CFDefensePanel()
     {
-        Columns = 6;
+        Columns = 3;
         HSeparationOverride = 5;
         VSeparationOverride = 0;
         Visible = false;
 
         for (var i = 0; i < Shown.Length; i++)
         {
-            AddChild(new Label { Text = Loc.GetString($"cf-hud-defense-{Shown[i].ToString().ToLowerInvariant()}") });
-            _values[i] = new Label { MinWidth = 28f, Align = Label.AlignMode.Right };
+            AddChild(new Label { Text = Loc.GetString($"cf-hud-defense-{Shown[i].ToString().ToLowerInvariant()}"), MinWidth = 44f });
+            _values[i] = new Label { MinWidth = 26f, Align = Label.AlignMode.Right };
             AddChild(_values[i]);
             _ranks[i] = new Label { MinWidth = 18f, StyleClasses = { "LabelSubText" } };
             AddChild(_ranks[i]);

@@ -35,8 +35,8 @@ public partial class ActionButtonContainer : GridContainer
     {
         var uniqueCount = Math.Min(system.GetClientActions().Count(), actionTypes.Length + 1);
         var keys = ContentKeyFunctions.GetHotbarBoundKeys();
-        // CarpFinder: a fixed bar still draws its empty keys.
-        var count = Math.Min(keys.Length, Math.Max(uniqueCount, MinimumButtons));
+        // CarpFinder: a fixed bar still draws its empty keys, and can have rows past the bound keys.
+        var count = Math.Max(MinimumButtons, Math.Min(keys.Length, uniqueCount));
 
         for (var i = 0; i < count; i++)
         {

@@ -108,7 +108,7 @@ public sealed class CFBonusDisplayTest : GameTest
 
     /// <summary>The HUD is only built in a round, so this is what proves its XAML loads.</summary>
     [Test]
-    public async Task SpellPipsSitInsideTheActionPanelBesideTheFilters()
+    public async Task TheBarIsLaidOutAsDrawn()
     {
         await Client.WaitAssertion(() =>
         {
@@ -117,20 +117,35 @@ public sealed class CFBonusDisplayTest : GameTest
             book.Expended.AddRange(new[] { 0, 1, 0, 0, 0, 0 });
 
             var hud = new CFGameHud();
-            hud.Spells.SetBook(book);
+            hud.SetCombatant(true);
+            hud.Deck.SetBook(book);
             hud.Defenses.Visible = true;
             hud.Measure(new Vector2(1600f, 600f));
             hud.Arrange(UIBox2.FromDimensions(0f, 0f, 1600f, 600f));
-            var height = hud.DesiredSize.Y;
+            var closed = hud.DesiredSize.Y;
 
-            Assert.That(hud.Spells.ChildCount, Is.EqualTo(5), "One column for each rank.");
-            Assert.That(hud.Defenses.GlobalPosition.X, Is.LessThan(hud.ActionPips.GlobalPosition.X));
-            Assert.That(hud.ActionPips.GlobalPosition.X, Is.LessThan(hud.Spells.GlobalPosition.X));
-            Assert.That(hud.Spells.GlobalPosition.Y, Is.LessThan(hud.Status.GlobalPosition.Y + 80f), "Up with the filters.");
+            Assert.Multiple(() =>
+            {
+                Assert.That(hud.Armor.GlobalPosition.X, Is.LessThan(hud.HpBar.GlobalPosition.X), "AC is left of the bars.");
+                Assert.That(hud.Armor.GlobalPosition.Y, Is.LessThan(hud.Defenses.GlobalPosition.Y), "AC is above the saves.");
+                Assert.That(hud.HpBar.GlobalPosition.X, Is.LessThan(hud.TempBar.GlobalPosition.X));
+                Assert.That(hud.HpBar.GlobalPosition.Y, Is.LessThan(hud.Hands.GlobalPosition.Y), "The bars lie across the item row.");
+            });
 
-            hud.Status.Set(new List<CFHudStatus> { new("Prone", false), new("Attack +1", true) });
-            hud.Measure(new Vector2(1600f, 600f));
-            Assert.That(hud.DesiredSize.Y, Is.EqualTo(height), "Open bags move if the HUD changes height.");
+            // A control only measures again on a real frame, so each case gets a HUD of its own.
+            var withConditions = new CFGameHud();
+            withConditions.SetCombatant(true);
+            withConditions.Defenses.Visible = true;
+            withConditions.Status.Set(new List<CFHudStatus> { new("Prone", false), new("Attack +1", true) });
+            withConditions.Measure(new Vector2(1600f, 600f));
+            Assert.That(withConditions.DesiredSize.Y, Is.EqualTo(closed), "Open bags move if the HUD changes height.");
+
+            var open = new CFGameHud();
+            open.SetCombatant(true);
+            open.Defenses.Visible = true;
+            open.DeckClip.Openness = 1f;
+            open.Measure(new Vector2(1600f, 600f));
+            Assert.That(open.DesiredSize.Y, Is.GreaterThan(closed + 64f), "The deck adds to the bar's height when it opens.");
         });
     }
 

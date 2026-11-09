@@ -17,7 +17,7 @@ using Robust.Shared.Timing;
 namespace Content.Client.CF.Hud;
 
 /// <summary>
-/// Fills the health bottles, spell pips, saves and conditions from the local creature's Carpfinder components.
+/// Fills the hit point bars, Armor Class, spell trackers, saves and conditions from the local creature's Carpfinder components.
 /// </summary>
 [UsedImplicitly]
 public sealed partial class CFHudUiController : UIController
@@ -47,10 +47,9 @@ public sealed partial class CFHudUiController : UIController
         if (_player.LocalEntity is not { } player
             || !EntityManager.TryGetComponent<CFCombatantComponent>(player, out var combatant))
         {
-            hud.Ball.Visible = false;
+            hud.SetCombatant(false);
             hud.ActionPips.Set(null);
-            hud.Spells.SetBook(null);
-            hud.Defenses.Visible = false;
+            hud.Deck.SetBook(null);
             hud.Status.Set(new List<CFHudStatus>());
             return;
         }
@@ -64,12 +63,24 @@ public sealed partial class CFHudUiController : UIController
             hud.Status.Set(Statuses(player, combatant));
         }
 
-        hud.Ball.Visible = true;
-        hud.Ball.Set(combatant.CurrentHp, combatant.MaxHp, combatant.TemporaryHp, combatant.ArmorClass, _acModifier, IsOffGuard(player));
+        hud.SetCombatant(true);
+        UpdateBars(hud, combatant);
+        hud.Armor.Set(combatant.ArmorClass, _acModifier, IsOffGuard(player));
         EntityManager.TryGetComponent<CFActionPoolComponent>(player, out var actions);
         hud.ActionPips.Set(actions);
         EntityManager.TryGetComponent<CFSpellbookComponent>(player, out var book);
-        hud.Spells.SetBook(book);
+        hud.Deck.SetBook(book);
+    }
+
+    private static void UpdateBars(CFGameHud hud, CFCombatantComponent combatant)
+    {
+        var max = Math.Max(0, combatant.MaxHp);
+        var current = Math.Max(0, combatant.CurrentHp);
+        var temp = Math.Max(0, combatant.TemporaryHp);
+        hud.HpBar.Set(max <= 0 ? 0f : current / (float) max, Loc.GetString("cf-hud-bar-hp", ("current", current), ("max", max)));
+        hud.TempBar.Set(max <= 0 ? 0f : temp / (float) max, Loc.GetString("cf-hud-bar-temp", ("amount", temp)));
+        hud.HpBar.ToolTip = Loc.GetString("cf-hud-hp-tooltip", ("current", current), ("max", max));
+        hud.TempBar.ToolTip = Loc.GetString("cf-hud-temp-tooltip", ("amount", temp));
     }
 
     private bool IsOffGuard(EntityUid player)

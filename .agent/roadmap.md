@@ -128,7 +128,7 @@ All of this is picked in the lobby and stored on `CFCharacterBuildData`, the way
 - [ ] Figment, Sigil and Know the Way. Give each something real to do, or flavour and `TBA`.
 - [x] Focus spells: `focus: true` on `CFSpell` and `CFGrantFocusSpell`, up to 3 Focus Points, refilled by a long rest. Refocus gives one back after 10 world minutes (2.5 real minutes at the default clock), and moving or being hurt interrupts it. In `Spells/Focus/`. Tempest Surge and Force Bolt are the first ones. Tests: `CFFocusTest`.
 - [ ] Casting from a higher slot. Slotted spells only resolve at their own rank today, so heightening does not work for them.
-- [ ] Signature Spells, and Divine Font's slots.
+- [ ] Signature Spells. Divine Font's slots work, as rank 1 spare slots for Heal and Harm, but at a fixed rank.
 - [ ] Compare each spell's effects with its text. The scan only finds spells with no effect at all, not spells with part of one.
 
 ### 1g. Waves
@@ -152,6 +152,18 @@ Witch familiars, Druid animal companions and Summoner eidolons all lean on `cfPe
 - [ ] Mark unfinished class features too. A feat with `grants` is finished unless it sets `pendingAction`. One without goes by its placeholder text.
 - [ ] `CFFeatureCoverageTest`: fails if a finished class has a placeholder, and if a `grants` entry cannot be read.
 - [ ] Kineticist is not included, but one feat file for it exists. Remove it.
+
+### Action HUD
+
+Built on 9 November 2026, between Waves 3 and 4. How it works is under "Game HUD" in `ss14.md`. Tests: `CFDeckLogicTest`, `CFHudDeckTest`. Accepted in a real client on 9 November 2026.
+
+- [ ] Section widths are saved for the deck as a whole, not per character.
+- [ ] Custom / Passives only holds the numbered hotbar. Nothing in the game is a passive toggle yet.
+- [ ] The Common tab's icons are stock placeholders. Grapple, Feint, Aid and Recall Knowledge do not look like what they do.
+- [ ] Throw and Stride have no button, because stock's inputs are already the whole action. Reposition and Sneak have none either.
+- [ ] The sheet's Preparation window can overwrite a slot but not empty one.
+- [ ] Prepared casters cannot put a lower-rank spell in a higher slot, because casting from a higher slot does not exist yet (1f).
+- [ ] No scrolls exist, so nothing has been listed on the Items tab under `CFSpellScroll`.
 
 ### Decided
 
@@ -346,6 +358,7 @@ The labels are the sections of Phase 6 in `roadmapold.md`, which has the design.
 
 ## Known bugs
 
+- `CFGOAPObstacleTest.PatienceDependsOnThePersonality` fails about half the time, measured on 9 November 2026 on the commit before the HUD (7 of 15) and with the HUD (8 of 16). After 7 seconds the default mob should be working on the locked door, but its `Obstacle` is another entity created later in the test, or null. What that entity is has not been looked at. The decision log is printed when the test fails. It is the same setup as the locked door notes in `ai-testing.md`, which may or may not be the same cause.
 - `CFGOAPEncounterTest.ItChoosesToFlankThenRunsThenHides` sometimes shows as `Skipped` in a full CF run and passes on its own. It runs no game ticks, so the cause is not movement. The failure message is lost, so the cause is unknown.
 - `CFSkeletonguardTest.OutOfArrowsItDropsTheBowAndUsesItsClaws` fails in every full CF run (it stops 2.4 away, and the test wants under 2) and passes alone, so it depends on what ran before it.
 - `RainWatersExposedCrops` is unreliable, not just in a full run. On 6 November 2026 it showed as `Skipped` in two full runs, then failed once and passed once on its own. The failure message was not captured, so the cause is unknown. It only touches weather and plants, not the AI.

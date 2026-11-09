@@ -17,7 +17,7 @@
             <Label Name="TraditionLabel" VerticalAlignment="Center"/>
             <Label Name="ProficiencyLabel" VerticalAlignment="Center"/>
             <Control HorizontalExpand="True"/>
-            <Button Name="PrepareButton" Text="{Loc 'cf-sheet-spells-prepare'}" Visible="False"/>
+            <Button Name="PrepareButton" Text="{Loc 'cf-sheet-spells-prepare'}" ToolTip="{Loc 'cf-sheet-spells-prepare-tooltip'}" Visible="False"/>
         </BoxContainer>
     </PanelContainer>
     <ScrollContainer VerticalExpand="True" HorizontalExpand="True" HScrollEnabled="False">

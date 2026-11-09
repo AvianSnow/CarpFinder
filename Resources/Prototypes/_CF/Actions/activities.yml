@@ -125,3 +125,7 @@
     - state: icon
   - type: CFActivity
     kind: Leap
+  - type: CFRadialSlot
+    group: Action
+    actions: 1
+    tab: Common

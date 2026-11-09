@@ -234,6 +234,13 @@ public sealed partial class CFSpellSystem : EntitySystem
         if (spell.Rank >= book.Slots.Count || book.Slots[spell.Rank] <= 0)
             return true;
 
+        if (book.Prepared)
+        {
+            CFPreparedSpells.Spend(book, spell.Spell, spell.Rank);
+            Dirty(caster, book);
+            return true;
+        }
+
         while (book.Expended.Count <= spell.Rank)
         {
             book.Expended.Add(0);
@@ -256,7 +263,37 @@ public sealed partial class CFSpellSystem : EntitySystem
         if (spell.Rank >= book.Slots.Count || book.Slots[spell.Rank] <= 0)
             return true;
 
+        if (book.Prepared)
+            return CFPreparedSpells.CanCast(book, spell.Spell, spell.Rank);
+
         var spent = spell.Rank < book.Expended.Count ? book.Expended[spell.Rank] : 0;
         return spent < book.Slots[spell.Rank];
+    }
+
+    /// <summary>Burns one slot of a rank without casting a spell, for an ability such as Spellstrike. False if none is left.</summary>
+    public bool TrySpendAnySlot(EntityUid caster, int rank)
+    {
+        if (!TryComp<CFSpellbookComponent>(caster, out var book) || rank >= book.Slots.Count || book.Slots[rank] <= 0)
+            return false;
+
+        if (book.Prepared)
+        {
+            if (!CFPreparedSpells.TrySpendAny(book, rank))
+                return false;
+
+            Dirty(caster, book);
+            return true;
+        }
+
+        var spent = rank < book.Expended.Count ? book.Expended[rank] : 0;
+        if (spent >= book.Slots[rank])
+            return false;
+
+        while (book.Expended.Count <= rank)
+            book.Expended.Add(0);
+
+        book.Expended[rank]++;
+        Dirty(caster, book);
+        return true;
     }
 }

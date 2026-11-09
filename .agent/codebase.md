@@ -36,7 +36,7 @@ Everything below is under `Content.Shared/_CF/`.
 | `Effects/` | Target, roll a check, apply effects. Bonuses and resistances. | `CFEffectSystem`, `CFBonusSystem` |
 | `Factions/` | Party, Opposition, Neutral | `CFFactionSystem` |
 | `Hazards/` | Traps: noticing, triggering, disabling, and creatures that build them | `CFHazardSystem`, `CFTrapLayerSystem` |
-| `Items/` | Item level, rarity, Bulk, encumbrance | `CFEncumbranceSystem` |
+| `Items/` | Item level, rarity, Bulk, encumbrance, what the HUD's Items tab can draw | `CFEncumbranceSystem`, `CFQuickItemSystem` |
 | `Detection/` | Remaster Hide, Sneak, Seek and Create a Diversion. Each creature's view of a sneaker. The drawing is client-side. | `CFStealthSystem`, `CFStealthComponent` |
 | `GOAP/` | Advanced NPCs: facts, steps, and goals, actions and personalities as prototypes. The logic is server-side in `Content.Server/_CF/GOAP/`. See `goap.md`. | `CFGOAPSystem`, `CFGOAPPlanner` |
 | `Medicine/` | Healer's toolkit, Treat Wounds, Battle Medicine | `CFMedicineSystem` |
@@ -51,7 +51,7 @@ Everything below is under `Content.Shared/_CF/`.
 | `Crafting/` | Recipes, formulas, Craft DCs. The workbench logic is server-side. | `CFCraftingRules`, `CFWorkbenchSystem` |
 | `Preferences/` | The build stored on `HumanoidCharacterProfile` | `CFCharacterBuildData` |
 | `Shop/` | Coins, prices, the merchant counter UI. Selling and coin logic are server-side. | `CFCoins`, `CFMerchantSystem`, `CFCoinSystem` |
-| `Spells/` | Paying for a cast, spellshapes, Prestidigitation | `CFSpellSystem`, `CFSpellshapeSystem` |
+| `Spells/` | Paying for a cast, prepared charges, spellshapes, Prestidigitation | `CFSpellSystem`, `CFPreparedSpells`, `CFSpellshapeSystem` |
 | `Traits/` | `cfTrait` prototypes and `CFTrait` | `CFTraitPrototype` |
 | `Roof/` | Roofs that hide while you stand under them. The hiding is client-side. | `CFRoofComponent` |
 | `Wallmount/` | Wall-only placement | `CFWallmount`, `CFWallRequired` |
@@ -134,7 +134,10 @@ Anything that targets, rolls, and applies effects is data on the source entity: 
 | Examine tab, information icon | Recall Knowledge (1 action) | `CFManeuverSystem.TryRecall` |
 | Alt+Z with a melee weapon, with panache | Confident Finisher at the enemy being aimed at (1 action) | `CFManeuverSystem.TryFinisher` |
 | Play a held instrument, as a Bard | Courageous Anthem, 1 action every 12 seconds | `CFAnthemSystem` |
-| Radial wheel or hotbar | Activities, stances, spellshapes, Strike actions and spells | `CFActivitySystem`, `CFStanceSystem`, `CFSpellshapeSystem`, `CFStrikeActionSystem`, `CFSpellSystem` |
+| Radial wheel, HUD deck or hotbar | Activities, stances, spellshapes, Strike actions and spells | `CFActivitySystem`, `CFStanceSystem`, `CFSpellshapeSystem`, `CFStrikeActionSystem`, `CFSpellSystem` |
+| HUD deck, Common tab | Shove or Disarm, Grapple, Tumble Through, Demoralize, Feint, Aid, Recall Knowledge, Hide, Seek, Leap | `CFBasicActionComponent`, `CFManeuverSystem.TryUse` |
+| HUD deck, Items tab | Take a carried consumable or thrown weapon into a free hand | `CFQuickItemSystem` |
+| Sheet, Spell Preparation | Plan what a prepared caster prepares at the next long rest | `CFSpellPreparationSystem` |
 | Reactions | Not on the wheel. They fire by themselves, and only when that would change the outcome. | `CFReactionSystem`, and `CFConditionSystem.TrySpendReaction` for the older ones |
 
 Code with no player, such as the AI, uses `CFManeuverSystem.CanUse` and `TryUse` with a `CFBasicAction`, and `CFStrikeSystem.TryFeatStrike`.
@@ -211,7 +214,8 @@ All edits carry `// CarpFinder` markers, so `grep -rn CarpFinder Content.Client 
 |---|---|---|
 | Spell targeting | `Content.Client/Actions/ActionsSystem.cs`, `Outline/TargetOutlineSystem.cs` | Click the outlined creature; do not outline through walls or past 90 feet |
 | Spell requests | `Content.Shared/Actions/ActionEvents.cs`, `SharedActionsSystem.cs` | Bolt count and mode on the perform request |
-| Radial wheel and hotbar | `SimpleRadialMenu.xaml.cs`, `ActionUIController.cs`, `ActionButtonContainer.cs`, `EmotesUIController.cs`, `HandsUIController.cs` | The CF wheel and action HUD |
+| Radial wheel and hotbar | `SimpleRadialMenu.xaml.cs`, `ActionUIController.cs`, `ActionButtonContainer.cs`, `EmotesUIController.cs`, `HandsUIController.cs` | The CF wheel and action HUD: the deck's buttons and lock, greying a spent spell, the item status panels |
+| Game screens | `DefaultGameScreen.xaml(.cs)`, `SeparatedChatGameScreen.xaml(.cs)` | Puts `CFGameHud` bottom centre and lifts the bag windows above it |
 | Melee | `Content.Client/Weapons/Melee/MeleeWeaponSystem.cs` | Right-click maneuvers for shields and trait weapons |
 | Crafting menu | `Content.Client/Construction/ConstructionSystem.cs`, `Content.Server/Construction/ConstructionSystem.Initial.cs` | The stock menu needs training in Crafting |
 | Characters | `HumanoidCharacterProfile.cs`, `HumanoidVisualLayers.cs` | The PF2e build; pelvis layer for split bodies |

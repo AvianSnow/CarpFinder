@@ -1,0 +1,57 @@
+<hud:CFHudDeck
+    xmlns="https://spacestation14.io"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:hud="clr-namespace:Content.Client.CF.Hud"
+    xmlns:actions="clr-namespace:Content.Client.UserInterface.Systems.Actions.Widgets"
+    x:Class="Content.Client.CF.Hud.CFHudDeck">
+    <PanelContainer Name="Frame" HorizontalExpand="True">
+        <BoxContainer Orientation="Vertical" SeparationOverride="4" Margin="6">
+            <BoxContainer Orientation="Horizontal" SeparationOverride="4">
+                <Button Name="TabAll" MinHeight="26" Text="{Loc 'cf-hud-deck-all'}" />
+                <Button Name="TabCommon" MinHeight="26" Text="{Loc 'cf-hud-deck-common'}" />
+                <Button Name="TabClass" MinHeight="26" Text="{Loc 'cf-hud-deck-class'}" />
+                <Button Name="TabSpells" MinHeight="26" Text="{Loc 'cf-hud-deck-spells'}" />
+                <Button Name="TabItems" MinHeight="26" Text="{Loc 'cf-hud-deck-items'}" />
+                <Button Name="TabCustom" MinHeight="26" Text="{Loc 'cf-hud-deck-custom'}" ToolTip="{Loc 'cf-hud-deck-custom-tooltip'}" />
+                <Control HorizontalExpand="True" />
+                <Button Name="RowsLess" MinSize="26 26" ToolTip="{Loc 'cf-hud-deck-rows-less'}" />
+                <Button Name="RowsMore" MinSize="26 26" ToolTip="{Loc 'cf-hud-deck-rows-more'}" />
+                <Button Name="LockButton" MinSize="26 26" ToggleMode="True" ToolTip="{Loc 'cf-hud-deck-lock'}" />
+                <Button Name="PinButton" MinSize="26 26" ToggleMode="True" ToolTip="{Loc 'cf-hud-deck-pin'}" />
+            </BoxContainer>
+            <BoxContainer Name="RankRow" Orientation="Horizontal" SeparationOverride="2" Visible="False" />
+            <hud:CFSpellPips Name="Trackers" Visible="False" />
+            <BoxContainer Name="Sections" Orientation="Horizontal" HorizontalAlignment="Center" Visible="False">
+                <BoxContainer Name="BasicSection" Orientation="Vertical" SeparationOverride="2">
+                    <Label ClipText="True" Text="{Loc 'cf-hud-deck-section-basic'}" ToolTip="{Loc 'cf-hud-deck-section-basic'}" MouseFilter="Stop" />
+                    <hud:CFDeckSlotGrid Name="BasicGrid" />
+                    <hud:CFDeckPager Name="BasicPager" />
+                </BoxContainer>
+                <hud:CFDeckDivider Name="Divider0" ToolTip="{Loc 'cf-hud-deck-divider'}" />
+                <BoxContainer Name="FeaturesSection" Orientation="Vertical" SeparationOverride="2">
+                    <Label ClipText="True" Text="{Loc 'cf-hud-deck-section-features'}" ToolTip="{Loc 'cf-hud-deck-section-features'}" MouseFilter="Stop" />
+                    <hud:CFDeckSlotGrid Name="FeaturesGrid" />
+                    <hud:CFDeckPager Name="FeaturesPager" />
+                </BoxContainer>
+                <hud:CFDeckDivider Name="Divider1" ToolTip="{Loc 'cf-hud-deck-divider'}" />
+                <BoxContainer Name="ItemsSection" Orientation="Vertical" SeparationOverride="2">
+                    <Label ClipText="True" Text="{Loc 'cf-hud-deck-section-items'}" ToolTip="{Loc 'cf-hud-deck-section-items'}" MouseFilter="Stop" />
+                    <hud:CFDeckSlotGrid Name="ItemsGrid" />
+                    <hud:CFDeckPager Name="ItemsPager" />
+                </BoxContainer>
+                <hud:CFDeckDivider Name="Divider2" ToolTip="{Loc 'cf-hud-deck-divider'}" />
+                <BoxContainer Name="CustomSection" Orientation="Vertical" SeparationOverride="2">
+                    <Label Name="CustomTitle" ClipText="True" Text="{Loc 'cf-hud-deck-section-custom'}" ToolTip="{Loc 'cf-hud-deck-custom-tooltip'}" MouseFilter="Stop" />
+                    <actions:ActionsBar Name="Bar" />
+                    <hud:CFDeckPager Name="CustomPager" />
+                </BoxContainer>
+            </BoxContainer>
+            <Control Name="ListHolder" HorizontalAlignment="Center">
+                <ScrollContainer Name="ListScroll" HScrollEnabled="False">
+                    <GridContainer Name="List" Columns="10" HSeparationOverride="2" VSeparationOverride="2" />
+                </ScrollContainer>
+                <Label Name="EmptyLabel" Text="{Loc 'cf-hud-deck-empty'}" HorizontalAlignment="Center" VerticalAlignment="Center" Visible="False" />
+            </Control>
+        </BoxContainer>
+    </PanelContainer>
+</hud:CFHudDeck>

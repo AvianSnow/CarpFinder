@@ -42,6 +42,7 @@ public sealed partial class CFActivitySystem : EntitySystem
     [Dependency] private CFBonusSystem _bonuses = default!;
     [Dependency] private CFFactionSystem _factions = default!;
     [Dependency] private CFTrapLayerSystem _traps = default!;
+    [Dependency] private CFSpellSystem _spells = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private ThrowingSystem _throwing = default!;
@@ -186,19 +187,10 @@ public sealed partial class CFActivitySystem : EntitySystem
 
         var dice = 1;
         var die = 8;
-        if (TryComp(user, out CFSpellbookComponent? book) && book.Slots.Count > 1 && book.Slots[1] > 0)
+        if (_spells.TrySpendAnySlot(user, 1))
         {
-            var spent = book.Expended.Count > 1 ? book.Expended[1] : 0;
-            if (spent < book.Slots[1])
-            {
-                while (book.Expended.Count <= 1)
-                    book.Expended.Add(0);
-
-                book.Expended[1]++;
-                Dirty(user, book);
-                dice = 2;
-                die = 6;
-            }
+            dice = 2;
+            die = 6;
         }
 
         var bonus = 0;

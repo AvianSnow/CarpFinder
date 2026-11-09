@@ -41,6 +41,7 @@ cf-sheet-spells-tradition = { $tradition }
 cf-sheet-spells-proficiency = { $rank }
 cf-sheet-spells-trained = Trained
 cf-sheet-spells-prepare = Spell Preparation
+cf-sheet-spells-prepare-tooltip = Choose what to prepare. It takes effect the next time you sleep in a bed.
 cf-sheet-spells-none = This character does not cast spells.
 cf-sheet-spells-empty-category = Nothing here.
 cf-sheet-spells-empty-slot = Empty

@@ -40,6 +40,9 @@ public sealed partial class HandsUIController : UIController, IOnStateEntered<Ga
 
     private HotbarGui? HandsGui => UIManager.GetActiveUIWidgetOrNull<HotbarGui>();
 
+    // CarpFinder: the action HUD also draws the item status panels.
+    private CFGameHud? CFHud => UIManager.GetActiveUIWidgetOrNull<CFGameHud>();
+
     // CarpFinder: the action HUD owns the hand buttons. The stock hotbar strip stays hidden.
     private HandsContainer? ActiveHands()
     {
@@ -283,15 +286,18 @@ public sealed partial class HandsUIController : UIController, IOnStateEntered<Ga
             {
                 _statusHandLeft = handControl;
                 HandsGui?.UpdatePanelEntityLeft(heldEnt, hand.Value);
+                CFHud?.UpdatePanelEntityLeft(heldEnt, hand.Value); // CarpFinder: the action HUD draws this panel.
             }
             else
             {
                 // Middle or right
                 _statusHandRight = handControl;
                 HandsGui?.UpdatePanelEntityRight(heldEnt, hand.Value);
+                CFHud?.UpdatePanelEntityRight(heldEnt, hand.Value); // CarpFinder: the action HUD draws this panel.
             }
 
             HandsGui?.SetHighlightHand(foldedLocation);
+            CFHud?.SetHighlightHand(foldedLocation); // CarpFinder: the action HUD draws this panel.
         }
     }
 
@@ -369,6 +375,7 @@ public sealed partial class HandsUIController : UIController, IOnStateEntered<Ga
         }
 
         HandsGui.UpdateStatusVisibility(leftVisible, rightVisible);
+        CFHud?.UpdateStatusVisibility(leftVisible, rightVisible); // CarpFinder: the action HUD draws these panels.
     }
 
     public void OnStateEntered(GameplayState state)
@@ -405,8 +412,10 @@ public sealed partial class HandsUIController : UIController, IOnStateEntered<Ga
     {
         if (hand == _statusHandLeft)
             HandsGui?.UpdatePanelEntityLeft(entity, handData);
+            CFHud?.UpdatePanelEntityLeft(entity, handData); // CarpFinder: the action HUD draws this panel.
 
         if (hand == _statusHandRight)
             HandsGui?.UpdatePanelEntityRight(entity, handData);
+            CFHud?.UpdatePanelEntityRight(entity, handData); // CarpFinder: the action HUD draws this panel.
     }
 }

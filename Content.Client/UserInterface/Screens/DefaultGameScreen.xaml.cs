@@ -45,8 +45,12 @@ public sealed partial class DefaultGameScreen : InGameScreen
 
         _placedHud = hudHeight;
         var lift = (int) MathF.Ceiling(hudHeight);
-        SetAnchorAndMarginPreset(Hud, LayoutPreset.BottomLeft, margin: 5);
-        SetMarginLeft(Hud, 78);
+        // A box with no size, so the HUD always takes the height it wants: margins from its size would stop it shrinking.
+        SetAnchorPreset(Hud, LayoutPreset.CenterBottom);
+        SetMarginLeft(Hud, 0);
+        SetMarginRight(Hud, 0);
+        SetMarginTop(Hud, -5);
+        SetMarginBottom(Hud, -5);
         SetAnchorAndMarginPreset(Hotbar, LayoutPreset.BottomWide, margin: 5 + lift);
     }
 

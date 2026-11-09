@@ -1,11 +1,5 @@
-cf-hud-actions = Actions
-cf-hud-spells = Spells
-cf-hud-actions-tooltip = Activities that cost one, two, or three actions. Drag one onto the bar.
-cf-hud-spells-tooltip = Spells and cantrips. Drag one onto the bar.
 cf-hud-action-pool = Actions { $current }/{ $max }. One returns every { $seconds }s. Next strike { $map } ({ $agile } agile).
 cf-action-not-enough = Not enough actions.
-cf-hud-ball-tooltip = Hit Points { $current }/{ $max }. Temporary Hit Points { $temp }. Armor Class { $ac }.
-cf-hud-ball-tooltip-off-guard = Hit Points { $current }/{ $max }. Temporary Hit Points { $temp }. Armor Class { $ac }, { $reduced } while off-guard.
 cf-hud-focus = Focus
 cf-hud-rank = Rank { $rank }
 cf-radial-back = Back
@@ -17,10 +11,10 @@ cf-radial-rank = Rank { $rank }
 
 cf-long-rest = You settle in for a long rest. Your wounds close and your spells return.
 
-cf-hud-defense-fortitude = Fort
-cf-hud-defense-reflex = Ref
+cf-hud-defense-fortitude = FORT
+cf-hud-defense-reflex = Reflex
 cf-hud-defense-will = Will
-cf-hud-defense-perception = Per
+cf-hud-defense-perception = Perc
 
 cf-hud-status-dying = Dying
 cf-hud-status-wounded = Wounded
@@ -53,3 +47,38 @@ cf-hud-status-perception = Perception
 cf-hud-status-skills = Skills
 cf-hud-status-speed = Speed
 cf-hud-status-map = MAP
+
+cf-hud-ac = AC
+cf-hud-ac-tooltip = Armor Class { $ac }.
+cf-hud-ac-tooltip-off-guard = Armor Class { $ac }, { $reduced } while off-guard.
+cf-hud-bar-hp = HP { $current }/{ $max }
+cf-hud-bar-temp = TEMP HP { $amount }
+cf-hud-hp-tooltip = Hit Points { $current }/{ $max }.
+cf-hud-temp-tooltip = Temporary Hit Points { $amount }.
+cf-hud-focus-tooltip = Focus Points { $ready }/{ $max }. Every focus spell shares them. Refocus or a long rest brings them back.
+cf-hud-rank-tracker = Rank { $rank }:
+
+cf-hud-deck-expand = expand ^
+cf-hud-deck-collapse = collapse v
+cf-hud-deck-all = All
+cf-hud-deck-section-basic = Basic Actions
+cf-hud-deck-section-features = Spells & Features
+cf-hud-deck-section-items = Items
+cf-hud-deck-section-custom = Custom
+cf-hud-deck-divider = Drag to share columns between these two sections.
+cf-hud-deck-common = Common
+cf-hud-deck-class = Class Features
+cf-hud-deck-spells = Spells
+cf-hud-deck-items = Items
+cf-hud-deck-custom = Custom
+cf-hud-deck-custom-tooltip = Your numbered slots. Drag anything from the other tabs here. Right-click a slot to clear it.
+cf-hud-deck-rows-less = Show one row fewer.
+cf-hud-deck-rows-more = Show one row more.
+cf-hud-deck-lock = Lock actions, so they cannot be dragged or cleared.
+cf-hud-deck-pin = Keep this deck open.
+cf-hud-deck-empty = Nothing here yet.
+cf-hud-deck-cantrips = Cantrips
+cf-hud-deck-focus = Focus
+cf-hud-deck-rank-short = { $rank }{ $suffix }
+cf-hud-items-no-hand = You have no free hand.
+cf-hud-items-draw = { $name } ({ $count }). Click to take it in hand.

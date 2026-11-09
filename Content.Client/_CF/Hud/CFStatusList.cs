@@ -21,12 +21,12 @@ public static class CFHudColors
 }
 
 /// <summary>
-/// The row of conditions above the action panel. It keeps its height while empty, because the screen moves open bags
+/// The row of conditions above the deck and hit point bars. It keeps its height while empty, because the screen moves open bags
 /// whenever the HUD changes height.
 /// </summary>
 public sealed class CFStatusList : PanelContainer
 {
-    private const int Columns = 6;
+    private const int Columns = 4;
 
     private static readonly StyleBoxFlat Backdrop = new()
     {

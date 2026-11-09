@@ -76,6 +76,7 @@
   - type: CFRefocus
   - type: CFRadialSlot
     group: Free
+    tab: Focus
 
 # The list of spells hides these from the builder: an empty traditions list is on nobody's spell list.
 - type: cfSpell

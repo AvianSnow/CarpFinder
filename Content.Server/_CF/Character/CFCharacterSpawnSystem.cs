@@ -24,6 +24,20 @@ namespace Content.Server.CF.Character;
 /// </summary>
 public sealed partial class CFCharacterSpawnSystem : EntitySystem
 {
+    /// <summary>The HUD deck's Common tab. Everyone has these.</summary>
+    private static readonly EntProtoId[] BasicActions =
+    {
+        "CFActManeuver",
+        "CFActGrapple",
+        "CFActTumble",
+        "CFActDemoralize",
+        "CFActFeint",
+        "CFActAid",
+        "CFActRecall",
+        "CFActHide",
+        "CFActSeek",
+    };
+
     [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private InventorySystem _inventory = default!;
     [Dependency] private CFFactionSystem _factions = default!;
@@ -272,12 +286,52 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
             book.Expended[pick.Rank]++;
         }
 
+        ApplyPrepared(book, profile, casting);
+
         book.FocusPoints = casting.FocusPoints;
         book.FocusSpent = 0;
         if (cls != null && cls.ID == "Cleric" && book.Slots.Count > 1 && TryComp(mob, out CFAbilityScoreComponent? scores))
+        {
+            // Divine Font: extra rank 1 slots that only Heal and Harm can use.
             book.Slots[1] += Math.Max(1, scores.GetModifier(CFAbility.Charisma));
+            book.SpareSlotSpells.Add("Heal");
+            book.SpareSlotSpells.Add("Harm");
+        }
 
         Dirty(mob, book);
+    }
+
+    /// <summary>A prepared caster starts with one charge per spell picked in the lobby, and plans the same for its next long rest.</summary>
+    private static void ApplyPrepared(
+        CFSpellbookComponent book,
+        Content.Shared.Preferences.HumanoidCharacterProfile profile,
+        CFSpellcasting casting)
+    {
+        book.Prepared = casting.Prepared;
+        book.PreparedSlots.Clear();
+        book.PlannedSlots.Clear();
+        book.Repertoire.Clear();
+        book.SpareSlotSpells.Clear();
+        book.PreparableSlots = new List<int>(book.Slots);
+        if (!casting.Prepared)
+            return;
+
+        var used = new int[book.Slots.Count];
+        foreach (var pick in profile.CFBuild.Spells)
+        {
+            if (!pick.HasSpell || pick.Rank <= 0 || pick.Rank >= book.Slots.Count)
+                continue;
+
+            if (!book.Repertoire.Contains(pick.Spell))
+                book.Repertoire.Add(pick.Spell);
+
+            if (used[pick.Rank] >= book.Slots[pick.Rank])
+                continue;
+
+            used[pick.Rank]++;
+            book.PreparedSlots.Add(new CFPreparedSlot(pick.Spell, pick.Rank, pick.Expended));
+            book.PlannedSlots.Add(new CFPreparedSlot(pick.Spell, pick.Rank));
+        }
     }
 
     /// <summary>
@@ -295,6 +349,8 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         var options = EnsureComp<CFCombatOptionsComponent>(mob);
         EnsureComp<CFGOAPScentEmitterComponent>(mob);
         _features.GrantAction(mob, "CFActLeap");
+        foreach (var action in BasicActions)
+            _features.GrantAction(mob, action);
 
         if (ancestry != null)
             _features.Apply(mob, ancestry.Grants, $"ancestry:{ancestry.ID}");

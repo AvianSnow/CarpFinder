@@ -86,6 +86,9 @@ One directed component + event pair. A second subscriber throws `Duplicate Subsc
 - Stock times a flight as if air did not slow the item, so a long throw lands short. `CFStrikeSystem.OnThrown` stretches `LandTime` for thrown weapons.
 - `EmbeddableProjectile` embeds on any touch of a thrown item, with no roll, and `EmbedAttach` is private. Set `embedOnThrow: false` and raise `ProjectileHitEvent` on the item to stick it.
 - `OpenStorage` empties a closet before it raises `StorageAfterOpenEvent`, so the contents are already gone. Watch `EntGotRemovedFromContainerMessage` on the creature.
+- Changing a child only queues a new measure, and the queue runs on a real frame. A test that changes a control and calls `Measure` again on an ancestor reads the old size and passes for nothing. Measure a new control, built in the state the test wants.
+- `OnMouseEntered` and `OnMouseExited` are for the exact control under the cursor, so a panel "loses" the mouse when it moves onto one of the panel's children. To ask whether the mouse is over an area, compare `IInputManager.MouseScreenPosition` with `GlobalPixelRect`.
+- A hand cannot take an item straight from a worn slot such as a pocket: `TryPickupAnyHand` returns false. Call `InventorySystem.TryUnequip` first. Storage is fine.
 - `PlayEmoteMessage` is only sent by the emote menu. `EmoteEvent` also fires for typed emotes and for automatic ones such as pain screams.
 - Alt+Z runs the first `AlternativeVerb` on the held item. Set a high `Priority` to come first.
 - Do not spawn a child of an entity in its `ComponentInit`: the parent is only `Initializing`, and a Debug build asserts. The client hits this on a state for something new, so it only shows when an entity arrives in that condition. Spawn on `AppearanceChangeEvent` or `ComponentStartup`. Tools builds compile the asserts out, so run the test with `-c Debug`.

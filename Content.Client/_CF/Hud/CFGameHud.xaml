@@ -4,49 +4,46 @@
     xmlns:hud="clr-namespace:Content.Client.CF.Hud"
     xmlns:inventory="clr-namespace:Content.Client.UserInterface.Systems.Inventory.Controls"
     xmlns:hands="clr-namespace:Content.Client.UserInterface.Systems.Hands.Controls"
-    xmlns:actions="clr-namespace:Content.Client.UserInterface.Systems.Actions.Widgets"
     x:Class="Content.Client.CF.Hud.CFGameHud"
     Orientation="Horizontal"
-    SeparationOverride="10"
-    HorizontalAlignment="Left"
+    SeparationOverride="4"
+    HorizontalAlignment="Center"
     VerticalAlignment="Bottom">
-    <BoxContainer Orientation="Horizontal" SeparationOverride="8" VerticalAlignment="Bottom">
-        <BoxContainer Orientation="Vertical" SeparationOverride="4">
-            <inventory:ItemSlotButtonContainer Name="SuitStorage" SlotGroup="CFSuitStorage" MaxColumns="1" />
-            <inventory:ItemSlotButtonContainer Name="Id" SlotGroup="CFId" MaxColumns="1" />
+    <PanelContainer Name="LeftPanel" VerticalAlignment="Bottom" MinWidth="112">
+        <BoxContainer Orientation="Vertical" SeparationOverride="2" Margin="6 4">
+            <hud:CFArmorBox Name="Armor" Access="Public" />
+            <hud:CFDefensePanel Name="Defenses" Access="Public" HorizontalAlignment="Left" />
         </BoxContainer>
-        <BoxContainer Orientation="Vertical" SeparationOverride="4">
-            <inventory:ItemSlotButtonContainer Name="Belt" SlotGroup="CFBelt" MaxColumns="1" />
-            <inventory:ItemSlotButtonContainer Name="Bag" SlotGroup="CFBag" MaxColumns="1" />
-        </BoxContainer>
-        <BoxContainer Orientation="Vertical" SeparationOverride="4">
-            <inventory:ItemSlotButtonContainer Name="Pockets" SlotGroup="CFPockets" MaxColumns="2" />
-            <hands:HandsContainer Name="Hands" Access="Public" ColumnLimit="2" />
-        </BoxContainer>
-        <hud:CFHealthBall Name="Ball" Access="Public" VerticalAlignment="Bottom" />
-    </BoxContainer>
-    <PanelContainer Name="DividerLeft" MinSize="2 120" />
+    </PanelContainer>
     <BoxContainer Orientation="Vertical" SeparationOverride="2" VerticalAlignment="Bottom">
-        <hud:CFStatusList Name="Status" Access="Public" HorizontalAlignment="Center" />
-        <PanelContainer Name="ActionPanel">
-            <BoxContainer Orientation="Vertical" SeparationOverride="4" Align="Center" Margin="6">
-                <BoxContainer Orientation="Horizontal" SeparationOverride="8">
-                    <BoxContainer Orientation="Horizontal" HorizontalExpand="True">
-                        <hud:CFDefensePanel Name="Defenses" Access="Public" HorizontalAlignment="Left" VerticalAlignment="Center" />
-                    </BoxContainer>
-                    <BoxContainer Orientation="Vertical" SeparationOverride="4">
-                        <hud:CFActionPips Name="ActionPips" Access="Public" HorizontalAlignment="Center" />
-                        <BoxContainer Orientation="Horizontal" SeparationOverride="6" HorizontalAlignment="Center">
-                            <Button Name="ActionsFilter" ToggleMode="True" MinSize="88 26" Text="{Loc 'cf-hud-actions'}" ToolTip="{Loc 'cf-hud-actions-tooltip'}" />
-                            <Button Name="SpellsFilter" ToggleMode="True" MinSize="88 26" Text="{Loc 'cf-hud-spells'}" ToolTip="{Loc 'cf-hud-spells-tooltip'}" />
-                        </BoxContainer>
-                    </BoxContainer>
-                    <BoxContainer Orientation="Horizontal" HorizontalExpand="True" Align="End">
-                        <hud:CFSpellPips Name="Spells" Access="Public" VerticalAlignment="Center" />
-                    </BoxContainer>
-                </BoxContainer>
-                <actions:ActionsBar />
+        <BoxContainer Orientation="Horizontal" SeparationOverride="6">
+            <BoxContainer Orientation="Horizontal" HorizontalExpand="True" Align="End">
+                <hud:CFStatusList Name="Status" Access="Public" VerticalAlignment="Bottom" />
+            </BoxContainer>
+            <Button Name="ExpandButton" MinSize="104 24" VerticalAlignment="Bottom" />
+            <Control HorizontalExpand="True" />
+        </BoxContainer>
+        <hud:CFDeckClip Name="DeckClip" Access="Public">
+            <hud:CFHudDeck Name="Deck" Access="Public" />
+        </hud:CFDeckClip>
+        <PanelContainer Name="BarPanel">
+            <BoxContainer Orientation="Horizontal" SeparationOverride="2" Margin="2">
+                <hud:CFHudBar Name="HpBar" Access="Public" HorizontalExpand="True" MinHeight="24" />
+                <PanelContainer Name="PipPanel" VerticalExpand="True">
+                    <hud:CFActionPips Name="ActionPips" Access="Public" VerticalAlignment="Center" Margin="10 0" />
+                </PanelContainer>
+                <hud:CFHudBar Name="TempBar" Access="Public" HorizontalExpand="True" MinHeight="24" />
             </BoxContainer>
         </PanelContainer>
+        <BoxContainer Orientation="Horizontal" HorizontalAlignment="Center">
+            <inventory:ItemSlotButtonContainer Name="Id" SlotGroup="CFId" MaxColumns="1" VerticalAlignment="Bottom" />
+            <inventory:ItemSlotButtonContainer Name="Belt" SlotGroup="CFBelt" MaxColumns="1" VerticalAlignment="Bottom" />
+            <inventory:ItemSlotButtonContainer Name="Bag" SlotGroup="CFBag" MaxColumns="1" VerticalAlignment="Bottom" />
+            <inventory:ItemStatusPanel Name="StatusPanelRight" Margin="0 0 -2 2" SetWidth="125" SetHeight="60" />
+            <hands:HandsContainer Name="Hands" Access="Public" ColumnLimit="6" />
+            <inventory:ItemStatusPanel Name="StatusPanelLeft" Margin="-2 0 0 2" SetWidth="125" SetHeight="60" />
+            <inventory:ItemSlotButtonContainer Name="Pockets" SlotGroup="CFPockets" MaxColumns="2" VerticalAlignment="Bottom" />
+            <inventory:ItemSlotButtonContainer Name="SuitStorage" SlotGroup="CFSuitStorage" MaxColumns="1" VerticalAlignment="Bottom" />
+        </BoxContainer>
     </BoxContainer>
 </hud:CFGameHud>

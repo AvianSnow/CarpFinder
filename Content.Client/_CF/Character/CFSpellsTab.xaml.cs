@@ -208,6 +208,7 @@ public sealed partial class CFSpellsTab : BoxContainer
             return;
 
         row[slot.Index] = spell.Id;
+        SendPlan();
         Rebuild();
         _popup?.RoomsChanged();
     }
@@ -224,10 +225,30 @@ public sealed partial class CFSpellsTab : BoxContainer
                 continue;
 
             row[i] = spellId;
+            SendPlan();
             Rebuild();
             _popup?.RoomsChanged();
             return;
         }
+    }
+
+    /// <summary>Tells the server what to prepare at the next long rest. Cantrip slots are not part of it.</summary>
+    private void SendPlan()
+    {
+        var plan = new CFPlanPreparationEvent();
+        foreach (var (rank, row) in _slots)
+        {
+            if (rank <= 0)
+                continue;
+
+            foreach (var id in row)
+            {
+                if (id != null)
+                    plan.Slots.Add(new CFPreparedSlot(id, rank));
+            }
+        }
+
+        _entities.RaisePredictiveEvent(plan);
     }
 
     private bool HasRoom(int rank)
@@ -326,7 +347,7 @@ public sealed partial class CFSpellsTab : BoxContainer
             if (spell == null)
                 slot.AddChild(EmptyRow());
             else
-                slot.AddChild(SpellRow(spell, CanCast(rank)));
+                slot.AddChild(SpellRow(spell, CanCast(spell)));
             body.AddChild(slot);
         }
 
@@ -337,9 +358,8 @@ public sealed partial class CFSpellsTab : BoxContainer
     {
         var max = SlotCount(rank);
         var body = Section(rank, max > 0 ? max : spells.Count);
-        var canCast = CanCast(rank);
         foreach (var spell in spells)
-            body.AddChild(SpellRow(spell, canCast));
+            body.AddChild(SpellRow(spell, CanCast(spell)));
         return Wrap(body);
     }
 
@@ -546,13 +566,27 @@ public sealed partial class CFSpellsTab : BoxContainer
                 row.Add(null);
 
             var used = 0;
-            foreach (var spell in _known)
+            if (rank.Key > 0 && _entities.TryGetComponent<CFSpellbookComponent>(_entity, out var book))
             {
-                if (spell.Rank != rank.Key || used >= row.Count)
-                    continue;
+                foreach (var planned in book.PlannedSlots)
+                {
+                    if (planned.Rank != rank.Key || used >= row.Count)
+                        continue;
 
-                row[used] = spell.Id;
-                used++;
+                    row[used] = planned.Spell.Id;
+                    used++;
+                }
+            }
+            else
+            {
+                foreach (var spell in _known)
+                {
+                    if (spell.Rank != rank.Key || used >= row.Count)
+                        continue;
+
+                    row[used] = spell.Id;
+                    used++;
+                }
             }
 
             _slots[rank.Key] = row;
@@ -564,10 +598,12 @@ public sealed partial class CFSpellsTab : BoxContainer
         var ranks = new List<KeyValuePair<int, int>>();
         if (_entities.TryGetComponent<CFSpellbookComponent>(_entity, out var book))
         {
-            for (var rank = 0; rank < book.Slots.Count; rank++)
+            // Divine Font's spare slots cannot be prepared.
+            var slots = book.Prepared ? book.PreparableSlots : book.Slots;
+            for (var rank = 0; rank < slots.Count; rank++)
             {
-                if (book.Slots[rank] > 0)
-                    ranks.Add(new KeyValuePair<int, int>(rank, book.Slots[rank]));
+                if (slots[rank] > 0)
+                    ranks.Add(new KeyValuePair<int, int>(rank, slots[rank]));
             }
 
             return ranks;
@@ -598,16 +634,10 @@ public sealed partial class CFSpellsTab : BoxContainer
         return book.Expended[rank];
     }
 
-    private bool CanCast(int rank)
+    private bool CanCast(CFSheetSpell spell)
     {
-        if (rank <= 0)
-            return true;
-
-        var max = SlotCount(rank);
-        if (max <= 0)
-            return true;
-
-        return Spent(rank) < max;
+        return !_entities.TryGetComponent<CFSpellComponent>(spell.Action, out var data)
+               || _entities.System<CFSpellSystem>().HasSlot(_entity, data);
     }
 
     private string Signature()

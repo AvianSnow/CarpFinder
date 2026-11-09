@@ -3,6 +3,7 @@ using Content.Shared.Bed.Sleep;
 using Content.Shared.Buckle.Components;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Combat;
+using Content.Shared.CF.Spells;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Popups;
 
@@ -46,6 +47,7 @@ public sealed partial class CFLongRestSystem : EntitySystem
                 book.Expended[rank] = 0;
             }
 
+            CFPreparedSpells.Refresh(book);
             book.FocusSpent = 0;
             Dirty(mob, book);
         }
