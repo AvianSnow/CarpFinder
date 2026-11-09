@@ -716,7 +716,7 @@ public sealed partial class HumanoidProfileEditor
         var options = new List<Pf2eListEntry>();
 
         foreach (var feat in _prototypeManager.EnumeratePrototypes<CFFeatPrototype>()
-                     .Where(feat => feat.FitsClass(classId, maxLevel) && !taken.Contains(feat.ID))
+                     .Where(feat => feat.FitsClass(classId, maxLevel) && CFClassChoices.MeetsRequirement(_prototypeManager, CurrentBuild(), feat) && !taken.Contains(feat.ID))
                      .OrderBy(feat => feat.Level)
                      .ThenBy(feat => Loc.GetString(feat.Name), StringComparer.CurrentCultureIgnoreCase))
         {

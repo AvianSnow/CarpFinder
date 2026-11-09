@@ -15,3 +15,5 @@
     - "warrior muse"
   action: Action
   pendingAction: true
+  requiresChoice:
+    - MuseWarrior

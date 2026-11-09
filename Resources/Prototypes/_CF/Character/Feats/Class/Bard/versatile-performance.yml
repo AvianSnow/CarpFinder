@@ -10,3 +10,5 @@
     - "Bard"
   prerequisites:
     - "polymath muse"
+  requiresChoice:
+    - MusePolymath

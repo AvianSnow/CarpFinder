@@ -10,3 +10,10 @@
     - "Cleric"
   prerequisites:
     - "warpriest doctrine"
+  requiresChoice:
+    - DoctrineWarpriest
+  grants:
+    - !type:CFGrantProficiency
+      proficiencies:
+      - HeavyArmor
+      rank: Trained

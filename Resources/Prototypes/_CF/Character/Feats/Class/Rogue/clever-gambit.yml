@@ -12,3 +12,5 @@
     - "mastermind racket"
   action: Reaction
   pendingAction: true
+  requiresChoice:
+    - Mastermind

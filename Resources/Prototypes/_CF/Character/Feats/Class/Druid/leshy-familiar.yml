@@ -11,3 +11,5 @@
   prerequisites:
     - "leaf order"
   pendingAction: true
+  requiresChoice:
+    - OrderLeaf

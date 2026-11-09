@@ -165,12 +165,12 @@ public static class CFSkills
         if (level >= 1)
         {
             AddFeat(prototypes, result, build.AncestryFeat, feat => feat.Fits(ancestryId, 1));
-            AddFeat(prototypes, result, build.ClassFeat, feat => feat.FitsClass(classId, 1));
+            AddFeat(prototypes, result, build.ClassFeat, feat => feat.FitsClass(classId, 1) && CFClassChoices.MeetsRequirement(prototypes, build, feat));
         }
 
         if (level >= 2)
         {
-            AddFeat(prototypes, result, build.ClassFeatLevel2, feat => feat.FitsClass(classId, 2));
+            AddFeat(prototypes, result, build.ClassFeatLevel2, feat => feat.FitsClass(classId, 2) && CFClassChoices.MeetsRequirement(prototypes, build, feat));
             AddFeat(prototypes, result, build.SkillFeatLevel2, feat => feat.FitsSkillSlot(2));
         }
 
@@ -179,7 +179,7 @@ public static class CFSkills
 
         if (level >= 4)
         {
-            AddFeat(prototypes, result, build.ClassFeatLevel4, feat => feat.FitsClass(classId, 4));
+            AddFeat(prototypes, result, build.ClassFeatLevel4, feat => feat.FitsClass(classId, 4) && CFClassChoices.MeetsRequirement(prototypes, build, feat));
             AddFeat(prototypes, result, build.SkillFeatLevel4, feat => feat.FitsSkillSlot(4));
         }
 

@@ -190,7 +190,7 @@ public sealed class CFAncestryFeatTest : GameTest
         });
     }
 
-    /// <summary>Against DC 100 every reroll is a critical failure, so the two luck feats differ exactly where the rules do.</summary>
+    /// <summary>Against DC 100 almost every reroll is a critical failure, so the two luck feats differ exactly where the rules do.</summary>
     [Test]
     public async Task LuckRerollsAFailedSaveOncePerRest()
     {
@@ -210,7 +210,11 @@ public sealed class CFAncestryFeatTest : GameTest
             Save(fortitude, CFDefenseType.Fortitude, CFDegree.Failure);
             otherSave = UsedToday(fortitude);
 
-            halfling = Save(Hero("CFHalflingLuck"), CFDefenseType.Will, CFDegree.Failure);
+            // A natural 20 still lifts a reroll one step, so one of several will show the worse result.
+            for (var i = 0; i < 10 && halfling != CFDegree.CriticalFailure; i++)
+            {
+                halfling = Save(Hero("CFHalflingLuck"), CFDefenseType.Will, CFDegree.Failure);
+            }
         });
 
         Assert.Multiple(() =>

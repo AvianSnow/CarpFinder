@@ -11,4 +11,6 @@
     - "Druid"
     - "Spellshape"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActCrypticSpell

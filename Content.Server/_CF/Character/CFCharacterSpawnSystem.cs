@@ -147,8 +147,8 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         xp.Xp = 0;
         xp.AncestryFeat = IdOf(profile.CFBuild.AncestryFeat);
         xp.ClassFeat = IdOf(profile.CFBuild.ClassFeat);
-        xp.ClassFeatLevel2 = IdOf(profile.CFBuild.ClassFeatLevel2);
-        xp.ClassFeatLevel4 = IdOf(profile.CFBuild.ClassFeatLevel4);
+        xp.ClassFeatLevel2 = ChoiceFeat(profile.CFBuild, profile.CFBuild.ClassFeatLevel2);
+        xp.ClassFeatLevel4 = ChoiceFeat(profile.CFBuild, profile.CFBuild.ClassFeatLevel4);
         xp.AncestryFeatLevel5 = IdOf(profile.CFBuild.AncestryFeatLevel5);
         xp.SkillFeatLevel2 = QualifiedFeat(profile.CFBuild, ancestryId, profile.CFBuild.SkillFeatLevel2, 2, skillSlot: true);
         xp.GeneralFeatLevel3 = QualifiedFeat(profile.CFBuild, ancestryId, profile.CFBuild.GeneralFeatLevel3, 3, skillSlot: false);
@@ -377,6 +377,14 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
     public void RefreshArmorClass(EntityUid mob)
     {
         _armor.RefreshArmorClass(mob);
+    }
+
+    /// <summary>The feat, if the build has the subclass option it asks for.</summary>
+    private string? ChoiceFeat(CFCharacterBuildData build, ProtoId<CFFeatPrototype>? id)
+    {
+        return id is { } feat && _prototypes.TryIndex(feat, out CFFeatPrototype? proto) && !CFClassChoices.MeetsRequirement(_prototypes, build, proto)
+            ? null
+            : id?.Id;
     }
 
     private static string? IdOf(ProtoId<CFFeatPrototype>? feat)

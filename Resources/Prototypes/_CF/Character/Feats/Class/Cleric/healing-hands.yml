@@ -10,3 +10,6 @@
     - "Cleric"
   prerequisites:
     - "healing font"
+  grants:
+    - !type:CFGrantOption
+      option: HealingHands

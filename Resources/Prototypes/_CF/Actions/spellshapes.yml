@@ -23,3 +23,30 @@
   components:
   - type: CFSpellshape
     widens: true
+
+- type: entity
+  parent: CFActSpellshapeBase
+  id: CFActConcealSpell
+  name: Conceal Spell
+  description: Your next spell is barely noticeable, so it does not set off reactions. Lost if you spend an action on anything else first.
+  components:
+  - type: CFSpellshape
+    subtle: true
+
+- type: entity
+  parent: CFActSpellshapeBase
+  id: CFActMelodiousSpell
+  name: Melodious Spell
+  description: You weave your next spell into a performance, so it does not set off reactions. Lost if you spend an action on anything else first.
+  components:
+  - type: CFSpellshape
+    subtle: true
+
+- type: entity
+  parent: CFActSpellshapeBase
+  id: CFActCrypticSpell
+  name: Cryptic Spell
+  description: You hide your next spell in the sounds of nature, so it does not set off reactions. Lost if you spend an action on anything else first.
+  components:
+  - type: CFSpellshape
+    subtle: true

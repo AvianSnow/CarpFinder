@@ -9,4 +9,12 @@
   traits:
     - "Alchemist"
     - "Druid"
-  pendingAction: true
+  grants:
+    - !type:CFGrantResistance
+      damageType: Poison
+      halfLevel: true
+    - !type:CFGrantBonus
+      stat: Saves
+      type: Status
+      value: 1
+      trait: Poison

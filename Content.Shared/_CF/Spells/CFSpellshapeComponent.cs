@@ -15,6 +15,10 @@ public sealed partial class CFSpellshapeComponent : Component
     [DataField]
     public int ExtraRangeFeet;
 
+    /// <summary>The spell is barely noticeable, so casting it does not set off reactions (Conceal Spell).</summary>
+    [DataField]
+    public bool Subtle;
+
     /// <summary>Makes a burst, cone or line with no duration bigger (Widen Spell).</summary>
     [DataField]
     public bool Widens;

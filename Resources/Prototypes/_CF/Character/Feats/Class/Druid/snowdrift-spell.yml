@@ -15,3 +15,5 @@
     - "storm order"
   action: Action
   pendingAction: true
+  requiresChoice:
+    - OrderStorm

@@ -1,3 +1,4 @@
+using Content.Shared.CF.Spells;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.DamageTypes;
@@ -98,6 +99,19 @@ public sealed partial class CFEffectSystem
             _dying.SyncHealthBar(target, combat);
 
         ShowNumber(target, display, amount, damageType);
+    }
+
+    /// <summary>Healing Hands and Harming Hands make those two spells roll d10s.</summary>
+    public int SpellDie(CFEffectArgs args, int die)
+    {
+        if (die != 8
+            || !TryComp(args.User, out CFCombatOptionsComponent? options)
+            || !TryComp(args.Source, out CFSpellComponent? spell))
+        {
+            return die;
+        }
+
+        return options.HealingHands && spell.Spell == "Heal" || options.HarmingHands && spell.Spell == "Harm" ? 10 : die;
     }
 
     public void Heal(EntityUid user, EntityUid target, int amount)

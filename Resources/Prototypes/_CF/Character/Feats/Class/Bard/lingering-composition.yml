@@ -10,3 +10,5 @@
     - "Bard"
   prerequisites:
     - "maestro muse"
+  requiresChoice:
+    - MuseMaestro

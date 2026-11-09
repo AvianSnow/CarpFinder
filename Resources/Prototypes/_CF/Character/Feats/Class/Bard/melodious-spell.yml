@@ -12,4 +12,6 @@
     - "Manipulate"
     - "Spellshape"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActMelodiousSpell

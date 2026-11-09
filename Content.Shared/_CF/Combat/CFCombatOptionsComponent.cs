@@ -67,6 +67,14 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public bool FreeStepWithShield;
 
+    /// <summary>The heal spell rolls d10s instead of d8s.</summary>
+    [DataField, AutoNetworkedField]
+    public bool HealingHands;
+
+    /// <summary>The harm spell rolls d10s instead of d8s.</summary>
+    [DataField, AutoNetworkedField]
+    public bool HarmingHands;
+
     /// <summary>Frightened eases by 2 each turn instead of 1 (Dwarven Doughtiness).</summary>
     [DataField, AutoNetworkedField]
     public bool ShakesOffFear;
@@ -240,6 +248,8 @@ public enum CFCombatOption : byte
     FinesseDexterity,
     ShakesOffFear,
     IgnoresArmorSpeed,
+    HealingHands,
+    HarmingHands,
     AnyWeaponSneak,
     PreyPrecision,
     PreyFlurry,

@@ -10,3 +10,5 @@
     - "Rogue"
   prerequisites:
     - "scoundrel racket"
+  requiresChoice:
+    - Scoundrel

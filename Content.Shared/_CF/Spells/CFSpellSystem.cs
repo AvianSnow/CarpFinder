@@ -200,7 +200,9 @@ public sealed partial class CFSpellSystem : EntitySystem
     private void FinishCast(EntityUid caster)
     {
         _conditions.NoteAttack(caster);
-        _strikes.ReactiveStrike(caster);
+        if (!_spellshapes.IsSubtle(caster))
+            _strikes.ReactiveStrike(caster);
+
         _spellshapes.Consume(caster);
     }
 

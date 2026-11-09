@@ -332,6 +332,12 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
             case CFCombatOption.FreeStepWithShield:
                 options.FreeStepWithShield = true;
                 break;
+            case CFCombatOption.HealingHands:
+                options.HealingHands = true;
+                break;
+            case CFCombatOption.HarmingHands:
+                options.HarmingHands = true;
+                break;
             case CFCombatOption.ShakesOffFear:
                 options.ShakesOffFear = true;
                 break;

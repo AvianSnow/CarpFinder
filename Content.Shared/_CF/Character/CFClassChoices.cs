@@ -29,6 +29,16 @@ public static class CFClassChoices
         return result;
     }
 
+    /// <summary>Whether the build has a subclass option this feat asks for.</summary>
+    public static bool MeetsRequirement(IPrototypeManager prototypes, CFCharacterBuildData build, CFFeatPrototype feat)
+    {
+        if (feat.RequiresChoice.Count == 0)
+            return true;
+
+        var selected = Selected(prototypes, build);
+        return feat.RequiresChoice.Any(id => selected.Exists(choice => choice.ID == id.Id));
+    }
+
     /// <summary>The build's deity, if it has one and its class follows one.</summary>
     public static CFDeityPrototype? SelectedDeity(IPrototypeManager prototypes, CFCharacterBuildData build)
     {
@@ -95,6 +105,7 @@ public static class CFClassChoices
             prototypes.TryIndex(existing, out CFClassChoicePrototype? other) && other.Slot == choice.Slot);
         build.ClassChoices.Add(id);
         DropRepeatedPicks(prototypes, build);
+        DropFeatsWithoutTheirChoice(prototypes, build);
     }
 
     public static void AssignDeity(IPrototypeManager prototypes, CFCharacterBuildData build, ProtoId<CFDeityPrototype> id)
@@ -112,6 +123,22 @@ public static class CFClassChoices
 
         if (SelectedDeity(prototypes, build) == null)
             build.Deity = null;
+
+        DropFeatsWithoutTheirChoice(prototypes, build);
+    }
+
+    private static void DropFeatsWithoutTheirChoice(IPrototypeManager prototypes, CFCharacterBuildData build)
+    {
+        build.ClassFeat = Kept(prototypes, build, build.ClassFeat);
+        build.ClassFeatLevel2 = Kept(prototypes, build, build.ClassFeatLevel2);
+        build.ClassFeatLevel4 = Kept(prototypes, build, build.ClassFeatLevel4);
+    }
+
+    private static ProtoId<CFFeatPrototype>? Kept(IPrototypeManager prototypes, CFCharacterBuildData build, ProtoId<CFFeatPrototype>? id)
+    {
+        return id is { } feat && prototypes.TryIndex(feat, out CFFeatPrototype? proto) && !MeetsRequirement(prototypes, build, proto)
+            ? null
+            : id;
     }
 
     private static void DropRepeatedPicks(IPrototypeManager prototypes, CFCharacterBuildData build)

@@ -10,3 +10,5 @@
     - "Druid"
   prerequisites:
     - "animal order"
+  requiresChoice:
+    - OrderAnimal

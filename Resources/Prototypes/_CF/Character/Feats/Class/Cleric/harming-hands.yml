@@ -10,3 +10,6 @@
     - "Cleric"
   prerequisites:
     - "harmful font"
+  grants:
+    - !type:CFGrantOption
+      option: HarmingHands

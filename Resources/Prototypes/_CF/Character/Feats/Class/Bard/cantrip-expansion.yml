@@ -15,3 +15,8 @@
     - "Sorcerer"
     - "Witch"
     - "Wizard"
+  choices:
+    - kind: Cantrip
+      count: 2
+      traditions:
+        - Occult

@@ -13,3 +13,5 @@
     - "enigma muse"
     - "expert in Occultism"
   pendingAction: true
+  requiresChoice:
+    - MuseEnigma

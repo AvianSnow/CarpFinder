@@ -14,3 +14,5 @@
     - Lore
   lores:
     - "Bardic Lore"
+  requiresChoice:
+    - MuseEnigma

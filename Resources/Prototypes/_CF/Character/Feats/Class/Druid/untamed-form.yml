@@ -10,3 +10,5 @@
     - "Druid"
   prerequisites:
     - "untamed order"
+  requiresChoice:
+    - OrderUntamed

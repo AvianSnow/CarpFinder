@@ -10,3 +10,5 @@
     - "Bard"
   prerequisites:
     - "warrior muse"
+  requiresChoice:
+    - MuseWarrior

@@ -86,6 +86,10 @@ public sealed partial class CFFeatPrototype : IPrototype
     [DataField]
     public CFFeatAction Action = CFFeatAction.Passive;
 
+    /// <summary>The character must have one of these subclass options. See <see cref="CFClassChoices.MeetsRequirement"/>.</summary>
+    [DataField]
+    public List<ProtoId<CFClassChoicePrototype>> RequiresChoice = new();
+
     /// <summary>What this gives a character. See <see cref="CFGrant"/>.</summary>
     [DataField]
     public List<CFGrant> Grants = new();

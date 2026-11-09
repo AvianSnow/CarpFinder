@@ -11,3 +11,5 @@
     - "Fortune"
   prerequisites:
     - "enigma muse"
+  requiresChoice:
+    - MuseEnigma

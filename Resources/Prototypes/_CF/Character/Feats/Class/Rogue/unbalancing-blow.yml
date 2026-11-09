@@ -13,3 +13,5 @@
   grants:
     - !type:CFGrantOption
       option: UnbalancingBlow
+  requiresChoice:
+    - Thief

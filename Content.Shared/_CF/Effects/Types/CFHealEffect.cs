@@ -28,7 +28,7 @@ public sealed partial class CFHealEffect : CFEffect
 
         var system = entities.System<CFEffectSystem>();
         var flat = Flat + HeightenFlat * args.HeightenSteps + (AddAbilityModifier ? args.AbilityModifier : 0);
-        var amount = system.Roll(Dice + HeightenDice * args.HeightenSteps, Die, flat);
+        var amount = system.Roll(Dice + HeightenDice * args.HeightenSteps, system.SpellDie(args, Die), flat);
         system.Heal(args.User, target, amount);
     }
 }

@@ -58,6 +58,11 @@ public sealed partial class CFSpellshapeSystem : EntitySystem
         };
     }
 
+    public bool IsSubtle(EntityUid user)
+    {
+        return Current(user) is { Subtle: true };
+    }
+
     /// <summary>The spell has been cast, so the spellshape is used up.</summary>
     public void Consume(EntityUid user)
     {

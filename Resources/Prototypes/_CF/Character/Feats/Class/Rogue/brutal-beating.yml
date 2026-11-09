@@ -16,3 +16,5 @@
   grants:
     - !type:CFGrantOption
       option: BrutalBeating
+  requiresChoice:
+    - Ruffian
