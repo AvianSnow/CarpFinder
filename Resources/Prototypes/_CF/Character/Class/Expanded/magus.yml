@@ -56,12 +56,14 @@
       description: "Level 1 cantrips and spell slots are on the spell sheet."
     - level: 1
       name: "Spellstrike"
-      description: "Spellstrike is on your action wheel. A melee Strike also deals force damage and can spend a rank 1 slot."
+      description: "Spellstrike is on your action wheel. A melee Strike also deals force damage and can spend a rank 1 slot. It then has to be recharged with its 1 action, or by casting a conflux spell. Choosing which spell goes into the Strike: TBA"
       grants:
         - !type:CFGrantOption
           option: Spellstrike
         - !type:CFGrantAction
           action: CFActSpellstrike
+        - !type:CFGrantAction
+          action: CFActSpellstrikeRecharge
     - level: 5
       name: "Reflex Expertise"
       description: "Expert in Reflex saves."

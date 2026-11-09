@@ -285,6 +285,7 @@ public sealed partial class CFEffectSystem : EntitySystem
     #region Checks
 
     [Dependency] private CFAuraSystem _auras = default!;
+    [Dependency] private CFTauntSystem _taunts = default!;
     [Dependency] private CFReactionSystem _reactions = default!;
 
     /// <summary>
@@ -299,16 +300,19 @@ public sealed partial class CFEffectSystem : EntitySystem
         var check = CompOrNull<CFCheckComponent>(source);
         var args = BuildArgs(source, user, target, Transform(target).Coordinates, check, out var stats);
 
+        // A taunted creature takes this on the attack or the DC of anything aimed past its taunter.
+        var taunted = check != null && check.Defense != CFDefenseType.None ? _taunts.NoteAttack(user, target) : 0;
+
         var landed = true;
         if (check != null && check.Defense == CFDefenseType.ArmorClass)
         {
-            args.Degree = RollAttack(user, target, check, stats.AttackBonus);
+            args.Degree = RollAttack(user, target, check, stats.AttackBonus + taunted);
             landed = args.Degree.IsSuccess();
             _auras.NoteAttacked(target, user);
         }
         else if (check != null && check.Defense != CFDefenseType.None)
         {
-            args.Degree = _conditions.RollDefense(target, check.Defense, stats.Dc, out _, args.Traits);
+            args.Degree = _conditions.RollDefense(target, check.Defense, stats.Dc + taunted, out _, args.Traits);
             landed = !args.Degree.IsSuccess();
         }
 

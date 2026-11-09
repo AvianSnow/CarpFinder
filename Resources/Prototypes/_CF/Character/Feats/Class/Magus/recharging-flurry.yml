@@ -11,6 +11,8 @@
   prerequisites:
     - "twofold tine hybrid study"
   action: Action
-  pendingAction: true
   requiresChoice:
     - StudyTwofoldTine
+  grants:
+    - !type:CFGrantAction
+      action: CFActRechargingFlurry

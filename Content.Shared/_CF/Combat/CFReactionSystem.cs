@@ -1,3 +1,4 @@
+using Content.Shared.CF.DamageTypes;
 using System.Numerics;
 using Content.Shared.CF.Actions;
 using Content.Shared.CF.Checks;
@@ -50,6 +51,8 @@ public sealed partial class CFReactionSystem : EntitySystem
     [Dependency] private CFFactionSystem _factions = default!;
     [Dependency] private CFStrikeSystem _strikes = default!;
     [Dependency] private CFAuraSystem _auras = default!;
+    [Dependency] private CFTauntSystem _taunts = default!;
+    [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private CFEffectSystem _effects = default!;
     [Dependency] private CFManeuverSystem _maneuvers = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
@@ -275,7 +278,7 @@ public sealed partial class CFReactionSystem : EntitySystem
     /// Damage is about to land on <paramref name="target"/>. Its own reaction goes first, then those of champions whose aura
     /// holds both it and the attacker. Returns the damage that is left. Damage only ever reaches here on the server.
     /// </summary>
-    public int AnswerDamage(EntityUid target, EntityUid attacker, int amount)
+    public int AnswerDamage(EntityUid target, EntityUid attacker, int amount, string damageType)
     {
         if (amount <= 0 || !_net.IsServer || target == attacker || !_mobState.IsAlive(attacker))
             return amount;
@@ -299,6 +302,15 @@ public sealed partial class CFReactionSystem : EntitySystem
 
             foreach (var known in reactions.Known)
             {
+                if (known.Reaction.Trigger == CFReactionTrigger.InterceptsDamage)
+                {
+                    if (!CanIntercept(uid, target, attacker, known.Reaction, damageType) || !TrySpend(uid, known))
+                        continue;
+
+                    _effects.DealDamage(attacker, uid, amount, damageType, critical: false);
+                    return 0;
+                }
+
                 if (known.Reaction.Trigger != CFReactionTrigger.AllyWouldBeDamaged
                     || !CanFire(uid, known)
                     || !_auras.Contains(uid, target)
@@ -313,6 +325,16 @@ public sealed partial class CFReactionSystem : EntitySystem
         }
 
         return amount;
+    }
+
+    private bool CanIntercept(EntityUid owner, EntityUid victim, EntityUid attacker, CFReaction reaction, string damageType)
+    {
+        if (reaction.DamageTypes.Count > 0 && !reaction.DamageTypes.Exists(type => CFDamageTypes.Same(_prototypes, type, damageType)))
+            return false;
+
+        var feet = _taunts.IsTauntedBy(attacker, owner) ? reaction.TauntedRangeFeet : reaction.RangeFeet;
+        var distance = (_transform.GetWorldPosition(owner) - _transform.GetWorldPosition(victim)).Length();
+        return distance <= feet / CFMelee.FeetPerTile;
     }
 
     private int Protect(EntityUid owner, EntityUid victim, EntityUid attacker, CFReaction reaction, int amount)

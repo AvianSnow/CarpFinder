@@ -322,3 +322,4 @@ cf-class-choice-practiceseer = Seer
 cf-class-choice-practiceseer-desc = Its invocation needs apparitions: TBA
 cf-class-choice-practiceshaman = Shaman
 cf-class-choice-practiceshaman-desc = Its invocation needs apparitions: TBA
+cf-reaction-intercept-attack = Intercept Attack

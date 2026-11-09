@@ -23,6 +23,8 @@ public sealed partial class CFStrikeActionSystem : EntitySystem
     [Dependency] private CFWeaponSystem _weapons = default!;
     [Dependency] private CFEffectSystem _effects = default!;
     [Dependency] private CFConditionSystem _conditions = default!;
+    [Dependency] private CFTauntSystem _taunts = default!;
+    [Dependency] private CFActivitySystem _activities = default!;
 
     /// <summary>
     /// A weapon held in both hands for one attack. One with the two-hand trait uses that die, and any other goes up one step.
@@ -74,6 +76,9 @@ public sealed partial class CFStrikeActionSystem : EntitySystem
 
         if (action.Finisher && CompOrNull<CFCombatOptionsComponent>(user)?.Panache != true)
             return "cf-strike-action-needs-panache";
+
+        if (action.NeedsIgnoredTaunt && !_taunts.HasIgnored(target, user))
+            return "cf-strike-action-needs-ignored-taunt";
 
         if (action.Ranged)
         {
@@ -149,6 +154,12 @@ public sealed partial class CFStrikeActionSystem : EntitySystem
         var hit = _strikes.PerformStrike(user, target, stats, weapon, melee: true, attackPenalty: action.AttackBonus, extraDice: action.ExtraDice, finisher: action.Finisher, resolved: Resolved);
         if (action.TwoWeapons && _strikes.TryOffHandWeapon(user, weapon, out var off, out var offHand))
             _strikes.PerformStrike(user, target, off, offHand, melee: true, attackPenalty: action.AttackBonus, skipPrecision: hit, resolved: Resolved);
+
+        if (action.TauntsTarget)
+            _taunts.Taunt(user, target);
+
+        if (action.RechargesSpellstrike)
+            _activities.RechargeSpellstrike(user);
     }
 
     private void RunEffects(Entity<CFStrikeActionComponent> ent, EntityUid user, EntityUid target, CFDegree degree, int damage)

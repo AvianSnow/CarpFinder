@@ -21,6 +21,10 @@ public sealed partial class CFSpellComponent : Component
     [DataField, AutoNetworkedField]
     public bool Focus;
 
+    /// <summary>A Magus's conflux spell. Casting one recharges Spellstrike.</summary>
+    [DataField]
+    public bool Conflux;
+
     /// <summary>0 is a cantrip: it does not spend a slot and heightens to half the caster's level.</summary>
     [DataField, AutoNetworkedField]
     public int Rank;

@@ -41,7 +41,16 @@
           option: GuardianArmor
     - level: 1
       name: "Guardian's Techniques"
-      description: "Ever Ready and Intercept Attack. A reaction that moves you is not built yet: TBA"
+      description: "Reaction, automatic. Intercept Attack: when an ally within 10 feet, or 15 if your taunted enemy hit them, would take physical damage, you take it instead. Stepping next to them, and Ever Ready: TBA"
+      grants:
+        - !type:CFGrantReaction
+          reaction:
+            name: cf-reaction-intercept-attack
+            trigger: InterceptsDamage
+            damageTypes:
+              - Bludgeoning
+              - Piercing
+              - Slashing
     - level: 1
       name: "Shield Block"
       description: "You can spend your reaction to block damage with a raised shield."
@@ -50,7 +59,10 @@
           option: ShieldBlock
     - level: 1
       name: "Taunt"
-      description: "Make an enemy attack you or suffer for it. Nothing checks who an enemy targets yet: TBA"
+      description: "Taunt is on your action wheel. For 6 seconds, an enemy within 30 feet that attacks one of your allies and not you takes -1 on that attack and is off-guard."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTaunt
     - level: 3
       name: "Tough To Kill"
       description: "Diehard, and staying up longer at 0 Hit Points: TBA"

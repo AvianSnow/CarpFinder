@@ -12,6 +12,8 @@ public enum CFActivityKind : byte
     SuddenCharge,
     Leap,
     ConstructTrap,
+    SpellstrikeRecharge,
+    MagusAnalysis,
 }
 
 /// <summary>

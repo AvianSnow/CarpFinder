@@ -62,6 +62,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
     [Dependency] private CFStanceSystem _stances = default!;
     [Dependency] private CFReactionSystem _reactions = default!;
     [Dependency] private CFAuraSystem _auras = default!;
+    [Dependency] private CFTauntSystem _taunts = default!;
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private SharedAudioSystem _audio = default!;
@@ -696,7 +697,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
             }
         }
 
-        var attackBonus = mapPenalty + attackPenalty + _conditions.TakeAid(user)
+        var attackBonus = mapPenalty + attackPenalty + _conditions.TakeAid(user) + (isObject ? 0 : _taunts.NoteAttack(user, target))
                           + StandingAttackBonus(user, attackerCombat, attackerAbilities, weapon, distanceFeet, ignoreVolley);
 
         // Sweep: +1 circumstance when this turn's earlier attack went at a different creature.
@@ -788,7 +789,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
                 damage = _bonuses.ModifyDamage(target, rolled.DamageType, damage);
                 damage = ApplyShieldBlock(target, damage);
                 if (!isObject)
-                    damage = _reactions.AnswerDamage(target, user, damage);
+                    damage = _reactions.AnswerDamage(target, user, damage, rolled.DamageType);
 
                 if (isObject && hardness > 0)
                     damage = Math.Max(0, damage - hardness);

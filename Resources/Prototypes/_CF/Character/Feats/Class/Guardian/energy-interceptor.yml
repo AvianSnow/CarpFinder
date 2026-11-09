@@ -10,4 +10,14 @@
     - "Guardian"
   prerequisites:
     - "Intercept Attack"
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-intercept-attack
+        trigger: InterceptsDamage
+        damageTypes:
+          - Acid
+          - Cold
+          - Electricity
+          - Fire
+          - Sonic

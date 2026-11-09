@@ -10,3 +10,6 @@
     - "Magus"
   prerequisites:
     - "focus pool"
+  grants:
+    - !type:CFGrantFocusSpell
+      spell: ForceFang

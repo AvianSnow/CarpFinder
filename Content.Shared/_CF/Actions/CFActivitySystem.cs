@@ -62,6 +62,10 @@ public sealed partial class CFActivitySystem : EntitySystem
     {
         switch (ent.Comp.Kind)
         {
+            case CFActivityKind.Spellstrike when CompOrNull<CFCombatOptionsComponent>(args.User)?.SpellstrikeSpent == true:
+                args.Cancelled = true;
+                args.Reason = Loc.GetString("cf-act-spellstrike-spent");
+                break;
             case CFActivityKind.Rage
                 when !TryComp(args.User, out CFCombatOptionsComponent? rage) || !rage.CanRage:
                 args.Cancelled = true;
@@ -102,6 +106,9 @@ public sealed partial class CFActivitySystem : EntitySystem
             case CFActivityKind.ConstructTrap:
                 _traps.TryConstruct(args.Performer);
                 break;
+            case CFActivityKind.SpellstrikeRecharge:
+                RechargeSpellstrike(args.Performer);
+                break;
         }
     }
 
@@ -128,6 +135,10 @@ public sealed partial class CFActivitySystem : EntitySystem
                 break;
             case CFActivityKind.Spellstrike:
                 Spellstrike(args.Performer, args.Target);
+                break;
+            case CFActivityKind.MagusAnalysis:
+                _maneuvers.TryRecall(args.Performer, args.Target);
+                RechargeSpellstrike(args.Performer);
                 break;
             case CFActivityKind.SuddenCharge:
                 StrikeHeld(args.Performer, args.Target);
@@ -198,6 +209,22 @@ public sealed partial class CFActivitySystem : EntitySystem
             bonus += _random.Next(1, die + 1);
 
         _strikes.PerformStrike(user, target, stats, weapon, melee: true, bonusDamage: bonus);
+        if (TryComp(user, out CFCombatOptionsComponent? options))
+        {
+            options.SpellstrikeSpent = true;
+            Dirty(user, options);
+        }
+    }
+
+    /// <summary>Makes Spellstrike ready again.</summary>
+    public void RechargeSpellstrike(EntityUid user)
+    {
+        if (!TryComp(user, out CFCombatOptionsComponent? options) || !options.SpellstrikeSpent)
+            return;
+
+        options.SpellstrikeSpent = false;
+        Dirty(user, options);
+        _popup.PopupEntity(Loc.GetString("cf-act-spellstrike-ready"), user, user);
     }
 
     public void Finisher(EntityUid user, EntityUid target)

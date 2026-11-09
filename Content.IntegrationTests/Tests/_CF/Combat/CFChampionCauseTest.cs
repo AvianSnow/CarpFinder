@@ -78,8 +78,8 @@ public sealed class CFChampionCauseTest : GameTest
             Champion("CauseJustice");
             var ally = Spawn(x: 1);
             var foe = Spawn("CFCauseFoe", 1);
-            first = Reactions.AnswerDamage(ally, foe, 20);
-            second = Reactions.AnswerDamage(ally, foe, 20);
+            first = Reactions.AnswerDamage(ally, foe, 20, "Slashing");
+            second = Reactions.AnswerDamage(ally, foe, 20, "Slashing");
         });
 
         Assert.Multiple(() =>
@@ -97,8 +97,8 @@ public sealed class CFChampionCauseTest : GameTest
         await Server.WaitPost(() =>
         {
             Champion("CauseJustice");
-            allyFar = Reactions.AnswerDamage(Spawn(x: FarAway), Spawn("CFCauseFoe", 1), 20);
-            foeFar = Reactions.AnswerDamage(Spawn(x: 1), Spawn("CFCauseFoe", FarAway), 20);
+            allyFar = Reactions.AnswerDamage(Spawn(x: FarAway), Spawn("CFCauseFoe", 1), 20, "Slashing");
+            foeFar = Reactions.AnswerDamage(Spawn(x: 1), Spawn("CFCauseFoe", FarAway), 20, "Slashing");
         });
 
         Assert.Multiple(() =>
@@ -135,7 +135,7 @@ public sealed class CFChampionCauseTest : GameTest
         {
             var hero = Champion("CauseDesecration");
             foe = Spawn("CFCauseFoe", 1);
-            left = Reactions.AnswerDamage(hero, foe.Value, 20);
+            left = Reactions.AnswerDamage(hero, foe.Value, 20, "Slashing");
             marked = SEntMan.GetComponent<CFCombatOptionsComponent>(hero).MarkedTarget;
         });
 
@@ -155,7 +155,7 @@ public sealed class CFChampionCauseTest : GameTest
         {
             var hero = Champion("CauseIniquity");
             var foe = Spawn("CFCauseFoe", 1);
-            left = Reactions.AnswerDamage(hero, foe, 20);
+            left = Reactions.AnswerDamage(hero, foe, 20, "Slashing");
             dealt = Hurt(foe);
         });
 
@@ -175,7 +175,7 @@ public sealed class CFChampionCauseTest : GameTest
         {
             var hero = Champion("CauseObedience");
             var foe = Spawn("CFCauseFoe", 1);
-            Reactions.AnswerDamage(hero, foe, 20);
+            Reactions.AnswerDamage(hero, foe, 20, "Slashing");
             dealt = Hurt(foe);
         });
 
@@ -191,7 +191,7 @@ public sealed class CFChampionCauseTest : GameTest
         {
             Champion("CauseRedemption");
             var foe = Spawn("CFCauseFoe", 1);
-            Reactions.AnswerDamage(Spawn(x: 1), foe, 20);
+            Reactions.AnswerDamage(Spawn(x: 1), foe, 20, "Slashing");
             var bonuses = SEntMan.System<CFBonusSystem>();
             attack = bonuses.Total(foe, CFBonusStat.AttackRoll);
             damage = bonuses.Total(foe, CFBonusStat.Damage);
@@ -223,7 +223,7 @@ public sealed class CFChampionCauseTest : GameTest
             var pool = SEntMan.GetComponent<CFActionPoolComponent>(ally);
             full = pool.Stamina;
             before = condition.Grabbed;
-            Reactions.AnswerDamage(ally, foe, 20);
+            Reactions.AnswerDamage(ally, foe, 20, "Slashing");
             after = condition.Grabbed;
             spent = full - pool.Stamina;
         });

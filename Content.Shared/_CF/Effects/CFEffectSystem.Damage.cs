@@ -97,7 +97,7 @@ public sealed partial class CFEffectSystem
         }
 
         if (!isObject)
-            amount = _reactions.AnswerDamage(target, user, amount);
+            amount = _reactions.AnswerDamage(target, user, amount, damageType);
 
         if (amount > 0)
         {

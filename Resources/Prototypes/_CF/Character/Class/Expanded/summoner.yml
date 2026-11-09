@@ -34,13 +34,13 @@
   features:
     - level: 1
       name: "Eidolon"
-      description: "This feature will be implemented later."
+      description: "Your eidolon, a second body. Eidolons are not built yet: TBA"
     - level: 1
       name: "Evolution Feat"
-      description: "This feature will be implemented later."
+      description: "A feat for your eidolon. Eidolons are not built yet: TBA"
     - level: 1
       name: "Link Spells"
-      description: "This feature will be implemented later."
+      description: "Focus spells that work through your eidolon. Eidolons are not built yet: TBA"
     - level: 1
       name: "Spell Repertoire"
       description: "Level 1 cantrips and spell slots are on the spell sheet."
@@ -49,11 +49,11 @@
       description: "Level 1 cantrips and spell slots are on the spell sheet."
     - level: 3
       name: "Shared Vigilance"
-      description: "This feature will be implemented later."
+      description: "Expert Perception for you and your eidolon. Eidolons are not built yet: TBA"
     - level: 3
       name: "Signature Spells"
-      description: "This feature will be implemented later."
+      description: "Heighten chosen spells freely. Casting from a higher slot does not exist yet: TBA"
     - level: 5
       name: "Eidolon Unarmed Expertise"
-      description: "This feature will be implemented later."
+      description: "Better unarmed attacks for your eidolon. Eidolons are not built yet: TBA"
   # Class key-attribute boost is applied from keyAbility in code (PF2e).

@@ -125,3 +125,34 @@
     effectsNeedDamage: false
     onHit:
     - !type:CFOffGuardEffect
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActRechargingFlurry
+  name: Recharging Flurry
+  description: Strike with the weapon in each hand, then recharge Spellstrike. Costs 2 actions.
+  components:
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFStrikeAction
+    twoWeapons: true
+    rechargesSpellstrike: true
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActTauntingStrike
+  name: Taunting Strike
+  description: A melee Strike that Taunts the target, hit or miss.
+  components:
+  - type: CFStrikeAction
+    tauntsTarget: true
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActProudNail
+  name: Proud Nail
+  description: A melee Strike with one extra damage die, against a creature that ignored your Taunt.
+  components:
+  - type: CFStrikeAction
+    needsIgnoredTaunt: true
+    extraDice: 1

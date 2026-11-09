@@ -225,3 +225,44 @@
   targets: allies in your aura
   summary: Raise your shield. Allies in your aura have +1 status bonus to AC, and an enemy that attacks one takes 1d4 spirit damage.
   heightened: Damage increases by 1d4 per 2 ranks.
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFForceFang
+  name: Force Fang
+  description: Your attack becomes pure force and deals 1d4+1 force damage to a creature in reach. It recharges Spellstrike. Costs a Focus Point.
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: ForceFang
+    rank: 0
+    focus: true
+    conflux: true
+  - type: CFTargeting
+    rangeFeet: 5
+  - type: CFHeighten
+    baseRank: 1
+    interval: 2
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 4
+      flat: 1
+      damageType: Force
+      heightenDice: 1
+      heightenFlat: 1
+
+- type: cfSpell
+  id: ForceFang
+  name: Force Fang
+  rank: 1
+  traits: [Force, Manipulate]
+  actionCost: One
+  range: reach
+  targets: 1 creature
+  summary: Your attack becomes pure force and deals 1d4+1 force damage. It recharges Spellstrike.
+  heightened: Damage increases by 1d4+1 per 2 ranks.

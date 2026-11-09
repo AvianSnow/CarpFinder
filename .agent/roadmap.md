@@ -156,7 +156,23 @@ Witch familiars, Druid animal companions and Summoner eidolons all lean on `cfPe
 - [x] Heritages show `(TBA)` in the builder when they have no effect at all. One with part of its rules working keeps its name and says which part is `TBA` in its text. Tests: `CFHeritageTest`.
 - [ ] Mark unfinished class features too. A feat with `grants` is finished unless it sets `pendingAction`. One without goes by its placeholder text.
 - [ ] `CFFeatureCoverageTest`: fails if a finished class has a placeholder, and if a `grants` entry cannot be read.
-- [ ] Kineticist is not included, but one feat file for it exists. Remove it.
+- [x] Kineticist is not included, and its stray feat file is gone.
+
+### Systems Wave 5 is waiting on
+
+Do all of these before Wave 6. Smallest first, each landing working and tested.
+
+- [x] Recharging Spellstrike. `SpellstrikeSpent` on `CFCombatOptionsComponent`, recharged by its action or by a spell with `conflux: true`. Tests: `CFGuardianMagusTest`. Choosing which spell goes into the Strike, and counting as two attacks for Multiple Attack Penalty: not built. Each hybrid study's own conflux spell: not built.
+- [x] Taunt. `CFTauntSystem`, and Intercept Attack as the `InterceptsDamage` trigger. Tests: `CFGuardianMagusTest`. Taunts do not change who an NPC chooses to attack, and an area that also holds the taunter still counts as ignoring them. Intercept Attack does not move the Guardian.
+- [ ] Firearms
+- [ ] Implements
+- [ ] Psi amps
+- [ ] Tactics and the banner
+- [ ] Innovations
+- [ ] Thralls
+- [ ] Apparitions
+- [ ] Ikons
+- [ ] Runes
 
 ### Action HUD
 

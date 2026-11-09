@@ -1,0 +1,30 @@
+# Taunts. CFTauntSystem runs them.
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTaunt
+  name: Taunt
+  description: For 6 seconds, an enemy within 30 feet that attacks one of your allies and not you takes -1 to that attack and is off-guard.
+  components:
+  - type: TargetAction
+    range: 6.25
+  - type: CFTauntAction
+
+- type: entity
+  parent: CFActTaunt
+  id: CFActLongDistanceTaunt
+  name: Long-Distance Taunt
+  description: Taunt an enemy within 120 feet.
+  components:
+  - type: TargetAction
+    range: 24.25
+
+- type: entity
+  parent: CFActTaunt
+  id: CFActShieldingTaunt
+  name: Shielding Taunt
+  description: Raise your shield and Taunt an enemy within 30 feet.
+  components:
+  - type: CFNeedsShield
+  - type: CFTauntAction
+    raisesShield: true

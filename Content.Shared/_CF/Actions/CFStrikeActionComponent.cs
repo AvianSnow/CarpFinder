@@ -41,6 +41,18 @@ public sealed partial class CFStrikeActionComponent : Component
     [DataField]
     public int ExtraDice;
 
+    /// <summary>Taunts the target, hit or miss.</summary>
+    [DataField]
+    public bool TauntsTarget;
+
+    /// <summary>Only against a creature that has ignored the user's Taunt (Proud Nail).</summary>
+    [DataField]
+    public bool NeedsIgnoredTaunt;
+
+    /// <summary>Recharges the user's Spellstrike, hit or miss.</summary>
+    [DataField]
+    public bool RechargesSpellstrike;
+
     /// <summary>Added to the attack roll.</summary>
     [DataField]
     public int AttackBonus;

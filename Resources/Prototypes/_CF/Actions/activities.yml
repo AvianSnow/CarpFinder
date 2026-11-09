@@ -129,3 +129,26 @@
     group: Action
     actions: 1
     tab: Common
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActSpellstrikeRecharge
+  name: Recharge Spellstrike
+  description: Makes Spellstrike ready to use again. Costs 1 action.
+  components:
+  - type: CFActivity
+    kind: SpellstrikeRecharge
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActMagusAnalysis
+  name: Magus's Analysis
+  description: Recall Knowledge about a creature, and recharge Spellstrike. Costs 1 action.
+  components:
+  - type: TargetAction
+    range: 6.25
+  - type: CFRadialSlot
+    group: Free
+    actions: 0
+  - type: CFActivity
+    kind: MagusAnalysis

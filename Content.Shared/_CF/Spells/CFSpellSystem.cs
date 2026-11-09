@@ -1,3 +1,4 @@
+using Content.Shared.CF.Actions;
 using Content.Shared.Actions;
 using Content.Shared.Actions.Events;
 using Content.Shared.CF.Character;
@@ -15,6 +16,7 @@ namespace Content.Shared.CF.Spells;
 /// </summary>
 public sealed partial class CFSpellSystem : EntitySystem
 {
+    [Dependency] private CFActivitySystem _activities = default!;
     [Dependency] private INetManager _net = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
@@ -217,6 +219,9 @@ public sealed partial class CFSpellSystem : EntitySystem
             }
 
             pool.FocusSpent++;
+            if (spell.Conflux)
+                _activities.RechargeSpellstrike(caster);
+
             Dirty(caster, pool);
             return true;
         }

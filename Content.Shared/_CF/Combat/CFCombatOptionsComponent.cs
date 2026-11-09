@@ -171,6 +171,10 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public bool Spellstrike;
 
+    /// <summary>Spellstrike has been used and has to be recharged first.</summary>
+    [DataField, AutoNetworkedField]
+    public bool SpellstrikeSpent;
+
     [DataField, AutoNetworkedField]
     public bool Devise;
 

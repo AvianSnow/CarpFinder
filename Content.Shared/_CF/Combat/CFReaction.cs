@@ -31,6 +31,9 @@ public enum CFReactionTrigger : byte
 
     /// <summary>An enemy is about to damage an ally, and both are inside this creature's aura.</summary>
     AllyWouldBeDamaged,
+
+    /// <summary>An ally close by is about to take damage. This creature takes it instead.</summary>
+    InterceptsDamage,
 }
 
 /// <summary>
@@ -133,6 +136,18 @@ public sealed partial class CFReaction
     /// <summary>The ally rolls to Escape from a grab, for free.</summary>
     [DataField]
     public bool FreesAlly;
+
+    /// <summary>With <see cref="CFReactionTrigger.InterceptsDamage"/>, the damage types it covers. Empty means every type.</summary>
+    [DataField]
+    public List<string> DamageTypes = new();
+
+    /// <summary>With <see cref="CFReactionTrigger.InterceptsDamage"/>, how close the ally has to be.</summary>
+    [DataField]
+    public int RangeFeet = 10;
+
+    /// <summary>With <see cref="RangeFeet"/>, how close the ally has to be when the damage comes from this creature's taunted enemy.</summary>
+    [DataField]
+    public int TauntedRangeFeet = 15;
 
     /// <summary>Runs on the enemy that set this off.</summary>
     [DataField]
