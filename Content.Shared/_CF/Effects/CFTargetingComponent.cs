@@ -10,9 +10,13 @@ public sealed partial class CFTargetingComponent : Component
     [DataField]
     public CFDelivery Delivery = CFDelivery.Creature;
 
-    /// <summary>0 means touch or self: no range check.</summary>
+    /// <summary>0 means no range check, as for a spell on yourself.</summary>
     [DataField]
     public int RangeFeet;
+
+    /// <summary>Reaches the next tile in every direction, diagonals too. Reach Spell makes it 30 feet.</summary>
+    [DataField]
+    public bool Touch;
 
     /// <summary>Further creatures in range that are also hit, such as electric arc's second target.</summary>
     [DataField]

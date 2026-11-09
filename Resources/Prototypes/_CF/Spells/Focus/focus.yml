@@ -118,6 +118,7 @@
     focus: true
   - type: CFTargeting
     rangeFeet: 5
+    touch: true
     filter: All
   - type: CFHeighten
     baseRank: 1
@@ -146,6 +147,7 @@
     focus: true
   - type: CFTargeting
     rangeFeet: 5
+    touch: true
   - type: CFHeighten
     baseRank: 1
     interval: 1
@@ -243,6 +245,7 @@
     conflux: true
   - type: CFTargeting
     rangeFeet: 5
+    touch: true
   - type: CFHeighten
     baseRank: 1
     interval: 2

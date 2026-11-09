@@ -88,6 +88,16 @@ public sealed partial class CFEffectSystem : EntitySystem
         return PassesFilter(user, target, filter, selfAllowed: true);
     }
 
+    /// <summary>How far a source reaches, in feet. No limit when it has no range.</summary>
+    private float MaxFeet(EntityUid source, EntityUid user, CFTargetingComponent targeting)
+    {
+        var extra = _spellshapes.ExtraRangeFeet(source, user);
+        if (targeting.Touch)
+            return extra > 0 ? extra : TouchFeet;
+
+        return targeting.RangeFeet > 0 ? targeting.RangeFeet + extra : float.MaxValue;
+    }
+
     public bool InRange(EntityUid source, EntityUid user, EntityUid target)
     {
         if (!TryComp(source, out CFTargetingComponent? targeting))
@@ -99,7 +109,7 @@ public sealed partial class CFEffectSystem : EntitySystem
             return false;
 
         var feet = (from.Position - to.Position).Length() * CFAreaGrid.FeetPerTile;
-        if (targeting.RangeFeet > 0 && feet > targeting.RangeFeet + _spellshapes.ExtraRangeFeet(source, user) + 0.05f)
+        if (feet > MaxFeet(source, user, targeting) + 0.05f)
             return false;
 
         return !targeting.LineOfEffect
@@ -117,7 +127,7 @@ public sealed partial class CFEffectSystem : EntitySystem
             return false;
 
         var feet = (from.Position - point.Position).Length() * CFAreaGrid.FeetPerTile;
-        if (targeting.RangeFeet > 0 && feet > targeting.RangeFeet + _spellshapes.ExtraRangeFeet(source, user) + 0.05f)
+        if (feet > MaxFeet(source, user, targeting) + 0.05f)
             return false;
 
         return !targeting.LineOfEffect
@@ -283,6 +293,9 @@ public sealed partial class CFEffectSystem : EntitySystem
     #endregion
 
     #region Checks
+
+    /// <summary>The next tile over, measured to a creature standing diagonally from the user.</summary>
+    private const float TouchFeet = 7.5f;
 
     [Dependency] private CFAuraSystem _auras = default!;
     [Dependency] private CFTauntSystem _taunts = default!;

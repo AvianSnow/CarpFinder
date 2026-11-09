@@ -1,4 +1,4 @@
-﻿- type: entity
+- type: entity
   parent: CFSpellTarget
   id: CFResistEnergy
   name: Resist Energy
@@ -16,6 +16,7 @@
     rank: 2
   - type: CFTargeting
     rangeFeet: 5
+    touch: true
     filter: All
   - type: CFDegreeEffects
     landed:
