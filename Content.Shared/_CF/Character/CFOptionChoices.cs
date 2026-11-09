@@ -67,6 +67,12 @@ public static class CFOptionChoices
         if (choice.Kind == CFOptionChoiceKind.Language)
             return CFLanguageRules.Pickable(prototypes, null).Select(language => language.ID).ToList();
 
+        if (choice.Kind == CFOptionChoiceKind.KeyAttribute)
+            return choice.Abilities.Select(ability => ability.ToString()).ToList();
+
+        if (choice.Kind == CFOptionChoiceKind.SaveOrPerception)
+            return new List<string> { "Fortitude", "Reflex", "Will", "Perception" };
+
         if (choice.Kind == CFOptionChoiceKind.Skill)
         {
             return choice.Skills.Count > 0

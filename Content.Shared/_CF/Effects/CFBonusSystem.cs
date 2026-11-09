@@ -193,6 +193,20 @@ public sealed partial class CFBonusSystem : EntitySystem
         return best + worst;
     }
 
+    /// <summary>What bonuses that only count against certain traits add to a stat, against this creature.</summary>
+    public int AgainstSource(EntityUid uid, CFBonusStat stat, EntityUid source)
+    {
+        if (!TryComp(uid, out CFBonusesComponent? comp)
+            || comp.Bonuses.Count == 0
+            || !TryComp(source, out CFTraitComponent? traits)
+            || traits.Traits.Count == 0)
+        {
+            return 0;
+        }
+
+        return Total(comp.Bonuses, stat, traits: traits.Traits) - Total(comp.Bonuses, stat);
+    }
+
     /// <summary>
     /// The total modifier for a stat. Per type, the highest bonus and the worst penalty apply.
     /// Untyped values all stack. Weapon dice take the highest value.

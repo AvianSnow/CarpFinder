@@ -451,10 +451,12 @@ public sealed partial class CFEffectSystem : EntitySystem
             armorClass = defender.ArmorClass;
 
         armorClass += _conditions.ArmorClassModifier(target);
+        armorClass += _bonuses.AgainstSource(target, CFBonusStat.ArmorClass, user);
         armorClass -= check.TargetAcPenalty;
 
         attackBonus += check.AttackModifier;
         attackBonus += _bonuses.Total(user, CFBonusStat.AttackRoll);
+        attackBonus += _bonuses.AgainstSource(user, CFBonusStat.AttackRoll, target);
         attackBonus -= _conditions.Frightened(user);
         if (check.MultipleAttackPenalty)
         {
@@ -466,7 +468,14 @@ public sealed partial class CFEffectSystem : EntitySystem
         if (_bonuses.TryConsumeFortune(user))
             d20 = Math.Max(d20, _random.Next(1, 21));
 
-        return CFDegrees.DegreeOfSuccess(d20, attackBonus, armorClass);
+        return AttackDegree(user, target, d20, attackBonus, armorClass);
+    }
+
+    /// <summary>A rolled attack's result, after the target's reactions. A spell is not a projectile, so it counts as melee to them.</summary>
+    public CFDegree AttackDegree(EntityUid user, EntityUid target, int d20, int attackBonus, int armorClass)
+    {
+        var degree = CFDegrees.DegreeOfSuccess(d20, attackBonus, armorClass);
+        return _reactions.AnswerAttack(target, user, ranged: false, d20, attackBonus, ref armorClass, degree);
     }
 
     /// <summary>A source's traits: those on the entity, and for a spell those on its prototype.</summary>

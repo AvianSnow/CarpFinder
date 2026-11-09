@@ -10,6 +10,11 @@ cf-radial-cantrips = Cantrips
 cf-radial-rank = Rank { $rank }
 
 cf-long-rest = You settle in for a long rest. Your wounds close and your spells return.
+cf-long-rest-enemies = You cannot rest with enemies this close.
+cf-long-rest-cooldown = You are not ready to rest again. { $minutes ->
+    [one] 1 more minute.
+   *[other] { $minutes } more minutes.
+}
 
 cf-hud-defense-fortitude = FORT
 cf-hud-defense-reflex = Reflex

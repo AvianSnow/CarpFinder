@@ -96,6 +96,25 @@ public sealed class CFReactionTest : GameTest
     }
 
     [Test]
+    public async Task ASpellAttackCanBeDodgedButNotDeflected()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        CFDegree dodged = default, deflected = default;
+        await Server.WaitPost(() =>
+        {
+            var effects = SEntMan.System<CFEffectSystem>();
+            dodged = effects.AttackDegree(Spawn("CFReactionTestFoe"), Hero("CFNimbleDodge"), 10, 5, 15);
+            deflected = effects.AttackDegree(Spawn("CFReactionTestFoe"), Hero("CFDeflectProjectile"), 10, 5, 15);
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(dodged, Is.EqualTo(CFDegree.Failure), "A hit by 0 turns into a miss with +2 AC.");
+            Assert.That(deflected, Is.EqualTo(CFDegree.Success), "A spell is not a projectile.");
+        });
+    }
+
+    [Test]
     public async Task ADodgeFiresOnlyWhenItChangesTheResult()
     {
         _map = await CFDevMap.Load(Pair, Footprint);

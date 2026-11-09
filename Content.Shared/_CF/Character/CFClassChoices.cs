@@ -86,11 +86,32 @@ public static class CFClassChoices
     {
         foreach (var choice in Selected(prototypes, build))
         {
+            if (PickedKeyAbility(build, choice) is { } picked)
+                return picked;
+
             if (choice.KeyAbility is { } ability)
                 return ability;
         }
 
         return cls.KeyAbility;
+    }
+
+    /// <summary>The key attribute the player chose for this option, if it offers one and the answer is one it offers.</summary>
+    private static CFAbility? PickedKeyAbility(CFCharacterBuildData build, CFClassChoicePrototype choice)
+    {
+        foreach (var offer in choice.Choices)
+        {
+            if (offer.Kind != CFOptionChoiceKind.KeyAttribute)
+                continue;
+
+            foreach (var ability in offer.Abilities)
+            {
+                if (build.OptionPicks.Exists(pick => pick.Source == choice.ID && pick.Value == ability.ToString()))
+                    return ability;
+            }
+        }
+
+        return null;
     }
 
     /// <summary>Skills trained by the build's subclass picks and deity.</summary>

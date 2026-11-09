@@ -58,7 +58,9 @@
   - "Trained in Arcana"
   requiresSkill: Arcana
   requiresRank: Trained
-  pendingAction: true
+  grants:
+  - !type:CFGrantSpell
+    spell: DetectMagic
 
 - type: cfFeat
   id: CFArmorAssist
@@ -76,7 +78,8 @@
   description: cf-feat-armor-proficiency-desc
   category: General
   level: 1
-  pendingAction: true
+  grants:
+  - !type:CFGrantArmorProficiency
 
 - type: cfFeat
   id: CFArmoredStealth
@@ -221,7 +224,8 @@
   description: cf-feat-canny-acumen-desc
   category: General
   level: 1
-  pendingAction: true
+  choices:
+  - kind: SaveOrPerception
 
 - type: cfFeat
   id: CFCatFall
@@ -349,7 +353,9 @@
   description: cf-feat-diehard-desc
   category: General
   level: 1
-  pendingAction: true
+  grants:
+  - !type:CFGrantOption
+    option: Diehard
 
 - type: cfFeat
   id: CFDirtyTrick
@@ -523,7 +529,7 @@
   description: cf-feat-fleet-desc
   category: General
   level: 1
-  pendingAction: true
+  speedBonus: 5
 
 - type: cfFeat
   id: CFForager
@@ -607,7 +613,9 @@
   - "Trained in Athletics"
   requiresSkill: Athletics
   requiresRank: Trained
-  pendingAction: true
+  grants:
+  - !type:CFGrantOption
+    option: HeftyHauler
 
 - type: cfFeat
   id: CFHobnobber
@@ -1168,7 +1176,9 @@
   category: General
   level: 1
   action: Reaction
-  pendingAction: true
+  grants:
+  - !type:CFGrantOption
+    option: ShieldBlock
 
 - type: cfFeat
   id: CFSignLanguage
@@ -1190,7 +1200,8 @@
   level: 1
   prerequisites:
   - "Intelligence +1"
-  pendingAction: true
+  choices:
+  - kind: Skill
 
 - type: cfFeat
   id: CFSlipperyPrey
@@ -1365,7 +1376,11 @@
   description: cf-feat-toughness-desc
   category: General
   level: 1
-  pendingAction: true
+  grants:
+  - !type:CFGrantHitPoints
+    perLevel: 1
+  - !type:CFGrantOption
+    option: Toughness
 
 - type: cfFeat
   id: CFTrainAnimal
@@ -1507,4 +1522,7 @@
   description: cf-feat-weapon-proficiency-desc
   category: General
   level: 1
-  pendingAction: true
+  grants:
+  - !type:CFGrantProficiency
+    proficiencies: [ MartialWeapons ]
+    rank: Trained

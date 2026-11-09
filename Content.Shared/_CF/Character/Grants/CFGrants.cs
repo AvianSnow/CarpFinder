@@ -35,6 +35,44 @@ public sealed partial class CFGrantProficiency : CFGrant
     }
 }
 
+/// <summary>More Hit Points for every level so far, and at each level to come.</summary>
+public sealed partial class CFGrantHitPoints : CFGrant
+{
+    [DataField(required: true)]
+    public int PerLevel;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        var combat = entities.EnsureComponent<CFCombatantComponent>(args.Mob);
+        var gain = PerLevel * Math.Max(1, combat.Level);
+        combat.BonusHpPerLevel += PerLevel;
+        combat.MaxHp += gain;
+        combat.CurrentHp += gain;
+        entities.Dirty(args.Mob, combat);
+    }
+}
+
+/// <summary>Trained in the lightest armor the character is not yet trained in: light, then medium, then heavy.</summary>
+public sealed partial class CFGrantArmorProficiency : CFGrant
+{
+    private static readonly string[] Order = { "LightArmor", "MediumArmor", "HeavyArmor" };
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        var prototypes = IoCManager.Resolve<IPrototypeManager>();
+        var combat = entities.EnsureComponent<CFCombatantComponent>(args.Mob);
+        foreach (var armor in Order)
+        {
+            if (CFDefense.ArmorRank(prototypes, combat, armor) >= CFProficiencyRank.Trained)
+                continue;
+
+            entities.System<CFCharacterFeatureSystem>().RaiseProficiency(args.Mob, armor, CFProficiencyRank.Trained);
+            entities.System<CFArmorSystem>().RefreshArmorClass(args.Mob);
+            return;
+        }
+    }
+}
+
 /// <summary>A lasting bonus. It stacks by the usual rules, so a status bonus here does not add to a status spell.</summary>
 public sealed partial class CFGrantBonus : CFGrant
 {

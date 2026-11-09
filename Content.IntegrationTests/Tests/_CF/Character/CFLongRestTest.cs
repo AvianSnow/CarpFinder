@@ -6,6 +6,7 @@ using Content.Shared.Bed.Sleep;
 using Content.Shared.Buckle;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Combat;
+using Content.Shared.Mobs;
 using Content.Shared.Mobs.Systems;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Maths;
@@ -38,6 +39,20 @@ public sealed class CFLongRestTest : GameTest
     expended: [ 0, 2, 1 ]
     focusPoints: 1
     focusSpent: 1
+  - type: CFFaction
+    faction: Alpha
+
+- type: entity
+  parent: MobHuman
+  id: CFRestFoe
+  components:
+  - type: CFCombatant
+    level: 1
+    maxHp: 20
+    currentHp: 20
+  - type: CFAbilityScore
+  - type: CFFaction
+    faction: Monster
 ";
 
     private CFDevMap _map = default!;
@@ -74,6 +89,75 @@ public sealed class CFLongRestTest : GameTest
                 Assert.That(book.FocusSpent, Is.Zero);
                 Assert.That(SEntMan.HasComponent<SleepingComponent>(hero), "A rest does not wake them.");
             });
+        });
+    }
+
+    private EntityUid HeroInBed()
+    {
+        var hero = SEntMan.SpawnEntity("CFRestHero", _map.Local(0, 0));
+        var bed = SEntMan.SpawnEntity("CFWoodenBed", _map.Local(0, 0));
+        Assert.That(SEntMan.System<SharedBuckleSystem>().TryBuckle(hero, hero, bed));
+        return hero;
+    }
+
+    [Test]
+    public async Task AnEnemyCloseByStopsTheRestUntilItIsDead()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            var hero = HeroInBed();
+            var foe = SEntMan.SpawnEntity("CFRestFoe", _map.Local(1, 0));
+            var sleeping = SEntMan.System<SleepingSystem>();
+
+            Assert.That(sleeping.TrySleeping(hero), Is.False);
+            AssertTired(hero);
+            Assert.That(SEntMan.HasComponent<SleepingComponent>(hero), Is.False);
+
+            SEntMan.System<MobStateSystem>().ChangeMobState(foe, MobState.Dead);
+
+            Assert.That(sleeping.TrySleeping(hero));
+            Assert.That(SEntMan.GetComponent<CFCombatantComponent>(hero).CurrentHp, Is.EqualTo(20));
+        });
+    }
+
+    [Test]
+    public async Task AnEnemyDoesNotStopSleepingOnTheFloor()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            var hero = SEntMan.SpawnEntity("CFRestHero", _map.Local(0, 0));
+            SEntMan.SpawnEntity("CFRestFoe", _map.Local(1, 0));
+
+            Assert.That(SEntMan.System<SleepingSystem>().TrySleeping(hero));
+        });
+    }
+
+    [Test]
+    public async Task ARestHasToWaitForItsCooldown()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            var hero = HeroInBed();
+            var sleeping = SEntMan.System<SleepingSystem>();
+            var rest = SEntMan.System<CFLongRestSystem>();
+            var combat = SEntMan.GetComponent<CFCombatantComponent>(hero);
+
+            Assert.That(sleeping.TrySleeping(hero));
+            Assert.That(rest.MinutesLeft(hero), Is.EqualTo(15));
+
+            SEntMan.RemoveComponent<SleepingComponent>(hero);
+            combat.CurrentHp = 5;
+
+            Assert.That(sleeping.TrySleeping(hero), Is.False, "Too soon.");
+            Assert.That(combat.CurrentHp, Is.EqualTo(5));
+
+            SEntMan.GetComponent<CFRestCooldownComponent>(hero).ReadyAt = SGameTiming.CurTime;
+
+            Assert.That(sleeping.TrySleeping(hero));
+            Assert.That(combat.CurrentHp, Is.EqualTo(20));
         });
     }
 

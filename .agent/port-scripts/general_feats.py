@@ -20,6 +20,16 @@ ACTIONS = {'Single Action': 'Action', 'Two Actions': 'Action', 'Three Actions': 
 WORKING = {
     'Battle Medicine': ['  grants:', '  - !type:CFGrantOption', '    option: BattleMedicine'],
     'Multilingual': ['  choices:', '  - kind: Language', '    count: 2'],
+    'Arcane Sense': ['  grants:', '  - !type:CFGrantSpell', '    spell: DetectMagic'],
+    'Armor Proficiency': ['  grants:', '  - !type:CFGrantArmorProficiency'],
+    'Canny Acumen': ['  choices:', '  - kind: SaveOrPerception'],
+    'Diehard': ['  grants:', '  - !type:CFGrantOption', '    option: Diehard'],
+    'Fleet': ['  speedBonus: 5'],
+    'Hefty Hauler': ['  grants:', '  - !type:CFGrantOption', '    option: HeftyHauler'],
+    'Shield Block': ['  grants:', '  - !type:CFGrantOption', '    option: ShieldBlock'],
+    'Skill Training': ['  choices:', '  - kind: Skill'],
+    'Toughness': ['  grants:', '  - !type:CFGrantHitPoints', '    perLevel: 1', '  - !type:CFGrantOption', '    option: Toughness'],
+    'Weapon Proficiency': ['  grants:', '  - !type:CFGrantProficiency', '    proficiencies: [ MartialWeapons ]', '    rank: Trained'],
 }
 
 

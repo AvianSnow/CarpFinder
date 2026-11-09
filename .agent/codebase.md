@@ -131,7 +131,7 @@ Anything that targets, rolls, and applies effects is data on the source entity: 
 | Click a creature with a healer's toolkit | Treat Wounds: 12 seconds, 3 actions spread across it, and the patient is held until it ends or they Escape | `CFMedicineSystem` |
 | Use a healer's toolkit in hand, combat mode, feat | Battle Medicine on the nearest hurt ally (1 action) | `CFMedicineSystem` |
 | Aid verb on an ally | Aid (1 action) | `CFManeuverSystem.TryAid` |
-| Sleep action while buckled to a bed | Long rest: full hit points, spell slots and focus | `CFLongRestSystem` |
+| Sleep action while buckled to a bed | Long rest: full hit points, spell slots and focus. Refused with an enemy close by, and once per 15 minutes | `CFLongRestSystem` |
 | Speak verb on yourself | Choose which language you speak (free) | `CFLanguageSystem` |
 | Examine tab, information icon | Recall Knowledge (1 action) | `CFManeuverSystem.TryRecall` |
 | Alt+Z with a melee weapon, with panache | Confident Finisher at the enemy being aimed at (1 action) | `CFManeuverSystem.TryFinisher` |

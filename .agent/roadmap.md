@@ -62,7 +62,7 @@ Measured on 9 November 2026. `python3 .agent/port-scripts/feature_scan.py` print
 | Class features | 181 | No placeholders are left | The parts still missing say `TBA` |
 | Heritages | 149 | 67 | 82 |
 | Ancestries | 23 | Boosts, HP, Speed, size, darkvision, languages | Traits are labels |
-| General and skill feats | 131 | 2 | Pickable in the builder, marked `(TBA)`. Battle Medicine and Multilingual work (the scan only counts grants, so it says 1) |
+| General and skill feats | 131 | 12 | Pickable in the builder, marked `(TBA)` until they work. See 1e |
 | Backgrounds | 324 | Boosts, skills and the skill feat they name | 259 grant one, but few of those feats do anything yet (1e) |
 | Spells | 62 | 57 | Figment, Know the Way, Sigil, Animal Form, Dispel Magic are popups. Prestidigitation has its own system and works |
 | Focus spells | | The pipeline works (1f) | Filled class by class. Many hexes, compositions and domain spells are still `TBA` |
@@ -83,7 +83,8 @@ Built on 6 November 2026, except where marked. Tests: `CFGrantTest`. What change
 - [x] Permanent bonuses in `CFBonusSystem`, and bonuses that only count against a trait. This replaces `SavesVsFear`.
 - [x] A hook that lets a grant change a save's degree, matching `AdjustDefense`: `CFBonusSystem.UpgradeSave`, called from `CFConditionSystem.RollDefense`.
 - [x] Traits on `CFEffectArgs`, read from the source, so any check can ask what it is rolling against.
-- [ ] A bonus against a trait only counts on saves and Perception. Attacks and AC have no source traits to read.
+- [x] A bonus against a trait counts on saves, Perception, attacks and AC (`CFBonusSystem.AgainstSource`). Tests: `CFGeneralFeatTest`.
+- [ ] On attacks and AC it reads the creature's traits only, not those of the weapon or spell.
 - [x] The ids in `CFGrantProficiency` are checked by `CFFeatureCoverageTest`, so a typo fails a test.
 - [ ] Low-light vision is a dimmer darkvision overlay, chosen by eye and not seen in a real client.
 
@@ -126,7 +127,7 @@ Most action feats share one of a few shapes, so build the shape once. An action 
   - [ ] Triggers still needed: an ally being attacked without being damaged yet, a spell being cast (Counterspell), and a critical hit (Scars of Steel).
   - [ ] A response that moves the creature, for No Escape and Reactive Pursuit.
   - [ ] NPCs do not walk to avoid Reactive Strike. They always run.
-  - [ ] Spell attacks do not trigger `AttackWouldHit`. Only Strikes do.
+  - [x] Spell attacks trigger `AttackWouldHit`, as melee, so Deflect Projectile does not answer one. Reactive Shield still only answers Strikes. Tests: `CFReactionTest`.
   - [ ] Reactive Strike, Shield Block, Reactive Shield and You're Next are still hard-coded in `CFReactions`. Move them when their class wave comes.
 - [x] Auras. `CFAura` on a creature and `CFAuraEffect` entries, added with `!type:CFGrantAura`, run by `CFAuraSystem`. Built on 9 November 2026 for the Champion's aura, with Aura of Courage, Aura of Despair, Divine Health and Shields of the Spirit. Tests: `CFAuraTest`.
   - It looks up who is inside 4 times a second, through `CFEffectSystem.CollectArea`, only for creatures that have an aura. It is not a physics sensor: a 15-foot sensor would make the problems in `ss14rules.md` about the flanking sensor much worse, and would be a circle where emanations are tiles.
@@ -143,7 +144,7 @@ Built on 9 November 2026. `CFClassChoices` decides what counts as a valid pick. 
 - [x] `cfDeity`, for classes with `usesDeity` (Cleric and Champion). Deities are data on the character, not a religion system.
 - [x] Rogue's rackets, in `Class/Choices/rogue.yml`. The Thief is finished. The others give their skills, armor and key attribute, and the rest is marked `TBA`.
 - [ ] Deity content: our own gods, `TBA`. There are no `cfDeity` entries yet, so the builder shows a disabled `Deity: TBA` button for classes that follow one.
-- [ ] A racket always sets the key attribute. The rules say the player can choose it, so a Ruffian cannot keep Dexterity.
+- [x] A Ruffian, Scoundrel or Mastermind picks its key attribute with a `KeyAttribute` entry in `choices`, and keeps the racket's until it does. Not clicked in a real client. Tests: `CFGeneralFeatTest`.
 - [ ] Fill each class's choices in its wave.
 
 ### 1d. Level-up
@@ -163,7 +164,7 @@ All of this is picked in the lobby and stored on `CFCharacterBuildData`, the way
 
 `Feats/General/feats.yml` holds 131 feats through level 4 from Player Core, Player Core 2 and GM Core, with the site's one line summaries. `.agent/port-scripts/general_feats.py` rewrites that file from Archives of Nethys, so put fixes in the script. Of 74 feats backgrounds name, 65 match by name.
 
-- [ ] Grants for them, in the waves. Battle Medicine and Multilingual work so far. `general_feats.py` keeps those in `WORKING`.
+- [ ] Effects for the rest. 12 work so far: Battle Medicine, Multilingual, Arcane Sense, Armor Proficiency, Canny Acumen, Diehard, Fleet, Hefty Hauler, Shield Block, Skill Training, Toughness and Weapon Proficiency. `general_feats.py` keeps them in `WORKING`. Weapon Proficiency only gives martial weapons, not the advanced weapon a character already trained in martial would get. Toughness and Fleet do not show in the builder's preview. Tests: `CFGeneralFeatTest`.
 - [ ] Prerequisites beyond one skill rank are text, not enforced. 90 feats have a rank the game checks.
 - [ ] The 2 background feats with no match, from other books: Contract Negotiator and Ravening's Desperation.
 
@@ -252,7 +253,7 @@ Built on 6 November 2026. `Content.Shared/_CF/Languages`, and `CFSpeech` in `Con
 
 Built on 6 November 2026. `CFLongRestSystem`. Tests: `CFLongRestTest`.
 
-- [ ] A long rest has no limit. It takes no time, so a player can sleep in a bed mid-fight and be fully restored. PF2e allows one in 24 hours, after 8 hours.
+- [x] A long rest is refused with a living enemy within 50 feet and in the open, and has a cooldown of 15 real minutes per character. This replaces PF2e's 8 hours and once a day, on purpose, for pace. It only counts creatures whose `cfFaction` opposes the sleeper's. Tests: `CFLongRestTest`.
 - [ ] It restores hit points, wounded, spell slots and focus. Conditions, Battle Medicine immunity and other daily limits are left alone.
 
 ## Step 2: Finish the rebuild

@@ -445,6 +445,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
     /// </summary>
     private int StandingAttackBonus(
         EntityUid user,
+        EntityUid target,
         CFCombatantComponent combat,
         CFAbilityScoreComponent abilities,
         CFStrikeWeaponStats weapon,
@@ -459,7 +460,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
 
         // Item bonuses do not stack: weapon potency or a spell's item bonus, whichever is higher.
         var otherItem = _bonuses.TotalOfType(user, CFBonusStat.AttackRoll, CFBonusType.Item);
-        return bonus + _bonuses.Total(user, CFBonusStat.AttackRoll) - otherItem + Math.Max(otherItem, weapon.Potency);
+        return bonus + _bonuses.Total(user, CFBonusStat.AttackRoll) - otherItem + Math.Max(otherItem, weapon.Potency)
+               + _bonuses.AgainstSource(user, CFBonusStat.AttackRoll, target);
     }
 
     /// <summary>The AC this attacker has to beat right now.</summary>
@@ -481,7 +483,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
         else if (!isObject && IsOffGuardForStrike(user, target, melee, unseen))
             acPenalty = CFFlanking.OffGuardAcPenalty;
 
-        return defender.ArmorClass - acPenalty + _conditions.ArmorClassModifier(target) + OutwitBonus(user, target);
+        return defender.ArmorClass - acPenalty + _conditions.ArmorClassModifier(target) + OutwitBonus(user, target)
+               + _bonuses.AgainstSource(target, CFBonusStat.ArmorClass, user);
     }
 
     /// <summary>Whether this target is off-guard to this attacker, for a Strike made this way.</summary>
@@ -529,7 +532,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
             return false;
 
         preview = new CFStrikePreview(
-            StandingAttackBonus(user, combat, abilities, weapon, 0f, false),
+            StandingAttackBonus(user, target, combat, abilities, weapon, 0f, false),
             _actions.MapPenalty(user, weapon.Agile),
             ArmorClassAgainst(user, target, defender, melee: true, unseen: false, isObject: false, alreadyDown: false),
             weapon.DamageDice * (weapon.DamageDie + 1) / 2f
@@ -705,7 +708,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
         }
 
         var attackBonus = mapPenalty + attackPenalty + _conditions.TakeAid(user) + (isObject ? 0 : _taunts.NoteAttack(user, target))
-                          + StandingAttackBonus(user, attackerCombat, attackerAbilities, weapon, distanceFeet, ignoreVolley);
+                          + StandingAttackBonus(user, target, attackerCombat, attackerAbilities, weapon, distanceFeet, ignoreVolley);
 
         // Sweep: +1 circumstance when this turn's earlier attack went at a different creature.
         var attacksBefore = AttacksBefore(mapPenalty);

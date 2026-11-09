@@ -345,9 +345,22 @@ public sealed partial class CFDyingSystem : EntitySystem
 
     public bool IsDying(CFCombatantComponent combatant) => combatant.Dying > 0;
 
+    /// <summary>The dying value this creature dies at.</summary>
+    public int DeathValue(EntityUid uid)
+    {
+        return CFDyingTrackerComponent.DeathValue + (CompOrNull<CFCombatOptionsComponent>(uid)?.Diehard == true ? 1 : 0);
+    }
+
+    /// <summary>The DC of this creature's next recovery check.</summary>
+    public int RecoveryDc(EntityUid uid, CFCombatantComponent combatant)
+    {
+        return CFDyingTrackerComponent.BaseRecoveryDc + combatant.Dying
+               - (CompOrNull<CFCombatOptionsComponent>(uid)?.Toughness == true ? 1 : 0);
+    }
+
     private void AttemptRecoveryCheck(EntityUid uid, CFCombatantComponent combatant)
     {
-        var dc = CFDyingTrackerComponent.BaseRecoveryDc + combatant.Dying;
+        var dc = RecoveryDc(uid, combatant);
         var d20 = _random.Next(1, 21);
         var degree = CFDegrees.DegreeOfSuccess(d20, 0, dc);
 
@@ -388,7 +401,7 @@ public sealed partial class CFDyingSystem : EntitySystem
         combatant.Dying = Math.Max(0, value);
         Dirty(target, combatant);
 
-        if (combatant.Dying >= CFDyingTrackerComponent.DeathValue)
+        if (combatant.Dying >= DeathValue(target))
         {
             Die(target, combatant, origin);
             return;

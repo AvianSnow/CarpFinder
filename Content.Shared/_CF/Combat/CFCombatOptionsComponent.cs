@@ -176,6 +176,18 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public bool ShieldBlock;
 
+    /// <summary>Dies at dying 5 instead of 4.</summary>
+    [DataField, AutoNetworkedField]
+    public bool Diehard;
+
+    /// <summary>Bulk limits count as 2 higher.</summary>
+    [DataField, AutoNetworkedField]
+    public bool HeftyHauler;
+
+    /// <summary>Recovery checks are 1 easier.</summary>
+    [DataField, AutoNetworkedField]
+    public bool Toughness;
+
     [DataField, AutoNetworkedField]
     public bool Flurry;
 
@@ -343,6 +355,9 @@ public enum CFCombatOption : byte
     FreeStep,
     FreeStepWithShield,
     RagingThrower,
+    Diehard,
+    HeftyHauler,
+    Toughness,
     CrushingGrab,
     FinishingFollowThrough,
     StrategicStrike,

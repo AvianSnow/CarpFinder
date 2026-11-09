@@ -124,8 +124,10 @@ public sealed partial class CFEncumbranceSystem : EntitySystem
             _popup.PopupClient(Loc.GetString("cf-bulk-too-heavy"), uid, uid);
     }
 
-    private int Strength(EntityUid uid)
+    /// <summary>The Strength the Bulk limits are worked out from. Hefty Hauler raises both limits by the same 2.</summary>
+    public int Strength(EntityUid uid)
     {
-        return TryComp(uid, out CFAbilityScoreComponent? abilities) ? abilities.GetModifier(CFAbility.Strength) : 0;
+        var strength = TryComp(uid, out CFAbilityScoreComponent? abilities) ? abilities.GetModifier(CFAbility.Strength) : 0;
+        return CompOrNull<CFCombatOptionsComponent>(uid)?.HeftyHauler == true ? strength + 2 : strength;
     }
 }

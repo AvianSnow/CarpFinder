@@ -294,6 +294,8 @@ public sealed partial class HumanoidProfileEditor
                     CFOptionChoiceKind.Cantrip => "cf-character-builder-option-cantrip",
                     CFOptionChoiceKind.WeaponGroup => "cf-character-builder-option-weapon-group",
                     CFOptionChoiceKind.Language => "cf-character-builder-option-language",
+                    CFOptionChoiceKind.KeyAttribute => "cf-character-builder-option-key-attribute",
+                    CFOptionChoiceKind.SaveOrPerception => "cf-character-builder-option-save",
                     _ => "cf-character-builder-option-skill",
                 }),
                 Allowed = allowed,

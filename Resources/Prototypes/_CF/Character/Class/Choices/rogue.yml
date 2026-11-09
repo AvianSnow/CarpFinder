@@ -1,5 +1,5 @@
 # CarpFinder: Rogue's Racket, Player Core pages 166 and 167.
-# The rules let these rackets use their attribute as the key attribute. Here the racket always sets it.
+# A racket's attribute can be the key attribute instead of Dexterity. keyAbility is what it uses until the player picks.
 - type: cfClassChoice
   id: Mastermind
   class: Rogue
@@ -16,6 +16,8 @@
         - Nature
         - Occultism
         - Religion
+    - kind: KeyAttribute
+      abilities: [ Dexterity, Intelligence ]
 
 - type: cfClassChoice
   id: Ruffian
@@ -26,6 +28,9 @@
   keyAbility: Strength
   trainedSkills:
     - Intimidation
+  choices:
+    - kind: KeyAttribute
+      abilities: [ Dexterity, Strength ]
   grants:
     - !type:CFGrantProficiency
       proficiencies:
@@ -44,6 +49,9 @@
   trainedSkills:
     - Deception
     - Diplomacy
+  choices:
+    - kind: KeyAttribute
+      abilities: [ Dexterity, Charisma ]
 
 - type: cfClassChoice
   id: Thief

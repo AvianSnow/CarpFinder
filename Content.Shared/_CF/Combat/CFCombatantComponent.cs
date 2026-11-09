@@ -100,6 +100,10 @@ public sealed partial class CFCombatantComponent : Component
     [DataField, AutoNetworkedField]
     public List<string> TrainedSkills = new();
 
+    /// <summary>Extra Hit Points at each level, from Toughness and the like. Level-up adds this.</summary>
+    [DataField, AutoNetworkedField]
+    public int BonusHpPerLevel;
+
     /// <summary>Skills raised by a skill increase, once for each increase.</summary>
     [DataField, AutoNetworkedField]
     public List<string> SkillIncreases = new();

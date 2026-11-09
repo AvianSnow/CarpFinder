@@ -1,3 +1,4 @@
+using Content.Shared.CF.Preferences;
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared.CF.Character;
@@ -8,6 +9,12 @@ public enum CFOptionChoiceKind : byte
     Skill,
     WeaponGroup,
     Language,
+
+    /// <summary>One of <see cref="CFOptionChoice.Abilities"/>, as the class's key attribute.</summary>
+    KeyAttribute,
+
+    /// <summary>A saving throw or Perception, raised to expert.</summary>
+    SaveOrPerception,
 }
 
 /// <summary>
@@ -31,4 +38,8 @@ public sealed partial class CFOptionChoice
     /// <summary>A skill must be one of these. Empty means any.</summary>
     [DataField]
     public List<ProtoId<CFAbilitySkillPrototype>> Skills = new();
+
+    /// <summary>What a <see cref="CFOptionChoiceKind.KeyAttribute"/> choice can be answered with.</summary>
+    [DataField]
+    public List<CFAbility> Abilities = new();
 }

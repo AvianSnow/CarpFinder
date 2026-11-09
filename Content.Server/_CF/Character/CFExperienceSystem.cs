@@ -184,6 +184,8 @@ public sealed partial class CFExperienceSystem : EntitySystem
             gain = Math.Max(1, cls.HitPoints + con);
         }
 
+        gain += combat.BonusHpPerLevel;
+
         // Constitution counts for every level, so a rise pays back the earlier ones too.
         if (constitutionRaised)
             gain += combat.Level - 1;

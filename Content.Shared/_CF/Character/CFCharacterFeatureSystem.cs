@@ -2,6 +2,7 @@ using Content.Shared.Actions;
 using Content.Shared.CF.Character.Grants;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Languages;
+using Content.Shared.CF.Preferences;
 using Content.Shared.CF.Spells;
 using Content.Shared.CF.Traits;
 using Content.Shared.Overlays;
@@ -200,6 +201,16 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
                 continue;
             }
 
+            // Read when it is needed, by CFClassChoices.KeyAbility.
+            if (Enum.IsDefined(typeof(CFAbility), pick.Value))
+                continue;
+
+            if (pick.Value is "Fortitude" or "Reflex" or "Will" or "Perception")
+            {
+                RaiseProficiency(mob, pick.Value, CFProficiencyRank.Expert);
+                continue;
+            }
+
             if (_prototypes.HasIndex<CFLanguagePrototype>(pick.Value))
             {
                 var languages = EnsureComp<CFLanguagesComponent>(mob);
@@ -302,6 +313,15 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
                 break;
             case CFCombatOption.BattleMedicine:
                 options.BattleMedicine = true;
+                break;
+            case CFCombatOption.Diehard:
+                options.Diehard = true;
+                break;
+            case CFCombatOption.HeftyHauler:
+                options.HeftyHauler = true;
+                break;
+            case CFCombatOption.Toughness:
+                options.Toughness = true;
                 break;
             case CFCombatOption.ReactiveShield:
                 options.ReactiveShield = true;
