@@ -85,6 +85,8 @@
                     <Label Text="{Loc 'cf-sheet-proficiency-legend'}" StyleClasses="LabelSubText"/>
                     <Label Text="{Loc 'cf-sheet-speed'}" Margin="8 0 0 0" StyleClasses="LabelSubText"/>
                     <Label Name="SpeedLabel" Text="25 ft"/>
+                    <Label Text="{Loc 'cf-sheet-languages'}" Margin="8 0 0 0" StyleClasses="LabelSubText"/>
+                    <Label Name="LanguagesLabel" Text="—" HorizontalExpand="True" ClipText="True"/>
                 </BoxContainer>
             </PanelContainer>
 

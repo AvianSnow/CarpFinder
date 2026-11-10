@@ -10,6 +10,7 @@ cf-character-builder-languages-done = Languages ✓
 cf-character-builder-languages-help = You know your ancestry's languages. Each point of Intelligence adds one more. Each row is a different language.
 cf-character-builder-languages-none = You know your ancestry's languages. Raise Intelligence to learn more.
 cf-character-builder-language-slot = Language {$index}
+cf-character-builder-language-slot-level-5 = Language (level 5, from Intelligence)
 
 cf-character-builder-skill-feat = Skill Feat
 cf-character-builder-general-feat = General Feat

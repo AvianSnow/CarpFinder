@@ -247,9 +247,9 @@ Built on 9 November 2026, between Waves 3 and 4. How it works is under "Game HUD
 Built on 6 November 2026. `Content.Shared/_CF/Languages`, and `CFSpeech` in `Content.Server/_CF/Languages/ChatSystem.CF.cs`. Tests: `CFLanguageTest`. The builder button and the Speak verb have not been used in a real client.
 
 - [ ] Radio is not translated. `EntitySpokeEvent` still carries the real words, so a radio or anything else listening to it hears them.
-- [ ] Show known languages on the character sheet.
+- [x] Known languages are on the character sheet, beside Speed. Not seen in a real client.
 - [x] Multilingual and Nomadic Halfling teach languages through a `Language` entry in `choices`, so the player picks. Only common languages are offered. `CFGrantLanguage` was not needed. Tests: `CFLevelChoicesTest`.
-- [ ] Recount the extra languages when Intelligence rises at level 5.
+- [x] A level 5 boost that raises Intelligence teaches one more language. The builder adds a slot for it, and `LevelUp` hands it over at level 5 (`xp.LanguageLevel5`). Tests: `CFLanguageTest`.
 - [ ] Give monsters that talk a `CFLanguages`. Without one, a creature speaks plainly and understands everything.
 - [ ] Every monster can now be played, so a player in a rat or a skeleton talks in plain words. Animals and mindless undead need a way to make noise only.
 - [ ] Languages from a heritage or a background.

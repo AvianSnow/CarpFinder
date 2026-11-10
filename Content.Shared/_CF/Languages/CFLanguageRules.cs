@@ -67,6 +67,31 @@ public static class CFLanguageRules
         return known;
     }
 
+    /// <summary>Whether the level 5 boosts raise Intelligence, which teaches one more language.</summary>
+    public static bool LevelFiveLanguage(IReadOnlyDictionary<CFAbility, int> modifiers, IEnumerable<CFAbility> levelFiveBoosts)
+    {
+        var mods = new Dictionary<CFAbility, int>(modifiers);
+        return levelFiveBoosts.Contains(CFAbility.Intelligence) && CFAttributeMath.TryLevelBoost(mods, CFAbility.Intelligence);
+    }
+
+    /// <summary>The language that level 5's extra one is: the first valid pick past those <see cref="Known"/> took.</summary>
+    public static ProtoId<CFLanguagePrototype>? LevelFivePick(
+        IPrototypeManager prototypes,
+        CFAncestryPrototype? ancestry,
+        IReadOnlyList<ProtoId<CFLanguagePrototype>> picks,
+        IReadOnlyDictionary<CFAbility, int> modifiers)
+    {
+        var known = Known(prototypes, ancestry, picks, modifiers);
+        var allowed = Pickable(prototypes, ancestry);
+        foreach (var pick in picks)
+        {
+            if (!known.Contains(pick) && allowed.Any(language => language.ID == pick.Id))
+                return pick;
+        }
+
+        return null;
+    }
+
     /// <summary>
     /// What a line sounds like without the language. A word always turns into the same nonsense, so a listener can start
     /// to recognise words, and punctuation stays so a shouted question still sounds like one.

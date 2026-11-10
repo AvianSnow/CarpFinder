@@ -1538,7 +1538,8 @@ public sealed partial class HumanoidProfileEditor
         _skillMode = SkillAssignMode.Language;
         var build = CurrentBuild();
         var sheet = CFAttributeMath.Snapshot(_prototypeManager, Profile);
-        var count = CFLanguageRules.PickCount(sheet.Modifiers);
+        var atFirst = CFLanguageRules.PickCount(sheet.Modifiers);
+        var count = LanguageSlots(build);
         var title = Loc.GetString("cf-character-builder-languages");
         if (count == 0)
         {
@@ -1560,7 +1561,9 @@ public sealed partial class HumanoidProfileEditor
             slots.Add(new SkillSlotDefinition
             {
                 Id = $"language-{i}",
-                Label = Loc.GetString("cf-character-builder-language-slot", ("index", i + 1)),
+                Label = i < atFirst
+                    ? Loc.GetString("cf-character-builder-language-slot", ("index", i + 1))
+                    : Loc.GetString("cf-character-builder-language-slot-level-5"),
                 Allowed = allowed,
                 Labels = labels,
                 Selected = selected,
@@ -1611,8 +1614,18 @@ public sealed partial class HumanoidProfileEditor
 
     private bool IsLanguagesComplete(CFCharacterBuildData build)
     {
-        return Profile != null
-               && build.Languages.Count >= CFLanguageRules.PickCount(CFAttributeMath.Snapshot(_prototypeManager, Profile).Modifiers);
+        return Profile != null && build.Languages.Count >= LanguageSlots(build);
+    }
+
+    /// <summary>One per point of Intelligence, and one more if a level 5 boost raises it.</summary>
+    private int LanguageSlots(CFCharacterBuildData build)
+    {
+        if (Profile == null)
+            return 0;
+
+        var modifiers = CFAttributeMath.Snapshot(_prototypeManager, Profile.WithCFBuild(build)).Modifiers;
+        return CFLanguageRules.PickCount(modifiers)
+               + (CFLanguageRules.LevelFiveLanguage(modifiers, build.AbilityBoostsLevel5) ? 1 : 0);
     }
 
     private void ShowClassSkill()

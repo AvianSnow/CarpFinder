@@ -225,6 +225,9 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         ApplyAncestry(mob, sheet.Ancestry, heritage, speedBonus);
         var languages = EnsureComp<CFLanguagesComponent>(mob);
         languages.Known = CFLanguageRules.Known(_prototypes, sheet.Ancestry, profile.CFBuild.Languages, sheet.Modifiers);
+        xp.LanguageLevel5 = CFLanguageRules.LevelFiveLanguage(sheet.Modifiers, xp.AbilityBoostsLevel5)
+            ? CFLanguageRules.LevelFivePick(_prototypes, sheet.Ancestry, profile.CFBuild.Languages, sheet.Modifiers)?.Id
+            : null;
         Dirty(mob, languages);
         _actionPool.Ensure(mob);
         ApplySpellbook(mob, profile, sheet.Class);

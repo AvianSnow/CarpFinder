@@ -47,6 +47,10 @@ public sealed partial class CFExperienceComponent : Component
     [DataField, AutoNetworkedField]
     public string? SkillIncreaseLevel5;
 
+    /// <summary>The language a level 5 Intelligence boost teaches, already checked at spawn.</summary>
+    [DataField]
+    public string? LanguageLevel5;
+
     /// <summary>Skill feats a class gives on top of the usual ones, by level. Level 1's is applied at spawn.</summary>
     [DataField]
     public Dictionary<int, string> BonusSkillFeats = new();

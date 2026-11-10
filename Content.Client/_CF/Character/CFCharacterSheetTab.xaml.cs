@@ -4,6 +4,7 @@ using Content.Client.Chat.Managers;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Combat;
+using Content.Shared.CF.Languages;
 using Content.Shared.CF.Preferences;
 using Content.Shared.Chat;
 using Content.Shared.Humanoid;
@@ -94,6 +95,10 @@ public sealed partial class CFCharacterSheetTab : BoxContainer
             ? Loc.GetString("cf-combat-off-guard-name")
             : "—";
         SpeedLabel.Text = Loc.GetString("cf-sheet-speed-value", ("feet", ancestry?.Speed ?? 25));
+        LanguagesLabel.Text = _entities.TryGetComponent(entity, out CFLanguagesComponent? languages) && languages.Known.Count > 0
+            ? string.Join(", ", languages.Known.Select(id => _prototypes.TryIndex(id, out var language) ? Loc.GetString(language.Name) : id.Id))
+            : "—";
+        LanguagesLabel.ToolTip = LanguagesLabel.Text;
 
         if (ancestry is { Traits.Count: > 0 })
         {

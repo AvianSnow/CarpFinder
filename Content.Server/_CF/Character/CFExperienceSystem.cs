@@ -1,4 +1,5 @@
 using Content.Server.CF.Companions;
+using Content.Shared.CF.Languages;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Factions;
@@ -237,10 +238,25 @@ public sealed partial class CFExperienceSystem : EntitySystem
             return false;
 
         var constitutionRaised = false;
+        var intelligenceRaised = false;
         foreach (var ability in xp.AbilityBoostsLevel5)
         {
-            if (CFAttributeMath.TryLevelBoost(abilities.AbilityModifiers, ability) && ability == CFAbility.Constitution)
-                constitutionRaised = true;
+            if (!CFAttributeMath.TryLevelBoost(abilities.AbilityModifiers, ability))
+                continue;
+
+            constitutionRaised |= ability == CFAbility.Constitution;
+            intelligenceRaised |= ability == CFAbility.Intelligence;
+        }
+
+        // Each point of Intelligence is a language, so a higher modifier teaches one more.
+        if (intelligenceRaised && xp.LanguageLevel5 is { } language)
+        {
+            var languages = EnsureComp<CFLanguagesComponent>(mob);
+            if (!languages.Known.Contains(language))
+            {
+                languages.Known.Add(language);
+                Dirty(mob, languages);
+            }
         }
 
         Dirty(mob, abilities);

@@ -4,7 +4,10 @@ using Content.Client.UserInterface.Systems.Chat;
 using Content.IntegrationTests.Fixtures;
 using Content.IntegrationTests.Tests.CF;
 using Content.Server.Chat.Systems;
+using Content.Server.CF.Character;
 using Content.Shared.CF.Character;
+using Content.Shared.CF.Combat;
+using Content.Shared.Preferences;
 using Content.Shared.CF.Languages;
 using Content.Shared.CF.Preferences;
 using Content.Shared.Chat;
@@ -118,6 +121,50 @@ public sealed class CFLanguageTest : GameTest
             var human = prototypes.EnumeratePrototypes<CFAncestryPrototype>().First(a => a.ID == "Human");
             var known = CFLanguageRules.Known(prototypes, human, Picks("Androffan", "NoSuchLanguage"), Intelligence(4));
             Assert.That(known, Is.EquivalentTo(human.Languages));
+        });
+    }
+
+    [Test]
+    public async Task ALevelFiveIntelligenceBoostTeachesTheNextPick()
+    {
+        await Server.WaitAssertion(() =>
+        {
+            var prototypes = Server.ProtoMan;
+            var human = prototypes.EnumeratePrototypes<CFAncestryPrototype>().First(a => a.ID == "Human");
+            var picks = Picks("Goblin", "Dwarven");
+            var boosts = new[] { CFAbility.Intelligence, CFAbility.Strength };
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(CFLanguageRules.LevelFiveLanguage(Intelligence(1), boosts));
+                Assert.That(CFLanguageRules.LevelFiveLanguage(Intelligence(4), boosts), Is.False, "At +4 a boost changes nothing.");
+                Assert.That(CFLanguageRules.LevelFiveLanguage(Intelligence(1), new[] { CFAbility.Strength }), Is.False);
+                Assert.That(CFLanguageRules.LevelFivePick(prototypes, human, picks, Intelligence(1))?.Id, Is.EqualTo("Dwarven"));
+            });
+        });
+    }
+
+    [Test]
+    public async Task ItIsLearnedAtLevelFive()
+    {
+        var map = await CFDevMap.Load(Pair, new Box2i(-1, -1, 2, 2));
+        await Server.WaitAssertion(() =>
+        {
+            var hero = SEntMan.SpawnEntity("MobHuman", map.Local(0, 0));
+            var build = new CFCharacterBuildData();
+            build.Languages.AddRange(Picks("Goblin", "Dwarven"));
+            build.AbilityBoostsLevel5.AddRange(new[] { CFAbility.Intelligence, CFAbility.Strength, CFAbility.Dexterity, CFAbility.Wisdom });
+            build.AncestryFreeBoosts.Add(CFAbility.Intelligence);
+            SEntMan.System<CFCharacterSpawnSystem>().ApplyBuild(hero, HumanoidCharacterProfile.DefaultWithSpecies().WithCFBuild(build));
+
+            var known = SEntMan.GetComponent<CFLanguagesComponent>(hero).Known;
+            var xp = SEntMan.GetComponent<CFExperienceComponent>(hero);
+            Assume.That(SEntMan.GetComponent<CFAbilityScoreComponent>(hero).GetModifier(CFAbility.Intelligence), Is.EqualTo(1));
+            Assert.That(known, Does.Not.Contain(new ProtoId<CFLanguagePrototype>("Dwarven")));
+            Assert.That(xp.LanguageLevel5, Is.EqualTo("Dwarven"));
+
+            SEntMan.System<CFExperienceSystem>().AddXp(hero, 4 * CFExperienceComponent.XpPerLevel);
+            Assert.That(known, Does.Contain(new ProtoId<CFLanguagePrototype>("Dwarven")));
         });
     }
 
