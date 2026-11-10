@@ -10,3 +10,5 @@
     - "Goblin"
   prerequisites:
     - "Phantom Visage"
+  requiresFeats:
+    - CFPhantomVisage

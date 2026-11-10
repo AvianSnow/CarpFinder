@@ -10,6 +10,8 @@
     - "Kobold"
   prerequisites:
     - "dragonscaled kobold heritage"
+  requiresHeritage:
+    - DragonscaledKobold
   trainedSkills:
     - Lore
     - Intimidation

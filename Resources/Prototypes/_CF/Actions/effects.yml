@@ -255,3 +255,34 @@
       die: 6
       damageType: Fire
       diceFromLevel: true
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActTwinParry
+  name: Twin Parry
+  description: With a melee weapon in each hand, +1 circumstance bonus to AC for 6 seconds.
+  components:
+  - type: CFEffectAction
+    needsWeaponInEachHand: true
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFBonusEffect
+      stat: ArmorClass
+      type: Circumstance
+      value: 1
+      durationSeconds: 6
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActRaiseSymbol
+  name: Raise Symbol
+  description: +2 circumstance bonus to saving throws for 6 seconds.
+  components:
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFBonusEffect
+      stat: Saves
+      type: Circumstance
+      value: 2
+      durationSeconds: 6

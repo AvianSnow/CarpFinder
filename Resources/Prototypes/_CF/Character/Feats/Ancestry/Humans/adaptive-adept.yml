@@ -11,3 +11,5 @@
   prerequisites:
     - "Adapted Cantrip"
     - "can cast 3rd rank spells"
+  requiresFeats:
+    - CFAdaptedCantrip

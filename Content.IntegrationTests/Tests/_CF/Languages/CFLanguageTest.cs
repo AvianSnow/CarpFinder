@@ -145,6 +145,29 @@ public sealed class CFLanguageTest : GameTest
     }
 
     [Test]
+    public async Task AnimalsGrowlUndeadMoanAndKoboldsKeepTheirOwnTongue()
+    {
+        var map = await CFDevMap.Load(Pair, new Box2i(-1, -1, 2, 2));
+        await Server.WaitAssertion(() =>
+        {
+            var languages = SEntMan.System<CFLanguageSystem>();
+            var boar = SEntMan.SpawnEntity("CFMobBoar", map.Local(0, 0));
+            var skeleton = SEntMan.SpawnEntity("CFMobSkeletonguardMelee", map.Local(0, 0));
+            var kobold = SEntMan.SpawnEntity("CFKoboldWarrior", map.Local(0, 0));
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(languages.TryGetSpoken(boar, out var growl) && growl.ID == "Bestial");
+                Assert.That(languages.TryGetSpoken(skeleton, out var moan) && moan.ID == "Mindless");
+                Assert.That(languages.Understands(kobold, "Draconic"));
+                Assert.That(languages.Understands(kobold, "Common"), Is.False, "Talk to it in Draconic or Sakvroth.");
+                Assert.That(languages.Understands(boar, "Common"), Is.False);
+                Assert.That(CFLanguageRules.Pickable(Server.ProtoMan, null).Any(l => l.ID is "Bestial" or "Mindless"), Is.False);
+            });
+        });
+    }
+
+    [Test]
     public async Task ItIsLearnedAtLevelFive()
     {
         var map = await CFDevMap.Load(Pair, new Box2i(-1, -1, 2, 2));

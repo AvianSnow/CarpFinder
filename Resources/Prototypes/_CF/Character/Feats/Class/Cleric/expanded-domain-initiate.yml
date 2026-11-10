@@ -10,3 +10,5 @@
     - "Cleric"
   prerequisites:
     - "Domain Initiate"
+  requiresFeats:
+    - CFDomainInitiate

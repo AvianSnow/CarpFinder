@@ -182,11 +182,11 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         combatant.TrainedSkills = CFSkills.CollectTrainedSkills(_prototypes, checkedBuild, ancestryId, classId, 1);
         var xp = EnsureComp<CFExperienceComponent>(mob);
         xp.Xp = 0;
-        xp.AncestryFeat = IdOf(profile.CFBuild.AncestryFeat);
-        xp.ClassFeat = IdOf(profile.CFBuild.ClassFeat);
-        xp.ClassFeatLevel2 = ChoiceFeat(profile.CFBuild, profile.CFBuild.ClassFeatLevel2);
-        xp.ClassFeatLevel4 = ChoiceFeat(profile.CFBuild, profile.CFBuild.ClassFeatLevel4);
-        xp.AncestryFeatLevel5 = IdOf(profile.CFBuild.AncestryFeatLevel5);
+        xp.AncestryFeat = IdOf(checkedBuild.AncestryFeat);
+        xp.ClassFeat = IdOf(checkedBuild.ClassFeat);
+        xp.ClassFeatLevel2 = ChoiceFeat(checkedBuild, checkedBuild.ClassFeatLevel2);
+        xp.ClassFeatLevel4 = ChoiceFeat(checkedBuild, checkedBuild.ClassFeatLevel4);
+        xp.AncestryFeatLevel5 = IdOf(checkedBuild.AncestryFeatLevel5);
         xp.SkillFeatLevel2 = QualifiedFeat(checkedBuild, ancestryId, checkedBuild.SkillFeatLevel2, 2, skillSlot: true);
         xp.GeneralFeatLevel3 = QualifiedFeat(checkedBuild, ancestryId, checkedBuild.GeneralFeatLevel3, 3, skillSlot: false);
         xp.SkillFeatLevel4 = QualifiedFeat(checkedBuild, ancestryId, checkedBuild.SkillFeatLevel4, 4, skillSlot: true);

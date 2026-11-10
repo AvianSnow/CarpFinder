@@ -1,5 +1,6 @@
 using System.Linq;
 using Content.Shared.CF.Preferences;
+using Content.Shared.Humanoid.Prototypes;
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared.CF.Character;
@@ -159,8 +160,54 @@ public static class CFSkills
         CFFeatPrototype feat,
         int level)
     {
-        return feat.RequiresSkill is not { } skill
-               || BuildRank(prototypes, build, ancestryId, skill.Id, level) >= feat.RequiresRank;
+        return (feat.RequiresSkill is not { } skill
+                || BuildRank(prototypes, build, ancestryId, skill.Id, level) >= feat.RequiresRank)
+               && MeetsPrerequisites(prototypes, build, ancestryId, feat, level);
+    }
+
+    /// <summary>
+    /// The prerequisites written as data: another feat, an attribute, a heritage. Skill ranks are <see cref="Qualifies"/>
+    /// and subclass picks <see cref="CFClassChoices.MeetsRequirement"/>. Anything else is text only.
+    /// </summary>
+    public static bool MeetsPrerequisites(
+        IPrototypeManager prototypes,
+        CFCharacterBuildData build,
+        string? ancestryId,
+        CFFeatPrototype feat,
+        int level)
+    {
+        if (feat.RequiresHeritage.Count > 0 && (build.Heritage is not { } heritage || !feat.RequiresHeritage.Contains(heritage)))
+            return false;
+
+        if (feat.RequiresFeats.Count > 0)
+        {
+            var had = SelectedFeats(prototypes, build, ancestryId, build.Class?.Id, level);
+            if (!had.Exists(other => other.ID != feat.ID && feat.RequiresFeats.Contains(other.ID)))
+                return false;
+        }
+
+        if (feat.RequiresAbility.Count > 0)
+        {
+            var species = ancestryId != null && prototypes.TryIndex<CFAncestryPrototype>(ancestryId, out var ancestry)
+                ? ancestry.Species
+                : new ProtoId<SpeciesPrototype>("Human");
+            var modifiers = CFAttributeMath.ComputeModifiers(prototypes, species, build);
+            if (level >= 5)
+            {
+                foreach (var boost in build.AbilityBoostsLevel5.Distinct().Take(CFAttributeMath.LevelFiveBoostCount))
+                {
+                    CFAttributeMath.TryLevelBoost(modifiers, boost);
+                }
+            }
+
+            foreach (var (ability, least) in feat.RequiresAbility)
+            {
+                if (modifiers.GetValueOrDefault(ability) < least)
+                    return false;
+            }
+        }
+
+        return true;
     }
 
     public static List<CFFeatPrototype> SelectedFeats(
@@ -269,6 +316,38 @@ public static class CFSkills
             if (Bad(build.SkillFeatLevel4?.Id, 4))
             {
                 build.SkillFeatLevel4 = null;
+                again = true;
+            }
+
+            // Class and ancestry feats fit their slots by class and ancestry, which the builder checks. Here it is only
+            // their prerequisites, which a change elsewhere can take away.
+            if (Bad(build.AncestryFeat?.Id, 1))
+            {
+                build.AncestryFeat = null;
+                again = true;
+            }
+
+            if (Bad(build.ClassFeat?.Id, 1))
+            {
+                build.ClassFeat = null;
+                again = true;
+            }
+
+            if (Bad(build.ClassFeatLevel2?.Id, 2))
+            {
+                build.ClassFeatLevel2 = null;
+                again = true;
+            }
+
+            if (Bad(build.ClassFeatLevel4?.Id, 4))
+            {
+                build.ClassFeatLevel4 = null;
+                again = true;
+            }
+
+            if (Bad(build.AncestryFeatLevel5?.Id, 5))
+            {
+                build.AncestryFeatLevel5 = null;
                 again = true;
             }
 

@@ -11,3 +11,5 @@
   prerequisites:
     - "Faithful Steed"
     - "trained in Survival"
+  requiresFeats:
+    - CFFaithfulSteed

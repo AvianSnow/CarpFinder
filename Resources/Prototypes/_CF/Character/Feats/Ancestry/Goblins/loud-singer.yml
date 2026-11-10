@@ -10,3 +10,5 @@
     - "Goblin"
   prerequisites:
     - "Goblin Song"
+  requiresFeats:
+    - CFGoblinSong

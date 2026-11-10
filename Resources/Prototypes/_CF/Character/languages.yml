@@ -114,3 +114,17 @@
   name: cf-language-androffan
   rarity: Rare
   syllables: [ 01, zet, kron, ax, ohm, vek, tri, dyn, ix, nul ]
+
+# Noises, not languages. Animals and mindless undead "speak" these, so a player in one of their bodies cannot talk.
+# They are rare, so no one can pick them, and nobody else understands them.
+- type: language
+  id: Bestial
+  name: cf-language-bestial
+  rarity: Rare
+  syllables: [ grr, rawr, hss, snrf, yip, rrah, chuff, skree, huff, grah ]
+
+- type: language
+  id: Mindless
+  name: cf-language-mindless
+  rarity: Rare
+  syllables: [ uhh, nnh, hhrr, ghh, aah, mmh, rrh, hhn ]

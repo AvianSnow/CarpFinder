@@ -10,5 +10,7 @@
     - "Ratfolk"
   prerequisites:
     - "Cheek Pouches"
+  requiresFeats:
+    - CFCheekPouches
   action: Free
   pendingAction: true

@@ -14,5 +14,7 @@
     - "Runesmith"
   prerequisites:
     - "Rune-Singer"
+  requiresFeats:
+    - CFRuneSinger
   action: Action
   pendingAction: true

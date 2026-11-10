@@ -30,6 +30,9 @@
     - SimpleHostile
   - type: CFFaction
     faction: Monster
+  # Mindless undead moan.
+  - type: CFLanguages
+    known: [ Mindless ]
   - type: MovementSpeedModifier
     baseWalkSpeed: 2.5
     baseSprintSpeed: 4.5

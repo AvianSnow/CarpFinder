@@ -1,4 +1,5 @@
 using Content.Shared.CF.Character.Grants;
+using Content.Shared.CF.Preferences;
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared.CF.Character;
@@ -108,6 +109,18 @@ public sealed partial class CFFeatPrototype : IPrototype
 
     [DataField]
     public CFProficiencyRank RequiresRank = CFProficiencyRank.Trained;
+
+    /// <summary>A feat the character must already have. Any one of these is enough. Written by <c>prerequisites.py</c>.</summary>
+    [DataField]
+    public List<ProtoId<CFFeatPrototype>> RequiresFeats = new();
+
+    /// <summary>Attribute modifiers the character needs, such as Strength 2.</summary>
+    [DataField]
+    public Dictionary<CFAbility, int> RequiresAbility = new();
+
+    /// <summary>The character needs one of these heritages.</summary>
+    [DataField]
+    public List<ProtoId<CFHeritagePrototype>> RequiresHeritage = new();
 
     /// <summary>A skill feat slot takes skill feats only.</summary>
     public bool FitsSkillSlot(int level)

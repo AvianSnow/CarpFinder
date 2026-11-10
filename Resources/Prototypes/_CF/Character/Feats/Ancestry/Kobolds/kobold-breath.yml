@@ -11,5 +11,7 @@
     - "Magical"
   prerequisites:
     - "dragonscaled kobold heritage"
+  requiresHeritage:
+    - DragonscaledKobold
   action: Action
   pendingAction: true

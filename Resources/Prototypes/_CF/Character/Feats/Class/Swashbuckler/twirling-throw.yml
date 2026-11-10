@@ -11,5 +11,7 @@
     - "Swashbuckler"
   prerequisites:
     - "Flying Blade"
+  requiresFeats:
+    - CFFlyingBlade
   action: Action
   pendingAction: true

@@ -10,3 +10,5 @@
     - "Runesmith"
   prerequisites:
     - "Glyph Familiar"
+  requiresFeats:
+    - CFGlyphFamiliar

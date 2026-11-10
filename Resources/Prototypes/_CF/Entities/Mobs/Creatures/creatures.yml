@@ -35,6 +35,9 @@
         - SimpleHostile
     - type: CFFaction
       faction: Monster
+    # Animals make noises. A player in one cannot talk, and does not understand speech.
+    - type: CFLanguages
+      known: [ Bestial ]
     - type: Appearance
     - type: MeleeWeapon
       angle: 0
@@ -421,6 +424,8 @@
   name: sewer ooze
   description: A heaving pile of filth that creeps toward anything that moves.
   components:
+    - type: CFLanguages
+      known: [ Mindless ]
     - type: GhostRole
       name: cf-ghost-sewer-ooze-name
       description: cf-ghost-sewer-ooze-desc

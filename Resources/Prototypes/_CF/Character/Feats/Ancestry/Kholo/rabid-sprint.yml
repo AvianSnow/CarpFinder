@@ -11,5 +11,7 @@
     - "Kholo"
   prerequisites:
     - "dog kholo heritage"
+  requiresHeritage:
+    - DogKholo
   action: Action
   pendingAction: true

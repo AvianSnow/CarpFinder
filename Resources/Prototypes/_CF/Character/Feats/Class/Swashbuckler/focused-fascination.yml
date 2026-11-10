@@ -10,3 +10,5 @@
     - "Swashbuckler"
   prerequisites:
     - "Fascinating Performance"
+  requiresFeats:
+    - CFFascinatingPerformance

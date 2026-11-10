@@ -511,6 +511,8 @@
   level: 1
   prerequisites:
   - "Constitution +2"
+  requiresAbility:
+    Constitution: 2
   pendingAction: true
 
 - type: cfFeat
@@ -521,6 +523,8 @@
   level: 1
   prerequisites:
   - "Dexterity +2"
+  requiresAbility:
+    Dexterity: 2
   pendingAction: true
 
 - type: cfFeat
@@ -704,6 +708,8 @@
   level: 2
   prerequisites:
   - "Strength +3; Expert in Intimidation"
+  requiresAbility:
+    Strength: 3
   requiresSkill: Intimidation
   requiresRank: Expert
   pendingAction: true
@@ -776,6 +782,9 @@
   - "Uncommon"
   prerequisites:
   - "Courtly Graces or Streetwise; Expert in Society"
+  requiresFeats:
+    - CFCourtlyGraces
+    - CFStreetwise
   pendingAction: true
 
 - type: cfFeat
@@ -897,6 +906,8 @@
   level: 3
   prerequisites:
   - "Constitution +2"
+  requiresAbility:
+    Constitution: 2
   pendingAction: true
 
 - type: cfFeat
@@ -1110,6 +1121,8 @@
   level: 2
   prerequisites:
   - "Cat Fall"
+  requiresFeats:
+    - CFCatFall
   pendingAction: true
 
 - type: cfFeat
@@ -1200,6 +1213,8 @@
   level: 1
   prerequisites:
   - "Intelligence +1"
+  requiresAbility:
+    Intelligence: 1
   choices:
   - kind: Skill
 
@@ -1432,6 +1447,8 @@
   - "Uncommon"
   prerequisites:
   - "Streetwise; Expert in Society"
+  requiresFeats:
+    - CFStreetwise
   requiresSkill: Society
   requiresRank: Expert
   pendingAction: true

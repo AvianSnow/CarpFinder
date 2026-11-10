@@ -10,5 +10,7 @@
     - "Rogue"
   prerequisites:
     - "Pickpocket"
+  requiresFeats:
+    - CFPickpocket
   action: Action
   pendingAction: true

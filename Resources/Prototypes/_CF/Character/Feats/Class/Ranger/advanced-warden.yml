@@ -10,3 +10,5 @@
     - "Ranger"
   prerequisites:
     - "Initiate Warden"
+  requiresFeats:
+    - CFInitiateWarden

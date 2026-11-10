@@ -12,5 +12,18 @@
     - "Spellshape"
   prerequisites:
     - "Reach Spell or Widen Spell"
+  requiresFeats:
+    - CFReachSpellBard
+    - CFReachSpellCleric
+    - CFReachSpellDruid
+    - CFReachSpellOracle
+    - CFReachSpellSorcerer
+    - CFReachSpellWitch
+    - CFReachSpellWizard
+    - CFWidenSpellDruid
+    - CFWidenSpellOracle
+    - CFWidenSpellSorcerer
+    - CFWidenSpellWitch
+    - CFWidenSpellWizard
   action: Free
   pendingAction: true

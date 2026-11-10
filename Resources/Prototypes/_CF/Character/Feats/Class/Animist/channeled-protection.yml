@@ -12,5 +12,7 @@
     - "Aura"
   prerequisites:
     - "Channeler's Stance"
+  requiresFeats:
+    - CFChannelersStance
   action: Action
   pendingAction: true

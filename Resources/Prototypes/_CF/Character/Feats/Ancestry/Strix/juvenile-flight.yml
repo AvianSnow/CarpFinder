@@ -10,3 +10,5 @@
     - "Strix"
   prerequisites:
     - "Fledgling Flight"
+  requiresFeats:
+    - CFFledglingFlight

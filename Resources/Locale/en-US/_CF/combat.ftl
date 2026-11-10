@@ -144,6 +144,7 @@ cf-stance-needs-ranged = You need a ranged weapon in hand.
 cf-stance-needs-melee = You need a melee weapon in hand.
 cf-stance-needs-free-hand = You need a hand free.
 cf-stance-needs-shield = You need a shield in hand.
+cf-act-needs-two-weapons = You need a melee weapon in each hand.
 cf-stance-only-strikes = Your stance only lets you make its own attack.
 cf-act-hunt-prey = Prey marked
 cf-act-exploit = Vulnerability exploited

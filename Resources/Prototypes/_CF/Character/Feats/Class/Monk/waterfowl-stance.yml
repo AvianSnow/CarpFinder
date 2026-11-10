@@ -13,5 +13,7 @@
     - "Water"
   prerequisites:
     - "Monastic Weaponry"
+  requiresFeats:
+    - CFMonasticWeaponry
   action: Action
   pendingAction: true

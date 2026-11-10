@@ -11,3 +11,5 @@
   prerequisites:
     - "expert in Crafting"
     - "Snare Crafting"
+  requiresFeats:
+    - CFSnareCrafting

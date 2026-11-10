@@ -10,3 +10,5 @@
     - "Monk"
   prerequisites:
     - "Qi Spells"
+  requiresFeats:
+    - CFQiSpells

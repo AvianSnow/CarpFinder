@@ -10,4 +10,9 @@
     - "Strix"
   trainedSkills:
     - Performance
-  pendingAction: true
+  grants:
+    - !type:CFGrantBonus
+      stat: SkillChecks
+      type: Circumstance
+      value: 1
+      skill: Performance

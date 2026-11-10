@@ -10,3 +10,5 @@
     - "Catfolk"
   prerequisites:
     - "Cat's Luck"
+  requiresFeats:
+    - CFCatsLuck

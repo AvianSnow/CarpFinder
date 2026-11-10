@@ -10,6 +10,8 @@
     - "Swashbuckler"
   prerequisites:
     - "Charisma +2"
+  requiresAbility:
+    Charisma: 2
   action: Reaction
   grants:
     - !type:CFGrantReaction

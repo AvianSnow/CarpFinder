@@ -10,3 +10,5 @@
     - "Commander"
   prerequisites:
     - "Officer's Medical Training"
+  requiresFeats:
+    - CFOfficersMedicalTraining

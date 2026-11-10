@@ -11,3 +11,5 @@
     - "Summoner"
   prerequisites:
     - "Energy Heart"
+  requiresFeats:
+    - CFEnergyHeart

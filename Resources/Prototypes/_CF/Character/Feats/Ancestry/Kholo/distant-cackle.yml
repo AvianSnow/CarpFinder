@@ -10,3 +10,5 @@
     - "Kholo"
   prerequisites:
     - "witch kholo heritage"
+  requiresHeritage:
+    - WitchKholo

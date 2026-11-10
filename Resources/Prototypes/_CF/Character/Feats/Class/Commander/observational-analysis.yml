@@ -10,4 +10,7 @@
     - "Commander"
   prerequisites:
     - "Combat Assessment"
+  requiresFeats:
+    - CFCombatAssessmentCommander
+    - CFCombatAssessmentFighter
   pendingAction: true

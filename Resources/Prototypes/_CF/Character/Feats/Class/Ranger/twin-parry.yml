@@ -10,4 +10,6 @@
     - "Fighter"
     - "Ranger"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActTwinParry

@@ -10,3 +10,5 @@
     - "Druid"
   prerequisites:
     - "Animal Companion"
+  requiresFeats:
+    - CFAnimalCompanion

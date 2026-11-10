@@ -10,5 +10,7 @@
     - "Witch"
   prerequisites:
     - "Witch's Armaments"
+  requiresFeats:
+    - CFWitchsArmaments
   action: Action
   pendingAction: true

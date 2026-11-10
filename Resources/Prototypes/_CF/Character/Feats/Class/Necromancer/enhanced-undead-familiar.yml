@@ -10,3 +10,5 @@
     - "Necromancer"
   prerequisites:
     - "Undead Familiar"
+  requiresFeats:
+    - CFUndeadFamiliar

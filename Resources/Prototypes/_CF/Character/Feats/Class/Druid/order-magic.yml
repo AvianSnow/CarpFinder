@@ -10,3 +10,5 @@
     - "Druid"
   prerequisites:
     - "Order Explorer"
+  requiresFeats:
+    - CFOrderExplorer

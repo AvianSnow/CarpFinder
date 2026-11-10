@@ -10,3 +10,7 @@
     - "Fighter"
   prerequisites:
     - "Aggressive Block or Brutish Shove"
+  requiresFeats:
+    - CFAggressiveBlockFighter
+    - CFAggressiveBlockGuardian
+    - CFBrutishShove

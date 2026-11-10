@@ -10,4 +10,6 @@
     - "Ranger"
   prerequisites:
     - "Monster Hunter"
+  requiresFeats:
+    - CFMonsterHunter
   pendingAction: true

@@ -1,4 +1,7 @@
+using Content.Shared.Actions.Events;
+using Content.Shared.CF.Combat;
 using Content.Shared.CF.Effects;
+using Content.Shared.Hands.EntitySystems;
 using Robust.Shared.Network;
 
 namespace Content.Shared.CF.Actions;
@@ -8,6 +11,27 @@ public sealed partial class CFEffectActionSystem : EntitySystem
 {
     [Dependency] private INetManager _net = default!;
     [Dependency] private CFEffectSystem _effects = default!;
+    [Dependency] private SharedHandsSystem _hands = default!;
+
+    [SubscribeLocalEvent]
+    private void OnAttempt(Entity<CFEffectActionComponent> ent, ref ActionAttemptEvent args)
+    {
+        if (!ent.Comp.NeedsWeaponInEachHand)
+            return;
+
+        var weapons = 0;
+        foreach (var held in _hands.EnumerateHeld(args.User))
+        {
+            if (HasComp<CFMeleeWeaponComponent>(held))
+                weapons++;
+        }
+
+        if (weapons >= 2)
+            return;
+
+        args.Cancelled = true;
+        args.Reason = Loc.GetString("cf-act-needs-two-weapons");
+    }
 
     [SubscribeLocalEvent]
     private void OnInstant(Entity<CFEffectActionComponent> ent, ref CFActivityInstantEvent args)

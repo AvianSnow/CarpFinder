@@ -10,5 +10,7 @@
     - "Guardian"
   prerequisites:
     - "Hampering Stance"
+  requiresFeats:
+    - CFHamperingStance
   action: Reaction
   pendingAction: true

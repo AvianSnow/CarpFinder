@@ -10,3 +10,5 @@
     - "Orc"
   prerequisites:
     - "Orc Ferocity"
+  requiresFeats:
+    - CFOrcFerocity

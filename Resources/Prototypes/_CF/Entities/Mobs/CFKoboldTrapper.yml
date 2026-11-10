@@ -19,6 +19,9 @@
   description: A wiry kobold hung with tools and tripline, watching you over the stock of a crossbow.
   suffix: Monster
   components:
+  # Kobolds do not speak Common, so a party has to know their tongue to talk them down.
+  - type: CFLanguages
+    known: [ Draconic, Sakvroth ]
   - type: InputMover
   - type: MobMover
   - type: NpcFactionMember

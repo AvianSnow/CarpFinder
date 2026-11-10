@@ -10,5 +10,7 @@
     - "Tengu"
   prerequisites:
     - "skyborn tengu heritage"
+  requiresHeritage:
+    - SkybornTengu
   action: Action
   pendingAction: true

@@ -169,7 +169,8 @@ All of this is picked in the lobby and stored on `CFCharacterBuildData`, the way
 `Feats/General/feats.yml` holds 131 feats through level 4 from Player Core, Player Core 2 and GM Core, with the site's one line summaries. `.agent/port-scripts/general_feats.py` rewrites that file from Archives of Nethys, so put fixes in the script. Of 74 feats backgrounds name, 65 match by name.
 
 - [ ] Effects for the rest. 12 work so far: Battle Medicine, Multilingual, Arcane Sense, Armor Proficiency, Canny Acumen, Diehard, Fleet, Hefty Hauler, Shield Block, Skill Training, Toughness and Weapon Proficiency. `general_feats.py` keeps them in `WORKING`. Weapon Proficiency only gives martial weapons, not the advanced weapon a character already trained in martial would get. Toughness and Fleet do not show in the builder's preview. Tests: `CFGeneralFeatTest`.
-- [ ] Prerequisites beyond one skill rank are text, not enforced. 90 feats have a rank the game checks.
+- [x] Prerequisites that name another feat, an attribute or a heritage are data (`requiresFeats`, `requiresAbility`, `requiresHeritage`), written by `.agent/port-scripts/prerequisites.py`. Run it after `general_feats.py`. The builder only lists feats the build qualifies for, and `CFSkills.DropUnqualifiedFeats` clears one that stops qualifying, for class and ancestry slots too. Tests: `CFLevelChoicesTest`.
+- [ ] 119 prerequisites are still text only: familiars, class features such as Spellstrike, an innovation, a focus pool, an age.
 - [ ] The 2 background feats with no match, from other books: Contract Negotiator and Ravening's Desperation.
 
 ### 1f. Spells
@@ -210,6 +211,7 @@ Witch familiars, Druid animal companions and Summoner eidolons all lean on `cfPe
 - [x] Unfinished class features show `(TBA)` in the class's description in the builder, when nothing about them works yet (`CFClassFeature.Unfinished`). Not seen in a real client.
 - [x] `CFFeatureCoverageTest`: fails on a placeholder in any class, on a class feat with no effect and no `TBA`, on a mistyped proficiency, and on an option in the files that did not load.
 - [x] Kineticist is not included, and its stray feat file is gone.
+- [x] A pass on 10 November 2026: Twin Parry (Fighter, Ranger), Raise Symbol (Cleric) and Story Crooner's Performance bonus work. `CFEffectAction` can need a melee weapon in each hand. Tests: `CFEffectActionFeatTest`. Most of the 465 class feats still marked `TBA` wait on a missing system (mounts, climb and swim, compositions, familiars, temporary Hit Points from actions), not on data.
 
 ### Systems Wave 5 is waiting on
 
@@ -256,8 +258,8 @@ Built on 6 November 2026. `Content.Shared/_CF/Languages`, and `CFSpeech` in `Con
 - [x] Known languages are on the character sheet, beside Speed. Not seen in a real client.
 - [x] Multilingual and Nomadic Halfling teach languages through a `Language` entry in `choices`, so the player picks. Only common languages are offered. `CFGrantLanguage` was not needed. Tests: `CFLevelChoicesTest`.
 - [x] A level 5 boost that raises Intelligence teaches one more language. The builder adds a slot for it, and `LevelUp` hands it over at level 5 (`xp.LanguageLevel5`). Tests: `CFLanguageTest`.
-- [ ] Give monsters that talk a `CFLanguages`. Without one, a creature speaks plainly and understands everything.
-- [ ] Every monster can now be played, so a player in a rat or a skeleton talks in plain words. Animals and mindless undead need a way to make noise only.
+- [x] Kobolds speak Draconic and Sakvroth, not Common, so a party needs one of those to talk to them. Tests: `CFLanguageTest`.
+- [x] Animals speak `Bestial` and mindless undead and oozes `Mindless`: noises no one can learn, so a player in one of their bodies cannot talk or understand speech. Tests: `CFLanguageTest`.
 - [ ] Languages from a heritage or a background.
 
 ### Rest

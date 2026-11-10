@@ -10,3 +10,5 @@
     - "Kobold"
   prerequisites:
     - "dragonscaled kobold heritage"
+  requiresHeritage:
+    - DragonscaledKobold

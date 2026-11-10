@@ -10,3 +10,5 @@
     - "Fighter"
   prerequisites:
     - "Dirty Trick"
+  requiresFeats:
+    - CFDirtyTrick

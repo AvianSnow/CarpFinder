@@ -322,6 +322,37 @@ public sealed class CFLevelChoicesTest : GameTest
     }
 
     [Test]
+    public async Task AFeatThatNeedsAnotherFeatIsDroppedWithoutIt()
+    {
+        string? without = "unset", with = null;
+        var found = false;
+        await Server.WaitPost(() =>
+        {
+            var feats = Server.ProtoMan.EnumeratePrototypes<CFFeatPrototype>().ToList();
+            var feat = feats.First(f => f.Class != null
+                                        && f.Level is >= 2 and <= 4
+                                        && f.RequiresFeats.Any(id => feats.Exists(p => p.ID == id.Id && p.Class == f.Class && p.Level == 1)));
+            var needed = feat.RequiresFeats.First(id => feats.Exists(p => p.ID == id.Id && p.Class == feat.Class && p.Level == 1));
+            found = true;
+
+            var lacking = new CFCharacterBuildData { Class = feat.Class, ClassFeatLevel4 = feat.ID };
+            CFSkills.DropUnqualifiedFeats(Server.ProtoMan, lacking, null);
+            without = lacking.ClassFeatLevel4?.Id;
+
+            var having = new CFCharacterBuildData { Class = feat.Class, ClassFeat = needed, ClassFeatLevel4 = feat.ID };
+            CFSkills.DropUnqualifiedFeats(Server.ProtoMan, having, null);
+            with = having.ClassFeatLevel4?.Id;
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(found);
+            Assert.That(without, Is.Null);
+            Assert.That(with, Is.Not.Null, "Its prerequisite was taken at level 1.");
+        });
+    }
+
+    [Test]
     public void TheNewChoicesSurviveACopy()
     {
         var build = new CFCharacterBuildData { SkillFeatLevel2 = "CFAssurance", SkillIncreaseLevel3 = "Athletics" };

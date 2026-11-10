@@ -10,5 +10,7 @@
     - "Dwarf"
   prerequisites:
     - "Rock Runner"
+  requiresFeats:
+    - CFRockRunner
   action: Action
   pendingAction: true

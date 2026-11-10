@@ -729,7 +729,10 @@ public sealed partial class HumanoidProfileEditor
         var options = new List<Pf2eListEntry>();
 
         foreach (var feat in _prototypeManager.EnumeratePrototypes<CFFeatPrototype>()
-                     .Where(feat => ancestry != null && feat.Fits(ancestry.ID, maxLevel) && feat.ID != other)
+                     .Where(feat => ancestry != null
+                                    && feat.Fits(ancestry.ID, maxLevel)
+                                    && feat.ID != other
+                                    && CFSkills.MeetsPrerequisites(_prototypeManager, build, ancestry.ID, feat, maxLevel))
                      .OrderBy(feat => feat.Level)
                      .ThenBy(feat => Loc.GetString(feat.Name), StringComparer.CurrentCultureIgnoreCase))
         {
@@ -776,6 +779,7 @@ public sealed partial class HumanoidProfileEditor
         Level4FeatSlot.Pressed = maxLevel >= 4;
 
         var build = CurrentBuild();
+        var ancestryId = CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species)?.ID;
         var classId = build.Class?.Id;
         var selected = maxLevel switch
         {
@@ -794,7 +798,10 @@ public sealed partial class HumanoidProfileEditor
         var options = new List<Pf2eListEntry>();
 
         foreach (var feat in _prototypeManager.EnumeratePrototypes<CFFeatPrototype>()
-                     .Where(feat => feat.FitsClass(classId, maxLevel) && CFClassChoices.MeetsRequirement(_prototypeManager, CurrentBuild(), feat) && !taken.Contains(feat.ID))
+                     .Where(feat => feat.FitsClass(classId, maxLevel)
+                                    && CFClassChoices.MeetsRequirement(_prototypeManager, build, feat)
+                                    && CFSkills.MeetsPrerequisites(_prototypeManager, build, ancestryId, feat, maxLevel)
+                                    && !taken.Contains(feat.ID))
                      .OrderBy(feat => feat.Level)
                      .ThenBy(feat => Loc.GetString(feat.Name), StringComparer.CurrentCultureIgnoreCase))
         {

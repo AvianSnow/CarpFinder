@@ -12,5 +12,7 @@
     - "Spellshape"
   prerequisites:
     - "Untamed Form"
+  requiresFeats:
+    - CFUntamedForm
   action: Action
   pendingAction: true
