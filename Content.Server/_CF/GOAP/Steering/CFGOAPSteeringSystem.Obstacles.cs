@@ -52,6 +52,15 @@ public sealed partial class CFGOAPSteeringSystem
     private const int GlassCost = 60;
     private const int LockedDoorCost = 100;
 
+    /// <summary>How long it has to get through a door it opened before it carries on from wherever it is.</summary>
+    private static readonly TimeSpan PassTime = TimeSpan.FromSeconds(4);
+
+    /// <summary>How often it checks whether it is through, which has to catch it on a one-tile step.</summary>
+    private static readonly TimeSpan PassCheckInterval = TimeSpan.FromSeconds(0.1);
+
+    /// <summary>It walks through at full speed, and only slows on the tile past the door.</summary>
+    private const float PassArriveRadius = 0.5f;
+
     /// <summary>How long a door it gave up on stays off its map.</summary>
     private static readonly TimeSpan GiveUpMemory = TimeSpan.FromSeconds(60);
 
@@ -222,7 +231,29 @@ public sealed partial class CFGOAPSteeringSystem
     {
         var obstacle = ent.Comp.Obstacle!.Value;
         var kind = TerminatingOrDeleted(obstacle) ? CFGOAPBlocker.None : Classify(ent, obstacle);
-        if (kind == CFGOAPBlocker.None || goal is { } point && CanWalkStraight(ent, point))
+        if (ent.Comp.PassingThrough)
+        {
+            if (kind != CFGOAPBlocker.Door)
+                return PassThrough(ent);
+
+            // It shut again before it got through, so it goes back to open it.
+            ent.Comp.PassingThrough = false;
+            WalkUpTo(ent, obstacle);
+        }
+
+        if (kind == CFGOAPBlocker.None)
+        {
+            // A door it opened: it walks through, and looks again from the far side. With the goal in a straight line
+            // there is nothing to look for, and it heads straight there.
+            var straight = goal is { } open && CanWalkStraight(ent, open);
+            if (!straight && !TerminatingOrDeleted(obstacle) && HasComp<DoorComponent>(obstacle) && StartPassing(ent, obstacle))
+                return true;
+
+            ClearObstacle(ent);
+            return false;
+        }
+
+        if (goal is { } point && CanWalkStraight(ent, point))
         {
             ClearObstacle(ent);
             return false;
@@ -279,8 +310,65 @@ public sealed partial class CFGOAPSteeringSystem
         return true;
     }
 
+    /// <summary>
+    /// Sets off through a door it opened, to the tile its arrow on the door leads to. With no arrow there it keeps
+    /// going the way it faced the door.
+    /// </summary>
+    private bool StartPassing(Entity<CFGOAPSteeringComponent> ent, EntityUid door)
+    {
+        if (Transform(door).GridUid is not { } grid || !TryComp(grid, out MapGridComponent? gridComp))
+            return false;
+
+        var doorPosition = _transform.GetWorldPosition(door);
+        var doorTile = _maps.WorldToTile(grid, gridComp, doorPosition);
+        var field = ent.Comp.ObstacleField ?? FieldOf(ent);
+        if (!field.Arrows.TryGetValue(doorTile, out var step) || step == Vector2.Zero)
+        {
+            var facing = (-_transform.GetWorldRotation(grid)).RotateVec(doorPosition - _transform.GetWorldPosition(ent));
+            if (facing == Vector2.Zero)
+                return false;
+
+            step = Vector2.Normalize(facing);
+        }
+
+        var beyond = doorTile + new Vector2i((int) MathF.Round(step.X), (int) MathF.Round(step.Y));
+        ent.Comp.PassingThrough = true;
+        ent.Comp.PassTile = beyond;
+        ent.Comp.PassUntil = _timing.CurTime + PassTime;
+        ent.Comp.NextNavigate = _timing.CurTime + PassCheckInterval;
+
+        var arrive = new CFGOAPSteeringBehavior { Kind = CFGOAPSteeringKind.Arrive, Radius = PassArriveRadius };
+        var point = _maps.GridTileToWorldPos(grid, gridComp, beyond);
+        Steer(ent, WithHabits(ProfileOf(ent), arrive), point: point, felt: ent.Comp.FeltMobs, through: door);
+        return true;
+    }
+
+    /// <summary>
+    /// Keeps walking through until it stands on the tile past the door. Then it lets go of the door, and its field is
+    /// built again, because from the far side the way may look different.
+    /// </summary>
+    private bool PassThrough(Entity<CFGOAPSteeringComponent> ent)
+    {
+        var through = Transform(ent).GridUid is { } grid
+                      && TryComp(grid, out MapGridComponent? gridComp)
+                      && _maps.WorldToTile(grid, gridComp, _transform.GetWorldPosition(ent)) == ent.Comp.PassTile;
+
+        var now = _timing.CurTime;
+        if (!through && now < ent.Comp.PassUntil)
+        {
+            ent.Comp.NextNavigate = now + PassCheckInterval;
+            return true;
+        }
+
+        var field = ent.Comp.ObstacleField ?? FieldOf(ent);
+        ClearObstacle(ent);
+        field.Rebuild = true;
+        return false;
+    }
+
     private void ClearObstacle(Entity<CFGOAPSteeringComponent> ent)
     {
+        ent.Comp.PassingThrough = false;
         ent.Comp.Obstacle = null;
         ent.Comp.ObstacleField = null;
         ent.Comp.Working = false;

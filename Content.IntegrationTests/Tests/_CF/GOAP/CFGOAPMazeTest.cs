@@ -173,6 +173,51 @@ public sealed class CFGOAPMazeTest : CFGOAPLoggedTest
         Assert.That(backtrack, Is.LessThan(1f), "It turned back in the corridor.");
     }
 
+    /// <summary>
+    /// The door at (0, -5) leads south into a corridor that turns east, so the goal is out of a straight line from both
+    /// sides of it. It opens the door, walks through, and builds its field again from the far side.
+    /// </summary>
+    [Test]
+    public async Task ItWalksThroughADoorThenBuildsANewField()
+    {
+        await Load();
+        Entity<CFGOAPComponent> boss = default;
+        var passed = false;
+        var buildBefore = TimeSpan.Zero;
+        var rebuilt = false;
+        var distance = float.MaxValue;
+        var goal = At(5, -9);
+        await Server.WaitPost(() =>
+        {
+            boss = Boss((0, -2), (5, -9));
+            boss.Comp.Lkp = Xform.ToMapCoordinates(goal);
+        });
+
+        await RunUntil(30f, () =>
+        {
+            if (SEntMan.TryGetComponent(boss, out CFGOAPSteeringComponent? steering))
+            {
+                if (steering.PassingThrough && !passed)
+                {
+                    passed = true;
+                    buildBefore = steering.OwnField.NextBuild;
+                }
+                else if (passed && !steering.PassingThrough && steering.OwnField.NextBuild > buildBefore)
+                {
+                    rebuilt = true;
+                }
+            }
+
+            distance = (Xform.ToMapCoordinates(goal).Position - Xform.GetMapCoordinates(boss).Position).Length();
+            return rebuilt && distance <= 1.5f;
+        });
+        await NpcsOff();
+
+        Assert.That(passed, "It never walked through a door it opened.");
+        Assert.That(rebuilt, "It did not build its field again on the far side.");
+        Assert.That(distance, Is.LessThanOrEqualTo(1.5f), "It never got there.");
+    }
+
     [Test]
     public async Task ItWalksHomeAcrossTheMaze()
     {

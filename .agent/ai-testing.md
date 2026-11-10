@@ -197,6 +197,8 @@ What was done, and what it found:
 - No allocations each tick: one cached ray filter, and reused lookup sets.
 - Two first attempts gained nothing, because a wide margin kept about 20 candidates per mob and asked each entity for its bounds every tick. Time each part before trusting a change.
 
+Calm goals, also on 10 November 2026: `Idle` and `GoHome` think once a second and cast no long rays, and none at all on open floor. GOAP AI time for 30 idle mobs went from 0.77 to 0.64 ms, almost all from thinking (0.16 to 0.10). The open floor skip fired 3 times in about 18,800 calm looks, because the maze nearly always has a wall within 2.5 tiles. A benchmark on an open map would show it.
+
 Still open:
 
 1. Skip the fan where the flow field already knows the way. On arrows, walls are not felt anyway, so only mobs need checking, and `CFFlankingSystem` already tracks enemies in reach.

@@ -77,12 +77,14 @@
 - type: cfGoapGoal
   id: Idle
   wants: [ Idled ]
+  calm: true
   priority: 1
 
 # With nothing better to do, it goes back to where it started instead of roaming off for good.
 - type: cfGoapGoal
   id: GoHome
   wants: [ AtHome ]
+  calm: true
   priority: 1.5
 
 # With no trail or node to go on, it still goes and looks at the place.

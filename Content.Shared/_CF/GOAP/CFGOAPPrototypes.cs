@@ -174,6 +174,13 @@ public sealed partial class CFGOAPGoalPrototype : IPrototype
     /// <summary>Only counts below the profile's <see cref="CFGOAPProfilePrototype.FleeHealth"/>.</summary>
     [DataField]
     public bool BelowFleeHealth;
+
+    /// <summary>
+    /// Nothing is going on. It thinks once a second instead of twice, casts no long rays to spot enemies, since its
+    /// sight sensor does that, and its feelers only look where something is near.
+    /// </summary>
+    [DataField]
+    public bool Calm;
 }
 
 /// <summary>One step a plan can use.</summary>

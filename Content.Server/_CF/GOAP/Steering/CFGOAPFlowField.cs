@@ -19,6 +19,12 @@ public sealed class CFGOAPFlowField
 
     public TimeSpan NextBuild;
 
+    /// <summary>
+    /// The navigator builds it again on its next move, whatever the timing. Set when a creature gets through a door,
+    /// because the way may look different from the far side.
+    /// </summary>
+    public bool Rebuild;
+
     /// <summary>Doors and windows given up on, and until when. On the field, so a whole group gives up together.</summary>
     public Dictionary<EntityUid, TimeSpan> GaveUp = new();
 
@@ -27,6 +33,7 @@ public sealed class CFGOAPFlowField
         Arrows = new Dictionary<Vector2i, Vector2>();
         GaveUp = new Dictionary<EntityUid, TimeSpan>();
         Away = false;
+        Rebuild = false;
         NextBuild = TimeSpan.Zero;
     }
 }

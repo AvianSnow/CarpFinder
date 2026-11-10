@@ -77,7 +77,10 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
     /// <summary>
     /// How much further than the search it keeps fixed things, so it can walk this far before looking again.
     /// </summary>
-    private const float PanicStaticMargin = 1f;
+    private const float PanicStaticMargin = 1.5f;
+
+    /// <summary>How far a calm creature may move in one tick, on top of its feelers' reach, for open floor to be sure.</summary>
+    private const float OpenFloorSlack = 0.25f;
 
     /// <summary>Fixed things are looked for again at least this often, in case a door shut or a wall went up.</summary>
     private static readonly TimeSpan PanicFixedRefresh = TimeSpan.FromSeconds(0.5);
@@ -237,7 +240,7 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
 
         // Long rays only spot enemies further off, which the sight sensor reads twice a second, so they wait longer.
         // A sharp turn or new behaviours cast them at once, or what they saw would be the wrong way.
-        var sweep = look && (forced || now >= ent.Comp.NextSight);
+        var sweep = look && !ent.Comp.Calm && (forced || now >= ent.Comp.NextSight);
         if (sweep)
             ent.Comp.NextSight = now + SightInterval;
 
@@ -249,6 +252,10 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
             ent.Comp.Felt = null;
             ent.Comp.FanMobs.Clear();
             Array.Clear(ent.Comp.FeelerTarget);
+
+            // Calm, it leaves spotting enemies to its sight sensor, so nothing far off is kept.
+            if (ent.Comp.Calm)
+                Array.Clear(ent.Comp.SightMobs);
         }
         else
         {
@@ -264,7 +271,8 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
 
         if (look)
         {
-            if (heading != Vector2.Zero)
+            // Calm on open floor there is nothing for the rays to find.
+            if (heading != Vector2.Zero && !(ent.Comp.Calm && IsOpenFloor(ent, args.WorldPosition)))
                 FeelFan(ent, ref args, heading, sweep);
         }
         else
@@ -382,12 +390,14 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
             return;
         }
 
+        // Calm, it also has to know the feelers' reach, to tell open floor.
         var local = _maps.WorldToLocal(grid, gridComp, position);
+        var need = ent.Comp.Calm ? MathF.Max(search, FeelerReach(ent.Comp) + OpenFloorSlack) : search;
         if (ent.Comp.PanicGrid != grid
             || _timing.CurTime >= ent.Comp.PanicRefreshAt
-            || (local - ent.Comp.PanicCentre).Length() + search > ent.Comp.PanicRange)
+            || (local - ent.Comp.PanicCentre).Length() + need > ent.Comp.PanicRange)
         {
-            FindPanicFixed(ent, grid, local, search);
+            FindPanicFixed(ent, grid, local, need);
         }
 
         // Busy with an obstacle, it stays put. What stands beside it cannot hurt it, and being thrown clear of the next
@@ -436,9 +446,9 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
     /// Finds the fixed things near it on the grid. Static fixtures only: sensors among them are dangerous tiles, which
     /// are not hard. Creatures' 2.5 tile flanking sensors are on moving bodies, so this never touches them.
     /// </summary>
-    private void FindPanicFixed(Entity<CFGOAPSteeringComponent> ent, EntityUid grid, Vector2 local, float search)
+    private void FindPanicFixed(Entity<CFGOAPSteeringComponent> ent, EntityUid grid, Vector2 local, float need)
     {
-        var range = search + PanicStaticMargin;
+        var range = need + PanicStaticMargin;
         ent.Comp.PanicFixed.Clear();
         ent.Comp.PanicGrid = grid;
         ent.Comp.PanicCentre = local;
@@ -467,6 +477,62 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
             ent.Comp.PanicFixed.Add(new CFGOAPPanicFixed(other, dangerous ? null : body, bounds, dangerous, HasComp<ClimbableComponent>(other)));
             ent.Comp.NearDanger |= dangerous;
         }
+
+        // Only a calm creature reads this, so only it pays for the search.
+        ent.Comp.LooseObstacleNear = false;
+        if (!ent.Comp.Calm)
+            return;
+
+        _panicFound.Clear();
+        _lookup.GetLocalEntitiesIntersecting(grid, area, _panicFound, LookupFlags.Dynamic);
+        var mask = _physics.GetHardCollision(ent).Mask;
+        foreach (var other in _panicFound)
+        {
+            if (other == ent.Owner || HasComp<MobStateComponent>(other))
+                continue;
+
+            if ((_physics.GetHardCollision(other).Layer & mask) != 0)
+            {
+                ent.Comp.LooseObstacleNear = true;
+                return;
+            }
+        }
+    }
+
+    /// <summary>The furthest its feelers reach, in tiles.</summary>
+    private static float FeelerReach(CFGOAPSteeringComponent steering)
+    {
+        return MathF.Max(steering.FeelerLength, steering.FeelerSideLength);
+    }
+
+    /// <summary>
+    /// Nothing within its feelers' reach that they could find: no wall, fixed solid, dangerous tile or loose obstacle.
+    /// Only sure inside the area the last look for fixed things covered. Other mobs do not count, because a calm
+    /// creature ignores them and the safety circle still keeps it off them.
+    /// </summary>
+    private bool IsOpenFloor(Entity<CFGOAPSteeringComponent> ent, Vector2 position)
+    {
+        if (ent.Comp.NearDanger
+            || ent.Comp.LooseObstacleNear
+            || ent.Comp.Through != null
+            || ent.Comp.PanicGrid is not { } grid
+            || Transform(ent).GridUid != grid
+            || !TryComp(grid, out MapGridComponent? gridComp))
+            return false;
+
+        var reach = FeelerReach(ent.Comp);
+        var local = _maps.WorldToLocal(grid, gridComp, position);
+        if (ent.Comp.PanicRange - (local - ent.Comp.PanicCentre).Length() < reach + OpenFloorSlack)
+            return false;
+
+        foreach (var other in ent.Comp.PanicFixed)
+        {
+            if (other.Body is { Hard: true, CanCollide: true }
+                && (local - CFGOAPSteeringMath.ClosestPoint(other.Bounds, local)).Length() < reach)
+                return false;
+        }
+
+        return true;
     }
 
     /// <summary>

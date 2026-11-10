@@ -33,7 +33,7 @@ Resources/Prototypes/_CF/GOAP/
 
 ## One think
 
-`CFGOAPOperator` calls `Tick` every tick, and `Tick` calls `Think` twice a second.
+`CFGOAPOperator` calls `Tick` every tick, and `Tick` calls `Think` twice a second, or once a second while the goal has `calm: true` (`Idle` and `GoHome`). Being hurt, or an order from an encounter's leader, makes it think at once.
 
 1. `Think` raises `CFGOAPSenseEvent`. Every sensor system handles it and adds facts. `CFGOAPSightSensorSystem` goes first, because it decides who the creature is after and the others read that.
 2. Reflexes can force a goal.
@@ -116,7 +116,9 @@ To remove it:
 | Destructible, and its plain hit beats the Hardness | `Smash` | Slower, and a locked door more so |
 | Anything else: a wall, or a grille it cannot hurt | `Solid` | Blocked, so it goes round |
 
-Only `Navigate` deals with these, so a step that moves any other way cannot get through a door. `FollowScent` is one. A mob working on something is left alone by the safety circle, except by lava and other mobs, or the next table along would throw it off the one it is climbing.
+Only `Navigate` deals with these, so a step that moves any other way cannot get through a door.
+
+**Doors.** When an arrow leads into a closed door it walks up and opens it. Once the door is open it walks through to the tile the door's arrow points at (`PassingThrough`, `PassTile`), with the door as `Through` so the feelers and safety circle leave the frame alone. On that tile it lets go of the door and sets `Rebuild` on its field, so the navigator builds the arrows again from the far side. If the goal is in a straight line once the door is open, it heads straight there instead. A door that shuts before it is through gets opened again. After 4 seconds it carries on from wherever it is. Tests: `ItWalksThroughADoorThenBuildsANewField` in `CFGOAPMazeTest`, 20 of 20 in a sweep. `FollowScent` is one. A mob working on something is left alone by the safety circle, except by lava and other mobs, or the next table along would throw it off the one it is climbing.
 
 ## Feelers and the safety circle
 
@@ -125,6 +127,7 @@ Only `Navigate` deals with these, so a step that moves any other way cannot get 
 - The fan looks every third tick (`FeelEvery`), or at once after a turn of more than 30 degrees, after `Steer` or `Stop`, or every tick while a dangerous tile is close. What it found holds in between: `FeelerTarget` keeps its danger, and `FanMobs` adds its chase or avoid interest again each tick.
 - At each look the three rays reach only the feeler's length. Past that a ray can only spot an enemy, so a long ray out to `FeelerSight` is cast every 0.25 seconds, or at once after a turn, and `SightMobs` holds what it saw. The sight sensor reads `Felt`, which this sets.
 - The safety circle measures every tick. Walls, fixed solids and dangerous tiles are kept in `PanicFixed` with their bounds on the grid, and looked for again after about a tile of walking or 0.5 seconds. Each tick checks the body is still hard and collidable, so an opened door stops counting. Mobs are looked for at each look, by their bodies, and measured to their bounds every tick.
+- A calm creature (`CFGOAPSteeringComponent.Calm`, from the goal) casts no long rays, because its sight sensor spots enemies anyway, and no rays at all on open floor: nothing fixed, dangerous or loose within its feelers' reach, judged from `PanicFixed` and `LooseObstacleNear`. On `npc_test_map` that is almost never, because a wall is nearly always within 2.5 tiles. Open islands should see it far more.
 - Never search with `LookupFlags.Sensors` on moving bodies here. It finds every creature's 2.5 tile flanking sensor. The grid-local `Static | Sensors` search reaches lava, whose fixture is not hard, and nothing that moves.
 
 ## Long trips

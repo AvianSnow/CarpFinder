@@ -124,7 +124,7 @@ public sealed partial class CFGOAPSteeringSystem
     private void SteerAway(Entity<CFGOAPSteeringComponent> ent, CFGOAPFlowField field, bool navigator, Vector2 threat)
     {
         var moved = (field.Goal - threat).Length();
-        var stale = !field.Away || field.Arrows.Count == 0 || moved >= FieldGoalSlack && _timing.CurTime >= field.NextBuild;
+        var stale = field.Rebuild || !field.Away || field.Arrows.Count == 0 || moved >= FieldGoalSlack && _timing.CurTime >= field.NextBuild;
         if (navigator && stale)
             BuildFleeField(ent, field, threat);
 
@@ -260,7 +260,7 @@ public sealed partial class CFGOAPSteeringSystem
         var navigator = alone || !_encounters.TryGetGroup(ent, out var group) || group.Members.Count > 0 && group.Members[0] == ent.Owner;
 
         var moved = (field.Goal - goal).Length();
-        if (navigator && (field.Away || field.Arrows.Count == 0 || moved >= FieldGoalSlack && _timing.CurTime >= field.NextBuild))
+        if (navigator && (field.Rebuild || field.Away || field.Arrows.Count == 0 || moved >= FieldGoalSlack && _timing.CurTime >= field.NextBuild))
             BuildField(ent, field, goal);
 
         return !field.Away && field.Arrows.Count > 0 && (field.Goal - goal).Length() < FieldShareRange;
@@ -276,6 +276,7 @@ public sealed partial class CFGOAPSteeringSystem
     {
         field.Goal = goal;
         field.Away = false;
+        field.Rebuild = false;
         field.NextBuild = _timing.CurTime + FieldBuildInterval;
         if (Transform(uid).GridUid is not { } grid || !TryComp(grid, out MapGridComponent? gridComp))
             return;
@@ -294,6 +295,7 @@ public sealed partial class CFGOAPSteeringSystem
     {
         field.Goal = threat;
         field.Away = true;
+        field.Rebuild = false;
         field.NextBuild = _timing.CurTime + FieldBuildInterval;
         if (Transform(uid).GridUid is not { } grid || !TryComp(grid, out MapGridComponent? gridComp))
             return;

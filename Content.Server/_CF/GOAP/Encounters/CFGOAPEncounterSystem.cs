@@ -73,6 +73,9 @@ public sealed partial class CFGOAPEncounterSystem : EntitySystem
             goap.Lkp = at;
             goap.LkpReached = false;
             goap.NodesChecked = 0;
+
+            // A calm member only thinks once a second, and an order should not wait for that.
+            goap.NextThink = TimeSpan.Zero;
         }
     }
 

@@ -31,6 +31,9 @@ public sealed partial class CFGOAPSystem : EntitySystem
 
     private static readonly TimeSpan ThinkInterval = TimeSpan.FromSeconds(0.5);
 
+    /// <summary>How often it thinks while its goal is calm. Being hurt still makes it think at once.</summary>
+    private static readonly TimeSpan CalmThinkInterval = TimeSpan.FromSeconds(1);
+
     /// <summary>Below this an action is not worth planning at all.</summary>
     private const float MinimumValue = 0.02f;
 
@@ -116,6 +119,13 @@ public sealed partial class CFGOAPSystem : EntitySystem
         {
             ent.Comp.NextThink = now + ThinkInterval;
             Think(ent);
+
+            var calm = ent.Comp.Goal is { } goal && _prototypes.Index(goal).Calm;
+            if (calm)
+                ent.Comp.NextThink = now + CalmThinkInterval;
+
+            if (TryComp(ent, out CFGOAPSteeringComponent? steering))
+                steering.Calm = calm;
         }
 
         RunStep(ent);

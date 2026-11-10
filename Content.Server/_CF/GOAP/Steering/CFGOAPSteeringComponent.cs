@@ -227,6 +227,30 @@ public sealed partial class CFGOAPSteeringComponent : Component
     /// <summary>The field that led it there, which is where giving up on it gets written down.</summary>
     public CFGOAPFlowField? ObstacleField;
 
+    /// <summary>
+    /// It opened <see cref="Obstacle"/>, a door, and is walking through to <see cref="PassTile"/>. Once there, its
+    /// field is built again from the far side.
+    /// </summary>
+    public bool PassingThrough;
+
+    /// <summary>The tile past the door, on the grid.</summary>
+    public Vector2i PassTile;
+
+    /// <summary>When it stops trying to get through and carries on from wherever it is.</summary>
+    public TimeSpan PassUntil;
+
+    /// <summary>
+    /// Its goal is calm, such as idling. Its feelers cast no long rays then, and none at all on open floor.
+    /// <see cref="CFGOAPSystem"/> sets this.
+    /// </summary>
+    public bool Calm;
+
+    /// <summary>
+    /// Something that is not fixed down but would stop its body, such as a crate, was near when it last looked for
+    /// fixed things. Floor with one of these is not open, so a calm creature still feels its way.
+    /// </summary>
+    public bool LooseObstacleNear;
+
     /// <summary>Whether it has started swinging at the obstacle or climbing it.</summary>
     public bool Working;
 
