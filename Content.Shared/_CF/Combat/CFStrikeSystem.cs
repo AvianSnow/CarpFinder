@@ -826,7 +826,10 @@ public sealed partial class CFStrikeSystem : EntitySystem
                 damage = rolled.Traits.Concussive
                     ? Math.Max(_bonuses.ModifyDamage(target, "Piercing", damage), _bonuses.ModifyDamage(target, "Bludgeoning", damage))
                     : _bonuses.ModifyDamage(target, rolled.DamageType, damage);
-                damage = ApplyShieldBlock(target, damage);
+                damage = ApplyShieldBlock(target, user, damage, rolled.DamageType, criticalHit && !isObject);
+                if (criticalHit && !isObject)
+                    damage = _reactions.AnswerCriticalHit(target, user, damage, rolled.DamageType);
+
                 if (!isObject)
                     damage = _reactions.AnswerDamage(target, user, damage, rolled.DamageType);
 
@@ -928,20 +931,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
         ref int targetAc,
         CFDegree degree)
     {
-        if (degree is not (CFDegree.Success or CFDegree.CriticalSuccess))
-            return degree;
-
-        if (!_shields.TryGetRaisedShield(target, out _)
-            && _shields.TryGetUsableShield(target, out var unraised)
-            && _conditions.TrySpendReaction(target, CFReactions.Raise))
-        {
-            _shields.SetRaised(unraised, true);
-            targetAc += _shields.RaisedBonus(target);
-            degree = CFDegrees.DegreeOfSuccess(d20, attackBonus, targetAc);
-            if (degree is not (CFDegree.Success or CFDegree.CriticalSuccess))
-                return degree;
-        }
-
+        // Reactive Shield is one of the target's reactions, so it takes its turn in their order.
         return _reactions.AnswerAttack(target, user, ranged, d20, attackBonus, ref targetAc, degree);
     }
 
@@ -1027,7 +1017,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
         return weapon.DamageDie <= (weapon.Proficiency == CFWeaponCategory.Simple.Proficiency() ? 8 : 6);
     }
 
-    private int ApplyShieldBlock(EntityUid target, int damage)
+    private int ApplyShieldBlock(EntityUid target, EntityUid attacker, int damage, string damageType, bool critical)
     {
         var spellShield = TryComp(target, out CFConditionComponent? cond) && cond.ShieldHardness > 0;
         damage = _conditions.BlockWithSpell(target, damage);
@@ -1035,6 +1025,10 @@ public sealed partial class CFStrikeSystem : EntitySystem
             return Math.Max(0, damage);
 
         if (!_shields.TryGetRaisedShield(target, out var shield))
+            return damage;
+
+        // A reaction ranked above Shield Block gets this damage first.
+        if (_reactions.OutranksShieldBlock(target, attacker, damageType, critical))
             return damage;
 
         if (!_conditions.TrySpendReaction(target, CFReactions.Block))

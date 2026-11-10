@@ -494,7 +494,7 @@ public sealed partial class CFEffectSystem : EntitySystem
     public CFDegree AttackDegree(EntityUid user, EntityUid target, int d20, int attackBonus, int armorClass)
     {
         var degree = CFDegrees.DegreeOfSuccess(d20, attackBonus, armorClass);
-        return _reactions.AnswerAttack(target, user, ranged: false, d20, attackBonus, ref armorClass, degree);
+        return _reactions.AnswerAttack(target, user, ranged: false, d20, attackBonus, ref armorClass, degree, strike: false);
     }
 
     /// <summary>A source's traits: those on the entity, and for a spell those on its prototype.</summary>

@@ -11,6 +11,7 @@
     <TabContainer Name="Tabs" Access="Public" HorizontalExpand="True" VerticalExpand="True">
         <cf:CFCharacterSheetTab Name="SheetTab" Access="Public"/>
         <cf:CFSpellsTab Name="SpellsTab" Access="Public"/>
+        <cf:CFReactionsTab Name="ReactionsTab" Access="Public"/>
         <ScrollContainer>
             <BoxContainer Orientation="Vertical" Margin="8">
                 <Label Name="RoleType" VerticalAlignment="Top" Margin="0 6 0 10" HorizontalAlignment="Center" StyleClasses="LabelHeading" Access="Public"/>

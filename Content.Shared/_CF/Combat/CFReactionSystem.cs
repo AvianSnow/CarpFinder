@@ -1,6 +1,8 @@
+using System.Linq;
 using Content.Shared.CF.DamageTypes;
 using System.Numerics;
 using Content.Shared.CF.Actions;
+using Content.Shared.CF.Character;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Detection;
 using Content.Shared.CF.Effects;
@@ -178,23 +180,25 @@ public sealed partial class CFReactionSystem : EntitySystem
             return;
         }
 
-        if (_conditions.TrySpendReaction(watcher, CFReactions.Strike))
+        var options = CompOrNull<CFCombatOptionsComponent>(watcher);
+        var known = CompOrNull<CFReactionsComponent>(watcher)?.Known ?? new List<CFKnownReaction>();
+        foreach (var candidate in Candidates(watcher, known, options?.ReactiveStrike == true ? ReactiveStrikeKey : null))
         {
-            _popup.PopupEntity(Loc.GetString("cf-reaction-reactive-strike"), watcher);
-            _strikes.ReactionStrike(watcher, mover);
-            return;
-        }
+            if (candidate == null)
+            {
+                if (!_conditions.TrySpendReaction(watcher, CFReactions.Strike))
+                    continue;
 
-        if (!TryComp(watcher, out CFReactionsComponent? reactions))
-            return;
+                _popup.PopupEntity(Loc.GetString("cf-reaction-reactive-strike"), watcher);
+                _strikes.ReactionStrike(watcher, mover);
+                return;
+            }
 
-        foreach (var known in reactions.Known)
-        {
-            if (known.Reaction.Trigger != CFReactionTrigger.EnemyLeftReach
-                || !known.Reaction.Strikes
-                || known.Reaction.PreyOnly && CompOrNull<CFCombatOptionsComponent>(watcher)?.Prey != mover
-                || known.Reaction.ExploitOnly && CompOrNull<CFCombatOptionsComponent>(watcher)?.Exploited != mover
-                || !TrySpend(watcher, known))
+            if (candidate.Reaction.Trigger != CFReactionTrigger.EnemyLeftReach
+                || !candidate.Reaction.Strikes
+                || candidate.Reaction.PreyOnly && options?.Prey != mover
+                || candidate.Reaction.ExploitOnly && options?.Exploited != mover
+                || !TrySpend(watcher, candidate))
             {
                 continue;
             }
@@ -204,9 +208,125 @@ public sealed partial class CFReactionSystem : EntitySystem
         }
     }
 
-    public void Add(EntityUid uid, CFReaction reaction)
+    public const string ReactiveStrikeKey = "builtin:ReactiveStrike";
+    public const string ShieldBlockKey = "builtin:ShieldBlock";
+    public const string ReactiveShieldKey = "builtin:ReactiveShield";
+    public const string YoureNextKey = "builtin:YoureNext";
+
+    /// <summary>The order entry for a reaction that is still coded as a flag, or null for any other option.</summary>
+    public static (string Key, LocId Name)? BuiltIn(CFCombatOption option)
     {
-        EnsureComp<CFReactionsComponent>(uid).Known.Add(new CFKnownReaction { Reaction = reaction });
+        return option switch
+        {
+            CFCombatOption.ReactiveStrike => (ReactiveStrikeKey, "cf-reaction-name-reactive-strike"),
+            CFCombatOption.ShieldBlock => (ShieldBlockKey, "cf-reaction-name-shield-block"),
+            CFCombatOption.ReactiveShield => (ReactiveShieldKey, "cf-reaction-name-reactive-shield"),
+            CFCombatOption.YoureNext => (YoureNextKey, "cf-reaction-name-youre-next"),
+            _ => null,
+        };
+    }
+
+    /// <summary>
+    /// Learns a reaction. <paramref name="source"/> names what gave it, and <paramref name="level"/> is that option's level,
+    /// which decides where it goes in the order.
+    /// </summary>
+    public void Add(EntityUid uid, CFReaction reaction, string source = "", int level = 1)
+    {
+        var comp = EnsureComp<CFReactionsComponent>(uid);
+        var key = string.IsNullOrEmpty(source) ? $"reaction:{comp.Known.Count}" : source;
+        while (comp.Known.Exists(other => other.Key == key))
+        {
+            key += "+";
+        }
+
+        comp.Known.Add(new CFKnownReaction { Reaction = reaction, Key = key });
+        AddEntry(uid, key, reaction.Name, level);
+    }
+
+    /// <summary>Puts a reaction in the order, above every one of a lower level.</summary>
+    public void AddEntry(EntityUid uid, string key, LocId name, int level)
+    {
+        var order = EnsureComp<CFReactionOrderComponent>(uid);
+        if (order.Entries.Exists(entry => entry.Key == key))
+            return;
+
+        var entry = new CFReactionEntry(key, name, level);
+        var below = order.Entries.FindIndex(other => other.Level < level);
+        if (below < 0)
+            order.Entries.Add(entry);
+        else
+            order.Entries.Insert(below, entry);
+
+        Dirty(uid, order);
+    }
+
+    /// <summary>Where a reaction is in the order. One with no entry, such as a monster's, comes after all of them.</summary>
+    public int Rank(EntityUid uid, string key)
+    {
+        if (!TryComp(uid, out CFReactionOrderComponent? order))
+            return int.MaxValue;
+
+        var index = order.Entries.FindIndex(entry => entry.Key == key);
+        return index < 0 ? int.MaxValue : index;
+    }
+
+    /// <summary>
+    /// The reactions in the order they get their chance. A built-in one named by <paramref name="builtIn"/> comes back as
+    /// null, at its own place.
+    /// </summary>
+    private List<CFKnownReaction?> Candidates(EntityUid uid, IReadOnlyList<CFKnownReaction> known, string? builtIn = null)
+    {
+        var ranked = new List<(int Rank, CFKnownReaction? Known)>();
+        foreach (var reaction in known)
+        {
+            ranked.Add((Rank(uid, reaction.Key), reaction));
+        }
+
+        if (builtIn != null)
+            ranked.Add((Rank(uid, builtIn), null));
+
+        return ranked.OrderBy(entry => entry.Rank).Select(entry => entry.Known).ToList();
+    }
+
+    private IEnumerable<CFKnownReaction> Ordered(EntityUid uid, CFReactionsComponent reactions)
+    {
+        foreach (var known in Candidates(uid, reactions.Known))
+        {
+            if (known != null)
+                yield return known;
+        }
+    }
+
+    /// <summary>Sets the order from the character sheet. Anything but the same keys in a new order is refused.</summary>
+    public bool Reorder(EntityUid uid, List<string> keys)
+    {
+        if (!TryComp(uid, out CFReactionOrderComponent? order)
+            || keys.Count != order.Entries.Count
+            || keys.Distinct().Count() != keys.Count)
+        {
+            return false;
+        }
+
+        var entries = new List<CFReactionEntry>();
+        foreach (var key in keys)
+        {
+            var index = order.Entries.FindIndex(entry => entry.Key == key);
+            if (index < 0)
+                return false;
+
+            entries.Add(order.Entries[index]);
+        }
+
+        order.Entries = entries;
+        Dirty(uid, order);
+        return true;
+    }
+
+    [SubscribeNetworkEvent]
+    private void OnReorder(CFReorderReactionsEvent ev, EntitySessionEventArgs args)
+    {
+        if (_net.IsServer && args.SenderSession.AttachedEntity is { } uid)
+            Reorder(uid, ev.Keys);
     }
 
     /// <summary>A long rest gives back every daily use.</summary>
@@ -222,10 +342,60 @@ public sealed partial class CFReactionSystem : EntitySystem
     }
 
     /// <summary>
-    /// Gives a Strike that is about to land the chance of being answered. Picks the reaction that helps most, and fires
-    /// none if no bonus would change the result.
+    /// Gives an attack that is about to land the chance of being answered, first by the target, then by an ally. Reactions
+    /// go in the target's order, and the first one that would change the result fires. Reactive Shield is the exception: it
+    /// fires on any melee Strike that would hit when its turn comes, because the shield stays up afterwards.
     /// </summary>
+    /// <param name="strike">False for a spell attack, which Reactive Shield does not answer.</param>
     public CFDegree AnswerAttack(
+        EntityUid target,
+        EntityUid attacker,
+        bool ranged,
+        int d20,
+        int attackBonus,
+        ref int armorClass,
+        CFDegree degree,
+        bool strike = true)
+    {
+        if (degree is not (CFDegree.Success or CFDegree.CriticalSuccess))
+            return degree;
+
+        var options = CompOrNull<CFCombatOptionsComponent>(target);
+        var shield = strike
+                     && !ranged
+                     && options is { ReactiveShield: true, ReactionSpent: 0 }
+                     && _mobState.IsAlive(target)
+                     && !_shields.TryGetRaisedShield(target, out _)
+                     && _shields.TryGetUsableShield(target, out _);
+
+        var known = CompOrNull<CFReactionsComponent>(target)?.Known ?? new List<CFKnownReaction>();
+        foreach (var candidate in Candidates(target, known, shield ? ReactiveShieldKey : null))
+        {
+            if (candidate == null)
+            {
+                if (!_shields.TryGetUsableShield(target, out var unraised) || !_conditions.TrySpendReaction(target, CFReactions.Raise))
+                    continue;
+
+                _shields.SetRaised(unraised, true);
+                armorClass += _shields.RaisedBonus(target);
+                return CFDegrees.DegreeOfSuccess(d20, attackBonus, armorClass);
+            }
+
+            if (candidate.Reaction.Trigger != CFReactionTrigger.AttackWouldHit
+                || !MeetsAttackNeeds(target, attacker, ranged, candidate.Reaction)
+                || !TryImprove(target, target, candidate, d20, attackBonus, ref armorClass, ref degree))
+            {
+                continue;
+            }
+
+            return degree;
+        }
+
+        return AnswerAllyAttacked(target, attacker, ranged, d20, attackBonus, ref armorClass, degree);
+    }
+
+    /// <summary>An ally close by may answer an attack that is about to hit the target.</summary>
+    private CFDegree AnswerAllyAttacked(
         EntityUid target,
         EntityUid attacker,
         bool ranged,
@@ -234,46 +404,123 @@ public sealed partial class CFReactionSystem : EntitySystem
         ref int armorClass,
         CFDegree degree)
     {
-        if (degree is not (CFDegree.Success or CFDegree.CriticalSuccess) || !TryComp(target, out CFReactionsComponent? reactions))
-            return degree;
+        foreach (var (uid, reactions) in _lookup.GetEntitiesInRange<CFReactionsComponent>(Transform(target).Coordinates, AllySearchRange))
+        {
+            if (uid == target || uid == attacker || _factions.CanHarm(uid, target) || !_factions.CanHarm(uid, attacker))
+                continue;
 
-        // Circumstance bonuses do not stack, so only what is above a raised shield or the like counts.
+            foreach (var known in Ordered(uid, reactions))
+            {
+                if (known.Reaction.Trigger != CFReactionTrigger.AllyWouldBeHit
+                    || !WithinFeet(uid, target, known.Reaction.RangeFeet)
+                    || !MeetsAttackNeeds(uid, attacker, ranged, known.Reaction)
+                    || !TryImprove(uid, target, known, d20, attackBonus, ref armorClass, ref degree))
+                {
+                    continue;
+                }
+
+                return degree;
+            }
+        }
+
+        return degree;
+    }
+
+    /// <summary>
+    /// Fires <paramref name="known"/>, a bonus to <paramref name="target"/>'s AC from <paramref name="owner"/>, if it turns
+    /// the attack into a worse result for the attacker. Circumstance bonuses do not stack, so only what is above a raised
+    /// shield or the like counts.
+    /// </summary>
+    private bool TryImprove(
+        EntityUid owner,
+        EntityUid target,
+        CFKnownReaction known,
+        int d20,
+        int attackBonus,
+        ref int armorClass,
+        ref CFDegree degree)
+    {
         var existing = Math.Max(
             _shields.RaisedBonus(target),
             Math.Max(0, _bonuses.TotalOfType(target, CFBonusStat.ArmorClass, CFBonusType.Circumstance)));
+        var gain = known.Reaction.AcBonus - existing;
+        if (gain <= 0 || !CanFire(owner, known))
+            return false;
 
-        CFKnownReaction? best = null;
-        var bestDegree = degree;
-        var bestGain = 0;
-        foreach (var known in reactions.Known)
+        var result = CFDegrees.DegreeOfSuccess(d20, attackBonus, armorClass + gain);
+        if (result >= degree || !TrySpend(owner, known))
+            return false;
+
+        armorClass += gain;
+        degree = result;
+        if (known.Reaction.GainsPanache && !result.IsSuccess())
+            GainPanache(owner);
+
+        return true;
+    }
+
+    private bool WithinFeet(EntityUid a, EntityUid b, int feet)
+    {
+        return (_transform.GetWorldPosition(a) - _transform.GetWorldPosition(b)).Length() <= feet / CFMelee.FeetPerTile;
+    }
+
+    /// <summary>
+    /// A Strike has critically hit <paramref name="target"/>. The first reaction in its order that can answer does. Returns
+    /// the damage that is left.
+    /// </summary>
+    public int AnswerCriticalHit(EntityUid target, EntityUid attacker, int amount, string damageType)
+    {
+        if (amount <= 0 || !_net.IsServer || !TryComp(target, out CFReactionsComponent? reactions))
+            return amount;
+
+        foreach (var known in Ordered(target, reactions))
         {
-            var reaction = known.Reaction;
-            var gain = reaction.AcBonus - existing;
-            if (reaction.Trigger != CFReactionTrigger.AttackWouldHit
-                || gain <= 0
-                || !CanFire(target, known)
-                || !MeetsAttackNeeds(target, attacker, ranged, reaction))
+            if (known.Reaction.Trigger != CFReactionTrigger.CriticallyHit
+                || !CoversType(known.Reaction, damageType)
+                || !TrySpend(target, known))
             {
                 continue;
             }
 
-            var result = CFDegrees.DegreeOfSuccess(d20, attackBonus, armorClass + gain);
-            if (result < bestDegree || result == bestDegree && best != null && gain > bestGain)
-            {
-                best = known;
-                bestDegree = result;
-                bestGain = gain;
-            }
+            return Protect(target, target, attacker, known.Reaction, amount);
         }
 
-        if (best == null || !TrySpend(target, best))
-            return degree;
+        return amount;
+    }
 
-        armorClass += bestGain;
-        if (best.Reaction.GainsPanache && bestDegree is not (CFDegree.Success or CFDegree.CriticalSuccess))
-            GainPanache(target);
+    /// <summary>
+    /// Whether a reaction the creature ranks above Shield Block could answer this Strike's damage, in which case Shield Block
+    /// waits, so as not to spend the reaction first.
+    /// </summary>
+    public bool OutranksShieldBlock(EntityUid target, EntityUid attacker, string damageType, bool critical)
+    {
+        if (!TryComp(target, out CFReactionsComponent? reactions))
+            return false;
 
-        return bestDegree;
+        var block = Rank(target, ShieldBlockKey);
+        foreach (var known in reactions.Known)
+        {
+            if (Rank(target, known.Key) >= block || !CanFire(target, known))
+                continue;
+
+            if (known.Reaction.Trigger == CFReactionTrigger.WouldBeDamaged
+                && _factions.CanHarm(target, attacker)
+                && _auras.Contains(target, attacker))
+            {
+                return true;
+            }
+
+            if (known.Reaction.Trigger == CFReactionTrigger.CriticallyHit && critical && CoversType(known.Reaction, damageType))
+                return true;
+        }
+
+        return false;
+    }
+
+    private bool CoversType(CFReaction reaction, string damageType)
+    {
+        return reaction.DamageTypes.Count == 0
+               || reaction.DamageTypes.Exists(type => CFDamageTypes.Same(_prototypes, type, damageType));
     }
 
     /// <summary>
@@ -289,7 +536,7 @@ public sealed partial class CFReactionSystem : EntitySystem
 
         if (TryComp(target, out CFReactionsComponent? own) && _factions.CanHarm(target, attacker) && _auras.Contains(target, attacker))
         {
-            foreach (var known in own.Known)
+            foreach (var known in Ordered(target, own))
             {
                 if (known.Reaction.Trigger != CFReactionTrigger.WouldBeDamaged || !TrySpend(target, known))
                     continue;
@@ -304,7 +551,7 @@ public sealed partial class CFReactionSystem : EntitySystem
             if (uid == target || uid == attacker || _factions.CanHarm(uid, target) || !_factions.CanHarm(uid, attacker))
                 continue;
 
-            foreach (var known in reactions.Known)
+            foreach (var known in Ordered(uid, reactions))
             {
                 if (known.Reaction.Trigger == CFReactionTrigger.InterceptsDamage)
                 {
@@ -339,7 +586,7 @@ public sealed partial class CFReactionSystem : EntitySystem
             if (CompOrNull<CFCombatOptionsComponent>(uid)?.Exploited != attacker || uid != target && _factions.CanHarm(uid, target))
                 continue;
 
-            foreach (var known in reactions.Known)
+            foreach (var known in Ordered(uid, reactions))
             {
                 if (known.Reaction.Trigger != CFReactionTrigger.ExploitedWouldDamage
                     || !CanFire(uid, known)
@@ -358,7 +605,7 @@ public sealed partial class CFReactionSystem : EntitySystem
 
     private bool CanIntercept(EntityUid owner, EntityUid victim, EntityUid attacker, CFReaction reaction, string damageType)
     {
-        if (reaction.DamageTypes.Count > 0 && !reaction.DamageTypes.Exists(type => CFDamageTypes.Same(_prototypes, type, damageType)))
+        if (!CoversType(reaction, damageType))
             return false;
 
         var feet = _taunts.IsTauntedBy(attacker, owner) ? reaction.TauntedRangeFeet : reaction.RangeFeet;
@@ -370,6 +617,8 @@ public sealed partial class CFReactionSystem : EntitySystem
     {
         var level = CompOrNull<CFCombatantComponent>(owner)?.Level ?? 1;
         var resist = reaction.ResistFlat + (reaction.ResistLevel ? level : 0) + (reaction.ResistHalfLevel ? level / 2 : 0);
+        if (reaction.ResistAbility is { } ability)
+            resist += Math.Max(0, CompOrNull<CFAbilityScoreComponent>(owner)?.GetModifier(ability) ?? 0);
         amount = Math.Max(0, amount - resist);
 
         if (reaction.TakesExtraDie > 0)
@@ -422,7 +671,7 @@ public sealed partial class CFReactionSystem : EntitySystem
             return;
         }
 
-        foreach (var known in reactions.Known)
+        foreach (var known in Ordered(target, reactions))
         {
             if (known.Reaction.Trigger != CFReactionTrigger.AttackCriticallyMissed
                 || !known.Reaction.Strikes
@@ -455,7 +704,7 @@ public sealed partial class CFReactionSystem : EntitySystem
         }
 
         var existing = Math.Max(0, _bonuses.TotalOfType(uid, CFBonusStat.Saves, CFBonusType.Circumstance));
-        foreach (var known in reactions.Known)
+        foreach (var known in Ordered(uid, reactions))
         {
             var reaction = known.Reaction;
             if (reaction.Trigger != CFReactionTrigger.SaveWouldFail
@@ -504,7 +753,7 @@ public sealed partial class CFReactionSystem : EntitySystem
         if (!TryComp(uid, out CFReactionsComponent? reactions))
             return false;
 
-        foreach (var known in reactions.Known)
+        foreach (var known in Ordered(uid, reactions))
         {
             if (known.Reaction.Trigger != CFReactionTrigger.WouldDrop || !CanFire(uid, known) || !TrySpend(uid, known))
                 continue;
@@ -530,7 +779,7 @@ public sealed partial class CFReactionSystem : EntitySystem
             return;
         }
 
-        foreach (var known in ent.Comp.Known)
+        foreach (var known in Ordered(ent, ent.Comp))
         {
             if (known.Reaction.Trigger != CFReactionTrigger.Damaged || !known.Reaction.EntersRage)
                 continue;

@@ -124,11 +124,14 @@ Most action feats share one of a few shapes, so build the shape once. An action 
   - `EnemyLeftReach` fires when an enemy leaves the reach circle under its own power. Walking out is PF2e's Step: it costs 1 action and does not provoke, and with no actions left it provokes anyway. It is only charged when the watcher could have answered, and one Step covers everyone left within a second. Moving about inside reach does not provoke either, because in real time that would fire on every footstep. Reactive Strike and Stand Still use it. Tests: `CFLeftReachTest`.
   - `WouldBeDamaged` and `AllyWouldBeDamaged` fire as damage is about to land, through `CFReactionSystem.AnswerDamage`, and need the enemy in the owner's aura. Each Champion cause is one of these. Tests: `CFChampionCauseTest`.
   - [ ] Causes where the rules let the enemy choose always use its refusal, as a mindless creature would: Iron Command, Glimpse of Redemption.
-  - [ ] Triggers still needed: an ally being attacked without being damaged yet, a spell being cast (Counterspell), and a critical hit (Scars of Steel).
+  - [x] Reactions go in an order (`CFReactionOrderComponent`). For each trigger, the first one in the order that would change the outcome fires. A new reaction goes above every lower-level one, and the player can reorder them on the character window's Reactions tab. Reactive Strike, Shield Block, Reactive Shield and You're Next have places in it too. Tests: `CFReactionTest`. The tab has not been seen in a real client.
+  - [x] Triggers `CriticallyHit` (Scars of Steel) and `AllyWouldBeHit` (Guardian's Deflection). Tests: `CFReactionTest`.
+  - [ ] Shield Block runs before the other damage reactions in code. It waits when a reaction ranked above it could answer, but one ranked below it never gets the chance once it fires.
+  - [ ] Trigger still needed: a spell being cast (Counterspell), which also needs counteracting (1f).
   - [ ] A response that moves the creature, for No Escape and Reactive Pursuit.
   - [ ] NPCs do not walk to avoid Reactive Strike. They always run.
   - [x] Spell attacks trigger `AttackWouldHit`, as melee, so Deflect Projectile does not answer one. Reactive Shield still only answers Strikes. Tests: `CFReactionTest`.
-  - [ ] Reactive Strike, Shield Block, Reactive Shield and You're Next are still hard-coded in `CFReactions`. Move them when their class wave comes.
+  - [ ] Reactive Strike, Shield Block and You're Next are still flags on `CFCombatOptionsComponent`, though they take their place in the order. Reactive Shield is answered in `CFReactionSystem.AnswerAttack`, in its place.
 - [x] Auras. `CFAura` on a creature and `CFAuraEffect` entries, added with `!type:CFGrantAura`, run by `CFAuraSystem`. Built on 9 November 2026 for the Champion's aura, with Aura of Courage, Aura of Despair, Divine Health and Shields of the Spirit. Tests: `CFAuraTest`.
   - It looks up who is inside 4 times a second, through `CFEffectSystem.CollectArea`, only for creatures that have an aura. It is not a physics sensor: a 15-foot sensor would make the problems in `ss14rules.md` about the flanking sensor much worse, and would be a circle where emanations are tiles.
   - "At the end of your turn" is every 6 seconds, on the owner's own timer. A placeholder: the timing will probably change.

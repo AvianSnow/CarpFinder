@@ -546,7 +546,8 @@ public sealed partial class CFGrantReaction : CFGrant
 
     public override void Apply(IEntityManager entities, CFGrantArgs args)
     {
-        entities.System<CFReactionSystem>().Add(args.Mob, Reaction);
+        var level = entities.System<CFCharacterFeatureSystem>().SourceLevel(args.Source);
+        entities.System<CFReactionSystem>().Add(args.Mob, Reaction, args.Source, level);
     }
 }
 
@@ -564,7 +565,13 @@ public sealed partial class CFGrantOption : CFGrant
     {
         var features = entities.System<CFCharacterFeatureSystem>();
         if (Option is { } option)
+        {
             features.SetOption(args.Mob, option);
+
+            // Reactions still coded as a flag take their place in the reaction order too.
+            if (CFReactionSystem.BuiltIn(option) is { } reaction)
+                entities.System<CFReactionSystem>().AddEntry(args.Mob, reaction.Key, reaction.Name, features.SourceLevel(args.Source));
+        }
 
         if (PointMark is { } mark)
             features.SetPointMark(args.Mob, mark);

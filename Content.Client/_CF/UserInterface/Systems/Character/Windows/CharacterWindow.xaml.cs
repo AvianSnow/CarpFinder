@@ -8,15 +8,16 @@ namespace Content.Client.UserInterface.Systems.Character.Windows;
 [GenerateTypedNameReferences]
 public sealed partial class CharacterWindow : DefaultWindow
 {
-    private const int ShopTabIndex = 3;
+    private const int ShopTabIndex = 4;
 
     public CharacterWindow()
     {
         RobustXamlLoader.Load(this);
         Tabs.SetTabTitle(0, Loc.GetString("cf-sheet-tab"));
         Tabs.SetTabTitle(1, Loc.GetString("cf-sheet-spells-tab"));
-        Tabs.SetTabTitle(2, Loc.GetString("cf-sheet-info-tab"));
-        Tabs.SetTabTitle(3, Loc.GetString("cf-shop-tab"));
+        Tabs.SetTabTitle(2, Loc.GetString("cf-sheet-reactions-tab"));
+        Tabs.SetTabTitle(3, Loc.GetString("cf-sheet-info-tab"));
+        Tabs.SetTabTitle(4, Loc.GetString("cf-shop-tab"));
         ShopTab.OnAccept += Close;
         ShopTab.OnCancel += Close;
     }

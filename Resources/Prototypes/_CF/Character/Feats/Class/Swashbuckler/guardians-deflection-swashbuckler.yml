@@ -9,4 +9,12 @@
   traits:
     - "Swashbuckler"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-guardians-deflection
+        trigger: AllyWouldBeHit
+        acBonus: 2
+        rangeFeet: 5
+        needsToSeeAttacker: true
+        needsFreeHand: true

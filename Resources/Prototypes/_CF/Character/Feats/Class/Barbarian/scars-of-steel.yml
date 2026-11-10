@@ -12,6 +12,14 @@
   prerequisites:
     - "Fury Instinct"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-scars-of-steel
+        trigger: CriticallyHit
+        perDay: 1
+        resistHalfLevel: true
+        resistAbility: Constitution
+        damageTypes: [ Bludgeoning, Piercing, Slashing ]
   requiresChoice:
     - InstinctFury

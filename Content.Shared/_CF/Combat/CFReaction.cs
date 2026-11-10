@@ -1,8 +1,11 @@
 using Content.Shared.CF.Effects;
 using Content.Shared.CF.Items;
 using Content.Shared.CF.Checks;
+using Content.Shared.CF.Preferences;
 using Content.Shared.CF.Traits;
+using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Serialization;
 
 namespace Content.Shared.CF.Combat;
 
@@ -38,6 +41,12 @@ public enum CFReactionTrigger : byte
 
     /// <summary>The creature this one has Exploited is about to damage it or an ally close by.</summary>
     ExploitedWouldDamage,
+
+    /// <summary>A Strike has critically hit this creature, and its damage is about to land.</summary>
+    CriticallyHit,
+
+    /// <summary>An attack is about to hit an ally within <see cref="CFReaction.RangeFeet"/>.</summary>
+    AllyWouldBeHit,
 }
 
 /// <summary>
@@ -137,6 +146,10 @@ public sealed partial class CFReaction
     [DataField]
     public bool ResistHalfLevel;
 
+    /// <summary>This attribute's modifier also comes off the damage, when it is positive.</summary>
+    [DataField]
+    public CFAbility? ResistAbility;
+
     /// <summary>The die of extra damage this creature takes. One die, and one more at levels 5, 9 and 13.</summary>
     [DataField]
     public int TakesExtraDie;
@@ -192,4 +205,48 @@ public sealed partial class CFKnownReaction
 
     [DataField]
     public int UsedToday;
+
+    /// <summary>Where it came from, such as <c>feat:CFNimbleDodge</c>. Its place in <see cref="CFReactionOrderComponent"/>.</summary>
+    [DataField]
+    public string Key = "";
+}
+
+/// <summary>
+/// The order a creature's reactions get their chance in, first to last. For each trigger, the first one that would change
+/// the outcome is the one that fires. A new reaction goes above every lower-level one. The player can reorder them on the
+/// character sheet. It holds the built-in reactions as well (<see cref="CFReactionSystem.ReactiveStrikeKey"/> and so on).
+/// </summary>
+[RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
+public sealed partial class CFReactionOrderComponent : Component
+{
+    [DataField, AutoNetworkedField]
+    public List<CFReactionEntry> Entries = new();
+}
+
+[DataDefinition, Serializable, NetSerializable]
+public partial struct CFReactionEntry
+{
+    [DataField]
+    public string Key;
+
+    [DataField]
+    public LocId Name;
+
+    /// <summary>The level of the feat or feature that gave it.</summary>
+    [DataField]
+    public int Level;
+
+    public CFReactionEntry(string key, LocId name, int level)
+    {
+        Key = key;
+        Name = name;
+        Level = level;
+    }
+}
+
+/// <summary>Sent by the character sheet: every reaction key, in the new order. The server checks it.</summary>
+[Serializable, NetSerializable]
+public sealed class CFReorderReactionsEvent : EntityEventArgs
+{
+    public List<string> Keys = new();
 }

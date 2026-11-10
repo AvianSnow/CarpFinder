@@ -285,6 +285,22 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
         Dirty(mob, options);
     }
 
+    /// <summary>
+    /// The level of the option a grant came from: a feat's level, or the level in a class feature's source
+    /// (<c>class:Fighter:3:Name</c>). Anything else, such as an ancestry or a heritage, is level 1.
+    /// </summary>
+    public int SourceLevel(string source)
+    {
+        var parts = source.Split(':');
+        if (parts.Length >= 3 && int.TryParse(parts[2], out var level))
+            return level;
+
+        if (parts.Length == 2 && parts[0] == "feat" && _prototypes.TryIndex<CFFeatPrototype>(parts[1], out var feat))
+            return feat.Level;
+
+        return 1;
+    }
+
     public void SetOption(EntityUid mob, CFCombatOption option)
     {
         var options = EnsureComp<CFCombatOptionsComponent>(mob);

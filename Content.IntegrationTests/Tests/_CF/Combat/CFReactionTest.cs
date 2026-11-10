@@ -1,6 +1,9 @@
+using System.Collections.Generic;
+using System.Linq;
 using Content.IntegrationTests.Fixtures;
 using Content.IntegrationTests.Tests.CF;
 using Content.Server.CF.Character;
+using Content.Shared.CF.Preferences;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Combat;
@@ -143,6 +146,107 @@ public sealed class CFReactionTest : GameTest
             Assert.That(turned.Ac, Is.EqualTo(ArmorClass + 2));
             Assert.That(spentAfterTurned, Is.Not.Zero);
             Assert.That(again.Degree, Is.EqualTo(CFDegree.Success), "One reaction until the pool is next full.");
+        });
+    }
+
+    private int Used(EntityUid uid, string feat)
+    {
+        return SEntMan.GetComponent<CFReactionsComponent>(uid).Known.First(known => known.Key == $"feat:{feat}").UsedToday;
+    }
+
+    [Test]
+    public async Task AHigherLevelReactionComesFirstAndTheOrderCanBeChanged()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        List<string> before = default!, after = default!;
+        var refused = true;
+        await Server.WaitPost(() =>
+        {
+            var hero = Hero("CFNimbleDodge", "CFScarsofSteel");
+            var order = SEntMan.GetComponent<CFReactionOrderComponent>(hero);
+            before = order.Entries.Select(entry => entry.Key).ToList();
+
+            refused = !Reactions.Reorder(hero, new List<string> { "feat:CFNimbleDodge", "feat:NoSuchFeat" });
+            Reactions.Reorder(hero, new List<string> { "feat:CFNimbleDodge", "feat:CFScarsofSteel" });
+            after = order.Entries.Select(entry => entry.Key).ToList();
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(before, Is.EqualTo(new[] { "feat:CFScarsofSteel", "feat:CFNimbleDodge" }), "Level 4 goes above level 1.");
+            Assert.That(refused, Is.True, "Only the same reactions in a new order are taken.");
+            Assert.That(after, Is.EqualTo(new[] { "feat:CFNimbleDodge", "feat:CFScarsofSteel" }));
+        });
+    }
+
+    [Test]
+    public async Task TheFirstReactionThatHelpsIsTheOneThatFires()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        int deflectByDefault = 0, dodgeWhenMoved = 0, deflectWhenMoved = 0;
+        await Server.WaitPost(() =>
+        {
+            // Both would turn this shot into a miss, so only the order decides. Deflect Projectile is level 4, so it is first.
+            var first = Hero("CFNimbleDodge", "CFDeflectProjectile");
+            Attack(first, Spawn("CFReactionTestFoe"), ArmorClass, ranged: true);
+            deflectByDefault = Used(first, "CFDeflectProjectile");
+
+            var second = Hero("CFNimbleDodge", "CFDeflectProjectile");
+            Reactions.Reorder(second, new List<string> { "feat:CFNimbleDodge", "feat:CFDeflectProjectile" });
+            Attack(second, Spawn("CFReactionTestFoe"), ArmorClass, ranged: true);
+            dodgeWhenMoved = Used(second, "CFNimbleDodge");
+            deflectWhenMoved = Used(second, "CFDeflectProjectile");
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(deflectByDefault, Is.EqualTo(1));
+            Assert.That(dodgeWhenMoved, Is.EqualTo(1));
+            Assert.That(deflectWhenMoved, Is.Zero, "One reaction, and the first in line had it.");
+        });
+    }
+
+    [Test]
+    public async Task ScarsOfSteelTakesThePhysicalPartOfACriticalHit()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        int fire = 0, slash = 0;
+        await Server.WaitPost(() =>
+        {
+            var hero = Hero("CFScarsofSteel");
+            SEntMan.GetComponent<CFAbilityScoreComponent>(hero).AbilityModifiers[CFAbility.Constitution] = 3;
+            var foe = Spawn("CFReactionTestFoe");
+
+            fire = Reactions.AnswerCriticalHit(hero, foe, 20, "Fire");
+            slash = Reactions.AnswerCriticalHit(hero, foe, 20, "Slashing");
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(fire, Is.EqualTo(20), "Only physical damage.");
+            Assert.That(slash, Is.EqualTo(17), "Constitution 3 plus half of level 1.");
+        });
+    }
+
+    [Test]
+    public async Task GuardiansDeflectionTurnsAHitOnAnAllyIntoAMiss()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        (CFDegree Degree, int Ac) result = default;
+        var used = 0;
+        await Server.WaitPost(() =>
+        {
+            var guardian = Hero("CFGuardiansDeflectionSwashbuckler");
+            var ally = Hero();
+            result = Attack(ally, Spawn("CFReactionTestFoe"), ArmorClass);
+            used = Used(guardian, "CFGuardiansDeflectionSwashbuckler");
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(result.Degree, Is.EqualTo(CFDegree.Failure));
+            Assert.That(result.Ac, Is.EqualTo(ArmorClass + 2));
+            Assert.That(used, Is.EqualTo(1));
         });
     }
 

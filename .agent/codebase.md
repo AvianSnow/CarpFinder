@@ -140,7 +140,7 @@ Anything that targets, rolls, and applies effects is data on the source entity: 
 | HUD deck, Common tab | Shove or Disarm, Grapple, Tumble Through, Demoralize, Feint, Aid, Recall Knowledge, Hide, Seek, Leap | `CFBasicActionComponent`, `CFManeuverSystem.TryUse` |
 | HUD deck, Items tab | Take a carried consumable or thrown weapon into a free hand | `CFQuickItemSystem` |
 | Sheet, Spell Preparation | Plan what a prepared caster prepares at the next long rest | `CFSpellPreparationSystem` |
-| Reactions | Not on the wheel. They fire by themselves, and only when that would change the outcome. | `CFReactionSystem`, and `CFConditionSystem.TrySpendReaction` for the older ones |
+| Reactions | Not on the wheel. They fire by themselves, and only when that would change the outcome. With several that could, the first in the character's order wins. The character window's Reactions tab reorders them | `CFReactionSystem`, `CFReactionOrderComponent`, `CFReactionsTab` |
 
 Code with no player, such as the AI, uses `CFManeuverSystem.CanUse` and `TryUse` with a `CFBasicAction`, and `CFStrikeSystem.TryFeatStrike`.
 
