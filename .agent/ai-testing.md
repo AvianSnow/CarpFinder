@@ -141,6 +141,68 @@ It shows as `Skipped` in a full run, because its asserts are inside `WaitAsserti
 - The boar test: one `AttemptLightAttack` counted 2 or 3 attacks in 22 of 60 runs, and damage went past the most one Strike can do. The cause is unknown. It could be the test, or one swing landing twice, which would be a real combat bug.
 - `CFGOAPSteeringSystem.Panic` measures to `GetWorldAABB`, which is 2.5 tiles wide for a creature because of the flanking sensor. Allies probably keep about 1.7 tiles apart as a result. A kobold was seen holding that gap in a corridor.
 
+## Stress test: GOAP against stock HTN
+
+`CFGOAPStressTest` is a benchmark, not a pass or fail test. It only runs with `CF_GOAP_STRESS=1`, and `CF_GOAP_STRESS_OUT` saves the table to a file:
+
+```bash
+CF_GOAP_STRESS=1 CF_GOAP_STRESS_OUT=stress.md dotnet test Content.IntegrationTests/Content.IntegrationTests.csproj -c Tools --no-build --filter "FullyQualifiedName~CFGOAPStressTest" --logger "console;verbosity=detailed"
+```
+
+It loads `npc_test_map`, spawns the same kobold warriors with stock HTN or with `CFGOAPBrain` from one seed, and runs 150 ticks of warmup then 900 measured ticks (30 game seconds). Idle has no enemies. Fight has 5 heroes that do not fight back, with every kobold starting within 30 feet of one. Per system times come from the engine's own update timing. GOAP thinks inside `NPCSystem` and steers inside `NPCSteeringSystem`, so those hold most of its cost. Two throwaway runs go first, because the JIT made the first real run look twice as slow.
+
+Results on 10 November 2026, on the Linux machine, server only. A tick has 33 ms at 30 ticks a second.
+
+| Mobs | Scenario | No AI, tick ms | HTN tick ms | GOAP tick ms | HTN AI ms | GOAP AI ms | GOAP asleep, tick ms |
+|---|---|---|---|---|---|---|---|
+| 30 | idle | 0.25 | 0.57 | 2.19 | 0.12 | 1.10 | 0.25 |
+| 30 | fight | 0.27 | 1.25 | 1.81 | 0.39 | 0.88 | |
+| 60 | idle | 0.28 | 0.82 | 2.82 | 0.20 | 1.42 | 0.29 |
+| 60 | fight | 0.29 | 2.84 | 3.86 | 1.18 | 2.14 | |
+| 100 | idle | 0.37 | 1.45 | 5.42 | 0.45 | 2.93 | 0.49 |
+| 100 | fight | 0.43 | 7.16 | 7.31 | 3.42 | 4.45 | |
+
+After the steering speedups below, the same day:
+
+| Mobs | Scenario | HTN AI ms | GOAP AI ms before | GOAP AI ms after |
+|---|---|---|---|---|
+| 30 | idle | 0.09 | 1.10 | 0.77 |
+| 30 | fight | 0.42 | 0.88 | 0.79 |
+| 60 | idle | 0.21 | 1.42 | 0.97 |
+| 60 | fight | 1.17 | 2.14 | 1.74 |
+| 100 | idle | 0.44 | 2.93 | 2.13 |
+| 100 | fight | 3.02 | 4.45 | 3.97 |
+
+- 30 GOAP mobs awake take about 3% of a tick. The game's ceiling is 30 active mobs, so moving every mob to GOAP fits easily.
+- Idle GOAP costs about 9 times idle HTN, because its steering runs feelers every tick whether or not it moves. In a fight the gap is about 2 times, and at 100 fighting mobs the whole tick is the same, because HTN mobs swing more and the combat code costs too.
+- Asleep costs the same as no AI.
+- The highest single tick was 10 to 25 ms in every mode, no AI included, so it is the test process (garbage collection, thread hand-off), not the AI. Compare averages.
+- GOAP kobolds dealt far less damage, 226 against 1,191 at 30 mobs. That is intended: they flank, reposition, hold back and run, where stock spams attacks.
+
+Where GOAP's time goes, timed with temporary stopwatches inside `CFGOAPSteeringSystem.OnSteering` at 30 mobs:
+
+| Part, ms per tick | Idle | Fight |
+|---|---|---|
+| Three feeler rays (`FeelFan`) | 0.50 | 0.26 |
+| Safety circle lookup (`Panic`) | 0.29 | 0.24 |
+| Behaviours and enemies in reach | 0.02 | 0.02 |
+| Thinking, in `NPCSystem` | about 0.25 | about 0.35 |
+
+What was done, and what it found:
+
+- Each fan ray was cast the full `FeelerSight` of 12 tiles, because it also spots enemies far off, and in a maze that is what cost most. Short rays to the feeler's length now run at each look, and the long rays every 0.25 seconds or after a sharp turn. See "Feelers" in `goap.md`.
+- Feelers look every third tick, or at once after a turn of more than 30 degrees, new behaviours, or with a dangerous tile close. What they found holds in between, and the interest it adds is added each tick.
+- Walls and lava are kept with their bounds on the grid and looked for again after about a tile of walking or 0.5 seconds, so the safety circle's check each tick is plain math. Mobs are looked for at each look and measured every tick.
+- Rays never touched flanking sensors: those are on no collision layer. The lookup did, through `LookupFlags.Sensors` on moving bodies. Fixed things are now found with a grid-local `Static | Sensors` search, which reaches lava but no creature, and mobs by their bodies.
+- No allocations each tick: one cached ray filter, and reused lookup sets.
+- Two first attempts gained nothing, because a wide margin kept about 20 candidates per mob and asked each entity for its bounds every tick. Time each part before trusting a change.
+
+Still open:
+
+1. Skip the fan where the flow field already knows the way. On arrows, walls are not felt anyway, so only mobs need checking, and `CFFlankingSystem` already tracks enemies in reach.
+2. Idle mobs need almost nothing. A mob with no goal beyond `Idle` or `Wander` can think once a second instead of twice, and walk without feelers in open floor.
+3. Our own update loop instead of riding stock steering. Stock steering still runs its own pass per mob and calls ours through an event. Stock forces one thread because of "dependency issues across threads", and engine lookups and rays are not safe to call from several, so threading would only work for the pure math once the world has been read.
+
 ## Checks in a real client
 
 - Kobolds and a closed door: they should open it.

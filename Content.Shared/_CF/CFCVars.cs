@@ -10,6 +10,13 @@ public sealed class CFCVars : CVars
     public static readonly CVarDef<bool> RequireCompleteCharacter =
         CVarDef.Create("cf.require_complete_character", true, CVar.SERVERONLY);
 
+    /// <summary>
+    /// GOAP brains sleep while no living player is within their <c>WakeFeet</c>, so mobs far from everyone cost nothing.
+    /// Integration tests turn it off, because their heroes have no player in them.
+    /// </summary>
+    public static readonly CVarDef<bool> GoapSleep =
+        CVarDef.Create("cf.goap_sleep", true, CVar.SERVERONLY);
+
     /// <summary>Keeps the HUD deck open instead of closing it 5 seconds after the mouse leaves.</summary>
     public static readonly CVarDef<bool> HudDeckPinned =
         CVarDef.Create("cf.hud_deck_pinned", false, CVar.CLIENTONLY | CVar.ARCHIVE);

@@ -1,6 +1,7 @@
 using System.Numerics;
 using Content.Server.CF.GOAP.Influence;
 using Content.Shared.NPC;
+using Robust.Shared.Physics.Components;
 
 namespace Content.Server.CF.GOAP.Steering;
 
@@ -44,6 +45,12 @@ public enum CFGOAPFeltMobs : byte
     /// <summary>Adds danger toward it.</summary>
     Avoid,
 }
+
+/// <summary>
+/// A wall, other fixed solid or dangerous tile near the creature, with its bounds on the grid. These do not move on
+/// their grid, so the safety circle measures to the stored bounds instead of asking the entity every tick.
+/// </summary>
+public readonly record struct CFGOAPPanicFixed(EntityUid Uid, PhysicsComponent? Body, Box2 Bounds, bool Dangerous, bool Climbable);
 
 /// <summary>One weighted steering behaviour.</summary>
 [DataDefinition]
@@ -128,6 +135,53 @@ public sealed partial class CFGOAPSteeringComponent : Component
     public Vector2 AvoidDirection;
 
     public TimeSpan AvoidUntil;
+
+    /// <summary>Steering ticks left before the feelers and the safety circle look again.</summary>
+    public int FeelCountdown;
+
+    /// <summary>Its behaviours changed, so the feelers look again at once, far rays included.</summary>
+    public bool FeelForced;
+
+    /// <summary>
+    /// The enemy each ray of the fan saw past its feeler's reach, out to <see cref="FeelerSight"/>: center, left,
+    /// right. Long rays are cast less often than short ones, and this holds what they saw in between.
+    /// </summary>
+    public readonly EntityUid?[] SightMobs = new EntityUid?[3];
+
+    /// <summary>When the fan next casts its long rays.</summary>
+    public TimeSpan NextSight;
+
+    /// <summary>The way it was heading when the feelers last looked. Turning away from it makes them look again.</summary>
+    public Vector2 FeltHeading;
+
+    /// <summary>
+    /// Enemies the fan's rays touched when they last looked, once per ray, so chasing or avoiding them carries on
+    /// between looks.
+    /// </summary>
+    public List<EntityUid> FanMobs = new();
+
+    /// <summary>
+    /// Mobs the safety circle may have to steer around, found when it last looked, with room for how far they can
+    /// move before the next look. Distances to them are measured every tick.
+    /// </summary>
+    public List<EntityUid> PanicMobs = new();
+
+    /// <summary>Walls, fixed solids and dangerous tiles within <see cref="PanicRange"/> of <see cref="PanicCentre"/>.</summary>
+    public List<CFGOAPPanicFixed> PanicFixed = new();
+
+    /// <summary>The grid <see cref="PanicFixed"/> is on.</summary>
+    public EntityUid? PanicGrid;
+
+    /// <summary>Where on the grid it looked for <see cref="PanicFixed"/>. Walking too far from here looks again.</summary>
+    public Vector2 PanicCentre;
+
+    public float PanicRange;
+
+    /// <summary>When it looks for fixed things again anyway, in case a door shut or a wall went up.</summary>
+    public TimeSpan PanicRefreshAt;
+
+    /// <summary>A dangerous tile is close, so the feelers look every tick.</summary>
+    public bool NearDanger;
 
     /// <summary>What the feelers report this tick, for each stock steering direction.</summary>
     public readonly float[] FeelerTarget = new float[SharedNPCSteeringSystem.InterestDirections];

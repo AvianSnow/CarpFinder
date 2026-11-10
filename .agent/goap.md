@@ -22,6 +22,7 @@ Content.Server/_CF/GOAP/
   Steps/                Do the work, one system per CFGOAPStep
   Tactics/              Puts numbers on a fight: target scores, and what an action is worth
   Steering/             Feelers, flow fields, doors and glass, on top of stock steering
+  Sleep/                Switches a brain off while no player is near
   DecisionLog/          DEBUG, to be removed: the decision log
   Encounters/           The spawner and groups
   Influence/            Scent and noise maps
@@ -40,6 +41,17 @@ Resources/Prototypes/_CF/GOAP/
 4. If the goal or a fact changed, the plan changes. A plan that starts with the step already running keeps it running, so a fact flipping does not restart a walk.
 
 Then `RunStep` looks the current action's `step` up in a table of step systems and runs it. Walking is a step like any other: `Close`, `GoToLkp` and `PickUp` walk the creature themselves, through `CFGOAPSteeringSystem.Navigate`.
+
+## Sleeping
+
+`CFGOAPSleepSystem` puts a brain to sleep while no living player is within `WakeFeet` (default 60) and wakes it when one comes in. Sleeping is stock `NPCSystem.SleepNPC`: it removes `ActiveNPCComponent`, so HTN, the plan, sensors and steering all stop, and the operator's `TaskShutdown` ends the step. The brain keeps `Target`, `Lkp` and `Home`, so it carries on from there when woken. Waking is `WakeNPC`, and HTN starts the operator again.
+
+- It only sleeps once no player has been near for `SleepDelay` (default 10 seconds), so walking along the edge of the range does not flip it. A new creature waits out the delay too.
+- It stays awake while it can see an enemy, is on fire, or is under a Command order, and sleeps once that ends. Freezing mid-fight would look wrong.
+- Being hurt by an enemy wakes it and its whole encounter group, so an arrow from past 60 feet still gets an answer. `CFGOAPPainSensorSystem` calls `Wake`.
+- Only a living body with a player in it counts, as for the encounter spawner, so ghosts and aghosts wake nothing. A body with a player or a mind in it, or one that is down, is left to stock.
+- `cf.goap_sleep` turns it off. Integration tests turn it off in `PoolManager.Cvars.cs`, because their heroes have no player in them. `CFGOAPSleepTest` turns it on.
+- `WakeFeet` and `SleepDelay` are `CFGOAP` fields, so a boss can wake from further away.
 
 ## How to add to it
 
@@ -105,6 +117,15 @@ To remove it:
 | Anything else: a wall, or a grille it cannot hurt | `Solid` | Blocked, so it goes round |
 
 Only `Navigate` deals with these, so a step that moves any other way cannot get through a door. `FollowScent` is one. A mob working on something is left alone by the safety circle, except by lava and other mobs, or the next table along would throw it off the one it is climbing.
+
+## Feelers and the safety circle
+
+`CFGOAPSteeringSystem.Feel` runs on every steering tick, inside stock's `NPCSteeringEvent`, and is most of what GOAP costs. To keep it cheap it does not look every tick:
+
+- The fan looks every third tick (`FeelEvery`), or at once after a turn of more than 30 degrees, after `Steer` or `Stop`, or every tick while a dangerous tile is close. What it found holds in between: `FeelerTarget` keeps its danger, and `FanMobs` adds its chase or avoid interest again each tick.
+- At each look the three rays reach only the feeler's length. Past that a ray can only spot an enemy, so a long ray out to `FeelerSight` is cast every 0.25 seconds, or at once after a turn, and `SightMobs` holds what it saw. The sight sensor reads `Felt`, which this sets.
+- The safety circle measures every tick. Walls, fixed solids and dangerous tiles are kept in `PanicFixed` with their bounds on the grid, and looked for again after about a tile of walking or 0.5 seconds. Each tick checks the body is still hard and collidable, so an opened door stops counting. Mobs are looked for at each look, by their bodies, and measured to their bounds every tick.
+- Never search with `LookupFlags.Sensors` on moving bodies here. It finds every creature's 2.5 tile flanking sensor. The grid-local `Static | Sensors` search reaches lava, whose fixture is not hard, and nothing that moves.
 
 ## Long trips
 

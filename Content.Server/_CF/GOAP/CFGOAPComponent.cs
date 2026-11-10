@@ -106,4 +106,17 @@ public sealed partial class CFGOAPComponent : Component
 
     /// <summary>Allies already seen down, so a reflex fires once for each.</summary>
     public HashSet<EntityUid> FallenAllies = new();
+
+    /// <summary>A living player this close wakes the brain, in feet. See <c>CFGOAPSleepSystem</c>.</summary>
+    [DataField]
+    public float WakeFeet = 60f;
+
+    /// <summary>How long no player has to be within <see cref="WakeFeet"/> before it sleeps again.</summary>
+    [DataField]
+    public TimeSpan SleepDelay = TimeSpan.FromSeconds(10);
+
+    /// <summary>When a player was last within <see cref="WakeFeet"/>, or something last woke it.</summary>
+    public TimeSpan LastWoken;
+
+    public TimeSpan NextSleepCheck;
 }

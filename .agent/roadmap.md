@@ -386,7 +386,11 @@ The labels are the sections of Phase 6 in `roadmapold.md`, which has the design.
 **6g. Verify**
 
 - [ ] A purpose-built test map. See proposal 1 in `ai-testing.md`, which covers this and the corridor, side room and closet.
-- [ ] Measure how much slower GOAP is than stock HTN, with the same mobs on the same map. The result decides whether CF mobs can all move to GOAP. Today ordinary mobs stay on stock HTN.
+- [x] Measure how much slower GOAP is than stock HTN, with the same mobs on the same map. Measured on 10 November 2026 with `CFGOAPStressTest`, results in `ai-testing.md`. At 30 mobs GOAP costs about 1 ms per tick against stock's 0.1 to 0.4, about 3% of a 30 tick server's time. That is cheap enough to move every mob to GOAP. Today ordinary mobs still stay on stock HTN.
+- [x] Sleep mode: a brain sleeps with no living player within 60 feet, and wakes when one comes in. It waits 10 seconds after the last player leaves before sleeping, and stays awake while it can see an enemy. Being hurt wakes it and its group. A sleeping mob costs nothing. `CFGOAPSleepSystem`, tests: `CFGOAPSleepTest`.
+- [x] GOAP steering is most of its cost. Three speedups on 10 November 2026: feelers look every third tick, long sight rays every 0.25 seconds, and walls and lava are kept on the grid instead of searched for each tick. GOAP AI time fell about 30% idle and 10 to 20% in fights, 0.77 ms for 30 idle mobs. See "Feelers and the safety circle" in `goap.md`.
+- [ ] More steering speedups, listed in `ai-testing.md` under the stress test. Steering is still about 0.45 ms of GOAP's 0.77 at 30 idle mobs.
+- [x] GOAP kobolds deal far less damage than stock ones in the stress test (226 against 1,191 at 30 mobs). This is intended: stock AI spams attacks, and GOAP flanks, repositions, holds back and runs.
 
 **6h. Encounters**
 

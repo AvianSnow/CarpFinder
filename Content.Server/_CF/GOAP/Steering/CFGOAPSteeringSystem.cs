@@ -65,7 +65,34 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
     /// <summary>Added to the search, because a tile's center is further away than its edge.</summary>
     private const float PanicSearchMargin = 0.75f;
 
-    private const LookupFlags PanicLookup = LookupFlags.Dynamic | LookupFlags.Static | LookupFlags.Sensors;
+    /// <summary>
+    /// The feelers and the safety circle look every this many steering ticks, 0.1 seconds at 30 a second. Between
+    /// looks the safety circle still measures every tick, against what the last look found.
+    /// </summary>
+    private const int FeelEvery = 3;
+
+    /// <summary>Turning further than 30 degrees from where the feelers last looked makes them look again.</summary>
+    private static readonly float LookTurn = MathF.Cos(MathF.PI / 6f);
+
+    /// <summary>
+    /// How much further than the search it keeps fixed things, so it can walk this far before looking again.
+    /// </summary>
+    private const float PanicStaticMargin = 1f;
+
+    /// <summary>Fixed things are looked for again at least this often, in case a door shut or a wall went up.</summary>
+    private static readonly TimeSpan PanicFixedRefresh = TimeSpan.FromSeconds(0.5);
+
+    /// <summary>How often the fan casts its long rays, which only spot enemies further off.</summary>
+    private static readonly TimeSpan SightInterval = TimeSpan.FromSeconds(0.25);
+
+    /// <summary>Two mobs closing on each other at a run between looks, with room to spare.</summary>
+    private const float PanicMobMargin = 1.5f;
+
+    /// <summary>
+    /// Mobs are found by their bodies, but the safety circle measures to their whole bounds, which the flanking
+    /// sensor makes 2.5 tiles wide, or 5 with a reach weapon. The search reaches this much further for them.
+    /// </summary>
+    private const float PanicMobBounds = 2.5f;
 
     /// <summary>What a ray can touch: walls, dangerous tiles, and mobs.</summary>
     private const long FeelerMask = (long) (CollisionGroup.Impassable
@@ -94,6 +121,22 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
     [Dependency] private CFStealthSystem _stealth = default!;
     [Dependency] private CFGOAPInfluenceMapSystem _influence = default!;
 
+    // Scratch space, cleared before each use and never read after it, so nothing about a creature is kept here.
+    // Reusing these keeps steering from allocating every tick.
+    private readonly HashSet<EntityUid> _panicFound = new();
+    private readonly HashSet<Entity<MobStateComponent>> _mobsFound = new();
+    private EntityUid _feelUid;
+    private EntityUid? _feelThrough;
+    private Func<EntityUid, bool> _feelIgnored = default!;
+
+    public override void Initialize()
+    {
+        base.Initialize();
+
+        // One delegate for every ray. A lambda per ray allocated each time.
+        _feelIgnored = IsFeelIgnored;
+    }
+
     /// <summary>Starts or changes what this creature is doing. Stock only steers something it has registered.</summary>
     public void Steer(
         EntityUid uid,
@@ -112,6 +155,8 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
         steering.Field = field;
         steering.Through = through;
         steering.ArriveSpeed = 1f;
+        steering.FeelCountdown = 0;
+        steering.FeelForced = true;
 
         // Stock leaves this set for good, and a creature in it does not steer at all.
         if (TryComp(uid, out NPCSteeringComponent? stock) && stock.Status == SteeringStatus.NoPath)
@@ -147,6 +192,8 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
         ent.Comp.Field = null;
         ent.Comp.Through = null;
         ent.Comp.ArriveSpeed = 1f;
+        ent.Comp.FeelCountdown = 0;
+        ent.Comp.FeelForced = true;
         ent.Comp.Route.Clear();
         ApplySpeed((ent.Owner, ent.Comp));
         _npcSteering.Unregister(ent);
@@ -178,23 +225,60 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
     /// A three-ray fan along the way it is heading. Stock takes danger away from interest, so a feeler touching
     /// something turns every kind of movement aside. A ray that reaches an enemy adds to the vectors instead.
     /// Rays reach further at speed, which makes their danger work like time to impact.
+    /// The rays only look every <see cref="FeelEvery"/> ticks, or sooner on a sharp turn or near a dangerous tile.
+    /// What they found holds in between, and the interest they add is added again each tick.
     /// </summary>
     private void Feel(Entity<CFGOAPSteeringComponent> ent, ref NPCSteeringEvent args)
     {
-        ent.Comp.Felt = null;
         ent.Comp.OnArrows = OnArrows(ent, args.WorldPosition);
-        Array.Clear(ent.Comp.FeelerTarget);
+        var heading = Heading(ent, ref args);
+        var look = ShouldLook(ent.Comp, heading, out var forced);
+        var now = _timing.CurTime;
 
-        // Beside or behind it, where the fan cannot reach. Flanking already tracks these.
+        // Long rays only spot enemies further off, which the sight sensor reads twice a second, so they wait longer.
+        // A sharp turn or new behaviours cast them at once, or what they saw would be the wrong way.
+        var sweep = look && (forced || now >= ent.Comp.NextSight);
+        if (sweep)
+            ent.Comp.NextSight = now + SightInterval;
+
+        if (look)
+        {
+            ent.Comp.FeelForced = false;
+            ent.Comp.FeelCountdown = FeelEvery - 1;
+            ent.Comp.FeltHeading = heading;
+            ent.Comp.Felt = null;
+            ent.Comp.FanMobs.Clear();
+            Array.Clear(ent.Comp.FeelerTarget);
+        }
+        else
+        {
+            ent.Comp.FeelCountdown--;
+        }
+
+        // Beside or behind it, where the fan cannot reach. Flanking already tracks these, so this is cheap every tick.
         foreach (var enemy in _flanking.EnemiesInReach(ent))
         {
             if (CanFeel(ent, enemy))
                 FeelMob(ent, ref args, enemy);
         }
 
-        var heading = Heading(ent, ref args);
-        if (heading != Vector2.Zero)
-            FeelFan(ent, ref args, heading);
+        if (look)
+        {
+            if (heading != Vector2.Zero)
+                FeelFan(ent, ref args, heading, sweep);
+        }
+        else
+        {
+            foreach (var mob in ent.Comp.FanMobs)
+            {
+                if (!TerminatingOrDeleted(mob))
+                    FeelMob(ent, ref args, mob);
+            }
+        }
+
+        // The way it committed to going round something, until that runs out.
+        if (now < ent.Comp.AvoidUntil)
+            Add(ref args, ent.Comp.AvoidDirection, AvoidWeight);
 
         var frameTime = (float) _timing.FrameTime.TotalSeconds;
         for (var i = 0; i < SharedNPCSteeringSystem.InterestDirections; i++)
@@ -203,42 +287,52 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
             args.Steering.Danger[i] = MathF.Max(args.Steering.Danger[i], ent.Comp.FeelerDanger[i]);
         }
 
-        Panic(ent, ref args);
+        Panic(ent, ref args, look);
+    }
+
+    /// <summary>Whether the feelers and the safety circle look again this tick.</summary>
+    private static bool ShouldLook(CFGOAPSteeringComponent steering, Vector2 heading, out bool forced)
+    {
+        var last = steering.FeltHeading;
+        forced = steering.FeelForced
+                 || (heading == Vector2.Zero || last == Vector2.Zero
+                     ? heading != last
+                     : Vector2.Dot(Vector2.Normalize(heading), Vector2.Normalize(last)) < LookTurn);
+
+        return forced || steering.FeelCountdown <= 0 || steering.NearDanger;
     }
 
     /// <summary>
     /// The safety circle. Rays run ahead, so a creature sliding alongside lava can miss all three while its body
     /// clips the tile. Anything inside the circle overrides everything else, with no easing, and snaps it away.
     /// </summary>
-    private void Panic(Entity<CFGOAPSteeringComponent> ent, ref NPCSteeringEvent args)
+    private void Panic(Entity<CFGOAPSteeringComponent> ent, ref NPCSteeringEvent args, bool look)
     {
         var position = args.WorldPosition;
         var velocity = CompOrNull<PhysicsComponent>(ent)?.LinearVelocity ?? Vector2.Zero;
         var escape = Vector2.Zero;
         var onlyWalls = true;
         var search = ent.Comp.PanicRadius + velocity.Length() * PanicLeadSearch + PanicSearchMargin;
-        foreach (var other in _lookup.GetEntitiesInRange(ent.Owner, search, PanicLookup))
+        if (look)
+            FindPanicMobs(ent, position, search);
+
+        PanicFromFixed(ent, position, velocity, search, ref escape, ref onlyWalls);
+
+        foreach (var other in ent.Comp.PanicMobs)
         {
-            if (!IsPanicCause(ent, other))
+            if (TerminatingOrDeleted(other) || !IsPanicCause(ent, other))
                 continue;
 
             var closest = CFGOAPSteeringMath.ClosestPoint(_lookup.GetWorldAABB(other), position);
             var away = position - closest;
-
-            // Already overlapping, as a mob on a lava tile would be. Its center is the way out.
             if (away == Vector2.Zero)
                 away = position - _transform.GetWorldPosition(other);
 
-            // A wall only stops it, so it can come close. Lava it has to turn away from in time.
-            var radius = HasComp<CFDangerousTileComponent>(other)
-                ? CFGOAPSteeringMath.HazardRadius(ent.Comp.PanicRadius, velocity, -away)
-                : ent.Comp.PanicRadius;
-
             var distance = away.Length();
-            if (distance > 0f && distance < radius)
+            if (distance > 0f && distance < ent.Comp.PanicRadius)
             {
-                escape += away / distance * (radius - distance);
-                onlyWalls &= !HasComp<MobStateComponent>(other) && !HasComp<CFDangerousTileComponent>(other);
+                escape += away / distance * (ent.Comp.PanicRadius - distance);
+                onlyWalls = false;
             }
         }
 
@@ -270,6 +364,129 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
             var alignment = Vector2.Dot(norm, NPCSteeringSystem.Directions[i]);
             args.Steering.Interest[i] = Math.Max(0f, alignment) * PanicForce;
             args.Steering.Danger[i] = Math.Max(0f, -alignment) * PanicForce;
+        }
+    }
+
+    /// <summary>
+    /// Walls, fixed solids and dangerous tiles push it away as mobs do, but they do not move on their grid. Their
+    /// bounds are kept on the grid and looked for again only once it has walked about a tile, so each tick is plain
+    /// math. A door that opened, or anything destroyed, is skipped by checking its body.
+    /// </summary>
+    private void PanicFromFixed(Entity<CFGOAPSteeringComponent> ent, Vector2 position, Vector2 velocity, float search, ref Vector2 escape, ref bool onlyWalls)
+    {
+        if (Transform(ent).GridUid is not { } grid || !TryComp(grid, out MapGridComponent? gridComp))
+        {
+            ent.Comp.PanicFixed.Clear();
+            ent.Comp.PanicGrid = null;
+            ent.Comp.NearDanger = false;
+            return;
+        }
+
+        var local = _maps.WorldToLocal(grid, gridComp, position);
+        if (ent.Comp.PanicGrid != grid
+            || _timing.CurTime >= ent.Comp.PanicRefreshAt
+            || (local - ent.Comp.PanicCentre).Length() + search > ent.Comp.PanicRange)
+        {
+            FindPanicFixed(ent, grid, local, search);
+        }
+
+        // Busy with an obstacle, it stays put. What stands beside it cannot hurt it, and being thrown clear of the next
+        // table along would only end the climb, over and over. Dangerous tiles still count.
+        var wallsCount = ent.Comp.Through == null && !ent.Comp.OnArrows;
+        var climbing = TryComp(ent, out ClimbingComponent? climb) && climb.IsClimbing;
+        var toWorld = _transform.GetWorldRotation(grid);
+        foreach (var other in ent.Comp.PanicFixed)
+        {
+            if (other.Uid == ent.Comp.Target || other.Uid == ent.Comp.Through || climbing && other.Climbable)
+                continue;
+
+            if (other.Dangerous)
+            {
+                if (TerminatingOrDeleted(other.Uid))
+                    continue;
+            }
+            else if (!wallsCount || other.Body is not { Hard: true, CanCollide: true } body || body.LifeStage > ComponentLifeStage.Running)
+            {
+                continue;
+            }
+
+            var awayLocal = local - CFGOAPSteeringMath.ClosestPoint(other.Bounds, local);
+
+            // Already overlapping, as a mob on a lava tile would be. Its center is the way out.
+            if (awayLocal == Vector2.Zero)
+                awayLocal = local - other.Bounds.Center;
+
+            var away = toWorld.RotateVec(awayLocal);
+
+            // A wall only stops it, so it can come close. Lava it has to turn away from in time.
+            var radius = other.Dangerous
+                ? CFGOAPSteeringMath.HazardRadius(ent.Comp.PanicRadius, velocity, -away)
+                : ent.Comp.PanicRadius;
+
+            var distance = away.Length();
+            if (distance > 0f && distance < radius)
+            {
+                escape += away / distance * (radius - distance);
+                onlyWalls &= !other.Dangerous;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Finds the fixed things near it on the grid. Static fixtures only: sensors among them are dangerous tiles, which
+    /// are not hard. Creatures' 2.5 tile flanking sensors are on moving bodies, so this never touches them.
+    /// </summary>
+    private void FindPanicFixed(Entity<CFGOAPSteeringComponent> ent, EntityUid grid, Vector2 local, float search)
+    {
+        var range = search + PanicStaticMargin;
+        ent.Comp.PanicFixed.Clear();
+        ent.Comp.PanicGrid = grid;
+        ent.Comp.PanicCentre = local;
+        ent.Comp.PanicRange = range;
+        ent.Comp.PanicRefreshAt = _timing.CurTime + PanicFixedRefresh;
+        ent.Comp.NearDanger = false;
+
+        _panicFound.Clear();
+        var area = new Box2(local - new Vector2(range), local + new Vector2(range));
+        _lookup.GetLocalEntitiesIntersecting(grid, area, _panicFound, LookupFlags.Static | LookupFlags.Sensors);
+        foreach (var other in _panicFound)
+        {
+            var dangerous = HasComp<CFDangerousTileComponent>(other);
+            if (!TryComp(other, out PhysicsComponent? body) || !dangerous && !(body.Hard && body.BodyType == BodyType.Static))
+                continue;
+
+            // Bounds on the grid, which never change while it is anchored there.
+            var xform = Transform(other);
+            if (xform.ParentUid != grid)
+                continue;
+
+            var bounds = _lookup.GetAABBNoContainer(other, xform.LocalPosition, xform.LocalRotation);
+            if ((local - CFGOAPSteeringMath.ClosestPoint(bounds, local)).Length() > range)
+                continue;
+
+            ent.Comp.PanicFixed.Add(new CFGOAPPanicFixed(other, dangerous ? null : body, bounds, dangerous, HasComp<ClimbableComponent>(other)));
+            ent.Comp.NearDanger |= dangerous;
+        }
+    }
+
+    /// <summary>
+    /// Finds mobs that could come within the search before the next look. They are found by their bodies, not by
+    /// searching sensors, which would find every creature's flanking sensor and made crowds slow.
+    /// </summary>
+    private void FindPanicMobs(Entity<CFGOAPSteeringComponent> ent, Vector2 position, float search)
+    {
+        ent.Comp.PanicMobs.Clear();
+        var range = search + PanicMobMargin;
+        _mobsFound.Clear();
+        _lookup.GetEntitiesInRange(Transform(ent).MapID, position, range + PanicMobBounds, _mobsFound, LookupFlags.Dynamic);
+        foreach (var mob in _mobsFound)
+        {
+            if (mob.Owner == ent.Owner)
+                continue;
+
+            var closest = CFGOAPSteeringMath.ClosestPoint(_lookup.GetWorldAABB(mob), position);
+            if ((position - closest).LengthSquared() <= range * range)
+                ent.Comp.PanicMobs.Add(mob.Owner);
         }
     }
 
@@ -307,16 +524,16 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
         return IsFixed(other);
     }
 
-    private void FeelFan(Entity<CFGOAPSteeringComponent> ent, ref NPCSteeringEvent args, Vector2 heading)
+    private void FeelFan(Entity<CFGOAPSteeringComponent> ent, ref NPCSteeringEvent args, Vector2 heading, bool sweep)
     {
         var speed = CompOrNull<PhysicsComponent>(ent)?.LinearVelocity.Length() ?? 0f;
         var length = CFGOAPSteeringMath.FeelerReach(ent.Comp.FeelerLength, speed, ent.Comp.FeelerFullSpeed, ent.Comp.FeelerMinLength);
         var sideLength = CFGOAPSteeringMath.FeelerReach(ent.Comp.FeelerSideLength, speed, ent.Comp.FeelerFullSpeed, ent.Comp.FeelerMinLength);
 
         var (centre, left, right) = CFGOAPSteeringMath.Fan(heading, ent.Comp.FeelerAngle);
-        var ahead = FeelAlong(ent, ref args, centre, length);
-        var leftDanger = FeelAlong(ent, ref args, left, sideLength, apply: false);
-        var rightDanger = FeelAlong(ent, ref args, right, sideLength, apply: false);
+        var ahead = FeelAlong(ent, ref args, centre, length, 0, sweep);
+        var leftDanger = FeelAlong(ent, ref args, left, sideLength, 1, sweep, apply: false);
+        var rightDanger = FeelAlong(ent, ref args, right, sideLength, 2, sweep, apply: false);
 
         // Both sides touched with the middle clear is a gap to go through. Their danger would cancel the way forward
         // and hold it in front of an open doorway, and the safety circle still keeps it off the frame.
@@ -333,29 +550,48 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
             ent.Comp.AvoidDirection = new Vector2(centre.Y, -centre.X) * CFGOAPSteeringMath.TurnSide(leftDanger, rightDanger);
             ent.Comp.AvoidUntil = now + AvoidTime;
         }
-
-        if (now < ent.Comp.AvoidUntil)
-            Add(ref args, ent.Comp.AvoidDirection, AvoidWeight);
     }
 
-    /// <summary>Casts one ray and returns the danger it found, leaving it to the caller when told not to apply it.</summary>
-    private float FeelAlong(Entity<CFGOAPSteeringComponent> ent, ref NPCSteeringEvent args, Vector2 direction, float length, bool apply = true)
+    /// <summary>
+    /// Casts one ray and returns the danger it found, leaving it to the caller when told not to apply it. The ray only
+    /// reaches the feeler's length. Past that it can only spot an enemy, which a long ray looks for when
+    /// <paramref name="sweep"/> is set; what it saw counts until the next sweep.
+    /// </summary>
+    private float FeelAlong(Entity<CFGOAPSteeringComponent> ent, ref NPCSteeringEvent args, Vector2 direction, float length, int ray, bool sweep, bool apply = true)
     {
-        if (!TryFeel(ent, args.WorldPosition, direction, ent.Comp.FeelerSight, out var hit, ent.Comp.Through))
+        if (TryFeel(ent, args.WorldPosition, direction, length, out var hit, ent.Comp.Through))
+        {
+            if (HasComp<MobStateComponent>(hit.Entity))
+            {
+                ent.Comp.FanMobs.Add(hit.Entity);
+                return FeelMob(ent, ref args, hit.Entity);
+            }
+
+            // What is fixed is left to the arrows, which already go round it.
+            if (ent.Comp.OnArrows && IsFixed(hit.Entity) && !HasComp<CFDangerousTileComponent>(hit.Entity))
+                return 0f;
+
+            var danger = (1f - hit.Distance / length) * FeelerDanger;
+            if (apply)
+                AddDanger(ent, ref args, direction, danger);
+
+            return danger;
+        }
+
+        // Nothing close. The ray still stops at a wall, so nothing is spotted through one.
+        if (sweep)
+        {
+            ent.Comp.SightMobs[ray] = TryFeel(ent, args.WorldPosition, direction, ent.Comp.FeelerSight, out var far, ent.Comp.Through)
+                                      && HasComp<MobStateComponent>(far.Entity)
+                ? far.Entity
+                : null;
+        }
+
+        if (ent.Comp.SightMobs[ray] is not { } seen || TerminatingOrDeleted(seen) || !CanFeel(ent, seen))
             return 0f;
 
-        if (HasComp<MobStateComponent>(hit.Entity))
-            return FeelMob(ent, ref args, hit.Entity);
-
-        // The ray still stops here, so nothing is felt through a wall. It just adds nothing to what the arrows know.
-        if (hit.Distance >= length || ent.Comp.OnArrows && IsFixed(hit.Entity) && !HasComp<CFDangerousTileComponent>(hit.Entity))
-            return 0f;
-
-        var danger = (1f - hit.Distance / length) * FeelerDanger;
-        if (apply)
-            AddDanger(ent, ref args, direction, danger);
-
-        return danger;
+        ent.Comp.FanMobs.Add(seen);
+        return FeelMob(ent, ref args, seen);
     }
 
     private float FeelMob(Entity<CFGOAPSteeringComponent> ent, ref NPCSteeringEvent args, EntityUid mob)
@@ -393,11 +629,16 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
     public bool TryFeel(EntityUid uid, Vector2 from, Vector2 direction, float length, out CFGOAPFeelerHit hit, EntityUid? through = null)
     {
         hit = default;
+
+        // Sensors only so it touches dangerous tiles, whose fixtures are not hard. Flanking sensors are on no layer,
+        // so the mask already keeps rays off them.
+        _feelUid = uid;
+        _feelThrough = through;
         var filter = new QueryFilter
         {
             MaskBits = FeelerMask,
             Flags = QueryFlags.Static | QueryFlags.Dynamic | QueryFlags.Sensors,
-            IsIgnored = other => other == through || !CanFeel(uid, other),
+            IsIgnored = _feelIgnored,
         };
 
         var result = _rays.CastRayClosest(Transform(uid).MapID, from, direction * length, filter);
@@ -407,6 +648,11 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
         var first = result.Results[0];
         hit = new CFGOAPFeelerHit(first.Entity, first.Fraction * length);
         return true;
+    }
+
+    private bool IsFeelIgnored(EntityUid other)
+    {
+        return other == _feelThrough || !CanFeel(_feelUid, other);
     }
 
     private bool IsFixed(EntityUid other)
@@ -585,7 +831,9 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
     {
         var total = Vector2.Zero;
         var count = 0;
-        foreach (var mob in _lookup.GetEntitiesInRange<MobStateComponent>(_transform.GetMapCoordinates(uid), radius))
+        _mobsFound.Clear();
+        _lookup.GetEntitiesInRange(_transform.GetMapCoordinates(uid), radius, _mobsFound);
+        foreach (var mob in _mobsFound)
         {
             if (mob.Owner == uid || _factions.CanHarm(uid, mob))
                 continue;

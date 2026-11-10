@@ -1,3 +1,4 @@
+using Content.Server.CF.GOAP.Sleep;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Factions;
 using Content.Shared.CF.GOAP;
@@ -18,6 +19,7 @@ public sealed partial class CFGOAPPainSensorSystem : EntitySystem
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private CFFactionSystem _factions = default!;
     [Dependency] private CFGOAPSightSensorSystem _sight = default!;
+    [Dependency] private CFGOAPSleepSystem _sleep = default!;
 
     [SubscribeLocalEvent]
     private void OnDamaged(Entity<CFGOAPComponent> ent, ref CFDamagedEvent args)
@@ -27,6 +29,8 @@ public sealed partial class CFGOAPPainSensorSystem : EntitySystem
             || !_factions.CanHarm(ent, args.Source))
             return;
 
+        // A hit from past its wake range, such as an arrow, still gets an answer.
+        _sleep.Wake(ent);
         ent.Comp.HurtBy = args.Source;
         ent.Comp.HurtByUntil = _timing.CurTime + GrudgeTime;
         if (CFGOAPSystem.Knows(ent.Comp, CFGOAPFact.TargetVisible))
