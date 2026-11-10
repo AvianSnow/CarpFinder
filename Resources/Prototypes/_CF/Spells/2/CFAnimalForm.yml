@@ -2,7 +2,7 @@
   parent: CFSpellInstant
   id: CFAnimalForm
   name: Animal Form
-  description: You take on the form of an animal.
+  description: You become an ape, bear, bull, canine, cat or deer for a minute. You fight with its attack, at AC 16 plus your level, and cannot cast spells or use a weapon.
   components:
   - type: Sprite
     sprite: Objects/Magic/magicactions.rsi
@@ -16,7 +16,20 @@
     rank: 2
   - type: CFTargeting
     filter: All
-  - type: CFDegreeEffects
-    landed:
-    - !type:CFPopupEffect
-      text: cf-spell-affected
+  - type: CFModeChoice
+    modes:
+    - { value: 1, name: cf-battle-form-ape, immediate: true }
+    - { value: 2, name: cf-battle-form-bear, immediate: true }
+    - { value: 3, name: cf-battle-form-bull, immediate: true }
+    - { value: 4, name: cf-battle-form-canine, immediate: true }
+    - { value: 5, name: cf-battle-form-cat, immediate: true }
+    - { value: 6, name: cf-battle-form-deer, immediate: true }
+  # Player Core's Animal Form at rank 2, one attack per animal.
+  - type: CFBattleFormSpell
+    forms:
+    - { mode: 1, name: cf-battle-form-ape, dice: 2, die: 6, damageType: Bludgeoning, speedFeet: 25 }
+    - { mode: 2, name: cf-battle-form-bear, dice: 2, die: 8, damageType: Piercing, speedFeet: 30 }
+    - { mode: 3, name: cf-battle-form-bull, dice: 2, die: 8, damageType: Piercing, speedFeet: 30 }
+    - { mode: 4, name: cf-battle-form-canine, dice: 2, die: 8, damageType: Piercing, speedFeet: 40 }
+    - { mode: 5, name: cf-battle-form-cat, dice: 2, die: 6, damageType: Piercing, speedFeet: 40 }
+    - { mode: 6, name: cf-battle-form-deer, dice: 2, die: 6, damageType: Piercing, speedFeet: 50 }

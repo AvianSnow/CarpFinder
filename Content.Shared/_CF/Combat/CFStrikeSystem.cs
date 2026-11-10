@@ -453,6 +453,10 @@ public sealed partial class CFStrikeSystem : EntitySystem
         bool ignoreVolley)
     {
         var bonus = CFMelee.AttackBonus(abilities, combat, weapon, _weapons.Rank(combat, weapon), distanceFeet, ignoreVolley);
+
+        // A battle form's attacks use its own modifier, unless the creature's is higher.
+        if (weapon.Item == null && TryComp(user, out CFBattleFormComponent? form))
+            bonus = Math.Max(bonus, form.AttackModifier);
         bonus -= _conditions.Frightened(user);
         bonus += _conditions.ProneAttackPenalty(user);
         if (weapon.Ranged)

@@ -1,4 +1,5 @@
 using Content.Shared.CF.Actions;
+using Content.Shared.CF.Spells;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Effects;
@@ -145,6 +146,9 @@ public sealed partial class CFArmorSystem : EntitySystem
 
         var rank = CFDefense.ArmorRank(_prototypes, combat, proficiency);
         combat.ArmorClass = CFAttributeMath.ComputeAc(abilities.AbilityModifiers, combat.Level, rank, acBonus, dexCap);
+        if (TryComp(mob, out CFBattleFormComponent? form))
+            combat.ArmorClass = Math.Max(combat.ArmorClass, form.ArmorClass);
+
         Dirty(mob, combat);
 
         var runes = worn != null ? CompOrNull<CFArmorRunesComponent>(worn.Value) : null;

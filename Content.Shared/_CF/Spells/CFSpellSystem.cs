@@ -233,6 +233,12 @@ public sealed partial class CFSpellSystem : EntitySystem
         spell.CastRank = 0;
         var wanted = spell.ChosenRank;
         spell.ChosenRank = 0;
+        if (HasComp<CFBattleFormComponent>(caster))
+        {
+            _popup.PopupEntity(Loc.GetString("cf-battle-form-no-spells"), caster, caster);
+            return false;
+        }
+
         if (spell.Focus)
         {
             if (!TryComp<CFSpellbookComponent>(caster, out var pool))
@@ -319,6 +325,10 @@ public sealed partial class CFSpellSystem : EntitySystem
     /// <summary>True when this cast can spend one slot of the spell's rank. Cantrips and creatures without a book always can.</summary>
     public bool HasSlot(EntityUid caster, CFSpellComponent spell)
     {
+        // A battle form cannot cast.
+        if (HasComp<CFBattleFormComponent>(caster))
+            return false;
+
         if (spell.Focus)
         {
             if (!TryComp<CFSpellbookComponent>(caster, out var pool))
