@@ -386,7 +386,7 @@ The labels are the sections of Phase 6 in `roadmapold.md`, which has the design.
 **6g. Verify**
 
 - [ ] A purpose-built test map. See proposal 1 in `ai-testing.md`, which covers this and the corridor, side room and closet.
-- [x] Measure how much slower GOAP is than stock HTN, with the same mobs on the same map. Measured on 10 November 2026 with `CFGOAPStressTest`, results in `ai-testing.md`. At 30 mobs GOAP costs about 1 ms per tick against stock's 0.1 to 0.4, about 3% of a 30 tick server's time. That is cheap enough to move every mob to GOAP. Today ordinary mobs still stay on stock HTN.
+- [x] Measure how much slower GOAP is than stock HTN, with the same mobs on the same map. Measured on 10 November 2026 with `CFGOAPStressTest`, results in `ai-testing.md`. At 30 mobs GOAP costs about 1 ms per tick against stock's 0.1 to 0.4, about 3% of a 30 tick server's time. That is cheap enough to move every mob to GOAP.
 - [x] Sleep mode: a brain sleeps with no living player within 60 feet, and wakes when one comes in. It waits 10 seconds after the last player leaves before sleeping, and stays awake while it can see an enemy. Being hurt wakes it and its group. A sleeping mob costs nothing. `CFGOAPSleepSystem`, tests: `CFGOAPSleepTest`.
 - [x] GOAP steering is most of its cost. Three speedups on 10 November 2026: feelers look every third tick, long sight rays every 0.25 seconds, and walls and lava are kept on the grid instead of searched for each tick. GOAP AI time fell about 30% idle and 10 to 20% in fights, 0.77 ms for 30 idle mobs. See "Feelers and the safety circle" in `goap.md`.
 - [x] Calm goals (`Idle`, `GoHome`) think once a second instead of twice, and cast no long rays. On open floor they cast no rays at all. GOAP AI for 30 idle mobs went from 0.77 to 0.64 ms. The open floor part has not been measured, because the stress map is a maze.
@@ -412,7 +412,9 @@ The labels are the sections of Phase 6 in `roadmapold.md`, which has the design.
 **6j. Tactics (6 November 2026)**
 
 - [ ] Balance: a creature with discipline waits out Multiple Attack Penalty, so it hits much harder over a long fight. Worked out at 4 to 5 times for a +8 attack against AC 18. Check this in play, and drop `discipline` if it is too much.
-- [ ] Give the creatures in `creatures.yml` a `tactics` value. They all use `Default` unless an encounter sets one.
+- [x] Every CF monster thinks with GOAP, from its base (10 November 2026). Animals use `Beast` tactics, the sewer ooze and skeleton guards `Mindless`, kobold warriors `Default`. Encounters replace tactics only when they name some, and a leader with `keepOwnLists` keeps its own. Stock SS14 mobs and companions keep their own AI. Tests: `CFMonsterTest`, `CFGOAPEncounterTest`, `CFSkeletonguardTest`. Not seen in a real client.
+- [x] Monsters live in a folder per creature type under `Entities/Mobs/Creatures/`, with the type on `CFTrait`. `MonstrousHumanoid` and `Outsider` were added as traits, though the remaster has neither.
+- [ ] GOAP for companions, eidolons, thralls and constructs. They still run `CFCompanion` through `NPCMeleeCombat`, which would fight a brain.
 - [ ] Choosing spells. See `goap-weights.md`.
 
 **6j2. The kobold trapper (6 November 2026)**
@@ -448,7 +450,7 @@ The labels are the sections of Phase 6 in `roadmapold.md`, which has the design.
 
 - `CFGOAPObstacleTest.PatienceDependsOnThePersonality` fails about half the time, measured on 9 November 2026 on the commit before the HUD (7 of 15) and with the HUD (8 of 16). After 7 seconds the default mob should be working on the locked door, but its `Obstacle` is another entity created later in the test, or null. What that entity is has not been looked at. The decision log is printed when the test fails. It is the same setup as the locked door notes in `ai-testing.md`, which may or may not be the same cause.
 - `CFGOAPEncounterTest.ItChoosesToFlankThenRunsThenHides` sometimes shows as `Skipped` in a full CF run and passes on its own. It runs no game ticks, so the cause is not movement. The failure message is lost, so the cause is unknown.
-- `CFSkeletonguardTest.OutOfArrowsItDropsTheBowAndUsesItsClaws` fails in every full CF run (it stops 2.4 away, and the test wants under 2) and passes alone, so it depends on what ran before it.
+- `CFEconomyTest.ShopTabFollowsAccess` fails: `SetShopVisible(false)` leaves the Shop tab visible. Found on 10 November 2026 and not looked into. It is client UI, not the AI.
 - `RainWatersExposedCrops` is unreliable, not just in a full run. On 6 November 2026 it showed as `Skipped` in two full runs, then failed once and passed once on its own. The failure message was not captured, so the cause is unknown. It only touches weather and plants, not the AI.
 - `CFProneTest.NpcWithNoRoomKeepsTryingToStand` fails now and then. The same error also hit `NpcStandsOnceItHasAnAction`: an NPC's stand-up attempt adds a `StatusEffectContainerComponent` to a mob that is already being deleted, and the assert surfaces in the next test's setup. Left alone on purpose. It only affects stock NPCs now. GOAP NPCs are the only ones planned to crawl away, and that is not built.
 

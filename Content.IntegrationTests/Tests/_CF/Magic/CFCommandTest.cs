@@ -58,7 +58,7 @@ public sealed class CFCommandTest : CFGOAPLoggedTest
   - type: CFFaction
     faction: Alpha
 
-# A stock HTN creature with fixed numbers, so rebalancing the boar does not move this test.
+# Fixed numbers, so rebalancing the boar does not move this test. The test takes its brain out to make it stock HTN.
 - type: entity
   parent: CFMobBoar
   id: CFCommandTestBoar
@@ -235,6 +235,7 @@ public sealed class CFCommandTest : CFGOAPLoggedTest
             config.SetCVar(CCVars.NPCEnabled, true);
             hero = Spawn("CFCommandTestHero", 0);
             boar = Spawn("CFCommandTestBoar", 3);
+            CFStockAi.MakeStock(SEntMan, boar);
             SEntMan.RemoveComponent<CFLanguagesComponent>(boar);
             SEntMan.System<SharedPhysicsSystem>().WakeBody(boar);
             SEntMan.System<NPCSystem>().WakeNPC(boar);

@@ -10,6 +10,7 @@ using Content.Server.NPC.Systems;
 using Content.Shared.CCVar;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Detection;
+using Content.Shared.CF.GOAP;
 using Content.Shared.DeviceLinking;
 using Content.Shared.Mobs.Systems;
 using Robust.Shared.Configuration;
@@ -17,6 +18,7 @@ using Robust.Shared.GameObjects;
 using Robust.Shared.Maths;
 using Robust.Shared.Physics.Systems;
 using Robust.Shared.Player;
+using Robust.Shared.Prototypes;
 
 namespace Content.IntegrationTests.Tests.CF.GOAP;
 
@@ -44,6 +46,11 @@ public sealed class CFGOAPEncounterTest : CFGOAPLoggedTest
   - type: CFCombatOptions
   - type: CFFaction
     faction: Alpha
+
+- type: encounter
+  id: CFGOAPEncounterTestPlain
+  mobs:
+  - CFMobBoar
 ";
 
     private CFDevMap _map = default!;
@@ -126,18 +133,53 @@ public sealed class CFGOAPEncounterTest : CFGOAPLoggedTest
     }
 
     [Test]
-    public async Task OnlyEncounterKoboldsGetABrain()
+    public async Task EveryKoboldHasABrainAndAnEncounterSetsHowItFights()
     {
         _map = await CFDevMap.Load(Pair, Footprint);
         await Server.WaitAssertion(() =>
         {
             var plain = SEntMan.SpawnEntity("CFKoboldWarrior", _map.Local(3, 0));
-            Assert.That(SEntMan.HasComponent<CFGOAPComponent>(plain), Is.False);
-            Assert.That(SEntMan.GetComponent<HTNComponent>(plain).RootTask.Task.Id, Is.EqualTo("SimpleHostileCompound"));
+            Assert.That(SEntMan.HasComponent<CFGOAPComponent>(plain), "Every CF monster thinks with GOAP.");
+            Assert.That(SEntMan.GetComponent<HTNComponent>(plain).RootTask.Task.Id, Is.EqualTo("CFGOAPCompound"));
 
             var spawner = Spawner();
             Encounters.Spawn(spawner);
-            Assert.That(SEntMan.GetComponent<HTNComponent>(spawner.Comp.Members[0]).RootTask.Task.Id, Is.EqualTo("CFGOAPCompound"));
+            var member = SEntMan.GetComponent<CFGOAPComponent>(spawner.Comp.Members[0]);
+            Assert.That(member.Tactics.Id, Is.EqualTo("Skirmisher"), "The encounter's tactics replace the kobold's own.");
+            Assert.That(member.Goals, Does.Contain(new ProtoId<CFGOAPGoalPrototype>("RunAway")));
+        });
+    }
+
+    [Test]
+    public async Task ALeaderKeepsItsOwnWayOfFighting()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            var alone = SEntMan.GetComponent<CFGOAPComponent>(SEntMan.SpawnEntity("CFMobKoboldTrapper", _map.Local(6, 0)));
+            var spawner = Spawner();
+            spawner.Comp.Encounter = "KoboldAmbush";
+            Encounters.Spawn(spawner);
+
+            var leader = spawner.Comp.Members
+                .Select(m => SEntMan.GetComponent<CFGOAPComponent>(m))
+                .Single(goap => goap.KeepOwnLists);
+            Assert.That(leader.Goals, Is.EqualTo(alone.Goals));
+            Assert.That(leader.Actions, Is.EqualTo(alone.Actions));
+        });
+    }
+
+    [Test]
+    public async Task AnEncounterThatNamesNoTacticsLeavesTheMonstersOwn()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            var spawner = Spawner();
+            spawner.Comp.Encounter = "CFGOAPEncounterTestPlain";
+            Encounters.Spawn(spawner);
+            var boar = SEntMan.GetComponent<CFGOAPComponent>(spawner.Comp.Members[0]);
+            Assert.That(boar.Tactics.Id, Is.EqualTo("Beast"));
         });
     }
 

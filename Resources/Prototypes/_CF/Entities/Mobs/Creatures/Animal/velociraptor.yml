@@ -1,0 +1,64 @@
+# Velociraptor. Creature 1, Small. Monster Core p. 96. Jaws only. Talon, Leaping Charge and Pack Attack are not in yet.
+- type: entity
+  parent: CFBaseCreature
+  id: CFMobVelociraptor
+  name: velociraptor
+  description: A quick, feathered hunter that attacks in packs.
+  components:
+    - type: GhostRole
+      name: cf-ghost-velociraptor-name
+      description: cf-ghost-velociraptor-desc
+    - type: Sprite
+      drawdepth: Mobs
+      layers:
+        - map: ["enum.DamageStateVisualLayers.Base"]
+          sprite: _CP14/Mobs/Animals/dino.rsi
+          state: live
+    - type: DamageStateVisuals
+      states:
+        Alive:
+          Base: live
+        Critical:
+          Base: dead
+        Dead:
+          Base: dead
+    - type: MovementSpeedModifier
+      baseWalkSpeed: 4
+      baseSprintSpeed: 7.2
+    - type: CFTrait
+      traits:
+        - Animal
+    - type: CFGOAP
+      tactics: Beast
+    - type: CFCombatant
+      level: 1
+      armorClass: 16
+      speedFeet: 40
+      maxHp: 20
+      currentHp: 20
+      diesAtZeroHp: true
+      printedFortitude: 5
+      printedReflex: 7
+      printedWill: 4
+      printedPerception: 6
+      printedAttack: 8
+      printedDamage: 3
+    - type: CFAbilityScore
+      abilityModifiers:
+        Strength: 0
+        Dexterity: 3
+        Constitution: 2
+        Intelligence: -4
+        Wisdom: 1
+        Charisma: 1
+    - type: CFCombatOptions
+      naturalDice: 1
+      naturalDie: 6
+      naturalType: Piercing
+      naturalAgile: false
+      naturalFinesse: true
+    - type: MobThresholds
+      thresholds:
+        0: Alive
+        19: Critical
+        20: Dead

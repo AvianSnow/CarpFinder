@@ -1,0 +1,64 @@
+# Giant frog. Creature 1, Medium. Monster Core 2 p. 158. Jaws only. Grab and the tongue are not in yet.
+- type: entity
+  parent: CFBaseCreature
+  id: CFMobGiantFrog
+  name: giant frog
+  description: A frog as big as a man, with a mouth to match.
+  components:
+    - type: GhostRole
+      name: cf-ghost-giant-frog-name
+      description: cf-ghost-giant-frog-desc
+    - type: Sprite
+      drawdepth: Mobs
+      layers:
+        - map: ["enum.DamageStateVisualLayers.Base"]
+          sprite: _CP14/Mobs/Animals/frog.rsi
+          state: frog
+    - type: DamageStateVisuals
+      states:
+        Alive:
+          Base: frog
+        Critical:
+          Base: frog_dead
+        Dead:
+          Base: frog_dead
+    - type: MovementSpeedModifier
+      baseWalkSpeed: 2.5
+      baseSprintSpeed: 4.5
+    - type: CFTrait
+      traits:
+        - Animal
+    - type: CFGOAP
+      tactics: Beast
+    - type: CFCombatant
+      level: 1
+      armorClass: 15
+      speedFeet: 25
+      maxHp: 30
+      currentHp: 30
+      diesAtZeroHp: true
+      printedFortitude: 8
+      printedReflex: 7
+      printedWill: 5
+      printedPerception: 7
+      printedAttack: 8
+      printedDamage: 3
+    - type: CFAbilityScore
+      abilityModifiers:
+        Strength: 3
+        Dexterity: 2
+        Constitution: 3
+        Intelligence: -4
+        Wisdom: 2
+        Charisma: -1
+    - type: CFCombatOptions
+      naturalDice: 1
+      naturalDie: 6
+      naturalType: Piercing
+      naturalAgile: false
+      naturalFinesse: false
+    - type: MobThresholds
+      thresholds:
+        0: Alive
+        29: Critical
+        30: Dead

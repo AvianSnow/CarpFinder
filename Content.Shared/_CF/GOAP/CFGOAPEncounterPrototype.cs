@@ -16,21 +16,23 @@ public sealed partial class CFGOAPEncounterPrototype : IPrototype
     [DataField]
     public int Count = 1;
 
+    /// <summary>Replaces each creature's own personality. Left out, each keeps its own.</summary>
     [DataField]
-    public ProtoId<CFGOAPProfilePrototype> Profile = "Default";
+    public ProtoId<CFGOAPProfilePrototype>? Profile;
 
+    /// <summary>Replaces each creature's own tactics, such as a boar's Beast. Left out, each keeps its own.</summary>
     [DataField]
-    public ProtoId<CFGOAPTacticsPrototype> Tactics = "Default";
+    public ProtoId<CFGOAPTacticsPrototype>? Tactics;
 
     /// <summary>The group runs once this share of it is left. 0 fights to the last.</summary>
     [DataField]
     public float RoutAt;
 
-    /// <summary>Added to each creature's goals, on top of the usual ones. A mob with its own brain keeps its own.</summary>
+    /// <summary>Added to each creature's goals, on top of its own. A brain with <c>keepOwnLists</c> is left alone.</summary>
     [DataField]
     public List<ProtoId<CFGOAPGoalPrototype>> Goals = new();
 
-    /// <summary>Added to each creature's actions, on top of the usual ones. A mob with its own brain keeps its own.</summary>
+    /// <summary>Added to each creature's actions, on top of its own. A brain with <c>keepOwnLists</c> is left alone.</summary>
     [DataField]
     public List<ProtoId<CFGOAPActionPrototype>> Actions = new();
 }

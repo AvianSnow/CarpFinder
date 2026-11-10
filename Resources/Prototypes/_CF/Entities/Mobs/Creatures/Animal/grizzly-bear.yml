@@ -1,0 +1,76 @@
+# Grizzly bear. Creature 3, Large. Monster Core p. 41. Jaws only. Claw, Grab, Mauler and Rush are not in yet.
+- type: entity
+  parent: [CFBaseCreature, BaseSlicingRefinableButchering]
+  id: CFMobGrizzlyBear
+  name: grizzly bear
+  description: A huge brown bear, heavy with muscle.
+  components:
+    - type: GhostRole
+      name: cf-ghost-grizzly-bear-name
+      description: cf-ghost-grizzly-bear-desc
+    - type: Sprite
+      drawdepth: Mobs
+      layers:
+        - map: ["enum.DamageStateVisualLayers.Base"]
+          sprite: _CP14/Mobs/Animals/bear.rsi
+          state: live
+    - type: DamageStateVisuals
+      states:
+        Alive:
+          Base: live
+        Critical:
+          Base: dead
+        Dead:
+          Base: dead
+    - type: MovementSpeedModifier
+      baseWalkSpeed: 3.5
+      baseSprintSpeed: 6.3
+    - type: CFTrait
+      traits:
+        - Animal
+    - type: CFGOAP
+      tactics: Beast
+    - type: CFCombatant
+      level: 3
+      armorClass: 17
+      speedFeet: 35
+      maxHp: 59
+      currentHp: 59
+      diesAtZeroHp: true
+      printedFortitude: 12
+      printedReflex: 6
+      printedWill: 8
+      printedPerception: 10
+      printedAttack: 11
+      printedDamage: 4
+    - type: CFAbilityScore
+      abilityModifiers:
+        Strength: 4
+        Dexterity: 1
+        Constitution: 5
+        Intelligence: -4
+        Wisdom: 1
+        Charisma: -2
+    - type: CFCombatOptions
+      naturalDice: 2
+      naturalDie: 8
+      naturalType: Piercing
+      naturalAgile: false
+      naturalFinesse: false
+    - type: MobThresholds
+      thresholds:
+        0: Alive
+        58: Critical
+        59: Dead
+    - type: ToolRefinable
+      refineResult:
+        - id: CFLeather1
+          amount: 2
+          maxAmount: 4
+        - id: CFScrapLeather
+          amount: 1
+          maxAmount: 3
+          prob: 0.5
+        - id: CFBone1
+          amount: 2
+          maxAmount: 4

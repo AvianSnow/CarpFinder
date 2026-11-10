@@ -1,0 +1,53 @@
+# The bases every CF monster is built on. Each monster has a file of its own, in the folder of its creature type, and
+# carries that type as a trait on CFTrait. See .agent/importcreatures.md.
+# Monster Core creatures on CP14 bodies. Numbers are the printed stat blocks, checked on Archives of Nethys.
+# Copy one for a new creature. printedAttack and printedDamage are the melee Strike's +N and +M in "+N, 1dX+M".
+
+# What makes a monster playable. Every monster takes this as a parent, and sets its own name and description on GhostRole.
+# GhostTakeoverAvailable is what lets a ghost actually take the body: without it the role is listed and does nothing.
+# Stock HTN sleeps while a player is in the body and wakes if they leave, and a GOAP brain runs inside HTN.
+- type: entity
+  abstract: true
+  id: CFMonsterGhostRole
+  categories: [ HideSpawnMenu ]
+  components:
+    - type: GhostRole
+      makeSentient: true
+      allowMovement: true
+      allowSpeech: true
+      rules: cf-ghost-monster-rules
+      mindRoles:
+        - MindRoleGhostRoleTeamAntagonist
+    - type: GhostTakeoverAvailable
+
+# Every CF monster thinks with a GOAP brain. Stock mobs keep stock HTN.
+- type: entity
+  abstract: true
+  parent: [SimpleMobBase, MobCombat, CFMonsterGhostRole, CFGOAPBrain]
+  id: CFBaseCreature
+  suffix: Monster
+  categories: [ForkFiltered]
+  components:
+    - type: InputMover
+    - type: MobMover
+    - type: HTN
+      rootTask:
+        task: CFGOAPCompound
+    - type: NpcFactionMember
+      factions:
+        - SimpleHostile
+    - type: CFFaction
+      faction: Monster
+    # Animals make noises. A player in one cannot talk, and does not understand speech.
+    - type: CFLanguages
+      known: [ Bestial ]
+    - type: Appearance
+    - type: MeleeWeapon
+      angle: 0
+      animation: WeaponArcBite
+      attackRate: 1
+      soundHit:
+        path: /Audio/Effects/bite.ogg
+      damage:
+        types:
+          Piercing: 0

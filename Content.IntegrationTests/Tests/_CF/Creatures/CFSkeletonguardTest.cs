@@ -23,7 +23,7 @@ using Robust.Shared.Physics.Systems;
 
 namespace Content.IntegrationTests.Tests.CF.Creatures;
 
-/// <summary>The Skeleton Guard: its stat block, and that it fights under stock AI and under a GOAP brain.</summary>
+/// <summary>The Skeleton Guard: its stat block, and that it fights with its GOAP brain.</summary>
 [TestFixture]
 [TestOf(typeof(CFArrowSupplySystem))]
 public sealed class CFSkeletonguardTest : GameTest
@@ -72,14 +72,6 @@ public sealed class CFSkeletonguardTest : GameTest
       amount: 9999
     - damageType: Void
       amount: 9999
-
-- type: entity
-  parent: [ CFMobSkeletonguardMelee, CFGOAPBrain ]
-  id: CFSkeletonguardTestBrainMelee
-
-- type: entity
-  parent: [ CFMobSkeletonguardRanged, CFGOAPBrain ]
-  id: CFSkeletonguardTestBrainRanged
 ";
 
     private CFDevMap _map = default!;
@@ -269,7 +261,7 @@ public sealed class CFSkeletonguardTest : GameTest
     }
 
     [Test]
-    public async Task StockAiCutsWithTheScimitar()
+    public async Task ItCutsWithTheScimitar()
     {
         _map = await CFDevMap.Load(Pair, Footprint, avoidStructures: true);
         EntityUid mob = default;
@@ -289,7 +281,7 @@ public sealed class CFSkeletonguardTest : GameTest
     }
 
     [Test]
-    public async Task StockAiStandsBackAndShootsThroughItsArrows()
+    public async Task ItStandsBackAndShootsThroughItsArrows()
     {
         _map = await CFDevMap.Load(Pair, Footprint, avoidStructures: true);
         EntityUid mob = default;
@@ -321,12 +313,13 @@ public sealed class CFSkeletonguardTest : GameTest
             Assert.That(arrows, Is.LessThan(19), "It has been shooting.");
             Assert.That(nocked, Is.EqualTo(1), "The next arrow is already on the bow.");
             Assert.That(hp, Is.LessThan(1000));
-            Assert.That(distance, Is.GreaterThan(2f), "It stayed out of melee.");
+            Assert.That(distance, Is.GreaterThan(3f), "It shot from where it stood.");
         });
     }
 
+    /// <summary>Its brain keeps the empty bow in hand and closes in to claw.</summary>
     [Test]
-    public async Task OutOfArrowsItDropsTheBowAndUsesItsClaws()
+    public async Task OutOfArrowsItUsesItsClaws()
     {
         _map = await CFDevMap.Load(Pair, Footprint, avoidStructures: true);
         EntityUid mob = default;
@@ -341,21 +334,21 @@ public sealed class CFSkeletonguardTest : GameTest
 
         await RunNpcs(900);
 
-        var holding = true;
+        var hp = 0;
         var distance = 0f;
         await Server.WaitPost(() =>
         {
-            holding = Weapon(mob).IsValid();
+            hp = SEntMan.GetComponent<CFCombatantComponent>(hero).CurrentHp;
             distance = Distance(mob, hero);
         });
 
-        Assert.That(holding, Is.False);
         Assert.That(distance, Is.LessThan(2f), "It walked up to use its claws.");
+        Assert.That(hp, Is.LessThan(1000), "It hurt them.");
     }
 
-    [TestCase("CFSkeletonguardTestBrainMelee", new[] { "Close", "Strike" })]
-    [TestCase("CFSkeletonguardTestBrainRanged", new[] { "Shoot" })]
-    public async Task WithABrainItPlansForItsWeapon(string id, string[] plan)
+    [TestCase(Melee, new[] { "Close", "Strike" })]
+    [TestCase(Ranged, new[] { "Shoot" })]
+    public async Task ItPlansForItsWeapon(string id, string[] plan)
     {
         _map = await CFDevMap.Load(Pair, Footprint, avoidStructures: true);
         await Server.WaitAssertion(() =>
@@ -375,40 +368,6 @@ public sealed class CFSkeletonguardTest : GameTest
             }
 
             Assert.That(chosen, Is.EqualTo(plan));
-        });
-    }
-
-    [Test]
-    public async Task WithABrainItReallyShoots()
-    {
-        _map = await CFDevMap.Load(Pair, Footprint, avoidStructures: true);
-        EntityUid mob = default;
-        EntityUid hero = default;
-        await Server.WaitPost(() =>
-        {
-            mob = SEntMan.SpawnEntity("CFSkeletonguardTestBrainRanged", _map.Local(0, 0));
-            hero = SEntMan.SpawnEntity("CFSkeletonguardTestHero", _map.Local(5, 0));
-            SEntMan.GetComponent<CFArrowSupplyComponent>(mob).Arrows = 19;
-            Wake(mob, hero);
-        });
-
-        await RunNpcs(450);
-
-        var arrows = 0;
-        var hp = 0;
-        var distance = 0f;
-        await Server.WaitPost(() =>
-        {
-            arrows = SEntMan.GetComponent<CFArrowSupplyComponent>(mob).Arrows;
-            hp = SEntMan.GetComponent<CFCombatantComponent>(hero).CurrentHp;
-            distance = Distance(mob, hero);
-        });
-
-        Assert.Multiple(() =>
-        {
-            Assert.That(arrows, Is.LessThan(19));
-            Assert.That(hp, Is.LessThan(1000));
-            Assert.That(distance, Is.GreaterThan(3f), "It shot from where it stood.");
         });
     }
 

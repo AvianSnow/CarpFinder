@@ -20,6 +20,13 @@ public sealed partial class CFGOAPComponent : Component
     [DataField]
     public ProtoId<CFGOAPTacticsPrototype> Tactics = "Default";
 
+    /// <summary>
+    /// It fights unlike any group it joins, as a leader such as the kobold trapper does, so an encounter leaves its
+    /// personality, tactics and lists alone. Without this, an encounter's settings replace the monster's own.
+    /// </summary>
+    [DataField]
+    public bool KeepOwnLists;
+
     [DataField]
     public List<ProtoId<CFGOAPGoalPrototype>> Goals = new()
     {

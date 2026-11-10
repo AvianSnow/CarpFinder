@@ -14,10 +14,9 @@
 # Skeleton Guard. Creature -1, Medium, Mindless Skeleton Undead Unholy. Monster Core p. 312. Recall Knowledge DC 13.
 # Each variant fights with one weapon. A disarmed or empty-handed guard uses its claw, which is the natural attack below.
 # Not in yet: immunity to death effects, disease and poison afflictions, and void effects healing it.
-# It is Mindless, so an encounter should set "tactics: Mindless".
 - type: entity
   abstract: true
-  parent: [ MobSkeletonPerson, CFMonsterGhostRole ]
+  parent: [ MobSkeletonPerson, CFMonsterGhostRole, CFGOAPBrain ]
   id: CFMobSkeletonguardBase
   description: Old bones held up by void energy, still keeping the post they were given.
   suffix: Monster
@@ -83,6 +82,8 @@
     - Skeleton
     - Undead
     - Unholy
+  - type: CFGOAP
+    tactics: Mindless
   - type: CFVoidHealing
   # Bleed, Mental and Poison are immunities. Void is what void healing says about void damage.
   - type: CFResistances
@@ -132,14 +133,11 @@
   - type: GhostRole
     name: cf-ghost-skeleton-guard-name
     description: cf-ghost-skeleton-guard-desc
-  - type: HTN
-    rootTask:
-      task: SimpleHostileCompound
   - type: Loadout
     prototypes: [ CFSkeletonguardMeleeGear ]
 
-# Stock AI through CFArcherCompound: wields the bow, walks until it has a line of sight, then stands and shoots.
-# With its 20 arrows gone it drops the bow and closes in with its claws.
+# Its brain shoots while it has a loaded bow and a line, from where it stands. With its 20 arrows gone it keeps the
+# empty bow in hand and closes in with its claws.
 - type: entity
   parent: CFMobSkeletonguardBase
   id: CFMobSkeletonguardRanged
@@ -148,9 +146,6 @@
   - type: GhostRole
     name: cf-ghost-skeleton-archer-name
     description: cf-ghost-skeleton-archer-desc
-  - type: HTN
-    rootTask:
-      task: CFArcherCompound
   - type: Loadout
     prototypes: [ CFSkeletonguardRangedGear ]
   # One more is already on the bow.

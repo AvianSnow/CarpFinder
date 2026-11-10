@@ -53,11 +53,7 @@ public sealed class CFGOAPStressTest : GameTest
     private const string Prototypes = @"
 - type: entity
   parent: CFKoboldWarrior
-  id: CFStressTestKoboldHtn
-
-- type: entity
-  parent: [ CFKoboldWarrior, CFGOAPBrain ]
-  id: CFStressTestKoboldGoap
+  id: CFStressTestKobold
 
 - type: entity
   parent: MobHuman
@@ -168,14 +164,18 @@ public sealed class CFGOAPStressTest : GameTest
                 }
             }
 
-            var proto = mode is Mode.Goap or Mode.GoapAsleep ? "CFStressTestKoboldGoap" : "CFStressTestKoboldHtn";
+            // Every CF monster has a brain, so the stock runs take it out again: the same body on stock HTN.
+            var stock = mode is Mode.None or Mode.Htn;
             for (var i = 0; i < count; i++)
             {
                 // In a fight every mob starts within 30 feet of a hero, so all of them have something to do.
                 var options = fight
                     ? free.Where(t => Near(t, heroTiles[i % Heroes])).ToList()
                     : free;
-                var mob = entities.SpawnEntity(proto, Centre(grid, options[random.Next(options.Count)]));
+                var mob = entities.SpawnEntity("CFStressTestKobold", Centre(grid, options[random.Next(options.Count)]));
+                if (stock)
+                    CFStockAi.MakeStock(entities, mob);
+
                 mobs.Add(mob);
                 if (mode == Mode.GoapAsleep)
                     entities.GetComponent<CFGOAPComponent>(mob).SleepDelay = TimeSpan.Zero;

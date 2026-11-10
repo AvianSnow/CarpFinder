@@ -4,7 +4,6 @@
 # Abilities Str +1, Dex +3, Con −1, Int +0, Wis +1, Cha +1. Fort +3, Ref +7, Will +3.
 # Sneak Attack and Scamper are on the book entry. Sneak Attack uses the game's precision dice.
 # Scamper is not a separate action yet.
-# Copy this file for a new monster. The field guide is .agents/.CURSOR/monsters.md.
 
 - type: startingGear
   id: CFKoboldWarriorGear
@@ -12,7 +11,7 @@
   - CFSpear
 
 - type: entity
-  parent: [ MobBaseKobold, CFMonsterGhostRole ]
+  parent: [ MobBaseKobold, CFGOAPBrain, CFMonsterGhostRole ]
   id: CFKoboldWarrior
   name: kobold warrior
   description: A small reptilian skirmisher in leather armor, armed with a spear. It strikes from the dark and keeps a sling ready.
@@ -31,7 +30,11 @@
   - type: MobMover
   - type: HTN
     rootTask:
-      task: SimpleHostileCompound
+      task: CFGOAPCompound
+  - type: CFTrait
+    traits:
+    - Humanoid
+    - Kobold
   - type: NpcFactionMember
     factions:
     - SimpleHostile

@@ -38,7 +38,7 @@ Everything below is under `Content.Shared/_CF/`.
 | `Hazards/` | Traps: noticing, triggering, disabling, and creatures that build them | `CFHazardSystem`, `CFTrapLayerSystem` |
 | `Items/` | Item level, rarity, Bulk, encumbrance, what the HUD's Items tab can draw | `CFEncumbranceSystem`, `CFQuickItemSystem` |
 | `Detection/` | Remaster Hide, Sneak, Seek and Create a Diversion. Each creature's view of a sneaker. The drawing is client-side. | `CFStealthSystem`, `CFStealthComponent` |
-| `GOAP/` | Advanced NPCs: facts, steps, and goals, actions and personalities as prototypes. The logic is server-side in `Content.Server/_CF/GOAP/`. See `goap.md`. | `CFGOAPSystem`, `CFGOAPPlanner` |
+| `GOAP/` | The AI every CF monster thinks with: facts, steps, and goals, actions and personalities as prototypes. The logic is server-side in `Content.Server/_CF/GOAP/`. See `goap.md`. | `CFGOAPSystem`, `CFGOAPPlanner` |
 | `Medicine/` | Healer's toolkit, Treat Wounds, Battle Medicine | `CFMedicineSystem` |
 | `Locks/` | Keys, Pick a Lock, Force Open, on top of the stock `Lock` | `CFLockSystem` |
 | `Outdoors/` | The outdoor map component, temperature rules, weather effects. The logic is server-side. | `CFEnvironmentRules`, `CFOutdoorsWorldSystem` |
@@ -250,8 +250,8 @@ Radial actions are entities in `Resources/Prototypes/_CF/Actions/activities.yml`
 |---|---|
 | `CFTrainingDummy` | AC 15, 20 HP. `spawn CFTrainingDummy` in game. |
 | `CFKoboldWarrior` | A hostile with a monster stat block |
-| `CFMobBoar`, `CFMobGiantRat`, ... | Monster Core creatures, in `Entities/Mobs/Creatures/creatures.yml` |
-| `CFMobSkeletonguardMelee`, `CFMobSkeletonguardRanged` | Skeleton Guards with a scimitar and a shortbow, in `Entities/Mobs/Creatures/undead.yml` |
+| `CFMobBoar`, `CFMobGiantRat`, ... | Monster Core creatures, one file each under `Entities/Mobs/Creatures/<creature type>/` |
+| `CFMobSkeletonguardMelee`, `CFMobSkeletonguardRanged` | Skeleton Guards with a scimitar and a shortbow, in `Entities/Mobs/Creatures/Undead/skeleton-guard.yml` |
 | `Objects/Weapons/`, `Clothing/CFArmors.yml` | Weapons, shields and armor. Bases are in `Objects/Weapons/_base.yml` |
 | `/Maps/Nonstations/meteor-arena.yml` | The arena all integration tests load, through `CFDevMap` |
 | `CFMobKoboldTrapper` | A GOAP leader that shoots, lays traps and draws a hammer when cornered. Set a spawner's `encounter` to `KoboldAmbush` for it and three warriors |

@@ -1,0 +1,70 @@
+# Sewer ooze. Creature 1, Medium. Monster Core p. 256. The extra 1d4 acid, Filth Wave, and immunity to critical hits and precision are not in yet.
+- type: entity
+  parent: CFBaseCreature
+  id: CFMobSewerOoze
+  name: sewer ooze
+  description: A heaving pile of filth that creeps toward anything that moves.
+  components:
+    - type: CFLanguages
+      known: [ Mindless ]
+    - type: GhostRole
+      name: cf-ghost-sewer-ooze-name
+      description: cf-ghost-sewer-ooze-desc
+    - type: Sprite
+      drawdepth: Mobs
+      layers:
+        - map: ["enum.DamageStateVisualLayers.Base"]
+          sprite: _CP14/Mobs/Monster/slime.rsi
+          state: base
+    - type: DamageStateVisuals
+      states:
+        Alive:
+          Base: base
+        Critical:
+          Base: base
+        Dead:
+          Base: base
+    - type: MovementSpeedModifier
+      baseWalkSpeed: 1
+      baseSprintSpeed: 1.8
+    - type: CFTrait
+      traits:
+        - Ooze
+    - type: CFGOAP
+      tactics: Mindless
+    - type: CFCombatant
+      level: 1
+      armorClass: 8
+      speedFeet: 10
+      maxHp: 40
+      currentHp: 40
+      diesAtZeroHp: true
+      printedFortitude: 9
+      printedReflex: 1
+      printedWill: 3
+      printedPerception: 3
+      printedAttack: 9
+      printedDamage: 1
+    - type: CFAbilityScore
+      abilityModifiers:
+        Strength: 2
+        Dexterity: -5
+        Constitution: 4
+        Intelligence: -5
+        Wisdom: 0
+        Charisma: -5
+    - type: CFCombatOptions
+      naturalDice: 1
+      naturalDie: 6
+      naturalType: Bludgeoning
+      naturalAgile: false
+      naturalFinesse: false
+    - type: MobThresholds
+      thresholds:
+        0: Alive
+        39: Critical
+        40: Dead
+    - type: CFResistances
+      entries:
+        - damageType: Acid
+          amount: 9999

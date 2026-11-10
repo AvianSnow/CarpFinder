@@ -220,21 +220,31 @@ public sealed partial class CFGOAPEncounterSystem : EntitySystem
     }
 
     /// <summary>
-    /// Gives a creature the group's brain, whatever it is. This is what lets any mob be chosen. A creature that came with
-    /// a brain of its own keeps it and only joins the group, so a leader can fight unlike the rest.
+    /// Gives a creature the group's way of fighting, whatever it is. This is what lets any mob be chosen, a stock one
+    /// included. Every CF monster already has a brain, and the encounter's personality, tactics and lists go onto it. A
+    /// brain with <see cref="CFGOAPComponent.KeepOwnLists"/> only joins the group, so a leader can fight unlike the rest.
     /// </summary>
     private void Enlist(Entity<CFGOAPEncounterSpawnerComponent> ent, EntityUid mob, CFGOAPEncounterPrototype encounter)
     {
         ent.Comp.Members.Add(mob);
         EnsureComp<CFGOAPEncounterMemberComponent>(mob).Group = ent;
 
-        if (!HasComp<CFGOAPComponent>(mob))
+        var goap = EnsureComp<CFGOAPComponent>(mob);
+        if (!goap.KeepOwnLists)
         {
-            var goap = AddComp<CFGOAPComponent>(mob);
-            goap.Profile = encounter.Profile;
-            goap.Tactics = encounter.Tactics;
-            goap.Goals.AddRange(encounter.Goals);
-            goap.Actions.AddRange(encounter.Actions);
+            goap.Profile = encounter.Profile ?? goap.Profile;
+            goap.Tactics = encounter.Tactics ?? goap.Tactics;
+            foreach (var goal in encounter.Goals)
+            {
+                if (!goap.Goals.Contains(goal))
+                    goap.Goals.Add(goal);
+            }
+
+            foreach (var action in encounter.Actions)
+            {
+                if (!goap.Actions.Contains(action))
+                    goap.Actions.Add(action);
+            }
         }
 
         EnsureComp<CFGOAPSteeringComponent>(mob);

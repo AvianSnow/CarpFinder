@@ -1,0 +1,73 @@
+# Giant rat. Creature -1, Small, Animal. Monster Core p. 288. Recall Knowledge DC 13.
+# Not in yet: putrid plague, low-light vision, scent, the climb Speed, and +4 Athletics to Climb or Swim.
+- type: entity
+  parent: CFBaseCreature
+  id: CFMobGiantRat
+  name: giant rat
+  description: A rat the size of a dog, with matted fur and yellow teeth.
+  components:
+    - type: GhostRole
+      name: cf-ghost-giant-rat-name
+      description: cf-ghost-giant-rat-desc
+    - type: Sprite
+      drawdepth: SmallMobs
+      layers:
+        - map: ["enum.DamageStateVisualLayers.Base"]
+          sprite: _CP14/Mobs/Pets/rat.rsi
+          state: rat
+    - type: DamageStateVisuals
+      states:
+        Alive:
+          Base: rat
+        Critical:
+          Base: rat_dead
+        Dead:
+          Base: rat_dead
+    - type: MovementSpeedModifier
+      baseWalkSpeed: 3
+      baseSprintSpeed: 5.4
+    - type: CFGOAP
+      tactics: Beast
+    - type: CFCombatant
+      level: -1
+      armorClass: 12
+      speedFeet: 30
+      maxHp: 8
+      currentHp: 8
+      diesAtZeroHp: true
+      printedFortitude: 6
+      printedReflex: 7
+      printedWill: 3
+      printedPerception: 5
+      printedAttack: 7
+      printedDamage: 1
+      trainedSkills:
+        - Acrobatics
+        - Athletics
+        - Stealth
+      printedSkills:
+        Acrobatics: 5
+        Athletics: 2
+        Stealth: 5
+    - type: CFAbilityScore
+      abilityModifiers:
+        Strength: 0
+        Dexterity: 3
+        Constitution: 2
+        Intelligence: -4
+        Wisdom: 1
+        Charisma: -3
+    - type: CFCombatOptions
+      naturalDice: 1
+      naturalDie: 4
+      naturalType: Piercing
+      naturalAgile: true
+      naturalFinesse: true
+    - type: CFTrait
+      traits:
+        - Animal
+    - type: MobThresholds
+      thresholds:
+        0: Alive
+        7: Critical
+        8: Dead

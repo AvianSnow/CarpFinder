@@ -24,6 +24,10 @@
     known: [ Draconic, Sakvroth ]
   - type: InputMover
   - type: MobMover
+  # MobBaseKobold is the first parent, so its stock HTN would win without this.
+  - type: HTN
+    rootTask:
+      task: CFGOAPCompound
   - type: NpcFactionMember
     factions:
     - SimpleHostile
@@ -113,7 +117,9 @@
   - type: ActionGrant
     actions:
     - CFActConstructTrap
+  # It leads its group but does not fight like it, so an encounter leaves these lists alone.
   - type: CFGOAP
+    keepOwnLists: true
     tactics: Skirmisher
     goals:
     - PutOutFire

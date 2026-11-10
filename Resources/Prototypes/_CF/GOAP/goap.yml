@@ -1,5 +1,5 @@
-# GOAP for advanced NPCs: mini bosses and special encounters. Simple mobs stay on stock HTN.
-# Give a creature this as a second parent:  parent: [ CFKoboldWarrior, CFGOAPBrain ]
+# The brain every CF monster thinks with. The monster bases take it as a parent, such as
+# parent: [ SimpleMobBase, MobCombat, CFMonsterGhostRole, CFGOAPBrain ]. Stock SS14 mobs keep stock HTN.
 
 - type: entity
   abstract: true

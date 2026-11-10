@@ -1,6 +1,6 @@
 # GOAP
 
-Advanced NPCs: mini bosses and special encounters. Ordinary mobs stay on stock HTN.
+The AI every CF monster thinks with. Each monster base has `CFGOAPBrain` as a parent, and `CFMonsterTest` fails on a monster without one. Stock SS14 mobs keep stock HTN. Companions keep their own AI for now.
 
 This is our own design, under the repo's MIT licence. **Do not copy from `crystall-edge`.** Its `_CE` code is all rights reserved, and using it needs TheShuEd's written consent. A port of its GOAP was thrown away before it was ever committed, for that reason.
 
@@ -64,7 +64,7 @@ Then `RunStep` looks the current action's `step` up in a table of step systems a
 | A step | A value in `CFGOAPStep` and a `CFGOAPStepSystem` in `Steps/`. It adds itself to the table. `EveryKindOfStepHasASystem` fails if one is missing |
 | A personality | A `cfGoapProfile` in `goap.yml`. It only changes numbers |
 | A way of fighting | A `goapTactics` in `tactics.yml`, with `parent: Default` and only what differs |
-| A leader who fights unlike its group | Give the mob `CFGOAPBrain` and its own `CFGOAP` lists. `Enlist` leaves a brain it finds alone, and the encounter's lists only go to mobs without one |
+| A leader who fights unlike its group | Give it `keepOwnLists: true` and its own `CFGOAP` lists. `Enlist` puts an encounter's tactics, goals and actions on every other brain. Profile and tactics are only replaced when the encounter names them |
 | An action worth weighing | A `CFGOAPValue`, a case in `CFGOAPTacticsSystem.Value`, and `valuedBy` on the action. Measure it against a clean Strike, which is 1 |
 
 ## Rules

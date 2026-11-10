@@ -79,6 +79,20 @@
   category: CreatureType
   summary: "A broad creature type."
 
+# Not a remaster creature type. Kept so CF can sort its own monsters this way.
+- type: cfTrait
+  id: MonstrousHumanoid
+  name: Monstrous Humanoid
+  category: CreatureType
+  summary: "A broad creature type. Not in the remaster: it names humanoid monsters such as minotaurs and harpies."
+
+# Not a remaster creature type. Kept so CF can sort its own monsters this way.
+- type: cfTrait
+  id: Outsider
+  name: Outsider
+  category: CreatureType
+  summary: "A broad creature type. Not in the remaster: it names creatures from other planes, which the remaster splits into celestials, fiends, monitors and elementals."
+
 - type: cfTrait
   id: Ooze
   name: Ooze

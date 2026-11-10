@@ -1,0 +1,76 @@
+# Boar. Creature 2, Medium. Monster Core p. 43. Ferocity and Boar Charge are not in yet.
+- type: entity
+  parent: [CFBaseCreature, BaseSlicingRefinableButchering]
+  id: CFMobBoar
+  name: boar
+  description: A bristling wild pig with tusks that can open a man from hip to rib.
+  components:
+    - type: GhostRole
+      name: cf-ghost-boar-name
+      description: cf-ghost-boar-desc
+    - type: Sprite
+      drawdepth: Mobs
+      layers:
+        - map: ["enum.DamageStateVisualLayers.Base"]
+          sprite: _CP14/Mobs/Animals/boar.rsi
+          state: live
+    - type: DamageStateVisuals
+      states:
+        Alive:
+          Base: live
+        Critical:
+          Base: dead
+        Dead:
+          Base: dead
+    - type: MovementSpeedModifier
+      baseWalkSpeed: 4
+      baseSprintSpeed: 7.2
+    - type: CFTrait
+      traits:
+        - Animal
+    - type: CFGOAP
+      tactics: Beast
+    - type: CFCombatant
+      level: 2
+      armorClass: 15
+      speedFeet: 40
+      maxHp: 40
+      currentHp: 40
+      diesAtZeroHp: true
+      printedFortitude: 10
+      printedReflex: 5
+      printedWill: 8
+      printedPerception: 8
+      printedAttack: 10
+      printedDamage: 4
+    - type: CFAbilityScore
+      abilityModifiers:
+        Strength: 4
+        Dexterity: 1
+        Constitution: 4
+        Intelligence: -4
+        Wisdom: 2
+        Charisma: -3
+    - type: CFCombatOptions
+      naturalDice: 2
+      naturalDie: 6
+      naturalType: Piercing
+      naturalAgile: false
+      naturalFinesse: false
+    - type: MobThresholds
+      thresholds:
+        0: Alive
+        39: Critical
+        40: Dead
+    - type: ToolRefinable
+      refineResult:
+        - id: CFLeather1
+          amount: 2
+          maxAmount: 4
+        - id: CFScrapLeather
+          amount: 1
+          maxAmount: 3
+          prob: 0.5
+        - id: CFBone1
+          amount: 2
+          maxAmount: 4

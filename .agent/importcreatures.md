@@ -1,13 +1,13 @@
 # Importing Pathfinder 2e creatures
 
-How to turn a printed stat block into a CF monster. The worked example is the Skeleton Guard: `Resources/Prototypes/_CF/Entities/Mobs/Creatures/undead.yml`, tested by `CFSkeletonguardTest`.
+How to turn a printed stat block into a CF monster. The worked example is the Skeleton Guard: `Resources/Prototypes/_CF/Entities/Mobs/Creatures/Undead/skeleton-guard.yml`, tested by `CFSkeletonguardTest`.
 
-Monsters run on stock SS14 HTN. Encounters give them GOAP later, so every creature has to work under both. Do not put `CFGOAP` on the creature itself.
+Every CF monster thinks with a GOAP brain, which its base gives it. Stock SS14 mobs keep stock HTN. `CFMonsterTest` fails on a monster with no brain or no creature type.
 
 ## Steps
 
-1. Check the id is not already in `Creatures/`. Get the stat block from https://2e.aonprd.com/ and put its source and page in a comment above the entity. `www.aonprd.com` is Pathfinder 1e, so find the 2e creature and do not use its numbers: the 1e Giant Spider is the 2e Hunting Spider.
-2. Pick a body and a file (below).
+1. Check the id is not already under `Creatures/`. Get the stat block from https://2e.aonprd.com/ and put its source and page in a comment above the entity. `www.aonprd.com` is Pathfinder 1e, so find the 2e creature and do not use its numbers: the 1e Giant Spider is the 2e Hunting Spider.
+2. Pick a body, and a file in the folder of its creature type (below).
 3. Fill in the stat block (the table below). Use printed numbers and do not derive them.
 4. Pick the AI root task (below).
 5. Give it a ghost role (below), so a player can take it.
@@ -18,12 +18,15 @@ Monsters run on stock SS14 HTN. Encounters give them GOAP later, so every creatu
 
 ## Body and file
 
-| Creature | Parent | File |
-|---|---|---|
-| Animal or beast with one natural attack | `CFBaseCreature`, which is `SimpleMobBase` | `Creatures/creatures.yml` |
-| Humanoid with hands and weapons | A stock species mob, such as `MobSkeletonPerson` | A file per creature type, such as `Creatures/undead.yml` |
+Each monster has a file of its own, named after it, in the folder of its creature type under `Resources/Prototypes/_CF/Entities/Mobs/Creatures/`: `Animal/boar.yml`, `Humanoid/kobold-warrior.yml`, `Undead/skeleton-guard.yml`. The folders are Aberration, Animal, Construct, Dragon, Fey, Fiend, Giant, Humanoid, MonstrousHumanoid, Ooze, Outsider, Plant, Spirit and Undead. The same type goes on `CFTrait`, so the folder and the trait agree. Monstrous Humanoid and Outsider are not remaster types; a remaster Beast, Celestial, Elemental, Fungus or Monitor goes in the nearest folder, or a new one. `_base.yml` holds `CFMonsterGhostRole` and `CFBaseCreature`.
 
-- An entity id starts with `CF`: `CFMobGiantRat`. Variants of one creature share an abstract base, such as `CFMobSkeletonguardBase`, and each sets `name`, `HTN` and `Loadout`.
+| Creature | Parent |
+|---|---|
+| Animal or beast with one natural attack | `CFBaseCreature`, which is `SimpleMobBase` and already has `CFGOAPBrain` |
+| Humanoid with hands and weapons | A stock species mob, such as `MobSkeletonPerson`, plus `CFGOAPBrain` and `CFMonsterGhostRole` |
+
+- An entity id starts with `CF`: `CFMobGiantRat`. Variants of one creature share an abstract base, such as `CFMobSkeletonguardBase`, and each sets `name` and `Loadout`.
+- When the first parent is a stock mob with its own `HTN`, such as `MobBaseKobold`, the first parent's copy wins, so set `HTN` with `rootTask: CFGOAPCompound` on the monster. See `CFKoboldWarrior`.
 - Give it `InputMover`, `MobMover`, `NpcFactionMember` with `SimpleHostile`, and `CFFaction` with `Monster`. `CFBaseCreature` already has these.
 - Sprites: stock bodies come from the species. Other art stays in its fork folder with its `meta.json`. An RSI with `idle` and `moving` states walks through `SpriteMovement`, and its layer needs the `movement` map as well. See `CFMobHuntingSpider`.
 
@@ -59,7 +62,7 @@ The role needs no AI work. Stock HTN sleeps while a player is in the body and wa
 | Immunity to a damage type | `CFResistances` with `amount: 9999` | Bleed, Mental, Poison, and so on |
 | Immunity to a condition | `CFConditionImmunity` `conditions` | Mental means `Frightened`, `Charmed`, `Calmed`. Unconscious means `Asleep` |
 | Void healing | `CFVoidHealing`, and `Void` at 9999 in `CFResistances` | |
-| Traits | `CFTrait` `traits` | Check the id exists under `Prototypes/_CF/Traits` |
+| Traits | `CFTrait` `traits` | Always its creature type, from `Traits/creature-type.yml`, plus what the stat block lists. Check each id exists under `Prototypes/_CF/Traits` |
 | Darkvision | `NightVision`, copied from an existing creature | |
 | Languages | `CFLanguages` `known` | Only for a creature that talks. Without it, it speaks plainly and understands everything |
 | Recall Knowledge DC | Nothing | It comes from level. Say if a creature's printed DC differs |
@@ -68,24 +71,13 @@ The role needs no AI work. Stock HTN sleeps while a player is in the body and wa
 
 ## AI
 
-Set the root task on `HTN`.
-
-| Creature | `rootTask` |
-|---|---|
-| Melee, with a weapon or natural attack | `SimpleHostileCompound` |
-| Bow | `CFArcherCompound`, plus `CFArrowSupply` |
-| A leader or anything with its own tactics | `CFGOAPBrain` as a second parent, with its own `CFGOAP` lists. See `CFMobKoboldTrapper` |
-| A mob that is itself a gun, such as a spitter | `SimpleRangedHostileCompound` |
-
-Do not use `SimpleHumanoidHostileCompound` or `GunCombatCompound` for a bow. `Resources/Prototypes/_CF/NPCs/archer.yml` says why.
-
-## Making it work with GOAP
+Every monster has a GOAP brain from its base, so there is no root task to pick.
 
 - It needs `HTN`, `CFCombatant`, `CFAbilityScore` and `CFCombatOptions`. A creature with a natural attack, or a held weapon with `CFItemUse`, counts as armed.
-- An encounter gives any mob the brain, and `CFGOAPSystem.OnBrainInit` swaps the root task, so stock AI on the creature cannot get in the way.
-- To test a brain on it, add a test prototype `parent: [ CFMobYourCreature, CFGOAPBrain ]`, or list it in a spawner's `mobs`.
-- Melee plans `Close`, then `Strike`. Anything holding a loaded gun or bow plans `Shoot` once it has a clear line. With nothing loaded it closes in.
-- Write the fitting tactics in the comment, for whoever builds the encounter: `tactics: Mindless` for mindless creatures, `Beast` for animals. See `goap-weights.md`.
+- Set its tactics on `CFGOAP`: `tactics: Beast` for animals, `Mindless` for mindless creatures. See `goap-weights.md`. An encounter that names tactics replaces them for its group.
+- A leader that fights unlike its group sets `keepOwnLists: true` and its own `CFGOAP` lists, so an encounter leaves it alone. See `CFMobKoboldTrapper`.
+- Melee plans `Close`, then `Strike`. Anything holding a loaded gun or bow plans `Shoot` once it has a clear line. With nothing loaded it keeps the weapon and closes in with its natural attack.
+- A test that needs the same body on stock HTN calls `CFStockAi.MakeStock` right after spawning it.
 
 ## Traps
 
