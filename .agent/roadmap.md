@@ -64,7 +64,7 @@ Measured on 9 November 2026. `python3 .agent/port-scripts/feature_scan.py` print
 | Ancestries | 23 | Boosts, HP, Speed, size, darkvision, languages | Traits are labels |
 | General and skill feats | 131 | 12 | Pickable in the builder, marked `(TBA)` until they work. See 1e |
 | Backgrounds | 324 | Boosts, skills and the skill feat they name | 259 grant one, but few of those feats do anything yet (1e) |
-| Spells | 62 | 60 | Animal Form and Dispel Magic are popups. Prestidigitation has its own system and works |
+| Spells | 62 | 61 | Animal Form is a popup. Prestidigitation has its own system and works |
 | Focus spells | | The pipeline works (1f) | Filled class by class. Many hexes, compositions and domain spells are still `TBA` |
 
 ### What blocks it
@@ -174,7 +174,9 @@ All of this is picked in the lobby and stored on `CFCharacterBuildData`, the way
 
 ### 1f. Spells
 
-- [ ] Dispel Magic, which needs PF2e counteract rules.
+- [x] Dispel Magic, on PF2e counteract rules (`CFCounteractSystem`). Spells cast through a spell action remember what they put on a creature: bonuses, and conditions `EndCondition` can end. Dispel Magic aims at an enemy's spell first, then the highest rank. Tests: `CFCounteractTest`.
+- [ ] Counteracting cannot end asleep, paralyzed, sickened, darkvision, resistances, quickened or slowed yet, and does not suppress magic items.
+- [ ] Counterspell and Counter Thought need a reaction that interrupts a spell being cast, which there is no trigger for yet.
 - [ ] Animal Form, which needs a battle form.
 - [x] Figment conjures a ghostly copy of a random shop item that vanishes when touched and fades after a minute. Sigil paints a glowing crayon rune on the floor, one per caster. Know the Way puts an arrow a tile north of the caster that points north on any screen rotation. Tests: `CFUtilityCantripTest`. Not seen in a real client, so the arrow's direction and the tint are unchecked by eye.
 - [ ] Figment has no sound mode, and nothing makes an NPC react to it. Sigil cannot go on a creature or be hidden.

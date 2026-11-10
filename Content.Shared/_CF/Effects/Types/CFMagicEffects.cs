@@ -21,6 +21,22 @@ public sealed partial class CFReadAuraEffect : CFEffect
     }
 }
 
+/// <summary>
+/// Dispel Magic: counteracts one spell on the target. The counteract rank is the slot's rank, and the check is the spell
+/// attack modifier, which is the spell DC less 10.
+/// </summary>
+public sealed partial class CFDispelEffect : CFEffect
+{
+    public override void Apply(IEntityManager entities, CFEffectArgs args)
+    {
+        if (args.Target is { } target
+            && !entities.System<CFCounteractSystem>().TryDispel(args.User, target, Math.Max(1, args.Rank), args.Dc - 10))
+        {
+            entities.System<Content.Shared.Popups.SharedPopupSystem>().PopupEntity(Loc.GetString("cf-spell-nothing-to-dispel"), target, args.User);
+        }
+    }
+}
+
 /// <summary>Sigil: a glowing rune on the floor at the aimed spot. The server paints it, as a crayon would.</summary>
 public sealed partial class CFSigilEffect : CFEffect
 {

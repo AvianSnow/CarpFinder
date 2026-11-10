@@ -41,7 +41,8 @@ public sealed partial class CFBonusEffect : CFEffect
         if (args.Target is not { } target)
             return;
 
-        entities.System<CFBonusSystem>().AddBonus(target, Stat, Type, Value, DurationSeconds, Trait, Skill?.Id);
+        var source = entities.System<CFCounteractSystem>().Note(args, target, DurationSeconds, bonus: true);
+        entities.System<CFBonusSystem>().AddBonus(target, Stat, Type, Value, DurationSeconds, Trait, Skill?.Id, source);
         if (Popup != null)
             entities.System<SharedPopupSystem>().PopupEntity(Loc.GetString(Popup), target);
     }

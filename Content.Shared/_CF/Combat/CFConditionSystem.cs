@@ -933,6 +933,72 @@ public sealed partial class CFConditionSystem : EntitySystem
         }
     }
 
+    /// <summary>
+    /// Ends a condition early, as a successful counteract does. False for one that cannot be ended this way yet: asleep,
+    /// paralyzed, sickened and darkvision.
+    /// </summary>
+    public bool EndCondition(EntityUid target, CFConditionKind kind)
+    {
+        if (!TryComp(target, out CFConditionComponent? cond))
+            return false;
+
+        switch (kind)
+        {
+            case CFConditionKind.Frightened:
+                cond.Frightened = 0;
+                break;
+            case CFConditionKind.Immobilized:
+                cond.Immobilized = false;
+                cond.ImmobilizedUntil = TimeSpan.Zero;
+                _speed.RefreshMovementSpeedModifiers(target);
+                break;
+            case CFConditionKind.Concealed:
+            case CFConditionKind.Invisible:
+                cond.Concealed = false;
+                cond.FlatCheckDc = 0;
+                cond.ConcealBreaks = false;
+                cond.ConcealedUntil = TimeSpan.Zero;
+                break;
+            case CFConditionKind.Sanctuary:
+                cond.Sanctuary = false;
+                cond.SanctuaryUntil = TimeSpan.Zero;
+                break;
+            case CFConditionKind.Charmed:
+                cond.Charmed = false;
+                cond.Charmer = null;
+                cond.CharmedUntil = TimeSpan.Zero;
+                break;
+            case CFConditionKind.Calmed:
+                cond.Calmed = false;
+                cond.CalmedUntil = TimeSpan.Zero;
+                break;
+            case CFConditionKind.Blinded:
+                cond.Blinded = false;
+                cond.BlindUntil = TimeSpan.Zero;
+                break;
+            case CFConditionKind.OffGuard:
+                cond.OffGuardAll = false;
+                cond.OffGuardAllUntil = TimeSpan.Zero;
+                break;
+            case CFConditionKind.Clumsy:
+                cond.ClumsyValue = 0;
+                cond.ClumsyUntil = TimeSpan.Zero;
+                break;
+            case CFConditionKind.Stupefied:
+                cond.StupefiedValue = 0;
+                cond.StupefiedUntil = TimeSpan.Zero;
+                break;
+            case CFConditionKind.SpellShield:
+                cond.ShieldHardness = 0;
+                break;
+            default:
+                return false;
+        }
+
+        Dirty(target, cond);
+        return true;
+    }
+
     private void KnockOutFor(EntityUid target, float seconds, string message)
     {
         _stun.TryKnockdown(

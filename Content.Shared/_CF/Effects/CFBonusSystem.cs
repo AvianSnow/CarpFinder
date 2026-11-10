@@ -55,7 +55,8 @@ public sealed partial class CFBonusSystem : EntitySystem
         int value,
         float seconds,
         ProtoId<CFTraitPrototype>? trait = null,
-        string? skill = null)
+        string? skill = null,
+        string? source = null)
     {
         if (value == 0)
             return;
@@ -71,6 +72,7 @@ public sealed partial class CFBonusSystem : EntitySystem
                 || bonus.Value != value
                 || bonus.Trait != trait
                 || bonus.Skill != skill
+                || bonus.Source != source
                 || bonus.Expires == TimeSpan.MaxValue)
             {
                 continue;
@@ -93,6 +95,7 @@ public sealed partial class CFBonusSystem : EntitySystem
             Expires = expires,
             Trait = trait,
             Skill = skill,
+            Source = source,
         });
         Dirty(uid, comp);
 

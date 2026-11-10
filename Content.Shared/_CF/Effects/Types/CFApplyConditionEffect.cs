@@ -20,6 +20,7 @@ public sealed partial class CFApplyConditionEffect : CFEffect
         if (args.Target is not { } target)
             return;
 
+        entities.System<CFCounteractSystem>().Note(args, target, DurationSeconds, Condition);
         entities.System<CFConditionSystem>()
             .ApplyCondition(target, Condition, Value, DurationSeconds, args.User, args.Dc);
     }
