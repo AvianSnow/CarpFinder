@@ -49,6 +49,7 @@ public sealed partial class CFReactionSystem : EntitySystem
     [Dependency] private CFEncumbranceSystem _encumbrance = default!;
     [Dependency] private CFFlankingSystem _flanking = default!;
     [Dependency] private CFConditionSystem _conditions = default!;
+    [Dependency] private CFActivitySystem _activities = default!;
     [Dependency] private CFDyingSystem _dying = default!;
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private CFFactionSystem _factions = default!;
@@ -833,8 +834,7 @@ public sealed partial class CFReactionSystem : EntitySystem
             if (!options.CanRage || options.Raging || !CanFire(ent, known) || !TrySpend(ent, known))
                 continue;
 
-            options.Raging = true;
-            Dirty(ent, options);
+            _activities.SetRaging(ent, true);
             return;
         }
     }

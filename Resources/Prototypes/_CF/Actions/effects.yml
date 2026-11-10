@@ -286,3 +286,21 @@
       type: Circumstance
       value: 2
       durationSeconds: 6
+
+# Guardian. Once an hour in the world is 15 minutes of real time at the default clock.
+- type: entity
+  parent: CFActivityInstant
+  id: CFActArmoredCourage
+  name: Armored Courage
+  description: In medium or heavy armor, gain temporary Hit Points equal to your level for a minute, and lower frightened by 1. Once an hour.
+  components:
+  - type: Action
+    useDelay: 900
+  - type: CFEffectAction
+    needsMediumOrHeavyArmor: true
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFTemporaryHpEffect
+      perLevel: 1
+      durationSeconds: 60
+    - !type:CFReduceFrightenedEffect

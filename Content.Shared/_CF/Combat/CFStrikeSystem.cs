@@ -64,6 +64,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
     [Dependency] private CFEffectSystem _effects = default!;
     [Dependency] private CFStanceSystem _stances = default!;
     [Dependency] private CFReactionSystem _reactions = default!;
+    [Dependency] private CFTemporaryHpSystem _tempHp = default!;
     [Dependency] private CFAuraSystem _auras = default!;
     [Dependency] private CFImplementSystem _implements = default!;
     [Dependency] private CFInventorSystem _inventor = default!;
@@ -840,6 +841,9 @@ public sealed partial class CFStrikeSystem : EntitySystem
                 if (isObject && hardness > 0)
                     damage = Math.Max(0, damage - hardness);
 
+                if (!isObject)
+                    damage = _tempHp.Absorb(target, defender, damage);
+
                 if (damage > 0)
                 {
                     defender.CurrentHp = Math.Max(0, defender.CurrentHp - damage);
@@ -871,6 +875,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
             damage = 2;
             if (!isObject && !alreadyDown)
             {
+                damage = _tempHp.Absorb(target, defender, damage);
                 defender.CurrentHp = Math.Max(0, defender.CurrentHp - damage);
                 Dirty(target, defender);
                 MirrorToSs14(user, target, defender, damage, "precision", isObject);

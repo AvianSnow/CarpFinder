@@ -13,6 +13,7 @@ using Content.Shared.Popups;
 using Content.Shared.Throwing;
 using Robust.Shared.Network;
 using Robust.Shared.Random;
+using Robust.Shared.Timing;
 
 namespace Content.Shared.CF.Actions;
 
@@ -32,6 +33,7 @@ public sealed partial class CFActivitySystem : EntitySystem
     private const float LeapThrowSpeed = 10f;
 
     [Dependency] private INetManager _net = default!;
+    [Dependency] private IGameTiming _timing = default!;
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private SharedHandsSystem _hands = default!;
@@ -46,6 +48,7 @@ public sealed partial class CFActivitySystem : EntitySystem
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private ThrowingSystem _throwing = default!;
+    [Dependency] private CFTemporaryHpSystem _tempHp = default!;
 
     [SubscribeLocalEvent]
     private void OnSpellAttempt(Entity<CFSpellComponent> spell, ref ActionAttemptEvent args)
@@ -151,9 +154,41 @@ public sealed partial class CFActivitySystem : EntitySystem
         if (!TryComp(user, out CFCombatOptionsComponent? opt) || !opt.CanRage)
             return;
 
-        opt.Raging = !opt.Raging;
-        Dirty(user, opt);
+        SetRaging(user, !opt.Raging);
         _popup.PopupEntity(Loc.GetString(opt.Raging ? "cf-act-rage-start" : "cf-act-rage-end"), user, user);
+    }
+
+    public const string RageSource = "rage";
+    private static readonly TimeSpan RageTempHpWait = TimeSpan.FromMinutes(1);
+
+    /// <summary>
+    /// Starts or ends a Rage. Starting gives temporary Hit Points equal to level plus Constitution modifier, but only once a
+    /// minute unless the creature has Second Wind. They last until the Rage ends.
+    /// </summary>
+    public void SetRaging(EntityUid user, bool raging)
+    {
+        var opt = EnsureComp<CFCombatOptionsComponent>(user);
+        if (opt.Raging == raging)
+            return;
+
+        opt.Raging = raging;
+        if (raging)
+        {
+            var now = _timing.CurTime;
+            if (opt.SecondWind || now >= opt.RageTempHpReadyAt)
+            {
+                var level = CompOrNull<CFCombatantComponent>(user)?.Level ?? 1;
+                var constitution = CompOrNull<CFAbilityScoreComponent>(user)?.GetModifier(CFAbility.Constitution) ?? 0;
+                _tempHp.Grant(user, level + constitution, 0f, RageSource);
+                opt.RageTempHpReadyAt = now + RageTempHpWait;
+            }
+        }
+        else
+        {
+            _tempHp.Clear(user, RageSource);
+        }
+
+        Dirty(user, opt);
     }
 
     public void Mark(EntityUid user, EntityUid target, bool prey)

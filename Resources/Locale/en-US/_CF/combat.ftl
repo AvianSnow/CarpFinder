@@ -140,6 +140,7 @@ cf-stance-enter = You take up { $name }.
 cf-stance-leave = You leave your stance.
 cf-stance-too-soon = You changed stance too recently.
 cf-stance-needs-unarmored = You cannot do that in armor.
+cf-act-needs-armor = You need to be wearing medium or heavy armor.
 cf-stance-needs-ranged = You need a ranged weapon in hand.
 cf-stance-needs-melee = You need a melee weapon in hand.
 cf-stance-needs-free-hand = You need a hand free.

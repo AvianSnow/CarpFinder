@@ -111,6 +111,7 @@ public sealed partial class CFBattleFormSystem : EntitySystem
     [Dependency] private CFSpellSystem _spells = default!;
     [Dependency] private CFBonusSystem _bonuses = default!;
     [Dependency] private CFArmorSystem _armor = default!;
+    [Dependency] private CFTemporaryHpSystem _tempHp = default!;
 
     public override void Update(float frameTime)
     {
@@ -172,9 +173,9 @@ public sealed partial class CFBattleFormSystem : EntitySystem
         Dirty(user, options);
 
         combat.ArmorClass = Math.Max(combat.ArmorClass, form.ArmorClass);
-        combat.TemporaryHp = Math.Max(combat.TemporaryHp, spell.TemporaryHp);
         Dirty(user, combat);
 
+        _tempHp.Grant(user, spell.TemporaryHp, spell.DurationSeconds, BonusSource);
         _bonuses.AddPermanentBonus(user, CFBonusStat.MeleeDamage, CFBonusType.Untyped, spell.DamageBonus, source: BonusSource);
         if (option.SpeedFeet != combat.SpeedFeet)
             _bonuses.AddPermanentBonus(user, CFBonusStat.Speed, CFBonusType.Untyped, option.SpeedFeet - combat.SpeedFeet, source: BonusSource);

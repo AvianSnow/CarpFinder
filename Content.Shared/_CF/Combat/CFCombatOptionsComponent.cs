@@ -155,6 +155,14 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public bool Raging;
 
+    /// <summary>When a Rage next gives temporary Hit Points.</summary>
+    [DataField]
+    public TimeSpan RageTempHpReadyAt;
+
+    /// <summary>Second Wind: a Rage gives temporary Hit Points without waiting a minute.</summary>
+    [DataField, AutoNetworkedField]
+    public bool SecondWind;
+
     /// <summary>What Rage adds to melee damage. Half of it counts with an agile attack.</summary>
     [DataField, AutoNetworkedField]
     public int RageDamage = 2;
@@ -358,6 +366,7 @@ public enum CFCombatOption : byte
     Diehard,
     HeftyHauler,
     Toughness,
+    SecondWind,
     CrushingGrab,
     FinishingFollowThrough,
     StrategicStrike,

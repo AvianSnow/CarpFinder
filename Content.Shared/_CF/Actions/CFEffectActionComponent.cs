@@ -11,4 +11,8 @@ public sealed partial class CFEffectActionComponent : Component
     /// <summary>Needs a melee weapon in each hand, as Twin Parry does.</summary>
     [DataField]
     public bool NeedsWeaponInEachHand;
+
+    /// <summary>Needs medium or heavy armor worn, as Armored Courage does.</summary>
+    [DataField]
+    public bool NeedsMediumOrHeavyArmor;
 }

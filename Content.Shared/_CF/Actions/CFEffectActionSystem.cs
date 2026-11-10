@@ -12,10 +12,20 @@ public sealed partial class CFEffectActionSystem : EntitySystem
     [Dependency] private INetManager _net = default!;
     [Dependency] private CFEffectSystem _effects = default!;
     [Dependency] private SharedHandsSystem _hands = default!;
+    [Dependency] private CFArmorSystem _armor = default!;
 
     [SubscribeLocalEvent]
     private void OnAttempt(Entity<CFEffectActionComponent> ent, ref ActionAttemptEvent args)
     {
+        if (ent.Comp.NeedsMediumOrHeavyArmor
+            && !(_armor.TryGetWornArmor(args.User, out var armor)
+                 && armor.Comp.Category is CFArmorCategory.Medium or CFArmorCategory.Heavy))
+        {
+            args.Cancelled = true;
+            args.Reason = Loc.GetString("cf-act-needs-armor");
+            return;
+        }
+
         if (!ent.Comp.NeedsWeaponInEachHand)
             return;
 

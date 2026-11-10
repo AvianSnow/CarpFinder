@@ -351,6 +351,9 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
             case CFCombatOption.Toughness:
                 options.Toughness = true;
                 break;
+            case CFCombatOption.SecondWind:
+                options.SecondWind = true;
+                break;
             case CFCombatOption.ReactiveShield:
                 options.ReactiveShield = true;
                 break;

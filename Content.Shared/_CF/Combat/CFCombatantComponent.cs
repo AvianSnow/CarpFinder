@@ -127,8 +127,17 @@ public sealed partial class CFCombatantComponent : Component
     [DataField, AutoNetworkedField]
     public List<string> LoreNames = new();
 
+    /// <summary>Taken from first by damage. Given and spent through <see cref="CFTemporaryHpSystem"/>.</summary>
     [DataField, AutoNetworkedField]
     public int TemporaryHp;
+
+    /// <summary>When <see cref="TemporaryHp"/> runs out. Zero means it lasts until spent or cleared.</summary>
+    [DataField, AutoNetworkedField]
+    public TimeSpan TemporaryHpUntil;
+
+    /// <summary>What gave the current temporary Hit Points, so ending that can take them away, as ending a Rage does.</summary>
+    [DataField]
+    public string? TemporaryHpSource;
 
     [DataField, AutoNetworkedField]
     public int Dying;

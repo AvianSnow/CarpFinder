@@ -8,3 +8,6 @@
   level: 2
   traits:
     - "Barbarian"
+  grants:
+    - !type:CFGrantOption
+      option: SecondWind

@@ -119,7 +119,10 @@ public sealed partial class CFEffectSystem
         }
 
         if (!isObject)
+        {
             amount = _reactions.AnswerDamage(target, user, amount, damageType);
+            amount = _tempHp.Absorb(target, combat, amount);
+        }
 
         if (amount > 0)
         {
