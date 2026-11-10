@@ -3,8 +3,11 @@
 # The stat block lists no languages. These are the horned dragon family's from Monster Core, so a party can talk to it.
 # It has one Strike, its jaws. The poison on the jaws is not in, nor are claw +14 (2d6+4 slashing, agile), tail +12
 # (1d8+4 bludgeoning, reach 10 feet) and horn +12 (1d12+4 bludgeoning).
-# Not in yet: Poison Breath (2 actions, 5d6 poison in a 30-foot cone, DC 21 basic Reflex, then 1d4 rounds to recharge),
-# Draconic Frenzy, Draconic Momentum, the Twisting Tail reaction, and its fly 30 feet and swim 20 feet Speeds.
+# Poison Breath (CFActPoisonBreath in Actions/breath.yml) and Draconic Momentum are in.
+# Not in yet: Draconic Frenzy, the Twisting Tail reaction, and its fly 30 feet and swim 20 feet Speeds.
+# It keeps a lair (CFGOAPLair): where it spawns is home. It breathes on whoever the cone would catch whenever its breath is
+# charged, waits in its lair while it recharges, only closes on someone within 3 tiles, and goes home once it is 8 tiles
+# out or has been away 10 seconds.
 # Sprite: _CF/Mobs/Monsters/Dragon/horned_dragon.rsi, made for CarpFinder, 64x64, so it is drawn about two tiles wide.
 - type: entity
   parent: [CFBaseCreature, BaseSlicingRefinableButchering]
@@ -39,9 +42,39 @@
       prioritized: true
       noiseAmount: 0
       lightingColor: "#9BB6FF30"
+    - type: ActionGrant
+      actions:
+        - CFActPoisonBreath
+    - type: CFDraconicMomentum
+    - type: CFGOAPLair
     # It is the boss of its adventure, and a thinker, so it sizes everyone up and does not wait as long between bites.
+    # It keeps its own lists, so an encounter cannot send it chasing or fleeing out of its lair.
     - type: CFGOAP
       tactics: Tactician
+      homeRange: 3
+      keepOwnLists: true
+      goals:
+        - PutOutFire
+        - ReturnToLair
+        - KillTarget
+        - HuntTarget
+        - Investigate
+        - GoHome
+        - Idle
+      actions:
+        - Breathe
+        - Strike
+        - Close
+        - Await
+        - Demoralize
+        - HoldBack
+        - FollowScent
+        - GoToLkp
+        - CheckNode
+        - LookAround
+        - GoHome
+        - Wander
+        - PutOutFire
     - type: CFCombatant
       level: 4
       armorClass: 20

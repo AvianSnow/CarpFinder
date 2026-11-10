@@ -70,6 +70,9 @@ The role needs no AI work. Stock HTN sleeps while a player is in the body and wa
 | Darkvision | `NightVision`, copied from an existing creature | |
 | Low-light vision | `CFSenses` with `lowLightVision: true`, and `NightVision` with `lightingColor: "#9BB6FF18"` | See `CFMobWolf` |
 | Scent, tremorsense, other imprecise senses | `CFSenses` `impreciseFeet` | Stealth reads it: an undetected creature inside it is only hidden |
+| Breath weapon, or any area with a recharge | An action parented on `CFActBreathBase` in `Actions/breath.yml`, with `CFAreaEffect`, `CFCheck` (`dcSource: Fixed`) and `CFDegreeEffects`, granted with `ActionGrant` | `CFBreathWeapon` `rechargeDice` and `rechargeDie` are in rounds of 6 seconds. The AI breathes with no more setup. See `CFActPoisonBreath` |
+| Draconic Momentum | `CFDraconicMomentum` | A critical hit recharges its breath weapons |
+| A creature that keeps a lair | `CFGOAPLair`, a small `homeRange`, and its own `CFGOAP` lists | See "Lairs" in `goap.md` and `CFMobJuvenileHornedDragon` |
 | Pack Attack | `CFCombatOptions` `packAttackDie` | The die size, 4 for 1d4. `CFFlankingSystem.AlliesThreatening` counts allies with the target in reach |
 | Languages | `CFLanguages` `known` | Only for a creature that talks. Without it, it speaks plainly and understands everything |
 | Recall Knowledge DC | Nothing | It comes from level. Say if a creature's printed DC differs |

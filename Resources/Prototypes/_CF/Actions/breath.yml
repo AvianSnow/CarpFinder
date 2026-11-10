@@ -1,0 +1,61 @@
+# Breath weapons, and other areas a creature lets loose and then has to wait to use again. CFBreathWeaponSystem runs
+# them: the area resolves through CFEffectSystem, and the rolled recharge becomes the action's cooldown. Grant one to a
+# creature with ActionGrant. The AI breathes through the Breathe action in goap.yml.
+
+- type: entity
+  abstract: true
+  parent: BaseAction
+  id: CFActBreathBase
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Action
+    itemIconStyle: BigAction
+    raiseOnAction: true
+  - type: TargetAction
+    range: -1
+    checkCanAccess: false
+    targetingIndicator: true
+  - type: WorldTargetAction
+    event: !type:CFBreathWeaponEvent
+  - type: CFTargeting
+    delivery: Point
+  - type: Sprite
+    sprite: Objects/Magic/magicactions.rsi
+    layers:
+    - state: spell_default
+  - type: CFRadialSlot
+    group: Action
+    actions: 2
+  - type: CFBreathWeapon
+
+# Juvenile Horned Dragon, Beginner Box Adventure. A toxic cloud: 5d6 poison in a 30-foot cone, DC 21 basic Reflex.
+# It cannot breathe again for 1d4 rounds.
+- type: entity
+  parent: CFActBreathBase
+  id: CFActPoisonBreath
+  name: Poison Breath
+  description: A 30-foot cone of toxic cloud. 5d6 poison, DC 21 basic Reflex. 2 actions, then 1d4 rounds to recharge.
+  components:
+  - type: Sprite
+    sprite: Objects/Magic/magicactions.rsi
+    layers:
+    - state: repulse
+    color: "#7FD35A"
+  - type: CFTrait
+    traits:
+    - Arcane
+    - Poison
+  - type: CFAreaEffect
+    shape: Cone
+    sizeFeet: 30
+  - type: CFCheck
+    defense: Reflex
+    basicSave: true
+    dcSource: Fixed
+    fixedDc: 21
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 5
+      die: 6
+      damageType: Poison

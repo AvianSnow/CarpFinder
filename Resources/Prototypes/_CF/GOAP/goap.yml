@@ -45,6 +45,15 @@
   priority: 5.8
   onlyWhen: [ ShieldReady, TargetVisible, ActionsLeft ]
 
+# A creature that keeps a lair goes back to it once it strays too far or has been away too long (CFGOAPLair). It
+# still fights back while an enemy is in reach, so this is about chasing, not about being hit.
+- type: cfGoapGoal
+  id: ReturnToLair
+  wants: [ AtHome ]
+  priority: 5.9
+  onlyWhen: [ LeftLair ]
+  notWhen: [ TargetInReach ]
+
 - type: cfGoapGoal
   id: KillTarget
   wants: [ TargetHurt ]
@@ -106,6 +115,23 @@
 
 # Actions.
 
+# A charged breath weapon that would catch the target comes before anything else it could do to it.
+- type: cfGoapAction
+  id: Breathe
+  step: Breathe
+  needs: [ TargetVisible, CanBreathe ]
+  gives: [ TargetHurt ]
+  cost: 0.3
+
+# A creature that keeps a lair stays put while its target is too far to go after, and lets it come, or lets its breath
+# recharge. It counts as doing something to the target, so KillTarget plans it instead of Close.
+- type: cfGoapAction
+  id: Await
+  step: Wait
+  needs: [ TargetVisible, Guarding ]
+  gives: [ TargetHurt ]
+  cost: 3
+
 - type: cfGoapAction
   id: Strike
   step: Strike
@@ -159,7 +185,7 @@
   id: Close
   step: Close
   needs: [ TargetVisible ]
-  needsNot: [ NoWay ]
+  needsNot: [ NoWay, Guarding ]
   gives: [ TargetInReach ]
 
 - type: cfGoapAction

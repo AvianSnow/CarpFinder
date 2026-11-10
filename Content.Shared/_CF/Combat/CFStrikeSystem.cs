@@ -897,6 +897,12 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (hit && !alreadyDown)
             ApplyPropertyRunes(user, target, weaponUid, degree);
 
+        if (criticalHit && !isObject)
+        {
+            var landed = new CFLandedCriticalEvent(target);
+            RaiseLocalEvent(user, ref landed);
+        }
+
         if (criticalHit && damage > 0 && !isObject && style != null)
         {
             if (style.BrutalBeating)

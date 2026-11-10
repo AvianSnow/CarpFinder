@@ -63,6 +63,15 @@ public enum CFGOAPFact : ulong
     /// <summary>It holds a shield that is not up, and could raise it.</summary>
     ShieldReady = 1ul << 38,
 
+    /// <summary>Its breath weapon is charged, it has the actions for it, and the target is inside the area.</summary>
+    CanBreathe = 1ul << 40,
+
+    /// <summary>It keeps a lair, and its target is too far away to go after.</summary>
+    Guarding = 1ul << 41,
+
+    /// <summary>It keeps a lair, and has gone too far from it or been away too long.</summary>
+    LeftLair = 1ul << 42,
+
     // Never sensed. These only exist as what a goal wants, so a plan has something to reach.
     TargetHurt = 1 << 20,
     Safe = 1 << 21,
@@ -129,6 +138,9 @@ public enum CFGOAPStep : byte
 
     /// <summary>Raise the shield it holds, for 1 action, the way a player does with use in hand.</summary>
     RaiseShield,
+
+    /// <summary>Let its breath weapon loose at the target, the same action a player aims.</summary>
+    Breathe,
 }
 
 /// <summary>How an action's worth is worked out when planning. See <c>CFGOAPTacticsSystem</c>.</summary>

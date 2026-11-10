@@ -162,6 +162,18 @@ A creature holding a shield that is not up, with an enemy in sight and an action
 
 It is not "Strike, Strike, Raise a Shield". In real time an NPC never gets two swings into one pool: its thinking timer and the pool's regen refill the pool between swings, so Multiple Attack Penalty stays at 1 and `HoldBack` never runs in a plain melee fight.
 
+## Breath weapons
+
+`Breathe` is on every brain. `CFGOAPBreathSensorSystem` sets `CanBreathe` when the creature has a breath action (`CFBreathWeapon`) that is charged and affordable, and `CFBreathWeaponSystem.WouldCatch` says the area would catch the target, using the same tiles and filter the breath does. At cost 0.3 it beats any Strike. The `Breathe` step aims at where the target stands and calls `TryBreathe`, which performs the same action a player aims, so it pays its actions through `CFRadialSlot` and rolls the same recharge.
+
+## Lairs
+
+`CFGOAPLair` is for a creature that keeps a lair, such as the juvenile horned dragon. Its home is its lair, and `homeRange` on `CFGOAP` is how big the lair is.
+
+- `Guarding`: the target is further than `EngageTiles` (3). `Close` will not run, so `KillTarget` plans `Await` (the `Wait` step) instead: it lets the target come, and its breath recharge. A charged breath still fires at any range the cone reaches.
+- `LeftLair`: once it is further than `LeashTiles` (8) from home, or has been out of its lair for `ChaseTime` (10 seconds), it sets off back and keeps going until the home sensor says `AtHome`. The `ReturnToLair` goal (5.9) is above `KillTarget`, but not while an enemy is in reach: it does not chase, but it does fight back where it stands.
+- Give it its own lists with `keepOwnLists: true` and no `StayAlive`, or an encounter or a low Hit Point flee can take it out of its lair.
+
 ## Laying traps
 
 `CFTrapLayer` holds the trap, charges and cooldown. A brain plans `LayTrap` when `CanLayTrap` is set: a target at 3 tiles or more, off cooldown, and a free tile on the target's side with no armed hazard within `SpacingTiles`. The step waits for the actions, so it can stand still for up to 3 regens.

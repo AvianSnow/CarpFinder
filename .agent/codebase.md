@@ -25,7 +25,7 @@ Everything below is under `Content.Shared/_CF/`.
 
 | Folder | Holds | Start at |
 |---|---|---|
-| `Actions/` | Action stamina, multiple attack penalty, radial activities, stances, flourishes, Shove, Disarm, Grapple, Escape, marks, standing | `CFActionPoolSystem`, `CFActivitySystem`, `CFStanceSystem`, `CFManeuverSystem` |
+| `Actions/` | Action stamina, multiple attack penalty, radial activities, breath weapons, stances, flourishes, Shove, Disarm, Grapple, Escape, marks, standing | `CFActionPoolSystem`, `CFActivitySystem`, `CFStanceSystem`, `CFManeuverSystem` |
 | `Afflictions/` | Staged afflictions such as Alcohol. Poisons and diseases can use the same pieces. | `CFAfflictionSystem` |
 | `Alchemy/` | Drinkable and feedable potions | `CFAlchemicalItemSystem` |
 | `Character/` | Prototypes for ancestry, class, feat, heritage, background, spell; skill and attribute math; `Grants/`, what an option gives a character | `CFAttributeMath`, `CFSkills`, `CFCharacterFeatureSystem` |
@@ -252,7 +252,7 @@ Radial actions are entities in `Resources/Prototypes/_CF/Actions/activities.yml`
 | `CFKoboldWarrior` | A hostile with a monster stat block |
 | `CFMobBoar`, `CFMobGiantRat`, ... | Monster Core creatures, one file each under `Entities/Mobs/Creatures/<creature type>/` |
 | `CFMobSkeletonguardMelee`, `CFMobSkeletonguardRanged` | Skeleton Guards with a scimitar and a shortbow, in `Entities/Mobs/Creatures/Undead/skeleton-guard.yml` |
-| `CFMobJuvenileHornedDragon` | A level 4 boss from the Beginner Box Adventure, on its own sprite in `_CF/Mobs/Monsters/Dragon/horned_dragon.rsi` |
+| `CFMobJuvenileHornedDragon` | A level 4 boss from the Beginner Box Adventure, on its own sprite in `_CF/Mobs/Monsters/Dragon/horned_dragon.rsi`. Poison Breath, and it keeps its lair (`CFGOAPLair`) |
 | `CFMobWolf` | On the stock corgi sprite, with Pack Attack. Set a spawner's `encounter` to `WolfPack` for four that flank |
 | `CFMobHobgoblinSoldierMelee`, `CFMobHobgoblinSoldierRanged` | Hobgoblin Soldiers on the same body: longsword and shield, or shortbow with the longsword as a sidearm. In `Humanoid/hobgoblin-soldier.yml` |
 | `CFMobGoblinWarriorMelee`, `CFMobGoblinWarriorRanged` | Goblin Warriors on the `_CE` goblin body, with a dogslicer and a shortbow, in `Entities/Mobs/Creatures/Humanoid/goblin-warrior.yml` |
