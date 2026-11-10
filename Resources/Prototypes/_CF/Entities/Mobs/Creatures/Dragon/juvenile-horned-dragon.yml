@@ -1,0 +1,118 @@
+# Juvenile Horned Dragon. Creature 4, Medium, Amphibious Dragon. Beginner Box Adventure (on Demiplane; Archives of Nethys
+# only has the young, adult and ancient horned dragons of Monster Core). Recall Knowledge DC 19.
+# The stat block lists no languages. These are the horned dragon family's from Monster Core, so a party can talk to it.
+# It has one Strike, its jaws. The poison on the jaws is not in, nor are claw +14 (2d6+4 slashing, agile), tail +12
+# (1d8+4 bludgeoning, reach 10 feet) and horn +12 (1d12+4 bludgeoning).
+# Not in yet: Poison Breath (2 actions, 5d6 poison in a 30-foot cone, DC 21 basic Reflex, then 1d4 rounds to recharge),
+# Draconic Frenzy, Draconic Momentum, the Twisting Tail reaction, and its fly 30 feet and swim 20 feet Speeds.
+# Sprite: _CF/Mobs/Monsters/Dragon/horned_dragon.rsi, made for CarpFinder, 64x64, so it is drawn about two tiles wide.
+- type: entity
+  parent: [CFBaseCreature, BaseSlicingRefinableButchering]
+  id: CFMobJuvenileHornedDragon
+  name: juvenile horned dragon
+  description: A young green dragon with a pair of heavy horns, still small enough to fit through a door. It watches you as if weighing what you know.
+  components:
+    - type: GhostRole
+      name: cf-ghost-juvenile-horned-dragon-name
+      description: cf-ghost-juvenile-horned-dragon-desc
+    - type: Sprite
+      drawdepth: Mobs
+      layers:
+        - map: ["enum.DamageStateVisualLayers.Base"]
+          sprite: _CF/Mobs/Monsters/Dragon/horned_dragon.rsi
+          state: alive
+    - type: DamageStateVisuals
+      states:
+        Alive:
+          Base: alive
+        Critical:
+          Base: dead
+        Dead:
+          Base: dead
+    - type: CFLanguages
+      known: [ Common, Draconic ]
+    - type: MovementSpeedModifier
+      baseWalkSpeed: 2.5
+      baseSprintSpeed: 4.5
+    - type: NightVision
+      enabled: true
+      prioritized: true
+      noiseAmount: 0
+      lightingColor: "#9BB6FF30"
+    # It is the boss of its adventure, and a thinker, so it sizes everyone up and does not wait as long between bites.
+    - type: CFGOAP
+      tactics: Tactician
+    - type: CFCombatant
+      level: 4
+      armorClass: 20
+      speedFeet: 25
+      maxHp: 60
+      currentHp: 60
+      diesAtZeroHp: true
+      thinkingTimer: 0.75
+      printedFortitude: 11
+      printedReflex: 11
+      printedWill: 9
+      printedPerception: 11
+      # Jaws +14, 2d8+4 piercing.
+      printedAttack: 14
+      printedDamage: 4
+      trainedSkills:
+        - Acrobatics
+        - Arcana
+        - Athletics
+        - Deception
+        - Diplomacy
+        - Intimidation
+        - Nature
+        - Occultism
+        - Society
+        - Stealth
+      printedSkills:
+        Acrobatics: 8
+        Arcana: 11
+        Athletics: 12
+        Deception: 9
+        Diplomacy: 11
+        Intimidation: 11
+        Nature: 9
+        Occultism: 12
+        Society: 9
+        Stealth: 10
+    - type: CFAbilityScore
+      abilityModifiers:
+        Strength: 4
+        Dexterity: 1
+        Constitution: 3
+        Intelligence: 1
+        Wisdom: 1
+        Charisma: 3
+    - type: CFCombatOptions
+      naturalDice: 2
+      naturalDie: 8
+      naturalType: Piercing
+    - type: CFTrait
+      traits:
+        - Amphibious
+        - Dragon
+    # Immune to poison and sleep.
+    - type: CFResistances
+      entries:
+        - damageType: Poison
+          amount: 9999
+    - type: CFConditionImmunity
+      conditions:
+        - Asleep
+    - type: MobThresholds
+      thresholds:
+        0: Alive
+        59: Critical
+        60: Dead
+    - type: ToolRefinable
+      refineResult:
+        - id: CFLeather1
+          amount: 2
+          maxAmount: 4
+        - id: CFBone1
+          amount: 2
+          maxAmount: 3

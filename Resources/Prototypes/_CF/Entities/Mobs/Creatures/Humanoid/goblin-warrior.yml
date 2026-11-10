@@ -1,0 +1,123 @@
+# Goblins from Monster Core, on the Crystall Edge goblin body (_CE/Mobs/Species/Goblin/parts.rsi). Numbers are the printed
+# stat blocks. How to add one: .agent/importcreatures.md.
+
+- type: startingGear
+  id: CFGoblinWarriorMeleeGear
+  equipment:
+    jumpsuit: CFClothingCommonOutfit
+    outerClothing: CFLeatherArmor
+  inhand:
+  - CFDogslicer
+
+- type: startingGear
+  id: CFGoblinWarriorRangedGear
+  equipment:
+    jumpsuit: CFClothingCommonOutfit
+    outerClothing: CFLeatherArmor
+  inhand:
+  - CFShortbow
+
+# Goblin Warrior. Creature -1, Small, Goblin Humanoid. Monster Core p. 174. Recall Knowledge DC 13 (Society).
+# The book's goblin carries a dogslicer and a shortbow with 10 arrows. Here each variant fights with one of them.
+# Leather armor is worn for looks and loot: the printed AC 16 already counts it, and Strength +0 meets it, so it costs nothing.
+# Not in yet: Goblin Scuttle (a reaction that Steps when a goblin ally ends a move beside it). Size: it is a Small creature
+# on the goblin body, which is drawn small but counts as Medium.
+- type: entity
+  abstract: true
+  parent: [ CFMobGoblinEdge, CFMonsterGhostRole, CFGOAPBrain ]
+  id: CFMobGoblinWarriorBase
+  description: A goblin in scraps of leather. Goblins fight best in a crowd, and like to outnumber a foe three to one.
+  suffix: Monster
+  categories: [ ForkFiltered ]
+  components:
+  - type: InputMover
+  - type: MobMover
+  - type: NpcFactionMember
+    factions:
+    - SimpleHostile
+  - type: CFFaction
+    faction: Monster
+  - type: CFLanguages
+    known: [ Common, Goblin ]
+  - type: MovementSpeedModifier
+    baseWalkSpeed: 2.5
+    baseSprintSpeed: 4.5
+  - type: NightVision
+    enabled: true
+    prioritized: true
+    noiseAmount: 0
+    lightingColor: "#9BB6FF30"
+  - type: CFCombatant
+    level: -1
+    armorClass: 16
+    speedFeet: 25
+    maxHp: 6
+    currentHp: 6
+    diesAtZeroHp: true
+    printedFortitude: 5
+    printedReflex: 7
+    printedWill: 3
+    printedPerception: 2
+    # Dogslicer +7, 1d6 slashing. With empty hands it punches at the same +7.
+    printedAttack: 7
+    printedDamage: 0
+    # Only reaches the shortbow: printedAttack covers melee. Dex and proficiency give +4, and the book says +7.
+    strikeAdjustment: 3
+    trainedSkills:
+    - Acrobatics
+    - Athletics
+    - Nature
+    - Stealth
+    printedSkills:
+      Acrobatics: 5
+      Athletics: 2
+      Nature: 1
+      Stealth: 5
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 0
+      Dexterity: 3
+      Constitution: 1
+      Intelligence: 0
+      Wisdom: -1
+      Charisma: 1
+  - type: CFCombatOptions
+  - type: CFTrait
+    traits:
+    - Goblin
+    - Humanoid
+  # Picks on the weak and the flanked, which suits a backstabber blade.
+  - type: CFGOAP
+    tactics: Skirmisher
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      5: Critical
+      6: Dead
+
+- type: entity
+  parent: CFMobGoblinWarriorBase
+  id: CFMobGoblinWarriorMelee
+  name: goblin warrior
+  components:
+  - type: GhostRole
+    name: cf-ghost-goblin-warrior-name
+    description: cf-ghost-goblin-warrior-desc
+  - type: Loadout
+    prototypes: [ CFGoblinWarriorMeleeGear ]
+
+# Its brain shoots while it has a loaded bow and a line, from where it stands. With its 10 arrows gone it keeps the
+# empty bow in hand and closes in with its fists.
+- type: entity
+  parent: CFMobGoblinWarriorBase
+  id: CFMobGoblinWarriorRanged
+  name: goblin archer
+  components:
+  - type: GhostRole
+    name: cf-ghost-goblin-archer-name
+    description: cf-ghost-goblin-archer-desc
+  - type: Loadout
+    prototypes: [ CFGoblinWarriorRangedGear ]
+  # One more is already on the bow.
+  - type: CFArrowSupply
+    arrows: 9

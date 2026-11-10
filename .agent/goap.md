@@ -156,6 +156,12 @@ A flow field reaches 20 tiles. For a known place further off, `CFGOAPSteeringSys
 - `Cornered` comes from `Flee` finding no way out, as it does for anything else. It is also set when an enemy stays in reach for `CaughtTime`, because two creatures of equal Speed would otherwise run forever with one hitting the other.
 - `ShouldDraw`: cornered or out of ammunition, with something in `SidearmSlot`. `DrawSidearm` drops the gun for free and takes the weapon out for 1 action. It picks up with the active hand, because that is the hand a swing uses.
 
+## Shields
+
+A creature holding a shield that is not up, with an enemy in sight and an action to spare, plans the `RaiseShield` goal (priority 5.8, above `KillTarget`). `ShieldReady` comes from `CFGOAPItemSensorSystem`. The `RaiseShield` step uses the shield in hand, the same path a player takes, so it costs 1 action. A raised shield stays up until lowered, dropped or broken, so it raises it once per fight and Shield Block can then answer.
+
+It is not "Strike, Strike, Raise a Shield". In real time an NPC never gets two swings into one pool: its thinking timer and the pool's regen refill the pool between swings, so Multiple Attack Penalty stays at 1 and `HoldBack` never runs in a plain melee fight.
+
 ## Laying traps
 
 `CFTrapLayer` holds the trap, charges and cooldown. A brain plans `LayTrap` when `CanLayTrap` is set: a target at 3 tiles or more, off cooldown, and a free tile on the target's side with no armed hazard within `SpacingTiles`. The step waits for the actions, so it can stand still for up to 3 regens.

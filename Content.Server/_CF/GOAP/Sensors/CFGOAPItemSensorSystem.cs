@@ -20,6 +20,7 @@ public sealed partial class CFGOAPItemSensorSystem : EntitySystem
     [Dependency] private SharedHandsSystem _hands = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private CFGOAPSteeringSystem _steering = default!;
+    [Dependency] private CFShieldSystem _shields = default!;
 
     [SubscribeLocalEvent]
     private void OnSense(ref CFGOAPSenseEvent args)
@@ -29,6 +30,8 @@ public sealed partial class CFGOAPItemSensorSystem : EntitySystem
             args.Facts |= CFGOAPFact.HasWeapon;
         if (TryFindHeld(uid, CFItemUse.Heals, out _))
             args.Facts |= CFGOAPFact.HasHealingItem;
+        if (_shields.TryGetUsableShield(uid, out var shield) && !shield.Comp.Raised)
+            args.Facts |= CFGOAPFact.ShieldReady;
         if (TryFindItem(uid, args.Here, CFItemUse.Weapon, out _))
             args.Facts |= CFGOAPFact.WeaponNearby;
         if (TryFindItem(uid, args.Here, CFItemUse.Heals, out _))

@@ -43,6 +43,7 @@ public sealed partial class CFFlankingSystem : EntitySystem
     [Dependency] private SharedContainerSystem _container = default!;
     [Dependency] private SharedStatusIconSystem _statusIcons = default!;
     [Dependency] private CFWeaponSystem _weapons = default!;
+    [Dependency] private EntityLookupSystem _lookup = default!;
 
     /// <summary>Foe to the allies whose reach sensors currently overlap that foe.</summary>
     private readonly Dictionary<EntityUid, HashSet<EntityUid>> _inReach = new();
@@ -246,6 +247,27 @@ public sealed partial class CFFlankingSystem : EntitySystem
     public IReadOnlyCollection<EntityUid> EnemiesInReach(EntityUid uid)
     {
         return _overlapping.TryGetValue(uid, out var enemies) ? enemies : Array.Empty<EntityUid>();
+    }
+
+    /// <summary>
+    /// How many of the attacker's allies, not counting the attacker, could Strike the target in melee now. Ally, enemy,
+    /// reach and being able to act mean what they mean for flanking. For Pack Attack.
+    /// </summary>
+    public int AlliesThreatening(EntityUid target, EntityUid attacker)
+    {
+        var count = 0;
+        var at = _transform.GetMapCoordinates(target);
+        foreach (var other in _lookup.GetEntitiesInRange<CFCombatantComponent>(at, CFFlanking.SearchRange))
+        {
+            var uid = other.Owner;
+            if (uid == attacker || uid == target || !AreAllies(attacker, uid) || !IsHostileTo(uid, target) || !CanAct(uid))
+                continue;
+
+            if (CFFlanking.InReach(_transform.GetWorldPosition(uid), at.Position, GetMeleeReachFeet(uid)))
+                count++;
+        }
+
+        return count;
     }
 
     public bool IsOffGuardTo(EntityUid target, EntityUid attacker)

@@ -23,6 +23,7 @@ public sealed class CFGearPortTest : GameTest
     [TestCase("CFDagger", 1, 4, "Piercing", 20, 0.1f)]
     [TestCase("CFRapier", 1, 6, "Piercing", 200, 1f)]
     [TestCase("CFScimitar", 1, 6, "Slashing", 100, 1f)]
+    [TestCase("CFDogslicer", 1, 6, "Slashing", 10, 0.1f)]
     [TestCase("CFLongsword", 1, 8, "Slashing", 100, 1f)]
     [TestCase("CFGreatsword", 1, 12, "Slashing", 200, 2f)]
     [TestCase("CFBattleAxe", 1, 8, "Slashing", 100, 1f)]

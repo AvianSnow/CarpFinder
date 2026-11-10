@@ -30,13 +30,13 @@ public sealed partial class CFGOAPComponent : Component
     [DataField]
     public List<ProtoId<CFGOAPGoalPrototype>> Goals = new()
     {
-        "PutOutFire", "KillTarget", "StayAlive", "Heal", "ArmSelf", "HuntTarget", "Investigate", "GoHome", "Idle",
+        "PutOutFire", "RaiseShield", "KillTarget", "StayAlive", "Heal", "ArmSelf", "HuntTarget", "Investigate", "GoHome", "Idle",
     };
 
     [DataField]
     public List<ProtoId<CFGOAPActionPrototype>> Actions = new()
     {
-        "Strike", "Shoot", "Close", "Demoralize", "Feint", "HoldBack", "Flee", "FightBack", "PickUpWeapon", "PickUpHealing", "DrinkHealing",
+        "Strike", "Shoot", "Close", "Demoralize", "Feint", "RaiseShield", "HoldBack", "Flee", "FightBack", "PickUpWeapon", "PickUpHealing", "DrinkHealing",
         "FollowScent", "GoToLkp", "CheckNode", "LookAround", "GoHome", "Wander", "PutOutFire",
     };
 

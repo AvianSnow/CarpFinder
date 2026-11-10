@@ -60,6 +60,9 @@ public enum CFGOAPFact : ulong
     /// <summary>Its ranged weapon is no use any more, and it has a melee weapon put away.</summary>
     ShouldDraw = 1ul << 34,
 
+    /// <summary>It holds a shield that is not up, and could raise it.</summary>
+    ShieldReady = 1ul << 38,
+
     // Never sensed. These only exist as what a goal wants, so a plan has something to reach.
     TargetHurt = 1 << 20,
     Safe = 1 << 21,
@@ -69,6 +72,7 @@ public enum CFGOAPFact : ulong
     Investigated = 1 << 25,
     TrapLaid = 1ul << 35,
     SidearmDrawn = 1ul << 36,
+    ShieldUp = 1ul << 39,
 
     /// <summary>It carried out a Command order. Only the Obey goal wants it.</summary>
     Obeyed = 1ul << 37,
@@ -122,6 +126,9 @@ public enum CFGOAPStep : byte
 
     /// <summary>Carry out a Command order: approach the caster, run from them, or halt.</summary>
     Obey,
+
+    /// <summary>Raise the shield it holds, for 1 action, the way a player does with use in hand.</summary>
+    RaiseShield,
 }
 
 /// <summary>How an action's worth is worked out when planning. See <c>CFGOAPTacticsSystem</c>.</summary>

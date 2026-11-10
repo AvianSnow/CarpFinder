@@ -252,6 +252,10 @@ Radial actions are entities in `Resources/Prototypes/_CF/Actions/activities.yml`
 | `CFKoboldWarrior` | A hostile with a monster stat block |
 | `CFMobBoar`, `CFMobGiantRat`, ... | Monster Core creatures, one file each under `Entities/Mobs/Creatures/<creature type>/` |
 | `CFMobSkeletonguardMelee`, `CFMobSkeletonguardRanged` | Skeleton Guards with a scimitar and a shortbow, in `Entities/Mobs/Creatures/Undead/skeleton-guard.yml` |
+| `CFMobJuvenileHornedDragon` | A level 4 boss from the Beginner Box Adventure, on its own sprite in `_CF/Mobs/Monsters/Dragon/horned_dragon.rsi` |
+| `CFMobWolf` | On the stock corgi sprite, with Pack Attack. Set a spawner's `encounter` to `WolfPack` for four that flank |
+| `CFMobHobgoblinSoldierMelee`, `CFMobHobgoblinSoldierRanged` | Hobgoblin Soldiers on the same body: longsword and shield, or shortbow with the longsword as a sidearm. In `Humanoid/hobgoblin-soldier.yml` |
+| `CFMobGoblinWarriorMelee`, `CFMobGoblinWarriorRanged` | Goblin Warriors on the `_CE` goblin body, with a dogslicer and a shortbow, in `Entities/Mobs/Creatures/Humanoid/goblin-warrior.yml` |
 | `Objects/Weapons/`, `Clothing/CFArmors.yml` | Weapons, shields and armor. Bases are in `Objects/Weapons/_base.yml` |
 | `/Maps/Nonstations/meteor-arena.yml` | The arena all integration tests load, through `CFDevMap` |
 | `CFMobKoboldTrapper` | A GOAP leader that shoots, lays traps and draws a hammer when cornered. Set a spawner's `encounter` to `KoboldAmbush` for it and three warriors |

@@ -827,6 +827,9 @@ public sealed partial class CFStrikeSystem : EntitySystem
                     && (_flanking.IsOffGuardTo(target, user) || _conditions.IsOffGuardTo(target, user)))
                     extra += weapon.Potency >= 3 ? 2 : 1;
 
+                if (style is { PackAttackDie: > 0 } && !isObject && _flanking.AlliesThreatening(target, user) >= 2)
+                    extra += _random.Next(1, style.PackAttackDie + 1);
+
                 damage = CFMelee.RollStrikeDamage(_random, rolled, damageMod, criticalHit, extra);
                 damage = rolled.Traits.Concussive
                     ? Math.Max(_bonuses.ModifyDamage(target, "Piercing", damage), _bonuses.ModifyDamage(target, "Bludgeoning", damage))

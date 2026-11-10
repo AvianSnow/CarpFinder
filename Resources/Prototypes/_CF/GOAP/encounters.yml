@@ -59,6 +59,19 @@
   - HideAway
   - WaitHidden
 
+# A wolf pack. They spread round their prey, so each bite has Pack Attack and a flank, and the last one runs.
+- type: encounter
+  id: WolfPack
+  mobs:
+  - CFMobWolf
+  count: 4
+  routAt: 0.25
+  goals:
+  - RunAway
+  actions:
+  - TakeFlank
+  - StrikeFlanked
+
 # A kobold trapper and the three warriors it sends in. The warriors flank. The trapper keeps its own brain, set on
 # CFMobKoboldTrapper: it stays back, shoots and lays traps. It is last so the first two warriors take opposite sides.
 # The last one left breaks. A ghost can take the trapper, and then points at an adventurer to set the warriors on them.

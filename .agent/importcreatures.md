@@ -56,7 +56,11 @@ The role needs no AI work. Stock HTN sleeps while a player is in the body and wa
 | Melee attack and damage | `CFCombatant` `printedAttack`, `printedDamage` | These replace abilities and proficiency for every melee Strike, weapon or natural, so a creature has one melee number |
 | Ranged attack | `CFCombatant` `strikeAdjustment` | Ranged ignores `printedAttack`. Set this to the book's bonus minus Dex minus (level + 2) |
 | Natural attack | `CFCombatOptions` `naturalDice`, `naturalDie`, `naturalType`, `naturalAgile`, `naturalFinesse` | Also what a disarmed creature uses |
-| Weapons | A `startingGear` with `inhand`, and `Loadout` on the mob | The item supplies dice, type and traits. Use the `CF` weapon, and do not copy its stats to the mob |
+| Weapons | A `startingGear` with `inhand`, and `Loadout` on the mob | The item supplies dice, type and traits. Use the `CF` weapon, and do not copy its stats to the mob. With a weapon and a shield, list the weapon first, so it is in the active hand that swings |
+| Shield | `CFWoodenShield` and so on in `inhand`, and `shieldBlock: true` on `CFCombatOptions` | The brain raises it on seeing an enemy and keeps it up. The printed "AC x (y with shield raised)" is then right with `armorClass` at x |
+| Armor | `equipment` in the `startingGear` | For looks and loot. Printed AC already counts it. Check the creature meets its Strength, or it takes a Speed penalty |
+| A melee weapon carried as well as a bow | The weapon in a slot, and `CFGOAPStandoff` with `sidearmSlot`. Add `DrawSidearm` to its goals and actions | It draws it when out of arrows or caught in reach. Add `KeepDistance` too for one that backs away. See `CFMobHobgoblinSoldierRanged` |
+| Reactive Strike | `reactiveStrike: true` on `CFCombatOptions` | |
 | Ammunition | `CFArrowSupply` `arrows` | Leave out the arrow already on the bow, so 20 arrows is `arrows: 19`. Set `ammo: CFBolt` for a crossbow |
 | Resistances, weaknesses | `CFResistances` `entries` | `weakness: true` for a weakness |
 | Immunity to a damage type | `CFResistances` with `amount: 9999` | Bleed, Mental, Poison, and so on |
@@ -64,6 +68,9 @@ The role needs no AI work. Stock HTN sleeps while a player is in the body and wa
 | Void healing | `CFVoidHealing`, and `Void` at 9999 in `CFResistances` | |
 | Traits | `CFTrait` `traits` | Always its creature type, from `Traits/creature-type.yml`, plus what the stat block lists. Check each id exists under `Prototypes/_CF/Traits` |
 | Darkvision | `NightVision`, copied from an existing creature | |
+| Low-light vision | `CFSenses` with `lowLightVision: true`, and `NightVision` with `lightingColor: "#9BB6FF18"` | See `CFMobWolf` |
+| Scent, tremorsense, other imprecise senses | `CFSenses` `impreciseFeet` | Stealth reads it: an undetected creature inside it is only hidden |
+| Pack Attack | `CFCombatOptions` `packAttackDie` | The die size, 4 for 1d4. `CFFlankingSystem.AlliesThreatening` counts allies with the target in reach |
 | Languages | `CFLanguages` `known` | Only for a creature that talks. Without it, it speaks plainly and understands everything |
 | Recall Knowledge DC | Nothing | It comes from level. Say if a creature's printed DC differs |
 | HP bar | `MobThresholds` | `0: Alive`, `HP - 1: Critical`, `HP: Dead`. Required for the mirror in `CFDyingSystem` |

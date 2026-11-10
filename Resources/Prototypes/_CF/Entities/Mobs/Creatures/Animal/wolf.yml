@@ -1,0 +1,99 @@
+# Wolf. Creature 1, Medium, Animal. Monster Core p. 350. Recall Knowledge DC 15.
+# The body is the stock corgi's sprite, drawn a quarter larger so it reads as Medium. Place a pack with the WolfPack
+# encounter.
+# Pack Attack is in (packAttackDie). Low-light vision and scent 30 feet (imprecise) are on CFSenses.
+# Not in yet: Knockdown, the 1 action Trip after a jaws hit, because Trip is not an action in CF.
+- type: entity
+  parent: [CFBaseCreature, BaseSlicingRefinableButchering]
+  id: CFMobWolf
+  name: wolf
+  description: A lean grey hunter. Wolves run their prey down together, and drag it to the ground.
+  components:
+    - type: GhostRole
+      name: cf-ghost-wolf-name
+      description: cf-ghost-wolf-desc
+    - type: Sprite
+      drawdepth: Mobs
+      scale: 1.25, 1.25
+      layers:
+        - map: ["enum.DamageStateVisualLayers.Base"]
+          sprite: Mobs/Pets/corgi.rsi
+          state: corgi
+    - type: DamageStateVisuals
+      states:
+        Alive:
+          Base: corgi
+        Critical:
+          Base: corgi_dead
+        Dead:
+          Base: corgi_dead
+    - type: MovementSpeedModifier
+      baseWalkSpeed: 3.5
+      baseSprintSpeed: 6.3
+    - type: CFSenses
+      lowLightVision: true
+      impreciseFeet: 30
+    - type: NightVision
+      enabled: true
+      prioritized: true
+      noiseAmount: 0
+      lightingColor: "#9BB6FF18"
+    - type: CFGOAP
+      tactics: Beast
+    - type: CFCombatant
+      level: 1
+      armorClass: 15
+      speedFeet: 35
+      maxHp: 24
+      currentHp: 24
+      diesAtZeroHp: true
+      printedFortitude: 6
+      printedReflex: 9
+      printedWill: 5
+      printedPerception: 7
+      printedAttack: 9
+      printedDamage: 2
+      trainedSkills:
+        - Acrobatics
+        - Athletics
+        - Stealth
+        - Survival
+      printedSkills:
+        Acrobatics: 7
+        Athletics: 6
+        Stealth: 7
+        Survival: 7
+    - type: CFAbilityScore
+      abilityModifiers:
+        Strength: 2
+        Dexterity: 4
+        Constitution: 1
+        Intelligence: -4
+        Wisdom: 2
+        Charisma: -2
+    # Jaws, 1d6+2 piercing.
+    - type: CFCombatOptions
+      naturalDice: 1
+      naturalDie: 6
+      naturalType: Piercing
+      packAttackDie: 4
+    - type: CFTrait
+      traits:
+        - Animal
+    - type: MobThresholds
+      thresholds:
+        0: Alive
+        23: Critical
+        24: Dead
+    - type: ToolRefinable
+      refineResult:
+        - id: CFLeather1
+          amount: 1
+          maxAmount: 2
+        - id: CFScrapLeather
+          amount: 1
+          maxAmount: 2
+          prob: 0.5
+        - id: CFBone1
+          amount: 1
+          maxAmount: 2

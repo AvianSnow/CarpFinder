@@ -36,6 +36,15 @@
   wants: [ Obeyed ]
   priority: 100
 
+# A raised shield stays up until it is lowered or breaks, so a creature raises it once, on seeing an enemy, and then
+# fights behind it. PF2e has it spend an action every turn; real time has no turns, so this is the one action it pays.
+# Above KillTarget, and below anything that keeps it alive.
+- type: cfGoapGoal
+  id: RaiseShield
+  wants: [ ShieldUp ]
+  priority: 5.8
+  onlyWhen: [ ShieldReady, TargetVisible, ActionsLeft ]
+
 - type: cfGoapGoal
   id: KillTarget
   wants: [ TargetHurt ]
@@ -129,6 +138,13 @@
   valuedBy: Feint
   needs: [ TargetVisible, TargetInReach ]
   gives: [ TargetHurt ]
+
+# Raises a held shield, for 1 action. Its goal is RaiseShield.
+- type: cfGoapAction
+  id: RaiseShield
+  step: RaiseShield
+  needs: [ ShieldReady ]
+  gives: [ ShieldUp ]
 
 # Lets the pool refill, which clears Multiple Attack Penalty. Dear, so anything useful comes first.
 - type: cfGoapAction

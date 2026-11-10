@@ -1,4 +1,4 @@
-# Velociraptor. Creature 1, Small. Monster Core p. 96. Jaws only. Talon, Leaping Charge and Pack Attack are not in yet.
+# Velociraptor. Creature 1, Small. Monster Core p. 96. Jaws only. Pack Attack is in. Talon and Leaping Charge are not in yet.
 - type: entity
   parent: CFBaseCreature
   id: CFMobVelociraptor
@@ -57,6 +57,7 @@
       naturalType: Piercing
       naturalAgile: false
       naturalFinesse: true
+      packAttackDie: 4
     - type: MobThresholds
       thresholds:
         0: Alive

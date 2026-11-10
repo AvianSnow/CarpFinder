@@ -181,6 +181,13 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public bool ReactiveStrike;
 
+    /// <summary>
+    /// Pack Attack, from a stat block: Strikes deal 1 die of this size extra against a creature within reach of at least
+    /// two of this creature's allies. 0 is none. <see cref="CFFlankingSystem.AlliesThreatening"/> counts the allies.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public int PackAttackDie;
+
     [DataField, AutoNetworkedField]
     public bool ShieldBlock;
 

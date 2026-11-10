@@ -1,0 +1,162 @@
+# Hobgoblins from Monster Core, on the Crystall Edge goblin body (_CE/Mobs/Species/Goblin/parts.rsi), the same as the
+# goblin warrior. Numbers are the printed stat blocks. How to add one: .agent/importcreatures.md.
+
+- type: startingGear
+  id: CFHobgoblinSoldierMeleeGear
+  equipment:
+    jumpsuit: CFClothingCommonOutfit
+    outerClothing: CFBreastplate
+  # The sword first, so it is in the active hand, which is the hand a swing uses.
+  inhand:
+  - CFLongsword
+  - CFWoodenShield
+
+- type: startingGear
+  id: CFHobgoblinSoldierRangedGear
+  equipment:
+    jumpsuit: CFClothingCommonOutfit
+    outerClothing: CFBreastplate
+    neck: CFLongsword
+  inhand:
+  - CFShortbow
+
+# Hobgoblin Soldier. Creature 1, Medium, Hobgoblin Humanoid. Monster Core p. 198. Recall Knowledge DC 15 (Society).
+# The book's soldier carries a longsword, a wooden shield, and a shortbow with 10 arrows. Here the melee variant has the
+# sword and shield, and the ranged one the bow, with the sword at its neck to draw.
+# The breastplate is worn for looks and loot: the printed AC 18 already counts it, and Strength +3 meets it, so it costs
+# no Speed and no check penalty.
+# Reactive Strike and Shield Block are in. The melee variant raises its shield on seeing an enemy and keeps it up
+# (RaiseShield in goap.yml), which makes the book's AC 20 with shield raised.
+# Not in yet: Formation (+1 circumstance to AC and saves beside two allies, +2 to Reflex against areas).
+- type: entity
+  abstract: true
+  parent: [ CFMobGoblinEdge, CFMonsterGhostRole, CFGOAPBrain ]
+  id: CFMobHobgoblinSoldierBase
+  description: A hobgoblin in a breastplate, drilled to hold a line. Soldiers are most of hobgoblin society, in a village or an army.
+  suffix: Monster
+  categories: [ ForkFiltered ]
+  components:
+  - type: InputMover
+  - type: MobMover
+  - type: NpcFactionMember
+    factions:
+    - SimpleHostile
+  - type: CFFaction
+    faction: Monster
+  - type: CFLanguages
+    known: [ Common, Goblin ]
+  - type: MovementSpeedModifier
+    baseWalkSpeed: 2.5
+    baseSprintSpeed: 4.5
+  - type: NightVision
+    enabled: true
+    prioritized: true
+    noiseAmount: 0
+    lightingColor: "#9BB6FF30"
+  - type: CFCombatant
+    level: 1
+    armorClass: 18
+    speedFeet: 25
+    maxHp: 20
+    currentHp: 20
+    diesAtZeroHp: true
+    printedFortitude: 5
+    printedReflex: 6
+    printedWill: 5
+    printedPerception: 7
+    # Longsword +8, 1d8+3 slashing.
+    printedAttack: 8
+    printedDamage: 3
+    # Only reaches the shortbow: printedAttack covers melee. Dex and proficiency give +6, and the book says +8.
+    strikeAdjustment: 2
+    trainedSkills:
+    - Athletics
+    - Stealth
+    printedSkills:
+      Athletics: 6
+      Stealth: 6
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 3
+      Dexterity: 3
+      Constitution: 2
+      Intelligence: 0
+      Wisdom: 2
+      Charisma: -1
+  - type: CFCombatOptions
+    reactiveStrike: true
+    shieldBlock: true
+  - type: CFTrait
+    traits:
+    - Hobgoblin
+    - Humanoid
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      19: Critical
+      20: Dead
+
+- type: entity
+  parent: CFMobHobgoblinSoldierBase
+  id: CFMobHobgoblinSoldierMelee
+  name: hobgoblin soldier
+  components:
+  - type: GhostRole
+    name: cf-ghost-hobgoblin-soldier-name
+    description: cf-ghost-hobgoblin-soldier-desc
+  - type: Loadout
+    prototypes: [ CFHobgoblinSoldierMeleeGear ]
+
+# Its brain shoots while it has a loaded bow and a line. Out of arrows, or caught in reach for 3 seconds, it drops the bow
+# and draws the longsword from its neck (CFGOAPStandoff). It does not back away from what comes close: KeepDistance is
+# left off, because a soldier holds its line.
+- type: entity
+  parent: CFMobHobgoblinSoldierBase
+  id: CFMobHobgoblinSoldierRanged
+  name: hobgoblin archer
+  components:
+  - type: GhostRole
+    name: cf-ghost-hobgoblin-archer-name
+    description: cf-ghost-hobgoblin-archer-desc
+  - type: Loadout
+    prototypes: [ CFHobgoblinSoldierRangedGear ]
+  # One more is already on the bow.
+  - type: CFArrowSupply
+    arrows: 9
+  - type: CFGOAPStandoff
+    sidearmSlot: neck
+  # The default lists, plus drawing the sidearm. An encounter still adds its own to these.
+  - type: CFGOAP
+    goals:
+    - PutOutFire
+    - DrawSidearm
+    - RaiseShield
+    - KillTarget
+    - StayAlive
+    - Heal
+    - ArmSelf
+    - HuntTarget
+    - Investigate
+    - GoHome
+    - Idle
+    actions:
+    - Strike
+    - Shoot
+    - Close
+    - Demoralize
+    - Feint
+    - RaiseShield
+    - HoldBack
+    - Flee
+    - FightBack
+    - PickUpWeapon
+    - PickUpHealing
+    - DrinkHealing
+    - FollowScent
+    - GoToLkp
+    - CheckNode
+    - LookAround
+    - GoHome
+    - Wander
+    - PutOutFire
+    - DrawSidearm
