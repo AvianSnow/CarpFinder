@@ -1,8 +1,8 @@
 - type: entity
-  parent: CFSpellTarget
+  parent: CFSpellArea
   id: CFSigil
   name: Sigil
-  description: You leave a small magical mark.
+  description: You paint a glowing rune on the floor beside you. Casting it again moves it.
   components:
   - type: Sprite
     sprite: Objects/Magic/magicactions.rsi
@@ -15,12 +15,8 @@
     spell: Sigil
     rank: 0
   - type: CFTargeting
-    rangeFeet: 5
-    touch: true
-    filter: All
+    delivery: Point
+    rangeFeet: 10
   - type: CFDegreeEffects
     landed:
-    - !type:CFPopupEffect
-      text: cf-spell-affected
-  - type: EntityTargetAction
-    canTargetSelf: true
+    - !type:CFSigilEffect

@@ -1,3 +1,21 @@
+# Know the Way's arrow. It points north on any screen, because it turns with the world.
+- type: entity
+  id: CFNorthArrow
+  name: north
+  categories: [ HideSpawnMenu ]
+  save: false
+  components:
+  - type: TimedDespawn
+    lifetime: 6
+  - type: Tag
+    tags:
+    - HideContextMenu
+  - type: Sprite
+    sprite: Interface/Misc/pointing.rsi
+    state: pointing
+    drawdepth: Overlays
+    color: "#8ec8ff"
+
 - type: entity
   id: CFBaseMagicImpact
   name: magic impact

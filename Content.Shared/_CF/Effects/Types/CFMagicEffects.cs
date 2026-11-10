@@ -21,6 +21,47 @@ public sealed partial class CFReadAuraEffect : CFEffect
     }
 }
 
+/// <summary>Sigil: a glowing rune on the floor at the aimed spot. The server paints it, as a crayon would.</summary>
+public sealed partial class CFSigilEffect : CFEffect
+{
+    public override void Apply(IEntityManager entities, CFEffectArgs args)
+    {
+        if (args.Position is not { } spot)
+            return;
+
+        var ev = new CFPlaceSigilEvent(args.User, spot);
+        entities.EventBus.RaiseEvent(EventSource.Local, ref ev);
+    }
+}
+
+/// <summary>Figment: the image of a random item at the aimed spot.</summary>
+public sealed partial class CFFigmentEffect : CFEffect
+{
+    public override void Apply(IEntityManager entities, CFEffectArgs args)
+    {
+        if (args.Position is { } spot)
+            entities.System<CFFigmentSystem>().Conjure(args.User, spot);
+    }
+}
+
+/// <summary>
+/// Know the Way: an arrow a tile north of the user, pointing north. It turns with the world, so it is right on a rotated
+/// screen too, where north is easy to lose.
+/// </summary>
+public sealed partial class CFKnowTheWayEffect : CFEffect
+{
+    /// <summary>The arrow's sprite points down, which is south.</summary>
+    private static readonly Angle PointNorth = Angle.FromDegrees(180);
+
+    public override void Apply(IEntityManager entities, CFEffectArgs args)
+    {
+        var transform = entities.System<SharedTransformSystem>();
+        var at = transform.GetMapCoordinates(args.User).Offset(new System.Numerics.Vector2(0f, 1f));
+        var arrow = entities.Spawn("CFNorthArrow", at);
+        transform.SetWorldRotation(arrow, PointNorth);
+    }
+}
+
 /// <summary>Light: an orb attached to the target.</summary>
 public sealed partial class CFLightEffect : CFEffect
 {

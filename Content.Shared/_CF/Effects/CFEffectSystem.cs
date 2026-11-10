@@ -182,7 +182,16 @@ public sealed partial class CFEffectSystem : EntitySystem
     {
         failure = null;
         if (!TryComp(source, out CFAreaEffectComponent? area))
+        {
+            // A spot with no area around it, such as Figment's, still has to be in range.
+            if (CompOrNull<CFTargetingComponent>(source)?.Delivery == CFDelivery.Point && !InRange(source, user, aim))
+            {
+                failure = "cf-spell-out-of-range";
+                return false;
+            }
+
             return true;
+        }
 
         var userMap = _transform.GetMapCoordinates(user);
         if (!_maps.TryFindGridAt(userMap, out _, out _))
@@ -210,7 +219,17 @@ public sealed partial class CFEffectSystem : EntitySystem
     public int ResolveArea(EntityUid source, EntityUid user, MapCoordinates aim)
     {
         if (!TryComp(source, out CFAreaEffectComponent? area))
+        {
+            // No area: the effects happen once, at the spot, with no creature to roll against.
+            if (CompOrNull<CFTargetingComponent>(source)?.Delivery != CFDelivery.Point)
+                return 0;
+
+            var spot = _maps.TryFindGridAt(aim, out var grid, out _)
+                ? _transform.ToCoordinates(grid, aim)
+                : _transform.ToCoordinates(aim);
+            RunDegreeEffects(source, BuildArgs(source, user, null, spot, null, out _), landed: true);
             return 0;
+        }
 
         var origin = _transform.GetMapCoordinates(user);
         var targets = CollectArea(

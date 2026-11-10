@@ -64,7 +64,7 @@ Measured on 9 November 2026. `python3 .agent/port-scripts/feature_scan.py` print
 | Ancestries | 23 | Boosts, HP, Speed, size, darkvision, languages | Traits are labels |
 | General and skill feats | 131 | 12 | Pickable in the builder, marked `(TBA)` until they work. See 1e |
 | Backgrounds | 324 | Boosts, skills and the skill feat they name | 259 grant one, but few of those feats do anything yet (1e) |
-| Spells | 62 | 57 | Figment, Know the Way, Sigil, Animal Form, Dispel Magic are popups. Prestidigitation has its own system and works |
+| Spells | 62 | 60 | Animal Form and Dispel Magic are popups. Prestidigitation has its own system and works |
 | Focus spells | | The pipeline works (1f) | Filled class by class. Many hexes, compositions and domain spells are still `TBA` |
 
 ### What blocks it
@@ -173,7 +173,8 @@ All of this is picked in the lobby and stored on `CFCharacterBuildData`, the way
 
 - [ ] Dispel Magic, which needs PF2e counteract rules.
 - [ ] Animal Form, which needs a battle form.
-- [ ] Figment, Sigil and Know the Way. Give each something real to do, or flavour and `TBA`.
+- [x] Figment conjures a ghostly copy of a random shop item that vanishes when touched and fades after a minute. Sigil paints a glowing crayon rune on the floor, one per caster. Know the Way puts an arrow a tile north of the caster that points north on any screen rotation. Tests: `CFUtilityCantripTest`. Not seen in a real client, so the arrow's direction and the tint are unchecked by eye.
+- [ ] Figment has no sound mode, and nothing makes an NPC react to it. Sigil cannot go on a creature or be hidden.
 - [x] Focus spells: `focus: true` on `CFSpell` and `CFGrantFocusSpell`, up to 3 Focus Points, refilled by a long rest. Refocus gives one back after 10 world minutes (2.5 real minutes at the default clock), and moving or being hurt interrupts it. In `Spells/Focus/`. Tempest Surge and Force Bolt are the first ones. Tests: `CFFocusTest`.
 - [x] Casting from a higher slot. A spell resolves at the rank of the slot it was paid from (`CFSpellComponent.ResolvedRank`). A prepared caster puts it in a higher slot in the lobby or on the sheet. A spontaneous caster has to learn it at that rank (`KnownAtRank`). Tests: `CFSpellSlotTest`. Not seen in a real client.
 - [x] A spell castable at several ranks opens a radial menu of them, before its mode or bolt count (`CFRankMenuSystem`). The rank is sent on the perform request and checked when it is paid for. Tests: `CFSpellSlotTest`. Not seen in a real client.
