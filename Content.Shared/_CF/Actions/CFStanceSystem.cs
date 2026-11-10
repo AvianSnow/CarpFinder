@@ -3,6 +3,8 @@ using Content.Shared.CF.Character;
 using Content.Shared.Actions.Events;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Effects;
+using Content.Shared.Hands;
+using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Interaction.Events;
 using Content.Shared.Inventory.Events;
 using Content.Shared.Mobs;
@@ -29,6 +31,8 @@ public sealed partial class CFStanceSystem : EntitySystem
     [Dependency] private CFCharacterFeatureSystem _features = default!;
     [Dependency] private CFBonusSystem _bonuses = default!;
     [Dependency] private CFArmorSystem _armor = default!;
+    [Dependency] private CFShieldSystem _shields = default!;
+    [Dependency] private SharedHandsSystem _hands = default!;
 
     /// <summary>The stance the creature is in, or null.</summary>
     public CFStanceComponent? Current(EntityUid user)
@@ -45,9 +49,62 @@ public sealed partial class CFStanceSystem : EntitySystem
 
     public bool MeetsRequirements(EntityUid user, CFStanceComponent stance)
     {
-        return !stance.RequiresUnarmored
-               || !_armor.TryGetWornArmor(user, out var armor)
-               || armor.Comp.Category == CFArmorCategory.Unarmored;
+        return Unmet(user, stance) == null;
+    }
+
+    /// <summary>The locale id saying what the stance needs and the creature lacks, or null when it has it all.</summary>
+    public string? Unmet(EntityUid user, CFStanceComponent stance)
+    {
+        if (stance.RequiresUnarmored
+            && _armor.TryGetWornArmor(user, out var armor)
+            && armor.Comp.Category != CFArmorCategory.Unarmored)
+        {
+            return "cf-stance-needs-unarmored";
+        }
+
+        if (stance.RequiresRangedWeapon && !Holding<CFRangedWeaponComponent>(user))
+            return "cf-stance-needs-ranged";
+
+        if (stance.RequiresMeleeWeapon && !Holding<CFMeleeWeaponComponent>(user))
+            return "cf-stance-needs-melee";
+
+        if (stance.RequiresFreeHand && _hands.CountFreeHands(user) == 0)
+            return "cf-stance-needs-free-hand";
+
+        if (stance.RequiresShield && !_shields.TryGetUsableShield(user, out _))
+            return "cf-stance-needs-shield";
+
+        return null;
+    }
+
+    private bool Holding<T>(EntityUid user) where T : IComponent
+    {
+        foreach (var held in _hands.EnumerateHeld(user))
+        {
+            if (HasComp<T>(held))
+                return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>Picking up or letting go of something can end a stance that needs a weapon, a shield or a free hand.</summary>
+    [SubscribeLocalEvent]
+    private void OnHandEquipped(Entity<CFActiveStanceComponent> ent, ref DidEquipHandEvent args)
+    {
+        CheckHands(ent);
+    }
+
+    [SubscribeLocalEvent]
+    private void OnHandUnequipped(Entity<CFActiveStanceComponent> ent, ref DidUnequipHandEvent args)
+    {
+        CheckHands(ent);
+    }
+
+    private void CheckHands(EntityUid user)
+    {
+        if (_net.IsServer && Current(user) is { } stance && !MeetsRequirements(user, stance))
+            Leave(user);
     }
 
     /// <summary>Ends the creature's stance, if it has one.</summary>
@@ -76,10 +133,10 @@ public sealed partial class CFStanceSystem : EntitySystem
             return;
         }
 
-        if (!MeetsRequirements(args.User, ent.Comp))
+        if (Unmet(args.User, ent.Comp) is { } unmet)
         {
             args.Cancelled = true;
-            args.Reason = Loc.GetString("cf-stance-needs-unarmored");
+            args.Reason = Loc.GetString(unmet);
         }
     }
 

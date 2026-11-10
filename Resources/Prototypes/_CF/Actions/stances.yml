@@ -10,10 +10,11 @@
   parent: CFActStanceBase
   id: CFActPointBlank
   name: Point-Blank Stance
-  description: Ignore volley and gain +2 damage with ranged Strikes inside the first range increment.
+  description: With a ranged weapon in hand, ignore volley and gain +2 damage with ranged Strikes inside the first range increment.
   components:
   - type: CFStance
     pointBlank: true
+    requiresRangedWeapon: true
 
 # Player Core 2, page 118 and 119. What the game cannot do yet is marked TBA in feats-class.ftl.
 - type: entity

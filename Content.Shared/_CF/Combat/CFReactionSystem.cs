@@ -8,6 +8,7 @@ using Content.Shared.CF.Detection;
 using Content.Shared.CF.Effects;
 using Content.Shared.CF.Factions;
 using Content.Shared.CF.Items;
+using Content.Shared.CF.Spells;
 using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Movement.Components;
@@ -512,6 +513,51 @@ public sealed partial class CFReactionSystem : EntitySystem
 
             if (known.Reaction.Trigger == CFReactionTrigger.CriticallyHit && critical && CoversType(known.Reaction, damageType))
                 return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>How far to look for someone who might counter a spell. Each reaction's own range has the last word.</summary>
+    private const float CounterspellSearchRange = 24f;
+
+    /// <summary>
+    /// <paramref name="caster"/> is casting <paramref name="spell"/>. An enemy that can see it and has the same spell prepared
+    /// may spend that charge to counteract it. True if the spell was countered and should do nothing.
+    /// </summary>
+    public bool TryCounterspell(EntityUid caster, CFSpellComponent spell, int? d20 = null)
+    {
+        if (!_net.IsServer || spell.Focus)
+            return false;
+
+        var lookup = _lookup.GetEntitiesInRange<CFReactionsComponent>(Transform(caster).Coordinates, CounterspellSearchRange);
+        foreach (var (uid, reactions) in lookup)
+        {
+            if (uid == caster || !_factions.CanHarm(uid, caster) || _stealth.IsUnseenBy(caster, uid))
+                continue;
+
+            foreach (var known in Ordered(uid, reactions))
+            {
+                if (known.Reaction.Trigger != CFReactionTrigger.EnemyCastsSpell
+                    || !known.Reaction.CounterspellPrepared
+                    || !WithinFeet(uid, caster, known.Reaction.RangeFeet)
+                    || !TryComp(uid, out CFSpellbookComponent? book)
+                    || CFPreparedSpells.Charges(book, spell.Spell).Ready <= 0
+                    || !TrySpend(uid, known))
+                {
+                    continue;
+                }
+
+                var rank = CFPreparedSpells.Spend(book, spell.Spell, spell.Rank);
+                Dirty(uid, book);
+
+                var mine = CFCasting.Spellcasting(_prototypes, CompOrNull<CFCombatantComponent>(uid), CompOrNull<CFAbilityScoreComponent>(uid));
+                var theirs = CFCasting.Spellcasting(_prototypes, CompOrNull<CFCombatantComponent>(caster), CompOrNull<CFAbilityScoreComponent>(caster));
+                var degree = CFDegrees.DegreeOfSuccess(d20 ?? _random.Next(1, 21), mine.AttackBonus, theirs.Dc);
+                var countered = CFCounteractSystem.Counteracts(degree, Math.Max(1, rank), Math.Max(1, spell.ResolvedRank));
+                _popup.PopupEntity(Loc.GetString(countered ? "cf-reaction-countered" : "cf-reaction-counter-failed"), caster);
+                return countered;
+            }
         }
 
         return false;

@@ -29,6 +29,7 @@ public sealed partial class CFSpellSystem : EntitySystem
     [Dependency] private CFEffectSystem _effects = default!;
     [Dependency] private CFSpellshapeSystem _spellshapes = default!;
     [Dependency] private CFVfxSystem _vfx = default!;
+    [Dependency] private CFReactionSystem _reactions = default!;
 
     [SubscribeLocalEvent]
     private void OnInstant(Entity<CFSpellComponent> spell, ref CFSpellCastInstantEvent args)
@@ -223,7 +224,13 @@ public sealed partial class CFSpellSystem : EntitySystem
             return false;
 
         if (!_spellshapes.IsSubtle(caster))
+        {
             _vfx.Cast(caster, spell);
+
+            // An enemy watching may counter it. The slot is gone either way, as it is in the rules.
+            if (_reactions.TryCounterspell(caster, spell.Comp))
+                return false;
+        }
 
         return true;
     }

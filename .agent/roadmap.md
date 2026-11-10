@@ -112,7 +112,7 @@ Most action feats share one of a few shapes, so build the shape once. An action 
   - It ends on being knocked out, when armor breaks an unarmored requirement, or on another stance action. Real time has no encounters, so it does not end when a fight does.
   - [x] Falling asleep ends a stance, from the condition or stock sleep. Paralyzed does not, because it is not being knocked out. Tests: `CFStanceTest`.
   - [ ] Not seen in a real client: the action button lighting up while in a stance.
-  - [ ] Stances with other requirements have no check yet, such as Mountain's touching the ground, or a weapon a stance needs.
+  - [x] A stance can need a ranged weapon, a melee weapon, a free hand or a shield in hand (`requiresRangedWeapon` and so on on `CFStance`), and ends when the creature lets go. Point-Blank Stance needs a ranged weapon. Mountain Stance's touching the ground is not checked, because nothing in the game flies yet. Tests: `CFStanceTest`.
 - [x] Flourishes (36). Add `CFFlourish` to an action. `CFActionPoolSystem` allows one until the pool is next full. Flurry of Blows and Sudden Charge use it, and Vicious Swing keeps its code path. The rest are filled in their waves.
 - [x] Spellshape (34 feats). `CFSpellshape` on an action, parented on `CFActSpellshapeBase` in `Actions/spellshapes.yml`, run by `CFSpellshapeSystem`. Built on 9 November 2026, with Reach Spell (7 classes) and Widen Spell (5 classes). The other 22 are filled in their waves. Tests: `CFSpellshapeTest`.
   - It waits for the next spell, and is lost after 6 seconds or when an action is spent on anything else. Free actions and reactions do not end it, though the rules say they should.
@@ -127,7 +127,7 @@ Most action feats share one of a few shapes, so build the shape once. An action 
   - [x] Reactions go in an order (`CFReactionOrderComponent`). For each trigger, the first one in the order that would change the outcome fires. A new reaction goes above every lower-level one, and the player can reorder them on the character window's Reactions tab. Reactive Strike, Shield Block, Reactive Shield and You're Next have places in it too. Tests: `CFReactionTest`. The tab has not been seen in a real client.
   - [x] Triggers `CriticallyHit` (Scars of Steel) and `AllyWouldBeHit` (Guardian's Deflection). Tests: `CFReactionTest`.
   - [ ] Shield Block runs before the other damage reactions in code. It waits when a reaction ranked above it could answer, but one ranked below it never gets the chance once it fires.
-  - [ ] Trigger still needed: a spell being cast (Counterspell), which also needs counteracting (1f).
+  - [x] Trigger `EnemyCastsSpell`. Counterspell (Wizard and Witch) spends a prepared charge of the same spell to counteract it, at that charge's rank, when an enemy within 60 feet casts it in sight. A countered spell's slot is still spent. Subtle spells cannot be countered. Tests: `CFReactionTest`.
   - [ ] A response that moves the creature, for No Escape and Reactive Pursuit.
   - [ ] NPCs do not walk to avoid Reactive Strike. They always run.
   - [x] Spell attacks trigger `AttackWouldHit`, as melee, so Deflect Projectile does not answer one. Reactive Shield still only answers Strikes. Tests: `CFReactionTest`.
@@ -176,7 +176,7 @@ All of this is picked in the lobby and stored on `CFCharacterBuildData`, the way
 
 - [x] Dispel Magic, on PF2e counteract rules (`CFCounteractSystem`). Spells cast through a spell action remember what they put on a creature: bonuses, and conditions `EndCondition` can end. Dispel Magic aims at an enemy's spell first, then the highest rank. Tests: `CFCounteractTest`.
 - [ ] Counteracting cannot end asleep, paralyzed, sickened, darkvision, resistances, quickened or slowed yet, and does not suppress magic items.
-- [ ] Counterspell and Counter Thought need a reaction that interrupts a spell being cast, which there is no trigger for yet.
+- [ ] Counter Thought (Psychic) can use `EnemyCastsSpell`, but needs a way to read a mental spell's traits and its own counteract rank.
 - [x] Animal Form, as a battle form (`CFBattleFormSystem`). A mode menu picks ape, bear, bull, canine, cat or deer. For a minute the caster fights with the animal's attack at +9 to hit and +1 damage, has AC 16 plus level and 5 temporary Hit Points, and moves at the animal's Speed. Its own attack and AC count instead when higher. No spells or weapons in the form, and it ends at 0 Hit Points. Tests: `CFBattleFormTest`. Not seen in a real client.
 - [ ] Battle forms still add Strength to damage, where the rules give the form's +1 only. Each animal has one attack. Frog, shark and snake, climb and swim Speeds, Athletics +9, senses, and dismissing the form are not built. The body does not change shape.
 - [x] Figment conjures a ghostly copy of a random shop item that vanishes when touched and fades after a minute. Sigil paints a glowing crayon rune on the floor, one per caster. Know the Way puts an arrow a tile north of the caster that points north on any screen rotation. Tests: `CFUtilityCantripTest`. Not seen in a real client, so the arrow's direction and the tint are unchecked by eye.

@@ -10,6 +10,7 @@ using Content.Shared.CF.Actions;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Effects;
+using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Inventory;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Systems;
@@ -359,22 +360,37 @@ public sealed class CFStanceTest : GameTest
     public async Task PointBlankIsAStance()
     {
         _map = await CFDevMap.Load(Pair, Footprint);
+        var withoutBow = true;
         var inStance = false;
         var after = true;
+        var afterDrop = true;
         await Server.WaitPost(() =>
         {
+            var hands = SEntMan.System<SharedHandsSystem>();
             var hero = Hero();
             var action = Grant(hero, "CFActPointBlank");
+            withoutBow = Use(hero, action);
+
+            hands.TryPickupAnyHand(hero, SEntMan.SpawnEntity("CFShortbow", _map.Local(0, 0)), checkActionBlocker: false);
             Use(hero, action);
             inStance = Stances.Current(hero) is { PointBlank: true };
             Use(hero, action);
             after = Stances.Current(hero) != null;
+
+            var archer = Hero();
+            var bow = SEntMan.SpawnEntity("CFShortbow", _map.Local(0, 0));
+            hands.TryPickupAnyHand(archer, bow, checkActionBlocker: false);
+            Use(archer, Grant(archer, "CFActPointBlank"));
+            hands.TryDrop(archer, bow, checkActionBlocker: false);
+            afterDrop = Stances.Current(archer) != null;
         });
 
         Assert.Multiple(() =>
         {
+            Assert.That(withoutBow, Is.False, "It needs a ranged weapon in hand.");
             Assert.That(inStance, Is.True);
-            Assert.That(after, Is.False);
+            Assert.That(after, Is.False, "Using it again dismisses it.");
+            Assert.That(afterDrop, Is.False, "Letting go of the bow ends it.");
         });
     }
 

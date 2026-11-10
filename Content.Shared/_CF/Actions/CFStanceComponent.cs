@@ -16,6 +16,22 @@ public sealed partial class CFStanceComponent : Component
     [DataField]
     public bool RequiresUnarmored;
 
+    /// <summary>Needs a ranged weapon in hand, and ends when the creature lets go of its last one.</summary>
+    [DataField]
+    public bool RequiresRangedWeapon;
+
+    /// <summary>Needs a melee weapon in hand.</summary>
+    [DataField]
+    public bool RequiresMeleeWeapon;
+
+    /// <summary>Needs a hand free.</summary>
+    [DataField]
+    public bool RequiresFreeHand;
+
+    /// <summary>Needs a shield in hand that is not broken.</summary>
+    [DataField]
+    public bool RequiresShield;
+
     /// <summary>Lasts as long as the stance does.</summary>
     [DataField]
     public List<CFStanceBonus> Bonuses = new();

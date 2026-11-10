@@ -10,4 +10,10 @@
     - "Witch"
     - "Wizard"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-counterspell
+        trigger: EnemyCastsSpell
+        counterspellPrepared: true
+        rangeFeet: 60

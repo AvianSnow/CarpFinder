@@ -4,6 +4,7 @@ using Content.IntegrationTests.Fixtures;
 using Content.IntegrationTests.Tests.CF;
 using Content.Server.CF.Character;
 using Content.Shared.CF.Preferences;
+using Content.Shared.CF.Spells;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Combat;
@@ -203,6 +204,39 @@ public sealed class CFReactionTest : GameTest
             Assert.That(deflectByDefault, Is.EqualTo(1));
             Assert.That(dodgeWhenMoved, Is.EqualTo(1));
             Assert.That(deflectWhenMoved, Is.Zero, "One reaction, and the first in line had it.");
+        });
+    }
+
+    [Test]
+    public async Task CounterspellSpendsTheSameSpellToCounterIt()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        bool countered = false, again = true;
+        var charges = -1;
+        await Server.WaitPost(() =>
+        {
+            var wizard = Hero("CFCounterspellPreparedWizard");
+            var book = SEntMan.EnsureComponent<CFSpellbookComponent>(wizard);
+            book.Prepared = true;
+            book.Slots = new List<int> { 5, 2 };
+            book.Expended = new List<int> { 0, 0 };
+            book.Repertoire.Add("Fear");
+            book.PreparedSlots.Add(new CFPreparedSlot("Fear", 1));
+
+            var foe = Spawn("CFReactionTestFoe");
+            var fear = SEntMan.GetComponent<CFSpellComponent>(SEntMan.SpawnEntity("CFFear", Robust.Shared.Map.MapCoordinates.Nullspace));
+            countered = Reactions.TryCounterspell(foe, fear, d20: 20);
+            charges = CFPreparedSpells.Charges(book, "Fear").Ready;
+
+            Options(wizard).ReactionSpent = 0;
+            again = Reactions.TryCounterspell(foe, fear, d20: 20);
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(countered, Is.True);
+            Assert.That(charges, Is.Zero, "The prepared Fear is spent.");
+            Assert.That(again, Is.False, "With no Fear left prepared, it cannot counter another.");
         });
     }
 

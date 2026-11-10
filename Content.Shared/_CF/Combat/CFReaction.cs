@@ -47,6 +47,9 @@ public enum CFReactionTrigger : byte
 
     /// <summary>An attack is about to hit an ally within <see cref="CFReaction.RangeFeet"/>.</summary>
     AllyWouldBeHit,
+
+    /// <summary>An enemy this creature can see, within <see cref="CFReaction.RangeFeet"/>, casts a spell.</summary>
+    EnemyCastsSpell,
 }
 
 /// <summary>
@@ -145,6 +148,13 @@ public sealed partial class CFReaction
     /// <summary>Half the creature's level also comes off the damage.</summary>
     [DataField]
     public bool ResistHalfLevel;
+
+    /// <summary>
+    /// With <see cref="CFReactionTrigger.EnemyCastsSpell"/>: spends a prepared charge of the same spell to counteract it,
+    /// at that charge's rank (Counterspell).
+    /// </summary>
+    [DataField]
+    public bool CounterspellPrepared;
 
     /// <summary>This attribute's modifier also comes off the damage, when it is positive.</summary>
     [DataField]
