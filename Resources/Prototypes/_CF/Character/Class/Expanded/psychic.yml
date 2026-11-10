@@ -68,7 +68,15 @@
           action: CFActUnleashPsyche
     - level: 3
       name: "Signature Spells"
-      description: "Heighten chosen spells freely. Casting from a higher slot does not exist yet: TBA"
+      description: "Choose one spell of each rank. You can cast it at any rank you have a slot for, without learning it there."
+      choiceTitle: cf-class-feature-signature-spells
+      choices:
+        - kind: SignatureSpell
+          spellRank: 1
+        - kind: SignatureSpell
+          spellRank: 2
+        - kind: SignatureSpell
+          spellRank: 3
     - level: 5
       name: "Clarity of Focus"
       description: "One more Focus Point."

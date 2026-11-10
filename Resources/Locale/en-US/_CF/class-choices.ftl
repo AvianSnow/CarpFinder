@@ -19,6 +19,7 @@ cf-class-choice-edge-precision = Precision
 cf-class-choice-edge-precision-desc = The first time you hit your prey each turn, you deal 1d8 extra precision damage.
 
 cf-class-feature-weapon-mastery = Fighter Weapon Mastery
+cf-class-feature-signature-spells = Signature Spells
 
 cf-class-choice-muse = Muse
 cf-class-choice-muse-enigma = Enigma

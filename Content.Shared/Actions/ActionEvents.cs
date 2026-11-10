@@ -95,6 +95,9 @@ public sealed class RequestPerformActionEvent : EntityEventArgs
     /// <summary>CarpFinder: this volley click fires one stored bolt. The opening click pays for the whole volley.</summary>
     public bool CFVolleyContinue;
 
+    /// <summary>CarpFinder: the rank picked for a spell castable at several. 0 lets the server take the highest.</summary>
+    public byte CFRank;
+
     public RequestPerformActionEvent(NetEntity action)
     {
         Action = action;

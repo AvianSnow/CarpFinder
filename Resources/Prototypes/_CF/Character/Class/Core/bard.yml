@@ -70,5 +70,13 @@
           rank: Expert
     - level: 3
       name: "Signature Spells"
-      description: "Heightening a signature spell freely: TBA"
+      description: "Choose one spell of each rank. You can cast it at any rank you have a slot for, without learning it there."
+      choiceTitle: cf-class-feature-signature-spells
+      choices:
+        - kind: SignatureSpell
+          spellRank: 1
+        - kind: SignatureSpell
+          spellRank: 2
+        - kind: SignatureSpell
+          spellRank: 3
   # Class key-attribute boost is applied from keyAbility in code (PF2e).

@@ -253,6 +253,9 @@ public sealed partial class HumanoidProfileEditor
 
     private string OptionLabel(string value)
     {
+        if (value.StartsWith(CFOptionChoices.SignaturePrefix, StringComparison.Ordinal))
+            value = value[CFOptionChoices.SignaturePrefix.Length..];
+
         if (_prototypeManager.TryIndex<CFSpellPrototype>(value, out var spell))
             return spell.Name;
 
@@ -282,15 +285,21 @@ public sealed partial class HumanoidProfileEditor
         var definitions = new List<SkillSlotDefinition>();
         foreach (var slot in slots)
         {
-            var allowed = CFOptionChoices.Allowed(_prototypeManager, slot.Choice)
+            var allowed = CFOptionChoices.Allowed(_prototypeManager, slot.Choice, build)
                 .Where(id => slot.Choice.Kind != CFOptionChoiceKind.Skill || ownPicks.Contains(id) || !trained.Contains(id))
                 .OrderBy(OptionLabel, StringComparer.CurrentCultureIgnoreCase)
                 .ToList();
+
+            // Signature spells are per rank, and a character may not have learned a spell of every rank. Accept needs every row filled.
+            if (slot.Choice.Kind == CFOptionChoiceKind.SignatureSpell && allowed.Count == 0)
+                continue;
+
             definitions.Add(new SkillSlotDefinition
             {
                 Id = slot.Slot.ToString(),
                 Label = Loc.GetString(slot.Choice.Kind switch
                 {
+                    CFOptionChoiceKind.SignatureSpell => "cf-character-builder-option-signature",
                     CFOptionChoiceKind.Cantrip => "cf-character-builder-option-cantrip",
                     CFOptionChoiceKind.WeaponGroup => "cf-character-builder-option-weapon-group",
                     CFOptionChoiceKind.Language => "cf-character-builder-option-language",

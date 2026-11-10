@@ -334,15 +334,9 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
             book.PlannedSlots.Add(new CFPreparedSlot(pick.Spell, pick.Rank));
         }
 
-        // A spare slot, such as Divine Font's, stays on top of what the table gives.
-        for (var rank = 0; rank < after.Count; rank++)
-        {
-            var spare = rank < before.Count && rank < book.Slots.Count ? book.Slots[rank] - before[rank] : 0;
-            if (rank < book.Slots.Count)
-                book.Slots[rank] = after[rank] + spare;
-            else
-                book.Slots.Add(after[rank]);
-        }
+        // Divine Font's slots move up to the new highest rank, so Heal and Harm heighten with the cleric.
+        book.Slots = new List<int>(after);
+        AddFontSlots(book);
 
         book.PreparableSlots = new List<int>(after);
         while (book.Expended.Count < book.Slots.Count)
@@ -386,8 +380,9 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         book.FocusSpent = 0;
         if (cls != null && cls.ID == "Cleric" && book.Slots.Count > 1 && TryComp(mob, out CFAbilityScoreComponent? scores))
         {
-            // Divine Font: extra rank 1 slots for what the deity offers.
-            book.Slots[1] += Math.Max(1, scores.GetModifier(CFAbility.Charisma));
+            // Divine Font: extra slots of the highest rank, for what the deity offers.
+            book.FontSlots = Math.Max(1, scores.GetModifier(CFAbility.Charisma));
+            AddFontSlots(book);
             if (CFClassChoices.SelectedDeity(_prototypes, profile.CFBuild) is { DivineFont.Count: > 0 } deity)
             {
                 book.SpareSlotSpells.AddRange(deity.DivineFont);
@@ -402,6 +397,21 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         Dirty(mob, book);
     }
 
+    private static void AddFontSlots(CFSpellbookComponent book)
+    {
+        if (book.FontSlots <= 0)
+            return;
+
+        for (var rank = book.Slots.Count - 1; rank > 0; rank--)
+        {
+            if (book.Slots[rank] <= 0)
+                continue;
+
+            book.Slots[rank] += book.FontSlots;
+            return;
+        }
+    }
+
     /// <summary>A prepared caster starts with one charge per spell picked in the lobby, and plans the same for its next long rest.</summary>
     private void ApplyPrepared(
         CFSpellbookComponent book,
@@ -414,6 +424,7 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         book.Repertoire.Clear();
         book.SpareSlotSpells.Clear();
         book.KnownAtRank.Clear();
+        book.SignatureSpells.Clear();
         book.PreparableSlots = new List<int>(book.Slots);
         foreach (var pick in CFSpellSlots.Within(profile.CFBuild.Spells, book.Slots, _prototypes))
         {

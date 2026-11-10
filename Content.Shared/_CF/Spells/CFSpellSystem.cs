@@ -231,6 +231,8 @@ public sealed partial class CFSpellSystem : EntitySystem
     public bool TrySpend(EntityUid caster, CFSpellComponent spell)
     {
         spell.CastRank = 0;
+        var wanted = spell.ChosenRank;
+        spell.ChosenRank = 0;
         if (spell.Focus)
         {
             if (!TryComp<CFSpellbookComponent>(caster, out var pool))
@@ -298,12 +300,12 @@ public sealed partial class CFSpellSystem : EntitySystem
 
         if (book.Prepared)
         {
-            spell.CastRank = CFPreparedSpells.Spend(book, spell.Spell, spell.Rank);
+            spell.CastRank = CFPreparedSpells.Spend(book, spell.Spell, spell.Rank, wanted);
             Dirty(caster, book);
             return true;
         }
 
-        spell.CastRank = CFPreparedSpells.SpontaneousRank(book, spell.Spell, spell.Rank);
+        spell.CastRank = CFPreparedSpells.SpontaneousRank(book, spell.Spell, spell.Rank, wanted);
         while (book.Expended.Count <= spell.CastRank)
         {
             book.Expended.Add(0);

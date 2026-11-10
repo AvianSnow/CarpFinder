@@ -15,6 +15,9 @@ public enum CFOptionChoiceKind : byte
 
     /// <summary>A saving throw or Perception, raised to expert.</summary>
     SaveOrPerception,
+
+    /// <summary>One of the build's spells of <see cref="CFOptionChoice.SpellRank"/>, which can then be cast at any rank.</summary>
+    SignatureSpell,
 }
 
 /// <summary>
@@ -42,4 +45,8 @@ public sealed partial class CFOptionChoice
     /// <summary>What a <see cref="CFOptionChoiceKind.KeyAttribute"/> choice can be answered with.</summary>
     [DataField]
     public List<CFAbility> Abilities = new();
+
+    /// <summary>The rank a <see cref="CFOptionChoiceKind.SignatureSpell"/> choice picks from.</summary>
+    [DataField]
+    public int SpellRank;
 }

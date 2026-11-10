@@ -33,6 +33,10 @@ public sealed partial class CFSpellComponent : Component
     [DataField, AutoNetworkedField]
     public int Rank;
 
+    /// <summary>The rank asked for by the next cast, from the client's menu. 0 takes the highest. Checked when it is paid for.</summary>
+    [ViewVariables]
+    public int ChosenRank;
+
     /// <summary>The rank of the slot the last cast was paid from. It lives here because a bolt can land after the cast.</summary>
     [ViewVariables]
     public int CastRank;

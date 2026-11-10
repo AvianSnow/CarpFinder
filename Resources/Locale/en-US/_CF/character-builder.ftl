@@ -83,6 +83,7 @@ cf-character-builder-option-cantrip = Cantrip
 cf-character-builder-option-skill = Skill
 cf-character-builder-option-weapon-group = Weapon group
 cf-character-builder-option-language = Language
+cf-character-builder-option-signature = Signature spell
 cf-character-builder-option-key-attribute = Key attribute
 cf-character-builder-option-save = Become expert in
 cf-character-builder-option-help = Choose what this option gives you.

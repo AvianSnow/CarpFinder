@@ -15,6 +15,9 @@ public readonly record struct CFOptionSlot(string Source, LocId SourceName, int 
 /// </summary>
 public static class CFOptionChoices
 {
+    /// <summary>Marks an answer as a signature spell, because a plain spell id means a cantrip to learn.</summary>
+    public const string SignaturePrefix = "signature:";
+
     /// <summary>Everything the build has to pick for what it has by <paramref name="level"/>.</summary>
     public static List<CFOptionSlot> Slots(
         IPrototypeManager prototypes,
@@ -58,9 +61,30 @@ public static class CFOptionChoices
         return $"class:{cls.ID}:{feature.Name}";
     }
 
-    /// <summary>The ids a choice can be answered with.</summary>
-    public static List<string> Allowed(IPrototypeManager prototypes, CFOptionChoice choice)
+    /// <summary>The ids a choice can be answered with. A signature spell needs <paramref name="build"/>, to see what it knows.</summary>
+    public static List<string> Allowed(IPrototypeManager prototypes, CFOptionChoice choice, CFCharacterBuildData? build = null)
     {
+        if (choice.Kind == CFOptionChoiceKind.SignatureSpell)
+        {
+            var known = new List<string>();
+            if (build == null)
+                return known;
+
+            foreach (var pick in build.Spells)
+            {
+                var id = SignaturePrefix + pick.Spell.Id;
+                if (pick.HasSpell
+                    && prototypes.TryIndex(pick.Spell, out var spell)
+                    && spell.Rank == choice.SpellRank
+                    && !known.Contains(id))
+                {
+                    known.Add(id);
+                }
+            }
+
+            return known;
+        }
+
         if (choice.Kind == CFOptionChoiceKind.WeaponGroup)
             return Enum.GetNames<CFWeaponGroup>().ToList();
 
@@ -96,7 +120,7 @@ public static class CFOptionChoices
         {
             var pick = build.OptionPicks.FirstOrDefault(p => p.Source == slot.Source && p.Slot == slot.Slot);
             if (pick == null
-                || !Allowed(prototypes, slot.Choice).Contains(pick.Value)
+                || !Allowed(prototypes, slot.Choice, build).Contains(pick.Value)
                 || result.Exists(other => other.Source == pick.Source && other.Value == pick.Value))
             {
                 continue;

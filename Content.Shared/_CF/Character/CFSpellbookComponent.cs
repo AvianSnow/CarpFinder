@@ -47,6 +47,10 @@ public sealed partial class CFSpellbookComponent : Component
     [DataField, AutoNetworkedField]
     public List<CFPreparedSlot> KnownAtRank = new();
 
+    /// <summary>A spontaneous caster's signature spells, which it can cast at any rank from their own up.</summary>
+    [DataField, AutoNetworkedField]
+    public List<ProtoId<CFSpellPrototype>> SignatureSpells = new();
+
     /// <summary>How many spells each rank can have prepared, same indexing as <see cref="Slots"/>. Excludes spare slots.</summary>
     [DataField, AutoNetworkedField]
     public List<int> PreparableSlots = new();
@@ -54,6 +58,10 @@ public sealed partial class CFSpellbookComponent : Component
     /// <summary>Spells that may use a spare slot, one <see cref="Slots"/> has and nothing is prepared in. Divine Font's Heal and Harm.</summary>
     [DataField, AutoNetworkedField]
     public List<ProtoId<CFSpellPrototype>> SpareSlotSpells = new();
+
+    /// <summary>Divine Font's extra slots. They always sit at the highest rank, and move up with it.</summary>
+    [DataField, AutoNetworkedField]
+    public int FontSlots;
 
     /// <summary>An Animist's apparition slots per rank, same indexing as <see cref="Slots"/>. They are spent like a spontaneous caster's.</summary>
     [DataField, AutoNetworkedField]

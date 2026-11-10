@@ -270,6 +270,16 @@ public sealed partial class ActionUIController : UIController, IOnStateChanged<G
             return;
         // CarpFinder end
 
+        // CarpFinder: a spell castable at several ranks asks which one first.
+        if (EntityManager.System<CFRankMenuSystem>().TryOffer(action, () => CFOfferCastMenus(action)))
+            return;
+
+        CFOfferCastMenus(action);
+    }
+
+    // CarpFinder: what happens once a spell's rank is settled.
+    private void CFOfferCastMenus(Entity<ActionComponent> action)
+    {
         // CarpFinder: a mode choice (prestidigitation) asks which mode, then a volley (Force Barrage) asks how many bolts.
         if (EntityManager.System<CFModeMenuSystem>().TryOffer(action, () => ActivateAction(action)))
             return;

@@ -176,9 +176,10 @@ All of this is picked in the lobby and stored on `CFCharacterBuildData`, the way
 - [ ] Figment, Sigil and Know the Way. Give each something real to do, or flavour and `TBA`.
 - [x] Focus spells: `focus: true` on `CFSpell` and `CFGrantFocusSpell`, up to 3 Focus Points, refilled by a long rest. Refocus gives one back after 10 world minutes (2.5 real minutes at the default clock), and moving or being hurt interrupts it. In `Spells/Focus/`. Tempest Surge and Force Bolt are the first ones. Tests: `CFFocusTest`.
 - [x] Casting from a higher slot. A spell resolves at the rank of the slot it was paid from (`CFSpellComponent.ResolvedRank`). A prepared caster puts it in a higher slot in the lobby or on the sheet. A spontaneous caster has to learn it at that rank (`KnownAtRank`). Tests: `CFSpellSlotTest`. Not seen in a real client.
-- [ ] With a spell at several ranks, a cast always uses the highest with a slot or charge left. There is no way to choose a lower one yet.
-- [ ] Apparition spells and Divine Font's Heal and Harm still only resolve at their own rank.
-- [ ] Signature Spells. Divine Font's slots work, as rank 1 spare slots for Heal and Harm, but at a fixed rank.
+- [x] A spell castable at several ranks opens a radial menu of them, before its mode or bolt count (`CFRankMenuSystem`). The rank is sent on the perform request and checked when it is paid for. Tests: `CFSpellSlotTest`. Not seen in a real client.
+- [ ] Apparition spells still only resolve at their own rank.
+- [x] Signature Spells: one spell of each rank, picked in the builder through a `SignatureSpell` entry in `choices`, cast at any rank with a slot from level 3. For Bard, Oracle, Psychic, Sorcerer and Summoner. Not clicked in a real client. Tests: `CFSpellSlotTest`.
+- [x] Divine Font's slots sit at the cleric's highest rank and move up as it levels (`FontSlots`), so Heal and Harm heighten. They are still Charisma modifier, at least 1, where the rules say 1 plus Charisma. Kept on purpose. Tests: `CFSpellSlotTest`.
 - [ ] Compare each spell's effects with its text. The scan only finds spells with no effect at all, not spells with part of one.
 
 ### 1g. Waves

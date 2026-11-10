@@ -195,6 +195,18 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
             if (pick.Source != source)
                 continue;
 
+            if (pick.Value.StartsWith(CFOptionChoices.SignaturePrefix, StringComparison.Ordinal))
+            {
+                var signature = pick.Value[CFOptionChoices.SignaturePrefix.Length..];
+                if (TryComp(mob, out CFSpellbookComponent? book) && !book.SignatureSpells.Contains(signature))
+                {
+                    book.SignatureSpells.Add(signature);
+                    Dirty(mob, book);
+                }
+
+                continue;
+            }
+
             if (_prototypes.HasIndex<CFSpellPrototype>(pick.Value))
             {
                 GrantSpell(mob, pick.Value);

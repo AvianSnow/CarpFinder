@@ -62,27 +62,54 @@ public static class CFPreparedSpells
             return true;
 
         if (book.SpareSlotSpells.Contains(spell))
-            return SpareLeft(book, rank) > 0;
+            return HighestSpare(book, rank) > 0;
 
         return !book.Repertoire.Contains(spell);
     }
 
+    /// <summary>The highest rank, from <paramref name="baseRank"/> up, with a spare slot left. Zero if none.</summary>
+    private static int HighestSpare(CFSpellbookComponent book, int baseRank)
+    {
+        for (var rank = book.Slots.Count - 1; rank >= Math.Max(1, baseRank); rank--)
+        {
+            if (SpareLeft(book, rank) > 0)
+                return rank;
+        }
+
+        return 0;
+    }
+
     /// <summary>
-    /// Pays for one cast, from the highest ready charge when the spell is prepared at several ranks. Call
-    /// <see cref="CanCast"/> first. A spell granted some other way costs nothing.
+    /// Pays for one cast: from the charge at <paramref name="wanted"/> if there is one, otherwise the highest ready charge.
+    /// Call <see cref="CanCast"/> first. A spell granted some other way costs nothing.
     /// </summary>
     /// <returns>The rank of the slot it used, which is the rank the spell resolves at.</returns>
-    public static int Spend(CFSpellbookComponent book, ProtoId<CFSpellPrototype> spell, int rank)
+    public static int Spend(CFSpellbookComponent book, ProtoId<CFSpellPrototype> spell, int rank, int wanted = 0)
     {
         var best = -1;
+        var exact = -1;
         for (var i = 0; i < book.PreparedSlots.Count; i++)
         {
             var slot = book.PreparedSlots[i];
-            if (slot.Spell == spell && !slot.Spent && (best < 0 || slot.Rank > book.PreparedSlots[best].Rank))
+            if (slot.Spell != spell || slot.Spent)
+                continue;
+
+            if (best < 0 || slot.Rank > book.PreparedSlots[best].Rank)
                 best = i;
+
+            if (slot.Rank == wanted)
+                exact = i;
         }
 
-        if (best >= 0)
+        // The menu offers spare slots alongside the charges.
+        var spareAsked = exact < 0
+                         && wanted >= rank
+                         && book.SpareSlotSpells.Contains(spell)
+                         && SpareLeft(book, wanted) > 0;
+        if (exact >= 0)
+            best = exact;
+
+        if (best >= 0 && !spareAsked)
         {
             var slot = book.PreparedSlots[best];
             slot.Spent = true;
@@ -91,34 +118,84 @@ public static class CFPreparedSpells
             return slot.Rank;
         }
 
-        if (book.SpareSlotSpells.Contains(spell) && SpareLeft(book, rank) > 0)
-            AddExpended(book, rank);
+        if (!book.SpareSlotSpells.Contains(spell))
+            return rank;
 
-        return rank;
+        var spare = spareAsked ? wanted : HighestSpare(book, rank);
+        if (spare <= 0)
+            return rank;
+
+        AddExpended(book, spare);
+        return spare;
     }
 
     /// <summary>
-    /// The rank a spontaneous caster casts this spell at: the highest one it knows the spell at with a slot left. Zero if
-    /// there is none. A spell it did not learn into a slot goes by its own rank.
+    /// The rank a spontaneous caster casts this spell at: <paramref name="wanted"/> if that is possible, otherwise the highest
+    /// that is. Zero if none is.
     /// </summary>
-    public static int SpontaneousRank(CFSpellbookComponent book, ProtoId<CFSpellPrototype> spell, int baseRank)
+    public static int SpontaneousRank(CFSpellbookComponent book, ProtoId<CFSpellPrototype> spell, int baseRank, int wanted = 0)
     {
-        var known = false;
-        var best = 0;
+        var ranks = CastableRanks(book, spell, baseRank);
+        if (ranks.Count == 0)
+            return 0;
+
+        return ranks.Contains(wanted) ? wanted : ranks[^1];
+    }
+
+    /// <summary>
+    /// Every rank this spell can be cast at right now, lowest first. Prepared: its ready charges, and a spare slot. Spontaneous:
+    /// the ranks it was learned at, or every rank from its own for a signature spell. A spell it did not learn into a slot
+    /// goes by its own rank.
+    /// </summary>
+    public static List<int> CastableRanks(CFSpellbookComponent book, ProtoId<CFSpellPrototype> spell, int baseRank)
+    {
+        var ranks = new List<int>();
+        if (book.Prepared)
+        {
+            foreach (var slot in book.PreparedSlots)
+            {
+                if (slot.Spell == spell && !slot.Spent && !ranks.Contains(slot.Rank))
+                    ranks.Add(slot.Rank);
+            }
+
+            if (book.SpareSlotSpells.Contains(spell))
+            {
+                for (var rank = Math.Max(1, baseRank); rank < book.Slots.Count; rank++)
+                {
+                    if (SpareLeft(book, rank) > 0 && !ranks.Contains(rank))
+                        ranks.Add(rank);
+                }
+            }
+
+            ranks.Sort();
+            return ranks;
+        }
+
+        var learned = false;
         foreach (var entry in book.KnownAtRank)
         {
             if (entry.Spell != spell)
                 continue;
 
-            known = true;
-            if (entry.Rank > best && SlotLeft(book, entry.Rank))
-                best = entry.Rank;
+            learned = true;
+            if (SlotLeft(book, entry.Rank) && !ranks.Contains(entry.Rank))
+                ranks.Add(entry.Rank);
         }
 
-        if (known)
-            return best;
+        if (learned && book.SignatureSpells.Contains(spell))
+        {
+            for (var rank = baseRank; rank < book.Slots.Count; rank++)
+            {
+                if (SlotLeft(book, rank) && !ranks.Contains(rank))
+                    ranks.Add(rank);
+            }
+        }
 
-        return SlotLeft(book, baseRank) ? baseRank : 0;
+        if (!learned && SlotLeft(book, baseRank))
+            ranks.Add(baseRank);
+
+        ranks.Sort();
+        return ranks;
     }
 
     private static bool SlotLeft(CFSpellbookComponent book, int rank)

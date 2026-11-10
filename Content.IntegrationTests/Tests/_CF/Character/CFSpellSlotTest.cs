@@ -165,15 +165,20 @@ public sealed class CFSpellSlotTest : GameTest
         _map = await CFDevMap.Load(Pair, Footprint);
         await Server.WaitAssertion(() =>
         {
-            var hero = Caster("Cleric", new List<CFSpellPick>());
+            var hero = Caster("Cleric", new List<CFSpellPick> { Pick(1, 0, "Bless"), Pick(1, 1, "Bless") });
             var book = Book(hero);
             var font = book.Slots[1] - 2;
+            Assert.That(font, Is.EqualTo(book.FontSlots));
             Assert.That(font, Is.GreaterThan(0));
 
             LevelTo(hero, 3);
-            Assert.That(book.Slots[1], Is.EqualTo(3 + font));
-            Assert.That(book.Slots[2], Is.EqualTo(2));
+            Assert.That(book.Slots[1], Is.EqualTo(3), "The font moved up.");
+            Assert.That(book.Slots[2], Is.EqualTo(2 + font));
             Assert.That(book.PreparableSlots, Is.EqualTo(new[] { 5, 3, 2 }));
+
+            // Two rank 1 charges are Bless, so rank 1's third slot is free as well.
+            Assert.That(CFPreparedSpells.CastableRanks(book, "Heal", 1), Is.EqualTo(new[] { 1, 2 }));
+            Assert.That(CFPreparedSpells.Spend(book, "Heal", 1), Is.EqualTo(2), "Highest first, so Heal is heightened.");
         });
     }
 
@@ -261,6 +266,58 @@ public sealed class CFSpellSlotTest : GameTest
             Assert.That(spells.TrySpend(hero, fire));
             Assert.That(fire.ResolvedRank, Is.EqualTo(1), "Rank 2 is used up, and it is known at rank 1 as well.");
             Assert.That(spells.HasSlot(hero, sleep), Is.False, "Sleep is only known at rank 2, so a rank 1 slot cannot cast it.");
+        });
+    }
+
+    [Test]
+    public async Task APickedRankIsUsedAndAnImpossibleOneIsIgnored()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            var hero = Caster("Wizard", new List<CFSpellPick> { Pick(1, 0, "BreatheFire"), Pick(2, 0, "BreatheFire"), Pick(2, 1, "BreatheFire") });
+            LevelTo(hero, 3);
+            var spells = SEntMan.System<CFSpellSystem>();
+            var action = Action(hero, "CFBreatheFire");
+            var book = SEntMan.GetComponent<CFSpellbookComponent>(hero);
+            Assert.That(CFPreparedSpells.CastableRanks(book, "BreatheFire", 1), Is.EqualTo(new[] { 1, 2 }));
+
+            action.ChosenRank = 1;
+            Assert.That(spells.TrySpend(hero, action));
+            Assert.That(action.ResolvedRank, Is.EqualTo(1));
+            Assert.That(action.ChosenRank, Is.Zero, "The next cast asks again.");
+            Assert.That(CFPreparedSpells.CastableRanks(book, "BreatheFire", 1), Is.EqualTo(new[] { 2 }));
+
+            action.ChosenRank = 9;
+            Assert.That(spells.TrySpend(hero, action));
+            Assert.That(action.ResolvedRank, Is.EqualTo(2));
+        });
+    }
+
+    [Test]
+    public async Task ASignatureSpellHeightensFreelyFromLevelThree()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            const string source = "class:Sorcerer:Signature Spells";
+            var picks = new List<CFSpellPick> { Pick(1, 0, "BreatheFire"), Pick(1, 1, "Sleep"), Pick(2, 0, "Blur") };
+            var build = new CFCharacterBuildData { Class = "Sorcerer", Spells = picks };
+            build.OptionPicks.Add(new CFOptionPick { Source = source, Slot = 0, Value = CFOptionChoices.SignaturePrefix + "BreatheFire" });
+            build.OptionPicks.Add(new CFOptionPick { Source = source, Slot = 1, Value = CFOptionChoices.SignaturePrefix + "Fireball" });
+
+            var hero = SEntMan.SpawnEntity("CFSpellSlotHero", _map.Local(0, 0));
+            SEntMan.System<CFCharacterSpawnSystem>().ApplyBuild(hero, HumanoidCharacterProfile.DefaultWithSpecies().WithCFBuild(build));
+            var book = SEntMan.GetComponent<CFSpellbookComponent>(hero);
+            Assert.That(book.SignatureSpells, Is.Empty, "The feature comes at level 3.");
+
+            LevelTo(hero, 3);
+            Assert.Multiple(() =>
+            {
+                Assert.That(book.SignatureSpells.Select(s => s.Id), Is.EqualTo(new[] { "BreatheFire" }), "Fireball is not a spell it knows.");
+                Assert.That(CFPreparedSpells.CastableRanks(book, "BreatheFire", 1), Is.EqualTo(new[] { 1, 2 }));
+                Assert.That(CFPreparedSpells.CastableRanks(book, "Sleep", 1), Is.EqualTo(new[] { 1 }));
+            });
         });
     }
 
