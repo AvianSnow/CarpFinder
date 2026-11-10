@@ -143,6 +143,20 @@ public sealed partial class CFSpellSystem : EntitySystem
 
         var trick = new CFModeTargetEvent(args.Performer, args.Target, mode.Chosen);
         RaiseLocalEvent(spell, ref trick);
+
+        // No system owns the mode, so it is a normal cast whose effects read the chosen mode (Command).
+        if (!trick.Handled)
+        {
+            args.Handled = true;
+            if (!_net.IsServer || !CanCastAt(spell, args.Performer, args.Target) || !TrySpendCast(args.Performer, spell))
+                return;
+
+            _psi.NoteCast(args.Performer, spell);
+            _effects.DeliverToTarget(spell, args.Performer, args.Target);
+            FinishCast(args.Performer);
+            return;
+        }
+
         if (!trick.Success || !TrySpendCast(args.Performer, spell))
             return;
 

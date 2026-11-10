@@ -2,7 +2,7 @@
   parent: CFSpellTarget
   id: CFCommand
   name: Command
-  description: On a failed Will save the target must spend its next action obeying.
+  description: Pick a one-word order, then a creature that understands you. On a failed Will save it obeys for 6 seconds, or 12 on a critical failure. Approach walks it to you, Drop makes it let go of what it holds, Fall knocks it prone, Flee sends it running from you, and Halt holds it in place.
   components:
   - type: Sprite
     sprite: Objects/Magic/magicactions.rsi
@@ -16,13 +16,22 @@
     rank: 1
   - type: CFTargeting
     rangeFeet: 30
+  # The values are CFCommandOrder.
+  - type: CFModeChoice
+    modes:
+    - { value: 1, name: cf-command-approach, tooltip: cf-command-approach-desc }
+    - { value: 2, name: cf-command-drop, tooltip: cf-command-drop-desc }
+    - { value: 3, name: cf-command-fall, tooltip: cf-command-fall-desc }
+    - { value: 4, name: cf-command-flee, tooltip: cf-command-flee-desc }
+    - { value: 5, name: cf-command-halt, tooltip: cf-command-halt-desc }
   - type: CFCheck
     defense: Will
     basicSave: false
+  # "Until the end of the target's next turn" is 6 seconds. A critical failure spends all its actions, so twice that.
   - type: CFDegreeEffects
-    landed:
-    - !type:CFApplyConditionEffect
-      condition: Frightened
-      value: 1
-    - !type:CFApplyConditionEffect
-      condition: Prone
+    failure:
+    - !type:CFCommandEffect
+      seconds: 6
+    criticalFailure:
+    - !type:CFCommandEffect
+      seconds: 12

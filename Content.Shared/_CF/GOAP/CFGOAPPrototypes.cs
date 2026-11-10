@@ -70,6 +70,9 @@ public enum CFGOAPFact : ulong
     TrapLaid = 1ul << 35,
     SidearmDrawn = 1ul << 36,
 
+    /// <summary>It carried out a Command order. Only the Obey goal wants it.</summary>
+    Obeyed = 1ul << 37,
+
     // Multiple Attack Penalty. It is what most changes the worth of a Strike, so a change in it has to replan.
     Attacked = 1 << 26,
     AttackedTwice = 1 << 27,
@@ -116,6 +119,9 @@ public enum CFGOAPStep : byte
 
     /// <summary>Drop what it is shooting with and take its melee weapon out of its pocket.</summary>
     DrawSidearm,
+
+    /// <summary>Carry out a Command order: approach the caster, run from them, or halt.</summary>
+    Obey,
 }
 
 /// <summary>How an action's worth is worked out when planning. See <c>CFGOAPTacticsSystem</c>.</summary>

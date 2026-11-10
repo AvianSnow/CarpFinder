@@ -142,6 +142,12 @@ No AI avoids a trap. `CFTrapLayerSystem.TryLay` gives the hazard the builder's f
 
 `CFGOAPCommander` marks a group's leader. A player in that body points at a living enemy, and `CFGOAPEncounterSystem.Command` sets the group's target and tells each member where it is. This follows the companion rule, but it does not use `CFCompanion`, which drives a mob through `NPCMeleeCombat` and would fight the brain. The members stay on their own brains, so they still flank, and they carry on if the player does nothing. A member that sees another enemy and not the ordered one keeps fighting what it sees.
 
+## Command
+
+The Command spell's movement orders (Approach, Flee, Halt) beat every goal. `CFGOAPSystem.Think` checks `CFCommandSystem.Current` before `ChooseGoal` and plans the `Obey` goal and action, which are not in the goal lists because encounters replace those. The `Obey` step calls `CFCommandServerSystem.Drive`: `Navigate` to the caster, `Flee` from them, or `Hold`. When the order runs out the next think goes back to its own goals.
+
+A stock HTN mob has no brain, so `CFCommandServerSystem` switches its HTN off with `SetHTNEnabled` for the order and drives it with the same steering. Sleeping the NPC would stop steering too. Drop and Fall happen at once in `CFCommandSystem` and need no AI. A creature with a player in it only sees the order.
+
 ## Fire
 
 `PutOutFire` has the highest priority of any goal, so a burning creature stops what it is doing, even running from a rout. The step calls `FlammableSystem.Resist`, which is what clicking the on fire alert does: 2 seconds paralyzed, which drops what it holds, while the fire dies 15 times as fast. A big fire takes several rolls. `ArmSelf` picks the weapon back up afterwards.

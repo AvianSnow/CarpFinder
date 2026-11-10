@@ -30,6 +30,12 @@
   priority: 25
   onlyWhen: [ OnFire ]
 
+# A Command spell's order. Never chosen from the lists: CFGOAPSystem plans it ahead of everything while the order lasts.
+- type: cfGoapGoal
+  id: Obey
+  wants: [ Obeyed ]
+  priority: 100
+
 - type: cfGoapGoal
   id: KillTarget
   wants: [ TargetHurt ]
@@ -218,6 +224,11 @@
   step: PutOutFire
   needs: [ OnFire ]
   removes: [ OnFire ]
+
+- type: cfGoapAction
+  id: Obey
+  step: Obey
+  gives: [ Obeyed ]
 
 - type: cfGoapAction
   id: Wander

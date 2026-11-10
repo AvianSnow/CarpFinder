@@ -7,6 +7,7 @@ using Content.Server.CF.GOAP.Tactics;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Factions;
 using Content.Shared.CF.GOAP;
+using Content.Shared.CF.Spells;
 using Content.Shared.Mobs.Systems;
 using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
@@ -32,6 +33,11 @@ public sealed partial class CFGOAPSystem : EntitySystem
 
     /// <summary>Below this an action is not worth planning at all.</summary>
     private const float MinimumValue = 0.02f;
+
+    private static readonly ProtoId<CFGOAPGoalPrototype> ObeyGoal = "Obey";
+    private static readonly ProtoId<CFGOAPActionPrototype> ObeyAction = "Obey";
+
+    [Dependency] private CFCommandSystem _command = default!;
 
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private IPrototypeManager _prototypes = default!;
@@ -129,7 +135,7 @@ public sealed partial class CFGOAPSystem : EntitySystem
         ent.Comp.Facts = (ulong) sense.Facts;
         CheckReflexes(ent);
 
-        var goal = ChooseGoal(ent, out var plan);
+        var goal = Obeying(ent, out var plan) ? ObeyGoal : ChooseGoal(ent, out plan);
         if (goal == ent.Comp.Goal && before == ent.Comp.Facts && ent.Comp.Step < ent.Comp.Plan.Count)
             return;
 
@@ -157,6 +163,19 @@ public sealed partial class CFGOAPSystem : EntitySystem
         return TryComp(uid, out CFCombatantComponent? combat) && combat.MaxHp > 0
             ? (float) combat.CurrentHp / combat.MaxHp
             : 1f;
+    }
+
+    /// <summary>
+    /// A Command order beats every goal, and is not in the goal lists, because encounters replace those.
+    /// </summary>
+    private bool Obeying(Entity<CFGOAPComponent> ent, out List<ProtoId<CFGOAPActionPrototype>> plan)
+    {
+        plan = new List<ProtoId<CFGOAPActionPrototype>>();
+        if (_command.Current(ent) == CFCommandOrder.None)
+            return false;
+
+        plan.Add(ObeyAction);
+        return true;
     }
 
     /// <summary>The best goal that a plan exists for. A forced goal comes first while it lasts.</summary>
