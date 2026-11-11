@@ -300,4 +300,28 @@ public sealed class CFStealthTest : GameTest
             Assert.That(Stealth.Detection(hero, foe), Is.EqualTo(CFDetection.Observed));
         });
     }
+
+    /// <summary>
+    /// A deleted observer used to stay in the networked dictionary. Two of them both became an invalid entity when the
+    /// state was sent, and the duplicate key broke the game state of every player who could see the hider.
+    /// </summary>
+    [Test]
+    public async Task DeletedObserversAreForgotten()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            var hero = Hero();
+            var first = Foe(2);
+            var second = Foe(3);
+            var stealth = Sneaking(hero, first, CFDetection.Hidden);
+            stealth.Detection[second] = CFDetection.Observed;
+
+            SEntMan.DeleteEntity(first);
+            SEntMan.DeleteEntity(second);
+
+            Assert.That(stealth.Detection, Is.Empty);
+            Assert.DoesNotThrow(() => SEntMan.GetNetEntityDictionary(stealth.Detection));
+        });
+    }
 }

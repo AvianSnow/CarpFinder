@@ -166,7 +166,9 @@ public sealed partial class CFGOAPEncounterSystem : EntitySystem
         if (mobs.Count == 0)
             return;
 
-        var count = ent.Comp.Count > 0 ? ent.Comp.Count : encounter.Count;
+        var count = ent.Comp.Amount > 0 ? ent.Comp.Amount
+            : string.IsNullOrWhiteSpace(ent.Comp.Mobs) ? encounter.Count
+            : mobs.Count;
         ent.Comp.Members.Clear();
         ent.Comp.Target = null;
         ent.Comp.Routed = false;

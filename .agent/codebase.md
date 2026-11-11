@@ -263,5 +263,5 @@ Radial actions are entities in `Resources/Prototypes/_CF/Actions/activities.yml`
 | `/Maps/Nonstations/meteor-arena.yml` | The arena all integration tests load, through `CFDevMap` |
 | `CFMobKoboldTrapper` | A GOAP leader that shoots, lays traps and draws a hammer when cornered. Set a spawner's `encounter` to `KoboldAmbush` for it and three warriors |
 | Any monster | Ghosts can take every monster above from the ghost role menu, through `CFMonsterGhostRole` |
-| `CFEncounterSpawner` | Spawns an `encounter` when a player comes within `triggerFeet`. Edit it in VV as an aghost. Left alone it is `SmallGroup`, four kobold warriors |
+| `CFEncounterSpawner` | Spawns an `encounter` when a player comes within `triggerFeet` (90). Edit it in VV as an aghost: `mobs` takes ids separated by commas, and `amount` is how many (`CFMobWolf` and 2 is two wolves; 0 is one of each typed mob). Left alone it is `SmallGroup`, four kobold warriors |
 | `CFEncounterSpawnerDragonLair` | The same, set to `DragonLair`: the juvenile horned dragon, which guards the spot it appears on. Dragon Run has one beside `CFBoneDragon` |

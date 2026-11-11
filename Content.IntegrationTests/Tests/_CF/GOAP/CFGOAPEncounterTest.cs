@@ -122,7 +122,7 @@ public sealed class CFGOAPEncounterTest : CFGOAPLoggedTest
         {
             var spawner = Spawner();
             spawner.Comp.Mobs = "CFMobBoar, CFNotARealMob, CFMobGiantRat";
-            spawner.Comp.Count = 3;
+            spawner.Comp.Amount = 3;
 
             Encounters.Spawn(spawner);
 

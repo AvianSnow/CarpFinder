@@ -1,11 +1,12 @@
 # Encounters. Place a CFEncounterSpawner and pick one with its encounter field. As an aghost, use VV on the
-# spawner: "mobs" takes entity ids separated by commas and replaces the list here, and "armed" spawns it again.
+# spawner: "mobs" takes entity ids separated by commas and replaces the list here, "amount" is how many to spawn
+# (0 is one of each typed mob, or the encounter's count), and "armed" spawns it again.
 
 # Stand-in: this has no Marker component, because the client hides those until showmarkers, so everyone can see it.
 - type: entity
   id: CFEncounterSpawner
   name: encounter spawner
-  description: Spawns an encounter when an adventurer comes within 30 feet.
+  description: Spawns an encounter when an adventurer comes within 90 feet.
   suffix: DM
   categories: [ ForkFiltered ]
   placement:
@@ -71,7 +72,7 @@
   parent: CFEncounterSpawner
   id: CFEncounterSpawnerDragonLair
   name: dragon lair spawner
-  description: Spawns the juvenile horned dragon when an adventurer comes within 30 feet. It guards that spot.
+  description: Spawns the juvenile horned dragon when an adventurer comes within 90 feet. It guards that spot.
   components:
   - type: Sprite
     sprite: Markers/cross.rsi

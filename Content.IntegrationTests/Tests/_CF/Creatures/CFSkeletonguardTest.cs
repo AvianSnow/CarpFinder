@@ -380,7 +380,7 @@ public sealed class CFSkeletonguardTest : GameTest
             var uid = SEntMan.SpawnEntity("CFEncounterSpawner", _map.Local(0, 0));
             var spawner = SEntMan.GetComponent<CFGOAPEncounterSpawnerComponent>(uid);
             spawner.Mobs = $"{Melee},{Ranged}";
-            spawner.Count = 2;
+            spawner.Amount = 2;
 
             SEntMan.System<CFGOAPEncounterSystem>().Spawn((uid, spawner));
 

@@ -23,13 +23,16 @@ public sealed partial class CFGOAPEncounterSpawnerComponent : Component
     [DataField, ViewVariables(VVAccess.ReadWrite)]
     public string Mobs = string.Empty;
 
-    /// <summary>How many to spawn. 0 uses the encounter's count.</summary>
+    /// <summary>
+    /// How many to spawn, going round <see cref="Mobs"/> in order. 0 spawns one of each mob typed in <see cref="Mobs"/>,
+    /// or the encounter's count when that is empty. <c>mobs: CFMobWolf</c> with <c>amount: 2</c> is two wolves.
+    /// </summary>
     [DataField, ViewVariables(VVAccess.ReadWrite)]
-    public int Count;
+    public int Amount;
 
     /// <summary>How near a player has to come.</summary>
     [DataField, ViewVariables(VVAccess.ReadWrite)]
-    public float TriggerFeet = 30f;
+    public float TriggerFeet = 90f;
 
     /// <summary>Whether it is waiting to spawn. It turns off after spawning. Turn it back on to spawn again.</summary>
     [DataField, ViewVariables(VVAccess.ReadWrite)]

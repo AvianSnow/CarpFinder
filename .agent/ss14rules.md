@@ -210,6 +210,10 @@ The linter also skips abstract entities, so a bad field there only shows up in t
 
 To catch this, spawn the entity in a focused test for that system. `EntityTest.SpawnAndDirtyAllEntities` spawns every prototype on server and client, but it takes far too long: do not run it, and do not filter on `EntityTest`, which includes it.
 
+## Networked dictionaries keyed by entity must drop deleted keys
+
+An `[AutoNetworkedField]` `Dictionary<EntityUid, T>` is sent through `GetNetEntityDictionary`, and every deleted entity becomes `NetEntity` 0 there. Two deleted keys collide, `An item with the same key has already been added. Key: 0` is thrown, and every game state for each player who can see the owner fails from then on. Remove a key when its entity terminates: `CFStealthSystem.OnTerminating` does it for `CFStealthComponent.Detection`. Lists and sets do not throw, but still send invalid entities.
+
 ## VV cannot add to a list
 
 The VV menu edits strings, numbers, booleans and enums, but it has no way to add an item to a `List` or `HashSet`. A field a DM must extend live has to be plain text, such as comma-separated names. Prototype data is copied per entity on spawn, so editing one entity never changes another.

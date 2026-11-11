@@ -429,6 +429,24 @@ public sealed partial class CFStealthSystem : EntitySystem
         }
     }
 
+    /// <summary>
+    /// Forgets a creature that is going away. <see cref="CFStealthComponent.Detection"/> is networked, and a deleted
+    /// key turns into an invalid entity when the state is sent. Two of those in one dictionary collide, and the state
+    /// for every player who can see the hider fails each tick from then on.
+    /// </summary>
+    [SubscribeLocalEvent]
+    private void OnTerminating(ref EntityTerminatingEvent args)
+    {
+        var gone = args.Entity.Owner;
+        var query = AllEntityQuery<CFStealthComponent>();
+        while (query.MoveNext(out var uid, out var stealth))
+        {
+            stealth.DivertedUntil.Remove(gone);
+            if (stealth.Detection.Remove(gone))
+                Dirty(uid, stealth);
+        }
+    }
+
     /// <summary>Stock empties a closet before saying it opened, so this watches the creature leave instead.</summary>
     [SubscribeLocalEvent]
     private void OnLeftContainer(Entity<CFStealthComponent> ent, ref EntGotRemovedFromContainerMessage args)
