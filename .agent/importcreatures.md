@@ -22,12 +22,15 @@ Each monster has a file of its own, named after it, in the folder of its creatur
 
 | Creature | Parent |
 |---|---|
-| Animal or beast with one natural attack | `CFBaseCreature`, which is `SimpleMobBase` and already has `CFGOAPBrain` |
-| Humanoid with hands and weapons | A stock species mob, such as `MobSkeletonPerson`, plus `CFGOAPBrain` and `CFMonsterGhostRole` |
+| Animal or beast with one natural attack | `CFBaseCreature`, which is `SimpleMobBase` on top of `CFBaseMonster` |
+| Humanoid with hands and weapons | A stock species mob first, such as `MobSkeletonPerson`, then `CFBaseMonster` |
+
+`CFBaseMonster` is what every monster is: GOAP brain, ghost role, Monster faction, combat mode, a `CFCombatant` that dies at 0 Hit Points, `CFAbilityScore`, `CFCombatOptions` and `CFHarvestable`. The monster sets its own numbers on those; it does not need to repeat `diesAtZeroHp` or the faction.
 
 - An entity id starts with `CF`: `CFMobGiantRat`. Variants of one creature share an abstract base, such as `CFMobSkeletonguardBase`, and each sets `name` and `Loadout`.
 - When the first parent is a stock mob with its own `HTN`, such as `MobBaseKobold`, the first parent's copy wins, so set `HTN` with `rootTask: CFGOAPCompound` on the monster. See `CFKoboldWarrior`.
-- Give it `InputMover`, `MobMover`, `NpcFactionMember` with `SimpleHostile`, and `CFFaction` with `Monster`. `CFBaseCreature` already has these.
+- `CFBaseMonster` gives `InputMover`, `MobMover`, `NpcFactionMember` with `SimpleHostile`, and `CFFaction` with `Monster`. On a stock body the body's copy wins, so set `HTN`, `NpcFactionMember` and `GhostRole` again on the monster if the body has them.
+- Monster parts: `CFBaseMonster` has `CFHarvestable`. List what the body gives in its `parts` (meat, leather, bone; or nothing, for generic monster parts), never a `ToolRefinable` and never `BaseSlicingRefinableButchering`. What they are worth comes from the level.
 - Sprites: stock bodies come from the species. Other art stays in its fork folder with its `meta.json`. An RSI with `idle` and `moving` states walks through `SpriteMovement`, and its layer needs the `movement` map as well. See `CFMobHuntingSpider`.
 
 ## Ghost role

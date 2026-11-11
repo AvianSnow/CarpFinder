@@ -5,13 +5,17 @@ using Content.Server.CF.GOAP;
 using Content.Server.NPC.HTN;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Factions;
+using Content.Shared.CF.Harvest;
 using Content.Shared.CF.Traits;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Prototypes;
 
 namespace Content.IntegrationTests.Tests.CF.Creatures;
 
-/// <summary>What every CF monster needs: a GOAP brain, and a creature type to say which folder it lives in.</summary>
+/// <summary>
+/// What every CF monster needs, which <c>CFBaseMonster</c> gives: a GOAP brain, death at 0 Hit Points and parts to harvest.
+/// Also a creature type, to say which folder it lives in.
+/// </summary>
 [TestFixture]
 public sealed class CFMonsterTest : GameTest
 {
@@ -37,7 +41,7 @@ public sealed class CFMonsterTest : GameTest
                 if (proto.Abstract
                     || proto.ID.Contains("Test")
                     || !proto.TryComp<HTNComponent>(out var htn, factory)
-                    || !proto.TryComp<CFCombatantComponent>(out _, factory)
+                    || !proto.TryComp<CFCombatantComponent>(out var combatant, factory)
                     || !proto.TryComp<CFFactionComponent>(out var faction, factory)
                     || faction.Faction != "Monster")
                     continue;
@@ -48,6 +52,12 @@ public sealed class CFMonsterTest : GameTest
 
                 if (htn.RootTask.Task != "CFGOAPCompound")
                     failures.Add($"{proto.ID} still names {htn.RootTask.Task} as its root task");
+
+                if (!combatant.DiesAtZeroHp)
+                    failures.Add($"{proto.ID} does not die at 0 Hit Points: give it CFBaseMonster as a parent");
+
+                if (!proto.TryComp<CFHarvestableComponent>(out _, factory))
+                    failures.Add($"{proto.ID} cannot be harvested: give it CFBaseMonster as a parent");
 
                 var hasType = proto.TryComp<CFTraitComponent>(out var traits, factory)
                               && traits.Traits.Any(t => !Descriptors.Contains(t.Id)

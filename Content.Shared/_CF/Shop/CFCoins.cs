@@ -3,13 +3,14 @@ using Content.Shared.CF.Preferences;
 using Content.Shared.Clothing;
 using Content.Shared.Preferences;
 using Content.Shared.Preferences.Loadouts;
+using Content.Shared.Stacks;
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared.CF.Shop;
 
 /// <summary>
 /// Carpfinder coins. 10 copper become 1 silver, 10 silver become 1 gold, and 10 gold become 1 platinum.
-/// The purse is stored as copper so a purchase can break a higher coin.
+/// Characters carry real coins in a wallet (<see cref="CFWalletComponent"/>). Spending breaks a higher coin and gives change.
 /// </summary>
 public static class CFCoins
 {
@@ -151,13 +152,45 @@ public static class CFCoins
     }
 
     /// <summary>
-    /// What a merchant pays for <paramref name="count"/> of a stack whose prototype holds
-    /// <paramref name="prototypeCount"/>: the share of the printed Price, halved unless it resells in full.
+    /// The full worth of <paramref name="count"/> of a stack whose prototype holds <paramref name="prototypeCount"/>:
+    /// that share of the printed Price, fractions of a copper dropped. Whoever buys it pays a share of this.
     /// </summary>
-    public static int SaleValue(int price, bool fullResale, int count, int prototypeCount)
+    public static int Worth(int price, int count, int prototypeCount)
     {
-        var worth = price * count / Math.Max(1, prototypeCount);
-        return fullResale ? worth : worth / 2;
+        return price * count / Math.Max(1, prototypeCount);
+    }
+
+    /// <summary><paramref name="percent"/> of <paramref name="copper"/>, rounded down.</summary>
+    public static int Share(int copper, int percent)
+    {
+        return copper * Math.Clamp(percent, 0, 100) / 100;
+    }
+
+    /// <summary>The coin stacks, largest first, with what one coin of each is worth.</summary>
+    public static readonly (ProtoId<StackPrototype> Stack, int Copper)[] Denominations =
+    {
+        ("CFPlatinumCoin", CopperPerPlatinum),
+        ("CFGoldCoin", CopperPerGold),
+        ("CFSilverCoin", CopperPerSilver),
+        ("CFCopperCoin", 1),
+    };
+
+    /// <summary>The fewest coins that make <paramref name="copper"/>, largest first. Denominations with none are left out.</summary>
+    public static List<(ProtoId<StackPrototype> Stack, int Count)> Breakdown(int copper)
+    {
+        var coins = new List<(ProtoId<StackPrototype> Stack, int Count)>();
+        var left = Math.Max(0, copper);
+        foreach (var (stack, value) in Denominations)
+        {
+            var count = left / value;
+            if (count <= 0)
+                continue;
+
+            coins.Add((stack, count));
+            left -= count * value;
+        }
+
+        return coins;
     }
 
     /// <summary>Item price, lowest coins omitted when they are zero.</summary>

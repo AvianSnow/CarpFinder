@@ -113,7 +113,8 @@ public static class CFSpellSlots
 
     public const int BonusRank = -1;
 
-    public static IReadOnlyList<CFSpellRankSlots> ForClass(CFClassPrototype? cls)
+    /// <summary>The slots a class has at <paramref name="level"/>. The lobby builds level 1.</summary>
+    public static IReadOnlyList<CFSpellRankSlots> ForClass(CFClassPrototype? cls, int level = 1)
     {
         var casting = cls?.Spellcasting;
         if (casting == null)
@@ -123,8 +124,7 @@ public static class CFSpellSlots
         if (casting.Cantrips > 0)
             ranks.Add(new CFSpellRankSlots(0, casting.Cantrips));
 
-        // Everything is chosen in the lobby, so the builder offers what the character will have by the last level.
-        var slots = casting.SlotsAt(CFExperienceComponent.MaxLevel);
+        var slots = casting.SlotsAt(level);
         for (var i = 0; i < slots.Count; i++)
         {
             if (slots[i] > 0)

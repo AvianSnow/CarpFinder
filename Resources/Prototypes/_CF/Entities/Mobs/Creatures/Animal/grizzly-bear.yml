@@ -1,6 +1,6 @@
 # Grizzly bear. Creature 3, Large. Monster Core p. 41. Jaws only. Claw, Grab, Mauler and Rush are not in yet.
 - type: entity
-  parent: [CFBaseCreature, BaseSlicingRefinableButchering]
+  parent: [CFBaseCreature]
   id: CFMobGrizzlyBear
   name: grizzly bear
   description: A huge brown bear, heavy with muscle.
@@ -36,7 +36,6 @@
       speedFeet: 35
       maxHp: 59
       currentHp: 59
-      diesAtZeroHp: true
       printedFortitude: 12
       printedReflex: 6
       printedWill: 8
@@ -62,8 +61,12 @@
         0: Alive
         58: Critical
         59: Dead
-    - type: ToolRefinable
-      refineResult:
+    # Monster parts: what a harvest gives, sharing the monster's parts value (CFHarvestSystem).
+    - type: CFHarvestable
+      parts:
+        - id: CFFoodMeatMonster
+          amount: 3
+          maxAmount: 4
         - id: CFLeather1
           amount: 2
           maxAmount: 4

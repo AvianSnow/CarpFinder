@@ -6,10 +6,11 @@ namespace Content.Client.CF.Hud;
 /// </summary>
 public sealed class CFDeckWidths
 {
-    public const int SectionCount = 4;
+    /// <summary>Basic actions, spells and features, and the numbered hotbar.</summary>
+    public const int SectionCount = 3;
     public const int MinColumns = 1;
 
-    private static readonly int[] Defaults = { 3, 4, 1, 2 };
+    private static readonly int[] Defaults = { 3, 5, 2 };
 
     private readonly int[] _columns;
 

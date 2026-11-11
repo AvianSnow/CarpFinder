@@ -59,6 +59,27 @@
   - HideAway
   - WaitHidden
 
+# The juvenile horned dragon, alone. It keeps its own lair, so it guards the spot it appears on and never runs.
+- type: encounter
+  id: DragonLair
+  mobs:
+  - CFMobJuvenileHornedDragon
+  count: 1
+
+# A spawner already set to the dragon, so a mapper can place one without VV.
+- type: entity
+  parent: CFEncounterSpawner
+  id: CFEncounterSpawnerDragonLair
+  name: dragon lair spawner
+  description: Spawns the juvenile horned dragon when an adventurer comes within 30 feet. It guards that spot.
+  components:
+  - type: Sprite
+    sprite: Markers/cross.rsi
+    layers:
+    - state: red
+  - type: CFGOAPEncounterSpawner
+    encounter: DragonLair
+
 # A wolf pack. They spread round their prey, so each bite has Pack Attack and a flank, and the last one runs.
 - type: encounter
   id: WolfPack

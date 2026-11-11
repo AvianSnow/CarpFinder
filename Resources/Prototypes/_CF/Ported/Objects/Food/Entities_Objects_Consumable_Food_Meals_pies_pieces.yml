@@ -27,6 +27,8 @@
   name: a piece of disgusting pie
   description: On the outside, it looked appealing and delicious, but on the inside, it was simply awful.
   components:
+  - type: CFItemPrice
+    copper: 3
   - type: Sprite
     layers:
     - state: blank
@@ -38,6 +40,8 @@
   name: a piece of meat pie
   description: Pie with juicy meat.
   components:
+  - type: CFItemPrice
+    copper: 15
   - type: Sprite
     layers:
     - state: blank
@@ -49,6 +53,8 @@
   name: a piece of pumpkin pie
   description: Pumpkin pie. Sweet and delicate.
   components:
+  - type: CFItemPrice
+    copper: 12
   - type: Sprite
     layers:
     - state: blank
@@ -60,6 +66,8 @@
   name: a piece of vegetable pie
   description: Vegetables and herbs inside
   components:
+  - type: CFItemPrice
+    copper: 12
   - type: Sprite
     layers:
     - state: blank

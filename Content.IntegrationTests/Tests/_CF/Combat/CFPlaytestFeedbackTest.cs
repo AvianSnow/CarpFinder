@@ -1,3 +1,4 @@
+using Robust.Shared.Prototypes;
 using System.Collections.Generic;
 using System.Numerics;
 using Content.IntegrationTests.Fixtures;
@@ -262,7 +263,7 @@ public sealed class CFPlaytestFeedbackTest : GameTest
 
         await Server.WaitAssertion(() =>
         {
-            var mental = Server.ProtoMan.Index<CFDamageTypePrototype>("Mental").Color;
+            var mental = Server.ProtoMan.Index(new ProtoId<CFDamageTypePrototype>("Mental")).Color;
             Assert.That(Effect(target, "CFVfxTargeted"), Is.EqualTo(new[] { mental }));
         });
     }

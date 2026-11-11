@@ -16,7 +16,7 @@ public sealed class CFGearPortTest : GameTest
 
     private T Comp<T>(string id) where T : Component, new()
     {
-        Assert.That(Server.ProtoMan.Index<EntityPrototype>(id).TryComp(out T? comp, SEntMan.ComponentFactory), id + " should have " + typeof(T).Name);
+        Assert.That(Server.ProtoMan.Index<EntityPrototype>(id).TryComp(out T comp, SEntMan.ComponentFactory), id + " should have " + typeof(T).Name);
         return comp!;
     }
 
@@ -103,10 +103,10 @@ public sealed class CFGearPortTest : GameTest
             var factory = SEntMan.ComponentFactory;
             foreach (var proto in Server.ProtoMan.EnumeratePrototypes<EntityPrototype>())
             {
-                if (proto.Abstract || !proto.TryComp(out CFWeaponComponent? weapon, factory) || weapon.Hands != CFWeaponHands.Two)
+                if (proto.Abstract || !proto.TryComp(out CFWeaponComponent weapon, factory) || weapon.Hands != CFWeaponHands.Two)
                     continue;
 
-                Assert.That(proto.TryComp(out WieldableComponent? _, factory), proto.ID + " must need wielding");
+                Assert.That(proto.TryComp(out WieldableComponent _, factory), proto.ID + " must need wielding");
             }
         });
     }

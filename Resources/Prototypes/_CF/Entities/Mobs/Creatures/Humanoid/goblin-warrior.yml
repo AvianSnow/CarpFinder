@@ -24,7 +24,7 @@
 # on the goblin body, which is drawn small but counts as Medium.
 - type: entity
   abstract: true
-  parent: [ CFMobGoblinEdge, CFMonsterGhostRole, CFGOAPBrain ]
+  parent: [ CFMobGoblinEdge, CFBaseMonster ]
   id: CFMobGoblinWarriorBase
   description: A goblin in scraps of leather. Goblins fight best in a crowd, and like to outnumber a foe three to one.
   suffix: Monster
@@ -35,8 +35,6 @@
   - type: NpcFactionMember
     factions:
     - SimpleHostile
-  - type: CFFaction
-    faction: Monster
   - type: CFLanguages
     known: [ Common, Goblin ]
   - type: MovementSpeedModifier
@@ -53,7 +51,6 @@
     speedFeet: 25
     maxHp: 6
     currentHp: 6
-    diesAtZeroHp: true
     printedFortitude: 5
     printedReflex: 7
     printedWill: 3

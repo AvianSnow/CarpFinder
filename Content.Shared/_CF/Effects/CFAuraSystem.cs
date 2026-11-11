@@ -71,7 +71,7 @@ public sealed partial class CFAuraSystem : EntitySystem
             return;
 
         // One extra die for every 2 ranks above the first, by the owner's focus spell rank.
-        var level = CompOrNull<CFCombatantComponent>(retaliation.Owner)?.Level ?? 1;
+        var level = CompOrNull<CFCombatantComponent>(retaliation.AuraOwner)?.Level ?? 1;
         var dice = 1 + (CFCasting.CantripRank(level) - 1) / 2;
         var damage = 0;
         for (var i = 0; i < dice; i++)
@@ -79,7 +79,7 @@ public sealed partial class CFAuraSystem : EntitySystem
             damage += _random.Next(1, retaliation.Die + 1);
         }
 
-        _effects.DealDamage(retaliation.Owner, attacker, damage, retaliation.DamageType, critical: false);
+        _effects.DealDamage(retaliation.AuraOwner, attacker, damage, retaliation.DamageType, critical: false);
     }
 
     [SubscribeLocalEvent]
@@ -217,7 +217,7 @@ public sealed partial class CFAuraSystem : EntitySystem
         if (effect.RetaliateDie > 0 && effect.RetaliateType is { } type)
         {
             var retaliation = EnsureComp<CFAuraRetaliationComponent>(target);
-            retaliation.Owner = owner;
+            retaliation.AuraOwner = owner;
             retaliation.Die = effect.RetaliateDie;
             retaliation.DamageType = type;
         }
@@ -231,7 +231,7 @@ public sealed partial class CFAuraSystem : EntitySystem
         if (effect.Stat != null)
             _bonuses.RemoveBonusesFrom(target, Source(owner, index));
 
-        if (effect.RetaliateDie > 0 && CompOrNull<CFAuraRetaliationComponent>(target)?.Owner == owner)
+        if (effect.RetaliateDie > 0 && CompOrNull<CFAuraRetaliationComponent>(target)?.AuraOwner == owner)
             RemComp<CFAuraRetaliationComponent>(target);
     }
 

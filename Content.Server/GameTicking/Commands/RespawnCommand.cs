@@ -14,6 +14,7 @@ namespace Content.Server.GameTicking.Commands
         [Dependency] private IPlayerLocator _locator = default!;
         [Dependency] private ServerGameTicker _gameTicker = default!;
         [Dependency] private MindSystem _mind = default!;
+        [Dependency] private Content.Server.Administration.Managers.IAdminManager _admin = default!; // CarpFinder: players may respawn themselves
 
         public override string Command => "respawn";
 
@@ -50,6 +51,16 @@ namespace Content.Server.GameTicking.Commands
                 userId = located.UserId;
             }
 
+            // CarpFinder: anyone can respawn, for a new character, but only a moderator can respawn someone else.
+            if (player != null
+                && userId != player.UserId
+                && !_admin.HasAdminFlag(player, Content.Shared.Administration.AdminFlags.Moderator))
+            {
+                shell.WriteError(Loc.GetString("cf-cmd-respawn-only-self"));
+                return;
+            }
+            // CarpFinder end
+
             if (!_player.TryGetSessionById(userId, out var targetPlayer))
             {
                 if (!_player.TryGetPlayerData(userId, out var data))
@@ -58,13 +69,37 @@ namespace Content.Server.GameTicking.Commands
                     return;
                 }
 
+                var offlineBody = OldBody(data.ContentData()?.Mind); // CarpFinder: the old body goes and gives its job slot back
                 _mind.WipeMind(data.ContentData()?.Mind);
+                ReleaseOldBody(offlineBody, userId); // CarpFinder: the old body goes and gives its job slot back
                 shell.WriteError(Loc.GetString("cmd-respawn-player-not-online"));
                 return;
             }
 
+            // CarpFinder: the old body goes and gives its job slot back
+            _mind.TryGetMind(targetPlayer, out var targetMind, out _);
+            var oldBody = OldBody(targetMind);
             _gameTicker.Respawn(targetPlayer);
+            ReleaseOldBody(oldBody, userId);
+            // CarpFinder end
         }
+
+        // CarpFinder: the old body goes and gives its job slot back
+        private EntityUid? OldBody(EntityUid? mind)
+        {
+            return EntityManager.GetComponentOrNull<Content.Shared.Mind.MindComponent>(mind)?.OwnedEntity;
+        }
+
+        // The mind may have left the body for good, as a ghost who cannot return, so bodies are also found by player.
+        private void ReleaseOldBody(EntityUid? body, NetUserId user)
+        {
+            var bodies = EntityManager.System<Content.Server.CF.Upkeep.CFPlayerBodySystem>();
+            if (body != null && EntityManager.HasComponent<Content.Server.CF.Upkeep.CFPlayerBodyComponent>(body))
+                bodies.ReleaseBody(body.Value);
+
+            bodies.ReleaseBodiesOf(user);
+        }
+        // CarpFinder end
 
       public override CompletionResult GetCompletion(IConsoleShell shell, string[] args)
         {

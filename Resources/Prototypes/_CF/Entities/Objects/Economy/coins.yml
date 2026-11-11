@@ -1,4 +1,4 @@
-# PF2e coins. Use a stack in hand to pocket it. Take coins out of your purse with the verb on yourself.
+# PF2e coins. Use a stack in hand to put it in your wallet (CFWallet), which is where money is spent from.
 
 - type: entity
   abstract: true

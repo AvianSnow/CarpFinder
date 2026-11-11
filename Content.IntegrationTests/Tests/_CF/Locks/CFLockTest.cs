@@ -74,7 +74,7 @@ public sealed class CFLockTest : GameTest
 
     private void Rest(EntityUid mob)
     {
-        if (SEntMan.TryGetComponent(mob, out CFActionPoolComponent? pool))
+        if (SEntMan.TryGetComponent(mob, out CFActionPoolComponent pool))
         {
             pool.Stamina = 100f;
             pool.MapAttacks = 0;

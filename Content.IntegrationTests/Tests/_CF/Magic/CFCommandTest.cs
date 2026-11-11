@@ -109,7 +109,7 @@ public sealed class CFCommandTest : CFGOAPLoggedTest
     {
         await Server.WaitAssertion(() =>
         {
-            var proto = Server.ProtoMan.Index<EntityPrototype>("CFCommand");
+            var proto = Server.ProtoMan.Index(new ProtoId<EntityPrototype>("CFCommand"));
             Assert.That(proto.TryComp<CFModeChoiceComponent>(out var choice, SEntMan.ComponentFactory));
             var values = new List<byte>();
             foreach (var mode in choice!.Modes)

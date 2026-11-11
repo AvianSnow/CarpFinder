@@ -36,11 +36,11 @@ public sealed class CFCompanionLevelTest : GameTest
 
     private CFDevMap _map = default!;
 
-    private EntityUid Spawn(string id) => SEntMan.SpawnEntity(id, _map.Local(0, 0));
+    private EntityUid SpawnHere(string id) => SEntMan.SpawnEntity(id, _map.Local(0, 0));
 
     private EntityUid Construct(EntityUid hero)
     {
-        var construct = Spawn("CFCompanionConstruct");
+        var construct = SpawnHere("CFCompanionConstruct");
         SEntMan.System<CFCompanionSystem>().Bind(hero, construct);
         SEntMan.GetComponent<CFCompanionComponent>(construct).PetId = "CFPetConstruct";
         return construct;
@@ -48,7 +48,7 @@ public sealed class CFCompanionLevelTest : GameTest
 
     private void GainLevels(EntityUid hero, int levels)
     {
-        SEntMan.System<CFExperienceSystem>().AddXp(hero, levels * CFExperienceComponent.XpPerLevel);
+        SEntMan.System<CFExperienceSystem>().AddXpAndLevelUp(hero, levels * CFExperienceComponent.XpPerLevel);
     }
 
     [Test]
@@ -57,7 +57,7 @@ public sealed class CFCompanionLevelTest : GameTest
         _map = await CFDevMap.Load(Pair, Footprint);
         await Server.WaitAssertion(() =>
         {
-            var hero = Spawn("CFCompanionLevelHero");
+            var hero = SpawnHere("CFCompanionLevelHero");
             var construct = Construct(hero);
             var combat = SEntMan.GetComponent<CFCombatantComponent>(construct);
             combat.MaxHp = 18;
@@ -78,7 +78,7 @@ public sealed class CFCompanionLevelTest : GameTest
         _map = await CFDevMap.Load(Pair, Footprint);
         await Server.WaitAssertion(() =>
         {
-            var hero = Spawn("CFCompanionLevelHero");
+            var hero = SpawnHere("CFCompanionLevelHero");
             var construct = Construct(hero);
             var combat = SEntMan.GetComponent<CFCombatantComponent>(construct);
             combat.CurrentHp = 0;
@@ -97,8 +97,8 @@ public sealed class CFCompanionLevelTest : GameTest
         _map = await CFDevMap.Load(Pair, Footprint);
         await Server.WaitAssertion(() =>
         {
-            var hero = Spawn("CFCompanionLevelHero");
-            var stranger = Spawn("CFCompanionLevelHero");
+            var hero = SpawnHere("CFCompanionLevelHero");
+            var stranger = SpawnHere("CFCompanionLevelHero");
             var theirs = Construct(stranger);
 
             GainLevels(hero, 1);
@@ -114,8 +114,8 @@ public sealed class CFCompanionLevelTest : GameTest
         _map = await CFDevMap.Load(Pair, Footprint);
         await Server.WaitAssertion(() =>
         {
-            var hero = Spawn("CFCompanionLevelHero");
-            var summon = Spawn("CFCompanionConstruct");
+            var hero = SpawnHere("CFCompanionLevelHero");
+            var summon = SpawnHere("CFCompanionConstruct");
             SEntMan.System<CFCompanionSystem>().Bind(hero, summon);
 
             GainLevels(hero, 1);

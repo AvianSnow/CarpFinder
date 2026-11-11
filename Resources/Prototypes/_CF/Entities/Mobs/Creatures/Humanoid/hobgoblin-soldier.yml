@@ -30,7 +30,7 @@
 # Not in yet: Formation (+1 circumstance to AC and saves beside two allies, +2 to Reflex against areas).
 - type: entity
   abstract: true
-  parent: [ CFMobGoblinEdge, CFMonsterGhostRole, CFGOAPBrain ]
+  parent: [ CFMobGoblinEdge, CFBaseMonster ]
   id: CFMobHobgoblinSoldierBase
   description: A hobgoblin in a breastplate, drilled to hold a line. Soldiers are most of hobgoblin society, in a village or an army.
   suffix: Monster
@@ -41,8 +41,6 @@
   - type: NpcFactionMember
     factions:
     - SimpleHostile
-  - type: CFFaction
-    faction: Monster
   - type: CFLanguages
     known: [ Common, Goblin ]
   - type: MovementSpeedModifier
@@ -59,7 +57,6 @@
     speedFeet: 25
     maxHp: 20
     currentHp: 20
-    diesAtZeroHp: true
     printedFortitude: 5
     printedReflex: 6
     printedWill: 5

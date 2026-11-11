@@ -159,7 +159,7 @@ public sealed class CFCreatureTest : GameTest
             Same(skill, printed, CFDefense.SkillModifier(prototypes, combat, abilities, skill, CFAbility.Strength));
         }
 
-        if (!SEntMan.TryGetComponent(uid, out CFCombatOptionsComponent? natural) || natural.NaturalDie <= 0)
+        if (!SEntMan.TryGetComponent(uid, out CFCombatOptionsComponent natural) || natural.NaturalDie <= 0)
             return;
 
         Same("damage dice", Math.Max(1, natural.NaturalDice), stats.DamageDice);

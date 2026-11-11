@@ -1,3 +1,4 @@
+using Robust.Shared.Prototypes;
 using System.Linq;
 using Content.IntegrationTests.Fixtures;
 using Content.IntegrationTests.Tests.CF;
@@ -103,7 +104,7 @@ public sealed class CFEffectActionFeatTest : GameTest
         await Server.WaitPost(() =>
         {
             var hero = Hero();
-            SEntMan.System<CFCharacterSpawnSystem>().ApplyFeat(hero, Server.ProtoMan.Index<CFFeatPrototype>("CFStoryCrooner"));
+            SEntMan.System<CFCharacterSpawnSystem>().ApplyFeat(hero, Server.ProtoMan.Index(new ProtoId<CFFeatPrototype>("CFStoryCrooner")));
             performance = Bonuses.Total(hero, CFBonusStat.SkillChecks, skill: "Performance");
             stealth = Bonuses.Total(hero, CFBonusStat.SkillChecks, skill: "Stealth");
         });

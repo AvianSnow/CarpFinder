@@ -62,18 +62,38 @@
   id: CFWoodenPalletSell
   parent: CFWoodenPallet
   name: selling wooden pallet
+  description: Goods left here are teleported to the Merchants' Guild, which keeps half the price for the magic. Merchants are members and keep it all.
   components:
   - type: Sprite
     layers:
     - state: wooden
     - state: sell
+  - type: CFGuildPallet
+    kind: Sell
+  - type: ActivatableUI
+    key: enum.CFMerchantUiKey.Key
+    requiresComplex: true
+  - type: UserInterface
+    interfaces:
+      enum.CFMerchantUiKey.Key:
+        type: CFMerchantBoundUserInterface
 
 - type: entity
   id: CFWoodenPalletBuy
   parent: CFWoodenPallet
   name: buying wooden pallet
+  description: Merchants' Guild orders arrive here, for a merchant standing beside it.
   components:
   - type: Sprite
     layers:
     - state: wooden
     - state: buy
+  - type: CFGuildPallet
+    kind: Buy
+  - type: ActivatableUI
+    key: enum.CFMerchantUiKey.Key
+    requiresComplex: true
+  - type: UserInterface
+    interfaces:
+      enum.CFMerchantUiKey.Key:
+        type: CFMerchantBoundUserInterface

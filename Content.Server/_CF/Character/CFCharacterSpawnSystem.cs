@@ -48,6 +48,10 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
     [Dependency] private CFArmorSystem _armor = default!;
     [Dependency] private CFCharacterFeatureSystem _features = default!;
     [Dependency] private Content.Server.CF.Shop.CFShopSystem _shop = default!;
+    [Dependency] private Content.Server.CF.Shop.CFCoinSystem _coins = default!;
+
+    /// <summary>Every character starts with their leftover coin in this, in a pocket.</summary>
+    private const string WalletPrototype = "CFWallet";
 
     /// <summary>Carpfinder Speed of 25 feet is the usual human walk.</summary>
     private const float BaselineSpeedFeet = 25f;
@@ -58,6 +62,7 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         ApplyBuild(args.Mob, args.Profile);
         GrantPurse(args.Mob, args.Profile, args.JobId);
         _factions.AssignJob(args.Mob, args.JobId);
+        EnsureComp<CFPvpComponent>(args.Mob);
         SpawnCompanion(args.Mob, args.Profile);
     }
 
@@ -149,10 +154,21 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
             }
         }
 
-        var purse = EnsureComp<CFPurseComponent>(mob);
-        purse.Copper = left;
-        purse.Seeded = true;
-        Dirty(mob, purse);
+        GiveWallet(mob, left);
+    }
+
+    /// <summary>
+    /// Gives the character a wallet holding <paramref name="copper"/> in coins: in a pocket, else a hand or the bag.
+    /// </summary>
+    public EntityUid GiveWallet(EntityUid mob, int copper)
+    {
+        var wallet = Spawn(WalletPrototype, Transform(mob).Coordinates);
+        if (!_inventory.TryEquip(mob, wallet, "pocket1", silent: true, force: true)
+            && !_inventory.TryEquip(mob, wallet, "pocket2", silent: true, force: true))
+            _shop.Give(mob, wallet);
+
+        _coins.PayInto(wallet, mob, copper);
+        return wallet;
     }
 
     public void ApplyBuild(EntityUid mob, Content.Shared.Preferences.HumanoidCharacterProfile profile)
@@ -182,27 +198,7 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         combatant.TrainedSkills = CFSkills.CollectTrainedSkills(_prototypes, checkedBuild, ancestryId, classId, 1);
         var xp = EnsureComp<CFExperienceComponent>(mob);
         xp.Xp = 0;
-        xp.AncestryFeat = IdOf(checkedBuild.AncestryFeat);
-        xp.ClassFeat = IdOf(checkedBuild.ClassFeat);
-        xp.ClassFeatLevel2 = ChoiceFeat(checkedBuild, checkedBuild.ClassFeatLevel2);
-        xp.ClassFeatLevel4 = ChoiceFeat(checkedBuild, checkedBuild.ClassFeatLevel4);
-        xp.AncestryFeatLevel5 = IdOf(checkedBuild.AncestryFeatLevel5);
-        xp.SkillFeatLevel2 = QualifiedFeat(checkedBuild, ancestryId, checkedBuild.SkillFeatLevel2, 2, skillSlot: true);
-        xp.GeneralFeatLevel3 = QualifiedFeat(checkedBuild, ancestryId, checkedBuild.GeneralFeatLevel3, 3, skillSlot: false);
-        xp.SkillFeatLevel4 = QualifiedFeat(checkedBuild, ancestryId, checkedBuild.SkillFeatLevel4, 4, skillSlot: true);
-        xp.SkillIncreaseLevel3 = KnownSkill(checkedBuild.SkillIncreaseLevel3);
-        xp.SkillIncreaseLevel5 = KnownSkill(checkedBuild.SkillIncreaseLevel5);
-        xp.BonusSkillFeats = checkedBuild.BonusSkillFeats
-            .Where(pair => pair.Key > 1 && QualifiedFeat(checkedBuild, ancestryId, new ProtoId<CFFeatPrototype>(pair.Value), pair.Key, skillSlot: true) != null)
-            .ToDictionary(pair => pair.Key, pair => pair.Value);
-        xp.BonusSkillIncreases = checkedBuild.BonusSkillIncreases
-            .Where(pair => _prototypes.HasIndex<CFAbilitySkillPrototype>(pair.Value))
-            .ToDictionary(pair => pair.Key, pair => pair.Value);
-        xp.AbilityBoostsLevel5 = profile.CFBuild.AbilityBoostsLevel5.Distinct().Take(CFAttributeMath.LevelFiveBoostCount).ToList();
-        xp.ClassChoices = CFClassChoices.Selected(_prototypes, profile.CFBuild).Select(choice => choice.ID).ToList();
-        xp.OptionPicks = CFOptionChoices.Valid(_prototypes, checkedBuild, ancestryId);
-        xp.SpellPicks = profile.CFBuild.Spells.Select(spell => spell.Copy()).ToList();
-        Dirty(mob, xp);
+        CopyLevelPicks(mob, xp, checkedBuild, ancestryId, sheet.Modifiers);
         combatant.LoreNames.Clear();
         foreach (var chosen in chosenFeats)
         {
@@ -225,9 +221,6 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         ApplyAncestry(mob, sheet.Ancestry, heritage, speedBonus);
         var languages = EnsureComp<CFLanguagesComponent>(mob);
         languages.Known = CFLanguageRules.Known(_prototypes, sheet.Ancestry, profile.CFBuild.Languages, sheet.Modifiers);
-        xp.LanguageLevel5 = CFLanguageRules.LevelFiveLanguage(sheet.Modifiers, xp.AbilityBoostsLevel5)
-            ? CFLanguageRules.LevelFivePick(_prototypes, sheet.Ancestry, profile.CFBuild.Languages, sheet.Modifiers)?.Id
-            : null;
         Dirty(mob, languages);
         _actionPool.Ensure(mob);
         ApplySpellbook(mob, profile, sheet.Class);
@@ -236,8 +229,49 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
     }
 
     /// <summary>
-    /// Speed scales the usual walk and sprint. Darkvision uses the same night-vision overlay as goblins.
+    /// Copies a build's picks for every level onto the character's XP record, each checked, because a build comes from a
+    /// client. Spawning does this with the lobby's build, and taking a level does it again with that level's picks.
     /// </summary>
+    public void CopyLevelPicks(
+        EntityUid mob,
+        CFExperienceComponent xp,
+        CFCharacterBuildData checkedBuild,
+        string? ancestryId,
+        IReadOnlyDictionary<CFAbility, int> modifiers)
+    {
+        xp.Build = checkedBuild;
+        xp.AncestryId = ancestryId;
+        xp.AncestryFeat = IdOf(checkedBuild.AncestryFeat);
+        xp.ClassFeat = IdOf(checkedBuild.ClassFeat);
+        xp.ClassFeatLevel2 = ChoiceFeat(checkedBuild, checkedBuild.ClassFeatLevel2);
+        xp.ClassFeatLevel4 = ChoiceFeat(checkedBuild, checkedBuild.ClassFeatLevel4);
+        xp.AncestryFeatLevel5 = IdOf(checkedBuild.AncestryFeatLevel5);
+        xp.SkillFeatLevel2 = QualifiedFeat(checkedBuild, ancestryId, checkedBuild.SkillFeatLevel2, 2, skillSlot: true);
+        xp.GeneralFeatLevel3 = QualifiedFeat(checkedBuild, ancestryId, checkedBuild.GeneralFeatLevel3, 3, skillSlot: false);
+        xp.SkillFeatLevel4 = QualifiedFeat(checkedBuild, ancestryId, checkedBuild.SkillFeatLevel4, 4, skillSlot: true);
+        xp.SkillIncreaseLevel3 = KnownSkill(checkedBuild.SkillIncreaseLevel3);
+        xp.SkillIncreaseLevel5 = KnownSkill(checkedBuild.SkillIncreaseLevel5);
+        xp.BonusSkillFeats = checkedBuild.BonusSkillFeats
+            .Where(pair => pair.Key > 1 && QualifiedFeat(checkedBuild, ancestryId, new ProtoId<CFFeatPrototype>(pair.Value), pair.Key, skillSlot: true) != null)
+            .ToDictionary(pair => pair.Key, pair => pair.Value);
+        xp.BonusSkillIncreases = checkedBuild.BonusSkillIncreases
+            .Where(pair => _prototypes.HasIndex<CFAbilitySkillPrototype>(pair.Value))
+            .ToDictionary(pair => pair.Key, pair => pair.Value);
+        xp.AbilityBoostsLevel5 = checkedBuild.AbilityBoostsLevel5.Distinct().Take(CFAttributeMath.LevelFiveBoostCount).ToList();
+        xp.ClassChoices = CFClassChoices.Selected(_prototypes, checkedBuild).Select(choice => choice.ID).ToList();
+        xp.OptionPicks = CFOptionChoices.Valid(_prototypes, checkedBuild, ancestryId);
+        xp.SpellPicks = checkedBuild.Spells.Select(spell => spell.Copy()).ToList();
+
+        CFAncestryPrototype? ancestry = null;
+        if (ancestryId != null)
+            _prototypes.TryIndex(ancestryId, out ancestry);
+
+        xp.LanguageLevel5 = CFLanguageRules.LevelFiveLanguage(modifiers, xp.AbilityBoostsLevel5)
+            ? CFLanguageRules.LevelFivePick(_prototypes, ancestry, checkedBuild.Languages, modifiers)?.Id
+            : null;
+        Dirty(mob, xp);
+    }
+
     /// <summary>The feat, if it fits the slot and the build meets its skill requirement by that level.</summary>
     private string? QualifiedFeat(
         CFCharacterBuildData build,

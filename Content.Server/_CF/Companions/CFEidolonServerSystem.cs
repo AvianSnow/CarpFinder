@@ -17,7 +17,7 @@ namespace Content.Server.CF.Companions;
 /// </summary>
 public sealed partial class CFEidolonServerSystem : EntitySystem
 {
-    private const string Prototype = "CFEidolon";
+    private const string EidolonPrototype = "CFEidolon";
     private const float TetherTiles = 20f;
     private const int Trained = 2;
     private static readonly TimeSpan CheckTether = TimeSpan.FromSeconds(1);
@@ -54,7 +54,7 @@ public sealed partial class CFEidolonServerSystem : EntitySystem
             return false;
         }
 
-        var eidolon = Spawn(Prototype, Transform(summoner).Coordinates.Offset(new Vector2(1f, 0f)));
+        var eidolon = Spawn(EidolonPrototype, Transform(summoner).Coordinates.Offset(new Vector2(1f, 0f)));
         _companions.Bind(summoner, eidolon);
         link.Eidolon = eidolon;
         link.SharedHp = combat.CurrentHp;

@@ -1,12 +1,13 @@
-# Adventure companies are a party with their own members and opposition to the other companies.
-# Neutral creatures do not hunt each other or the companies. Attacks against neutrals are still allowed.
+# Adventure companies are a party with their own members and with each other. Players fight each other only
+# when both turn PvP on (`pvp` command, CFPvpComponent), whatever their factions say.
+# Neutral creatures do not hunt each other or the companies. Attacks against neutral creatures are still allowed.
 
 - type: cfFaction
   id: Alpha
   name: cf-faction-alpha
   jobs:
   - CFAlpha
-  opposition:
+  party:
   - Beta
   - Charlie
   - Delta
@@ -16,7 +17,7 @@
   name: cf-faction-beta
   jobs:
   - CFBeta
-  opposition:
+  party:
   - Alpha
   - Charlie
   - Delta
@@ -26,7 +27,7 @@
   name: cf-faction-charlie
   jobs:
   - CFCharlie
-  opposition:
+  party:
   - Alpha
   - Beta
   - Delta
@@ -36,7 +37,7 @@
   name: cf-faction-delta
   jobs:
   - CFDelta
-  opposition:
+  party:
   - Alpha
   - Beta
   - Charlie

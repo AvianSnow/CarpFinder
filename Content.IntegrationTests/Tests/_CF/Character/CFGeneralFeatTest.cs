@@ -1,3 +1,4 @@
+using Robust.Shared.Prototypes;
 using System.Linq;
 using Content.IntegrationTests.Fixtures;
 using Content.IntegrationTests.Tests.CF;
@@ -68,7 +69,7 @@ public sealed class CFGeneralFeatTest : GameTest
             dc = dying.RecoveryDc(hero, combat);
             plainDc = dying.RecoveryDc(plain, SEntMan.GetComponent<CFCombatantComponent>(plain));
 
-            SEntMan.System<CFExperienceSystem>().AddXp(hero, CFExperienceComponent.XpPerLevel);
+            SEntMan.System<CFExperienceSystem>().AddXpAndLevelUp(hero, CFExperienceComponent.XpPerLevel);
             afterLevel = combat.MaxHp;
         });
 
@@ -170,8 +171,8 @@ public sealed class CFGeneralFeatTest : GameTest
         CFAbility unpicked = default, kept = default, cheated = default;
         await Server.WaitPost(() =>
         {
-            var rogue = Server.ProtoMan.Index<CFClassPrototype>("Rogue");
-            CFAbility Key(string? pick)
+            var rogue = Server.ProtoMan.Index(new ProtoId<CFClassPrototype>("Rogue"));
+            CFAbility Key(string pick)
             {
                 var build = new CFCharacterBuildData { Class = "Rogue" };
                 build.ClassChoices.Add("Ruffian");

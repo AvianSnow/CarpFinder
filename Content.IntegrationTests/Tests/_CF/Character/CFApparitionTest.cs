@@ -1,3 +1,4 @@
+using Robust.Shared.Prototypes;
 using System.Linq;
 using Content.IntegrationTests.Fixtures;
 using Content.IntegrationTests.Tests.CF;
@@ -71,7 +72,7 @@ public sealed class CFApparitionTest : GameTest
     private EntityUid Animist(params string[] choices)
     {
         var hero = Spawn("CFApparitionHero");
-        var first = Server.ProtoMan.Index<CFClassPrototype>("Animist").Features.First(f => f.Name == "Animist & Apparition Spellcasting");
+        var first = Server.ProtoMan.Index(new ProtoId<CFClassPrototype>("Animist")).Features.First(f => f.Name == "Animist & Apparition Spellcasting");
         Features.Apply(hero, first.Grants, "casting");
         Choose(hero, choices);
         return hero;

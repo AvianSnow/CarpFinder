@@ -88,7 +88,7 @@ public sealed class CFStanceTest : GameTest
         return !attempt.Cancelled;
     }
 
-    private bool Use(EntityUid hero, Entity<ActionComponent> action, BaseActionEvent? ev = null)
+    private bool Use(EntityUid hero, Entity<ActionComponent> action, BaseActionEvent ev = null)
     {
         if (!CanUse(hero, action))
             return false;

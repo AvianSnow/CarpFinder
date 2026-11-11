@@ -67,12 +67,12 @@ public sealed class CFReactionTest : GameTest
 
     private EntityUid Hero(params string[] feats)
     {
-        var hero = Spawn("CFReactionTestHero");
+        var hero = SpawnHere("CFReactionTestHero");
         Learn(hero, feats);
         return hero;
     }
 
-    private EntityUid Spawn(string id)
+    private EntityUid SpawnHere(string id)
     {
         return SEntMan.SpawnEntity(id, _map.Local(0, 0));
     }
@@ -107,8 +107,8 @@ public sealed class CFReactionTest : GameTest
         await Server.WaitPost(() =>
         {
             var effects = SEntMan.System<CFEffectSystem>();
-            dodged = effects.AttackDegree(Spawn("CFReactionTestFoe"), Hero("CFNimbleDodge"), 10, 5, 15);
-            deflected = effects.AttackDegree(Spawn("CFReactionTestFoe"), Hero("CFDeflectProjectile"), 10, 5, 15);
+            dodged = effects.AttackDegree(SpawnHere("CFReactionTestFoe"), Hero("CFNimbleDodge"), 10, 5, 15);
+            deflected = effects.AttackDegree(SpawnHere("CFReactionTestFoe"), Hero("CFDeflectProjectile"), 10, 5, 15);
         });
 
         Assert.Multiple(() =>
@@ -127,7 +127,7 @@ public sealed class CFReactionTest : GameTest
         await Server.WaitPost(() =>
         {
             var hero = Hero("CFNimbleDodge");
-            var foe = Spawn("CFReactionTestFoe");
+            var foe = SpawnHere("CFReactionTestFoe");
 
             tooStrong = Attack(hero, foe, 20);
             spentAfterTooStrong = Options(hero).ReactionSpent;
@@ -189,12 +189,12 @@ public sealed class CFReactionTest : GameTest
         {
             // Both would turn this shot into a miss, so only the order decides. Deflect Projectile is level 4, so it is first.
             var first = Hero("CFNimbleDodge", "CFDeflectProjectile");
-            Attack(first, Spawn("CFReactionTestFoe"), ArmorClass, ranged: true);
+            Attack(first, SpawnHere("CFReactionTestFoe"), ArmorClass, ranged: true);
             deflectByDefault = Used(first, "CFDeflectProjectile");
 
             var second = Hero("CFNimbleDodge", "CFDeflectProjectile");
             Reactions.Reorder(second, new List<string> { "feat:CFNimbleDodge", "feat:CFDeflectProjectile" });
-            Attack(second, Spawn("CFReactionTestFoe"), ArmorClass, ranged: true);
+            Attack(second, SpawnHere("CFReactionTestFoe"), ArmorClass, ranged: true);
             dodgeWhenMoved = Used(second, "CFNimbleDodge");
             deflectWhenMoved = Used(second, "CFDeflectProjectile");
         });
@@ -223,7 +223,7 @@ public sealed class CFReactionTest : GameTest
             book.Repertoire.Add("Fear");
             book.PreparedSlots.Add(new CFPreparedSlot("Fear", 1));
 
-            var foe = Spawn("CFReactionTestFoe");
+            var foe = SpawnHere("CFReactionTestFoe");
             var fear = SEntMan.GetComponent<CFSpellComponent>(SEntMan.SpawnEntity("CFFear", Robust.Shared.Map.MapCoordinates.Nullspace));
             countered = Reactions.TryCounterspell(foe, fear, d20: 20);
             charges = CFPreparedSpells.Charges(book, "Fear").Ready;
@@ -249,7 +249,7 @@ public sealed class CFReactionTest : GameTest
         {
             var hero = Hero("CFScarsofSteel");
             SEntMan.GetComponent<CFAbilityScoreComponent>(hero).AbilityModifiers[CFAbility.Constitution] = 3;
-            var foe = Spawn("CFReactionTestFoe");
+            var foe = SpawnHere("CFReactionTestFoe");
 
             fire = Reactions.AnswerCriticalHit(hero, foe, 20, "Fire");
             slash = Reactions.AnswerCriticalHit(hero, foe, 20, "Slashing");
@@ -272,7 +272,7 @@ public sealed class CFReactionTest : GameTest
         {
             var guardian = Hero("CFGuardiansDeflectionSwashbuckler");
             var ally = Hero();
-            result = Attack(ally, Spawn("CFReactionTestFoe"), ArmorClass);
+            result = Attack(ally, SpawnHere("CFReactionTestFoe"), ArmorClass);
             used = Used(guardian, "CFGuardiansDeflectionSwashbuckler");
         });
 
@@ -289,7 +289,7 @@ public sealed class CFReactionTest : GameTest
     {
         _map = await CFDevMap.Load(Pair, Footprint);
         (CFDegree Degree, int Ac) result = default;
-        await Server.WaitPost(() => result = Attack(Hero("CFNimbleDodge"), Spawn("CFReactionTestFoe"), 24));
+        await Server.WaitPost(() => result = Attack(Hero("CFNimbleDodge"), SpawnHere("CFReactionTestFoe"), 24));
 
         Assert.That(result.Degree, Is.EqualTo(CFDegree.Success));
     }
@@ -301,8 +301,8 @@ public sealed class CFReactionTest : GameTest
         (CFDegree Degree, int Ac) shot = default, swing = default;
         await Server.WaitPost(() =>
         {
-            shot = Attack(Hero("CFNimbleDodge", "CFDeflectProjectile"), Spawn("CFReactionTestFoe"), 17, ranged: true);
-            swing = Attack(Hero("CFNimbleDodge", "CFDeflectProjectile"), Spawn("CFReactionTestFoe"), 17);
+            shot = Attack(Hero("CFNimbleDodge", "CFDeflectProjectile"), SpawnHere("CFReactionTestFoe"), 17, ranged: true);
+            swing = Attack(Hero("CFNimbleDodge", "CFDeflectProjectile"), SpawnHere("CFReactionTestFoe"), 17);
         });
 
         Assert.Multiple(() =>
@@ -323,11 +323,11 @@ public sealed class CFReactionTest : GameTest
         {
             var covered = Hero("CFNimbleDodge");
             SEntMan.System<CFBonusSystem>().AddBonus(covered, CFBonusStat.ArmorClass, CFBonusType.Circumstance, 2, 60f);
-            equal = Attack(covered, Spawn("CFReactionTestFoe"), 15);
+            equal = Attack(covered, SpawnHere("CFReactionTestFoe"), 15);
 
             var slight = Hero("CFNimbleDodge");
             SEntMan.System<CFBonusSystem>().AddBonus(slight, CFBonusStat.ArmorClass, CFBonusType.Circumstance, 1, 60f);
-            smaller = Attack(slight, Spawn("CFReactionTestFoe"), 14);
+            smaller = Attack(slight, SpawnHere("CFReactionTestFoe"), 14);
         });
 
         Assert.Multiple(() =>
@@ -347,9 +347,9 @@ public sealed class CFReactionTest : GameTest
         {
             var hero = Hero("CFDeflectProjectile");
             var hands = SEntMan.System<SharedHandsSystem>();
-            hands.TryPickupAnyHand(hero, Spawn("CFDagger"));
-            hands.TryPickupAnyHand(hero, Spawn("CFDagger"));
-            result = Attack(hero, Spawn("CFReactionTestFoe"), 15, ranged: true);
+            hands.TryPickupAnyHand(hero, SpawnHere("CFDagger"));
+            hands.TryPickupAnyHand(hero, SpawnHere("CFDagger"));
+            result = Attack(hero, SpawnHere("CFReactionTestFoe"), 15, ranged: true);
         });
 
         Assert.That(result.Degree, Is.EqualTo(CFDegree.Success));
@@ -363,11 +363,11 @@ public sealed class CFReactionTest : GameTest
         await Server.WaitPost(() =>
         {
             var hero = Hero("CFFlashyDodge");
-            Attack(hero, Spawn("CFReactionTestFoe"), 15);
+            Attack(hero, SpawnHere("CFReactionTestFoe"), 15);
             afterMiss = Options(hero).Panache;
 
             var grazed = Hero("CFFlashyDodge");
-            Attack(grazed, Spawn("CFReactionTestFoe"), 24);
+            Attack(grazed, SpawnHere("CFReactionTestFoe"), 24);
             afterGraze = Options(grazed).Panache;
         });
 
@@ -418,7 +418,7 @@ public sealed class CFReactionTest : GameTest
         await Server.WaitPost(() =>
         {
             var hero = Hero("CFOrcFerocity");
-            var foe = Spawn("CFReactionTestFoe");
+            var foe = SpawnHere("CFReactionTestFoe");
             var combat = SEntMan.GetComponent<CFCombatantComponent>(hero);
             var effects = SEntMan.System<CFEffectSystem>();
 
@@ -459,9 +459,9 @@ public sealed class CFReactionTest : GameTest
         var dead = false;
         await Server.WaitPost(() =>
         {
-            var monster = Spawn("CFReactionTestMonster");
+            var monster = SpawnHere("CFReactionTestMonster");
             Learn(monster, "CFOrcFerocity");
-            SEntMan.System<CFEffectSystem>().DealDamage(Spawn("CFReactionTestFoe"), monster, 10000, "Slashing", false);
+            SEntMan.System<CFEffectSystem>().DealDamage(SpawnHere("CFReactionTestFoe"), monster, 10000, "Slashing", false);
             dead = SEntMan.System<MobStateSystem>().IsDead(monster);
         });
 
@@ -477,7 +477,7 @@ public sealed class CFReactionTest : GameTest
         await Server.WaitPost(() =>
         {
             var effects = SEntMan.System<CFEffectSystem>();
-            var foe = Spawn("CFReactionTestFoe");
+            var foe = SpawnHere("CFReactionTestFoe");
 
             var barbarian = Hero("CFWoundedRage");
             Options(barbarian).CanRage = true;
@@ -510,7 +510,7 @@ public sealed class CFReactionTest : GameTest
         await Server.WaitPost(() =>
         {
             var hero = Hero("CFNimbleDodge");
-            var foe = Spawn("CFReactionTestFoe");
+            var foe = SpawnHere("CFReactionTestFoe");
             var strikes = SEntMan.System<CFStrikeSystem>();
             var stats = strikes.UnarmedStats(foe);
             for (var i = 0; i < 400 && spent == 0; i++)

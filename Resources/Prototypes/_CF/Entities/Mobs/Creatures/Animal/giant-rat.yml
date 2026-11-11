@@ -34,7 +34,6 @@
       speedFeet: 30
       maxHp: 8
       currentHp: 8
-      diesAtZeroHp: true
       printedFortitude: 6
       printedReflex: 7
       printedWill: 3

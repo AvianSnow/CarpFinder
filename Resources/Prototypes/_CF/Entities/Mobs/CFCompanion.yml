@@ -1,19 +1,33 @@
-# Shared body for an eidolon, animal companion, familiar, or summon.
+# Shared body for an eidolon, animal companion, familiar, construct, thrall or summon.
 # Parent this and override the name, sprite, and the CFCombatant / CFCombatOptions numbers.
 # A young animal companion's level matches its master. It is trained in unarmed attacks,
 # unarmored defense, barding, saves, Perception, Acrobatics, and Athletics.
 # Hit Points are the type's ancestry Hit Points plus 6 + Constitution at each level.
 # Each species lives in Resources/Prototypes/_CF/Companions/Animals.
-# The ally takes the summoner's company. Point at a creature and it closes in and Strikes.
-# Point at an item and it fetches the item, then sets it down beside the summoner.
-# Point at the floor and it stops. A ghost can take the body.
+#
+# A companion thinks with a GOAP brain (CFCompanionSystem, CFGOAPCompanionSensorSystem). It takes its master's company,
+# attacks enemies it sees by itself, and its home is wherever its master is, so it keeps close and comes back.
+# Pointing helps it: at a creature, it goes for that one first; at the master, it comes straight back; at an item, it
+# fetches it; at the floor, it forgets the creature it was sent at. A ghost can take the body.
 # One hand can pick items up. A drop beside the summoner puts the item in their hands.
 
 - type: entity
   id: CFCompanionBase
   abstract: true
+  parent: CFGOAPBrain
   components:
   - type: CFCompanion
+  # Every companion fights by itself, and the GOAP Strike step needs combat mode. A clean bot body has none.
+  - type: CombatMode
+  # Home follows the master. It wanders no further than this from them with nothing to do.
+  - type: CFGOAP
+    homeRange: 3
+  # The lair leash keeps it with its master: too far, or chasing too long, and it comes back, though it still fights
+  # whatever is in reach. It goes for anything it sees, so it never just guards.
+  - type: CFGOAPLair
+    engageTiles: 12
+    leashTiles: 10
+    chaseTime: 20
   - type: Hands
     startingHands:
       hand:
@@ -26,7 +40,7 @@
         type: StrippableBoundUserInterface
   - type: HTN
     rootTask:
-      task: CFCompanionCompound
+      task: CFGOAPCompound
   - type: CFFaction
     faction: Neutral
   - type: NpcFactionMember
@@ -79,12 +93,12 @@
   parent: [ MobFox, CFCompanionBase ]
   id: CFSummon
   name: summoned ally
-  description: An eidolon, animal companion, familiar, or summon. It fights the creature its summoner points at.
+  description: An eidolon, animal companion, familiar, or summon. It fights for its summoner, and goes for the creature they point at first.
   suffix: Companion
   components:
   - type: HTN
     rootTask:
-      task: CFCompanionCompound
+      task: CFGOAPCompound
   - type: NpcFactionMember
     factions:
     - Passive

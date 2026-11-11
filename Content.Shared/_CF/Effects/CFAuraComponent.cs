@@ -106,7 +106,7 @@ public sealed partial class CFAuraComponent : Component
 public sealed partial class CFAuraRetaliationComponent : Component
 {
     [DataField]
-    public EntityUid Owner;
+    public EntityUid AuraOwner;
 
     [DataField]
     public int Die;

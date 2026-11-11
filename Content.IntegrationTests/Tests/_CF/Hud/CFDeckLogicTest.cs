@@ -84,7 +84,7 @@ public sealed class CFDeckLogicTest
     public void ADividerTradesColumnsBetweenItsNeighboursOnly()
     {
         var widths = new CFDeckWidths();
-        var (first, second, third, fourth) = (widths[0], widths[1], widths[2], widths[3]);
+        var (first, second, third) = (widths[0], widths[1], widths[2]);
 
         Assert.That(widths.Move(0, 1), Is.EqualTo(1));
         Assert.Multiple(() =>
@@ -92,7 +92,6 @@ public sealed class CFDeckLogicTest
             Assert.That(widths[0], Is.EqualTo(first + 1));
             Assert.That(widths[1], Is.EqualTo(second - 1));
             Assert.That(widths[2], Is.EqualTo(third));
-            Assert.That(widths[3], Is.EqualTo(fourth));
         });
     }
 
@@ -114,16 +113,17 @@ public sealed class CFDeckLogicTest
     public void ColumnsSurviveASaveAndBadSavesAreIgnored()
     {
         var widths = new CFDeckWidths();
-        widths.Move(2, 1);
+        widths.Move(1, 1);
         Assert.That(CFDeckWidths.Parse(widths.Save()).Save(), Is.EqualTo(widths.Save()));
 
         var defaults = new CFDeckWidths().Save();
         Assert.Multiple(() =>
         {
             Assert.That(CFDeckWidths.Parse("rubbish").Save(), Is.EqualTo(defaults));
-            Assert.That(CFDeckWidths.Parse("1,1,1").Save(), Is.EqualTo(defaults), "Too few sections.");
-            Assert.That(CFDeckWidths.Parse("5,5,5,5").Save(), Is.EqualTo(defaults), "More columns than the deck has.");
-            Assert.That(CFDeckWidths.Parse("0,4,3,3").Save(), Is.EqualTo(defaults), "A section with no columns.");
+            Assert.That(CFDeckWidths.Parse("5,5").Save(), Is.EqualTo(defaults), "Too few sections.");
+            Assert.That(CFDeckWidths.Parse("3,4,1,2").Save(), Is.EqualTo(defaults), "The old Items section is gone.");
+            Assert.That(CFDeckWidths.Parse("5,5,5").Save(), Is.EqualTo(defaults), "More columns than the deck has.");
+            Assert.That(CFDeckWidths.Parse("0,5,5").Save(), Is.EqualTo(defaults), "A section with no columns.");
         });
     }
 

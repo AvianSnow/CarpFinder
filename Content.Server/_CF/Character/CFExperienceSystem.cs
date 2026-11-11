@@ -155,20 +155,74 @@ public sealed partial class CFExperienceSystem : EntitySystem
         AwardHazard(args.User, args.Level, args.Complex);
     }
 
+    /// <summary>
+    /// Adds XP. Reaching a level does not take it: the player picks it on the character sheet's Level Up tab, which
+    /// sends <see cref="CFLevelUpRequestEvent"/>.
+    /// </summary>
     public void AddXp(EntityUid mob, int amount)
     {
         if (amount <= 0 || !TryComp(mob, out CFExperienceComponent? xp) || !TryComp(mob, out CFCombatantComponent? combat))
             return;
 
+        var couldBefore = xp.CanLevelUp(combat.Level);
         xp.Xp += amount;
         _popup.PopupEntity(Loc.GetString("cf-xp-gained", ("xp", amount)), mob, mob);
-        while (combat.Level < CFExperienceComponent.MaxLevel && xp.Xp >= CFExperienceComponent.XpPerLevel)
-        {
-            xp.Xp -= CFExperienceComponent.XpPerLevel;
-            LevelUp(mob, combat, xp);
-        }
+        if (!couldBefore && xp.CanLevelUp(combat.Level))
+            _popup.PopupEntity(Loc.GetString("cf-xp-level-ready", ("level", combat.Level + 1)), mob, mob, PopupType.Large);
 
         Dirty(mob, xp);
+    }
+
+    /// <summary>
+    /// Takes the next level, if the character has the XP for it. <paramref name="picks"/> holds the player's picks for
+    /// that level, from the Level Up tab. They came from a client, so only that level's are read and each is checked,
+    /// as at spawn. With none, the character takes the picks it already has, which is what tests do.
+    /// </summary>
+    public bool TryLevelUp(EntityUid mob, CFCharacterBuildData? picks = null)
+    {
+        if (!TryComp(mob, out CFExperienceComponent? xp)
+            || !TryComp(mob, out CFCombatantComponent? combat)
+            || !xp.CanLevelUp(combat.Level))
+        {
+            return false;
+        }
+
+        var level = combat.Level + 1;
+        if (picks != null && xp.Build != null)
+        {
+            var build = xp.Build.Clone();
+            CFLevelUp.TakeLevel(_prototypes, build, picks, level);
+            CFSkills.DropUnqualifiedFeats(_prototypes, build, xp.AncestryId);
+            var modifiers = CompOrNull<CFAbilityScoreComponent>(mob)?.AbilityModifiers ?? new Dictionary<CFAbility, int>();
+            _spawn.CopyLevelPicks(mob, xp, build, xp.AncestryId, modifiers);
+        }
+        else if (xp.Build != null)
+        {
+            xp.Build.Level = level;
+        }
+
+        xp.Xp -= CFExperienceComponent.XpPerLevel;
+        LevelUp(mob, combat, xp);
+        Dirty(mob, xp);
+        return true;
+    }
+
+    /// <summary>Adds XP and takes every level it pays for, with the picks the character already has.</summary>
+    public void AddXpAndLevelUp(EntityUid mob, int amount)
+    {
+        AddXp(mob, amount);
+        while (TryLevelUp(mob))
+        {
+        }
+    }
+
+    [SubscribeNetworkEvent]
+    private void OnLevelUpRequest(CFLevelUpRequestEvent msg, EntitySessionEventArgs args)
+    {
+        if (args.SenderSession.AttachedEntity is not { } mob)
+            return;
+
+        TryLevelUp(mob, msg.Build);
     }
 
     private void LevelUp(EntityUid mob, CFCombatantComponent combat, CFExperienceComponent xp)

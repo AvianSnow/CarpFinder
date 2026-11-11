@@ -134,7 +134,7 @@ public sealed class CFMonsterGhostRoleTest : GameTest
             Assert.That(SEntMan.HasComponent<CFActionPoolComponent>(mob), "A player pays for actions like anyone else.");
         });
 
-        if (SEntMan.TryGetComponent(mob, out CFGOAPComponent? brain))
+        if (SEntMan.TryGetComponent(mob, out CFGOAPComponent brain))
         {
             Assert.Multiple(() =>
             {

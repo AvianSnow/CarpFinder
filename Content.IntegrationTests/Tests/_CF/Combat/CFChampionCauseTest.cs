@@ -1,3 +1,4 @@
+using Robust.Shared.Prototypes;
 using System.Linq;
 using Content.IntegrationTests.Fixtures;
 using Content.IntegrationTests.Tests.CF;
@@ -60,7 +61,7 @@ public sealed class CFChampionCauseTest : GameTest
     {
         var hero = Spawn();
         var features = SEntMan.System<CFCharacterFeatureSystem>();
-        var aura = Server.ProtoMan.Index<CFClassPrototype>("Champion").Features.First(f => f.Name == "Champion's Aura");
+        var aura = Server.ProtoMan.Index(new ProtoId<CFClassPrototype>("Champion")).Features.First(f => f.Name == "Champion's Aura");
         features.Apply(hero, aura.Grants, "feature:aura");
         features.Apply(hero, Server.ProtoMan.Index<CFClassChoicePrototype>(cause).Grants, $"choice:{cause}");
         return hero;

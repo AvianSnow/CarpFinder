@@ -1,3 +1,4 @@
+using Robust.Shared.Prototypes;
 using System.Linq;
 using Content.IntegrationTests.Fixtures;
 using Content.IntegrationTests.Tests.CF;
@@ -68,7 +69,7 @@ public sealed class CFEidolonTest : GameTest
     private EntityUid Summoner(params string[] choices)
     {
         var hero = Spawn("CFEidolonHero");
-        foreach (var feature in Server.ProtoMan.Index<CFClassPrototype>("Summoner").Features.Where(f => f.Level == 1))
+        foreach (var feature in Server.ProtoMan.Index(new ProtoId<CFClassPrototype>("Summoner")).Features.Where(f => f.Level == 1))
         {
             Features.Apply(hero, feature.Grants, feature.Name);
         }
@@ -324,7 +325,7 @@ public sealed class CFEidolonTest : GameTest
         await Server.WaitAssertion(() =>
         {
             var hero = Summoner("EidolonBeast", "EidolonKeyStrength", "EidolonAttackSlashing");
-            Features.Apply(hero, Server.ProtoMan.Index<CFFeatPrototype>("CFAlacritousAction").Grants, "feat");
+            Features.Apply(hero, Server.ProtoMan.Index(new ProtoId<CFFeatPrototype>("CFAlacritousAction")).Grants, "feat");
             Manifest(hero);
             Assert.That(Combat(Link(hero).Eidolon).SpeedFeet, Is.EqualTo(35));
         });

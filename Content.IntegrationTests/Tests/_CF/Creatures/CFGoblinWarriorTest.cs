@@ -132,7 +132,7 @@ public sealed class CFGoblinWarriorTest : GameTest
     {
         await Server.WaitAssertion(() =>
         {
-            var proto = Server.ProtoMan.Index<EntityPrototype>("CFDogslicer");
+            var proto = Server.ProtoMan.Index(new ProtoId<EntityPrototype>("CFDogslicer"));
             Assert.That(proto.TryComp<CFTraitComponent>(out var traits, SEntMan.ComponentFactory));
             Assert.That(traits!.Traits.Select(t => t.Id),
                 Is.SupersetOf(new[] { "Agile", "Backstabber", "Finesse", "Goblin" }),

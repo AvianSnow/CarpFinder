@@ -452,7 +452,7 @@ public sealed class CFWave4Test : GameTest
             var hero = Spawn();
             GiveChoice(hero, "DevotionLayOnHands");
             hasAction = SEntMan.System<SharedActionsSystem>().GetActions(hero)
-                .Any(action => SEntMan.TryGetComponent(action, out CFSpellComponent? spell) && spell.Focus);
+                .Any(action => SEntMan.TryGetComponent(action, out CFSpellComponent spell) && spell.Focus);
         });
 
         Assert.That(hasAction, Is.True);

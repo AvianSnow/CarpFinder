@@ -189,7 +189,7 @@ public sealed class CFWave3Test : GameTest
         var divine = new List<string>();
         await Server.WaitPost(() =>
         {
-            var choice = Server.ProtoMan.Index<CFFeatPrototype>("CFCantripExpansionWizard").Choices[0];
+            var choice = Server.ProtoMan.Index(new ProtoId<CFFeatPrototype>("CFCantripExpansionWizard")).Choices[0];
             count = choice.Count;
             offered = CFOptionChoices.Allowed(Server.ProtoMan, choice);
             divine = Server.ProtoMan.EnumeratePrototypes<CFSpellPrototype>()
@@ -211,11 +211,11 @@ public sealed class CFWave3Test : GameTest
     {
         _map = await CFDevMap.Load(Pair, Footprint);
         bool ruffian = false, thief = true;
-        string? spawned = "x", kept = null;
+        string spawned = "x", kept = null;
         ProtoId<CFFeatPrototype>? dropped = "CFBrutalBeating";
         await Server.WaitPost(() =>
         {
-            var feat = Server.ProtoMan.Index<CFFeatPrototype>("CFBrutalBeating");
+            var feat = Server.ProtoMan.Index(new ProtoId<CFFeatPrototype>("CFBrutalBeating"));
             var asRuffian = new CFCharacterBuildData { Class = "Rogue", ClassFeatLevel2 = "CFBrutalBeating" };
             asRuffian.ClassChoices.Add("Ruffian");
             var asThief = new CFCharacterBuildData { Class = "Rogue", ClassFeatLevel2 = "CFBrutalBeating" };

@@ -4,7 +4,7 @@
 # Pack Attack is in (packAttackDie). Low-light vision and scent 30 feet (imprecise) are on CFSenses.
 # Not in yet: Knockdown, the 1 action Trip after a jaws hit, because Trip is not an action in CF.
 - type: entity
-  parent: [CFBaseCreature, BaseSlicingRefinableButchering]
+  parent: [CFBaseCreature]
   id: CFMobWolf
   name: wolf
   description: A lean grey hunter. Wolves run their prey down together, and drag it to the ground.
@@ -46,7 +46,6 @@
       speedFeet: 35
       maxHp: 24
       currentHp: 24
-      diesAtZeroHp: true
       printedFortitude: 6
       printedReflex: 9
       printedWill: 5
@@ -85,8 +84,12 @@
         0: Alive
         23: Critical
         24: Dead
-    - type: ToolRefinable
-      refineResult:
+    # Monster parts: what a harvest gives, sharing the monster's parts value (CFHarvestSystem).
+    - type: CFHarvestable
+      parts:
+        - id: CFFoodMeatMonster
+          amount: 1
+          maxAmount: 2
         - id: CFLeather1
           amount: 1
           maxAmount: 2

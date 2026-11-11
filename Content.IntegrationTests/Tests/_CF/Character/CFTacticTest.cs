@@ -69,7 +69,7 @@ public sealed class CFTacticTest : GameTest
     private EntityUid Commander()
     {
         var hero = Spawn();
-        var feature = Server.ProtoMan.Index<CFClassPrototype>("Commander").Features.First(f => f.Name == "Commander's Banner");
+        var feature = Server.ProtoMan.Index(new ProtoId<CFClassPrototype>("Commander")).Features.First(f => f.Name == "Commander's Banner");
         Features.Apply(hero, feature.Grants, "banner");
         return hero;
     }

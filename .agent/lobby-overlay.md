@@ -76,7 +76,7 @@ Same pattern for the in-game character menu (`C`):
 - `CFSpellsTab` lists the spells granted as actions, grouped by rank, with Cast. Prepared classes (`cfClass` `spellcasting.prepared: true`) get a Spell Preparation window: search, Add, or drag a spell onto a slot of the same rank. It edits the plan the server applies at the next long rest. Spontaneous casters cast from Known Spells and do not see that button. Rituals and Activations are the known spells whose traits are Ritual or Focus.
 - Sheet controls: `Content.Client/_CF/Character/` (`CFCharacterSheetTab`, `CFSheetSkillRow`, `CFShopView`) with `x:Class="Content.Client.CF.Character.…"`
 - `CFShopView` is the shop body. The character menu embeds it as a tab. `CFShopWindow` hosts the same view when a merchant opens a popup.
-- The shop lists non-abstract `CF*` entity prototypes that have `Item`. The footer shows the purse as pp / gp / sp / cp (10 of a coin rolls into the next). Accept sends `CFShopPurchaseEvent` only when the purse covers the cart. The server spends `CFPurseComponent` and puts each item in an empty hand, then the backpack (`back` storage), then on the ground around the player. Unpriced items cannot be bought.
+- The shop lists non-abstract `CF*` entity prototypes that have `Item`. The footer shows the coins in the player's wallet as pp / gp / sp / cp (10 of a coin rolls into the next). Accept sends `CFShopPurchaseEvent` only when the wallet covers the cart. The server spends coins from the wallet and puts each item in an empty hand, then the backpack (`back` storage), then on the ground around the player, or on a guild buy pallet when the merchant stands beside one. Unpriced items cannot be bought.
 
 ## Verify
 

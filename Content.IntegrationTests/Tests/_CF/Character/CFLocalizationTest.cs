@@ -1,3 +1,4 @@
+using Robust.Shared.Prototypes;
 using System.Collections.Generic;
 using System.Linq;
 using Content.IntegrationTests.Fixtures;
@@ -69,12 +70,12 @@ public sealed class CFLocalizationTest : GameTest
     [Test]
     public async Task FeatTextIsWhatTheFileSays()
     {
-        string? name = null;
-        string? description = null;
+        string name = null;
+        string description = null;
         await Server.WaitPost(() =>
         {
             var loc = Server.ResolveDependency<ILocalizationManager>();
-            var feat = Server.ProtoMan.Index<CFFeatPrototype>("CFQuickBomber");
+            var feat = Server.ProtoMan.Index(new ProtoId<CFFeatPrototype>("CFQuickBomber"));
             name = loc.GetString(feat.Name);
             description = loc.GetString(feat.Description);
         });

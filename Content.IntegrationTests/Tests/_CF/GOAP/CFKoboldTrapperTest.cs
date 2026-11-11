@@ -1,3 +1,4 @@
+using Robust.Shared.Prototypes;
 using System.Collections.Generic;
 using System.Linq;
 using Content.IntegrationTests.Fixtures;
@@ -234,7 +235,7 @@ public sealed class CFKoboldTrapperTest : GameTest
             var hands = SEntMan.System<SharedHandsSystem>();
             Assert.That(hands.TryGetActiveItem(trapper.Owner, out var crossbow));
 
-            var action = Server.ProtoMan.Index<CFGOAPActionPrototype>("DrawSidearm");
+            var action = Server.ProtoMan.Index(new ProtoId<CFGOAPActionPrototype>("DrawSidearm"));
             Assert.That(step.Run((trapper, goap), action), "It finishes in one go with an action to spend.");
 
             Assert.That(hands.IsHolding(trapper.Owner, crossbow!.Value), Is.False, "It dropped the crossbow.");
@@ -367,7 +368,7 @@ public sealed class CFKoboldTrapperTest : GameTest
         await Server.WaitAssertion(() =>
         {
             var (trapper, _) = Standoff(1);
-            var action = Server.ProtoMan.Index<CFGOAPActionPrototype>("DrawSidearm");
+            var action = Server.ProtoMan.Index(new ProtoId<CFGOAPActionPrototype>("DrawSidearm"));
             Assert.That(SEntMan.System<CFGOAPDrawSidearmStepSystem>().Run(trapper, action));
 
             Goap.Think(trapper);

@@ -1,3 +1,4 @@
+using Robust.Shared.Prototypes;
 using System.Collections.Generic;
 using System.Numerics;
 using Content.IntegrationTests.Fixtures;
@@ -347,7 +348,7 @@ public sealed class CFZLevelTest : GameTest
     {
         await Server.WaitAssertion(() =>
         {
-            var map = Server.ProtoMan.Index<GameMapPrototype>("CFZLevelTest");
+            var map = Server.ProtoMan.Index(new ProtoId<GameMapPrototype>("CFZLevelTest"));
             SEntMan.System<GameTicker>().LoadGameMap(map, out var ground);
 
             var below = Levels.MapAtOffset(ground, -1);

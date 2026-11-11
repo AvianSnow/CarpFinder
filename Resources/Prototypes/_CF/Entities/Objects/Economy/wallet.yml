@@ -1,0 +1,40 @@
+# Ported from CP14's wallet.yml. The coins in the wallet a character carries are their money.
+
+- type: entity
+  parent: BaseStorageItem
+  id: CFWallet
+  name: wallet
+  description: A small wallet, handy for storing coins. Shops, merchants and the guild take coins from it and pay into it.
+  suffix: Empty
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    sprite: /Textures/_CP14/Objects/Economy/wallet.rsi
+    layers:
+    - state: wallet-0
+      map: ["enum.StorageFillLayers.Fill"]
+  - type: Item
+    size: Small
+  - type: Storage
+    maxItemSize: Tiny
+    grid:
+    - 0,0,3,2
+    quickInsert: true
+    areaInsert: false
+    storageOpenSound:
+      collection: storageRustle
+    storageInsertSound:
+      collection: storageRustle
+    whitelist:
+      components:
+      - CFCoin
+  - type: UseDelay
+    delay: 0.3
+  - type: Appearance
+  - type: StorageFillVisualizer
+    maxFillLevels: 4
+    fillBaseName: wallet
+  - type: Dumpable
+  - type: CFWallet
+  - type: CFBulk
+    bulk: 0

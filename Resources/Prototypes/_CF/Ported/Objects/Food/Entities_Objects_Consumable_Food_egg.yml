@@ -91,6 +91,8 @@
   id: CFFoodEgg
   name: egg
   components:
+  - type: CFItemPrice
+    copper: 3
   - type: Sprite
     layers:
       - state: icon
@@ -110,6 +112,8 @@
   parent: CFFoodEgg
   name: cooked egg
   components:
+  - type: CFItemPrice
+    copper: 10
   - type: Edible
   - type: SolutionContainerManager
     solutions:

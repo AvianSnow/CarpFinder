@@ -56,7 +56,7 @@ public sealed class CFAfflictionTest : GameTest
 
     private void Drink(EntityUid mob)
     {
-        if (SEntMan.TryGetComponent(mob, out CFAfflictionsComponent? comp) && comp.Active.Count > 0)
+        if (SEntMan.TryGetComponent(mob, out CFAfflictionsComponent comp) && comp.Active.Count > 0)
             comp.Active[0].NextExposure = TimeSpan.Zero;
 
         Afflictions.Expose(mob, Alcohol);

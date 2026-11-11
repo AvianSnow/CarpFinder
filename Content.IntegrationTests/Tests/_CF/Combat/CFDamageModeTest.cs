@@ -35,7 +35,7 @@ public sealed class CFDamageModeTest : GameTest
 
     private CFDevMap _map = default!;
 
-    private EntityUid Spawn(string id) => SEntMan.SpawnEntity(id, _map.Local(0, 0));
+    private EntityUid SpawnHere(string id) => SEntMan.SpawnEntity(id, _map.Local(0, 0));
 
     private void Use(EntityUid hero, EntityUid gun)
     {
@@ -55,8 +55,8 @@ public sealed class CFDamageModeTest : GameTest
         string first = "", second = "", third = "", wrapped = "";
         await Server.WaitPost(() =>
         {
-            var hero = Spawn("CFDamageModeHero");
-            var gun = Spawn("CFHandCannon");
+            var hero = SpawnHere("CFDamageModeHero");
+            var gun = SpawnHere("CFHandCannon");
             first = Type(gun);
             Use(hero, gun);
             second = Type(gun);
@@ -83,8 +83,8 @@ public sealed class CFDamageModeTest : GameTest
         var stayed = "";
         await Server.WaitPost(() =>
         {
-            var hero = Spawn("CFDamageModeHero");
-            var gun = Spawn("CFHandCannon");
+            var hero = SpawnHere("CFDamageModeHero");
+            var gun = SpawnHere("CFHandCannon");
             var pool = SEntMan.GetComponent<CFActionPoolComponent>(hero);
             var before = pool.Stamina;
             Use(hero, gun);

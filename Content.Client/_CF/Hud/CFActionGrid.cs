@@ -34,7 +34,7 @@ public sealed class CFActionGrid : ActionButtonContainer
     }
 
     /// <summary>How many rows are on show. The rest stay assigned, and their keys still work.</summary>
-    public int Rows
+    public int VisibleRows
     {
         get => _rows;
         set

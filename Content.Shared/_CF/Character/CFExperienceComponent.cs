@@ -4,9 +4,9 @@ using Robust.Shared.GameStates;
 namespace Content.Shared.CF.Character;
 
 /// <summary>
-/// Progress toward the next level, plus the feats chosen in the lobby for levels 1 through 5.
-/// Medium advancement: 1000 XP levels you up and the remainder carries over.
-/// A character spawns at level 1. Later feats wait until that level.
+/// Progress toward the next level, and the picks for each level. Medium advancement: 1000 XP earns a level and the rest
+/// carries over. A character spawns at level 1 with what the lobby built. When it has the XP, the player picks the next
+/// level on the character sheet and accepts it (<see cref="CFLevelUp"/>).
 /// </summary>
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class CFExperienceComponent : Component
@@ -16,6 +16,23 @@ public sealed partial class CFExperienceComponent : Component
 
     [DataField, AutoNetworkedField]
     public int Xp;
+
+    /// <summary>
+    /// The character's build, checked at spawn, with each level's picks added as it is taken. The character sheet's
+    /// Level Up tab edits a copy of it.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public CFCharacterBuildData? Build;
+
+    /// <summary>The ancestry the build was made for.</summary>
+    [DataField, AutoNetworkedField]
+    public string? AncestryId;
+
+    /// <summary>True when the character has the XP for another level and has not taken it yet.</summary>
+    public bool CanLevelUp(int level)
+    {
+        return level < MaxLevel && Xp >= XpPerLevel;
+    }
 
     [DataField, AutoNetworkedField]
     public string? AncestryFeat;

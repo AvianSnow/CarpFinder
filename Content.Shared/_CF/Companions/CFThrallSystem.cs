@@ -9,12 +9,12 @@ using Robust.Shared.Network;
 
 namespace Content.Shared.CF.Companions;
 
-/// <summary>A Necromancer's thrall. It does nothing unless commanded, and falls apart after a minute.</summary>
+/// <summary>A Necromancer's thrall. It fights for its Necromancer on a GOAP brain, and falls apart after a minute.</summary>
 [RegisterComponent]
 public sealed partial class CFThrallComponent : Component
 {
     [DataField]
-    public EntityUid Owner;
+    public EntityUid Necromancer;
 
     [DataField]
     public TimeSpan Expires;
@@ -216,13 +216,13 @@ public sealed partial class CFThrallSystem : EntitySystem
     private void OnShutdown(Entity<CFThrallComponent> ent, ref ComponentShutdown args)
     {
         if (!_net.IsServer
-            || TerminatingOrDeleted(ent.Comp.Owner)
-            || CompOrNull<CFNecromancerComponent>(ent.Comp.Owner) is not { BloodReturns: true })
+            || TerminatingOrDeleted(ent.Comp.Necromancer)
+            || CompOrNull<CFNecromancerComponent>(ent.Comp.Necromancer) is not { BloodReturns: true })
         {
             return;
         }
 
-        var level = CompOrNull<CFCombatantComponent>(ent.Comp.Owner)?.Level ?? 1;
-        _effects.Heal(ent.Comp.Owner, ent.Comp.Owner, 1 + (level - 1) / 4);
+        var level = CompOrNull<CFCombatantComponent>(ent.Comp.Necromancer)?.Level ?? 1;
+        _effects.Heal(ent.Comp.Necromancer, ent.Comp.Necromancer, 1 + (level - 1) / 4);
     }
 }

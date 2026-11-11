@@ -3,8 +3,9 @@ using Robust.Shared.GameStates;
 namespace Content.Shared.CF.Companions;
 
 /// <summary>
-/// A summoned ally: eidolon, animal companion, familiar, or other summon.
-/// It keeps its summoner's company and attacks only the creature that summoner points at.
+/// A summoned ally: eidolon, animal companion, familiar, construct, thrall or other summon.
+/// It thinks with a GOAP brain: it keeps its summoner's company, attacks enemies by itself, and goes for the creature
+/// its summoner points at first.
 /// </summary>
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class CFCompanionComponent : Component
@@ -12,7 +13,10 @@ public sealed partial class CFCompanionComponent : Component
     [DataField, AutoNetworkedField]
     public EntityUid Summoner;
 
-    /// <summary>The creature this ally is ordered to attack. Invalid when it is following, fetching, or standing still.</summary>
+    /// <summary>
+    /// The creature its summoner pointed at, which it goes for first while it can see it. Invalid when it chooses for
+    /// itself.
+    /// </summary>
     [DataField, AutoNetworkedField]
     public EntityUid Target;
 
@@ -20,7 +24,7 @@ public sealed partial class CFCompanionComponent : Component
     [DataField, AutoNetworkedField]
     public EntityUid Fetch;
 
-    /// <summary>True after the summoner points at themself. The ally paths back and stays nearby.</summary>
+    /// <summary>True after the summoner points at themself, until it is sent somewhere else. It always keeps close.</summary>
     [DataField, AutoNetworkedField]
     public bool Following;
 
@@ -31,6 +35,10 @@ public sealed partial class CFCompanionComponent : Component
     /// <summary>The barding the ally was given, which counts toward its AC.</summary>
     [DataField]
     public string Barding = string.Empty;
+
+    /// <summary>Server-only. Its brain is switched off while it fetches, because the fetch walks it.</summary>
+    [DataField]
+    public bool BrainPaused;
 
     /// <summary>Server-only. Frames spent in reach of a fetch item that would not be picked up.</summary>
     public int FetchWaits;

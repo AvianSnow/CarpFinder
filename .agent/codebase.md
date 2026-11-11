@@ -34,11 +34,12 @@ Everything below is under `Content.Shared/_CF/`.
 | `Companions/` | Pet data and math. The AI is server-side. | `CFPetMath` |
 | `DamageTypes/` | `cfDamageType` and its link to SS14 damage | `CFDamageTypes` |
 | `Effects/` | Target, roll a check, apply effects. Bonuses and resistances. | `CFEffectSystem`, `CFBonusSystem` |
-| `Factions/` | Party, Opposition, Neutral | `CFFactionSystem` |
+| `Factions/` | Party, Opposition, Neutral. Player characters fight each other only when both have PvP on (`CFPvpComponent`, the `pvp` command) | `CFFactionSystem` |
 | `Hazards/` | Traps: noticing, triggering, disabling, and creatures that build them | `CFHazardSystem`, `CFTrapLayerSystem` |
-| `Items/` | Item level, rarity, Bulk, encumbrance, what the HUD's Items tab can draw | `CFEncumbranceSystem`, `CFQuickItemSystem` |
+| `Items/` | Item level, rarity, Bulk, encumbrance, drawing a carried consumable to a free hand (no longer on the HUD) | `CFEncumbranceSystem`, `CFQuickItemSystem` |
 | `Detection/` | Remaster Hide, Sneak, Seek and Create a Diversion. Each creature's view of a sneaker. The drawing is client-side. | `CFStealthSystem`, `CFStealthComponent` |
 | `GOAP/` | The AI every CF monster thinks with: facts, steps, and goals, actions and personalities as prototypes. The logic is server-side in `Content.Server/_CF/GOAP/`. See `goap.md`. | `CFGOAPSystem`, `CFGOAPPlanner` |
+| `Harvest/` | Harvesting a dead monster for priced parts with a survival knife and a Survival check (Battlezoo Bestiary's values) | `CFHarvestSystem`, `CFHarvestRules` |
 | `Medicine/` | Healer's toolkit, Treat Wounds, Battle Medicine | `CFMedicineSystem` |
 | `Locks/` | Keys, Pick a Lock, Force Open, on top of the stock `Lock` | `CFLockSystem` |
 | `Outdoors/` | The outdoor map component, temperature rules, weather effects. The logic is server-side. | `CFEnvironmentRules`, `CFOutdoorsWorldSystem` |
@@ -50,14 +51,14 @@ Everything below is under `Content.Shared/_CF/`.
 | `ZLevels/` | Stairs, ladders, holes, falling rules. The stacking logic is server-side. | `CFFallRules`, `CFZLevelSystem` |
 | `Crafting/` | Recipes, formulas, Craft DCs. The workbench logic is server-side. | `CFCraftingRules`, `CFWorkbenchSystem` |
 | `Preferences/` | The build stored on `HumanoidCharacterProfile` | `CFCharacterBuildData` |
-| `Shop/` | Coins, prices, the merchant counter UI. Selling and coin logic are server-side. | `CFCoins`, `CFMerchantSystem`, `CFCoinSystem` |
+| `Shop/` | Coins, prices, the wallet, the merchant's counter and the guild pallets. Selling and coin logic are server-side. | `CFCoins`, `CFWalletSystem`, `CFMerchantSystem`, `CFCoinSystem` |
 | `Spells/` | Paying for a cast, prepared charges, spellshapes, Prestidigitation | `CFSpellSystem`, `CFPreparedSpells`, `CFSpellshapeSystem` |
 | `Traits/` | `cfTrait` prototypes and `CFTrait` | `CFTraitPrototype` |
 | `Roof/` | Roofs that hide while you stand under them. The hiding is client-side. | `CFRoofComponent` |
 | `Wallmount/` | Wall-only placement | `CFWallmount`, `CFWallRequired` |
 | `Temperature/`, `TileEditTool/`, `Wallpaper/`, `Time/`, `StatusIcon/` | Ported CP14 systems, the world clock, status icons | |
 
-Server: `Character/` (`CFCharacterSpawnSystem`, `CFExperienceSystem`, `CFGiveXpCommand`, `CFLongRestSystem`), `Companions/CFCompanionSystem`, `GOAP/` (see `goap.md`), `Shop/CFShopSystem`, `Spells/CFPrestidigitationSystem`, `Temperature/` (`CFStockHeatSystem` turns stock burning into CF fire damage), `Materials/`.
+Server: `Upkeep/` (`CFDungeonCleanupSystem`, the hourly cleanup; `CFPlayerBodySystem`, job slots coming back, SSD bodies, dropping a body's bag and weapons), `Character/` (`CFCharacterSpawnSystem`, `CFExperienceSystem`, `CFGiveXpCommand`, `CFLongRestSystem`), `Companions/CFCompanionSystem`, `GOAP/` (see `goap.md`), `Shop/CFShopSystem`, `Spells/CFPrestidigitationSystem`, `Temperature/` (`CFStockHeatSystem` turns stock burning into CF fire damage), `Materials/`.
 
 Client: `Hud/` (the in-game bar and radial menu), `Character/` (sheet, spells tab, shop), `Combat/` (floating numbers, flanking icon), `Effects/` (area and target overlays, mode and volley menus), `Lobby/UI/` (character builder, see `lobby-overlay.md`), `UserInterface/Systems/Character/` (the character window overlay).
 
@@ -66,7 +67,7 @@ Client: `Hud/` (the in-game bar and radial menu), `Character/` (sheet, spells ta
 1. The lobby builder (`Content.Client/_CF/Lobby/UI/`) writes to `HumanoidCharacterProfile.CFBuild`.
 2. `CFCharacterSpawnSystem.OnPlayerSpawnComplete` runs `ApplyBuild`: abilities, `CFCombatant` (level, AC, HP, proficiencies), speed, spellbook.
 3. `ApplyFeatures` gives what everyone has, then runs the `grants` of the ancestry, heritage, background, level 1 class features and feats through `CFCharacterFeatureSystem`. `CFCombatOptionsComponent` holds the class and feat flags that Strikes read (`SneakAttack`, `ReactiveStrike`, `ReactiveShield`, ...).
-4. Later feats wait on `CFExperienceComponent` and apply on level up through `ApplyFeat`. `LevelUp` also runs the class features that level reaches.
+4. XP builds up on `CFExperienceComponent`, which also keeps the build. With 1000 XP the player picks the next level on the character sheet's Level Up tab and accepts it (`CFLevelUpRequestEvent`). `CFExperienceSystem.TryLevelUp` checks the picks and runs `LevelUp`, which applies the feats through `ApplyFeat` and runs the class features that level reaches.
 
 Details: `character-builder.md`.
 
@@ -137,8 +138,8 @@ Anything that targets, rolls, and applies effects is data on the source entity: 
 | Alt+Z with a melee weapon, with panache | Confident Finisher at the enemy being aimed at (1 action) | `CFManeuverSystem.TryFinisher` |
 | Play a held instrument, as a Bard | Courageous Anthem, 1 action every 12 seconds | `CFAnthemSystem` |
 | Radial wheel, HUD deck or hotbar | Activities, stances, spellshapes, Strike actions and spells | `CFActivitySystem`, `CFStanceSystem`, `CFSpellshapeSystem`, `CFStrikeActionSystem`, `CFSpellSystem` |
+| 1 to 0, and Shift with them, while the deck shows Basic, Class or Spells | Use that tab's first or second row | `CFHudDeck.TryKeyed` |
 | HUD deck, Common tab | Shove or Disarm, Grapple, Tumble Through, Demoralize, Feint, Aid, Recall Knowledge, Hide, Seek, Leap | `CFBasicActionComponent`, `CFManeuverSystem.TryUse` |
-| HUD deck, Items tab | Take a carried consumable or thrown weapon into a free hand | `CFQuickItemSystem` |
 | Sheet, Spell Preparation | Plan what a prepared caster prepares at the next long rest | `CFSpellPreparationSystem` |
 | Reactions | Not on the wheel. They fire by themselves, and only when that would change the outcome. With several that could, the first in the character's order wins. The character window's Reactions tab reorders them | `CFReactionSystem`, `CFReactionOrderComponent`, `CFReactionsTab` |
 
@@ -216,9 +217,11 @@ All edits carry `// CarpFinder` markers, so `grep -rn CarpFinder Content.Client 
 |---|---|---|
 | Spell targeting | `Content.Client/Actions/ActionsSystem.cs`, `Outline/TargetOutlineSystem.cs` | Click the outlined creature; do not outline through walls or past 90 feet |
 | Spell requests | `Content.Shared/Actions/ActionEvents.cs`, `SharedActionsSystem.cs` | Bolt count and mode on the perform request |
-| Radial wheel and hotbar | `SimpleRadialMenu.xaml.cs`, `ActionUIController.cs`, `ActionButtonContainer.cs`, `EmotesUIController.cs`, `HandsUIController.cs` | The CF wheel and action HUD: the deck's buttons and lock, greying a spent spell, the item status panels |
+| Radial wheel and hotbar | `SimpleRadialMenu.xaml.cs`, `ActionUIController.cs` (also the number keys on deck tabs), `ActionButtonContainer.cs`, `EmotesUIController.cs`, `HandsUIController.cs` | The CF wheel and action HUD: the deck's buttons and lock, greying a spent spell, the item status panels |
 | Game screens | `DefaultGameScreen.xaml(.cs)`, `SeparatedChatGameScreen.xaml(.cs)` | Puts `CFGameHud` bottom centre and lifts the bag windows above it |
 | Joining a round | `Content.Server/GameTicking/ServerGameTicker.Lobby.cs`, `ServerGameTicker.Spawning.cs` | An unfinished character cannot ready up or spawn |
+| Respawn | `Content.Server/GameTicking/Commands/RespawnCommand.cs`, `Resources/engineCommandPerms.yml` | Anyone can `respawn` themselves back to the lobby for a new character. Only a moderator can name someone else. The old body drops everything it carried and is deleted, which gives its job slot back. Bodies are also found by player (`CFPlayerBodyComponent.User`) |
+| Ghost respawn | `Content.Client/UserInterface/Systems/Ghost/Widgets/GhostGui.xaml(.cs)` | A Respawn button left of Return to body. It asks once more, then runs `respawn` |
 | Melee | `Content.Client/Weapons/Melee/MeleeWeaponSystem.cs`, `MeleeWeaponSystem.Effects.cs` | Right-click maneuvers for shields and trait weapons, left-click aim assist, a swing animation half as long |
 | Crafting menu | `Content.Client/Construction/ConstructionSystem.cs`, `Content.Server/Construction/ConstructionSystem.Initial.cs` | The stock menu needs training in Crafting |
 | Characters | `HumanoidCharacterProfile.cs`, `HumanoidVisualLayers.cs` | The PF2e build; pelvis layer for split bodies |
@@ -260,4 +263,5 @@ Radial actions are entities in `Resources/Prototypes/_CF/Actions/activities.yml`
 | `/Maps/Nonstations/meteor-arena.yml` | The arena all integration tests load, through `CFDevMap` |
 | `CFMobKoboldTrapper` | A GOAP leader that shoots, lays traps and draws a hammer when cornered. Set a spawner's `encounter` to `KoboldAmbush` for it and three warriors |
 | Any monster | Ghosts can take every monster above from the ghost role menu, through `CFMonsterGhostRole` |
-| `CFEncounterSpawner` | Spawns an `encounter` when a player comes within `triggerFeet`. Edit it in VV as an aghost |
+| `CFEncounterSpawner` | Spawns an `encounter` when a player comes within `triggerFeet`. Edit it in VV as an aghost. Left alone it is `SmallGroup`, four kobold warriors |
+| `CFEncounterSpawnerDragonLair` | The same, set to `DragonLair`: the juvenile horned dragon, which guards the spot it appears on. Dragon Run has one beside `CFBoneDragon` |

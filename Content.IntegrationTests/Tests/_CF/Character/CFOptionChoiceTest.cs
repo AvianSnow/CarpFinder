@@ -1,3 +1,4 @@
+using Robust.Shared.Prototypes;
 using System.Collections.Generic;
 using System.Linq;
 using Content.IntegrationTests.Fixtures;
@@ -50,7 +51,7 @@ public sealed class CFOptionChoiceTest : GameTest
 
     private List<string> ArcaneCantrips()
     {
-        return CFOptionChoices.Allowed(Server.ProtoMan, Server.ProtoMan.Index<CFFeatPrototype>("CFOtherworldlyMagic").Choices[0]);
+        return CFOptionChoices.Allowed(Server.ProtoMan, Server.ProtoMan.Index(new ProtoId<CFFeatPrototype>("CFOtherworldlyMagic")).Choices[0]);
     }
 
     [Test]
@@ -139,7 +140,7 @@ public sealed class CFOptionChoiceTest : GameTest
             build.OptionPicks.Add(Pick("CFNaturalSkill", 1, "Medicine"));
             var hero = Built("Human", build);
             before = Trained(hero).Contains("Athletics");
-            SEntMan.System<CFExperienceSystem>().AddXp(hero, 4 * CFExperienceComponent.XpPerLevel);
+            SEntMan.System<CFExperienceSystem>().AddXpAndLevelUp(hero, 4 * CFExperienceComponent.XpPerLevel);
             after = Trained(hero).Contains("Athletics");
         });
 

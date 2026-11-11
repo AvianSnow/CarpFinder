@@ -20,16 +20,26 @@
         - MindRoleGhostRoleTeamAntagonist
     - type: GhostTakeoverAvailable
 
-# Every CF monster thinks with a GOAP brain. Stock mobs keep stock HTN.
+# What every CF monster is, whatever body it has. Every monster has this as a parent, directly or through
+# CFBaseCreature. A monster on a stock body lists the body first and this second: [ MobBaseKobold, CFBaseMonster ].
+# With two parents the first parent's copy of a component wins, so such a monster still sets its own HTN,
+# NpcFactionMember and GhostRole fields where the stock body has them. See .agent/importcreatures.md.
+#
+# - It thinks with a GOAP brain (CFGOAPBrain) and a ghost can take it (CFMonsterGhostRole).
+# - It is in the Monster faction, which every adventure company opposes.
+# - It fights on its printed stat block: CFCombatant with printed numbers, CFAbilityScore and CFCombatOptions.
+#   CF Strikes, saves and conditions read only these. It dies at 0 Hit Points, which is what makes it worth XP.
+# - Dead, it can be harvested for monster parts by someone trained in Survival (CFHarvestable). Set parts on it to
+#   say what the body gives; with none it gives generic monster parts. Their worth comes from the level.
 - type: entity
   abstract: true
-  parent: [SimpleMobBase, MobCombat, CFMonsterGhostRole, CFGOAPBrain]
-  id: CFBaseCreature
-  suffix: Monster
-  categories: [ForkFiltered]
+  parent: [ CFMonsterGhostRole, CFGOAPBrain ]
+  id: CFBaseMonster
+  categories: [ HideSpawnMenu ]
   components:
     - type: InputMover
     - type: MobMover
+    - type: CombatMode
     - type: HTN
       rootTask:
         task: CFGOAPCompound
@@ -38,6 +48,29 @@
         - SimpleHostile
     - type: CFFaction
       faction: Monster
+    - type: CFCombatant
+      diesAtZeroHp: true
+    - type: CFAbilityScore
+    - type: CFCombatOptions
+    - type: CFHarvestable
+
+# A monster with an animal's body: one natural attack, no hands, and Bestial noises for speech.
+- type: entity
+  abstract: true
+  parent: [ SimpleMobBase, MobCombat, CFBaseMonster ]
+  id: CFBaseCreature
+  suffix: Monster
+  categories: [ ForkFiltered ]
+  components:
+    # SimpleMobBase comes first, so the brain's parts it also has are set again here.
+    - type: InputMover
+    - type: MobMover
+    - type: HTN
+      rootTask:
+        task: CFGOAPCompound
+    - type: NpcFactionMember
+      factions:
+        - SimpleHostile
     # Animals make noises. A player in one cannot talk, and does not understand speech.
     - type: CFLanguages
       known: [ Bestial ]

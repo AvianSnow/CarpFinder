@@ -82,3 +82,17 @@
       shader: unshaded
     - state: particles_up
       shader: unshaded
+
+# What a summoned creature leaves as it vanishes, on death or when its time is up (CFSummonedSystem).
+- type: entity
+  parent: WizardSmoke
+  id: CFSummonPuff
+  name: puff of smoke
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Smoke
+    spreadAmount: 0
+  - type: TimedDespawn
+    lifetime: 1.5
+  - type: EmitSoundOnSpawn
+    sound: /Audio/Effects/smoke.ogg

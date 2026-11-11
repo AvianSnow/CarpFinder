@@ -276,6 +276,31 @@ public sealed class CFHudDeckTest : GameTest
         });
     }
 
+    [Test]
+    public async Task TheNumberKeysFollowTheChosenTab()
+    {
+        await Client.WaitAssertion(() =>
+        {
+            var deck = new Content.Client.CF.Hud.CFHudDeck();
+            Assert.Multiple(() =>
+            {
+                Assert.That(deck.TryKeyed(0, out _), Is.False, "All keeps the keys on the numbered hotbar.");
+
+                deck.SelectTab(Content.Client.CF.Hud.CFDeckTab.Spells);
+                Assert.That(deck.TryKeyed(0, out var first), "1 is the Spells tab's first slot.");
+                Assert.That(first, Is.Null, "An empty slot does nothing, and does not fall through to the hotbar.");
+                Assert.That(deck.TryKeyed(19, out _), "Shift+0 is the second row's last slot.");
+                Assert.That(deck.TryKeyed(20, out _), Is.False, "Only two rows have keys.");
+
+                deck.SelectTab(Content.Client.CF.Hud.CFDeckTab.ClassFeatures);
+                Assert.That(deck.TryKeyed(3, out _));
+
+                deck.SelectTab(Content.Client.CF.Hud.CFDeckTab.Custom);
+                Assert.That(deck.TryKeyed(0, out _), Is.False);
+            });
+        });
+    }
+
     /// <summary>The Items tab reads the client's copy of a closed bag, so the contents must have been sent.</summary>
     [Test]
     public async Task TheClientSeesWhatIsInsideAClosedBag()

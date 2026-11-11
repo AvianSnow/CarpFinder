@@ -1,3 +1,4 @@
+using Content.Client.UserInterface.Systems.Inventory;
 using Content.Client.CF.Hud;
 using Content.Client.UserInterface.Systems.Hotbar.Widgets;
 using Content.Shared.Bed.Sleep;
@@ -8,8 +9,10 @@ using Content.Shared.CF.Combat;
 using Content.Shared.CF.Detection;
 using Content.Shared.CF.Effects;
 using Content.Shared.CF.Items;
+using Content.Shared.Ghost.Components;
 using JetBrains.Annotations;
 using Robust.Client.Player;
+using Robust.Client.UserInterface;
 using Robust.Client.UserInterface.Controllers;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
@@ -29,6 +32,7 @@ public sealed partial class CFHudUiController : UIController
     [Dependency] private IPrototypeManager _prototypes = default!;
 
     private float _statusTimer;
+    private CFGameHud? _slotsClaimedBy;
     private int _acModifier;
 
     public override void FrameUpdate(FrameEventArgs args)
@@ -38,11 +42,33 @@ public sealed partial class CFHudUiController : UIController
         if (UIManager.GetActiveUIWidgetOrNull<CFGameHud>() is not { } hud)
             return;
 
-        // The stock hotbar strip (hands, status panels, old slot row) stays hidden.
+        // A new screen brings a new HUD: give it the inventory slots, then fill them.
+        if (hud != _slotsClaimedBy)
+        {
+            _slotsClaimedBy = hud;
+            hud.ClaimSlotGroups();
+            UIManager.GetUIController<InventoryUIController>().ReloadSlots();
+        }
+
+        // A ghost gets the stock HUD, because this one covers the ghost buttons (return to body, warp, ghost roles).
+        var ghost = _player.LocalEntity is { } local && EntityManager.HasComponent<GhostComponent>(local);
+        hud.Visible = !ghost;
+
+        // In a body, the stock hotbar strip (hands, status panels, old slot row) stays hidden.
         // Storage windows still parent to that widget, above this HUD.
         if (UIManager.GetActiveUIWidgetOrNull<HotbarGui>() is { } hotbar
             && hotbar.HandContainer.Parent is { } row)
-            row.Visible = false;
+            row.Visible = ghost;
+
+        if (ghost)
+        {
+            // Ghost actions stay usable on the numbered hotbar, put where stock keeps its action row.
+            if (VoteMenu() is { Parent: { } parent } vote)
+                hud.Deck.LendHotbar(parent, vote.GetPositionInParent() + 1);
+            return;
+        }
+
+        hud.Deck.LendHotbar(null);
 
         if (_player.LocalEntity is not { } player
             || !EntityManager.TryGetComponent<CFCombatantComponent>(player, out var combatant))
@@ -70,6 +96,22 @@ public sealed partial class CFHudUiController : UIController
         hud.ActionPips.Set(actions);
         EntityManager.TryGetComponent<CFSpellbookComponent>(player, out var book);
         hud.Deck.SetBook(book);
+    }
+
+    /// <summary>The screen's vote box. Stock's action row sat just below it.</summary>
+    private Control? VoteMenu()
+    {
+        if (UIManager.ActiveScreen is not { } screen)
+            return null;
+
+        try
+        {
+            return screen.FindControl<Control>("VoteMenu");
+        }
+        catch (ArgumentException)
+        {
+            return null;
+        }
     }
 
     private static void UpdateBars(CFGameHud hud, CFCombatantComponent combatant)

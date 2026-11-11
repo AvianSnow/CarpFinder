@@ -29,3 +29,5 @@
   categories: [ HideSpawnMenu ]
   components:
   - type: Transform
+  # Every hour the dungeon wizard clears loose items, puddles and abandoned bodies, after warnings.
+  - type: CFDungeonCleanup

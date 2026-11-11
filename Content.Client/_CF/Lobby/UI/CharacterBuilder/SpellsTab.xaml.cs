@@ -44,6 +44,7 @@ public sealed partial class SpellsTab : BoxContainer
             prototypes.TryIndex(build.Class.Value, out cls);
 
         FillSummary(profile, prototypes, build, cls);
+        FillGranted(profile, prototypes, build);
         SpellRanks.RemoveAllChildren();
 
         foreach (var rank in CFSpellSlots.ForClass(cls))
@@ -87,6 +88,23 @@ public sealed partial class SpellsTab : BoxContainer
         ProfLabel.Text = Loc.GetString("cf-spell-prof", ("prof", CFAbilityScores.FormatModifier(prof)));
         ItemLabel.Text = Loc.GetString("cf-spell-item", ("item", CFAbilityScores.FormatModifier(item)));
         FillFocus(casting.FocusPoints);
+    }
+
+    /// <summary>Spells the ancestry, heritage, class and feats already give, so they are not picked again.</summary>
+    private void FillGranted(HumanoidCharacterProfile? profile, IPrototypeManager prototypes, CFCharacterBuildData build)
+    {
+        GrantedSpells.RemoveAllChildren();
+        var ancestryId = profile == null ? null : CFAttributeMath.FindAncestry(prototypes, profile.Species)?.ID;
+        var granted = CFLevelUp.GrantedSpells(prototypes, build, ancestryId, build.Level);
+        GrantedPanel.Visible = granted.Count > 0;
+        foreach (var spell in granted)
+        {
+            var name = prototypes.TryIndex<CFSpellPrototype>(spell.Spell, out var proto) ? proto.Name : spell.Spell;
+            GrantedSpells.AddChild(new Label
+            {
+                Text = Loc.GetString("cf-spell-granted-line", ("spell", name), ("source", Loc.GetString(spell.Source))),
+            });
+        }
     }
 
     private void FillFocus(int points)

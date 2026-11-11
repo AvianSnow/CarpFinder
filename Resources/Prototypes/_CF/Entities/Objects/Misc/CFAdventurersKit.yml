@@ -4,7 +4,7 @@
   parent: ClothingBackpack
   id: CFAdventurersKit
   name: adventurer's kit
-  description: A backpack packed for the road, with rope, a torch, flint and steel, a ration and water.
+  description: A backpack packed for the road, with rope, a torch, flint and steel, a ration, water and a survival knife.
   components:
   - type: Sprite
     sprite: _CP14/Clothing/Back/Backpacks/backpack_t1.rsi
@@ -19,6 +19,7 @@
         - id: CFLighter
         - id: CFRation
         - id: CFCanteenWater
+        - id: CFSurvivalKnife
   - type: CFItem
     level: 0
   - type: CFBulk

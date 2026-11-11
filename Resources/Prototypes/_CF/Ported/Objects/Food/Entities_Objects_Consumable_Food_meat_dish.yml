@@ -9,6 +9,8 @@
   description: Pumpkin stuffed with meat and vegetables is very popular among the people of the Kingdom of Klanir.
   categories: [ ForkFiltered ]
   components:
+  - type: CFItemPrice
+    copper: 250
   - type: FlavorProfile
     flavors:
       - meaty

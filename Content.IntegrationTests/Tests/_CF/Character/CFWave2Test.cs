@@ -136,7 +136,7 @@ public sealed class CFWave2Test : GameTest
     private void LevelTo(EntityUid hero, int level)
     {
         var combat = SEntMan.GetComponent<CFCombatantComponent>(hero);
-        SEntMan.System<CFExperienceSystem>().AddXp(hero, (level - combat.Level) * CFExperienceComponent.XpPerLevel);
+        SEntMan.System<CFExperienceSystem>().AddXpAndLevelUp(hero, (level - combat.Level) * CFExperienceComponent.XpPerLevel);
     }
 
     /// <summary>A shot with one fixed damage die, so anything above the base is extra damage.</summary>

@@ -119,7 +119,7 @@ public sealed class CFFeatureCoverageTest : GameTest
                     continue;
 
                 using var reader = resources.ContentFileReadText(path);
-                string? kind = null;
+                string kind = null;
                 while (reader.ReadLine() is { } line)
                 {
                     if (line.StartsWith("- type: ", StringComparison.Ordinal))
@@ -201,8 +201,8 @@ public sealed class CFFeatureCoverageTest : GameTest
         var signpost = false;
         await Server.WaitPost(() =>
         {
-            var fighter = Server.ProtoMan.Index<CFClassPrototype>("Fighter");
-            var witch = Server.ProtoMan.Index<CFClassPrototype>("Witch");
+            var fighter = Server.ProtoMan.Index(new ProtoId<CFClassPrototype>("Fighter"));
+            var witch = Server.ProtoMan.Index(new ProtoId<CFClassPrototype>("Witch"));
             granted = fighter.Features.First(f => f.Name == "Fighter Weapon Mastery").Unfinished;
             signpost = witch.Features.First(f => f.Name == "Patron").Unfinished;
             unfinished = Server.ProtoMan.EnumeratePrototypes<CFClassPrototype>()

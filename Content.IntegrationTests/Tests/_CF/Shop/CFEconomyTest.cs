@@ -1,24 +1,32 @@
+using Robust.Shared.Prototypes;
 using System.Collections.Generic;
+using System.Linq;
 using Content.Client.CF.Character;
 using Content.Client.CF.Shop;
 using Content.IntegrationTests.Fixtures;
 using Content.IntegrationTests.Tests.CF;
 using Content.Server.CF.Shop;
 using Content.Client.UserInterface.Systems.Character.Windows;
-using Content.Shared.CF.Combat;
 using Content.Shared.CF.Shop;
+using Content.Shared.Hands.EntitySystems;
+using Content.Shared.Interaction;
 using Content.Shared.Placeable;
 using Content.Shared.Roles;
-using Content.Shared.Stacks;
+using Content.Shared.UserInterface;
+using Robust.Shared.Containers;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Maths;
 using Robust.Shared.Physics.Systems;
 
 namespace Content.IntegrationTests.Tests.CF.Shop;
 
-/// <summary>Coins, the purse, and selling at a merchant's counter, with goods really placed on it.</summary>
+/// <summary>
+/// Coins in a wallet, a merchant buying what adventurers place on their counter, and selling to the Merchants'
+/// Guild on its pallets, with goods really placed on them.
+/// </summary>
 [TestFixture]
 [TestOf(typeof(CFMerchantSystem))]
+[TestOf(typeof(CFCoinSystem))]
 public sealed class CFEconomyTest : GameTest
 {
     private static readonly Box2i Footprint = new(-1, -1, 4, 2);
@@ -34,9 +42,6 @@ public sealed class CFEconomyTest : GameTest
   - type: CFCombatant
     level: 1
   - type: CFAbilityScore
-  - type: CFPurse
-    seeded: true
-    copper: 1000
 
 - type: entity
   parent: BaseItem
@@ -48,9 +53,29 @@ public sealed class CFEconomyTest : GameTest
     private CFCoinSystem Coins => SEntMan.System<CFCoinSystem>();
     private CFMerchantSystem Merchant => SEntMan.System<CFMerchantSystem>();
 
-    private EntityUid Human() => SEntMan.SpawnEntity("CFEconomyTestHuman", _map.Local(2, 0));
+    /// <summary>A human holding a wallet with 10 gp in it.</summary>
+    private EntityUid Human()
+    {
+        var mob = SEntMan.SpawnEntity("CFEconomyTestHuman", _map.Local(2, 0));
+        var wallet = SEntMan.SpawnEntity("CFWallet", _map.Local(2, 0));
+        Assert.That(SEntMan.System<SharedHandsSystem>().TryPickupAnyHand(mob, wallet));
+        Coins.PayInto(wallet, mob, 1000);
+        return mob;
+    }
 
-    private int Purse(EntityUid mob) => SEntMan.GetComponent<CFPurseComponent>(mob).Copper;
+    private EntityUid MerchantHuman()
+    {
+        var merchant = Human();
+        foreach (var special in Server.ProtoMan.Index(new ProtoId<JobPrototype>("CFMerchant")).Special)
+        {
+            special.AfterEquip(merchant);
+        }
+
+        Assert.That(SEntMan.HasComponent<CFShopAccessComponent>(merchant), "The merchant job grants the shop.");
+        return merchant;
+    }
+
+    private int Wallet(EntityUid mob) => Coins.Total(mob);
 
     private async Task<Entity<CFMerchantCounterComponent>> Counter(params string[] goods)
     {
@@ -75,98 +100,221 @@ public sealed class CFEconomyTest : GameTest
     }
 
     [Test]
-    public void SaleValuesFollowTheRules()
+    public void WorthAndSharesFollowTheRules()
     {
         Assert.Multiple(() =>
         {
-            Assert.That(CFCoins.SaleValue(300, false, 1, 1), Is.EqualTo(150), "Most items sell for half.");
-            Assert.That(CFCoins.SaleValue(25000, true, 1, 1), Is.EqualTo(25000), "Gems sell in full.");
-            Assert.That(CFCoins.SaleValue(100, false, 5, 10), Is.EqualTo(25), "Half a stack is half the Price.");
-            Assert.That(CFCoins.SaleValue(5, false, 1, 1), Is.EqualTo(2), "Fractions of a copper round down.");
+            Assert.That(CFCoins.Worth(300, 1, 1), Is.EqualTo(300));
+            Assert.That(CFCoins.Worth(100, 5, 10), Is.EqualTo(50), "Half a stack is half the Price.");
+            Assert.That(CFCoins.Share(300, 50), Is.EqualTo(150));
+            Assert.That(CFCoins.Share(5, 50), Is.EqualTo(2), "Fractions of a copper round down.");
+            Assert.That(CFCoins.Breakdown(1234).Select(c => c.Count), Is.EqualTo(new[] { 1, 2, 3, 4 }),
+                "1 pp, 2 gp, 3 sp and 4 cp.");
         });
     }
 
     [Test]
-    public async Task PocketingAddsTheWholeStack()
+    public async Task TheWalletHoldsTheMoneyAndGivesChange()
     {
         _map = await CFDevMap.Load(Pair, Footprint);
         await Server.WaitAssertion(() =>
         {
             var mob = Human();
-            var uid = SEntMan.SpawnEntity("CFGoldCoin", _map.Local(2, 0));
+            Assert.That(Wallet(mob), Is.EqualTo(1000));
 
-            var value = Coins.Pocket((uid, SEntMan.GetComponent<CFCoinComponent>(uid)), mob);
+            Assert.That(Coins.TrySpend(mob, 250));
+            Assert.That(Wallet(mob), Is.EqualTo(750), "A gold coin is broken and the change put back.");
 
-            Assert.That(value, Is.EqualTo(1000));
-            Assert.That(Purse(mob), Is.EqualTo(2000));
-            Assert.That(SEntMan.Deleted(uid));
+            Assert.That(Coins.TrySpend(mob, 1000), Is.False);
+            Assert.That(Wallet(mob), Is.EqualTo(750), "Nothing is taken when it cannot pay.");
+
+            Coins.Pay(mob, 30);
+            Assert.That(Wallet(mob), Is.EqualTo(780));
         });
     }
 
     [Test]
-    public async Task TakingCoinsOutMovesExactValueAndCannotOverdraw()
+    public async Task UsingCoinsPutsThemInTheWallet()
     {
         _map = await CFDevMap.Load(Pair, Footprint);
         await Server.WaitAssertion(() =>
         {
             var mob = Human();
+            var gold = SEntMan.SpawnEntity("CFGoldCoin", _map.Local(2, 0));
+            var interaction = SEntMan.System<SharedInteractionSystem>();
 
-            var coins = Coins.TakeOut(mob, "CFGoldCoin", CFCoins.CopperPerGold, 3);
-            Assert.That(coins, Is.Not.Null);
-            Assert.That(SEntMan.GetComponent<StackComponent>(coins!.Value).Count, Is.EqualTo(3));
-            Assert.That(Purse(mob), Is.EqualTo(700));
-
-            Assert.That(Coins.TakeOut(mob, "CFPlatinumCoin", CFCoins.CopperPerPlatinum, 1), Is.Null);
-            Assert.That(Purse(mob), Is.EqualTo(700));
-
-            Coins.Pocket((coins.Value, SEntMan.GetComponent<CFCoinComponent>(coins.Value)), mob);
-            Assert.That(Purse(mob), Is.EqualTo(1000), "Coins out and back in lose nothing.");
+            Assert.That(interaction.UseInHandInteraction(mob, gold));
+            Assert.That(Wallet(mob), Is.EqualTo(2000), "Ten gold coins went in.");
         });
     }
 
+    private List<EntityUid> Placed(EntityUid counter)
+    {
+        return Merchant.Placed(counter);
+    }
+
+    /// <summary>The coins lying on the counter, in copper.</summary>
+    private int CoinsOn(EntityUid counter)
+    {
+        var total = 0;
+        foreach (var uid in SEntMan.GetComponent<ItemPlacerComponent>(counter).PlacedEntities)
+        {
+            total += SEntMan.System<CFWalletSystem>().CoinValue(uid);
+        }
+
+        return total;
+    }
+
     [Test]
-    public async Task SellingPaysHalfForGoodsAndFullForGems()
+    public async Task TheMerchantBuysAndLaysTheCoinsOnTheCounter()
     {
         _map = await CFDevMap.Load(Pair, Footprint);
-        var counter = await Counter("CFThievesToolkit", "CFGemTopaz");
+        var counter = await Counter("CFThievesToolkit");
         await Server.WaitAssertion(() =>
         {
-            var mob = Human();
+            var adventurer = Human();
+            var merchant = MerchantHuman();
+            var toolkit = Placed(counter).Single();
 
-            Assert.That(Merchant.Sell(counter, mob), Is.EqualTo(150 + 12500));
-            Assert.That(Purse(mob), Is.EqualTo(1000 + 150 + 12500));
-            Assert.That(SEntMan.GetComponent<ItemPlacerComponent>(counter).PlacedEntities, Is.Empty);
+            Assert.That(Merchant.TryBuy(counter, adventurer, toolkit), Is.False, "Only the merchant buys.");
+            Assert.That(Merchant.TryBuy(counter, merchant, toolkit));
+            Assert.Multiple(() =>
+            {
+                Assert.That(Wallet(merchant), Is.EqualTo(1000 - 300), "The market price, 3 gp.");
+                Assert.That(Wallet(adventurer), Is.EqualTo(1000), "Nothing goes to anyone's wallet.");
+                Assert.That(Merchant.Stored(counter), Is.EqualTo(new[] { toolkit }), "It waits in the store.");
+                Assert.That(Placed(counter), Is.Empty, "Coins on the counter are not goods.");
+            });
+        });
+
+        await Pair.RunTicksSync(10);
+        await Server.WaitAssertion(() =>
+            Assert.That(CoinsOn(counter), Is.EqualTo(300), "The coins lie on the counter to be picked up."));
+    }
+
+    [Test]
+    public async Task TheMerchantPaysThePriceTheyType()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        var counter = await Counter("CFThievesToolkit");
+        await Server.WaitAssertion(() =>
+        {
+            var merchant = MerchantHuman();
+            var toolkit = Placed(counter).Single();
+
+            Assert.That(Merchant.TryBuy(counter, merchant, toolkit, 210), "2 gp 1 sp for a 3 gp toolkit.");
+            Assert.That(Wallet(merchant), Is.EqualTo(1000 - 210));
+        });
+
+        await Pair.RunTicksSync(10);
+        await Server.WaitAssertion(() => Assert.That(CoinsOn(counter), Is.EqualTo(210)));
+    }
+
+    [Test]
+    public async Task TheMerchantCannotBuyWhatTheyCannotAfford()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        var counter = await Counter("CFGemTopaz");
+        await Server.WaitAssertion(() =>
+        {
+            var merchant = MerchantHuman();
+            var gem = Placed(counter).Single();
+
+            Assert.That(Merchant.TryBuy(counter, merchant, gem), Is.False, "125 gp from a 10 gp wallet.");
+            Assert.That(Wallet(merchant), Is.EqualTo(1000));
+            Assert.That(Placed(counter), Has.Count.EqualTo(1));
         });
     }
 
     [Test]
-    public async Task WorthlessGoodsStayOnTheCounter()
+    public async Task StoredGoodsAreTakenOrSoldToTheGuildAtFullWorth()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        var counter = await Counter("CFThievesToolkit", "CFCrowbar");
+        await Server.WaitAssertion(() =>
+        {
+            var merchant = MerchantHuman();
+            Coins.Pay(merchant, 1000);
+            foreach (var item in Placed(counter))
+            {
+                Assert.That(Merchant.TryBuy(counter, merchant, item));
+            }
+
+            Assert.That(Wallet(merchant), Is.EqualTo(2000 - 300 - 50));
+            Assert.That(Merchant.Stored(counter), Has.Count.EqualTo(2));
+
+            var adventurer = Human();
+            var crowbar = Merchant.Stored(counter).Single(uid =>
+                SEntMan.GetComponent<MetaDataComponent>(uid).EntityPrototype?.ID == "CFCrowbar");
+            Assert.That(Merchant.TryTake(counter, adventurer, crowbar), Is.False);
+            Assert.That(Merchant.TryTake(counter, merchant, crowbar));
+            Assert.That(Merchant.Stored(counter), Has.Count.EqualTo(1));
+
+            Assert.That(Merchant.SellStored(counter, adventurer, null), Is.Zero);
+            Assert.That(Merchant.SellStored(counter, merchant, null), Is.EqualTo(300), "No guild cut for a member.");
+            Assert.That(Wallet(merchant), Is.EqualTo(2000 - 300 - 50 + 300));
+            Assert.That(Merchant.Stored(counter), Is.Empty);
+        });
+    }
+
+    [Test]
+    public async Task OnlyAMerchantOpensTheCounter()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        var counter = await Counter();
+        await Server.WaitAssertion(() =>
+        {
+            bool Opens(EntityUid user)
+            {
+                var attempt = new ActivatableUIOpenAttemptEvent(user, true);
+                SEntMan.EventBus.RaiseLocalEvent(counter.Owner, attempt);
+                return !attempt.Cancelled;
+            }
+
+            Assert.That(Opens(Human()), Is.False);
+            Assert.That(Opens(MerchantHuman()));
+        });
+    }
+
+    [Test]
+    public async Task TheGuildKeepsHalfExceptFromMerchants()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            var palletUid = SEntMan.SpawnEntity("CFWoodenPalletSell", _map.Local(0, 0));
+            var pallet = new Entity<CFGuildPalletComponent>(palletUid, SEntMan.GetComponent<CFGuildPalletComponent>(palletUid));
+            var gem = SEntMan.SpawnEntity("CFGemTopaz", _map.Local(0, 0));
+
+            var adventurer = Human();
+            Assert.That(Merchant.SellToGuild(pallet, adventurer), Is.EqualTo(6250), "Half, even for a gem.");
+            Assert.That(SEntMan.Deleted(gem));
+            Assert.That(Wallet(adventurer), Is.EqualTo(1000 + 6250));
+
+            SEntMan.SpawnEntity("CFGemTopaz", _map.Local(0, 0));
+            var merchant = MerchantHuman();
+            Assert.That(Merchant.SellToGuild(pallet, merchant), Is.EqualTo(12500), "Members keep it all.");
+        });
+    }
+
+    [Test]
+    public async Task WorthlessGoodsStayPut()
     {
         _map = await CFDevMap.Load(Pair, Footprint);
         var counter = await Counter("CFEconomyTestWorthless");
         await Server.WaitAssertion(() =>
         {
-            var mob = Human();
+            var merchant = MerchantHuman();
+            var junk = Placed(counter).Single();
 
-            Assert.That(Merchant.Sell(counter, mob), Is.Zero);
-            Assert.That(Purse(mob), Is.EqualTo(1000));
-            Assert.That(SEntMan.GetComponent<ItemPlacerComponent>(counter).PlacedEntities, Has.Count.EqualTo(1));
+            Assert.That(Merchant.TryBuy(counter, merchant, junk), Is.False);
+            Assert.That(Wallet(merchant), Is.EqualTo(1000));
+            Assert.That(Placed(counter), Has.Count.EqualTo(1));
         });
     }
 
     [Test]
-    public async Task BuyingAndResellingLosesMoney()
-    {
-        _map = await CFDevMap.Load(Pair, Footprint);
-        await Server.WaitAssertion(() =>
-        {
-            var item = SEntMan.SpawnEntity("CFCrowbar", _map.Local(2, 0));
-            Assert.That(Merchant.SaleValue(item), Is.EqualTo(25), "A 5 sp crowbar fetches half.");
-        });
-    }
-
-    [Test]
-    public async Task OnlyMerchantsCanBuy()
+    public async Task OnlyMerchantsCanBuyAndOrdersLandOnTheBuyPallet()
     {
         _map = await CFDevMap.Load(Pair, Footprint);
         await Server.WaitAssertion(() =>
@@ -176,17 +324,17 @@ public sealed class CFEconomyTest : GameTest
 
             var adventurer = Human();
             SEntMan.System<CFShopSystem>().Purchase(adventurer, order);
-            Assert.That(Purse(adventurer), Is.EqualTo(1000), "Only merchants have the shop.");
+            Assert.That(Wallet(adventurer), Is.EqualTo(1000), "Only merchants have the shop.");
 
-            var merchant = Human();
-            foreach (var special in Server.ProtoMan.Index<JobPrototype>("CFMerchant").Special)
-            {
-                special.AfterEquip(merchant);
-            }
-
-            Assert.That(SEntMan.HasComponent<CFShopAccessComponent>(merchant), "The merchant job grants the shop.");
+            var pallet = SEntMan.SpawnEntity("CFWoodenPalletBuy", _map.Local(3, 0));
+            var merchant = MerchantHuman();
             SEntMan.System<CFShopSystem>().Purchase(merchant, order);
-            Assert.That(Purse(merchant), Is.EqualTo(1000 - 50));
+            Assert.That(Wallet(merchant), Is.EqualTo(1000 - 50));
+
+            var onPallet = SEntMan.System<EntityLookupSystem>()
+                .GetEntitiesInRange(SEntMan.GetComponent<TransformComponent>(pallet).Coordinates, 0.3f)
+                .Any(uid => SEntMan.GetComponent<MetaDataComponent>(uid).EntityPrototype?.ID == "CFCrowbar");
+            Assert.That(onPallet, "The order arrived on the buy pallet beside the merchant.");
         });
     }
 
@@ -213,11 +361,23 @@ public sealed class CFEconomyTest : GameTest
         await Client.WaitAssertion(() =>
         {
             var window = new CFMerchantWindow();
-            window.UpdateState(new CFMerchantState(new List<CFMerchantEntry>
+            window.SetMerchant(true);
+            var entries = new List<CFMerchantEntry>
             {
-                new("crowbar", 25),
+                new("crowbar", 50),
                 new("rock", 0),
-            }, 25));
+            };
+            window.UpdateState(new CFMerchantState(entries, CFMerchantMode.GuildSell, 50));
+            window.UpdateState(new CFMerchantState(entries, CFMerchantMode.GuildBuy, 50));
+
+            var offers = new List<CFCounterEntry>
+            {
+                new(new NetEntity(1), "CFCrowbar", "crowbar", "A bar.", 1234),
+                new(new NetEntity(2), "", "rock", "", 0),
+            };
+            var state = new CFMerchantCounterState(offers, offers);
+            new CFCounterWindow().UpdateState(state, 1000);
+            new CFCounterStoreWindow().UpdateState(state);
             _ = new CFShopWindow();
         });
     }

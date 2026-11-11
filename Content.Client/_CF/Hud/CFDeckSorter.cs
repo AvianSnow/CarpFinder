@@ -10,7 +10,6 @@ public enum CFDeckTab : byte
     Common,
     ClassFeatures,
     Spells,
-    Items,
     Custom,
 }
 

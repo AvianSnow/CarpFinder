@@ -1,7 +1,7 @@
 using System.Linq;
+using Content.Shared.CF.Combat;
 using Content.Shared.CF.Alchemy;
 using Content.Shared.CF.Character;
-using Content.Shared.CF.Combat;
 using Content.Shared.CF.Items;
 using Content.Shared.CF.Shop;
 using Content.Shared.CF.Traits;
@@ -188,7 +188,9 @@ public sealed partial class CFShopView : BoxContainer
         yield return ChkConsumable;
         yield return ChkContainer;
         yield return ChkEquipment;
+        yield return ChkFood;
         yield return ChkKit;
+        yield return ChkMaterial;
         yield return ChkShield;
         yield return ChkTreasure;
         yield return ChkWeapon;
@@ -232,15 +234,9 @@ public sealed partial class CFShopView : BoxContainer
             return PurseSource();
 
         if (_player.LocalEntity is not { } uid)
-            return CFCoins.StartingCopper(1);
+            return 0;
 
-        if (_entities.TryGetComponent<CFPurseComponent>(uid, out var purse) && purse.Seeded)
-            return purse.Copper;
-
-        if (_entities.TryGetComponent<CFCombatantComponent>(uid, out var combatant))
-            return CFCoins.StartingCopper(combatant.Level);
-
-        return CFCoins.StartingCopper(1);
+        return _entities.System<CFWalletSystem>().Total(uid);
     }
 
     private int CartCost()
@@ -315,7 +311,9 @@ public sealed partial class CFShopView : BoxContainer
         if (ChkConsumable.Pressed) set.Add(CFShopCategory.Consumable);
         if (ChkContainer.Pressed) set.Add(CFShopCategory.Container);
         if (ChkEquipment.Pressed) set.Add(CFShopCategory.Equipment);
+        if (ChkFood.Pressed) set.Add(CFShopCategory.Food);
         if (ChkKit.Pressed) set.Add(CFShopCategory.Kit);
+        if (ChkMaterial.Pressed) set.Add(CFShopCategory.Material);
         if (ChkShield.Pressed) set.Add(CFShopCategory.Shield);
         if (ChkTreasure.Pressed) set.Add(CFShopCategory.Treasure);
         if (ChkWeapon.Pressed) set.Add(CFShopCategory.Weapon);
@@ -581,6 +579,15 @@ public sealed partial class CFShopView : BoxContainer
 
         if (proto.ID.Contains("Shield", StringComparison.OrdinalIgnoreCase))
             return CFShopCategory.Shield;
+
+        // Food and drink are both Edible.
+        if (proto.Components.ContainsKey("Edible"))
+            return CFShopCategory.Food;
+
+        // Raw materials: anything a recipe counts as a material, or any stack that is not coin.
+        if (proto.Components.ContainsKey("Material")
+            || proto.Components.ContainsKey("Stack") && !proto.Components.ContainsKey("CFCoin"))
+            return CFShopCategory.Material;
 
         if (proto.TryGetComponent<StorageComponent>(out _))
             return CFShopCategory.Container;

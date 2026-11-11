@@ -29,12 +29,12 @@ public sealed class CFAdventureSiteTest : GameTest
 
     private CFAdventureSiteSystem Sites => SEntMan.System<CFAdventureSiteSystem>();
 
-    private CFAdventureSitePrototype Cave => Server.ProtoMan.Index<CFAdventureSitePrototype>("Cave");
+    private CFAdventureSitePrototype Cave => Server.ProtoMan.Index(new ProtoId<CFAdventureSitePrototype>("Cave"));
 
     private int XpOf(EntProtoId id, int partyLevel)
     {
         var factory = SEntMan.ComponentFactory;
-        Assert.That(Server.ProtoMan.Index(id).TryComp(out CFCombatantComponent? combat, factory));
+        Assert.That(Server.ProtoMan.Index(id).TryComp(out CFCombatantComponent combat, factory));
         CFExperienceAwards.TryAdversary(combat!.Level - partyLevel, out var xp);
         return xp;
     }

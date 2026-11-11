@@ -225,7 +225,7 @@ public sealed class CFFocusTest : GameTest
             armor = CFDefense.ArmorRank(Server.ProtoMan, combat, "MediumArmor");
             fort = CFDefense.SaveRank(Server.ProtoMan, combat, "Fortitude");
             martialEarly = CFDefense.AttackRank(Server.ProtoMan, combat, "MartialWeapons");
-            SEntMan.System<CFExperienceSystem>().AddXp(hero, 2 * CFExperienceComponent.XpPerLevel);
+            SEntMan.System<CFExperienceSystem>().AddXpAndLevelUp(hero, 2 * CFExperienceComponent.XpPerLevel);
             martialLate = CFDefense.AttackRank(Server.ProtoMan, combat, "MartialWeapons");
         });
 

@@ -763,9 +763,9 @@ public sealed partial class CFStrikeSystem : EntitySystem
         damageMod += _inventor.OverdriveDamage(user);
 
         // A thrall attacks with its Necromancer's spell attack.
-        if (TryComp(user, out CFThrallComponent? thrall) && TryComp(thrall.Owner, out CFCombatantComponent? masterCombat))
+        if (TryComp(user, out CFThrallComponent? thrall) && TryComp(thrall.Necromancer, out CFCombatantComponent? masterCombat))
         {
-            attackBonus = CFCasting.Spellcasting(_prototypes, masterCombat, CompOrNull<CFAbilityScoreComponent>(thrall.Owner)).AttackBonus;
+            attackBonus = CFCasting.Spellcasting(_prototypes, masterCombat, CompOrNull<CFAbilityScoreComponent>(thrall.Necromancer)).AttackBonus;
             for (var i = 0; i < thrall.ChargeDice; i++)
             {
                 damageMod += _random.Next(1, 7);

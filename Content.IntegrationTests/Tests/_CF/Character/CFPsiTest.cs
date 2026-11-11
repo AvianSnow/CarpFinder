@@ -1,3 +1,4 @@
+using Robust.Shared.Prototypes;
 using System.Linq;
 using Content.IntegrationTests.Fixtures;
 using Content.IntegrationTests.Tests.CF;
@@ -66,7 +67,7 @@ public sealed class CFPsiTest : GameTest
         var hero = Spawn();
         foreach (var name in new[] { "Psi Cantrips and Amps", "Unleash Psyche" })
         {
-            var feature = Server.ProtoMan.Index<CFClassPrototype>("Psychic").Features.First(f => f.Name == name);
+            var feature = Server.ProtoMan.Index(new ProtoId<CFClassPrototype>("Psychic")).Features.First(f => f.Name == name);
             Features.Apply(hero, feature.Grants, name);
         }
 

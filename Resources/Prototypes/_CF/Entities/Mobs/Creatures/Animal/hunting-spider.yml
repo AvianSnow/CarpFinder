@@ -2,7 +2,7 @@
 # The body is the stock tarantula's. It leaves out stock's Spider component, which would spawn stock webs.
 # Not in yet: hunting spider venom, the web Strike and Web Trap, web sense, Spring Upon Prey, Descend on a Web, and the climb Speed.
 - type: entity
-  parent: [CFBaseCreature, BaseSlicingRefinableButchering]
+  parent: [CFBaseCreature]
   id: CFMobHuntingSpider
   name: hunting spider
   description: A spider the size of a large dog that runs its prey down.
@@ -48,7 +48,6 @@
       speedFeet: 25
       maxHp: 16
       currentHp: 16
-      diesAtZeroHp: true
       printedFortitude: 6
       printedReflex: 9
       printedWill: 5
@@ -85,7 +84,8 @@
         0: Alive
         15: Critical
         16: Dead
-    - type: ToolRefinable
-      refineResult:
+    # Monster parts: what a harvest gives, sharing the monster's parts value (CFHarvestSystem).
+    - type: CFHarvestable
+      parts:
         - id: FoodMeatSpider
           amount: 2

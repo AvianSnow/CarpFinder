@@ -44,7 +44,7 @@ public sealed class CFGrantTest : GameTest
     };
 
     /// <summary>The same for a feat.</summary>
-    private static readonly Dictionary<string, (Func<CFCombatOptionsComponent, bool> Options, string? Action)> Feats = new()
+    private static readonly Dictionary<string, (Func<CFCombatOptionsComponent, bool> Options, string Action)> Feats = new()
     {
         ["CFDoubleSlice"] = (o => o.DoubleSlice, null),
         ["CFExactingStrike"] = (o => o.ExactingStrike, null),
@@ -232,7 +232,7 @@ public sealed class CFGrantTest : GameTest
         return CFDefense.SaveModifier(Server.ProtoMan, Combat(mob), Abilities(mob), save);
     }
 
-    private List<string?> ActionIds(EntityUid mob)
+    private List<string> ActionIds(EntityUid mob)
     {
         return SEntMan.System<SharedActionsSystem>()
             .GetActions(mob)
@@ -335,12 +335,12 @@ public sealed class CFGrantTest : GameTest
             var combat = Combat(hero);
             var experience = SEntMan.System<CFExperienceSystem>();
 
-            experience.AddXp(hero, CFExperienceComponent.XpPerLevel);
+            experience.AddXpAndLevelUp(hero, CFExperienceComponent.XpPerLevel);
             Assert.That(combat.Level, Is.EqualTo(2));
             Assert.That(SEntMan.GetComponent<CFCombatOptionsComponent>(hero).SneakAttack, "Level 1 features count too.");
             Assert.That(combat.ProficiencyRanks, Is.Empty, "The level 3 feature has not been reached.");
 
-            experience.AddXp(hero, CFExperienceComponent.XpPerLevel);
+            experience.AddXpAndLevelUp(hero, CFExperienceComponent.XpPerLevel);
             Assert.That(combat.Level, Is.EqualTo(3));
             Assert.That(CFDefense.SaveRank(Server.ProtoMan, combat, "Fortitude"), Is.EqualTo(CFProficiencyRank.Expert));
         });
@@ -382,7 +382,7 @@ public sealed class CFGrantTest : GameTest
             var perception = CFDefense.PerceptionModifier(Server.ProtoMan, combat, Abilities(hero));
             var fortitude = Save(hero, CFDefenseType.Fortitude);
 
-            Features.ApplyClassFeatures(hero, Server.ProtoMan.Index<CFClassPrototype>("CFGrantTestClass"), 3);
+            Features.ApplyClassFeatures(hero, Server.ProtoMan.Index(new ProtoId<CFClassPrototype>("CFGrantTestClass")), 3);
             armor.RefreshArmorClass(hero);
 
             Assert.Multiple(() =>

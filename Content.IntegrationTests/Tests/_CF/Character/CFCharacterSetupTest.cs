@@ -171,6 +171,25 @@ public sealed class CFCharacterSetupTest : GameTest
     }
 
     [Test]
+    public async Task BuyingInTheLobbyLeavesSomethingToSave()
+    {
+        HumanoidCharacterProfile saved = default!;
+        await Server.WaitPost(() => saved = Complete().WithLoadout(new RoleLoadout("JobCFAlpha")));
+        await Client.WaitAssertion(() =>
+        {
+            var session = Client.ResolveDependency<Robust.Client.Player.IPlayerManager>().LocalSession;
+            var editing = saved.Clone();
+            Assert.That(CFBuilderRole.TryGet(editing, null, session, Client.ProtoMan, out _, out var role));
+            Assert.That(role.AddLoadout("CFWeaponsMelee", "CFLoadoutBattleAxe", Client.ProtoMan));
+
+            var bought = editing.WithLoadout(role);
+            Assert.That(bought.MemberwiseEquals(saved), Is.False, "The editor sees a change, so Save lights up.");
+            Assert.That(saved.Loadouts["JobCFAlpha"].SelectedLoadouts.Values.SelectMany(picks => picks)
+                .Any(pick => pick.Prototype == "CFLoadoutBattleAxe"), Is.False, "The saved profile is untouched.");
+        });
+    }
+
+    [Test]
     public async Task ACheatedCartIsCutToWhatThePurseHolds()
     {
         List<(string Item, int Count)> copies = default!;
@@ -235,7 +254,7 @@ public sealed class CFCharacterSetupTest : GameTest
     public async Task EveryJobDressesItsCharacter()
     {
         var map = await CFDevMap.Load(Pair, new Box2i(-1, -1, 2, 2));
-        var worn = new List<string?>();
+        var worn = new List<string>();
         var undressed = new List<string>();
         await Server.WaitPost(() =>
         {
@@ -266,10 +285,30 @@ public sealed class CFCharacterSetupTest : GameTest
     }
 
     [Test]
+    public async Task EveryoneStartsWithTheirCoinInAWalletInAPocket()
+    {
+        var map = await CFDevMap.Load(Pair, new Box2i(-1, -1, 2, 2));
+        await Server.WaitAssertion(() =>
+        {
+            var mob = SEntMan.SpawnEntity("MobHuman", map.Local(0, 0));
+            SEntMan.System<StationSpawningSystem>().EquipStartingGear(mob, new ProtoId<StartingGearPrototype>("CFCommonClothes"));
+
+            var wallet = SEntMan.System<Content.Server.CF.Character.CFCharacterSpawnSystem>().GiveWallet(mob, 1234);
+
+            SEntMan.System<InventorySystem>().TryGetSlotEntity(mob, "pocket1", out var pocket);
+            Assert.Multiple(() =>
+            {
+                Assert.That(pocket, Is.EqualTo(wallet));
+                Assert.That(SEntMan.System<CFWalletSystem>().Total(mob), Is.EqualTo(1234));
+            });
+        });
+    }
+
+    [Test]
     public async Task TheAdventurersKitIsPackedAndCanBeCarried()
     {
         var map = await CFDevMap.Load(Pair, new Box2i(-1, -1, 2, 2));
-        var packed = new List<string?>();
+        var packed = new List<string>();
         int tenths = 0, water = 0, nutriment = 0;
         await Server.WaitPost(() =>
         {
@@ -294,7 +333,7 @@ public sealed class CFCharacterSetupTest : GameTest
 
         Assert.Multiple(() =>
         {
-            Assert.That(packed, Is.EquivalentTo(new[] { "CFRope", "CFTorch", "CFLighter", "CFRation", "CFCanteenWater" }));
+            Assert.That(packed, Is.EquivalentTo(new[] { "CFRope", "CFTorch", "CFLighter", "CFRation", "CFCanteenWater", "CFSurvivalKnife" }));
             Assert.That(water, Is.EqualTo(60));
             Assert.That(nutriment, Is.EqualTo(20));
             Assert.That(tenths, Is.LessThanOrEqualTo(20), "A new character has room left for armor.");

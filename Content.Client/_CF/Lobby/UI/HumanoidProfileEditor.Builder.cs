@@ -221,7 +221,7 @@ public sealed partial class HumanoidProfileEditor
     {
         return Profile == null
             ? new List<CFOptionSlot>()
-            : CFOptionChoices.Slots(_prototypeManager, build, CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species)?.ID);
+            : CFOptionChoices.Slots(_prototypeManager, build, CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species)?.ID, level: 1);
     }
 
     /// <summary>One button for each option in the build that has something to choose.</summary>

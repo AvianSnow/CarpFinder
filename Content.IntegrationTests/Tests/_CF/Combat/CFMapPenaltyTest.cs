@@ -37,7 +37,7 @@ public sealed class CFMapPenaltyTest : GameTest
     private CFStrikeSystem Strikes => SEntMan.System<CFStrikeSystem>();
 
     /// <summary>A hero that has already made <paramref name="attacks"/> attacks, holding <paramref name="item"/>.</summary>
-    private EntityUid Hero(int attacks, string? item = null)
+    private EntityUid Hero(int attacks, string item = null)
     {
         var hero = SEntMan.SpawnEntity("CFMapHero", _map.Local(0, 0));
         SEntMan.EnsureComponent<CFActionPoolComponent>(hero).MapAttacks = attacks;

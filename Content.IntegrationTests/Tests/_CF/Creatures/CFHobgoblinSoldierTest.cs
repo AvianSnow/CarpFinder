@@ -55,7 +55,7 @@ public sealed class CFHobgoblinSoldierTest : GameTest
 
     private SharedHandsSystem Hands => SEntMan.System<SharedHandsSystem>();
 
-    private string? Id(EntityUid? uid)
+    private string Id(EntityUid? uid)
     {
         return uid == null ? null : SEntMan.GetComponent<MetaDataComponent>(uid.Value).EntityPrototype?.ID;
     }
@@ -95,7 +95,7 @@ public sealed class CFHobgoblinSoldierTest : GameTest
     public async Task ItSwingsTheSwordWithTheShieldInTheOtherHand()
     {
         _map = await CFDevMap.Load(Pair, Footprint);
-        string? active = null;
+        string active = null;
         var holdsShield = false;
         int? printedAttack = null;
         int? printedDamage = null;
@@ -255,7 +255,7 @@ public sealed class CFHobgoblinSoldierTest : GameTest
 
         await RunNpcs(900);
 
-        string? held = null;
+        string held = null;
         await Server.WaitPost(() => held = Id(Active(mob)));
         Assert.That(held, Is.EqualTo("CFLongsword"));
     }

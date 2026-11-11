@@ -1,0 +1,62 @@
+- type: gameMap
+  id: CFDragonRunTest
+  mapName: Dragon Run
+  mapPath: /Maps/_CF/DragonRunTest.yml
+  minPlayers: 0
+  stations:
+    DragonRunTest:
+      stationProto: CFStationBasic
+      components:
+        - type: StationNameSetup
+          mapNameTemplate: "Dragon Run"
+        - type: StationJobs
+          availableJobs:
+            CFAlpha: [ 0, 6 ]
+            CFBeta: [ 0, 6 ]
+            CFCharlie: [ 0, 6 ]
+            CFDelta: [ 0, 6 ]
+            CFMerchant: [ 1, 1 ]
+        # One wandering mob every 10 minutes, on grass or cave floor, never within 30 tiles of a player.
+        - type: CFWildSpawner
+          table: !type:NestedSelector
+            tableId: CFWildMobsDragonRun
+
+# What wanders the Dragon Run. The dragon is the dungeon's boss, so it is not here.
+- type: entityTable
+  id: CFWildMobsDragonRun
+  table: !type:GroupSelector
+    children:
+    - id: CFMobWolf
+      weight: 15
+    - id: CFMobBoar
+      weight: 10
+    - id: CFMobGiantRat
+      weight: 15
+    - id: CFMobGiantFrog
+      weight: 10
+    - id: CFMobHuntingSpider
+      weight: 10
+    - id: CFMobVelociraptor
+      weight: 5
+    - id: CFMobGrizzlyBear
+      weight: 3
+    - id: CFMobSewerOoze
+      weight: 5
+    - id: CFMobGoblinWarriorMelee
+      weight: 8
+    - id: CFMobGoblinWarriorRanged
+      weight: 6
+    - id: CFMobHobgoblinSoldierMelee
+      weight: 4
+    - id: CFMobHobgoblinSoldierRanged
+      weight: 3
+    - id: CFMobSkeletonguardMelee
+      weight: 4
+    - id: CFMobSkeletonguardRanged
+      weight: 2
+
+# The only map players can play. game.map_pool points here.
+- type: gameMapPool
+  id: CFMapPool
+  maps:
+  - CFDragonRunTest

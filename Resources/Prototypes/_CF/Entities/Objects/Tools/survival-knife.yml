@@ -1,0 +1,24 @@
+# Harvests monster parts from a dead monster, for someone trained in Survival (CFHarvestSystem).
+# It uses the iron dagger's sprite until it has its own.
+
+- type: entity
+  parent: CFDagger
+  id: CFSurvivalKnife
+  name: survival knife
+  description: A sturdy knife for skinning, butchering and carving trophies. Use it on a dead monster to harvest its parts, if you are trained in Survival.
+  components:
+  - type: CFWeapon
+    damageDie: 4
+    damageType: Slashing
+    category: Simple
+    group: Knife
+    hands: One
+  - type: CFTrait
+    traits:
+    - Agile
+    - Finesse
+  - type: CFHarvestTool
+  - type: CFItem
+    level: 0
+  - type: CFItemPrice
+    copper: 50 # 5 sp

@@ -9,7 +9,10 @@ using Robust.Shared.Timing;
 
 namespace Content.Server.CF.Companions;
 
-/// <summary>Makes thralls, gives them orders for a round at a time, and clears away the ones that are finished.</summary>
+/// <summary>
+/// Makes thralls, sends one at a creature for a round at a time, and sends them away when their minute is up. Between
+/// orders they fight by themselves, on their GOAP brains, like any companion.
+/// </summary>
 public sealed partial class CFThrallServerSystem : EntitySystem
 {
     private static readonly TimeSpan Lifetime = TimeSpan.FromSeconds(60);
@@ -26,6 +29,7 @@ public sealed partial class CFThrallServerSystem : EntitySystem
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private CFBonusSystem _bonuses = default!;
     [Dependency] private CFCompanionSystem _companions = default!;
+    [Dependency] private CFSummonedSystem _summoned = default!;
 
     [SubscribeLocalEvent]
     private void OnCreate(Entity<CFNecromancerComponent> ent, ref CFCreateThrallsEvent args)
@@ -39,7 +43,7 @@ public sealed partial class CFThrallServerSystem : EntitySystem
             _companions.Bind(ent, thrall);
 
             var comp = EnsureComp<CFThrallComponent>(thrall);
-            comp.Owner = ent;
+            comp.Necromancer = ent;
             comp.Expires = _timing.CurTime + Lifetime;
 
             if (TryComp(thrall, out CFCombatOptionsComponent? options))
@@ -87,7 +91,7 @@ public sealed partial class CFThrallServerSystem : EntitySystem
         var query = EntityQueryEnumerator<CFThrallComponent>();
         while (query.MoveNext(out var uid, out var thrall))
         {
-            if (thrall.Owner != owner || !_mobState.IsAlive(uid))
+            if (thrall.Necromancer != owner || !_mobState.IsAlive(uid))
                 continue;
 
             var distance = (_transform.GetWorldPosition(uid) - position).LengthSquared();
@@ -114,9 +118,10 @@ public sealed partial class CFThrallServerSystem : EntitySystem
         var query = EntityQueryEnumerator<CFThrallComponent>();
         while (query.MoveNext(out var uid, out var thrall))
         {
-            if (now >= thrall.Expires || _mobState.IsDead(uid))
+            // A dead thrall has already gone in a puff of smoke (CFSummonedSystem).
+            if (now >= thrall.Expires)
             {
-                QueueDel(uid);
+                _summoned.Unsummon(uid);
                 continue;
             }
 

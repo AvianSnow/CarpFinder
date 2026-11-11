@@ -201,9 +201,9 @@ public sealed class CFClassChoiceTest : GameTest
             var options = SEntMan.GetComponent<CFCombatOptionsComponent>(hero);
             var experience = SEntMan.System<CFExperienceSystem>();
             atFirst = options.Flurry;
-            experience.AddXp(hero, CFExperienceComponent.XpPerLevel);
+            experience.AddXpAndLevelUp(hero, CFExperienceComponent.XpPerLevel);
             atTwo = options.Flurry;
-            experience.AddXp(hero, CFExperienceComponent.XpPerLevel);
+            experience.AddXpAndLevelUp(hero, CFExperienceComponent.XpPerLevel);
             atThree = options.Flurry;
         });
 

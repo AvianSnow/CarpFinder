@@ -33,7 +33,26 @@ public sealed partial class GhostGui : UIWidget
         ReturnToBodyButton.OnPressed += _ => ReturnToBodyPressed?.Invoke();
         GhostRolesButton.OnPressed += _ => GhostRolesPressed?.Invoke();
         GhostRolesButton.OnPressed += _ => GhostRolesButton.StyleClasses.Remove(StyleClass.Negative);
+        RespawnButton.OnPressed += _ => OnRespawnPressed(); // CarpFinder: back to the lobby for a new character
     }
+
+    // CarpFinder: back to the lobby for a new character. The first press asks, the second respawns.
+    private bool _respawnArmed;
+
+    private void OnRespawnPressed()
+    {
+        if (!_respawnArmed)
+        {
+            _respawnArmed = true;
+            RespawnButton.Text = Loc.GetString("cf-ghost-respawn-confirm");
+            return;
+        }
+
+        _respawnArmed = false;
+        RespawnButton.Text = Loc.GetString("cf-ghost-respawn-button");
+        IoCManager.Resolve<Robust.Client.Console.IClientConsoleHost>().ExecuteCommand("respawn");
+    }
+    // CarpFinder end
 
     public void Hide()
     {

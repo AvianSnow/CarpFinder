@@ -1,3 +1,4 @@
+using Robust.Shared.Prototypes;
 using System.Linq;
 using Content.IntegrationTests.Fixtures;
 using Content.IntegrationTests.Tests.CF;
@@ -66,7 +67,7 @@ public sealed class CFInnovationTest : GameTest
 
     private void GiveFeature(EntityUid hero, string name)
     {
-        var feature = Server.ProtoMan.Index<CFClassPrototype>("Inventor").Features.First(f => f.Name == name);
+        var feature = Server.ProtoMan.Index(new ProtoId<CFClassPrototype>("Inventor")).Features.First(f => f.Name == name);
         Features.Apply(hero, feature.Grants, name);
     }
 
@@ -222,7 +223,7 @@ public sealed class CFInnovationTest : GameTest
         _map = await CFDevMap.Load(Pair, Footprint);
         await Server.WaitAssertion(() =>
         {
-            var pet = Server.ProtoMan.Index<CFPetPrototype>("CFPetConstruct");
+            var pet = Server.ProtoMan.Index(new ProtoId<CFPetPrototype>("CFPetConstruct"));
             var block = CFPetMath.Present(pet, new CFCharacterBuildData { Class = "Inventor" }, null);
             Assert.That(block.ArmorClass, Is.EqualTo(16), "10 + level 1 + Dexterity 3 + trained 2.");
             Assert.That(block.HitPoints, Is.EqualTo(18), "10 + 6 + Constitution 2, at level 1.");

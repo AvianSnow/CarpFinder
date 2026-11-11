@@ -27,7 +27,8 @@ public sealed class CFLanguageGarbleTest
     [Test]
     public void AWordAlwaysSoundsTheSame()
     {
-        Assert.That(CFLanguageRules.Garble(Syllables, "stand down"), Is.EqualTo(CFLanguageRules.Garble(Syllables, "stand down")));
+        var first = CFLanguageRules.Garble(Syllables, "stand down");
+        Assert.That(CFLanguageRules.Garble(Syllables, "stand down"), Is.EqualTo(first));
     }
 
     [Test]
@@ -186,7 +187,7 @@ public sealed class CFLanguageTest : GameTest
             Assert.That(known, Does.Not.Contain(new ProtoId<CFLanguagePrototype>("Dwarven")));
             Assert.That(xp.LanguageLevel5, Is.EqualTo("Dwarven"));
 
-            SEntMan.System<CFExperienceSystem>().AddXp(hero, 4 * CFExperienceComponent.XpPerLevel);
+            SEntMan.System<CFExperienceSystem>().AddXpAndLevelUp(hero, 4 * CFExperienceComponent.XpPerLevel);
             Assert.That(known, Does.Contain(new ProtoId<CFLanguagePrototype>("Dwarven")));
         });
     }

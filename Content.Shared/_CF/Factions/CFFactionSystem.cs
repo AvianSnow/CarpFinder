@@ -1,9 +1,11 @@
+using Content.Shared.CF.Combat;
 using Content.Shared.CF.Detection;
 using Content.Shared.Examine;
 using Content.Shared.Interaction.Events;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Components;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Timing;
 
 namespace Content.Shared.CF.Factions;
 
@@ -15,6 +17,11 @@ public sealed partial class CFFactionSystem : EntitySystem
     [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private CFStealthSystem _stealth = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private EntityQuery<CFPvpComponent> _pvpQuery = default!;
+
+    /// <summary>How long after a fight with another player PvP stays on.</summary>
+    public static readonly TimeSpan PvpLock = TimeSpan.FromSeconds(30);
 
     private readonly Dictionary<string, string> _jobFactions = new();
     private readonly List<EntityUid> _hostileRemove = new();
@@ -82,12 +89,16 @@ public sealed partial class CFFactionSystem : EntitySystem
     }
 
     /// <summary>
-    /// False only when both creatures have factions and their alliance is <see cref="CFAlliance.Party"/>.
+    /// Two player characters can harm each other only when both have PvP on. Otherwise false only when both
+    /// creatures have factions and their alliance is <see cref="CFAlliance.Party"/>.
     /// </summary>
     public bool CanHarm(EntityUid attacker, EntityUid target)
     {
         if (attacker == target)
             return false;
+
+        if (TryPvp(attacker, target, out var both))
+            return both;
 
         if (!HasComp<CFFactionComponent>(attacker) || !HasComp<CFFactionComponent>(target))
             return true;
@@ -95,8 +106,73 @@ public sealed partial class CFFactionSystem : EntitySystem
         return GetAlliance(attacker, target) != CFAlliance.Party;
     }
 
+    /// <summary>
+    /// True when both are player characters. <paramref name="both"/> says whether both have PvP on.
+    /// </summary>
+    private bool TryPvp(EntityUid a, EntityUid b, out bool both)
+    {
+        both = false;
+        if (!_pvpQuery.TryComp(a, out var pvpA) || !_pvpQuery.TryComp(b, out var pvpB))
+            return false;
+
+        both = pvpA.Enabled && pvpB.Enabled;
+        return true;
+    }
+
+    public bool PvpEnabled(EntityUid uid)
+    {
+        return _pvpQuery.TryComp(uid, out var pvp) && pvp.Enabled;
+    }
+
+    /// <summary>Seconds before this creature may turn PvP off, or 0.</summary>
+    public double PvpLockSeconds(Entity<CFPvpComponent> ent)
+    {
+        if (ent.Comp.LastFight is not { } last)
+            return 0;
+
+        var left = last + PvpLock - _timing.CurTime;
+        return left > TimeSpan.Zero ? Math.Ceiling(left.TotalSeconds) : 0;
+    }
+
+    /// <summary>Turns PvP on or off. Turning it off is refused within <see cref="PvpLock"/> of a fight.</summary>
+    public bool TrySetPvp(Entity<CFPvpComponent> ent, bool enabled)
+    {
+        if (ent.Comp.Enabled == enabled)
+            return true;
+
+        if (!enabled && PvpLockSeconds(ent) > 0)
+            return false;
+
+        ent.Comp.Enabled = enabled;
+        Dirty(ent);
+        return true;
+    }
+
+    [SubscribeLocalEvent]
+    private void OnPvpDamaged(Entity<CFPvpComponent> ent, ref CFDamagedEvent args)
+    {
+        if (!ent.Comp.Enabled || args.Source == ent.Owner || !_pvpQuery.TryComp(args.Source, out var source) || !source.Enabled)
+            return;
+
+        var now = _timing.CurTime;
+        ent.Comp.LastFight = now;
+        source.LastFight = now;
+        Dirty(ent);
+        Dirty(args.Source, source);
+    }
+
+    [SubscribeLocalEvent]
+    private void OnPvpExamined(Entity<CFPvpComponent> ent, ref ExaminedEvent args)
+    {
+        if (ent.Comp.Enabled)
+            args.PushMarkup(Loc.GetString("cf-pvp-examine"));
+    }
+
     public CFAlliance GetAlliance(EntityUid a, EntityUid b)
     {
+        if (a != b && TryPvp(a, b, out var both) && both)
+            return CFAlliance.Opposition;
+
         if (!TryComp(a, out CFFactionComponent? factionA) || !TryComp(b, out CFFactionComponent? factionB))
             return CFAlliance.Neutral;
 

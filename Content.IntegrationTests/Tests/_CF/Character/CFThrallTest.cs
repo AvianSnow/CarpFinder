@@ -1,8 +1,15 @@
+using Robust.Shared.Prototypes;
 using System;
 using System.Linq;
 using Content.IntegrationTests.Fixtures;
 using Content.IntegrationTests.Tests.CF;
 using Content.Server.CF.Companions;
+using Content.Server.CF.GOAP;
+using Content.Server.NPC.HTN;
+using Content.Shared.Actions;
+using Content.Shared.Actions.Components;
+using Content.Shared.CF.Spells;
+using Content.Shared.CF.Traits;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Combat;
@@ -63,7 +70,7 @@ public sealed class CFThrallTest : GameTest
     private EntityUid Necromancer(params string[] choices)
     {
         var hero = Spawn("CFThrallHero");
-        var feature = Server.ProtoMan.Index<CFClassPrototype>("Necromancer").Features.First(f => f.Name == "Grave Spells");
+        var feature = Server.ProtoMan.Index(new ProtoId<CFClassPrototype>("Necromancer")).Features.First(f => f.Name == "Grave Spells");
         Features.Apply(hero, feature.Grants, "grave");
         foreach (var id in choices)
         {
@@ -85,7 +92,7 @@ public sealed class CFThrallTest : GameTest
         var query = SEntMan.EntityQueryEnumerator<CFThrallComponent>();
         while (query.MoveNext(out _, out var thrall))
         {
-            if (thrall.Owner == hero)
+            if (thrall.Necromancer == hero)
                 count++;
         }
 
@@ -97,7 +104,7 @@ public sealed class CFThrallTest : GameTest
         var query = SEntMan.EntityQueryEnumerator<CFThrallComponent>();
         while (query.MoveNext(out var uid, out var thrall))
         {
-            if (thrall.Owner == hero)
+            if (thrall.Necromancer == hero)
                 return uid;
         }
 
@@ -172,7 +179,7 @@ public sealed class CFThrallTest : GameTest
     }
 
     [Test]
-    public async Task AThrallDoesNotFollowItsOwner()
+    public async Task AThrallFightsOnAGoapBrainAndFollowsItsOwner()
     {
         _map = await CFDevMap.Load(Pair, Footprint);
         await Server.WaitAssertion(() =>
@@ -180,9 +187,87 @@ public sealed class CFThrallTest : GameTest
             var hero = Necromancer();
             Raise(hero, 1);
             var thrall = FirstThrall(hero);
-            var companions = SEntMan.System<CFCompanionSystem>();
-            companions.ComeAlong(thrall);
-            Assert.That(SEntMan.GetComponent<CFCompanionComponent>(thrall).Following, Is.False);
+            Assert.Multiple(() =>
+            {
+                Assert.That(SEntMan.HasComponent<CFGOAPComponent>(thrall), "It thinks for itself.");
+                Assert.That(SEntMan.GetComponent<HTNComponent>(thrall).RootTask.Task, Is.EqualTo("CFGOAPCompound"));
+                Assert.That(SEntMan.HasComponent<CFSummonedComponent>(thrall));
+                Assert.That(SEntMan.GetComponent<CFTraitComponent>(thrall).HasTrait("Summoned"));
+            });
+
+            SEntMan.System<CFCompanionSystem>().ComeAlong(thrall);
+            Assert.That(SEntMan.GetComponent<CFCompanionComponent>(thrall).Following, "It comes when called.");
+        });
+    }
+
+    [Test]
+    public async Task AThrallVanishesInSmokeWhenItDiesOrItsMinuteIsUp()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        EntityUid hero = default, killed = default;
+        await Server.WaitPost(() =>
+        {
+            hero = Necromancer();
+            Raise(hero, 2);
+            var query = SEntMan.EntityQueryEnumerator<CFThrallComponent>();
+            var first = true;
+            while (query.MoveNext(out var uid, out var thrall))
+            {
+                if (thrall.Necromancer != hero)
+                    continue;
+
+                if (first)
+                {
+                    thrall.Expires = Server.ResolveDependency<IGameTiming>().CurTime;
+                    first = false;
+                }
+                else
+                {
+                    killed = uid;
+                }
+            }
+
+            SEntMan.System<CFDyingSystem>().Kill(killed, hero);
+        });
+        await Pair.RunTicksSync(3);
+        await Server.WaitAssertion(() =>
+        {
+            // Only this map's: puffs from earlier tests can still be drifting on theirs.
+            var puffs = 0;
+            var query = SEntMan.AllEntityQueryEnumerator<MetaDataComponent, TransformComponent>();
+            while (query.MoveNext(out _, out var meta, out var xform))
+            {
+                if (meta.EntityPrototype?.ID == "CFSummonPuff" && xform.MapID == _map.MapId)
+                    puffs++;
+            }
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(CountThralls(hero), Is.Zero, "Neither leaves a body.");
+                Assert.That(SEntMan.Deleted(killed));
+                Assert.That(puffs, Is.EqualTo(2), "Each goes in a puff of smoke.");
+            });
+        });
+    }
+
+    [Test]
+    public async Task CreateThrallWaitsAMinuteBetweenCastings()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            var hero = Necromancer();
+            var actions = SEntMan.System<SharedActionsSystem>();
+            var create = actions.GetActions(hero)
+                .First(a => SEntMan.GetComponent<MetaDataComponent>(a).EntityPrototype?.ID == "CFCreateThrall");
+
+            actions.PerformAction(hero, create, new CFSpellCastInstantEvent());
+            Assert.That(CountThralls(hero), Is.EqualTo(2));
+
+            var cooldown = SEntMan.GetComponent<ActionComponent>(create).Cooldown;
+            var now = Server.ResolveDependency<IGameTiming>().CurTime;
+            Assert.That(cooldown, Is.Not.Null);
+            Assert.That((cooldown!.Value.End - now).TotalSeconds, Is.EqualTo(60).Within(1), "One casting a minute.");
         });
     }
 
@@ -236,7 +321,7 @@ public sealed class CFThrallTest : GameTest
             var ordered = 0;
             while (query.MoveNext(out _, out var thrall, out var companion))
             {
-                if (thrall.Owner == hero && companion.Target == foe)
+                if (thrall.Necromancer == hero && companion.Target == foe)
                 {
                     ordered++;
                     Assert.That(thrall.ChargeDice, Is.EqualTo(1));

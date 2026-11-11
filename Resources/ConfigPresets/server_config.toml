@@ -38,6 +38,14 @@ ipintel_enabled = false
 ipintel_contact_email = ""
 # IPIntel score to reject connections.
 ipintel_bad_rating = 0.95
+# CarpFinder: every round is Dragon Run in Greenshift. CFMapPool holds only that map, so rounds loop on it.
+map = "CFDragonRunTest"
+map_pool = "CFMapPool"
+defaultpreset = "Greenshift"
+fallbackpreset = "Greenshift"
+# CarpFinder: new characters prefer a CF adventurer job.
+new_character_jobs = "CFAlpha"
+# CarpFinder end
 
 [ic]
 # Allows visibility and editing of flavor text (character descriptions)
@@ -66,6 +74,8 @@ enabled = true
 emergency_early_launch_allowed = false
 # Time in minutes after round start to auto-call the emergency shuttle. Set to zero to disable.
 auto_call_time = 90
+# CarpFinder: no arrivals shuttle. Late joiners start at the map's own late-join point.
+arrivals = false
 
 [console]
 # If this is true, people connecting from this computer will automatically be elevated to full admin privileges.

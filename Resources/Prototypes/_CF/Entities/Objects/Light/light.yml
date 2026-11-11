@@ -88,6 +88,7 @@
   components:
   - type: Sprite
     sprite: _CP14/Structures/Wallmount/wallmount_lamp.rsi
+    snapCardinals: false # BaseSign snaps, but the lamp has a sprite per wall
     layers:
     - state: base
     - state: crystal

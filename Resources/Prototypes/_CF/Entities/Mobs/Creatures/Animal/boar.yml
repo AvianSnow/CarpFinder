@@ -1,6 +1,6 @@
 # Boar. Creature 2, Medium. Monster Core p. 43. Ferocity and Boar Charge are not in yet.
 - type: entity
-  parent: [CFBaseCreature, BaseSlicingRefinableButchering]
+  parent: [CFBaseCreature]
   id: CFMobBoar
   name: boar
   description: A bristling wild pig with tusks that can open a man from hip to rib.
@@ -36,7 +36,6 @@
       speedFeet: 40
       maxHp: 40
       currentHp: 40
-      diesAtZeroHp: true
       printedFortitude: 10
       printedReflex: 5
       printedWill: 8
@@ -62,8 +61,12 @@
         0: Alive
         39: Critical
         40: Dead
-    - type: ToolRefinable
-      refineResult:
+    # Monster parts: what a harvest gives, sharing the monster's parts value (CFHarvestSystem).
+    - type: CFHarvestable
+      parts:
+        - id: CFFoodMeatBoar
+          amount: 2
+          maxAmount: 3
         - id: CFLeather1
           amount: 2
           maxAmount: 4

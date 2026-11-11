@@ -740,8 +740,11 @@
   parent: CFSpellInstant
   id: CFCreateThrall
   name: Create Thrall
-  description: Two thralls rise next to you, for a minute.
+  description: Two thralls rise next to you, for a minute. You can raise more once a minute has passed.
   components:
+  # One casting a minute, the same as a thrall lasts, so a Necromancer cannot raise a horde.
+  - type: Action
+    useDelay: 60
   - type: CFRadialSlot
     group: Spell
     spellRank: 0

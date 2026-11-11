@@ -112,8 +112,8 @@ public sealed class CFGOAPMazeTest : CFGOAPLoggedTest
     public async Task WithinItsRangeItIdlesAndOutsideItGoesHome()
     {
         await Load(npcs: false);
-        string? near = null;
-        string? far = null;
+        string near = null;
+        string far = null;
         await Server.WaitPost(() =>
         {
             var goap = SEntMan.System<CFGOAPSystem>();
@@ -195,7 +195,7 @@ public sealed class CFGOAPMazeTest : CFGOAPLoggedTest
 
         await RunUntil(30f, () =>
         {
-            if (SEntMan.TryGetComponent(boss, out CFGOAPSteeringComponent? steering))
+            if (SEntMan.TryGetComponent(boss, out CFGOAPSteeringComponent steering))
             {
                 if (steering.PassingThrough && !passed)
                 {
@@ -235,7 +235,7 @@ public sealed class CFGOAPMazeTest : CFGOAPLoggedTest
 
         await RunUntil(120f, () =>
         {
-            usedRoute |= SEntMan.TryGetComponent(boss, out CFGOAPSteeringComponent? steering) && steering.Route.Count > 0;
+            usedRoute |= SEntMan.TryGetComponent(boss, out CFGOAPSteeringComponent steering) && steering.Route.Count > 0;
             distance = DistanceHome(boss);
             took = Timing.CurTime - start;
             return distance <= CFGOAPSystem.HomeArrival;
@@ -283,7 +283,7 @@ public sealed class CFGOAPMazeTest : CFGOAPLoggedTest
     public async Task PuttingOutAFireComesBeforeEverythingElse()
     {
         await Load(npcs: false);
-        string? goal = null;
+        string goal = null;
         var fact = false;
         await Server.WaitPost(() =>
         {
@@ -303,7 +303,7 @@ public sealed class CFGOAPMazeTest : CFGOAPLoggedTest
     public async Task ItDoesNotRollOnLava()
     {
         await Load(npcs: false);
-        string? goal = null;
+        string goal = null;
         await Server.WaitPost(() =>
         {
             SEntMan.SpawnEntity("FloorLavaEntity", At(0, 0));
@@ -357,7 +357,7 @@ public sealed class CFGOAPMazeTest : CFGOAPLoggedTest
         await Load();
         Entity<CFGOAPComponent> boss = default;
         var noWay = false;
-        string? goal = null;
+        string goal = null;
         await Server.WaitPost(() => boss = Boss((x, y), (-11, 9)));
 
         await RunUntil(30f, () =>
@@ -378,7 +378,7 @@ public sealed class CFGOAPMazeTest : CFGOAPLoggedTest
     {
         await Load();
         Entity<CFGOAPComponent> boss = default;
-        string? goal = null;
+        string goal = null;
         var trips = 0;
         var furthestAtEndOfTrip = 0f;
         var furthest = 0f;

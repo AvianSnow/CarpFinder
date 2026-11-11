@@ -2,7 +2,7 @@
   parent: CFBaseWorkbench
   id: CFMerchantCounter
   name: merchant's counter
-  description: Place goods here to sell them, or see what is for sale.
+  description: Place goods here to sell them to the merchant, who pays their full worth.
   components:
   - type: Sprite
     sprite: _CP14/Structures/Furniture/workbench.rsi

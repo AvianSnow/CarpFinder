@@ -1,3 +1,4 @@
+using Robust.Shared.Prototypes;
 using System.Collections.Generic;
 using System.Linq;
 using Content.IntegrationTests.Fixtures;
@@ -182,7 +183,7 @@ public sealed class CFWave5Test : GameTest
     {
         await Server.WaitAssertion(() =>
         {
-            var psychic = Server.ProtoMan.Index<CFClassPrototype>("Psychic");
+            var psychic = Server.ProtoMan.Index(new ProtoId<CFClassPrototype>("Psychic"));
             var build = new CFCharacterBuildData { Class = "Psychic" };
             Assert.That(CFClassChoices.KeyAbility(Server.ProtoMan, build, psychic), Is.EqualTo(CFAbility.Intelligence));
             build.ClassChoices.Add("SubconsciousEmotionalAcceptance");

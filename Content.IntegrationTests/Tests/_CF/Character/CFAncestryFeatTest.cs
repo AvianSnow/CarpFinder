@@ -81,7 +81,7 @@ public sealed class CFAncestryFeatTest : GameTest
         return SEntMan.GetComponent<CFReactionsComponent>(hero).Known[0].UsedToday;
     }
 
-    private CFDegree Save(EntityUid hero, CFDefenseType defense, CFDegree degree, int modifier = 0, int dc = 100, string? trait = null)
+    private CFDegree Save(EntityUid hero, CFDefenseType defense, CFDegree degree, int modifier = 0, int dc = 100, string trait = null)
     {
         var total = 10 + modifier;
         return Reactions.AnswerSave(hero, defense, 10, modifier, dc, ref total, degree, trait == null ? null : Traits(trait));
@@ -314,8 +314,8 @@ public sealed class CFAncestryFeatTest : GameTest
         {
             var hero = Hero();
             var features = SEntMan.System<CFCharacterFeatureSystem>();
-            features.Apply(hero, Server.ProtoMan.Index<CFAncestryPrototype>("Kholo").Grants, "ancestry:Kholo");
-            features.Apply(hero, Server.ProtoMan.Index<CFFeatPrototype>("CFCrunch").Grants, "feat:CFCrunch");
+            features.Apply(hero, Server.ProtoMan.Index(new ProtoId<CFAncestryPrototype>("Kholo")).Grants, "ancestry:Kholo");
+            features.Apply(hero, Server.ProtoMan.Index(new ProtoId<CFFeatPrototype>("CFCrunch")).Grants, "feat:CFCrunch");
             die = SEntMan.System<CFStrikeSystem>().UnarmedStats(hero).DamageDie;
         });
 

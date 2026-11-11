@@ -31,12 +31,14 @@ public static class CFBuilderRole
             return false;
 
         roleProto = resolved;
+        // A copy: the profile shares its loadouts with the saved one, so editing this in place changed both, the
+        // editor saw nothing to save, and a bought item never reached the server.
         roleLoadout = profile.GetLoadoutOrDefault(
             roleId,
             session,
             profile.Species,
             IoCManager.Resolve<IEntityManager>(),
-            prototypes);
+            prototypes).Clone();
         return true;
     }
 

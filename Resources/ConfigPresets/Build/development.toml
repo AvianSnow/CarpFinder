@@ -1,11 +1,12 @@
 ﻿[game]
 # CarpFinder: lobby on so you can build/select a character before joining
 lobbyenabled = true
-# Dev map for faster loading & convenience
-map = "Dev"
-# CarpFinder: Sandbox (not Secret) — solo Dev has no§ antag pool
-defaultpreset = "Sandbox"
-fallbackpreset = "Sandbox"
+# CarpFinder: Dragon Run is the only map players can play (CFMapPool holds just it)
+map = "CFDragonRunTest"
+map_pool = "CFMapPool"
+# CarpFinder: Greenshift, so no antagonists are rolled
+defaultpreset = "Greenshift"
+fallbackpreset = "Greenshift"
 role_timers = false
 admin_job_tracking = true
 role_loadout_timers = false

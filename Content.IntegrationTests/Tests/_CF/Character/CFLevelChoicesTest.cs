@@ -70,7 +70,7 @@ public sealed class CFLevelChoicesTest : GameTest
     private void LevelTo(EntityUid hero, int level)
     {
         var combat = SEntMan.GetComponent<CFCombatantComponent>(hero);
-        Experience.AddXp(hero, (level - combat.Level) * CFExperienceComponent.XpPerLevel);
+        Experience.AddXpAndLevelUp(hero, (level - combat.Level) * CFExperienceComponent.XpPerLevel);
         Assert.That(combat.Level, Is.EqualTo(level));
     }
 
@@ -324,7 +324,7 @@ public sealed class CFLevelChoicesTest : GameTest
     [Test]
     public async Task AFeatThatNeedsAnotherFeatIsDroppedWithoutIt()
     {
-        string? without = "unset", with = null;
+        string without = "unset", with = null;
         var found = false;
         await Server.WaitPost(() =>
         {

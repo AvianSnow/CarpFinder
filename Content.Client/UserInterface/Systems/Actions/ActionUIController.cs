@@ -243,6 +243,16 @@ public sealed partial class ActionUIController : UIController, IOnStateChanged<G
 
     private void TriggerAction(int index)
     {
+        // CarpFinder: with Basic, Class or Spells chosen on the HUD deck, the number keys use that tab's first two rows.
+        if (UIManager.GetActiveUIWidgetOrNull<Content.Client.CF.Hud.CFGameHud>() is { Visible: true } cfHud
+            && cfHud.Deck.TryKeyed(index, out var keyed))
+        {
+            if (keyed != null && _actionsSystem?.GetAction(keyed.Value) is { } keyedAction)
+                UseAction(keyedAction);
+            return;
+        }
+        // CarpFinder end
+
         if (!_actions.TryGetValue(index, out var actionId) ||
             _actionsSystem?.GetAction(actionId) is not {} action)
         {

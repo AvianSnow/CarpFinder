@@ -83,7 +83,7 @@ public sealed class CFSkeletonguardTest : GameTest
         return Hands.EnumerateHeld(mob).FirstOrDefault(held => SEntMan.HasComponent<CFWeaponComponent>(held));
     }
 
-    private string? WeaponId(EntityUid mob)
+    private string WeaponId(EntityUid mob)
     {
         return SEntMan.GetComponent<MetaDataComponent>(Weapon(mob)).EntityPrototype?.ID;
     }

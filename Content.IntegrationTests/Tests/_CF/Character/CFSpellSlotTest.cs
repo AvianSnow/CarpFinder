@@ -59,7 +59,7 @@ public sealed class CFSpellSlotTest : GameTest
         };
     }
 
-    private EntityUid Caster(string cls, List<CFSpellPick>? picks = null)
+    private EntityUid Caster(string cls, List<CFSpellPick> picks = null)
     {
         var hero = SEntMan.SpawnEntity("CFSpellSlotHero", _map.Local(0, 0));
         var build = new CFCharacterBuildData { Class = cls, Spells = picks ?? Picks() };
@@ -70,7 +70,7 @@ public sealed class CFSpellSlotTest : GameTest
     private void LevelTo(EntityUid hero, int level)
     {
         var combat = SEntMan.GetComponent<CFCombatantComponent>(hero);
-        SEntMan.System<CFExperienceSystem>().AddXp(hero, (level - combat.Level) * CFExperienceComponent.XpPerLevel);
+        SEntMan.System<CFExperienceSystem>().AddXpAndLevelUp(hero, (level - combat.Level) * CFExperienceComponent.XpPerLevel);
         Assert.That(combat.Level, Is.EqualTo(level));
     }
 

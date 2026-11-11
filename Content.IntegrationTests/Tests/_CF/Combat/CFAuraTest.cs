@@ -71,7 +71,7 @@ public sealed class CFAuraTest : GameTest
     {
         var hero = Spawn();
         var features = SEntMan.System<CFCharacterFeatureSystem>();
-        var aura = Server.ProtoMan.Index<CFClassPrototype>("Champion").Features.First(f => f.Name == "Champion's Aura");
+        var aura = Server.ProtoMan.Index(new ProtoId<CFClassPrototype>("Champion")).Features.First(f => f.Name == "Champion's Aura");
         features.Apply(hero, aura.Grants, "feature:aura");
         foreach (var id in feats)
         {
@@ -214,7 +214,7 @@ public sealed class CFAuraTest : GameTest
             hero = Champion();
             SEntMan.System<CFCharacterFeatureSystem>().Apply(
                 hero,
-                Server.ProtoMan.Index<CFClassChoicePrototype>("DevotionShieldsOfTheSpirit").Grants,
+                Server.ProtoMan.Index(new ProtoId<CFClassChoicePrototype>("DevotionShieldsOfTheSpirit")).Grants,
                 "choice:shields");
             ally = Spawn(x: 1);
             foe = Spawn("CFAuraFoe", 2);

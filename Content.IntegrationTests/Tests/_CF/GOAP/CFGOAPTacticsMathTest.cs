@@ -1,6 +1,9 @@
 using Content.Server.CF.GOAP.Tactics;
 using Content.Shared.CF.GOAP;
 
+// Plain math with no game running, so prototypes are built by hand here.
+#pragma warning disable RA0039
+
 namespace Content.IntegrationTests.Tests.CF.GOAP;
 
 /// <summary>What the odds and target scores come to. Plain math, so these need no game running.</summary>

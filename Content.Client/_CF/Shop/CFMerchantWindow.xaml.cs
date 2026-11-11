@@ -6,12 +6,14 @@ using Robust.Client.UserInterface.XAML;
 
 namespace Content.Client.CF.Shop;
 
-/// <summary>What is on the counter, what it fetches, and the way into the shop.</summary>
+/// <summary>Trading on a Merchants' Guild pallet: what is on it and what the guild pays for it.</summary>
 [GenerateTypedNameReferences]
 public sealed partial class CFMerchantWindow : DefaultWindow
 {
     public event Action? OnSell;
     public event Action? OnBuy;
+
+    private bool _merchant;
 
     public CFMerchantWindow()
     {
@@ -20,22 +22,36 @@ public sealed partial class CFMerchantWindow : DefaultWindow
         BuyButton.OnPressed += _ => OnBuy?.Invoke();
     }
 
-    /// <summary>Only merchants get the way into the shop.</summary>
-    public void SetCanBuy(bool canBuy)
+    /// <summary>Merchants order from the guild and pay it no cut.</summary>
+    public void SetMerchant(bool merchant)
     {
-        BuyButton.Visible = canBuy;
+        _merchant = merchant;
+        BuyButton.Visible = merchant;
     }
 
     public void UpdateState(CFMerchantState state)
     {
+        var rate = state.RateFor(_merchant);
         Goods.RemoveAllChildren();
         foreach (var entry in state.Entries)
         {
-            var worth = entry.Copper > 0 ? CFCoins.FormatPrice(entry.Copper) : Loc.GetString("cf-merchant-no-value");
+            var paid = CFCoins.Share(entry.Copper, rate);
+            var worth = paid > 0 ? CFCoins.FormatPrice(paid) : Loc.GetString("cf-merchant-no-value");
             Goods.AddChild(new Label { Text = $"{entry.Name}: {worth}" });
         }
 
-        TotalLabel.Text = Loc.GetString("cf-merchant-total", ("amount", CFCoins.FormatPrice(state.Total)));
-        SellButton.Disabled = state.Total <= 0;
+        var total = state.TotalFor(_merchant);
+        TotalLabel.Text = Loc.GetString("cf-merchant-total", ("amount", CFCoins.FormatPrice(total)));
+
+        var guildBuy = state.Mode == CFMerchantMode.GuildBuy;
+        SellButton.Visible = !guildBuy;
+        SellButton.Disabled = total <= 0;
+        TotalLabel.Visible = !guildBuy;
+
+        HintLabel.Text = state.Mode switch
+        {
+            CFMerchantMode.GuildBuy => Loc.GetString(_merchant ? "cf-guild-buy-hint" : "cf-guild-buy-hint-closed"),
+            _ => Loc.GetString(_merchant ? "cf-guild-sell-hint-member" : "cf-guild-sell-hint", ("cut", 100 - state.Rate)),
+        };
     }
 }

@@ -1,3 +1,4 @@
+using Robust.Shared.Prototypes;
 using System.Linq;
 using Content.IntegrationTests.Fixtures;
 using Content.IntegrationTests.Tests.CF;
@@ -43,7 +44,7 @@ public sealed class CFFirearmTest : GameTest
 
     private CFDevMap _map = default!;
 
-    private EntityUid Spawn(string id) => SEntMan.SpawnEntity(id, _map.Local(0, 0));
+    private EntityUid SpawnHere(string id) => SEntMan.SpawnEntity(id, _map.Local(0, 0));
 
     private ItemSlot Slot(EntityUid gun)
     {
@@ -67,7 +68,7 @@ public sealed class CFFirearmTest : GameTest
             var weapons = SEntMan.System<CFWeaponSystem>();
             foreach (var id in Guns)
             {
-                var gun = Spawn(id);
+                var gun = SpawnHere(id);
                 Assert.That(SEntMan.GetComponent<CFWeaponComponent>(gun).Group, Is.EqualTo(CFWeaponGroup.Firearm), id);
                 Assert.That(weapons.TryStats(gun, out var stats), Is.True, id);
                 Assert.That(stats.Ranged, Is.True, id);
@@ -84,9 +85,9 @@ public sealed class CFFirearmTest : GameTest
         await Server.WaitAssertion(() =>
         {
             var weapons = SEntMan.System<CFWeaponSystem>();
-            weapons.TryStats(Spawn("CFArquebus"), out var arquebus);
-            weapons.TryStats(Spawn("CFBlunderbuss"), out var blunderbuss);
-            weapons.TryStats(Spawn("CFFlintlockPistol"), out var pistol);
+            weapons.TryStats(SpawnHere("CFArquebus"), out var arquebus);
+            weapons.TryStats(SpawnHere("CFBlunderbuss"), out var blunderbuss);
+            weapons.TryStats(SpawnHere("CFFlintlockPistol"), out var pistol);
             Assert.That(arquebus.Traits.Kickback, Is.True);
             Assert.That(arquebus.Traits.Concussive, Is.True);
             Assert.That(arquebus.Traits.Fatal, Is.EqualTo(12));
@@ -103,11 +104,11 @@ public sealed class CFFirearmTest : GameTest
         bool empty = true, loaded = false, roundGone = false, noAmmo = true;
         await Server.WaitPost(() =>
         {
-            var hero = Spawn("CFFirearmHero");
+            var hero = SpawnHere("CFFirearmHero");
             var hands = SEntMan.System<SharedHandsSystem>();
             var reload = SEntMan.System<CFReloadSystem>();
             var slots = SEntMan.System<ItemSlotsSystem>();
-            var gun = Spawn("CFFlintlockPistol");
+            var gun = SpawnHere("CFFlintlockPistol");
             slots.TryEject(gun, "projectiles", null, out var ejected);
             SEntMan.DeleteEntity(ejected);
             hands.TryPickupAnyHand(hero, gun);
@@ -115,7 +116,7 @@ public sealed class CFFirearmTest : GameTest
             empty = Slot(gun).HasItem;
             noAmmo = reload.TryReload(hero, prepaid: false);
 
-            var round = Spawn("CFFirearmRound");
+            var round = SpawnHere("CFFirearmRound");
             hands.TryPickupAnyHand(hero, round);
             loaded = reload.TryReload(hero, prepaid: false);
             roundGone = Slot(gun).Item == round;
@@ -137,9 +138,9 @@ public sealed class CFFirearmTest : GameTest
         bool plain = true, prepaid = false;
         await Server.WaitPost(() =>
         {
-            var hero = Spawn("CFFirearmHero");
+            var hero = SpawnHere("CFFirearmHero");
             var reload = SEntMan.System<CFReloadSystem>();
-            var gun = Spawn("CFFlintlockPistol");
+            var gun = SpawnHere("CFFlintlockPistol");
             SEntMan.System<SharedHandsSystem>().TryPickupAnyHand(hero, gun);
             var ranged = SEntMan.GetComponent<CFRangedWeaponComponent>(gun);
 
@@ -165,12 +166,12 @@ public sealed class CFFirearmTest : GameTest
         {
             var weapons = SEntMan.System<CFWeaponSystem>();
             var features = SEntMan.System<CFCharacterFeatureSystem>();
-            var hero = Spawn("CFFirearmHero");
-            var gun = Spawn("CFFlintlockPistol");
+            var hero = SpawnHere("CFFirearmHero");
+            var gun = SpawnHere("CFFlintlockPistol");
             weapons.TryStats(gun, out var stats);
             var combat = SEntMan.GetComponent<CFCombatantComponent>(hero);
             plain = weapons.Rank(combat, stats);
-            var feature = Server.ProtoMan.Index<CFClassPrototype>("Gunslinger").Features.First(f => f.Name == "Slinger's Precision");
+            var feature = Server.ProtoMan.Index(new ProtoId<CFClassPrototype>("Gunslinger")).Features.First(f => f.Name == "Slinger's Precision");
             features.Apply(hero, feature.Grants, "feature");
             trained = weapons.Rank(combat, stats);
         });
@@ -192,11 +193,11 @@ public sealed class CFFirearmTest : GameTest
             var features = SEntMan.System<CFCharacterFeatureSystem>();
             foreach (var choice in Server.ProtoMan.EnumeratePrototypes<CFClassChoicePrototype>().Where(c => c.Class.Id == "Gunslinger"))
             {
-                features.Apply(Spawn("CFFirearmHero"), choice.Grants, choice.ID);
+                features.Apply(SpawnHere("CFFirearmHero"), choice.Grants, choice.ID);
             }
 
-            var hero = Spawn("CFFirearmHero");
-            features.Apply(hero, Server.ProtoMan.Index<CFClassChoicePrototype>("WaySniper").Grants, "sniper");
+            var hero = SpawnHere("CFFirearmHero");
+            features.Apply(hero, Server.ProtoMan.Index(new ProtoId<CFClassChoicePrototype>("WaySniper")).Grants, "sniper");
             granted = Action(hero, "CFActCoveredReload") != default;
         });
 

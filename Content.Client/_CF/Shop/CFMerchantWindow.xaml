@@ -2,10 +2,10 @@
                xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                x:Class="Content.Client.CF.Shop.CFMerchantWindow"
                Title="{Loc 'cf-merchant-title'}"
-               SetSize="380 340"
-               MinSize="320 240">
+               SetSize="400 420"
+               MinSize="340 280">
     <BoxContainer Orientation="Vertical">
-        <Label Text="{Loc 'cf-merchant-hint'}" Margin="0 0 0 4" />
+        <Label Name="HintLabel" Margin="0 0 0 4" />
         <ScrollContainer VerticalExpand="True" HScrollEnabled="False">
             <BoxContainer Name="Goods" Orientation="Vertical" HorizontalExpand="True" />
         </ScrollContainer>

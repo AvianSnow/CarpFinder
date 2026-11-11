@@ -16,7 +16,7 @@
 # Not in yet: immunity to death effects, disease and poison afflictions, and void effects healing it.
 - type: entity
   abstract: true
-  parent: [ MobSkeletonPerson, CFMonsterGhostRole, CFGOAPBrain ]
+  parent: [ MobSkeletonPerson, CFBaseMonster ]
   id: CFMobSkeletonguardBase
   description: Old bones held up by void energy, still keeping the post they were given.
   suffix: Monster
@@ -27,8 +27,6 @@
   - type: NpcFactionMember
     factions:
     - SimpleHostile
-  - type: CFFaction
-    faction: Monster
   # Mindless undead moan.
   - type: CFLanguages
     known: [ Mindless ]
@@ -46,7 +44,6 @@
     speedFeet: 25
     maxHp: 4
     currentHp: 4
-    diesAtZeroHp: true
     printedFortitude: 2
     printedReflex: 8
     printedWill: 2

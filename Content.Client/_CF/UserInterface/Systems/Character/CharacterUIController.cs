@@ -111,7 +111,10 @@ public sealed partial class CharacterUIController : UIController, IOnStateEntere
         if (_window is { IsOpen: true })
             _window.ReactionsTab.FrameUpdate();
         if (_window is { IsOpen: true } && _player.LocalEntity is { } entity)
+        {
             _window.SheetTab.UpdateXp(entity);
+            _window.LevelUpTab.Update(entity);
+        }
     }
 
     private void RefreshShopTab()
@@ -145,6 +148,7 @@ public sealed partial class CharacterUIController : UIController, IOnStateEntere
         _window.SheetTab.Update(entity);
         _window.SpellsTab.Update(entity);
         _window.ReactionsTab.Update(entity);
+        _window.LevelUpTab.Update(entity);
 
         _window.SpriteView.SetEntity(entity);
 

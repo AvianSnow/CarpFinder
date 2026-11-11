@@ -2,6 +2,7 @@ using System.Numerics;
 using Content.Server.CF.GOAP.Encounters;
 using Content.Server.CF.GOAP.Steering;
 using Content.Server.CF.GOAP.Tactics;
+using Content.Shared.CF.Companions;
 using Content.Shared.CF.Detection;
 using Content.Shared.CF.Factions;
 using Content.Shared.CF.GOAP;
@@ -24,6 +25,9 @@ public sealed partial class CFGOAPSightSensorSystem : EntitySystem
     private const float SightTiles = 12f;
 
     private const float ReachTiles = 1.25f;
+
+    /// <summary>The creature a companion's master pointed at beats any score tactics give, while it can be seen.</summary>
+    private const float PointedScore = 1_000_000f;
 
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
@@ -80,6 +84,7 @@ public sealed partial class CFGOAPSightSensorSystem : EntitySystem
         target = default;
         var uid = ent.Owner;
         var best = float.MinValue;
+        var companion = CompOrNull<CFCompanionComponent>(uid);
         foreach (var mob in _lookup.GetEntitiesInRange<MobStateComponent>(here, SightTiles))
         {
             if (mob.Owner == uid
@@ -88,8 +93,13 @@ public sealed partial class CFGOAPSightSensorSystem : EntitySystem
                 || _stealth.Detection(mob, uid) == CFDetection.Undetected)
                 continue;
 
+            // A companion goes for real enemies by itself, and for anything else only when its master points at it.
+            var pointedAt = companion != null && mob.Owner == companion.Target;
+            if (companion != null && !pointedAt && _factions.GetAlliance(uid, mob) != CFAlliance.Opposition)
+                continue;
+
             var distance = (_transform.GetMapCoordinates(mob).Position - here.Position).Length();
-            var score = _tactics.ScoreTarget(ent, mob, distance);
+            var score = pointedAt ? PointedScore : _tactics.ScoreTarget(ent, mob, distance);
             if (score <= best || !_examine.InRangeUnOccluded(uid, mob, SightTiles))
                 continue;
 

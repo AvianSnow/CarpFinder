@@ -65,7 +65,7 @@ public sealed class CFManeuverTest : GameTest
 
     private void Rest(EntityUid mob)
     {
-        if (SEntMan.TryGetComponent(mob, out CFActionPoolComponent? pool))
+        if (SEntMan.TryGetComponent(mob, out CFActionPoolComponent pool))
             pool.Stamina = 100f;
     }
 

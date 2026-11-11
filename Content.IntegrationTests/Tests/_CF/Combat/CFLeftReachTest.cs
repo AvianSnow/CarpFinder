@@ -1,3 +1,4 @@
+using Robust.Shared.Prototypes;
 using System.Numerics;
 using Content.IntegrationTests.Fixtures;
 using Content.IntegrationTests.Tests.CF;
@@ -325,7 +326,7 @@ public sealed class CFLeftReachTest : GameTest
             foe = SEntMan.SpawnEntity("CFLeftReachFoe", _map.Local(1, 0));
             SEntMan.System<CFCharacterFeatureSystem>().Apply(
                 monk,
-                Server.ProtoMan.Index<CFFeatPrototype>("CFStandStill").Grants,
+                Server.ProtoMan.Index(new ProtoId<CFFeatPrototype>("CFStandStill")).Grants,
                 "feat:CFStandStill");
             Push(foe, East);
             Reactions.NoteLeftReach(monk, foe);

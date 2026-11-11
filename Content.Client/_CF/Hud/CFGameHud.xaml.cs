@@ -49,6 +49,20 @@ public sealed partial class CFGameHud : UIWidget
     }
 
     /// <summary>A body with no Pathfinder stats (a ghost, an animal) keeps its actions on show, and has no bars to fill.</summary>
+    /// <summary>
+    /// Takes the ID, belt, bag, pocket and suit storage slot groups for this HUD's buttons. The inventory keeps one
+    /// container per group, and the first one in wins. After a screen change (to the separated chat layout, say) the old
+    /// screen's containers still hold them and this HUD would show empty hands only.
+    /// </summary>
+    public void ClaimSlotGroups()
+    {
+        foreach (var container in new[] { Id, Belt, Bag, Pockets, SuitStorage })
+        {
+            // Setting the group gives it up and registers it again, for this container.
+            container.SlotGroup = container.SlotGroup;
+        }
+    }
+
     public void SetCombatant(bool combatant)
     {
         _combatant = combatant;

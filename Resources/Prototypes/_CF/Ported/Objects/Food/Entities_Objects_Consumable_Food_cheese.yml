@@ -7,6 +7,8 @@
   description: A large wheel of soft, fragrant piece of cheese.
   categories: [ ForkFiltered ]
   components:
+  - type: CFItemPrice
+    copper: 30
   - type: Item
     size: Normal
   - type: FlavorProfile
@@ -36,6 +38,8 @@
   description: A triangle of soft, fragrant cheese.
   categories: [ ForkFiltered ]
   components:
+  - type: CFItemPrice
+    copper: 12
   - type: Item
     size: Tiny
   - type: FlavorProfile
@@ -71,6 +75,8 @@
   description: A thin slice of delicious smelling cheese.
   categories: [ ForkFiltered ]
   components:
+  - type: CFItemPrice
+    copper: 4
   - type: Item
     size: Tiny
   - type: FlavorProfile
@@ -108,6 +114,8 @@
   name: blue cheese wheel
   description: A wheel of cheese with distinctive blue veins. Strong aroma!
   components:
+  - type: CFItemPrice
+    copper: 160
   - type: Sprite
     layers:
       - state: blue_cheese_wheel
@@ -134,6 +142,8 @@
   name: blue cheese wedge
   description: A triangle of cheesy blue-veined cheese.
   components:
+  - type: CFItemPrice
+    copper: 25
   - type: FlavorProfile
     flavors:
       - cheesy
@@ -167,6 +177,8 @@
   name: blue cheese slice
   description: A thin slice of cheesy blue cheese.
   components:
+  - type: CFItemPrice
+    copper: 5
   - type: FlavorProfile
     flavors:
       - cheesy
@@ -202,6 +214,8 @@
   name: aged cheese wheel
   description: Hard cheese aged for months to develop rich flavor.
   components:
+  - type: CFItemPrice
+    copper: 220
   - type: Sprite
     layers:
       - state: aged_cheese_wheel
@@ -228,6 +242,8 @@
   name: aged cheese wedge
   description: A triangle of richly flavored aged cheese.
   components:
+  - type: CFItemPrice
+    copper: 30
   - type: FlavorProfile
     flavors:
       - cheesy
@@ -261,6 +277,8 @@
   name: aged cheese slice
   description: A thin slice of richly flavored aged cheese.
   components:
+  - type: CFItemPrice
+    copper: 5
   - type: FlavorProfile
     flavors:
       - cheesy

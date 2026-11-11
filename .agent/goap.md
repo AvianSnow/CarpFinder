@@ -1,6 +1,6 @@
 # GOAP
 
-The AI every CF monster thinks with. Each monster base has `CFGOAPBrain` as a parent, and `CFMonsterTest` fails on a monster without one. Stock SS14 mobs keep stock HTN. Companions keep their own AI for now.
+The AI every CF monster thinks with. Each monster base has `CFGOAPBrain` as a parent, and `CFMonsterTest` fails on a monster without one. Stock SS14 mobs keep stock HTN. Companions think with it too, through `CFCompanionBase`: see Companions below.
 
 This is our own design, under the repo's MIT licence. **Do not copy from `crystall-edge`.** Its `_CE` code is all rights reserved, and using it needs TheShuEd's written consent. A port of its GOAP was thrown away before it was ever committed, for that reason.
 
@@ -182,7 +182,7 @@ No AI avoids a trap. `CFTrapLayerSystem.TryLay` gives the hazard the builder's f
 
 ## Orders from a player
 
-`CFGOAPCommander` marks a group's leader. A player in that body points at a living enemy, and `CFGOAPEncounterSystem.Command` sets the group's target and tells each member where it is. This follows the companion rule, but it does not use `CFCompanion`, which drives a mob through `NPCMeleeCombat` and would fight the brain. The members stay on their own brains, so they still flank, and they carry on if the player does nothing. A member that sees another enemy and not the ordered one keeps fighting what it sees.
+`CFGOAPCommander` marks a group's leader. A player in that body points at a living enemy, and `CFGOAPEncounterSystem.Command` sets the group's target and tells each member where it is. This works like a companion's master pointing. The members stay on their own brains, so they still flank, and they carry on if the player does nothing. A member that sees another enemy and not the ordered one keeps fighting what it sees.
 
 ## Command
 
@@ -205,3 +205,13 @@ What burning costs in hit points is not AI. See `CFStockHeatSystem`.
 A routed group shares one flee field, built by its navigator. A creature fleeing alone uses its own, because its pack may still be chasing on theirs.
 
 A zero arrow means nowhere is better than here. With the threat within 3 tiles, that sets `CorneredUntil`, the `Cornered` fact takes `Flee` out of the plan, and `FightBack` becomes the way to reach `Safe`.
+
+## Companions
+
+Animal companions, familiars, eidolons, constructs and thralls all have `CFCompanionBase`, which has `CFGOAPBrain` as a parent. They plan with the default goals and actions like any brain.
+
+- **Who they fight.** The sight sensor only lets a companion pick a creature of the Opposition alliance, so it leaves neutral creatures alone. The creature its master pointed at (`CFCompanionComponent.Target`) can be anything it may harm, and scores above any tactics score while it is in sight. When that creature is gone, `CFCompanionSystem` clears it.
+- **Home is the master.** `CFGOAPCompanionSensorSystem` sets `Home` to the master's position on every think, before the home sensor reads it. `homeRange: 3`, so idle it stays within 3 tiles.
+- **The leash.** Companions use `CFGOAPLair` with `engageTiles: 12` (so they never just guard), `leashTiles: 10` and `chaseTime: 20`. Pointing at the master sets `Returning`, which sends it home at once.
+- **Fetching** walks the companion with stock steering, so `CFCompanionSystem` switches its HTN off for the trip (`BrainPaused`) and back on after, as the Command spell does for stock mobs.
+- A companion needs `CombatMode` for the Strike step, which a clean bot body lacks, so the base gives it.

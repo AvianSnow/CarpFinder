@@ -106,6 +106,12 @@ One directed component + event pair. A second subscriber throws `Duplicate Subsc
 - A grid's `GridAtmosphere` saves air per tile as an index into `uniqueMixes`, and that is what rooms have. `MapAtmosphere` only fills space outside the grid, so a map can have both and its rooms still be vacuum. Mobs show it as Critical after about 35 seconds. `fixgridatmos` only changes the running game: to keep it, save the map or edit the mix.
 - Save a map under `/Maps/`, and from `mapping`, not a running round. A map file under `Resources/Prototypes/` fails with `document #1 is not a sequence`, and saving over a `gameMap` file loses that prototype. A forced save from a round is post-init: every entity gets `mapInit: true`, cooler cups and physics nudges are baked in, and `NoSavedPostMapInitTest` fails.
 - A wall-mounted item hangs on the wall its rotation points at, north when it has none. With no wall there, it deletes itself a few seconds after map init, with no error.
+- A map saved from a running round marks entities `mapInit: true` and the map `paused: true`. Such a map loads still paused, and `NoSavedPostMapInitTest` fails. When nothing in it has run its map init into saved state (container contents, spawned mobs), deleting those two lines makes it a pre-init map again. Its `GridAtmosphere` also keeps whatever air it had, so check `uniqueMixes` for `moles: {}` (vacuum) and give rooms air.
+- A GOAP brain's Strike step calls `SetInCombatMode`, which logs an error on a body with no `CombatModeComponent`, such as a clean bot. Monster and companion bases give it.
+- `snapCardinals: true` on a sprite whose state has 4 or 8 directions crashes a Debug client the moment it is drawn (`SpriteSystem.CalculateLocalBounds` assert). Stock `BaseSign` sets it, so a directional wall-mount parented on it needs `snapCardinals: false`. Tools builds compile the assert out.
+- Puddles are anchored to their tile. A rule that keeps anchored things also keeps every pool of blood.
+- `StationJobsComponent.JobList` is access-restricted, and the component cannot go on a bare entity: its init reads `availableJobs`, which is required. In a test, spawn a test prototype with `StationJobs` and `availableJobs`, and use `ServerStationJobsSystem.TrySetJobSlot` and `TryGetJobSlot`.
+- `SharedContainerSystem.GetAllContainers` on an entity with no `ContainerManagerComponent` throws. `TryComp` it first when walking into items.
 - `GetTileMixture` returns null for a tile under a wall, window, grille or closed door. That is not vacuum.
 - A steering safety radius must stay under 0.5 tiles. The middle of a one-tile doorway is 0.5 from each side, so anything larger overrides the way forward and holds the NPC there.
 - `Vector2.Normalize(Vector2.Zero)` is NaN. In `NPCSteeringComponent.Interest` or `Danger`, stock's blend keeps a NaN forever and the NPC stands still with no error. Check before normalizing.
@@ -130,7 +136,7 @@ One directed component + event pair. A second subscriber throws `Duplicate Subsc
 
 The same goes for these, which stock code still uses in bulk:
 
-- `Component.Owner`: pass `Entity<T>` or `EntityUid`.
+- `Component.Owner`: pass `Entity<T>` or `EntityUid`. Do not name a component field `Owner` either: it hides the base member (`CS0108`, an error). Worse, if the field is later renamed and a use is missed, `comp.Owner` still compiles and silently means the entity the component is on. Name it after what it holds (`Necromancer`, `AuraOwner`).
 - `DamageableSystem.GetTotalDamage`, `GetAllDamage`, `GetDamagePerGroup`, `DamageGroupPrototype`, `DamageChangedEvent`: see "Do not sum SS14 damage".
 - `StatusEffectsComponent`, the old `StatusEffectsSystem`: use `Content.Shared.StatusEffectNew`.
 - `SharedBatterySystem.GetCharge(Entity)`: use the tuple version.
@@ -228,6 +234,7 @@ Bodies that stand still go to sleep and make no new contacts. Integration tests 
 
 - Never build `Content.Shared` alone. Build `Content.Server` and/or `Content.Client`.
 - `MSB3027` means the client or server is locking DLLs. Close them, then rebuild.
+- Release turns warnings into errors (`MSBuild/Content.props`), apart from the obsolete-API ones. Tools and Debug do not, so code that builds in Tools can still fail in Release. Watch for these: `CS0108` (a member named like a base one: `Owner`, `Name`, `Rows`, `Prototype`, a test's `Spawn`), `CS8632` (`string?` in the test project, which has nullable off), `RA0033` (a string literal passed to `ProtoMan.Index`: pass `new ProtoId<T>("Id")` or a static `ProtoId` field) and NUnit analyzer rules. Run `dotnet build -c Release -clp:ErrorsOnly` before calling a change done.
 
 ## Leave these alone
 

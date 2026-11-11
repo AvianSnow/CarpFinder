@@ -58,6 +58,8 @@
   name: raw lamb
   description: Succulent lamb steak
   components:
+  - type: CFItemPrice
+    copper: 5
   - type: Sprite
     sprite: _CP14/Objects/Consumable/Food/meat.rsi
     state: sheepmeat
@@ -89,6 +91,8 @@
   parent: CFFoodMeatLamb
   name: cooked lamb steak
   components:
+  - type: CFItemPrice
+    copper: 20
   - type: Sprite
     state: sheepmeat_cooked
   - type: SolutionContainerManager
@@ -117,6 +121,8 @@
   name: meat pieces
   description: Succulent lamb steak
   components:
+  - type: CFItemPrice
+    copper: 3
   - type: Item
     size: Tiny
   - type: Sprite
@@ -155,6 +161,8 @@
   parent: CFFoodMeatLambSlice
   name: cooked meat pieces
   components:
+  - type: CFItemPrice
+    copper: 10
   - type: Sprite
     layers:
       - state: sheepmeat_slice_cooked
@@ -192,6 +200,8 @@
   name: lamb cutlet
   description: The result of mixing sliced lamb and egg - a raw round cutlet.
   components:
+  - type: CFItemPrice
+    copper: 4
   - type: Sprite
     sprite: _CP14/Objects/Consumable/Food/meat.rsi
     state: cutlet
@@ -225,6 +235,8 @@
   name: cooked lamb cutlet
   description: Yammi!
   components:
+  - type: CFItemPrice
+    copper: 18
   - type: Sprite
     state: cutlet_cooked
   - type: SolutionContainerManager
@@ -258,6 +270,8 @@
   name: frog leg
   description: They say they eat it somewhere.
   components:
+  - type: CFItemPrice
+    copper: 4
   - type: Sprite
     sprite: _CP14/Objects/Consumable/Food/meat.rsi
     state: frog_leg
@@ -287,6 +301,8 @@
   name: cooked frog leg
   description: It even seems edible.
   components:
+  - type: CFItemPrice
+    copper: 14
   - type: Sprite
     sprite: _CP14/Objects/Consumable/Food/meat.rsi
     state: frog_leg_cooked
@@ -317,6 +333,8 @@
   name: raw human meat
   description: This meat has a suspicious look to it.
   components:
+  - type: CFItemPrice
+    copper: 3
   - type: Sprite
     sprite: _CP14/Objects/Consumable/Food/meat.rsi
     layers:
@@ -353,6 +371,8 @@
   parent: CFFoodMeatHuman
   name: cooked human meat
   components:
+  - type: CFItemPrice
+    copper: 10
   - type: Sprite
     layers:
       - state: human_meat1_cooked
@@ -390,6 +410,8 @@
   name: raw dino meat
   description: Now who's going to eat who?
   components:
+  - type: CFItemPrice
+    copper: 5
   - type: Sprite
     sprite: _CP14/Objects/Consumable/Food/meat.rsi
     state: dino_meat1
@@ -419,6 +441,8 @@
   parent: CFFoodMeatDino
   name: cooked dino meat
   components:
+  - type: CFItemPrice
+    copper: 28
   - type: Sprite
     state: dino_meat1_cooked
   - type: SolutionContainerManager
@@ -447,6 +471,8 @@
   name: raw hydra meat
   description: Not as much meat as I would have liked.
   components:
+  - type: CFItemPrice
+    copper: 5
   - type: Sprite
     sprite: _CP14/Objects/Consumable/Food/meat.rsi
     state: dino_meat2
@@ -474,6 +500,8 @@
   parent: CFFoodMeatHydra
   name: cooked hydra meat
   components:
+  - type: CFItemPrice
+    copper: 180
   - type: Sprite
     state: dino_meat2_cooked
   - type: SolutionContainerManager
@@ -502,6 +530,8 @@
   name: raw rabbit meat
   description: The meat seems tough and the odour is unpleasant.
   components:
+  - type: CFItemPrice
+    copper: 4
   - type: Sprite
     sprite: _CP14/Objects/Consumable/Food/meat.rsi
     layers:
@@ -539,6 +569,8 @@
   name: cooked rabbit meat
   description: The frying went to good use, now the meat seems juicy and tender.
   components:
+  - type: CFItemPrice
+    copper: 16
   - type: Sprite
     layers:
       - state: rabbit_meat1_cooked
@@ -576,6 +608,8 @@
   name: raw pig meat
   description: I've eaten pork, I eat pork, and it looks like I'll be eating pork forever and ever.
   components:
+  - type: CFItemPrice
+    copper: 5
   - type: Sprite
     sprite: _CP14/Objects/Consumable/Food/meat.rsi
     layers:
@@ -613,6 +647,8 @@
   parent: CFFoodMeatPig
   name: cooked pig meat
   components:
+  - type: CFItemPrice
+    copper: 18
   - type: Sprite
     layers:
       - state: pig_meat1_cooked
@@ -649,6 +685,8 @@
   name: raw pig leg meat
   description: A decent ham, albeit with a large preponderance of bone.
   components:
+  - type: CFItemPrice
+    copper: 5
   - type: Sprite
     sprite: _CP14/Objects/Consumable/Food/meat.rsi
     state: pig_meat5
@@ -680,6 +718,8 @@
   parent: CFFoodMeatPigLeg
   name: cooked pig leg meat # Jamon? - Хамон?
   components:
+  - type: CFItemPrice
+    copper: 120
   - type: Sprite
     state: pig_meat5_cooked
   - type: SolutionContainerManager
@@ -710,6 +750,8 @@
   name: raw boar meat
   description: It's like pig meat, except more odorous.
   components:
+  - type: CFItemPrice
+    copper: 5
   - type: Sprite
     sprite: _CP14/Objects/Consumable/Food/meat.rsi
     layers:
@@ -748,6 +790,8 @@
   name: cooked boar meat
   description: After a good frying, it's almost indistinguishable from pork meat.
   components:
+  - type: CFItemPrice
+    copper: 22
   - type: Sprite
     layers:
       - state: pig_meat2_cooked
@@ -784,6 +828,8 @@
   name: meat pieces
   description: Pork meat ball with veins of lard.
   components:
+  - type: CFItemPrice
+    copper: 3
   - type: Item
     size: Tiny
   - type: Sprite
@@ -816,6 +862,8 @@
   parent: CFFoodMeatPigSlice
   name: cooked meat pieces
   components:
+  - type: CFItemPrice
+    copper: 10
   - type: Sprite
     layers:
       - state: pig_meat6_cooked
@@ -849,6 +897,8 @@
   name: raw monster meat
   description: The colour is quite suspicious, not everyone would dare to try it out, perhaps give it to a goblin?
   components:
+  - type: CFItemPrice
+    copper: 3
   - type: Sprite
     sprite: _CP14/Objects/Consumable/Food/meat.rsi
     layers:
@@ -890,6 +940,8 @@
   parent: CFFoodMeatMonster
   name: cooked monster meat
   components:
+  - type: CFItemPrice
+    copper: 12
   - type: Sprite
     layers:
       - state: mole_meat1 # We need fried sprites
@@ -929,6 +981,8 @@
   name: raw monster leg meat
   description: The suspicious colour of the meat makes you question its edibility, but if you're really hungry...
   components:
+  - type: CFItemPrice
+    copper: 4
   - type: Sprite
     sprite: _CP14/Objects/Consumable/Food/meat.rsi
     state: mole_meat5
@@ -962,6 +1016,8 @@
   parent: CFFoodMeatMonsterLeg
   name: cooked monster leg meat # Jamon? - Хамон?
   components:
+  - type: CFItemPrice
+    copper: 15
   - type: Sprite
     state: mole_meat5 # We need fried sprites
     color: "#c98367"
@@ -993,6 +1049,8 @@
   name: monster meat piece
   description: Monster meat balls with their trademark suspicious colour.
   components:
+  - type: CFItemPrice
+    copper: 3
   - type: Item
     size: Tiny
   - type: Sprite
@@ -1027,6 +1085,8 @@
   parent: CFFoodMeatMonsterSlice
   name: cooked monster meat pieces
   components:
+  - type: CFItemPrice
+    copper: 10
   - type: Sprite
     layers:
       - state: mole_meat6 # We need fried sprites
@@ -1061,6 +1121,8 @@
   name: raw flem head
   description: Honestly looks quite tasty.
   components:
+  - type: CFItemPrice
+    copper: 3
   - type: FlavorProfile
     flavors:
       - fishy
@@ -1096,6 +1158,8 @@
   parent: CFFoodMeatFlemHead
   name: cooked flem head
   components:
+  - type: CFItemPrice
+    copper: 11
   - type: Sprite
     state: flem_head_cooked
   - type: SolutionContainerManager
@@ -1125,6 +1189,8 @@
   name: raw flem torso
   description: Seems to be hollow.
   components:
+  - type: CFItemPrice
+    copper: 4
   - type: FlavorProfile
     flavors:
       - fishy
@@ -1160,6 +1226,8 @@
   parent: CFFoodMeatFlemTorso
   name: cooked flem torso
   components:
+  - type: CFItemPrice
+    copper: 14
   - type: Sprite
     state: flem_torso_cooked
   - type: SolutionContainerManager
@@ -1189,6 +1257,8 @@
   name: raw flem ring
   description: Onions not included.
   components:
+  - type: CFItemPrice
+    copper: 3
   - type: FlavorProfile
     flavors:
       - fishy
@@ -1224,6 +1294,8 @@
   parent: CFFoodMeatFlemTorsoCut
   name: fishy rings
   components:
+  - type: CFItemPrice
+    copper: 18
   - type: Sprite
     layers:
       - state: flem_torso_cut_cooked
@@ -1255,6 +1327,8 @@
   name: raw flem leg
   description: Probally not the best part to eat. but you never know until you try.
   components:
+  - type: CFItemPrice
+    copper: 4
   - type: FlavorProfile
     flavors:
       - fishy
@@ -1292,6 +1366,8 @@
   name: fish sticks
   description: Like fries. But fish!
   components:
+  - type: CFItemPrice
+    copper: 15
   - type: Sprite
     state: flem_leg_cooked
   - type: SolutionContainerManager

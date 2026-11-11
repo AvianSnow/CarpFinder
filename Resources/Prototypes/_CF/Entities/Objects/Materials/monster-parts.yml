@@ -1,0 +1,18 @@
+# What a monster gives when its harvest list is empty. Its worth is set by the harvest (CFPartsValue).
+
+- type: entity
+  parent: BaseItem
+  id: CFMonsterParts
+  name: monster parts
+  description: Teeth, claws, scales and other trophies carved from a monster. Merchants and the Merchants' Guild buy them.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Item
+    size: Small
+  - type: Sprite
+    sprite: _CP14/Objects/Materials/bones.rsi
+    state: bone_1
+  - type: CFItem
+    level: 0
+  - type: CFBulk
+    bulk: 0.1

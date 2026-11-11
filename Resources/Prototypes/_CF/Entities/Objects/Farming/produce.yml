@@ -7,6 +7,8 @@
   name: cabbage
   description: Green edible ball.
   components:
+  - type: CFItemPrice
+    copper: 3
   - type: Item
     size: Normal
   - type: Sprite
@@ -35,6 +37,8 @@
   name: pumpkin
   description: Big, cool pumpkin.
   components:
+  - type: CFItemPrice
+    copper: 5
   - type: Item
     size: Normal
   - type: Sprite
@@ -64,6 +68,8 @@
   name: potato
   description: Cute potato.
   components:
+  - type: CFItemPrice
+    copper: 3
   - type: Item
     size: Tiny
   - type: Sprite
@@ -95,6 +101,8 @@
   name: cucumber
   description: An oblong green vegetable. Refreshing!
   components:
+  - type: CFItemPrice
+    copper: 4
   - type: Item
     size: Tiny
   - type: Sprite
@@ -126,6 +134,8 @@
   name: tomatoes
   description: A red, juicy tomato. You just want to throw it in someone's face!
   components:
+  - type: CFItemPrice
+    copper: 4
   - type: Item
     size: Tiny
   - type: Sprite
@@ -181,6 +191,8 @@
   name: pepper
   description: Red and sweetish.
   components:
+  - type: CFItemPrice
+    copper: 5
   - type: Item
     size: Tiny
   - type: Sprite
@@ -209,6 +221,8 @@
   name: onion
   description: If you eat too much, you can cry tears of joy.
   components:
+  - type: CFItemPrice
+    copper: 3
   - type: Item
     size: Tiny
   - type: Sprite

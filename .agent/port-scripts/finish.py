@@ -122,6 +122,47 @@ sub('Entities/Structures/Ported/Flora/web.yml','''      - !type:NestedSelector
 sub('Entities/Structures/Ported/Flora/web.yml','CFMobSpiderBlackHunter','CFMobHuntingSpider')
 sub('Entities/Structures/Ported/Flora/royalpumpkin.yml','CFFoodPumpkinSlice','CFFoodPumpkin')
 sub('Entities/Structures/Ported/Furniture/mannequin.yml','templateId: CFPartial','templateId: human')
+# The sell and buy pallets are the Merchants' Guild's (CFGuildPallet, CFMerchantSystem). CP14's are sprites only.
+_guild_ui = """  - type: ActivatableUI
+    key: enum.CFMerchantUiKey.Key
+    requiresComplex: true
+  - type: UserInterface
+    interfaces:
+      enum.CFMerchantUiKey.Key:
+        type: CFMerchantBoundUserInterface
+"""
+sub('Entities/Structures/Ported/Furniture/pallets.yml',"""  name: selling wooden pallet
+  components:
+  - type: Sprite
+    layers:
+    - state: wooden
+    - state: sell
+""","""  name: selling wooden pallet
+  description: Goods left here are teleported to the Merchants' Guild, which keeps half the price for the magic. Merchants are members and keep it all.
+  components:
+  - type: Sprite
+    layers:
+    - state: wooden
+    - state: sell
+  - type: CFGuildPallet
+    kind: Sell
+"""+_guild_ui)
+sub('Entities/Structures/Ported/Furniture/pallets.yml',"""  name: buying wooden pallet
+  components:
+  - type: Sprite
+    layers:
+    - state: wooden
+    - state: buy
+""","""  name: buying wooden pallet
+  description: Merchants' Guild orders arrive here, for a merchant standing beside it.
+  components:
+  - type: Sprite
+    layers:
+    - state: wooden
+    - state: buy
+  - type: CFGuildPallet
+    kind: Buy
+"""+_guild_ui)
 sub('Entities/Structures/Ported/Storage/Crates/grave.yml',r'^    - !type:GroupSelector # Body parts\n(?:.*\n)*?(?=^- type|\Z)','''    - id: CFBone1
     - id: CFCopperCoin
       weight: 0.2
@@ -259,4 +300,7 @@ need=sorted(k for k in used if k in entries and k not in have)
 lost=sorted(k for k in used if k not in entries and k not in have)
 open('Resources/Locale/en-US/_CF/ported.ftl','w').write('# Strings from CP14 that ported prototypes use.\n\n'+'\n'.join('\n'.join(entries[k]) for k in need)+'\n')
 print('locale written',len(need),'not found',len(lost),lost[:12])
+# Food prices live in their own table, so a re-port keeps them.
+import food_prices
+miss += food_prices.apply()
 print('MISSED',miss)

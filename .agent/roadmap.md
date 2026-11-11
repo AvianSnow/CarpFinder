@@ -4,9 +4,116 @@ Ordered plan for the next stretch of work. Each step builds on the one before it
 
 Source of rules: https://2e.aonprd.com/ (Remaster). Source of structure and assets: `C:\project\crystall-punk-14` (**read-only**: copy from it, never edit it).
 
-## Do first: playtest feedback
+## Do first: HUD fixes, 11 November
 
-Complaints from a playtest, noted on 9 November 2026. These come before everything else on this roadmap. Built on 9 November 2026. Tests: `CFPlaytestFeedbackTest`.
+Asked for on 11 November 2026, after the HUD and menus list. Built the same day. Tests: `CFHudDeckTest`, `CFDeckLogicTest`.
+
+- [x] The separated chat layout lost the ID, belt, bag, pocket and suit storage slots, leaving only the hands. A screen change left the old screen's containers holding those slot groups. The HUD now claims them whenever it appears (`CFGameHud.ClaimSlotGroups`).
+- [x] The deck has no Items tab or section. All is Basic, Spells & Features and Custom, with two dividers. A saved layout with four sections falls back to the default.
+- [x] With Basic, Class or Spells chosen, 1 to 0 use that tab's first row and Shift with 1 to 0 its second, and each button shows its key. Asked for as Alt: Alt with a number has no stock bind and keybinds are not edited, so it is Shift, which stock already binds for the second hotbar row. All and Custom keep the keys on the numbered hotbar.
+- [ ] The keys follow the chosen tab even while the deck is slid shut. Check in play whether they should only work while it is open.
+- [ ] Not seen in a real client: the slots on the separated layout, and the keys on a deck tab.
+
+## Do first: HUD and menus, 11 November
+
+Asked for on 11 November 2026. Built the same day. Tests: `CFLevelUpTest`, `CFUpkeepTest`.
+
+- [x] **The lobby builds level 1 only.** The level 2 to 5 panels are hidden, option choices are level 1's, and the spells tab offers level 1's slots (`CFSpellSlots.ForClass(cls, level)`).
+- [x] The spells tab lists spells the character already gets from its ancestry, heritage, background, class, subclass, feats and their cantrip choices (`CFLevelUp.GrantedSpells`), so they are not picked again. The Level Up tab shows the same list.
+- [x] **Levels are taken in game.** XP no longer levels a character: reaching 1000 shows a popup, and the character sheet's Level Up tab (`CFLevelUpTab`) asks for that level's picks: class, ancestry, skill and general feats, skill increases, the four level 5 boosts and the language an Intelligence boost brings, the new spell slots, and the option choices the new feats and features have. Accept stays off until everything that has something to choose is chosen. It sends `CFLevelUpRequestEvent`. The server reads only that level's picks (`CFLevelUp.TakeLevel`), checks them as it checks a lobby build (`CFCharacterSpawnSystem.CopyLevelPicks`), and runs `LevelUp`. The build lives on `CFExperienceComponent.Build`. `CFExperienceSystem.TryLevelUp` with no picks takes the ones the character already has, which tests use through `AddXpAndLevelUp`.
+- [ ] Older saved characters still hold the level 2 to 5 picks the lobby used to take. The Level Up tab starts from them, and the player can change them.
+- [ ] Not seen in a real client: the Level Up tab, its feat and spell windows, and the popup.
+- [x] **Respawn from the ghost.** A Respawn button left of Return to body, which asks once more before running `respawn`. The old body drops everything it wore and held where it lay, then goes, and its job slot opens. The body remembers its player (`CFPlayerBodyComponent.User`), so it is found even when the ghost could not return to it. SSD and cleanup removals now drop everything too, not only the bag, weapons and wallet.
+- [ ] Not seen in a real client: the Respawn button.
+
+## Do first: monsters, summons and companions, 11 November
+
+Asked for on 11 November 2026, after the 10 November playtest list. Built the same day. Tests: `CFMonsterTest`, `CFThrallTest`, `CFCompanionGoapTest`, `CFHarvestTest`.
+
+- [x] **One monster base.** `CFBaseMonster` in `Mobs/Creatures/_base.yml` holds what every monster is: GOAP brain, ghost role, Monster faction, combat mode, `CFCombatant` that dies at 0 Hit Points, `CFAbilityScore`, `CFCombatOptions` and `CFHarvestable`. `CFBaseCreature` is the animal body on top of it. Humanoid monsters list their stock body first and `CFBaseMonster` second. `CFMonsterTest` fails a monster that cannot be harvested or does not die at 0. A monster on a stock body still sets its own `HTN`, `NpcFactionMember` and `GhostRole`, because the stock body's copy wins.
+- [x] **Summoned creatures.** `CFSummoned` gives the Summoned trait. When one dies or its time is up it vanishes in a puff of smoke (`CFSummonPuff`) and leaves no body, so it cannot be looted or harvested (`CFSummonedSystem`). Thralls have it.
+- [ ] No spell summons a creature yet (Summon Animal and the like). A new one gives what it calls `CFSummoned`, and `CFSpawnEffect` would need a way to bind it to the caster.
+- [x] **Companions think with GOAP.** `CFCompanionBase` has `CFGOAPBrain` as a parent, so animal companions, familiars, eidolons, constructs and thralls all do. They attack enemies they see by themselves: only the Opposition alliance, so neutral creatures are left alone unless pointed at. Their home is their master (`CFGOAPCompanionSensorSystem`), within 3 tiles, and the lair leash (`CFGOAPLair`, 10 tiles or 20 seconds) brings them back mid-chase, though they still fight what is in reach.
+- [x] Pointing helps. At a creature, it goes for that one first while it can see it. At the master, it comes straight back. At an item, it fetches it, with its brain paused for the trip. At the floor, it forgets the creature it was sent at.
+- [x] **Thralls work.** They stood still because they ran the old companion task, which waited for an order, and pointing skipped them on purpose. Now they fight on their brains like any companion, follow, and answer pointing. Command a Thrall and Thrall Charge still pick the nearest one.
+- [x] Create Thrall has a 60-second cooldown, as long as a thrall lasts (`useDelay` on the action).
+- [ ] Not seen in a real client: companions fighting by themselves, coming back, fetching, and the smoke puff.
+- [ ] A companion with a player in it gets nothing from pointing but the popup.
+
+## Do first: playtest feedback, 10 November
+
+Requests from the playtest on the night of 10 November 2026, noted on 11 November. These come before everything else on this roadmap, in this order: PvP and server upkeep (3 to 5) are small and fix what hurt most on a long-running server, then money (1), then monster parts (2), which sells through the new money.
+
+### 1. Money in a wallet
+
+Built on 11 November 2026. `CFWallet`, `CFWalletSystem`, `CFCoinSystem`, `CFMerchantSystem`. Tests: `CFEconomyTest`, `CFCharacterSetupTest`.
+
+- [x] A wallet (`CFWallet`, CP14's sprite) that goes in a pocket and only takes coins. Every character spawns with one in a pocket, holding their leftover starting coin.
+- [x] The wallet is the money. The shop, the counter and the guild spend from the coins in the first wallet the character carries (held, worn, in a pocket, or in the bag), breaking coins and putting the change back. Coins elsewhere do not count. Using coins in hand puts them in the wallet. `CFPurseComponent` and the right-click-yourself verb are gone.
+- [x] A wallet in a dead body can be looted like any item, and SSD and respawned bodies drop it (5).
+
+Two ways to sell, and both are always there:
+
+- [x] **The guild pallets.** `CFWoodenPalletSell` and `CFWoodenPalletBuy` get `CFGuildPallet` (in `finish.py`, since the file is ported). Opening a sell pallet lists the goods lying on it and sells them all to the Merchants' Guild, which keeps 50% because it teleports them away by magic, `fullResale` items included. A merchant is a guild member and keeps the full worth. No console was needed: the pallet opens the trading window itself.
+- [x] A merchant standing within 2 tiles of a buy pallet gets their shop orders on it instead of in hand. Opening a buy pallet says so. Only merchants can order.
+- [x] **A merchant's counter** (`CFMerchantCounter`) is for selling to the player merchant, and only a merchant can open it. An adventurer places goods on it. The merchant's window lists each one with its Market price and Your price in separate columns. Your price is four boxes (pp, gp, sp, cp), filled with the market price, which the merchant can type over. Buy sends what is typed (`CFCounterBuyMessage.Copper`), takes it from the merchant's wallet and lays the coins on the counter for the adventurer to pick up. Bought goods wait under Items stored, a window laid out like the shop, where the merchant takes each one or sells it to the guild at full worth. Changed on 11 November 2026: no till, no counter-wide rate, and no record of who placed what. Any merchant can work any counter, since the job has one slot. Tests: `CFEconomyTest`.
+- [ ] Anyone can pick up the coins laid on the counter, not only the adventurer who sold.
+- [ ] What a merchant charges is not on the counter: they sell by hand, trading coins and goods.
+- [ ] Not seen in a real client: the wallet in a pocket, the counter's till controls, and opening a pallet. A pallet is drawn under the goods on it, so it may need right-click, Open, when something lies on it.
+- [ ] Coins dropped from a broken wallet, or more coins than fit, go to the hands or the floor. Not tried with a full wallet.
+
+### 2. Monster parts and harvesting
+
+Built on 11 November 2026. `CFHarvestSystem`, `CFHarvestRules`, `CFHarvestable`, `CFSurvivalKnife`. Tests: `CFHarvestTest`.
+
+- [x] Each monster's parts value is Battlezoo Bestiary's monster parts by creature level (Battlezoo Bestiary p. 133, Tables 2A to 2C), read from its level, so a rebalance moves it. We use the Light column (2A), because CarpFinder still drops coin as treasure and parts come on top of it. The table is in `CFHarvestRules`, from https://pf2easy.com/index.php?id=19435. Battlezoo gathers parts with no check; the Survival roll is ours.
+- [x] Harvesting is butchering. Use a survival knife on a dead monster, or its Harvest verb: 5 seconds, once per body, and only for a character trained in Survival. Every monster has `CFHarvestable`. It replaces stock butchering: a stock mob that could be butchered by knife (`ToolRefinable`) or on the kitchen spike (`Butcherable`) gets `CFHarvestable` instead, with that list as its parts, so nothing is butchered without the check. A finished harvest removes the body: everything it wore or held drops, and its parts are scattered where it lay. It is not gibbed, so no organs are left. Every harvest gives generic monster parts (`CFMonsterParts`) plus the meat, bone and leather the monster lists, and the generic parts keep what rounding leaves so the total is exact. A critical failure removes the body with no parts. Player characters are never harvested. Changed on 11 November 2026; the body used to stay.
+- [x] The harvest rolls Survival against the DC for the monster's level: a critical failure ruins the parts, a failure keeps half the value, a success all of it, and a critical success one and a half times.
+- [x] The meat, leather, scraps and bone a monster gives are its parts and share its value (`CFPartsValue`, per item in a stack). Every monster also gives `CFMonsterParts`. Parts are treasure: the cleanup keeps them, and they sell to a merchant at their counter at the merchant's price, or on a guild sell pallet for half, or full for a merchant.
+- [x] Meat on the drop lists: `CFFoodMeatBoar` for the boar, `CFFoodMeatMonster` for the bear, wolf and dragon.
+- [x] A survival knife (`CFSurvivalKnife`, 5 sp, a d4 slashing agile finesse knife) is in every adventurer's kit and in the merchant's shop. It uses the dagger's sprite.
+- [ ] Merging two stacks of harvested parts keeps the receiving stack's value per item, so their worth can drift.
+- [ ] Kobolds, goblins and hobgoblins give generic monster parts. Decide whether humanoids should give anything.
+- [ ] Not seen in a real client: the Harvest verb, the do-after, and the popups.
+- [ ] Later: Battlezoo's refining and imbuing, crafting parts into gear. Bulk by size, and Gathering More through Earn Income, are not built.
+
+### 3. PvP only by choice
+
+Built on 11 November 2026. `CFPvpComponent`, `CFFactionSystem.CanHarm`, the `pvp` command (`CFPvpCommand`). Tests: `CFPvpTest`.
+
+- [x] The four groups are a party with each other (`factions.yml`). Monsters still oppose everyone.
+- [x] A `pvp` console command, typed in chat as `/pvp on`, `/pvp off`, or `/pvp` to toggle. Off by default. Two player characters can harm each other only when both have it on. This covers merchants too, who used to be fair game as Neutral.
+- [x] It covers everything that asks `CanHarm` or `GetAlliance`: Strikes, spells and areas, projectiles, thrown weapons, maneuvers, reactions and flanking. Players always fight monsters: only player characters get `CFPvpComponent`, at spawn, so a ghost in a monster body is still a monster.
+- [x] Crossed swords on the left of a player with PvP on (`CFPvpIcon`), and an examine line.
+- [x] Turning it off waits 30 seconds after the player last hurt, or was hurt by, another player with PvP on (`CFDamagedEvent`).
+- [ ] Not seen in a real client: the icon, and `/pvp` typed in chat.
+- [ ] A player's companion, eidolon or thrall follows its faction, so it never fights another player even with PvP on.
+
+### 4. The dungeon wizard cleans up
+
+Built on 11 November 2026. `CFDungeonCleanupSystem`, on `CFStationBasic` so every CF map has it. Tests: `CFUpkeepTest`.
+
+- [x] Every hour a cleanup runs, with announcements from "The Dungeon Wizard" 15 minutes, 1 minute and 10 seconds before, then one saying how much was swept away. The interval and warnings are fields on `CFDungeonCleanup`, so a DM can change them in VV.
+- [x] Cleaned, on every map that is not paused: dead monsters, blood and other puddles, and loose weapons and items.
+- [x] Kept: anything inside a container; containers themselves; living creatures; bodies whose player can still return to them; coins and `fullResale` treasure, which monster parts will be; anchored things apart from puddles.
+- [x] Kept: everything the mapper placed, spawners' loot included. Anything created within a second of its map counts as the mapper's.
+- [x] Dead adventurers whose player can no longer return drop their bag and weapons, then go, as in 5.
+- [ ] Not seen in a real round: the announcements, and how long a sweep takes on a big map.
+- [ ] A mapped item that is picked up and dropped somewhere else still counts as the mapper's, so it is never cleaned.
+
+### 5. Respawning and SSD players
+
+Built on 11 November 2026. `CFPlayerBodySystem`. Tests: `CFUpkeepTest`.
+
+- [x] `respawn` deletes the old body after dropping its bag and weapons. Marked lines in `RespawnCommand.cs`.
+- [x] Any player body gives its job slot back when it is deleted, however that happens (`CFPlayerBodyComponent`, through `ServerStationJobsSystem.TryAdjustJobSlot`).
+- [x] A body left without its player for 15 minutes is removed: its bag and weapons are dropped on the ground first. Ghosting out of a body counts as leaving it, as stock's SSD does, so a dead player who waits 15 minutes as a ghost loses the body. The time is `SsdLimit` on the component.
+- [ ] Drop the wallet too, once it exists (1).
+- [ ] Not tried with a real player: respawning, and coming back after the body was removed.
+
+## Playtest feedback, 9 November
+
+Complaints from a playtest, noted on 9 November 2026. Built on 9 November 2026. Tests: `CFPlaytestFeedbackTest`.
 
 - [ ] Not seen in a real client: the sparkles and their colours, the aura border, the faster swing, and aim assist with a real mouse.
 
@@ -155,7 +262,7 @@ Built on 9 November 2026. `CFClassChoices` decides what counts as a valid pick. 
 
 All of this is picked in the lobby and stored on `CFCharacterBuildData`, the way `ClassFeatLevel2` is. `LevelUp` only hands it over. The builder slots have not been clicked in a real client. Tests: `CFLevelChoicesTest`.
 
-- [x] Builder slots for levels 2 to 5: skill increases at 3 and 5, ability boosts at 5, a general feat at 3, and skill feats at 2 and 4.
+- [x] Slots for levels 2 to 5: skill increases at 3 and 5, ability boosts at 5, a general feat at 3, and skill feats at 2 and 4. Picked on the Level Up tab since 11 November 2026, not in the lobby.
 - [x] The same choices copied to `CFExperienceComponent` at spawn, checked again there because they come from a client, and applied by `LevelUp`.
 - [x] Run class features from `LevelUp` when their level is reached.
 - [x] The feat a background names, at level 1: `skillFeats` on `cfBackground`, read through `CFSkills.SelectedFeats`. It needs no qualifying and cannot be taken again in a slot. Three backgrounds name two feats and get both, which has not been checked against the rules (Hermean Heritor and the ones with Hefty Hauler or Diehard). Contract Negotiator and Ravening's Desperation are from other books and are not granted.
@@ -228,7 +335,7 @@ Do all of these before Wave 6. Smallest first, each landing working and tested.
 - [x] Psi amps. `CFPsiSystem`. `CFActAmp` is a free spellshape that arms the next psi cantrip, which spends a Focus Point. What an amp does is data on `CFPsiCantrip` on the spell's action. Unleash Psyche and three of four psyche actions work. Tests: `CFPsiTest`. Amps from feats (Mental Balm, Homing Beacon, Warp Space), forbidden thought, distortion lens, warp step, message and telekinetic hand are not built. Telekinetic Rend is one 10-foot burst, not two 5-foot ones. Stunned, the temporary Hit Points on Frostbite and the Oscillating Wave's alternation are not built.
 - [x] Tactics and the banner. `CFTacticSystem`, `Actions/tactics.yml`, and the item `CFCommanderBanner`. Three tactics are picked in the builder as `cfClassChoice` slots, because everything is chosen in the lobby. The squad is the Commander plus 2 + Intelligence nearest allies in the banner's 30 feet. Tests: `CFTacticTest`. Seven of the level 1 tactics work. Real time cannot make other players move, so a tactic's Stride or Step is +10 feet Speed for 3 seconds. Double Team, End it!, Coordinating Maneuvers, Mountaineering and Naval Training, Passage of Lines, Protective Screen and Shadows in the Moonlight are not built, and nor are the folio, Plant Banner, Warfare Lore or the penalty for losing the banner.
 - [x] Innovations. `CFInventorSystem`, items in `Entities/Objects/Misc/CFInnovations.yml`, the construct in `Companions/constructs.yml`. A class choice picks the innovation and another its modification. Overdrive, Explode and the unstable check work. A broken innovation is usable again after the time Refocus takes. Tests: `CFInnovationTest`. The construct has the prototype's statistics from Guns & Gears, on a stock clean bot body. Its second attack, and being broken and repaired at 0 Hit Points, are not built. Companions level with their owner through `CFCompanionSystem.MatchOwnerLevel`. Tests: `CFCompanionLevelTest`. Construct modifications, Ranged Blunt Shot, weapons other than the longsword base, razing and hampering are not built.
-- [x] Thralls. `CFThrallSystem` (Shared) and `CFThrallServerSystem`. `CFThrall` in `Companions/thralls.yml`, a level -1 companion with 1 Hit Point that only acts when commanded. Create Thrall, Thrall Charge, Command a Thrall and the grave spells cast on a thrall through `CFThrallBlastEffect`. Tests: `CFThrallTest`. Thralls spawn beside the Necromancer without checking the tile is free. Their Strikes do not count toward the Necromancer's Multiple Attack Penalty. Inevitable Return, Consume Thrall, Thrall Teamwork, Song of the Soul, Muscle Barrier and regaining Focus by destroying a thrall are not built.
+- [x] Thralls. `CFThrallSystem` (Shared) and `CFThrallServerSystem`. `CFThrall` in `Companions/thralls.yml`, a level -1 summoned companion with 1 Hit Point that fights on a GOAP brain since 11 November. Create Thrall, Thrall Charge, Command a Thrall and the grave spells cast on a thrall through `CFThrallBlastEffect`. Tests: `CFThrallTest`. Thralls spawn beside the Necromancer without checking the tile is free. Their Strikes do not count toward the Necromancer's Multiple Attack Penalty. Inevitable Return, Consume Thrall, Thrall Teamwork, Song of the Soul, Muscle Barrier and regaining Focus by destroying a thrall are not built.
 - [x] Apparitions. `CFApparitionSystem`, `CFApparitions` and `CFSustain` in `Spells/`. Two apparitions are picked in the builder (`Choices/apparitions.yml`), the Primary slot and the Second, and `group` keeps a build from taking one twice. Apparition slots are their own pool on `CFSpellbookComponent`, spent like a spontaneous caster's. Sustaining is using the action again: 1 action, no Focus Point, once per 6 seconds, lapsing after 12, for up to a minute. Tests: `CFApparitionTest`. One apparition slot per rank, at levels 1, 3 and 5, from the class table. Most apparition spells do not exist in the game yet, so each option's text says which are missing, and some apparitions teach nothing yet. Traveling Workshop and Darkened Forest Form are not built, so Crafter and Stalker have no vessel. Several vessels are partial, and their summaries say how. Heightening apparition spells waits for casting from a higher slot (1f). Changing primary on Refocus, Relinquish Control, Apparition Sense, spirit familiars and Channeler's Stance are not built.
 - [x] Ikons. `CFIkonSystem`, `cfIkon` prototypes in `Combat/ikons.yml`, actions in `Actions/ikons.yml`, and three builder slots in `Choices/exemplar.yml`. A Shift action per ikon moves the spark, and a transcendence is greyed out until it can be used. Weapon ikons are whatever matching weapon is in hand, not a chosen item. Worn ikons need no item at all. After a transcendence the spark goes to the next ikon, because real time has no pause to choose in. Tests: `CFIkonTest`. Not built: Shadow Sheath's copies, Fetching Bangles, Horn of Plenty, the transcendences of Bands, Pelt, Skybearer's Belt, Shadow Sheath and Victor's Wreath, Diehard on the Scar, armor against ranged only and melee only, and every Exemplar feat that imbues an ikon. Root epithets train their skill at level 1, not 3. Only Brave and Radiant do anything more. Spirit damage is dealt as a second hit, so it shows as its own number.
 - [x] Runes. `CFRuneSystem`, `Combat/runes.yml`, `Actions/runes.yml`, `Crafting/rune_recipes.yml`, and six builder slots in `Choices/runesmith.yml`. A `craftingRecipe` with `attachRune: true` puts its result on a weapon or armor lying on the bench instead of making an item, so the workbench is how item runes and etched Runesmith runes get on things. Recipes follow the normal level rule, so only +1 weapon potency and striking are attachable to weapons at level cap 5, with armor potency at level 5. Trace Rune is one action per rune, 1 action adjacent and 2 from further away, and lasts 12 seconds. Invoke Rune targets a creature and sets off up to two runes on it and what it holds. Tests: `CFRuneTest`. Passives and invocations that need something unbuilt say so in each option: Baruiel, Ledria, Oljinex, Pluuna, Tilus and Zohk have no invocation yet. Not built: etching on a creature, invoking runes on two different creatures at once, the level 5 diacritic runes, shield and armor property runes, the artisan's toolkit requirement, upgrading a rune by paying the difference, and Magical Crafting. Rune items use a placeholder sprite from CP14's magic trap sheet. Materials to craft a rune item itself are not defined, so they come from the shop or as loot.
@@ -243,11 +350,11 @@ Built on 9 November 2026, between Waves 3 and 4. How it works is under "Game HUD
 - [ ] Throw and Stride have no button, because stock's inputs are already the whole action. Reposition and Sneak have none either.
 - [ ] The sheet's Preparation window can overwrite a slot but not empty one.
 - [x] Prepared casters can put a lower-rank spell in a higher slot, by dragging it there. Add uses its own rank first.
-- [ ] No scrolls exist, so nothing has been listed on the Items tab under `CFSpellScroll`.
+- [x] The Items tab is gone (11 November 2026): items are used in hand. The All tab is Basic, Spells & Features and Custom, with two dividers.
 
 ### Decided
 
-- **Choices are made in the lobby, up to level 5.** A player picks every feat, skill and boost through level 5 before they play. The server records them, spawns the character at level 1, and hands each level's choices over as XP earns that level. Nothing is chosen in play.
+- **The lobby builds level 1, and each later level is picked in play.** Changed on 11 November 2026, from picking every level up to 5 in the lobby. When a character has the XP, the player picks the level on the character sheet's Level Up tab and accepts it.
 - **Unfinished options are marked in the builder**, not hidden, so a player can see what is coming.
 - **Exploration and downtime options run on the world clock** where that works. Otherwise they keep their flavour text with the word `TBA` on its own, so `TBA` can be searched for later.
 - **Swimming, flying and climbing are `TBA`.** Swimming will be ported from another fork, because SS14 has water entities. Climb speeds are not built, and `CFZLevelClimb` always rolls.
@@ -322,9 +429,9 @@ The rule for what comes over, and how, is under Phase 3b in `roadmapold.md`: RPG
   - Wolf, on the stock corgi sprite, and a `WolfPack` encounter of four that flank. Pack Attack, low-light vision and scent are in. Knockdown is not, because Trip is not an action. Tests: `CFWolfTest`. Not seen in a real client.
   - Juvenile Horned Dragon, from the Beginner Box Adventure on Demiplane, on a sprite made for CarpFinder. Jaws, Poison Breath (`CFBreathWeapon`, used by the AI and by a player in the body) and Draconic Momentum. It keeps its lair (`CFGOAPLair`): breathes when charged, waits in the lair while it recharges, closes only within 3 tiles, and goes home after 8 tiles or 10 seconds away. Draconic Frenzy, Twisting Tail, the poison on its jaws, and flying and swimming are not in. Tests: `CFJuvenileHornedDragonTest`. Not seen in a real client, nor is the cone outline while a player aims the breath.
   - Still to port: livestock (pig, sheep, rabbit, cat; there is no printed stat block for most), zombies (they need CP14's humanoid species), watchers, spineguard, flem, cackle, bone hound, mole, myconids, ice spectre, whistler, mosquito, hydra, fairy. CP14-only monsters need a PF2e creature of a matching level chosen first.
-  - Boar and bear drop CP14's leather, scraps and bone when butchered. Meat waits for the Consumables port.
+  - Monsters are harvested for priced parts with a survival knife and a Survival check, through `CFHarvestable` (see Monster parts under Do first). Boar, bear, wolf and dragon give leather, bone and meat.
 - [ ] Raw materials and coins.
-  - Not done: raw materials have no price, so they cannot be sold. Giving stack prototypes a Price needs a shop fix first: the shop charges the listed price per prototype, whatever the stack holds, so `CFIronBar10` would be a bargain. Also not done: coin Bulk (1,000 coins is 1 Bulk), art objects, coins as monster loot, and looting a purse from a body.
+  - Not done: raw materials have no price, so they cannot be sold. Giving stack prototypes a Price needs a shop fix first: the shop charges the listed price per prototype, whatever the stack holds, so `CFIronBar10` would be a bargain. Also not done: coin Bulk (1,000 coins is 1 Bulk), art objects, and coins as monster loot.
 - [ ] Items left out of the consumables port.
   - Not ported here: monster toxins (creatures row), cooking pots and their recipes (crafting row), smoking pipes and chromium jelly (they need plants from the farming row).
 - [ ] Decide on CP14 alchemy.
@@ -416,9 +523,9 @@ The labels are the sections of Phase 6 in `roadmapold.md`, which has the design.
 **6j. Tactics (6 November 2026)**
 
 - [ ] Balance: a creature with discipline waits out Multiple Attack Penalty, so it hits much harder over a long fight. Worked out at 4 to 5 times for a +8 attack against AC 18. Check this in play, and drop `discipline` if it is too much.
-- [x] Every CF monster thinks with GOAP, from its base (10 November 2026). Animals use `Beast` tactics, the sewer ooze and skeleton guards `Mindless`, kobold warriors `Default`. Encounters replace tactics only when they name some, and a leader with `keepOwnLists` keeps its own. Stock SS14 mobs and companions keep their own AI. Tests: `CFMonsterTest`, `CFGOAPEncounterTest`, `CFSkeletonguardTest`. Not seen in a real client.
+- [x] Every CF monster thinks with GOAP, from its base (10 November 2026). Animals use `Beast` tactics, the sewer ooze and skeleton guards `Mindless`, kobold warriors `Default`. Encounters replace tactics only when they name some, and a leader with `keepOwnLists` keeps its own. Stock SS14 mobs keep their own AI. Companions moved to GOAP on 11 November. Tests: `CFMonsterTest`, `CFGOAPEncounterTest`, `CFSkeletonguardTest`. Not seen in a real client.
 - [x] Monsters live in a folder per creature type under `Entities/Mobs/Creatures/`, with the type on `CFTrait`. `MonstrousHumanoid` and `Outsider` were added as traits, though the remaster has neither.
-- [ ] GOAP for companions, eidolons, thralls and constructs. They still run `CFCompanion` through `NPCMeleeCombat`, which would fight a brain.
+- [x] GOAP for companions, eidolons, thralls and constructs (11 November 2026). See the first Do first section. Tests: `CFCompanionGoapTest`.
 - [ ] Choosing spells. See `goap-weights.md`.
 
 **6j2. The kobold trapper (6 November 2026)**
@@ -452,6 +559,8 @@ The labels are the sections of Phase 6 in `roadmapold.md`, which has the design.
 
 ## Known bugs
 
+- `MaterialArbitrageTest.NoMaterialArbitrage` (stock) fails inside `ConstructionGraphPrototype.Path`, which means a construction graph has a node it cannot reach. Found on 11 November 2026 and not looked into. It is not from butchering: the harvest change touches no construction.
+
 - `CFGOAPObstacleTest.PatienceDependsOnThePersonality` fails about half the time, measured on 9 November 2026 on the commit before the HUD (7 of 15) and with the HUD (8 of 16). After 7 seconds the default mob should be working on the locked door, but its `Obstacle` is another entity created later in the test, or null. What that entity is has not been looked at. The decision log is printed when the test fails. It is the same setup as the locked door notes in `ai-testing.md`, which may or may not be the same cause.
 - `CFGOAPEncounterTest.ItChoosesToFlankThenRunsThenHides` sometimes shows as `Skipped` in a full CF run and passes on its own. It runs no game ticks, so the cause is not movement. The failure message is lost, so the cause is unknown.
 - `CFEconomyTest.ShopTabFollowsAccess` fails: `SetShopVisible(false)` leaves the Shop tab visible. Found on 10 November 2026 and not looked into. It is client UI, not the AI.
@@ -465,7 +574,7 @@ The labels are the sections of Phase 6 in `roadmapold.md`, which has the design.
 - Hazards and traps (area + check + degree effects). Prototype done: `CFHazard` and the Beginner Box spike trap (`CFSpikeTrap`, `CFSpikeTrapMonster`). Still to do: complex hazards with routines, resetting traps, and area traps (`CFAreaEffect` on the hazard).
 - Persistent damage and resistances/weaknesses everywhere damage is dealt.
 - AI avoids known traps through the `Threat` layer (6c).
-- GOAP for companions and animal companions taking player commands (Command an Animal).
+- Animal companions taking player commands as an action (Command an Animal). Pointing already steers them.
 - Mobs that cast spells, chosen by score. `goap-weights.md` has the plan.
 
 ## Working notes

@@ -45,7 +45,9 @@
                                 <CheckBox Name="ChkConsumable" Text="{Loc 'cf-shop-cat-consumable'}"/>
                                 <CheckBox Name="ChkContainer" Text="{Loc 'cf-shop-cat-container'}"/>
                                 <CheckBox Name="ChkEquipment" Text="{Loc 'cf-shop-cat-equipment'}"/>
+                                <CheckBox Name="ChkFood" Text="{Loc 'cf-shop-cat-food'}"/>
                                 <CheckBox Name="ChkKit" Text="{Loc 'cf-shop-cat-kit'}"/>
+                                <CheckBox Name="ChkMaterial" Text="{Loc 'cf-shop-cat-material'}"/>
                                 <CheckBox Name="ChkShield" Text="{Loc 'cf-shop-cat-shield'}"/>
                                 <CheckBox Name="ChkTreasure" Text="{Loc 'cf-shop-cat-treasure'}"/>
                                 <CheckBox Name="ChkWeapon" Text="{Loc 'cf-shop-cat-weapon'}"/>

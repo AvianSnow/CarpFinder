@@ -180,7 +180,7 @@ public sealed class CFImplementTest : GameTest
         await Server.WaitPost(() =>
         {
             hero = Spawn();
-            Features.Apply(hero, Server.ProtoMan.Index<CFClassPrototype>("Champion").Features.First(f => f.Name == "Champion's Aura").Grants, "aura");
+            Features.Apply(hero, Server.ProtoMan.Index(new ProtoId<CFClassPrototype>("Champion")).Features.First(f => f.Name == "Champion's Aura").Grants, "aura");
             Choose(hero, "ImplementRegalia");
             ally = Spawn(x: 1);
         });

@@ -11,7 +11,6 @@
                 <Button Name="TabCommon" MinHeight="26" Text="{Loc 'cf-hud-deck-common'}" />
                 <Button Name="TabClass" MinHeight="26" Text="{Loc 'cf-hud-deck-class'}" />
                 <Button Name="TabSpells" MinHeight="26" Text="{Loc 'cf-hud-deck-spells'}" />
-                <Button Name="TabItems" MinHeight="26" Text="{Loc 'cf-hud-deck-items'}" />
                 <Button Name="TabCustom" MinHeight="26" Text="{Loc 'cf-hud-deck-custom'}" ToolTip="{Loc 'cf-hud-deck-custom-tooltip'}" />
                 <Control HorizontalExpand="True" />
                 <Button Name="RowsLess" MinSize="26 26" ToolTip="{Loc 'cf-hud-deck-rows-less'}" />
@@ -34,12 +33,6 @@
                     <hud:CFDeckPager Name="FeaturesPager" />
                 </BoxContainer>
                 <hud:CFDeckDivider Name="Divider1" ToolTip="{Loc 'cf-hud-deck-divider'}" />
-                <BoxContainer Name="ItemsSection" Orientation="Vertical" SeparationOverride="2">
-                    <Label ClipText="True" Text="{Loc 'cf-hud-deck-section-items'}" ToolTip="{Loc 'cf-hud-deck-section-items'}" MouseFilter="Stop" />
-                    <hud:CFDeckSlotGrid Name="ItemsGrid" />
-                    <hud:CFDeckPager Name="ItemsPager" />
-                </BoxContainer>
-                <hud:CFDeckDivider Name="Divider2" ToolTip="{Loc 'cf-hud-deck-divider'}" />
                 <BoxContainer Name="CustomSection" Orientation="Vertical" SeparationOverride="2">
                     <Label Name="CustomTitle" ClipText="True" Text="{Loc 'cf-hud-deck-section-custom'}" ToolTip="{Loc 'cf-hud-deck-custom-tooltip'}" MouseFilter="Stop" />
                     <actions:ActionsBar Name="Bar" />

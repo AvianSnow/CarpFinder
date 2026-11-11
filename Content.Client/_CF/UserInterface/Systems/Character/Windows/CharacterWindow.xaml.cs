@@ -18,6 +18,7 @@ public sealed partial class CharacterWindow : DefaultWindow
         Tabs.SetTabTitle(2, Loc.GetString("cf-sheet-reactions-tab"));
         Tabs.SetTabTitle(3, Loc.GetString("cf-sheet-info-tab"));
         Tabs.SetTabTitle(4, Loc.GetString("cf-shop-tab"));
+        Tabs.SetTabTitle(5, Loc.GetString("cf-sheet-levelup-tab"));
         ShopTab.OnAccept += Close;
         ShopTab.OnCancel += Close;
     }

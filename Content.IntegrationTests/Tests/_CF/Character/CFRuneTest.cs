@@ -87,7 +87,7 @@ public sealed class CFRuneTest : GameTest
     private CFRuneItemComponent Item(string rune)
     {
         var factory = SEntMan.ComponentFactory;
-        Assert.That(Server.ProtoMan.Index<EntityPrototype>(rune).TryComp(out CFRuneItemComponent? item, factory), Is.True);
+        Assert.That(Server.ProtoMan.Index<EntityPrototype>(rune).TryComp(out CFRuneItemComponent item, factory), Is.True);
         return item!;
     }
 
@@ -144,7 +144,7 @@ public sealed class CFRuneTest : GameTest
     {
         var hero = Spawn("CFRuneHero");
         var features = SEntMan.System<CFCharacterFeatureSystem>();
-        features.Apply(hero, Server.ProtoMan.Index<CFClassPrototype>("Runesmith").Features.First(f => f.Name == "Runes").Grants, "runes");
+        features.Apply(hero, Server.ProtoMan.Index(new ProtoId<CFClassPrototype>("Runesmith")).Features.First(f => f.Name == "Runes").Grants, "runes");
         foreach (var id in choices)
         {
             features.Apply(hero, Server.ProtoMan.Index<CFClassChoicePrototype>(id).Grants, id);
@@ -165,7 +165,7 @@ public sealed class CFRuneTest : GameTest
             var axe = First<CFWeaponComponent>(bench);
             var rune = First<CFRuneItemComponent>(bench);
 
-            var degree = Workbench.TryCraft(bench, hero, Server.ProtoMan.Index<CFCraftingRecipePrototype>("AttachWeaponPotency1"));
+            var degree = Workbench.TryCraft(bench, hero, Server.ProtoMan.Index(new ProtoId<CFCraftingRecipePrototype>("AttachWeaponPotency1")));
             Assert.That(degree, Is.Not.Null);
             Assert.That(degree.Value.IsSuccess(), Is.True);
             Assert.That(SEntMan.GetComponent<CFWeaponRunesComponent>(axe).Potency, Is.EqualTo(1));
@@ -186,7 +186,7 @@ public sealed class CFRuneTest : GameTest
             Teach(hero, "AttachWeaponPotency1");
             var entry = Workbench.Entries(bench, hero).Single(e => e.Recipe == "AttachWeaponPotency1");
             Assert.That(entry.HasMaterials, Is.False);
-            Assert.That(Workbench.TryCraft(bench, hero, Server.ProtoMan.Index<CFCraftingRecipePrototype>("AttachWeaponPotency1")), Is.Null);
+            Assert.That(Workbench.TryCraft(bench, hero, Server.ProtoMan.Index(new ProtoId<CFCraftingRecipePrototype>("AttachWeaponPotency1"))), Is.Null);
         });
     }
 
@@ -197,12 +197,12 @@ public sealed class CFRuneTest : GameTest
         await Server.WaitAssertion(() =>
         {
             var low = Crafter(level: 1);
-            var potency = Server.ProtoMan.Index<CFCraftingRecipePrototype>("AttachWeaponPotency1");
+            var potency = Server.ProtoMan.Index(new ProtoId<CFCraftingRecipePrototype>("AttachWeaponPotency1"));
             Assert.That(Workbench.BlockedReason(low, potency), Is.EqualTo("cf-craft-blocked-level"));
 
             var capped = Crafter(level: 5);
             Assert.That(Workbench.BlockedReason(capped, potency), Is.Null);
-            Assert.That(Workbench.BlockedReason(capped, Server.ProtoMan.Index<CFCraftingRecipePrototype>("AttachFlaming")), Is.EqualTo("cf-craft-blocked-level"));
+            Assert.That(Workbench.BlockedReason(capped, Server.ProtoMan.Index(new ProtoId<CFCraftingRecipePrototype>("AttachFlaming"))), Is.EqualTo("cf-craft-blocked-level"));
         });
     }
 
@@ -212,7 +212,7 @@ public sealed class CFRuneTest : GameTest
         _map = await CFDevMap.Load(Pair, Footprint);
         await Server.WaitAssertion(() =>
         {
-            var etch = Server.ProtoMan.Index<CFCraftingRecipePrototype>("EtchEsvadir");
+            var etch = Server.ProtoMan.Index(new ProtoId<CFCraftingRecipePrototype>("EtchEsvadir"));
             var stranger = Crafter();
             Assert.That(Workbench.BlockedReason(stranger, etch), Is.EqualTo("cf-rune-unknown"));
 
