@@ -19,3 +19,5 @@ cf-reagent-desc-essence-magic = A concentrated essence of magical energy.
 reagent-physical-desc-colorless = colorless
 reagent-physical-desc-sparkling = sparkling
 cp14-flavor-base-salt = salty
+cf-reagent-name-toxic-spew = toxic spew
+cf-reagent-desc-toxic-spew = What is left of a toxic spew: a green, reeking film that clings to the floor until it fumes away.

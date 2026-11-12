@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using Content.Shared.CF.Actions;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Checks;
@@ -277,9 +279,8 @@ public sealed partial class CFEffectSystem : EntitySystem
         EntityWhitelist? whitelist = null,
         int maxTargets = 0)
     {
-        var found = new List<EntityUid>();
         if (origin.MapId != aim.MapId || !_maps.TryFindGridAt(origin, out var grid, out var gridComp))
-            return found;
+            return new List<EntityUid>();
 
         var originLocal = _maps.WorldToLocal(grid, gridComp, origin.Position);
         var aimLocal = _maps.WorldToLocal(grid, gridComp, aim.Position);
@@ -287,6 +288,110 @@ public sealed partial class CFEffectSystem : EntitySystem
 
         var searchFrom = atPoint ? aim : origin;
         var reach = Math.Max(3f, sizeFeet / CFAreaGrid.FeetPerTile + 3f);
+        return CollectInTiles(user, (grid, gridComp), tiles, searchFrom, reach, filter, selfAllowed, whitelist, maxTargets);
+    }
+
+    /// <summary>
+    /// The grid tiles a source's area covers from where the user stands now, with spellshapes counted. False when the
+    /// source has no area, or the user is not on a grid.
+    /// </summary>
+    public bool AreaTiles(
+        EntityUid source,
+        EntityUid user,
+        MapCoordinates aim,
+        out Entity<MapGridComponent> grid,
+        [NotNullWhen(true)] out HashSet<Vector2i>? tiles)
+    {
+        grid = default;
+        tiles = null;
+        var origin = _transform.GetMapCoordinates(user);
+        if (!TryComp(source, out CFAreaEffectComponent? area)
+            || origin.MapId != aim.MapId
+            || !_maps.TryFindGridAt(origin, out var gridUid, out var gridComp))
+        {
+            return false;
+        }
+
+        grid = (gridUid, gridComp);
+        tiles = CFAreaGrid.Collect(
+            area.Shape,
+            area.SizeFeet + _spellshapes.ExtraAreaFeet(source, user, area),
+            _maps.WorldToLocal(gridUid, gridComp, origin.Position),
+            _maps.WorldToLocal(gridUid, gridComp, aim.Position),
+            gridComp.TileSize,
+            area.IncludeSelf);
+        return true;
+    }
+
+    /// <summary>
+    /// Resolves the source on every creature standing in the given tiles now, with the filter of its area. For an area
+    /// that took time to fill, such as a breath that flows out as liquid. Returns how many were affected.
+    /// </summary>
+    public int ResolveTiles(EntityUid source, EntityUid user, Entity<MapGridComponent> grid, IReadOnlyCollection<Vector2i> tiles)
+    {
+        var targets = CreaturesInTiles(source, user, grid, tiles);
+        foreach (var target in targets)
+        {
+            ResolveTarget(source, user, target);
+        }
+
+        if (targets.Count == 0)
+            _popup.PopupEntity(Loc.GetString("cf-spell-no-one"), user, user);
+
+        return targets.Count;
+    }
+
+    /// <summary>The creatures standing in the given tiles now that the source's area would affect.</summary>
+    public List<EntityUid> CreaturesInTiles(
+        EntityUid source,
+        EntityUid user,
+        Entity<MapGridComponent> grid,
+        IReadOnlyCollection<Vector2i> tiles)
+    {
+        if (!TryComp(source, out CFAreaEffectComponent? area) || tiles.Count == 0)
+            return new List<EntityUid>();
+
+        // Search around the middle of the tiles, far enough to reach every one.
+        var center = Vector2.Zero;
+        foreach (var tile in tiles)
+        {
+            center += (Vector2) tile;
+        }
+
+        center = center / tiles.Count + new Vector2(0.5f, 0.5f);
+        var reach = 1.5f;
+        foreach (var tile in tiles)
+        {
+            reach = Math.Max(reach, ((Vector2) tile + new Vector2(0.5f, 0.5f) - center).Length() + 1.5f);
+        }
+
+        var searchFrom = _transform.ToMapCoordinates(new EntityCoordinates(grid, center * grid.Comp.TileSize));
+        var set = tiles as HashSet<Vector2i> ?? new HashSet<Vector2i>(tiles);
+        return CollectInTiles(
+            user,
+            grid,
+            set,
+            searchFrom,
+            reach * grid.Comp.TileSize,
+            area.Filter,
+            area.IncludeSelf,
+            area.Whitelist,
+            area.MaxTargets);
+    }
+
+    private List<EntityUid> CollectInTiles(
+        EntityUid user,
+        Entity<MapGridComponent> gridEnt,
+        HashSet<Vector2i> tiles,
+        MapCoordinates searchFrom,
+        float reach,
+        CFTargetFilter filter,
+        bool selfAllowed,
+        EntityWhitelist? whitelist,
+        int maxTargets)
+    {
+        var found = new List<EntityUid>();
+        var (grid, gridComp) = gridEnt;
         foreach (var uid in _lookup.GetEntitiesInRange(searchFrom, reach))
         {
             if (!HasComp<MobStateComponent>(uid) || !TryComp(uid, out TransformComponent? xform) || xform.GridUid != grid)

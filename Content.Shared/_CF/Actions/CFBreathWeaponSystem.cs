@@ -24,6 +24,8 @@ public sealed partial class CFBreathWeaponSystem : EntitySystem
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private CFActionPoolSystem _pool = default!;
     [Dependency] private CFEffectSystem _effects = default!;
+    [Dependency] private CFBreathFlowSystem _flow = default!;
+    [Dependency] private CFBreathGasSystem _gas = default!;
     [Dependency] private CFVfxSystem _vfx = default!;
 
     [SubscribeLocalEvent]
@@ -46,7 +48,9 @@ public sealed partial class CFBreathWeaponSystem : EntitySystem
             return;
 
         _vfx.Cast(args.Performer, ent);
-        _effects.ResolveArea(ent, args.Performer, aim);
+        // A gas or a liquid breath takes time to spread, and its creatures roll as it reaches them.
+        if (!_gas.TryStart((ent.Owner, null), args.Performer, aim) && !_flow.TryStart(ent, args.Performer, aim))
+            _effects.ResolveArea(ent, args.Performer, aim);
         _actions.SetUseDelay(ent.Owner, RollRecharge(ent.Comp));
     }
 

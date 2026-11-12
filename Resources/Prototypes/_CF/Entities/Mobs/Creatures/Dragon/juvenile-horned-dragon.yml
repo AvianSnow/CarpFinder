@@ -3,7 +3,8 @@
 # The stat block lists no languages. These are the horned dragon family's from Monster Core, so a party can talk to it.
 # It has one Strike, its jaws. The poison on the jaws is not in, nor are claw +14 (2d6+4 slashing, agile), tail +12
 # (1d8+4 bludgeoning, reach 10 feet) and horn +12 (1d12+4 bludgeoning).
-# Poison Breath (CFActPoisonBreath in Actions/breath.yml) and Draconic Momentum are in.
+# Poison Breath (CFActPoisonBreath in Actions/breath.yml) and Draconic Momentum are in. The breath is a toxic cloud that
+# spreads over the cone in about 2 seconds; anyone standing where it has thickened rolls, once, and it fades after.
 # Not in yet: Draconic Frenzy, the Twisting Tail reaction, and its fly 30 feet and swim 20 feet Speeds.
 # It keeps a lair (CFGOAPLair): where it spawns is home. It breathes on whoever the cone would catch whenever its breath is
 # charged, waits in its lair while it recharges, only closes on someone within 3 tiles, and goes home once it is 8 tiles

@@ -4,6 +4,7 @@ using Content.Server.CF.GOAP.Encounters;
 using Robust.Shared.EntitySerialization;
 using Robust.Shared.EntitySerialization.Systems;
 using Robust.Shared.GameObjects;
+using Robust.Shared.Map;
 using Robust.Shared.Utility;
 
 namespace Content.IntegrationTests.Tests.CF.GOAP;
@@ -23,7 +24,8 @@ public sealed class CFDragonRunLairTest : GameTest
         await Server.WaitPost(() =>
         {
             var options = new DeserializationOptions { InitializeMaps = true };
-            Assert.That(SEntMan.System<MapLoaderSystem>().TryLoadMap(Map, out _, out _, options));
+            Assert.That(SEntMan.System<MapLoaderSystem>().TryLoadMap(Map, out var map, out _, options));
+            _mapId = map!.Value.Comp.MapId;
         });
 
         await Server.WaitAssertion(() =>
@@ -46,13 +48,19 @@ public sealed class CFDragonRunLairTest : GameTest
         });
     }
 
+    private MapId _mapId;
+
+    /// <summary>
+    /// Entities of a prototype on the map this test loaded. The server can be one an earlier test used, with its own
+    /// dragons still on another map.
+    /// </summary>
     private System.Collections.Generic.List<EntityUid> Find(string id)
     {
         var found = new System.Collections.Generic.List<EntityUid>();
-        var query = SEntMan.AllEntityQueryEnumerator<MetaDataComponent>();
-        while (query.MoveNext(out var uid, out var meta))
+        var query = SEntMan.AllEntityQueryEnumerator<MetaDataComponent, TransformComponent>();
+        while (query.MoveNext(out var uid, out var meta, out var xform))
         {
-            if (meta.EntityPrototype?.ID == id)
+            if (meta.EntityPrototype?.ID == id && xform.MapID == _mapId)
                 found.Add(uid);
         }
 

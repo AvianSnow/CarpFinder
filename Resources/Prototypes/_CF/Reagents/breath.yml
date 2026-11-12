@@ -1,0 +1,13 @@
+# What breath weapons leave on the floor when they pour out as liquid (CFBreathWeapon.reagent, CFBreathFlowSystem), such
+# as Toxic Spew. The breath does its harm through its own save, once it has filled, so the reagent itself is harmless.
+# evaporationSpeed is units per second: 48 units go from a smooth sheet to a few drops and are gone in about 20 seconds.
+
+- type: reagent
+  id: CFToxicSpew
+  name: cf-reagent-name-toxic-spew
+  desc: cf-reagent-desc-toxic-spew
+  group: Toxins
+  flavor: bitter
+  physicalDesc: reagent-physical-desc-cloudy
+  color: "#4FD13A"
+  evaporationSpeed: 2.5

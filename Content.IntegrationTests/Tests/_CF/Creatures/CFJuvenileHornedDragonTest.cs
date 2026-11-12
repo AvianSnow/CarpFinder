@@ -4,6 +4,7 @@ using Content.IntegrationTests.Fixtures;
 using Content.IntegrationTests.Tests.CF;
 using Content.Server.CF.GOAP;
 using Content.Server.CF.GOAP.Sensors;
+using Content.Server.NPC.HTN;
 using Content.Server.NPC.Systems;
 using Content.Shared.Actions;
 using Content.Shared.Actions.Components;
@@ -86,6 +87,15 @@ public sealed class CFJuvenileHornedDragonTest : GameTest
         return breath!.Value;
     }
 
+    /// <summary>A dragon that only does what the test tells it: left to think, it walks up and bites the hero.</summary>
+    private EntityUid SpawnStillDragon(int x, int y)
+    {
+        var dragon = SEntMan.SpawnAttachedTo(Dragon, _map.Local(x, y));
+        SEntMan.RemoveComponent<HTNComponent>(dragon);
+        SEntMan.RemoveComponent<CFGOAPComponent>(dragon);
+        return dragon;
+    }
+
     private void SpendBreath(EntityUid dragon)
     {
         SEntMan.System<SharedActionsSystem>().SetCooldown(Breath(dragon).Owner, TimeSpan.FromSeconds(30));
@@ -151,40 +161,151 @@ public sealed class CFJuvenileHornedDragonTest : GameTest
         });
     }
 
-    [Test]
-    public async Task PoisonBreathHurtsWhatTheConeCatchesThenRecharges()
+    /// <summary>This dragon's cloud, while it is in the air. Other tests on the same server may have their own.</summary>
+    private CFBreathCloudComponent CloudOf(EntityUid dragon)
     {
-        _map = await CFDevMap.Load(Pair, LairFootprint);
-        var hurt = 0;
+        var query = SEntMan.AllEntityQueryEnumerator<CFBreathCloudComponent>();
+        while (query.MoveNext(out _, out var cloud))
+        {
+            if (cloud.User == dragon)
+                return cloud;
+        }
+
+        return null;
+    }
+
+    /// <summary>How many tiles of this dragon's cloud are drawn.</summary>
+    private int CloudTiles(EntityUid dragon)
+    {
+        if (CloudOf(dragon) is not { } cloud)
+            return 0;
+
+        return cloud.Clouds.Count(tile => tile is { } uid && SEntMan.EntityExists(uid));
+    }
+
+    private int Hurt(EntityUid hero)
+    {
+        return 1000 - SEntMan.GetComponent<CFCombatantComponent>(hero).CurrentHp;
+    }
+
+    /// <summary>
+    /// Poison Breath billows out as a cloud. Nobody rolls the moment it breathes. The hero rolls once the gas on their
+    /// tile has thickened, and only once however long they stand in it. Then the cloud thins out and is gone.
+    /// </summary>
+    [Test]
+    public async Task PoisonBreathBillowsOutAndEachCreatureRollsOnce()
+    {
+        _map = await CFDevMap.Load(Pair, LairFootprint, avoidStructures: true);
+        EntityUid dragon = default;
+        EntityUid hero = default;
+        var hurtAtOnce = -1;
         var spent = 0;
         var first = false;
         var second = true;
         var recharge = TimeSpan.Zero;
         await Server.WaitPost(() =>
         {
-            var dragon = SEntMan.SpawnEntity(Dragon, _map.Local(0, 0));
-            var hero = SEntMan.SpawnEntity("CFDragonTestHero", _map.Local(3, 0));
+            dragon = SpawnStillDragon(0, 0);
+            hero = SEntMan.SpawnAttachedTo("CFDragonTestHero", _map.Local(3, 0));
             var breathing = SEntMan.System<CFBreathWeaponSystem>();
             var pool = SEntMan.EnsureComponent<CFActionPoolComponent>(dragon);
             var before = SEntMan.System<CFActionPoolSystem>().ReadyCount(dragon, pool);
             var breath = Breath(dragon);
+            var aim = SEntMan.System<SharedTransformSystem>().GetMapCoordinates(hero);
 
-            first = breathing.TryBreathe(dragon, breath, SEntMan.System<SharedTransformSystem>().GetMapCoordinates(hero));
-            second = breathing.TryBreathe(dragon, breath, SEntMan.System<SharedTransformSystem>().GetMapCoordinates(hero));
+            first = breathing.TryBreathe(dragon, breath, aim);
+            second = breathing.TryBreathe(dragon, breath, aim);
 
-            hurt = 1000 - SEntMan.GetComponent<CFCombatantComponent>(hero).CurrentHp;
+            hurtAtOnce = Hurt(hero);
             spent = before - SEntMan.System<CFActionPoolSystem>().ReadyCount(dragon, pool);
             if (breath.Comp.Cooldown is { } cooldown)
                 recharge = cooldown.End - cooldown.Start;
         });
 
+        await RunSeconds(0.2f);
+        var cloudsEarly = 0;
+        var hurtEarly = -1;
+        await Server.WaitPost(() =>
+        {
+            cloudsEarly = CloudTiles(dragon);
+            hurtEarly = Hurt(hero);
+        });
+
+        await RunSeconds(2.3f);
+        var cloudsFilled = 0;
+        var drawn = new List<EntityUid>();
+        var hurt = 0;
+        await Server.WaitPost(() =>
+        {
+            cloudsFilled = CloudTiles(dragon);
+            drawn.AddRange(CloudOf(dragon)?.Clouds.Where(tile => tile != null).Select(tile => tile.Value) ?? Enumerable.Empty<EntityUid>());
+            hurt = Hurt(hero);
+        });
+
+        await RunSeconds(2f);
+        var hurtLater = 0;
+        await Server.WaitPost(() => hurtLater = Hurt(hero));
+
+        await RunSeconds(12f);
+        var cloudsLeft = -1;
+        var breathsLeft = -1;
+        await Server.WaitPost(() =>
+        {
+            cloudsLeft = drawn.Count(SEntMan.EntityExists);
+            breathsLeft = CloudOf(dragon) == null ? 0 : 1;
+        });
+
         Assert.Multiple(() =>
         {
             Assert.That(first, "It breathes.");
-            Assert.That(hurt, Is.InRange(2, 60), "5d6 poison, halved at best.");
             Assert.That(spent, Is.EqualTo(2), "Breathing is 2 actions.");
             Assert.That(recharge.TotalSeconds, Is.InRange(6, 24), "1d4 rounds.");
             Assert.That(second, Is.False, "It cannot breathe again until it recharges.");
+            Assert.That(hurtAtOnce, Is.Zero, "Nobody rolls the moment it breathes.");
+            Assert.That(hurtEarly, Is.Zero, "Nor before the gas on their tile has thickened.");
+            Assert.That(cloudsEarly, Is.InRange(1, cloudsFilled - 1), "The cloud spreads out tile by tile.");
+            Assert.That(cloudsFilled, Is.GreaterThanOrEqualTo(15), "It fills most of a 30-foot cone.");
+            Assert.That(hurt, Is.InRange(2, 60), "5d6 poison, halved at best.");
+            Assert.That(hurtLater, Is.EqualTo(hurt), "Standing in it longer is not a second roll.");
+            Assert.That(cloudsLeft, Is.Zero, "The cloud thins out and is gone.");
+            Assert.That(breathsLeft, Is.Zero);
+        });
+    }
+
+    /// <summary>Someone who walks into the cloud while it lingers rolls too.</summary>
+    [Test]
+    public async Task WalkingIntoTheLingeringCloudRolls()
+    {
+        _map = await CFDevMap.Load(Pair, LairFootprint, avoidStructures: true);
+        EntityUid hero = default;
+        var breathed = false;
+        await Server.WaitPost(() =>
+        {
+            var dragon = SpawnStillDragon(0, 0);
+
+            // Behind the dragon, out of the cone.
+            hero = SEntMan.SpawnAttachedTo("CFDragonTestHero", _map.Local(-1, 0));
+            var aim = SEntMan.System<SharedTransformSystem>().ToMapCoordinates(_map.Local(3, 0));
+            breathed = SEntMan.System<CFBreathWeaponSystem>().TryBreathe(dragon, Breath(dragon), aim);
+        });
+
+        await RunSeconds(2.5f);
+        var hurtOutside = -1;
+        await Server.WaitPost(() =>
+        {
+            hurtOutside = Hurt(hero);
+            SEntMan.System<SharedTransformSystem>().SetCoordinates(hero, _map.Local(3, 0));
+        });
+
+        await RunSeconds(0.5f);
+        var hurtInside = 0;
+        await Server.WaitPost(() => hurtInside = Hurt(hero));
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(breathed);
+            Assert.That(hurtOutside, Is.Zero, "Out of the cone, the cloud never reached them.");
+            Assert.That(hurtInside, Is.InRange(2, 60), "Walking into it, they rolled.");
         });
     }
 
