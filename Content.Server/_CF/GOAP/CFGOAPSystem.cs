@@ -34,6 +34,12 @@ public sealed partial class CFGOAPSystem : EntitySystem
     /// <summary>How often it thinks while its goal is calm. Being hurt still makes it think at once.</summary>
     private static readonly TimeSpan CalmThinkInterval = TimeSpan.FromSeconds(1);
 
+    /// <summary>
+    /// The most steps one tick runs, as each finished step starts the next. A step that finishes as it begins could
+    /// otherwise run a whole plan in one tick.
+    /// </summary>
+    private const int StepsPerTick = 3;
+
     /// <summary>Below this an action is not worth planning at all.</summary>
     private const float MinimumValue = 0.02f;
 
@@ -270,25 +276,36 @@ public sealed partial class CFGOAPSystem : EntitySystem
         return options;
     }
 
+    /// <summary>
+    /// Runs the current step. One that finishes hands straight over to the next in the same tick, so walking up to a
+    /// target and swinging at it do not have a standstill between them.
+    /// </summary>
     private void RunStep(Entity<CFGOAPComponent> ent)
     {
-        if (ent.Comp.Step >= ent.Comp.Plan.Count)
-            return;
-
-        var action = _prototypes.Index(ent.Comp.Plan[ent.Comp.Step]);
-        var step = _steps[action.Step];
-        if (!ent.Comp.StepStarted)
+        for (var i = 0; i < StepsPerTick && ent.Comp.Step < ent.Comp.Plan.Count; i++)
         {
-            ent.Comp.StepStarted = true;
-            ent.Comp.StepTime = _timing.CurTime;
-            step.Begin(ent, action);
+            var action = _prototypes.Index(ent.Comp.Plan[ent.Comp.Step]);
+            var step = _steps[action.Step];
+            if (!ent.Comp.StepStarted)
+            {
+                ent.Comp.StepStarted = true;
+                ent.Comp.StepTime = _timing.CurTime;
+                step.Begin(ent, action);
+            }
+
+            if (!step.Run(ent, action))
+                return;
+
+            EndStep(ent);
+            ent.Comp.Step++;
         }
+    }
 
-        if (!step.Run(ent, action))
-            return;
-
-        EndStep(ent);
-        ent.Comp.Step++;
+    /// <summary>The action after the current one, if the plan has one.</summary>
+    public CFGOAPActionPrototype? NextAction(Entity<CFGOAPComponent> ent)
+    {
+        var next = ent.Comp.Step + 1;
+        return next < ent.Comp.Plan.Count ? _prototypes.Index(ent.Comp.Plan[next]) : null;
     }
 
     private void EndStep(Entity<CFGOAPComponent> ent)

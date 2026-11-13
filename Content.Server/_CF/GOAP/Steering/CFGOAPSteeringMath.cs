@@ -39,6 +39,76 @@ public static class CFGOAPSteeringMath
         return slowRadius <= 0f ? 1f : Math.Clamp(Vector2.Distance(position, target) / slowRadius, 0f, 1f);
     }
 
+    /// <summary>Within this of where it wants to stop, it has arrived.</summary>
+    public const float ArriveTolerance = 0.1f;
+
+    /// <summary>The slowest it walks while still on its way, so the last stretch does not take forever.</summary>
+    public const float MinApproachSpeed = 0.3f;
+
+    /// <summary>
+    /// The share of full speed for getting to <paramref name="goal"/> and stopping <paramref name="standoff"/> short of
+    /// it, or 0 to stand still. It slows over the last <paramref name="slowRadius"/>, but keeps up with a goal moving
+    /// away, or it could never stay beside a creature that walks off. Once stopped it stays stopped until the goal is
+    /// <paramref name="resume"/> further off, so a small shuffle does not set it walking and stopping over and over.
+    /// </summary>
+    public static float ApproachSpeed(
+        Vector2 position,
+        Vector2 goal,
+        Vector2 goalVelocity,
+        float maxSpeed,
+        float slowRadius,
+        float standoff,
+        float resume,
+        ref bool settled)
+    {
+        var line = goal - position;
+        var distance = line.Length();
+        var gap = distance - standoff;
+        if (settled)
+        {
+            if (gap <= resume)
+                return 0f;
+
+            settled = false;
+        }
+
+        if (gap <= ArriveTolerance)
+        {
+            settled = true;
+            return 0f;
+        }
+
+        var away = distance > 0f && maxSpeed > 0f
+            ? Math.Max(0f, Vector2.Dot(goalVelocity, line / distance)) / maxSpeed
+            : 0f;
+
+        var share = slowRadius <= 0f ? 1f : gap / slowRadius;
+        return Math.Clamp(share + away, MinApproachSpeed, 1f);
+    }
+
+    /// <summary>
+    /// Where between stock's 12 steering directions to aim, as a slot number with a fraction. Stock takes the single
+    /// best slot, so a creature heading 15 degrees off one zigzags between two of them. This fits a curve through the
+    /// best slot and its neighbours and takes its peak, which is the way the behaviours really asked for.
+    /// </summary>
+    public static float Aim(float[] interest, float[] danger, int best)
+    {
+        var count = interest.Length;
+        var left = Adjusted(interest, danger, (best + count - 1) % count);
+        var centre = Adjusted(interest, danger, best);
+        var right = Adjusted(interest, danger, (best + 1) % count);
+        var curve = left - 2f * centre + right;
+        if (curve >= 0f)
+            return best;
+
+        return best + Math.Clamp(0.5f * (left - right) / curve, -0.5f, 0.5f);
+    }
+
+    private static float Adjusted(float[] interest, float[] danger, int i)
+    {
+        return Math.Clamp(interest[i] - danger[i], 0f, 1f);
+    }
+
     /// <summary>Where the target will be by the time something at <paramref name="speed"/> could reach it now.</summary>
     public static Vector2 Predict(Vector2 position, float speed, Vector2 target, Vector2 targetVelocity)
     {

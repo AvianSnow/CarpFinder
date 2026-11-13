@@ -10,6 +10,11 @@ public enum CFGOAPSteeringKind : byte
     /// <summary>Stock path-following to the steering coordinates. Without this, stock seek is off.</summary>
     Seek,
     Flee,
+
+    /// <summary>
+    /// Toward the target or point, slowing over <see cref="CFGOAPSteeringBehavior.Radius"/> and stopping
+    /// <see cref="CFGOAPSteeringBehavior.Standoff"/> short of it. It keeps up with a goal that moves away.
+    /// </summary>
     Arrive,
     Wander,
     Pursuit,
@@ -69,6 +74,14 @@ public sealed partial class CFGOAPSteeringBehavior
     /// <summary>How far Wander's angle can jump each tick, in radians.</summary>
     [DataField]
     public float Jitter = 0.5f;
+
+    /// <summary>How far short of the goal Arrive stops, in tiles. Near a creature this keeps it out of their body.</summary>
+    [DataField]
+    public float Standoff;
+
+    /// <summary>Once Arrive has stopped, how much further the goal has to get before it sets off again, in tiles.</summary>
+    [DataField]
+    public float Resume = 0.5f;
 
     /// <summary>The influence layer FieldFollow reads.</summary>
     [DataField]
@@ -194,6 +207,12 @@ public sealed partial class CFGOAPSteeringComponent : Component
 
     /// <summary>A world position to use when there is no <see cref="Target"/>.</summary>
     public Vector2? Point;
+
+    /// <summary>How fast <see cref="Point"/> is moving, when a step moves it along, so Arrive can keep up.</summary>
+    public Vector2 PointVelocity;
+
+    /// <summary>Arrive got there and stopped. It stays put until the goal is far enough off again.</summary>
+    public bool Settled;
 
     /// <summary>The arrows it is reading. A group shares one.</summary>
     public CFGOAPFlowField? Field;

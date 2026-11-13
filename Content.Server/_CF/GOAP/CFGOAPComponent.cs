@@ -30,14 +30,14 @@ public sealed partial class CFGOAPComponent : Component
     [DataField]
     public List<ProtoId<CFGOAPGoalPrototype>> Goals = new()
     {
-        "PutOutFire", "RaiseShield", "KillTarget", "StayAlive", "Heal", "ArmSelf", "HuntTarget", "Investigate", "GoHome", "Idle",
+        "PutOutFire", "RaiseShield", "KillTarget", "StayAlive", "Heal", "ArmSelf", "HuntTarget", "Investigate", "StayWithMaster", "GoHome", "Idle",
     };
 
     [DataField]
     public List<ProtoId<CFGOAPActionPrototype>> Actions = new()
     {
         "Breathe", "Strike", "Shoot", "Close", "Demoralize", "Feint", "RaiseShield", "HoldBack", "Flee", "FightBack", "PickUpWeapon", "PickUpHealing", "DrinkHealing",
-        "FollowScent", "GoToLkp", "CheckNode", "LookAround", "GoHome", "Wander", "PutOutFire",
+        "FollowScent", "GoToLkp", "CheckNode", "LookAround", "GoHome", "Wander", "Follow", "PutOutFire",
     };
 
     public ulong Facts;
@@ -110,6 +110,27 @@ public sealed partial class CFGOAPComponent : Component
     public ProtoId<CFGOAPGoalPrototype>? ForcedGoal;
 
     public TimeSpan ForcedUntil;
+
+    /// <summary>Where the current idle walk is going, or null while it rests.</summary>
+    public Vector2? WanderPoint;
+
+    /// <summary>When the rest between idle walks ends.</summary>
+    public TimeSpan WanderRestUntil;
+
+    /// <summary>When an idle walk that has not got there is given up, and it rests where it is.</summary>
+    public TimeSpan WanderGiveUpAt;
+
+    /// <summary>
+    /// The way its master was last seen walking, so a companion keeps behind them after they stop. Zero until they
+    /// have moved.
+    /// </summary>
+    public Vector2 FollowHeading;
+
+    /// <summary>When a companion next checks whether it can walk straight to its place behind its master.</summary>
+    public TimeSpan NextFollowCheck;
+
+    /// <summary>It could walk straight to its place behind its master when it last checked.</summary>
+    public bool FollowStraight;
 
     /// <summary>Allies already seen down, so a reflex fires once for each.</summary>
     public HashSet<EntityUid> FallenAllies = new();

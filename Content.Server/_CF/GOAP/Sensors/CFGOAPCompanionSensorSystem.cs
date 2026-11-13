@@ -1,4 +1,5 @@
 using Content.Shared.CF.Companions;
+using Content.Shared.CF.GOAP;
 using Content.Shared.Mobs.Systems;
 
 namespace Content.Server.CF.GOAP.Sensors;
@@ -9,6 +10,9 @@ namespace Content.Server.CF.GOAP.Sensors;
 /// </summary>
 public sealed partial class CFGOAPCompanionSensorSystem : EntitySystem
 {
+    /// <summary>How close to its master a recalled companion has to get before it fights again, in tiles.</summary>
+    private const float RecallArrival = 2.5f;
+
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private MobStateSystem _mobState = default!;
 
@@ -26,5 +30,11 @@ public sealed partial class CFGOAPCompanionSensorSystem : EntitySystem
             return;
 
         args.Creature.Comp.Home = _transform.GetMoverCoordinates(master);
+        args.Facts |= CFGOAPFact.HasMaster;
+
+        // Back beside its master, a recall is done and it fights for itself again.
+        if (companion.Recalled
+            && (_transform.GetMapCoordinates(master).Position - args.Here.Position).Length() <= RecallArrival)
+            companion.Recalled = false;
     }
 }

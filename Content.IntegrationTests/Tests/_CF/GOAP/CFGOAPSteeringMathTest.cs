@@ -57,6 +57,65 @@ public sealed class CFGOAPSteeringMathTest
     }
 
     [Test]
+    public void ApproachSlowsThenStopsAndWaitsToResume()
+    {
+        var goal = new Vector2(10f, 0f);
+        var settled = false;
+        Assert.That(CFGOAPSteeringMath.ApproachSpeed(Vector2.Zero, goal, Vector2.Zero, 4f, 2f, 0f, 0.5f, ref settled), Is.EqualTo(1f), "Far off it goes at full speed.");
+        Assert.That(CFGOAPSteeringMath.ApproachSpeed(new Vector2(9f, 0f), goal, Vector2.Zero, 4f, 2f, 0f, 0.5f, ref settled), Is.EqualTo(0.5f), "Halfway into the radius, half speed.");
+        Assert.That(CFGOAPSteeringMath.ApproachSpeed(new Vector2(9.8f, 0f), goal, Vector2.Zero, 4f, 2f, 0f, 0.5f, ref settled), Is.EqualTo(CFGOAPSteeringMath.MinApproachSpeed), "It never crawls.");
+        Assert.That(settled, Is.False);
+
+        Assert.That(CFGOAPSteeringMath.ApproachSpeed(new Vector2(9.95f, 0f), goal, Vector2.Zero, 4f, 2f, 0f, 0.5f, ref settled), Is.Zero);
+        Assert.That(settled, "Close enough, it stops.");
+        Assert.That(CFGOAPSteeringMath.ApproachSpeed(new Vector2(9.7f, 0f), goal, Vector2.Zero, 4f, 2f, 0f, 0.5f, ref settled), Is.Zero, "A small shuffle does not set it off again.");
+        Assert.That(CFGOAPSteeringMath.ApproachSpeed(new Vector2(9f, 0f), goal, Vector2.Zero, 4f, 2f, 0f, 0.5f, ref settled), Is.GreaterThan(0f), "A real move does.");
+        Assert.That(settled, Is.False);
+    }
+
+    [Test]
+    public void ApproachStopsShortAndKeepsUpWithAGoalWalkingOff()
+    {
+        var goal = new Vector2(10f, 0f);
+        var settled = false;
+        Assert.That(CFGOAPSteeringMath.ApproachSpeed(new Vector2(9.1f, 0f), goal, Vector2.Zero, 4f, 2f, 0.85f, 0.25f, ref settled), Is.Zero, "It stops at the standoff, out of their body.");
+
+        settled = false;
+        var standing = CFGOAPSteeringMath.ApproachSpeed(new Vector2(8.5f, 0f), goal, Vector2.Zero, 4f, 2f, 0.85f, 0.25f, ref settled);
+        var walkingOff = CFGOAPSteeringMath.ApproachSpeed(new Vector2(8.5f, 0f), goal, new Vector2(3f, 0f), 4f, 2f, 0.85f, 0.25f, ref settled);
+        var walkingIn = CFGOAPSteeringMath.ApproachSpeed(new Vector2(8.5f, 0f), goal, new Vector2(-3f, 0f), 4f, 2f, 0.85f, 0.25f, ref settled);
+        Assert.That(walkingOff, Is.GreaterThan(standing), "A goal walking away is kept up with.");
+        Assert.That(walkingIn, Is.EqualTo(standing), "One walking in does not make it brake harder than standing would.");
+    }
+
+    [Test]
+    public void AimFindsTheWayBetweenTwoSlots()
+    {
+        // What stock writes for a behaviour heading 15 degrees, halfway between slots 0 and 1.
+        var interest = new float[12];
+        var danger = new float[12];
+        for (var i = 0; i < 12; i++)
+        {
+            interest[i] = MathF.Max(0f, MathF.Cos(i * MathF.Tau / 12f - MathF.PI / 12f));
+        }
+
+        Assert.That(CFGOAPSteeringMath.Aim(interest, danger, 0), Is.EqualTo(0.5f).Within(0.01f));
+        Assert.That(CFGOAPSteeringMath.Aim(interest, danger, 1), Is.EqualTo(0.5f).Within(0.01f), "Either best slot gives the same answer.");
+
+        for (var i = 0; i < 12; i++)
+        {
+            interest[i] = MathF.Max(0f, MathF.Cos(i * MathF.Tau / 12f));
+        }
+
+        Assert.That(CFGOAPSteeringMath.Aim(interest, danger, 0), Is.EqualTo(0f).Within(0.001f), "Straight along a slot stays on it.");
+
+        interest[11] = 1f;
+        interest[0] = 1f;
+        interest[1] = 1f;
+        Assert.That(CFGOAPSteeringMath.Aim(interest, danger, 0), Is.EqualTo(0f), "A flat top keeps the best slot.");
+    }
+
+    [Test]
     public void WanderStaysRoughlyAhead()
     {
         for (var angle = 0f; angle < MathF.Tau; angle += 0.5f)

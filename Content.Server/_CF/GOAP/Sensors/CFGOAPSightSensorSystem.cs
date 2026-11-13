@@ -45,6 +45,15 @@ public sealed partial class CFGOAPSightSensorSystem : EntitySystem
     private void OnSense(ref CFGOAPSenseEvent args)
     {
         var uid = args.Creature.Owner;
+
+        // Called back by its master, it comes straight back and leaves every fight alone until it is there.
+        if (TryComp(uid, out CFCompanionComponent? companion) && companion.Recalled)
+        {
+            args.Creature.Comp.Target = null;
+            args.Creature.Comp.Lkp = null;
+            return;
+        }
+
         if (!TryFindBestEnemy(args.Creature, args.Here, out var seen) && !TryGetFelt(uid, out seen))
             return;
 
@@ -52,10 +61,18 @@ public sealed partial class CFGOAPSightSensorSystem : EntitySystem
         Follow(args.Creature, seen);
         args.Facts |= CFGOAPFact.TargetVisible;
 
-        // Glass lets it see the target without being able to touch it. A table is no such thing: a swing goes over it.
-        if ((_transform.GetMapCoordinates(seen).Position - args.Here.Position).Length() <= ReachTiles
-            && _interaction.InRangeUnobstructed(uid, seen, ReachTiles))
+        if (InReach(uid, seen, args.Here.Position))
             args.Facts |= CFGOAPFact.TargetInReach;
+    }
+
+    /// <summary>
+    /// Whether it could swing at the target from where it stands. Glass lets it see the target without being able to
+    /// touch it. A table is no such thing: a swing goes over it.
+    /// </summary>
+    public bool InReach(EntityUid uid, EntityUid target, Vector2 here)
+    {
+        return (_transform.GetMapCoordinates(target).Position - here).Length() <= ReachTiles
+               && _interaction.InRangeUnobstructed(uid, target, ReachTiles);
     }
 
     /// <summary>Makes this the creature it is after, and starts a new search from where it is now.</summary>

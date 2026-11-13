@@ -1,5 +1,6 @@
 using System.Numerics;
 using Content.Server.CF.GOAP.Encounters;
+using Content.Server.NPC.Components;
 using Content.Shared.CF.GOAP;
 using Content.Shared.Mobs.Components;
 using Robust.Shared.Map;
@@ -17,6 +18,15 @@ public sealed partial class CFGOAPSteeringSystem
 
     /// <summary>Half the width of a creature's body, in tiles.</summary>
     private const float BodyHalfWidth = 0.35f;
+
+    /// <summary>
+    /// How far from a creature's centre it stops to fight, in tiles. Two bodies touch at 0.7, and a Strike reaches
+    /// 1.25, so this leaves a little room either way.
+    /// </summary>
+    public const float MeleeStandoff = 0.85f;
+
+    /// <summary>How far past the standoff they get before it follows. It sets off while they are still in reach.</summary>
+    private const float MeleeResume = 0.25f;
 
     private static readonly TimeSpan FieldBuildInterval = TimeSpan.FromSeconds(1);
 
@@ -177,21 +187,59 @@ public sealed partial class CFGOAPSteeringSystem
     }
 
     /// <summary>
-    /// Steers straight at a point and lets the feelers turn it aside, with no pathfinding at all.
-    /// An enemy a ray touches on the way pulls it in.
+    /// Steers straight at a point and lets the feelers turn it aside, with no pathfinding at all. It slows down as it
+    /// gets there and stops on the spot. An enemy a ray touches on the way pulls it in.
     /// </summary>
-    public void MoveTo(EntityUid uid, Vector2 point)
+    public void MoveTo(EntityUid uid, Vector2 point, CFGOAPFeltMobs felt = CFGOAPFeltMobs.Chase)
     {
         var profile = ProfileOf(uid);
+
+        // Already walking to a spot this way, it only moves the spot. Starting over would drop what the feelers know
+        // and set a creature that had stopped walking again, which shows as a stutter each time a step aims anew.
+        if (TryComp(uid, out CFGOAPSteeringComponent? steering)
+            && steering is { Target: null, Point: { } old, UsingField: false, Through: null }
+            && steering.FeltMobs == felt
+            && steering.Behaviors.Count > 0
+            && steering.Behaviors[0] is { Kind: CFGOAPSteeringKind.Arrive, Standoff: 0f } current
+            && MathF.Abs(current.Radius - profile.ArriveRadius) < 0.001f
+            && (old - point).Length() < FieldGoalSlack
+            && HasComp<NPCSteeringComponent>(uid))
+        {
+            steering.Point = point;
+            return;
+        }
+
         var arrive = new CFGOAPSteeringBehavior { Kind = CFGOAPSteeringKind.Arrive, Radius = profile.ArriveRadius };
-        Steer(uid, WithHabits(profile, arrive), point: point, felt: CFGOAPFeltMobs.Chase);
+        Steer(uid, WithHabits(profile, arrive), point: point, felt: felt);
     }
 
-    /// <summary>The same for a creature, aiming for where it is heading.</summary>
+    /// <summary>
+    /// The same for a creature, aiming for where it is heading. It slows down as it closes and stops just out of
+    /// their body, inside reach, so it does not run past them.
+    /// </summary>
     public void Chase(EntityUid uid, EntityUid target)
     {
-        var pursuit = new CFGOAPSteeringBehavior { Kind = CFGOAPSteeringKind.Pursuit };
-        Steer(uid, WithHabits(ProfileOf(uid), pursuit), target, felt: CFGOAPFeltMobs.Chase);
+        Steer(uid, WithHabits(ProfileOf(uid), CloseIn(uid)), target, felt: CFGOAPFeltMobs.Chase);
+    }
+
+    /// <summary>
+    /// Stays in reach of a creature while fighting it: it stands while they stand, and walks with them when they move,
+    /// so it can keep swinging. Other enemies do not pull it away.
+    /// </summary>
+    public void Engage(EntityUid uid, EntityUid target)
+    {
+        Steer(uid, new List<CFGOAPSteeringBehavior> { CloseIn(uid) }, target);
+    }
+
+    private CFGOAPSteeringBehavior CloseIn(EntityUid uid)
+    {
+        return new CFGOAPSteeringBehavior
+        {
+            Kind = CFGOAPSteeringKind.Arrive,
+            Radius = ProfileOf(uid).ArriveRadius,
+            Standoff = MeleeStandoff,
+            Resume = MeleeResume,
+        };
     }
 
     /// <summary>The behaviours it was asked for, plus the habits its personality adds to all its movement.</summary>

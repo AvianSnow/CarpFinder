@@ -10,6 +10,7 @@ using Content.Shared.CF.GOAP;
 using Content.Shared.Climbing.Components;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
+using Content.Shared.Movement.Components;
 using Content.Shared.Movement.Systems;
 using Content.Shared.NPC;
 using Content.Shared.Physics;
@@ -54,6 +55,9 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
 
     private static readonly TimeSpan AvoidTime = TimeSpan.FromSeconds(0.3);
 
+    /// <summary>The furthest ahead, in seconds, Arrive aims for a moving creature.</summary>
+    private const float ApproachLead = 0.4f;
+
     private const float MinimumEscape = 0.0001f;
 
     /// <summary>The search has to reach as far as the widest circle speed can give.</summary>
@@ -92,8 +96,8 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
     private const float PanicMobMargin = 1.5f;
 
     /// <summary>
-    /// Mobs are found by their bodies, but the safety circle measures to their whole bounds, which the flanking
-    /// sensor makes 2.5 tiles wide, or 5 with a reach weapon. The search reaches this much further for them.
+    /// How much further the search for mobs reaches, so a lookup by position cannot miss a body whose centre is just
+    /// outside it. The safety circle measures to their hard bodies, never the 2.5 tile flanking sensor.
     /// </summary>
     private const float PanicMobBounds = 2.5f;
 
@@ -158,6 +162,8 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
         steering.Field = field;
         steering.Through = through;
         steering.ArriveSpeed = 1f;
+        steering.PointVelocity = Vector2.Zero;
+        steering.Settled = false;
         steering.FeelCountdown = 0;
         steering.FeelForced = true;
 
@@ -195,6 +201,8 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
         ent.Comp.Field = null;
         ent.Comp.Through = null;
         ent.Comp.ArriveSpeed = 1f;
+        ent.Comp.PointVelocity = Vector2.Zero;
+        ent.Comp.Settled = false;
         ent.Comp.FeelCountdown = 0;
         ent.Comp.FeelForced = true;
         ent.Comp.Route.Clear();
@@ -214,11 +222,21 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
                 continue;
             }
 
+            // Arrive comes first and has stopped it. Habits such as keeping to walls would only nudge it off the spot,
+            // and then it walks back: that back and forth is the twitch.
+            if (ent.Comp.Settled && IsHabit(behavior.Kind))
+                continue;
+
             Add(ref args, Desired(ent, behavior, args.WorldPosition, args.Steering.LastSteerDirection), behavior.Weight);
         }
 
         if (ent.Comp.Behaviors.Count > 0 && !usesStockSeek)
             args.Steering.CanSeek = false;
+
+        // Stock keeps last tick's interest and only eases it toward zero, and any interest at all is a step at full
+        // input. Without clearing it, a creature that has arrived keeps walking on for a moment and overshoots.
+        if (ent.Comp.Settled)
+            Array.Clear(args.Steering.Interest);
 
         Feel(ent, ref args);
         ApplySpeed(ent);
@@ -298,6 +316,11 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
         Panic(ent, ref args, look);
     }
 
+    private static bool IsHabit(CFGOAPSteeringKind kind)
+    {
+        return kind is CFGOAPSteeringKind.WallFollow or CFGOAPSteeringKind.Separation or CFGOAPSteeringKind.Cohesion;
+    }
+
     /// <summary>Whether the feelers and the safety circle look again this tick.</summary>
     private static bool ShouldLook(CFGOAPSteeringComponent steering, Vector2 heading, out bool forced)
     {
@@ -331,7 +354,9 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
             if (TerminatingOrDeleted(other) || !IsPanicCause(ent, other))
                 continue;
 
-            var closest = CFGOAPSteeringMath.ClosestPoint(_lookup.GetWorldAABB(other), position);
+            // Its body, not its whole bounds: the flanking sensor makes those 2.5 tiles wide, which held every creature
+            // that far off its master and pack mates, and set it stepping back and forth at that distance.
+            var closest = CFGOAPSteeringMath.ClosestPoint(_physics.GetHardAABB(other), position);
             var away = position - closest;
             if (away == Vector2.Zero)
                 away = position - _transform.GetWorldPosition(other);
@@ -550,7 +575,7 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
             if (mob.Owner == ent.Owner)
                 continue;
 
-            var closest = CFGOAPSteeringMath.ClosestPoint(_lookup.GetWorldAABB(mob), position);
+            var closest = CFGOAPSteeringMath.ClosestPoint(_physics.GetHardAABB(mob), position);
             if ((position - closest).LengthSquared() <= range * range)
                 ent.Comp.PanicMobs.Add(mob.Owner);
         }
@@ -664,7 +689,10 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
     {
         ent.Comp.Felt ??= mob;
         var toMob = _transform.GetWorldPosition(mob) - args.WorldPosition;
-        if (ent.Comp.FeltMobs == CFGOAPFeltMobs.Chase)
+
+        // The creature it is after already has a behaviour that slows down and stops beside it. Full interest here
+        // as well would drive it on into their body.
+        if (ent.Comp.FeltMobs == CFGOAPFeltMobs.Chase && mob != ent.Comp.Target)
             Add(ref args, toMob, 1f);
 
         if (ent.Comp.FeltMobs != CFGOAPFeltMobs.Avoid)
@@ -840,8 +868,7 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
             case CFGOAPSteeringKind.Flee:
                 return CFGOAPSteeringMath.Flee(position, goal);
             case CFGOAPSteeringKind.Arrive:
-                ent.Comp.ArriveSpeed = CFGOAPSteeringMath.ArriveSpeed(position, goal, behavior.Radius);
-                return CFGOAPSteeringMath.Seek(position, goal);
+                return Approach(ent, behavior, position, goal, velocity);
             case CFGOAPSteeringKind.Pursuit:
                 return CFGOAPSteeringMath.Pursuit(position, speed, goal, velocity);
             case CFGOAPSteeringKind.Evade:
@@ -849,6 +876,44 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
             default:
                 return Vector2.Zero;
         }
+    }
+
+    /// <summary>
+    /// Arrive: heads for the goal, slows down over the last stretch, and stops short of it. A creature is aimed at
+    /// where it will be in a moment, so following one that walks off does not lag behind.
+    /// </summary>
+    private Vector2 Approach(Entity<CFGOAPSteeringComponent> ent, CFGOAPSteeringBehavior behavior, Vector2 position, Vector2 goal, Vector2 velocity)
+    {
+        var maxSpeed = MaxSpeed(ent);
+        if (velocity != Vector2.Zero && maxSpeed > 0f)
+            goal += velocity * MathF.Min(Vector2.Distance(position, goal) / maxSpeed, ApproachLead);
+
+        var settled = ent.Comp.Settled;
+        var share = CFGOAPSteeringMath.ApproachSpeed(
+            position,
+            goal,
+            velocity,
+            maxSpeed,
+            behavior.Radius,
+            behavior.Standoff,
+            behavior.Resume,
+            ref settled);
+
+        ent.Comp.Settled = settled;
+        if (share <= 0f)
+            return Vector2.Zero;
+
+        ent.Comp.ArriveSpeed = share;
+        return CFGOAPSteeringMath.Seek(position, goal);
+    }
+
+    /// <summary>Its top speed before what steering itself takes off, in tiles a second.</summary>
+    private float MaxSpeed(Entity<CFGOAPSteeringComponent> ent)
+    {
+        if (!TryComp(ent, out MovementSpeedModifierComponent? modifier) || ent.Comp.AppliedSpeed <= 0f)
+            return 0f;
+
+        return modifier.CurrentSprintSpeed / ent.Comp.AppliedSpeed * ent.Comp.SpeedMultiplier;
     }
 
     /// <summary>
@@ -890,6 +955,7 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
         }
 
         goal = ent.Comp.Point ?? Vector2.Zero;
+        velocity = ent.Comp.PointVelocity;
         return ent.Comp.Point != null;
     }
 

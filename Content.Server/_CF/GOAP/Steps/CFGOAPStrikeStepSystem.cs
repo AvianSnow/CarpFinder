@@ -4,7 +4,10 @@ using Content.Shared.CombatMode;
 
 namespace Content.Server.CF.GOAP.Steps;
 
-/// <summary>Stays near and lets stock melee swing, which CF turns into Strikes.</summary>
+/// <summary>
+/// Lets stock melee swing, which CF turns into Strikes, while it keeps in reach. It stands while the target stands and
+/// walks with them when they move, so it can swing on the move instead of waiting for the next think to chase.
+/// </summary>
 public sealed partial class CFGOAPStrikeStepSystem : CFGOAPStepSystem
 {
     [Dependency] private SharedCombatModeSystem _combatMode = default!;
@@ -18,7 +21,7 @@ public sealed partial class CFGOAPStrikeStepSystem : CFGOAPStepSystem
 
         _combatMode.SetInCombatMode(ent, true);
         EnsureComp<NPCMeleeCombatComponent>(ent).Target = target;
-        Steering.Hold(ent);
+        Steering.Engage(ent, target);
     }
 
     public override void End(Entity<CFGOAPComponent> ent, CFGOAPActionPrototype action)

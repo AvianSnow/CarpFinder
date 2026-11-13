@@ -404,7 +404,12 @@ public sealed partial class NPCSteeringSystem : SharedNPCSteeringSystem
 
         if (desiredDirection != -1)
         {
-            resultDirection = new Angle(desiredDirection * InterestRadians).ToVec();
+            // CarpFinder: GOAP mobs aim between the 12 directions, so they do not zigzag along a line between two
+            var slot = HasComp<CFGOAPSteeringComponent>(uid)
+                ? CFGOAPSteeringMath.Aim(steering.Interest, steering.Danger, desiredDirection)
+                : desiredDirection;
+            resultDirection = new Angle(slot * InterestRadians).ToVec();
+            // CarpFinder end
         }
 
         steering.LastSteerDirection = resultDirection;

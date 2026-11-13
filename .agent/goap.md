@@ -40,7 +40,19 @@ Resources/Prototypes/_CF/GOAP/
 3. `ChooseGoal` takes the highest priority goal the planner can reach.
 4. If the goal or a fact changed, the plan changes. A plan that starts with the step already running keeps it running, so a fact flipping does not restart a walk.
 
-Then `RunStep` looks the current action's `step` up in a table of step systems and runs it. Walking is a step like any other: `Close`, `GoToLkp` and `PickUp` walk the creature themselves, through `CFGOAPSteeringSystem.Navigate`.
+Then `RunStep` looks the current action's `step` up in a table of step systems and runs it. Walking is a step like any other: `Close`, `GoToLkp` and `PickUp` walk the creature themselves, through `CFGOAPSteeringSystem.Navigate`. A step that finishes hands straight over to the next in the same tick (up to 3), so `Close` into `Strike` has no standstill between them.
+
+## Moving smoothly
+
+Built on 13 November 2026 to stop twitching. Tests: `CFGOAPMovementTest`, `CFGOAPSteeringMathTest`.
+
+- **Aiming between directions.** Stock steering picks the best of 12 directions, so a creature heading 15 degrees off one zigzags between two. For GOAP mobs a marked edit in `NPCSteeringSystem.Steer` calls `CFGOAPSteeringMath.Aim`, which fits a curve through the best slot and its neighbours and aims at its peak.
+- **Arrive slows and stops.** `Arrive` slows over the profile's `arriveRadius` (default 1.5 tiles), never below 30% speed, and stops within 0.1 tiles of `Standoff` short of the goal. It aims a moving creature's position up to 0.4 seconds ahead, and adds the goal's speed away from it, so it keeps up with someone walking off. Once stopped (`Settled`) it stays until the goal is `Resume` further off, so a small shuffle does not set it walking. Settled, it clears stock's interest, because stock only eases old interest toward zero and any interest at all is a step at full input: that was a creature walking on past where it stopped. Habits (wall following, separation) are skipped while settled.
+- **Closing on a creature.** `Chase` is `Arrive` with a standoff of 0.85 tiles (bodies touch at 0.7, a Strike reaches 1.25) and a resume of 0.25. The target's own felt interest is skipped, or the feelers would drive it into their body. `Close` ends the moment `CFGOAPSightSensorSystem.InReach` says so, not at the next think.
+- **Swinging on the move.** When a Strike is next in the plan, `Close` puts `NPCMeleeCombat` on at the start, so stock melee swings the moment the target is in weapon range. `Strike` uses `Engage`: the same arrive, ignoring other enemies, so it stands while the target stands and walks with them when they move.
+- **Idle walks.** `Wander` picks a spot 1.5 tiles up to `wanderDistance` (4) away that it can stand on and walk straight to, inside its home range, walks there slowing down, and rests `wanderRestMin` to `wanderRestMax` seconds (1.5 to 4). Past 60% of its home range it only picks spots back toward home, so it never needs sending home. A walk that takes too long is given up and it rests where it is. `Cowardly` rests 0.5 to 1.5 seconds and walks 3 tiles at most.
+- **The safety circle measures to bodies.** It used to measure other creatures to their whole bounds, which the 2.5 tile flanking sensor sets, so a creature was pushed off anything within about 1.67 tiles of another combatant and stepped back and forth there. It now uses `GetHardAABB`.
+- `MoveTo` to a spot near the one it is already walking to only moves the spot, so `Flank` re-aiming every half second does not restart the walk.
 
 ## Sleeping
 
@@ -211,7 +223,9 @@ A zero arrow means nowhere is better than here. With the threat within 3 tiles, 
 Animal companions, familiars, eidolons, constructs and thralls all have `CFCompanionBase`, which has `CFGOAPBrain` as a parent. They plan with the default goals and actions like any brain.
 
 - **Who they fight.** The sight sensor only lets a companion pick a creature of the Opposition alliance, so it leaves neutral creatures alone. The creature its master pointed at (`CFCompanionComponent.Target`) can be anything it may harm, and scores above any tactics score while it is in sight. When that creature is gone, `CFCompanionSystem` clears it.
-- **Home is the master.** `CFGOAPCompanionSensorSystem` sets `Home` to the master's position on every think, before the home sensor reads it. `homeRange: 3`, so idle it stays within 3 tiles.
-- **The leash.** Companions use `CFGOAPLair` with `engageTiles: 12` (so they never just guard), `leashTiles: 10` and `chaseTime: 20`. Pointing at the master sets `Returning`, which sends it home at once.
+- **Pointing is an order.** Pointing at a creature also tells the brain where it stands (`Lkp`), so it goes there without seeing it, and the leash does not call it back while that creature lives. Pointing at the master sets `Recalled`: it forgets the fight, ignores every enemy, and comes back, until it is within 2.5 tiles of the master.
+- **Home is the master.** `CFGOAPCompanionSensorSystem` sets `Home` to the master's position on every think, before the home sensor reads it, and the `HasMaster` fact.
+- **Following.** With nothing to fight, a companion plans `StayWithMaster` (priority 1.6, above `GoHome` and `Idle`, so it never wanders off). The `Follow` step keeps a place 1.5 tiles behind the master, by the way they last walked. It moves the place every tick and passes the master's speed on (`PointVelocity`), so it walks with them; when they stop it slows down, stands, and only sets off again once its place has moved a tile. Further companions of one master stand 40 degrees out to alternate sides. A wall behind the master puts it on its own side instead. Round a corner it uses `Travel`.
+- **The leash.** Companions use `CFGOAPLair` with `engageTiles: 12` (so they never just guard), `leashTiles: 10` and `chaseTime: 20`, except while they have an order. Pointing at the master sets `Returning`, which sends it home at once.
 - **Fetching** walks the companion with stock steering, so `CFCompanionSystem` switches its HTN off for the trip (`BrainPaused`) and back on after, as the Command spell does for stock mobs.
 - A companion needs `CombatMode` for the Strike step, which a clean bot body lacks, so the base gives it.

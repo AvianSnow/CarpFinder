@@ -72,6 +72,9 @@ public enum CFGOAPFact : ulong
     /// <summary>It keeps a lair, and has gone too far from it or been away too long.</summary>
     LeftLair = 1ul << 42,
 
+    /// <summary>It is a companion with a master it can walk to.</summary>
+    HasMaster = 1ul << 43,
+
     // Never sensed. These only exist as what a goal wants, so a plan has something to reach.
     TargetHurt = 1 << 20,
     Safe = 1 << 21,
@@ -86,6 +89,9 @@ public enum CFGOAPFact : ulong
     /// <summary>It carried out a Command order. Only the Obey goal wants it.</summary>
     Obeyed = 1ul << 37,
 
+    /// <summary>It kept to its master. Only the StayWithMaster goal wants it, so a companion always has that to do.</summary>
+    WithMaster = 1ul << 44,
+
     // Multiple Attack Penalty. It is what most changes the worth of a Strike, so a change in it has to replan.
     Attacked = 1 << 26,
     AttackedTwice = 1 << 27,
@@ -94,13 +100,13 @@ public enum CFGOAPFact : ulong
 /// <summary>What running an action does.</summary>
 public enum CFGOAPStep : byte
 {
-    /// <summary>Stay near and let stock melee swing, which CF turns into Strikes.</summary>
+    /// <summary>Stay in reach, following the target if it moves, and let stock melee swing, which CF turns into Strikes.</summary>
     Strike,
 
     /// <summary>Stay put and let stock NPC shooting fire, which CF turns into Strikes.</summary>
     Shoot,
 
-    /// <summary>Path to the target.</summary>
+    /// <summary>Path to the target. When a Strike comes next, it already swings on the way in.</summary>
     Close,
 
     Flee,
@@ -141,6 +147,9 @@ public enum CFGOAPStep : byte
 
     /// <summary>Let its breath weapon loose at the target, the same action a player aims.</summary>
     Breathe,
+
+    /// <summary>A companion keeps behind its master, and stops there when they stop.</summary>
+    Follow,
 }
 
 /// <summary>How an action's worth is worked out when planning. See <c>CFGOAPTacticsSystem</c>.</summary>
@@ -292,13 +301,24 @@ public sealed partial class CFGOAPProfilePrototype : IPrototype
     [DataField]
     public float MaxSpeed = 1f;
 
-    /// <summary>How close it slows down when arriving.</summary>
+    /// <summary>
+    /// How far out it starts slowing down when it gets somewhere or closes on a creature, in tiles. Smaller charges in
+    /// harder and stops more abruptly.
+    /// </summary>
     [DataField]
-    public float ArriveRadius = 1f;
+    public float ArriveRadius = 1.5f;
 
-    /// <summary>How erratically it wanders.</summary>
+    /// <summary>The shortest rest between two idle walks, in seconds.</summary>
     [DataField]
-    public float WanderJitter = 0.5f;
+    public float WanderRestMin = 1.5f;
+
+    /// <summary>The longest rest between two idle walks, in seconds. A nervous creature rests less.</summary>
+    [DataField]
+    public float WanderRestMax = 4f;
+
+    /// <summary>The furthest one idle walk goes, in tiles.</summary>
+    [DataField]
+    public float WanderDistance = 4f;
 
     /// <summary>How strongly it keeps to walls. Stealthy creatures use this. It is not separation.</summary>
     [DataField]

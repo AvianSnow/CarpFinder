@@ -4,6 +4,21 @@ Ordered plan for the next stretch of work. Each step builds on the one before it
 
 Source of rules: https://2e.aonprd.com/ (Remaster). Source of structure and assets: `C:\project\crystall-punk-14` (**read-only**: copy from it, never edit it).
 
+## Do first: GOAP movement, 13 November
+
+Asked for on 13 November 2026: mobs moved twitchily. Built the same day. How it works is under "Moving smoothly" and "Companions" in `goap.md`. Tests: `CFGOAPMovementTest`, `CFGOAPSteeringMathTest`.
+
+- [x] Mobs aim between stock's 12 steering directions, so walking at an angle no longer zigzags (a marked edit in `NPCSteeringSystem`).
+- [x] Arriving slows down and stops, and a stopped mob stays put until its goal moves off. A mob that had stopped used to walk on, because stock keeps old interest.
+- [x] Idle: pick a spot inside the home range, walk there slowing down, rest 1.5 to 4 seconds, pick another.
+- [x] Attacking: closing slows down and stops just out of the target's body, inside reach. Melee is ready while closing, so it swings the moment it is in reach, and while striking it walks with a target that moves instead of waiting for the next think.
+- [x] Following: a companion keeps 1.5 tiles behind its master, walks at their pace, and stops behind them when they stop. Several fan out to the sides.
+- [x] Pointing is an order. At a creature: the companion is told where it is and is not leashed back while it lives. At the master: it drops the fight and ignores enemies until it is back.
+- [x] The safety circle pushed creatures off anything within about 1.67 tiles of another combatant, because it measured to the flanking sensor. It measures to bodies now.
+- [ ] Not seen in a real client: how any of this looks, and whether the rests and slowing distances feel right. They are profile fields (`arriveRadius`, `wanderRestMin`, `wanderRestMax`, `wanderDistance`).
+- [ ] A recalled companion ignores enemies even when hit on the way back. `StayAlive` can still make one run from an ordered target.
+- [ ] A companion's place behind its master only follows the way they walked. Teleporting or being pulled leaves it on its own side.
+
 ## Do first: chasm edges, 13 November
 
 Asked for on 13 November 2026. Built the same day. Tests: `CFChasmEdgeTest`.
@@ -586,7 +601,7 @@ The labels are the sections of Phase 6 in `roadmapold.md`, which has the design.
 
 - [ ] A mob cannot follow a trail through a door. A closed door takes no scent, and `FollowScent` does not use `Navigate`, so it never opens one. It also flips between `HuntTarget` and `Investigate` as scent comes and goes.
 - [ ] `Investigate` never Seeks, so a hidden creature beside the mob is not looked for without a node.
-- [ ] `Wander` runs at full speed and can jam for good in a corridor. With a home it also paces: every trip ends at home, but at a range of 3 tiles it makes about one trip every 2 seconds, and at the default 8 about one every 10. Check in play whether that looks wrong.
+- [x] `Wander` ran at full speed, could jam in a corridor, and paced at the edge of its home range. Replaced on 13 November 2026 by walks to spots it can reach in a straight line, inside its range, with rests between (see GOAP movement under Do first).
 - [ ] A routed creature that can still see its enemy never hides, because the flee map ignores line of sight.
 - [ ] Swings at obstacles ignore `discipline`, so the pool stays empty and it stays at -10.
 

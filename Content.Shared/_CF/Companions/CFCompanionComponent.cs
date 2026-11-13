@@ -40,6 +40,13 @@ public sealed partial class CFCompanionComponent : Component
     [DataField]
     public bool BrainPaused;
 
+    /// <summary>
+    /// Server-only. Its summoner pointed at themself, and it is on its way back. Until it is beside them it fights
+    /// nothing, because pointing is an order.
+    /// </summary>
+    [ViewVariables]
+    public bool Recalled;
+
     /// <summary>Server-only. Frames spent in reach of a fetch item that would not be picked up.</summary>
     public int FetchWaits;
 }

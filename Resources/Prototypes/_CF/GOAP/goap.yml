@@ -105,6 +105,15 @@
   calm: true
   priority: 1.5
 
+# A companion with nothing to fight keeps a little behind its master, and stands there while they stand. Above GoHome,
+# whose home for a companion is the same master, and Idle, so it never wanders off them.
+- type: cfGoapGoal
+  id: StayWithMaster
+  wants: [ WithMaster ]
+  calm: true
+  priority: 1.6
+  onlyWhen: [ HasMaster ]
+
 # With no trail or node to go on, it still goes and looks at the place.
 - type: cfGoapGoal
   id: Investigate
@@ -284,6 +293,12 @@
   step: Regroup
   gives: [ Regrouped ]
 
+- type: cfGoapAction
+  id: Follow
+  step: Follow
+  needs: [ HasMaster ]
+  gives: [ WithMaster ]
+
 # Personalities. They only change numbers, and can be swapped on any brain.
 
 - type: cfGoapProfile
@@ -293,7 +308,7 @@
 - type: cfGoapProfile
   id: Brave
   maxSpeed: 1.2
-  arriveRadius: 0.2
+  arriveRadius: 0.75
   lkpDwell: 0.5
   smashPatience: 40
   fleeHealth: 0
@@ -314,9 +329,12 @@
   nodeTags:
     Shadow: 3
 
+# Nervous: it rests less between idle walks, and the walks are short.
 - type: cfGoapProfile
   id: Cowardly
-  wanderJitter: 1.5
+  wanderRestMin: 0.5
+  wanderRestMax: 1.5
+  wanderDistance: 3
   lkpKeepOut: 5
   smashPatience: 5
   fleeHealth: 0.3

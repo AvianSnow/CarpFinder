@@ -405,7 +405,10 @@ public sealed class CFGOAPMazeTest : CFGOAPLoggedTest
         await NpcsOff();
 
         TestContext.Out.WriteLine(FormattableString.Invariant($"{trips} trips home. Furthest {furthest:F1} tiles."));
-        Assert.That(trips, Is.GreaterThan(0), "Ninety seconds of wandering should pass a range of 3 tiles.");
+        // Idle walks only pick spots inside the range, so it should never need sending home at all. If it does, the
+        // trip must still end at home, not at the edge where it would flick in and out.
+        Assert.That(furthest, Is.GreaterThan(1f), "It walks about.");
+        Assert.That(furthest, Is.LessThanOrEqualTo(boss.Comp.HomeRange + 0.5f), "Idle walks keep inside its range.");
         Assert.That(furthestAtEndOfTrip, Is.LessThanOrEqualTo(CFGOAPSystem.HomeArrival + 1f), "A trip ended short of home, so it is flicking at the edge of its range.");
     }
 }

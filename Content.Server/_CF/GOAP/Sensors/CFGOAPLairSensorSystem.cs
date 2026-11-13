@@ -1,3 +1,4 @@
+using Content.Shared.CF.Companions;
 using Content.Shared.CF.GOAP;
 using Robust.Shared.Timing;
 
@@ -29,6 +30,15 @@ public sealed partial class CFGOAPLairSensorSystem : EntitySystem
         }
 
         var now = _timing.CurTime;
+
+        // A companion its master sent at a creature keeps after it while that creature lives. Pointing is an order.
+        if (TryComp(creature, out CFCompanionComponent? companion) && companion.Target.IsValid() && !companion.Recalled)
+        {
+            lair.AwaySince = null;
+            lair.Returning = false;
+            return;
+        }
+
         if (args.Has(CFGOAPFact.AtHome))
         {
             lair.AwaySince = null;

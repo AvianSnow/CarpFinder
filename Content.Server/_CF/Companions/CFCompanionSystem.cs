@@ -274,13 +274,32 @@ public sealed partial class CFCompanionSystem : EntitySystem
             _factions.SetFaction(companion, faction.Faction);
     }
 
-    /// <summary>The creature becomes the one the companion goes for first, while it can see it.</summary>
+    /// <summary>
+    /// The creature becomes the one the companion goes for first. Pointing is an order: it is told where the creature
+    /// stands, so it goes there even without seeing it, and the leash does not call it back while that creature lives.
+    /// </summary>
     private void Order(EntityUid companion, CFCompanionComponent comp, EntityUid target)
     {
         EndFetch(companion, comp);
         comp.Following = false;
+        comp.Recalled = false;
         comp.Target = target;
         Dirty(companion, comp);
+
+        if (TryComp(companion, out CFGOAPLairComponent? lair))
+        {
+            lair.Returning = false;
+            lair.AwaySince = null;
+        }
+
+        if (TryComp(companion, out CFGOAPComponent? brain))
+        {
+            brain.Target = target;
+            brain.Lkp = _transform.GetMapCoordinates(target);
+            brain.LkpReached = false;
+            brain.NodesChecked = 0;
+        }
+
         ThinkNow(companion);
     }
 
@@ -292,11 +311,19 @@ public sealed partial class CFCompanionSystem : EntitySystem
     {
         EndFetch(companion, comp);
         comp.Following = true;
+        comp.Recalled = true;
         comp.Target = EntityUid.Invalid;
         Dirty(companion, comp);
 
         if (TryComp(companion, out CFGOAPLairComponent? lair))
             lair.Returning = true;
+
+        // It forgets the fight, or it would go looking for it again once back.
+        if (TryComp(companion, out CFGOAPComponent? brain))
+        {
+            brain.Target = null;
+            brain.Lkp = null;
+        }
 
         ThinkNow(companion);
     }
@@ -304,6 +331,7 @@ public sealed partial class CFCompanionSystem : EntitySystem
     private void Fetch(EntityUid companion, CFCompanionComponent comp, EntityUid item)
     {
         comp.Following = false;
+        comp.Recalled = false;
         comp.Target = EntityUid.Invalid;
         comp.Fetch = item;
         comp.FetchWaits = 0;
@@ -494,6 +522,7 @@ public sealed partial class CFCompanionSystem : EntitySystem
     {
         EndFetch(companion, comp);
         comp.Following = false;
+        comp.Recalled = false;
         comp.Target = EntityUid.Invalid;
         Dirty(companion, comp);
     }
