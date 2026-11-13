@@ -58,6 +58,7 @@
   - type: CFCombatant
     level: -1
     armorClass: 16
+    thinkingTimer: 0.2
     printedFortitude: 3
     printedReflex: 7
     printedWill: 3
@@ -98,5 +99,5 @@
   - type: MobThresholds
     thresholds:
       0: Alive
-      6: Critical
+      4: Critical
       7: Dead

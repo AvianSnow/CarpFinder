@@ -82,7 +82,7 @@
       speedFeet: 25
       maxHp: 60
       currentHp: 60
-      thinkingTimer: 0.75
+      thinkingTimer: 0.1
       printedFortitude: 11
       printedReflex: 11
       printedWill: 9
