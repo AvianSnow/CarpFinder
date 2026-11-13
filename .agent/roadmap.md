@@ -4,6 +4,38 @@ Ordered plan for the next stretch of work. Each step builds on the one before it
 
 Source of rules: https://2e.aonprd.com/ (Remaster). Source of structure and assets: `C:\project\crystall-punk-14` (**read-only**: copy from it, never edit it).
 
+## Do first: Bard fixes, 13 November
+
+Asked for on 13 November 2026. Built the same day. Tests: `CFBardTest`, `CFSocialActionTest`, `CFAuraTest`.
+
+- [x] Auras are drawn as a ring on the owner's drawn position (`CFAuraOverlaySystem`), so they glide with the owner instead of jumping a tile at a time. Who is inside is the same circle on the server: a creature counts when its centre is within `CFAuraSystem.Radius` (the size, plus half the owner's square), not by tiles.
+- [x] Courageous Anthem is an aura on the Bard (`CFAuraNeeds.Anthem`, 60 feet, the Bard included). The action runs it for a real minute (`CFActivitySystem.AnthemLasts`). Playing a held instrument costs 1 action to start it and then keeps it going while the music plays, ending 2 seconds after. Using it again never shortens or stacks it.
+- [x] Every Bard starts with a virtuoso's lute (`CFVirtuosoLute`) in the backpack: percussion and program changes are on, so a MIDI file plays each channel in its own voice. `CFGrantItem` now puts what it grants in the backpack, or at the character's feet without one.
+- [x] Closing the instrument window no longer stops the song. It plays on while the player holds the instrument in either hand and is conscious, or stays within reach of a placed one such as a piano, and reopening the window shows it playing so Play stops it (`CFInstrumentSystem`, marked edits in the stock `InstrumentSystem`, its BUI and `InstrumentMenu`). Fixed again after the first playtest: stock's window stopped the song from the client as it closed (`InstrumentMenu.ExitedTree`), which no server test could see, because the test client has no MIDI.
+- [x] Aura bonuses show in the HUD's status row. They have no end time while a creature stands inside, and the row skipped every such bonus as a lasting one from a feat or equipment. `CFBonusSystem.TimedTotal` now counts a bonus whose source is an aura (`CFAuraSystem.IsAuraSource`). The anthem's +1 against fear is still not shown, as it only counts against fear.
+- [x] The item status panels: a change in one hand redrew both panels with that hand's item (missing braces in `HandsUIController.UpdateHandStatus`).
+- [ ] "Instruments are used up when used in hand": not reproduced. On the server, using a lute, flute or the virtuoso's lute in hand twice leaves it in hand (`UsingAnInstrumentInHandKeepsIt`). Possibly the status panel bug above. Needs steps from a real client.
+- [ ] Not seen in a real client: the ring, the lute's tint and glow, songs playing on with the window shut.
+- [ ] The virtuoso's lute keeps stock's MIDI limits, so a very busy song can still give finger cramps.
+
+## Do first: level up bug, 13 November
+
+Reported on 13 November 2026: a Sorcerer reaching level 5 was told to pick a language with no language to pick, and could not accept. Fixed the same day. Tests: `CFLevelUpTest`.
+
+- [x] The language at level 5 only counts as a pick when there is a language left to learn. The tab listed only languages the character does not already speak, but the count ignored those, so a character who already spoke every common language was stuck. Both now use `CFLevelUp.LanguageOptions`. Whether this is the exact case seen is not certain: it was not reproduced in a real client.
+- [x] Accept is never blocked. Picks left open are skipped, and the tab says so.
+- [x] Every level taken with picks open writes a JSON report to `logs/cf-levelup/` beside the server's log files (`CFLevelUpReportSystem`), and a warning in the server log naming it. It holds what was left open, each slot's pick and options, the character's class, ancestry, level, Hit Points, ability modifiers and known languages before the level, and the builds before, as sent and after.
+- [ ] Read the next report that comes in, and fix what it shows.
+
+## Do first: holstering, 13 November
+
+Asked for on 13 November 2026. Built the same day. Tests: `CFHolsterTest`.
+
+- [x] Every weapon can be worn on the belt, back or neck, and every shield on the back or neck. `.agent/port-scripts/holsters.py` writes each one's `Clothing` block. A slot its sprite has no state for borrows another carry state: a sword on the belt or back uses CP14's back sheath (`equipped-NECK`), a dagger on the back uses its belt state. Firearms, the dart and the steel shield have no carry sprite and are not drawn while worn.
+- [x] A weapon or shield worn in those slots counts half its own Bulk, rounded up, so a light item stays light (`CFEncumbranceSystem.IsHolstered`). What is inside it, such as a loaded bolt, counts in full. Our rule, not PF2e's.
+- [ ] The back slot is where the adventurer's kit goes, so a shield or weapon there means carrying the kit some other way.
+- [ ] Not seen in a real client: how each weapon looks on the belt and back, and which side it hangs on.
+
 ## Do first: HUD fixes, 11 November
 
 Asked for on 11 November 2026, after the HUD and menus list. Built the same day. Tests: `CFHudDeckTest`, `CFDeckLogicTest`.

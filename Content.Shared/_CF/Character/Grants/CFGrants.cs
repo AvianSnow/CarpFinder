@@ -8,6 +8,9 @@ using Content.Shared.CF.DamageTypes;
 using Content.Shared.CF.Effects;
 using Content.Shared.CF.Traits;
 using Content.Shared.CF.ZLevels;
+using Content.Shared.Inventory;
+using Content.Shared.Storage;
+using Content.Shared.Storage.EntitySystems;
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared.CF.Character.Grants;
@@ -479,12 +482,19 @@ public sealed partial class CFGrantItem : CFGrant
     [DataField]
     public int Count = 1;
 
+    /// <summary>Goes in the backpack, else on the ground at the character's feet.</summary>
     public override void Apply(IEntityManager entities, CFGrantArgs args)
     {
         var coordinates = entities.GetComponent<TransformComponent>(args.Mob).Coordinates;
+        var inventory = entities.System<InventorySystem>();
+        var storage = entities.System<SharedStorageSystem>();
         for (var i = 0; i < Count; i++)
         {
-            entities.SpawnAtPosition(Item, coordinates);
+            var item = entities.SpawnAtPosition(Item, coordinates);
+            if (inventory.TryGetSlotEntity(args.Mob, "back", out var bag)
+                && entities.TryGetComponent(bag, out StorageComponent? store)
+                && storage.CanInsert(bag.Value, item, out _, store))
+                storage.Insert(bag.Value, item, out _, args.Mob, store, playSound: false);
         }
     }
 }

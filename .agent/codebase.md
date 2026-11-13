@@ -36,7 +36,7 @@ Everything below is under `Content.Shared/_CF/`.
 | `Effects/` | Target, roll a check, apply effects. Bonuses and resistances. | `CFEffectSystem`, `CFBonusSystem` |
 | `Factions/` | Party, Opposition, Neutral. Player characters fight each other only when both have PvP on (`CFPvpComponent`, the `pvp` command) | `CFFactionSystem` |
 | `Hazards/` | Traps: noticing, triggering, disabling, and creatures that build them | `CFHazardSystem`, `CFTrapLayerSystem` |
-| `Items/` | Item level, rarity, Bulk, encumbrance, drawing a carried consumable to a free hand (no longer on the HUD) | `CFEncumbranceSystem`, `CFQuickItemSystem` |
+| `Items/` | Item level, rarity, Bulk, encumbrance (a holstered weapon or shield counts half), drawing a carried consumable to a free hand (no longer on the HUD) | `CFEncumbranceSystem`, `CFQuickItemSystem` |
 | `Detection/` | Remaster Hide, Sneak, Seek and Create a Diversion. Each creature's view of a sneaker. The drawing is client-side. | `CFStealthSystem`, `CFStealthComponent` |
 | `GOAP/` | The AI every CF monster thinks with: facts, steps, and goals, actions and personalities as prototypes. The logic is server-side in `Content.Server/_CF/GOAP/`. See `goap.md`. | `CFGOAPSystem`, `CFGOAPPlanner` |
 | `Harvest/` | Harvesting a dead monster for priced parts with a survival knife and a Survival check (Battlezoo Bestiary's values) | `CFHarvestSystem`, `CFHarvestRules` |
@@ -58,7 +58,7 @@ Everything below is under `Content.Shared/_CF/`.
 | `Wallmount/` | Wall-only placement | `CFWallmount`, `CFWallRequired` |
 | `Temperature/`, `TileEditTool/`, `Wallpaper/`, `Time/`, `StatusIcon/` | Ported CP14 systems, the world clock, status icons | |
 
-Server: `Upkeep/` (`CFDungeonCleanupSystem`, the hourly cleanup; `CFPlayerBodySystem`, job slots coming back, SSD bodies, dropping a body's bag and weapons), `Character/` (`CFCharacterSpawnSystem`, `CFExperienceSystem`, `CFGiveXpCommand`, `CFLongRestSystem`), `Companions/CFCompanionSystem`, `GOAP/` (see `goap.md`), `Shop/CFShopSystem`, `Spells/CFPrestidigitationSystem`, `Temperature/` (`CFStockHeatSystem` turns stock burning into CF fire damage), `Materials/`.
+Server: `Instruments/` (`CFInstrumentSystem`, music that plays on with the window shut), `Upkeep/` (`CFDungeonCleanupSystem`, the hourly cleanup; `CFPlayerBodySystem`, job slots coming back, SSD bodies, dropping a body's bag and weapons), `Character/` (`CFCharacterSpawnSystem`, `CFExperienceSystem`, `CFGiveXpCommand`, `CFLongRestSystem`, `CFLevelUpReportSystem`), `Companions/CFCompanionSystem`, `GOAP/` (see `goap.md`), `Shop/CFShopSystem`, `Spells/CFPrestidigitationSystem`, `Temperature/` (`CFStockHeatSystem` turns stock burning into CF fire damage), `Materials/`.
 
 Client: `Hud/` (the in-game bar and radial menu), `Character/` (sheet, spells tab, shop), `Combat/` (floating numbers, flanking icon), `Effects/` (area and target overlays, mode and volley menus), `Lobby/UI/` (character builder, see `lobby-overlay.md`), `UserInterface/Systems/Character/` (the character window overlay).
 
@@ -67,7 +67,7 @@ Client: `Hud/` (the in-game bar and radial menu), `Character/` (sheet, spells ta
 1. The lobby builder (`Content.Client/_CF/Lobby/UI/`) writes to `HumanoidCharacterProfile.CFBuild`.
 2. `CFCharacterSpawnSystem.OnPlayerSpawnComplete` runs `ApplyBuild`: abilities, `CFCombatant` (level, AC, HP, proficiencies), speed, spellbook.
 3. `ApplyFeatures` gives what everyone has, then runs the `grants` of the ancestry, heritage, background, level 1 class features and feats through `CFCharacterFeatureSystem`. `CFCombatOptionsComponent` holds the class and feat flags that Strikes read (`SneakAttack`, `ReactiveStrike`, `ReactiveShield`, ...).
-4. XP builds up on `CFExperienceComponent`, which also keeps the build. With 1000 XP the player picks the next level on the character sheet's Level Up tab and accepts it (`CFLevelUpRequestEvent`). `CFExperienceSystem.TryLevelUp` checks the picks and runs `LevelUp`, which applies the feats through `ApplyFeat` and runs the class features that level reaches.
+4. XP builds up on `CFExperienceComponent`, which also keeps the build. With 1000 XP the player picks the next level on the character sheet's Level Up tab and accepts it (`CFLevelUpRequestEvent`). `CFExperienceSystem.TryLevelUp` checks the picks and runs `LevelUp`, which applies the feats through `ApplyFeat` and runs the class features that level reaches. Accept works with picks still open: they are skipped, and `CFLevelUpReportSystem` writes a JSON report to `logs/cf-levelup/` beside the server's logs (what was open, every slot's options, the character before, and the builds before, sent and after).
 
 Details: `character-builder.md`.
 
@@ -136,7 +136,7 @@ Anything that targets, rolls, and applies effects is data on the source entity: 
 | Speak verb on yourself | Choose which language you speak (free) | `CFLanguageSystem` |
 | Examine tab, information icon | Recall Knowledge (1 action) | `CFManeuverSystem.TryRecall` |
 | Alt+Z with a melee weapon, with panache | Confident Finisher at the enemy being aimed at (1 action) | `CFManeuverSystem.TryFinisher` |
-| Play a held instrument, as a Bard | Courageous Anthem, 1 action every 12 seconds | `CFAnthemSystem` |
+| Play a held instrument, as a Bard | Courageous Anthem for as long as the music lasts. 1 action to start it, nothing to keep it going. Closing the window does not stop the song while the instrument stays in hand | `CFAnthemSystem`, `CFInstrumentSystem` |
 | Radial wheel, HUD deck or hotbar | Activities, stances, spellshapes, Strike actions and spells | `CFActivitySystem`, `CFStanceSystem`, `CFSpellshapeSystem`, `CFStrikeActionSystem`, `CFSpellSystem` |
 | 1 to 0, and Shift with them, while the deck shows Basic, Class or Spells | Use that tab's first or second row | `CFHudDeck.TryKeyed` |
 | HUD deck, Common tab | Shove or Disarm, Grapple, Tumble Through, Demoralize, Feint, Aid, Recall Knowledge, Hide, Seek, Leap | `CFBasicActionComponent`, `CFManeuverSystem.TryUse` |
@@ -217,11 +217,12 @@ All edits carry `// CarpFinder` markers, so `grep -rn CarpFinder Content.Client 
 |---|---|---|
 | Spell targeting | `Content.Client/Actions/ActionsSystem.cs`, `Outline/TargetOutlineSystem.cs` | Click the outlined creature; do not outline through walls or past 90 feet |
 | Spell requests | `Content.Shared/Actions/ActionEvents.cs`, `SharedActionsSystem.cs` | Bolt count and mode on the perform request |
-| Radial wheel and hotbar | `SimpleRadialMenu.xaml.cs`, `ActionUIController.cs` (also the number keys on deck tabs), `ActionButtonContainer.cs`, `EmotesUIController.cs`, `HandsUIController.cs` | The CF wheel and action HUD: the deck's buttons and lock, greying a spent spell, the item status panels |
+| Radial wheel and hotbar | `SimpleRadialMenu.xaml.cs`, `ActionUIController.cs` (also the number keys on deck tabs), `ActionButtonContainer.cs`, `EmotesUIController.cs`, `HandsUIController.cs` | The CF wheel and action HUD: the deck's buttons and lock, greying a spent spell, the item status panels (each hand's panel only follows that hand) |
 | Game screens | `DefaultGameScreen.xaml(.cs)`, `SeparatedChatGameScreen.xaml(.cs)` | Puts `CFGameHud` bottom centre and lifts the bag windows above it |
 | Joining a round | `Content.Server/GameTicking/ServerGameTicker.Lobby.cs`, `ServerGameTicker.Spawning.cs` | An unfinished character cannot ready up or spawn |
 | Respawn | `Content.Server/GameTicking/Commands/RespawnCommand.cs`, `Resources/engineCommandPerms.yml` | Anyone can `respawn` themselves back to the lobby for a new character. Only a moderator can name someone else. The old body drops everything it carried and is deleted, which gives its job slot back. Bodies are also found by player (`CFPlayerBodyComponent.User`) |
 | Ghost respawn | `Content.Client/UserInterface/Systems/Ghost/Widgets/GhostGui.xaml(.cs)` | A Respawn button left of Return to body. It asks once more, then runs `respawn` |
+| Instruments | `Content.Server/Instruments/InstrumentSystem.cs`, `Content.Client/Instruments/UI/InstrumentBoundUserInterface.cs`, `InstrumentMenu.xaml.cs` | An instrument plays on after its window closes, while it is held or, for a placed one, while the player stays in reach (`CFInstrumentSystem`). Stock's window stopped the song itself as it closed (`ExitedTree`); that line is commented out. Reopening the window does not stop it |
 | Melee | `Content.Client/Weapons/Melee/MeleeWeaponSystem.cs`, `MeleeWeaponSystem.Effects.cs` | Right-click maneuvers for shields and trait weapons, left-click aim assist, a swing animation half as long |
 | Crafting menu | `Content.Client/Construction/ConstructionSystem.cs`, `Content.Server/Construction/ConstructionSystem.Initial.cs` | The stock menu needs training in Crafting |
 | Characters | `HumanoidCharacterProfile.cs`, `HumanoidVisualLayers.cs` | The PF2e build; pelvis layer for split bodies |

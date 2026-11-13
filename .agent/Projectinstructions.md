@@ -141,14 +141,15 @@ Class examples: `CFMySystem`, `CFMyServerSystem`, `CFMyClientSystem`, `CFExample
 | Weapon stats for a Strike | `CFWeaponSystem.TryStats(weapon)` → `CFStrikeWeaponStats`; traits through `CFWeaponTraits` (never add weapon booleans: give the `cfTrait` a `rule`) |
 | Worn armor, check penalty, Speed penalty, AC refresh | `CFArmorSystem` (`TryGetWornArmor`, `CheckPenalty`, `SpeedPenalty`, `RefreshArmorClass`) |
 | Shields | `CFShieldSystem` (`TryGetRaisedShield`, `TryGetUsableShield`, `SetRaised`, `RaisedBonus`, `Block`). Raised is `CFShieldComponent.Raised` on the item. |
-| Bulk and encumbrance | `CFBulk`, `CFEncumbranceSystem`; clumsy from `CFConditionSystem.Clumsy` |
+| Bulk and encumbrance | `CFBulk`, `CFEncumbranceSystem`; clumsy from `CFConditionSystem.Clumsy`. A weapon or shield worn on the belt, back or neck counts half (`CFEncumbranceSystem.IsHolstered`) |
+| A new weapon or shield | Run `.agent/port-scripts/holsters.py` after adding it, so it can be worn on the belt, back and neck (shields: back and neck) with the right sprites. `CFHolsterTest` fails until you do |
 | A group that fights together | An `encounter` prototype in `Resources/Prototypes/_CF/GOAP/encounters.yml`, placed with `CFEncounterSpawner`. Its tactics, goals and actions go onto each member's brain, and a stock mob it spawns gets one |
 | A monster's AI | Every CF monster thinks with GOAP: `CFBaseMonster`, which every monster has as a parent, has `CFGOAPBrain`. Set `CFGOAP.profile` to a `cfGoapProfile` and `CFGOAP.tactics` to a `goapTactics`. A leader that fights unlike its group sets `keepOwnLists: true`. Stock SS14 mobs keep stock HTN |
 | A stance or a flourish | A stance is an action parented on `CFActStanceBase` with a `CFStance` (`Resources/Prototypes/_CF/Actions/stances.yml`). A flourish is any action with `CFFlourish`. Grant either with `CFGrantAction` |
 | An option where the player picks a cantrip or skill | A `choices` list on the `cfFeat`, `cfHeritage` or `cfClassChoice`. Read answers through `CFOptionChoices`, not `CFBuild.OptionPicks` directly |
 | A bonus that only counts while raging, with panache, or unarmored | `!type:CFGrantWhile`, run by `CFWhileBonusSystem` |
 | What a Barbarian instinct does to Rage | `!type:CFGrantRage` (`damage`, `attackDie`, `attackType`) |
-| An aura, or something an aura does | `!type:CFGrantAura` with a list of `effects`. `CFAuraSystem` runs them. Do not add a physics sensor for one |
+| An aura, or something an aura does | `!type:CFGrantAura` with a list of `effects`. `CFAuraSystem` runs them. Do not add a physics sensor for one. An aura is a circle of `CFAuraSystem.Radius` around where its owner stands, not tiles, and the client draws that same circle. An effect can set its own `sizeFeet` and `includeSelf` |
 | Taunting an enemy | An action with `CFTauntAction` (`Resources/Prototypes/_CF/Actions/taunts.yml`), or `tauntsTarget: true` on a `CFStrikeAction`. `CFTauntSystem` runs it |
 | A weapon whose damage type can be switched | `CFDamageMode` with a `types` list. Use in hand cycles it for 1 action, and the hand status shows it. `CFWeaponSystem.TryStats` reads it |
 | Something a Thaumaturge needs in hand | `CFImplement` on the item, `CFImplementSystem.IsHolding`, and `CFNeedsImplement` on an action |

@@ -410,12 +410,18 @@ public sealed partial class HandsUIController : UIController, IOnStateEntered<Ga
 
     private void UpdateHandStatus(HandButton hand, EntityUid? entity, Hand? handData)
     {
+        // CarpFinder: the action HUD draws these panels. Braced, so a change in one hand no longer redraws the other's.
         if (hand == _statusHandLeft)
+        {
             HandsGui?.UpdatePanelEntityLeft(entity, handData);
-            CFHud?.UpdatePanelEntityLeft(entity, handData); // CarpFinder: the action HUD draws this panel.
+            CFHud?.UpdatePanelEntityLeft(entity, handData);
+        }
 
         if (hand == _statusHandRight)
+        {
             HandsGui?.UpdatePanelEntityRight(entity, handData);
-            CFHud?.UpdatePanelEntityRight(entity, handData); // CarpFinder: the action HUD draws this panel.
+            CFHud?.UpdatePanelEntityRight(entity, handData);
+        }
+        // CarpFinder end
     }
 }

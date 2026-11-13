@@ -263,56 +263,108 @@ public static class CFLevelUp
     }
 
     /// <summary>
-    /// What is still to pick before this level can be taken. A slot with nothing it could take does not count, so a
-    /// character is never stuck.
+    /// How many picks are still open for this level. A slot with nothing it could take does not count, so a character
+    /// is never stuck. A level can be taken with picks still open: they are skipped, and the server writes a report.
     /// </summary>
+    /// <param name="knownLanguages">Languages the character already speaks, from any source. Null counts only the build's.</param>
     public static int Unfilled(
         IPrototypeManager prototypes,
         CFCharacterBuildData build,
         string? ancestryId,
         int level,
-        IReadOnlyDictionary<CFAbility, int> modifiers)
+        IReadOnlyDictionary<CFAbility, int> modifiers,
+        IReadOnlyCollection<ProtoId<CFLanguagePrototype>>? knownLanguages = null)
     {
-        var missing = 0;
+        return UnfilledSlots(prototypes, build, ancestryId, level, modifiers, knownLanguages).Count;
+    }
+
+    /// <summary>
+    /// Each pick still open for this level, described for a log: what the slot is and how many options it had. The same
+    /// rules as <see cref="Unfilled"/>.
+    /// </summary>
+    public static List<string> UnfilledSlots(
+        IPrototypeManager prototypes,
+        CFCharacterBuildData build,
+        string? ancestryId,
+        int level,
+        IReadOnlyDictionary<CFAbility, int> modifiers,
+        IReadOnlyCollection<ProtoId<CFLanguagePrototype>>? knownLanguages = null)
+    {
+        var missing = new List<string>();
         foreach (var slot in SlotsAt(prototypes, build, level))
         {
             switch (slot)
             {
                 case CFLevelSlot.Boosts:
-                    if (build.AbilityBoostsLevel5.Distinct().Count() < CFAttributeMath.LevelFiveBoostCount)
-                        missing++;
+                    var boosts = build.AbilityBoostsLevel5.Distinct().Count();
+                    if (boosts < CFAttributeMath.LevelFiveBoostCount)
+                        missing.Add($"{slot}: {boosts} of {CFAttributeMath.LevelFiveBoostCount} picked");
                     break;
                 case CFLevelSlot.SkillIncrease:
                 case CFLevelSlot.BonusSkillIncrease:
-                    if (Pick(build, slot, level) == null && SkillOptions(prototypes, build, ancestryId, level).Count > 0)
-                        missing++;
+                    if (Pick(build, slot, level) == null
+                        && SkillOptions(prototypes, build, ancestryId, level).Count is var skills and > 0)
+                    {
+                        missing.Add($"{slot}: none picked, {skills} options");
+                    }
                     break;
                 default:
-                    if (Pick(build, slot, level) == null && FeatOptions(prototypes, build, ancestryId, slot, level).Count > 0)
-                        missing++;
+                    if (Pick(build, slot, level) == null
+                        && FeatOptions(prototypes, build, ancestryId, slot, level).Count is var feats and > 0)
+                    {
+                        missing.Add($"{slot}: none picked, {feats} options");
+                    }
                     break;
             }
         }
 
         if (NeedsLanguage(build, level, modifiers) && LevelFiveLanguage(prototypes, build, ancestryId, modifiers) == null)
-            missing++;
+        {
+            var languages = LanguageOptions(prototypes, build, ancestryId, modifiers, knownLanguages).Count;
+            if (languages > 0)
+                missing.Add($"{CFLevelSlot.Language}: none picked, {languages} options");
+        }
 
         foreach (var spell in NewSpellSlots(prototypes, build, level))
         {
             if (!build.Spells.Exists(pick => pick.Rank == spell.Rank && pick.Index == spell.Index && pick.HasSpell))
-                missing++;
+                missing.Add($"Spell: rank {spell.Rank}, slot {spell.Index}, none picked");
         }
 
         foreach (var option in NewOptionSlots(prototypes, build, ancestryId, level))
         {
-            if (!build.OptionPicks.Exists(pick => pick.Source == option.Source && pick.Slot == option.Slot)
-                && CFOptionChoices.Allowed(prototypes, option.Choice, build).Count > 0)
-            {
-                missing++;
-            }
+            if (build.OptionPicks.Exists(pick => pick.Source == option.Source && pick.Slot == option.Slot))
+                continue;
+
+            var allowed = CFOptionChoices.Allowed(prototypes, option.Choice, build).Count;
+            if (allowed > 0)
+                missing.Add($"Option: {option.Choice.Kind} for {option.Source}, slot {option.Slot}, none picked, {allowed} options");
         }
 
         return missing;
+    }
+
+    /// <summary>
+    /// The languages level 5's Intelligence boost could teach: common ones the ancestry does not give and the character
+    /// does not already speak. The pick itself stays an option, so a list can show it as chosen.
+    /// </summary>
+    /// <param name="knownLanguages">Languages the character already speaks, from any source, before this level.</param>
+    public static List<CFLanguagePrototype> LanguageOptions(
+        IPrototypeManager prototypes,
+        CFCharacterBuildData build,
+        string? ancestryId,
+        IReadOnlyDictionary<CFAbility, int> modifiers,
+        IReadOnlyCollection<ProtoId<CFLanguagePrototype>>? knownLanguages = null)
+    {
+        CFAncestryPrototype? ancestry = null;
+        if (ancestryId != null)
+            prototypes.TryIndex(ancestryId, out ancestry);
+
+        var known = CFLanguageRules.Known(prototypes, ancestry, build.Languages, modifiers);
+        return CFLanguageRules.Pickable(prototypes, ancestry)
+            .Where(language => !known.Contains(language.ID)
+                               && knownLanguages?.Contains(language.ID) != true)
+            .ToList();
     }
 
     /// <summary>

@@ -3,12 +3,10 @@ using Content.Shared.CF.Character;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Effects;
-using Content.Shared.CF.Factions;
 using Content.Shared.CF.Hazards;
 using Content.Shared.CF.Preferences;
 using Content.Shared.CF.Spells;
 using Content.Shared.Hands.EntitySystems;
-using Content.Shared.Mobs.Components;
 using Content.Shared.Popups;
 using Content.Shared.Throwing;
 using Robust.Shared.Network;
@@ -23,11 +21,11 @@ namespace Content.Shared.CF.Actions;
 /// </summary>
 public sealed partial class CFActivitySystem : EntitySystem
 {
-    /// <summary>How long Courageous Anthem's bonus lasts. Printed as 1 round; a Bard repeats it at this pace.</summary>
-    public const float AnthemSeconds = 12f;
-
-    /// <summary>A 60-foot emanation.</summary>
-    private const float AnthemTiles = 12f;
+    /// <summary>
+    /// How long Courageous Anthem lasts from the action. Printed as 1 round, which is too short with no turns, so it is
+    /// a real minute. Playing a held instrument keeps it going for as long as the music lasts instead.
+    /// </summary>
+    public static readonly TimeSpan AnthemLasts = TimeSpan.FromMinutes(1);
 
     /// <summary>Stock's jump speed. A leap lands as soon as it has covered the distance.</summary>
     private const float LeapThrowSpeed = 10f;
@@ -42,13 +40,12 @@ public sealed partial class CFActivitySystem : EntitySystem
     [Dependency] private CFActionPoolSystem _actions = default!;
     [Dependency] private CFManeuverSystem _maneuvers = default!;
     [Dependency] private CFBonusSystem _bonuses = default!;
-    [Dependency] private CFFactionSystem _factions = default!;
     [Dependency] private CFTrapLayerSystem _traps = default!;
     [Dependency] private CFSpellSystem _spells = default!;
-    [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private ThrowingSystem _throwing = default!;
     [Dependency] private CFTemporaryHpSystem _tempHp = default!;
+    [Dependency] private CFAuraSystem _auras = default!;
 
     [SubscribeLocalEvent]
     private void OnSpellAttempt(Entity<CFSpellComponent> spell, ref ActionAttemptEvent args)
@@ -300,27 +297,21 @@ public sealed partial class CFActivitySystem : EntitySystem
         _throwing.TryThrow(user, landing, LeapThrowSpeed, doSpin: false);
     }
 
-    /// <summary>+1 status to attack rolls, damage rolls, and saves against fear for the Bard and nearby allies.</summary>
+    /// <summary>
+    /// Courageous Anthem for <see cref="AnthemLasts"/>: +1 status to attack rolls, damage rolls, and saves against fear
+    /// for the Bard and allies within 60 feet, as an aura that follows the Bard.
+    /// </summary>
     public void Anthem(EntityUid user)
     {
-        Buff(user);
-        var origin = _transform.GetMapCoordinates(user);
-        foreach (var uid in _lookup.GetEntitiesInRange(origin, AnthemTiles))
-        {
-            if (uid == user || !HasComp<MobStateComponent>(uid) || _factions.CanHarm(user, uid))
-                continue;
-
-            Buff(uid);
-        }
-
-        _popup.PopupEntity(Loc.GetString("cf-act-anthem"), user, user);
+        Anthem(user, AnthemLasts);
     }
 
-    private void Buff(EntityUid ally)
+    public void Anthem(EntityUid user, TimeSpan lasts)
     {
-        _bonuses.AddBonus(ally, CFBonusStat.AttackRoll, CFBonusType.Status, 1, AnthemSeconds);
-        _bonuses.AddBonus(ally, CFBonusStat.Damage, CFBonusType.Status, 1, AnthemSeconds);
-        _bonuses.AddBonus(ally, CFBonusStat.Saves, CFBonusType.Status, 1, AnthemSeconds, trait: "Fear");
+        var started = !_auras.AnthemActive(user);
+        _auras.Anthem(user, lasts);
+        if (started)
+            _popup.PopupEntity(Loc.GetString("cf-act-anthem"), user, user);
     }
 
     /// <summary>

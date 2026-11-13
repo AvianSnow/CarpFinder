@@ -24,8 +24,8 @@ cf-levelup-need-xp = { $xp } more XP to reach level { $level }.
 cf-levelup-title = Level { $level }: make your picks, then accept.
 cf-levelup-accept = Accept
 cf-levelup-missing = { $count ->
-    [one] 1 pick left
-   *[other] { $count } picks left
+    [one] 1 pick left. Accept skips it.
+   *[other] { $count } picks left. Accept skips them.
 }
 cf-levelup-ready = Ready.
 cf-levelup-choose = Choose...

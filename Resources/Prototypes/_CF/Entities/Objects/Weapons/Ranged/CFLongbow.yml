@@ -19,10 +19,19 @@
       size: Large
       sprite: _CP14/Objects/Weapons/Ranged/bow.rsi
     - type: Clothing
-      sprite: _CP14/Objects/Weapons/Ranged/bow.rsi
       quickEquip: false
+      sprite: _CP14/Objects/Weapons/Ranged/bow.rsi
       slots:
+      - belt
+      - back
       - neck
+      clothingVisuals:
+        belt:
+        - sprite: _CP14/Objects/Weapons/Ranged/bow.rsi
+          state: equipped-NECK
+        back:
+        - sprite: _CP14/Objects/Weapons/Ranged/bow.rsi
+          state: equipped-NECK
     - type: Appearance
     - type: ItemMapper
       spriteLayers:

@@ -19,6 +19,9 @@ public sealed partial class CFEncumbranceSystem : EntitySystem
 {
     private static readonly TimeSpan CheckInterval = TimeSpan.FromSeconds(1);
 
+    /// <summary>The inventory slots a weapon or shield can be holstered in. CP14's neck sprites are back sheaths.</summary>
+    public static readonly string[] HolsterSlots = { "belt", "back", "neck" };
+
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private INetManager _net = default!;
     [Dependency] private InventorySystem _inventory = default!;
@@ -80,21 +83,50 @@ public sealed partial class CFEncumbranceSystem : EntitySystem
         return TryComp(item, out ItemComponent? stock) ? CFBulk.FromItemSize(stock.Size.Id) : 0;
     }
 
-    /// <summary>Everything in the creature's hands and inventory slots, and inside those, in tenths of Bulk.</summary>
+    /// <summary>
+    /// Everything in the creature's hands and inventory slots, and inside those, in tenths of Bulk. A holstered weapon or
+    /// shield counts half (<see cref="IsHolstered"/>).
+    /// </summary>
     public int CarriedTenths(EntityUid uid)
     {
         var total = 0;
         foreach (var item in _inventory.GetHandOrInventoryEntities(uid))
         {
-            total += ItemAndContentsTenths(item);
+            var own = ItemTenths(item);
+            total += (IsHolstered(uid, item) ? HolsteredTenths(own) : own) + ContentsTenths(item);
         }
 
         return total;
     }
 
+    /// <summary>
+    /// A weapon or shield worn in a holster slot (belt, back or neck) on <paramref name="wearer"/>. Being strapped down,
+    /// it counts half its Bulk. This is CarpFinder's rule, not PF2e's, to make carrying gear less of a chore.
+    /// </summary>
+    public bool IsHolstered(EntityUid wearer, EntityUid item)
+    {
+        if (!HasComp<CFWeaponComponent>(item)
+            || !_containers.TryGetContainingContainer((item, null, null), out var container)
+            || container.Owner != wearer)
+            return false;
+
+        return Array.IndexOf(HolsterSlots, container.ID) >= 0;
+    }
+
+    /// <summary>Half, rounded up, so a light item stays light rather than weighing nothing.</summary>
+    public static int HolsteredTenths(int tenths)
+    {
+        return (tenths + 1) / 2;
+    }
+
     private int ItemAndContentsTenths(EntityUid item)
     {
-        var total = ItemTenths(item);
+        return ItemTenths(item) + ContentsTenths(item);
+    }
+
+    private int ContentsTenths(EntityUid item)
+    {
+        var total = 0;
         if (!TryComp(item, out ContainerManagerComponent? manager))
             return total;
 

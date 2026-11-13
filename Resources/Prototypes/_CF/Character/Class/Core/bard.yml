@@ -48,12 +48,14 @@
       description: "Level 1 cantrips and spell slots are on the spell sheet."
     - level: 1
       name: "Composition Spells"
-      description: "Courageous Anthem is on your action wheel."
+      description: "Courageous Anthem is on your action wheel, and lasts a minute. Playing a held instrument performs it for as long as the music lasts. You start with a virtuoso's lute, which plays every voice of a song."
       grants:
         - !type:CFGrantOption
           option: Anthem
         - !type:CFGrantAction
           action: CFActAnthem
+        - !type:CFGrantItem
+          item: CFVirtuosoLute
     - level: 1
       name: "Muses"
       description: "Choose yours with the Muse button."

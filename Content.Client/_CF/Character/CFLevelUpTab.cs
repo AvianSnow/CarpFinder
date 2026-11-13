@@ -185,11 +185,12 @@ public sealed partial class CFLevelUpTab : BoxContainer
         if (_build == null)
             return;
 
-        var missing = CFLevelUp.Unfilled(_prototypes, _build, _ancestryId, Next, _modifiers);
+        // Picks left open do not block Accept: they are skipped, and the server writes a report of them.
+        var missing = CFLevelUp.Unfilled(_prototypes, _build, _ancestryId, Next, _modifiers, _known);
         _missing.Text = missing > 0
             ? Loc.GetString("cf-levelup-missing", ("count", missing))
             : Loc.GetString("cf-levelup-ready");
-        _accept.Disabled = missing > 0;
+        _accept.Disabled = false;
     }
 
     private void Accept()
@@ -342,13 +343,7 @@ public sealed partial class CFLevelUpTab : BoxContainer
 
     private Control LanguageRow()
     {
-        CFAncestryPrototype? ancestry = null;
-        if (_ancestryId != null)
-            _prototypes.TryIndex(_ancestryId, out ancestry);
-
-        var options = CFLanguageRules.Pickable(_prototypes, ancestry)
-            .Where(language => !_known.Contains(language.ID))
-            .ToList();
+        var options = CFLevelUp.LanguageOptions(_prototypes, _build!, _ancestryId, _modifiers, _known);
         var current = CFLevelUp.LevelFiveLanguage(_prototypes, _build!, _ancestryId, _modifiers);
         var button = new OptionButton();
         button.AddItem(Loc.GetString("cf-levelup-choose"), 0);

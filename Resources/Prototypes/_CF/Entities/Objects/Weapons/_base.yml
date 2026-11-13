@@ -69,7 +69,19 @@
     size: Small
     sprite: _CP14/Objects/Weapons/Melee/Dagger/iron.rsi
   - type: Clothing
+    quickEquip: false
     sprite: _CP14/Objects/Weapons/Melee/Dagger/iron.rsi
+    slots:
+    - belt
+    - back
+    - neck
+    clothingVisuals:
+      back:
+      - sprite: _CP14/Objects/Weapons/Melee/Dagger/iron.rsi
+        state: equipped-BELT
+      neck:
+      - sprite: _CP14/Objects/Weapons/Melee/Dagger/iron.rsi
+        state: equipped-BELT
   - type: CFWeapon
     damageDie: 4
     damageType: Piercing
@@ -101,7 +113,19 @@
     size: Normal
     sprite: _CP14/Objects/Weapons/Melee/Rapier/iron.rsi
   - type: Clothing
+    quickEquip: false
     sprite: _CP14/Objects/Weapons/Melee/Rapier/iron.rsi
+    slots:
+    - belt
+    - back
+    - neck
+    clothingVisuals:
+      back:
+      - sprite: _CP14/Objects/Weapons/Melee/Rapier/iron.rsi
+        state: equipped-BELT
+      neck:
+      - sprite: _CP14/Objects/Weapons/Melee/Rapier/iron.rsi
+        state: equipped-BELT
   - type: CFWeapon
     damageDie: 6
     damageType: Piercing
@@ -131,7 +155,19 @@
     size: Normal
     sprite: _CP14/Objects/Weapons/Melee/Skimitar/iron.rsi
   - type: Clothing
+    quickEquip: false
     sprite: _CP14/Objects/Weapons/Melee/Skimitar/iron.rsi
+    slots:
+    - belt
+    - back
+    - neck
+    clothingVisuals:
+      belt:
+      - sprite: _CP14/Objects/Weapons/Melee/Skimitar/iron.rsi
+        state: equipped-NECK
+      back:
+      - sprite: _CP14/Objects/Weapons/Melee/Skimitar/iron.rsi
+        state: equipped-NECK
   - type: CFWeapon
     damageDie: 6
     damageType: Slashing
@@ -162,7 +198,19 @@
     size: Small
     sprite: _CP14/Objects/Weapons/Melee/Skimitar/iron.rsi
   - type: Clothing
+    quickEquip: false
     sprite: _CP14/Objects/Weapons/Melee/Skimitar/iron.rsi
+    slots:
+    - belt
+    - back
+    - neck
+    clothingVisuals:
+      belt:
+      - sprite: _CP14/Objects/Weapons/Melee/Skimitar/iron.rsi
+        state: equipped-NECK
+      back:
+      - sprite: _CP14/Objects/Weapons/Melee/Skimitar/iron.rsi
+        state: equipped-NECK
   - type: CFWeapon
     damageDie: 6
     damageType: Slashing
@@ -196,7 +244,19 @@
     size: Normal
     sprite: _CP14/Objects/Weapons/Melee/Sword/iron.rsi
   - type: Clothing
+    quickEquip: false
     sprite: _CP14/Objects/Weapons/Melee/Sword/iron.rsi
+    slots:
+    - belt
+    - back
+    - neck
+    clothingVisuals:
+      belt:
+      - sprite: _CP14/Objects/Weapons/Melee/Sword/iron.rsi
+        state: equipped-NECK
+      back:
+      - sprite: _CP14/Objects/Weapons/Melee/Sword/iron.rsi
+        state: equipped-NECK
   - type: CFWeapon
     damageDie: 8
     damageType: Slashing
@@ -224,7 +284,19 @@
     size: Large
     sprite: _CP14/Objects/Weapons/Melee/TwoHandedSword/iron.rsi
   - type: Clothing
+    quickEquip: false
     sprite: _CP14/Objects/Weapons/Melee/TwoHandedSword/iron.rsi
+    slots:
+    - belt
+    - back
+    - neck
+    clothingVisuals:
+      belt:
+      - sprite: _CP14/Objects/Weapons/Melee/TwoHandedSword/iron.rsi
+        state: equipped-NECK
+      back:
+      - sprite: _CP14/Objects/Weapons/Melee/TwoHandedSword/iron.rsi
+        state: equipped-NECK
   - type: CFWeapon
     damageDie: 12
     damageType: Slashing
@@ -254,7 +326,19 @@
     size: Normal
     sprite: _CP14/Objects/Weapons/Melee/WarAxe/iron.rsi
   - type: Clothing
+    quickEquip: false
     sprite: _CP14/Objects/Weapons/Melee/WarAxe/iron.rsi
+    slots:
+    - belt
+    - back
+    - neck
+    clothingVisuals:
+      belt:
+      - sprite: _CP14/Objects/Weapons/Melee/WarAxe/iron.rsi
+        state: equipped-NECK
+      back:
+      - sprite: _CP14/Objects/Weapons/Melee/WarAxe/iron.rsi
+        state: equipped-NECK
   - type: CFWeapon
     damageDie: 8
     damageType: Slashing
@@ -282,7 +366,19 @@
     size: Normal
     sprite: _CP14/Objects/Weapons/Melee/WarHammer/iron.rsi
   - type: Clothing
+    quickEquip: false
     sprite: _CP14/Objects/Weapons/Melee/WarHammer/iron.rsi
+    slots:
+    - belt
+    - back
+    - neck
+    clothingVisuals:
+      belt:
+      - sprite: _CP14/Objects/Weapons/Melee/WarHammer/iron.rsi
+        state: equipped-NECK
+      back:
+      - sprite: _CP14/Objects/Weapons/Melee/WarHammer/iron.rsi
+        state: equipped-NECK
   - type: CFWeapon
     damageDie: 8
     damageType: Bludgeoning
@@ -310,7 +406,19 @@
     size: Large
     sprite: _CP14/Objects/Weapons/Melee/Spear/iron.rsi
   - type: Clothing
+    quickEquip: false
     sprite: _CP14/Objects/Weapons/Melee/Spear/iron.rsi
+    slots:
+    - belt
+    - back
+    - neck
+    clothingVisuals:
+      belt:
+      - sprite: _CP14/Objects/Weapons/Melee/Spear/iron.rsi
+        state: equipped-NECK
+      back:
+      - sprite: _CP14/Objects/Weapons/Melee/Spear/iron.rsi
+        state: equipped-NECK
   - type: CFWeapon
     damageDie: 6
     damageType: Piercing
@@ -345,7 +453,19 @@
     size: Small
     sprite: _CP14/Objects/Weapons/Melee/Dagger/hatchet.rsi
   - type: Clothing
+    quickEquip: false
     sprite: _CP14/Objects/Weapons/Melee/Dagger/hatchet.rsi
+    slots:
+    - belt
+    - back
+    - neck
+    clothingVisuals:
+      back:
+      - sprite: _CP14/Objects/Weapons/Melee/Dagger/hatchet.rsi
+        state: equipped-BELT
+      neck:
+      - sprite: _CP14/Objects/Weapons/Melee/Dagger/hatchet.rsi
+        state: equipped-BELT
   - type: CFWeapon
     damageDie: 6
     damageType: Slashing
@@ -376,7 +496,19 @@
     size: Small
     sprite: _CP14/Objects/Weapons/Melee/Dagger/sickle.rsi
   - type: Clothing
+    quickEquip: false
     sprite: _CP14/Objects/Weapons/Melee/Dagger/sickle.rsi
+    slots:
+    - belt
+    - back
+    - neck
+    clothingVisuals:
+      back:
+      - sprite: _CP14/Objects/Weapons/Melee/Dagger/sickle.rsi
+        state: equipped-BELT
+      neck:
+      - sprite: _CP14/Objects/Weapons/Melee/Dagger/sickle.rsi
+        state: equipped-BELT
   - type: CFWeapon
     damageDie: 4
     damageType: Slashing
@@ -406,7 +538,19 @@
     size: Small
     sprite: _CP14/Objects/Weapons/Melee/Hammer/iron.rsi
   - type: Clothing
+    quickEquip: false
     sprite: _CP14/Objects/Weapons/Melee/Hammer/iron.rsi
+    slots:
+    - belt
+    - back
+    - neck
+    clothingVisuals:
+      back:
+      - sprite: _CP14/Objects/Weapons/Melee/Hammer/iron.rsi
+        state: equipped-BELT
+      neck:
+      - sprite: _CP14/Objects/Weapons/Melee/Hammer/iron.rsi
+        state: equipped-BELT
   - type: CFWeapon
     damageDie: 6
     damageType: Bludgeoning
@@ -439,7 +583,19 @@
     size: Normal
     sprite: _CP14/Objects/Weapons/Melee/Pickaxe/iron.rsi
   - type: Clothing
+    quickEquip: false
     sprite: _CP14/Objects/Weapons/Melee/Pickaxe/iron.rsi
+    slots:
+    - belt
+    - back
+    - neck
+    clothingVisuals:
+      belt:
+      - sprite: _CP14/Objects/Weapons/Melee/Pickaxe/iron.rsi
+        state: equipped-NECK
+      back:
+      - sprite: _CP14/Objects/Weapons/Melee/Pickaxe/iron.rsi
+        state: equipped-NECK
   - type: CFWeapon
     damageDie: 6
     damageType: Piercing
@@ -467,7 +623,19 @@
     size: Large
     sprite: _CP14/Objects/Weapons/Melee/Shovel/iron.rsi
   - type: Clothing
+    quickEquip: false
     sprite: _CP14/Objects/Weapons/Melee/Shovel/iron.rsi
+    slots:
+    - belt
+    - back
+    - neck
+    clothingVisuals:
+      belt:
+      - sprite: _CP14/Objects/Weapons/Melee/Shovel/iron.rsi
+        state: equipped-NECK
+      back:
+      - sprite: _CP14/Objects/Weapons/Melee/Shovel/iron.rsi
+        state: equipped-NECK
   - type: CFWeapon
     damageDie: 6
     damageType: Bludgeoning
@@ -496,7 +664,19 @@
     size: Large
     sprite: _CP14/Objects/Weapons/Magic/TwoHandedStaff/healing_staff.rsi
   - type: Clothing
+    quickEquip: false
     sprite: _CP14/Objects/Weapons/Magic/TwoHandedStaff/healing_staff.rsi
+    slots:
+    - belt
+    - back
+    - neck
+    clothingVisuals:
+      belt:
+      - sprite: _CP14/Objects/Weapons/Magic/TwoHandedStaff/healing_staff.rsi
+        state: equipped-NECK
+      back:
+      - sprite: _CP14/Objects/Weapons/Magic/TwoHandedStaff/healing_staff.rsi
+        state: equipped-NECK
   - type: CFWeapon
     damageDie: 4
     damageType: Bludgeoning
@@ -522,7 +702,15 @@
     size: Large
     sprite: _CP14/Objects/Weapons/Melee/Shield/shield.rsi
   - type: Clothing
+    quickEquip: false
     sprite: _CP14/Objects/Weapons/Melee/Shield/shield.rsi
+    slots:
+    - back
+    - neck
+    clothingVisuals:
+      back:
+      - sprite: _CP14/Objects/Weapons/Melee/Shield/shield.rsi
+        state: equipped-NECK
   - type: CFShield
     acBonus: 2
     hardness: 3
@@ -545,7 +733,15 @@
     size: Large
     sprite: _CP14/Objects/Weapons/Melee/ShieldBuckler/iron.rsi
   - type: Clothing
+    quickEquip: false
     sprite: _CP14/Objects/Weapons/Melee/ShieldBuckler/iron.rsi
+    slots:
+    - back
+    - neck
+    clothingVisuals:
+      back:
+      - sprite: _CP14/Objects/Weapons/Melee/ShieldBuckler/iron.rsi
+        state: equipped-NECK
   - type: CFShield
     acBonus: 1
     hardness: 3
@@ -568,7 +764,15 @@
     size: Large
     sprite: _CP14/Objects/Weapons/Melee/TowerShield/wooden.rsi
   - type: Clothing
+    quickEquip: false
     sprite: _CP14/Objects/Weapons/Melee/TowerShield/wooden.rsi
+    slots:
+    - back
+    - neck
+    clothingVisuals:
+      back:
+      - sprite: _CP14/Objects/Weapons/Melee/TowerShield/wooden.rsi
+        state: equipped-NECK
   - type: CFShield
     acBonus: 2
     hardness: 5
@@ -602,6 +806,12 @@
     bulk: 1
   - type: CFItemPrice
     copper: 200
+  - type: Clothing
+    quickEquip: false
+    sprite: Objects/Weapons/Melee/shields.rsi
+    slots:
+    - back
+    - neck
 
 - type: entity
   parent: BaseItem
@@ -637,3 +847,10 @@
   - type: CFItemPrice
     copper: 1
   - type: LandAtCursor
+  - type: Clothing
+    quickEquip: false
+    sprite: _CP14/Objects/Weapons/Ranged/Projectiles/spike.rsi
+    slots:
+    - belt
+    - back
+    - neck

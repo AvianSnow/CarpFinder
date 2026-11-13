@@ -5,6 +5,7 @@ using Content.IntegrationTests.Tests.CF;
 using Content.Server.CF.Character;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Combat;
+using Content.Shared.CF.Languages;
 using Content.Shared.CF.Preferences;
 using Content.Shared.Preferences;
 using Robust.Shared.GameObjects;
@@ -107,6 +108,109 @@ public sealed class CFLevelUpTest : GameTest
                 Assert.That(xp.Build.ClassFeatLevel4, Is.Null, "Level 4's too.");
                 Assert.That(CFLevelUp.Unfilled(Protos, xp.Build, xp.AncestryId, 2, new Dictionary<CFAbility, int>()), Is.Zero);
             });
+        });
+    }
+
+    /// <summary>
+    /// A Sorcerer reached level 5 with an Intelligence boost but no language left to learn, and the sheet still asked for
+    /// one. A slot with nothing to pick never counts.
+    /// </summary>
+    [Test]
+    public async Task ALanguageWithNothingLeftToLearnIsNotAPickLeft()
+    {
+        await Server.WaitAssertion(() =>
+        {
+            var build = new CFCharacterBuildData
+            {
+                Class = "Sorcerer",
+                AbilityBoostsLevel5 = new List<CFAbility> { CFAbility.Intelligence },
+            };
+            var modifiers = new Dictionary<CFAbility, int> { [CFAbility.Intelligence] = 0 };
+            Assert.That(CFLevelUp.NeedsLanguage(build, 5, modifiers), "The boost raises Intelligence.");
+
+            var all = CFLevelUp.LanguageOptions(Protos, build, null, modifiers)
+                .Select(language => new ProtoId<CFLanguagePrototype>(language.ID))
+                .ToList();
+            Assert.That(all, Is.Not.Empty);
+
+            bool AsksForLanguage(IReadOnlyCollection<ProtoId<CFLanguagePrototype>> known)
+            {
+                return CFLevelUp.UnfilledSlots(Protos, build, null, 5, modifiers, known)
+                    .Any(slot => slot.StartsWith(nameof(CFLevelSlot.Language)));
+            }
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(AsksForLanguage(null), "With languages left, it is a pick.");
+                Assert.That(AsksForLanguage(all), Is.False, "Knowing them all already, there is nothing to pick.");
+            });
+
+            build.Languages.Add(all[0]);
+            Assert.That(AsksForLanguage(null), Is.False, "Picked.");
+        });
+    }
+
+    [Test]
+    public async Task TakingALevelWithPicksOpenWritesAReport()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        string file = null;
+        try
+        {
+            await Server.WaitAssertion(() =>
+            {
+                var hero = Hero(new CFCharacterBuildData { Class = "Fighter" });
+                var xp = SEntMan.GetComponent<CFExperienceComponent>(hero);
+                var experience = SEntMan.System<CFExperienceSystem>();
+                var reports = SEntMan.System<CFLevelUpReportSystem>();
+                var started = System.DateTime.UtcNow.AddSeconds(-1);
+
+                experience.AddXp(hero, CFExperienceComponent.XpPerLevel);
+                Assert.That(experience.TryLevelUp(hero, xp.Build!.Clone()), "Open picks do not stop the level.");
+                Assert.That(Level(hero), Is.EqualTo(2));
+
+                var folder = reports.ReportFolder();
+                Assert.That(System.IO.Directory.Exists(folder), folder);
+                file = System.IO.Directory.GetFiles(folder, "*_level2.json")
+                    .Where(path => System.IO.File.GetLastWriteTimeUtc(path) >= started)
+                    .OrderByDescending(System.IO.File.GetLastWriteTimeUtc)
+                    .FirstOrDefault();
+                Assert.That(file, Is.Not.Null, "A report is written.");
+
+                var report = System.Text.Json.Nodes.JsonNode.Parse(System.IO.File.ReadAllText(file!))!;
+                Assert.Multiple(() =>
+                {
+                    Assert.That(report["toLevel"]!.GetValue<int>(), Is.EqualTo(2));
+                    Assert.That(report["unfilled"]!.AsArray().Select(node => node!.GetValue<string>()),
+                        Has.Some.StartsWith(nameof(CFLevelSlot.ClassFeat)));
+                    Assert.That(report["slots"]![nameof(CFLevelSlot.ClassFeat)]!["options"]!.AsArray(), Is.Not.Empty);
+                    Assert.That(report["buildAfter"], Is.Not.Null);
+                });
+            });
+        }
+        finally
+        {
+            if (file != null && System.IO.File.Exists(file))
+                System.IO.File.Delete(file);
+        }
+    }
+
+    [Test]
+    public async Task ATakenLevelWithEveryPickMadeWritesNoReport()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            var hero = Hero(new CFCharacterBuildData { Class = "Fighter" });
+            var xp = SEntMan.GetComponent<CFExperienceComponent>(hero);
+            var sent = xp.Build!.Clone();
+            CFLevelUp.SetPick(sent, CFLevelSlot.ClassFeat, 2, CFLevelUp.FeatOptions(Protos, sent, xp.AncestryId, CFLevelSlot.ClassFeat, 2).First().ID);
+            CFLevelUp.SetPick(sent, CFLevelSlot.SkillFeat, 2, CFLevelUp.FeatOptions(Protos, sent, xp.AncestryId, CFLevelSlot.SkillFeat, 2).First().ID);
+
+            var unfilled = CFLevelUp.UnfilledSlots(Protos, sent, xp.AncestryId, 2, new Dictionary<CFAbility, int>());
+            Assert.That(unfilled, Is.Empty);
+            Assert.That(SEntMan.System<CFLevelUpReportSystem>()
+                .Report(hero, 2, unfilled, xp.Build, sent, sent, xp.AncestryId, new Dictionary<CFAbility, int>()), Is.Null);
         });
     }
 

@@ -12,10 +12,19 @@
     size: Large
     sprite: _CP14/Objects/Weapons/Ranged/bow.rsi
   - type: Clothing
-    sprite: _CP14/Objects/Weapons/Ranged/bow.rsi
     quickEquip: false
+    sprite: _CP14/Objects/Weapons/Ranged/bow.rsi
     slots:
+    - belt
+    - back
     - neck
+    clothingVisuals:
+      belt:
+      - sprite: _CP14/Objects/Weapons/Ranged/bow.rsi
+        state: equipped-NECK
+      back:
+      - sprite: _CP14/Objects/Weapons/Ranged/bow.rsi
+        state: equipped-NECK
   - type: CFWeapon
     damageDie: 6
     damageType: Piercing
@@ -46,10 +55,19 @@
     size: Large
     sprite: _CP14/Objects/Weapons/Ranged/light_crossbow.rsi
   - type: Clothing
-    sprite: _CP14/Objects/Weapons/Ranged/light_crossbow.rsi
     quickEquip: false
+    sprite: _CP14/Objects/Weapons/Ranged/light_crossbow.rsi
     slots:
+    - belt
+    - back
     - neck
+    clothingVisuals:
+      back:
+      - sprite: _CP14/Objects/Weapons/Ranged/light_crossbow.rsi
+        state: equipped-BELT
+      neck:
+      - sprite: _CP14/Objects/Weapons/Ranged/light_crossbow.rsi
+        state: equipped-BELT
   - type: CFWeapon
     damageDie: 8
     damageType: Piercing
@@ -96,10 +114,19 @@
     size: Large
     sprite: _CP14/Objects/Weapons/Ranged/crossbow.rsi
   - type: Clothing
-    sprite: _CP14/Objects/Weapons/Ranged/crossbow.rsi
     quickEquip: false
+    sprite: _CP14/Objects/Weapons/Ranged/crossbow.rsi
     slots:
+    - belt
+    - back
     - neck
+    clothingVisuals:
+      belt:
+      - sprite: _CP14/Objects/Weapons/Ranged/crossbow.rsi
+        state: equipped-NECK
+      back:
+      - sprite: _CP14/Objects/Weapons/Ranged/crossbow.rsi
+        state: equipped-NECK
   - type: CFWeapon
     damageDie: 10
     damageType: Piercing

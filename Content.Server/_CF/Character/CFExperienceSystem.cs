@@ -20,6 +20,7 @@ public sealed partial class CFExperienceSystem : EntitySystem
     [Dependency] private CFCharacterSpawnSystem _spawn = default!;
     [Dependency] private CFCharacterFeatureSystem _features = default!;
     [Dependency] private CFCompanionSystem _companions = default!;
+    [Dependency] private CFLevelUpReportSystem _reports = default!;
 
     public IEnumerable<string> Factions()
     {
@@ -190,10 +191,17 @@ public sealed partial class CFExperienceSystem : EntitySystem
         var level = combat.Level + 1;
         if (picks != null && xp.Build != null)
         {
+            var before = xp.Build.Clone();
             var build = xp.Build.Clone();
             CFLevelUp.TakeLevel(_prototypes, build, picks, level);
             CFSkills.DropUnqualifiedFeats(_prototypes, build, xp.AncestryId);
             var modifiers = CompOrNull<CFAbilityScoreComponent>(mob)?.AbilityModifiers ?? new Dictionary<CFAbility, int>();
+
+            // Picks left open are skipped, not refused, so the player is never stuck. Each time, a report says why.
+            var known = CompOrNull<CFLanguagesComponent>(mob)?.Known;
+            var unfilled = CFLevelUp.UnfilledSlots(_prototypes, build, xp.AncestryId, level, modifiers, known);
+            _reports.Report(mob, level, unfilled, before, picks, build, xp.AncestryId, modifiers);
+
             _spawn.CopyLevelPicks(mob, xp, build, xp.AncestryId, modifiers);
         }
         else if (xp.Build != null)

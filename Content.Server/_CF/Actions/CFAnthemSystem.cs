@@ -1,19 +1,20 @@
 using Content.Server.Instruments;
 using Content.Shared.CF.Actions;
 using Content.Shared.CF.Combat;
+using Content.Shared.CF.Effects;
 using Content.Shared.Hands.EntitySystems;
 using Robust.Shared.Timing;
 
 namespace Content.Server.CF.Actions;
 
 /// <summary>
-/// A Bard playing a held instrument performs Courageous Anthem, and keeps paying for it while the music lasts.
-/// Instruments are server-only, so this cannot sit with the other activities.
+/// A Bard playing a held instrument performs Courageous Anthem for as long as the music lasts. Starting costs 1 action;
+/// keeping it going is free. Instruments are server-only, so this cannot sit with the other activities.
 /// </summary>
 public sealed partial class CFAnthemSystem : EntitySystem
 {
-    /// <summary>The anthem's bonus lasts as long, so steady playing never drops it.</summary>
-    private static readonly TimeSpan RepeatInterval = TimeSpan.FromSeconds(CFActivitySystem.AnthemSeconds);
+    /// <summary>How long the anthem outlasts the music, so a short gap between notes or songs does not end it.</summary>
+    public static readonly TimeSpan KeepUp = TimeSpan.FromSeconds(2);
 
     private static readonly TimeSpan RetryInterval = TimeSpan.FromSeconds(1);
 
@@ -22,6 +23,7 @@ public sealed partial class CFAnthemSystem : EntitySystem
     [Dependency] private SharedHandsSystem _hands = default!;
     [Dependency] private CFActionPoolSystem _actions = default!;
     [Dependency] private CFActivitySystem _activities = default!;
+    [Dependency] private CFAuraSystem _auras = default!;
 
     public override void Update(float frameTime)
     {
@@ -37,11 +39,20 @@ public sealed partial class CFAnthemSystem : EntitySystem
         }
     }
 
-    /// <summary>Pays one action for the anthem, unless the last one is still running. Returns whether it played.</summary>
+    /// <summary>
+    /// Keeps the anthem going while the Bard plays. Starting it pays 1 action. Returns whether it started now, and so
+    /// paid; keeping a running anthem going is free and returns false.
+    /// </summary>
     public bool TryPlay(EntityUid player)
     {
         if (!TryComp(player, out CFCombatOptionsComponent? options) || !options.Anthem)
             return false;
+
+        if (_auras.AnthemActive(player))
+        {
+            _auras.Anthem(player, KeepUp);
+            return false;
+        }
 
         var now = _timing.CurTime;
         if (now < options.NextAnthem)
@@ -53,8 +64,7 @@ public sealed partial class CFAnthemSystem : EntitySystem
             return false;
         }
 
-        options.NextAnthem = now + RepeatInterval;
-        _activities.Anthem(player);
+        _activities.Anthem(player, KeepUp);
         return true;
     }
 }

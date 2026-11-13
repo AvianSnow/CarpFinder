@@ -1,0 +1,27 @@
+# A Bard's own instrument, given by the class (Composition Spells). Ordinary instruments play one voice for the whole
+# song; this one lets a MIDI file pick each channel's voice and play drums, so a full arrangement sounds as written.
+
+- type: entity
+  parent: CFLuteInstrument
+  id: CFVirtuosoLute
+  name: virtuoso's lute
+  description: An enchanted lute that answers to every voice a song asks for, strings, horns, choir and drums at once. Playing it performs Courageous Anthem.
+  components:
+  - type: Instrument
+    program: 24
+    allowPercussion: true
+    allowProgramChange: true
+  - type: Sprite
+    sprite: _CP14/Objects/Fun/Instruments/lute.rsi
+    state: icon
+    color: "#D8C8FF"
+  - type: PointLight
+    radius: 1.2
+    energy: 0.6
+    color: "#B090FF"
+  - type: CFTrait
+    traits:
+    - Magical
+  - type: CFItem
+    level: 1
+    rarity: Uncommon

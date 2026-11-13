@@ -24,6 +24,9 @@ public enum CFAuraNeeds : byte
 
     /// <summary>The ikon named by <see cref="CFAuraEffect.Ikon"/> holds the owner's divine spark.</summary>
     Immanence,
+
+    /// <summary>The owner is performing Courageous Anthem: <see cref="CFAuraComponent.AnthemUntil"/> has not passed.</summary>
+    Anthem,
 }
 
 /// <summary>One thing an aura does to the creatures inside it. See <see cref="CFAuraSystem"/>.</summary>
@@ -39,6 +42,14 @@ public sealed partial class CFAuraEffect
     /// <summary>For <see cref="CFAuraNeeds.Immanence"/>.</summary>
     [DataField]
     public string Ikon = string.Empty;
+
+    /// <summary>This effect's own emanation, in feet. 0 uses the aura's <see cref="CFAuraComponent.SizeFeet"/>.</summary>
+    [DataField]
+    public int SizeFeet;
+
+    /// <summary>An ally effect also counts on the owner.</summary>
+    [DataField]
+    public bool IncludeSelf;
 
     /// <summary>The stat of a bonus that lasts while a creature is inside. Null means no bonus.</summary>
     [DataField]
@@ -84,6 +95,10 @@ public sealed partial class CFAuraComponent : Component
     [DataField, AutoNetworkedField]
     public bool Active;
 
+    /// <summary>The sizes in feet of the effects working right now, one border each.</summary>
+    [DataField, AutoNetworkedField]
+    public List<int> ActiveSizes = new();
+
     [DataField]
     public List<CFAuraEffect> Effects = new();
 
@@ -99,6 +114,10 @@ public sealed partial class CFAuraComponent : Component
     /// <summary>Shields of the Spirit lasts until this time.</summary>
     [DataField]
     public TimeSpan SpiritShieldsUntil;
+
+    /// <summary>Courageous Anthem lasts until this time. Playing an instrument keeps pushing it on.</summary>
+    [DataField]
+    public TimeSpan AnthemUntil;
 }
 
 /// <summary>On a creature inside an aura that hurts whoever attacks it.</summary>

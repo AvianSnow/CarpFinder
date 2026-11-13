@@ -72,6 +72,13 @@
     bulk: 1
   - type: CFItemPrice
     copper: 400
+  - type: Clothing
+    quickEquip: false
+    sprite: Objects/Weapons/Guns/Snipers/flintlock.rsi
+    slots:
+    - belt
+    - back
+    - neck
 
 - type: entity
   parent: CFBaseFirearmTwoHanded
@@ -101,6 +108,13 @@
     bulk: 1
   - type: CFItemPrice
     copper: 500
+  - type: Clothing
+    quickEquip: false
+    sprite: Objects/Weapons/Guns/Snipers/musket.rsi
+    slots:
+    - belt
+    - back
+    - neck
 
 - type: entity
   parent: CFBaseFirearmTwoHanded
@@ -133,6 +147,13 @@
     bulk: 2
   - type: CFItemPrice
     copper: 800
+  - type: Clothing
+    quickEquip: false
+    sprite: Objects/Weapons/Guns/Snipers/flintlock.rsi
+    slots:
+    - belt
+    - back
+    - neck
 
 - type: entity
   parent: CFBaseFirearmTwoHanded
@@ -162,6 +183,13 @@
     bulk: 2
   - type: CFItemPrice
     copper: 600
+  - type: Clothing
+    quickEquip: false
+    sprite: Objects/Weapons/Guns/Shotguns/blunderbuss.rsi
+    slots:
+    - belt
+    - back
+    - neck
 
 - type: entity
   parent: CFBaseFirearm
@@ -195,6 +223,20 @@
     bulk: 1
   - type: CFItemPrice
     copper: 300
+  - type: Clothing
+    quickEquip: false
+    sprite: Objects/Weapons/Guns/Launchers/pirate_cannon.rsi
+    slots:
+    - belt
+    - back
+    - neck
+    clothingVisuals:
+      belt:
+      - sprite: Objects/Weapons/Guns/Launchers/pirate_cannon.rsi
+        state: equipped-BACKPACK
+      neck:
+      - sprite: Objects/Weapons/Guns/Launchers/pirate_cannon.rsi
+        state: equipped-BACKPACK
 
 - type: entity
   parent: CFArrow

@@ -227,7 +227,10 @@ public sealed partial class CFBonusSystem : EntitySystem
         return Total(comp.Bonuses, stat, also, traits, skill);
     }
 
-    /// <summary>The total from spells and other timed sources, leaving out what lasts: feats and equipment.</summary>
+    /// <summary>
+    /// The total from spells, auras and other passing sources, leaving out what lasts: feats and equipment. An aura's
+    /// bonus has no end time while the creature stands in it, so it is told apart by its source.
+    /// </summary>
     public int TimedTotal(EntityUid uid, CFBonusStat stat, CFBonusStat? also = null)
     {
         return TryComp(uid, out CFBonusesComponent? comp) ? Total(comp.Bonuses, stat, also, timedOnly: true) : 0;
@@ -258,7 +261,7 @@ public sealed partial class CFBonusSystem : EntitySystem
             if (bonus.Stat != stat && bonus.Stat != also)
                 continue;
 
-            if (timedOnly && bonus.Expires == TimeSpan.MaxValue)
+            if (timedOnly && bonus.Expires == TimeSpan.MaxValue && !CFAuraSystem.IsAuraSource(bonus.Source))
                 continue;
 
             if (bonus.Trait is { } trait && traits?.Contains(trait) != true)
