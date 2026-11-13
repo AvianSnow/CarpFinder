@@ -314,6 +314,8 @@ public static class CFReactions
     public const int Granted = 4;
     public const int Raise = 8;
     public const int Next = 32;
+    /// <summary>Grab an Edge, which every creature knows.</summary>
+    public const int Edge = 64;
 
     public static bool Knows(CFCombatOptionsComponent opt, int bit)
     {
@@ -323,6 +325,7 @@ public static class CFReactions
             Block => opt.ShieldBlock,
             Raise => opt.ReactiveShield,
             Next => opt.YoureNext,
+            Edge => true,
             _ => false,
         };
     }

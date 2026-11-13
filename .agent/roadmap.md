@@ -4,6 +4,18 @@ Ordered plan for the next stretch of work. Each step builds on the one before it
 
 Source of rules: https://2e.aonprd.com/ (Remaster). Source of structure and assets: `C:\project\crystall-punk-14` (**read-only**: copy from it, never edit it).
 
+## Do first: chasm edges, 13 November
+
+Asked for on 13 November 2026. Built the same day. Tests: `CFChasmEdgeTest`.
+
+- [x] Touching a chasm no longer drops a creature. Stock's step trigger counted the 2.5 tile flanking sensor as the body, so one pixel over the edge was a fall. A creature now slips only once its centre is over the hole (`CFChasmEdgeSystem`, `CFChasmEdge` on `FloorChasmEntity`).
+- [x] A slip pops up "Falling...", stops the creature, and makes it weightless for 4 seconds, so it drifts and can steer back onto solid ground. Getting its centre off the hole ends the slip.
+- [x] After 4 seconds still over the hole, it spends its reaction on Grab an Edge: a Reflex save against DC 10 (untrained). A success puts it on the nearest solid, unwalled tile within 10 feet with nothing in the way. A failure, no reaction left, being unconscious, or no ledge in reach falls as stock does. Players and monsters alike; items still drop at once.
+- [ ] A successful grab moves the creature straight onto the ledge. It is not a thrown leap with an arc, because a throw can land short and slip again.
+- [ ] NPCs do not steer themselves out during the slip. They rely on the save.
+- [ ] Grab an Edge does not check for bound hands.
+- [ ] Not seen in a real client: the drift, the popups, and the Weightless alert that shows while slipping.
+
 ## Do first: Bard fixes, 13 November
 
 Asked for on 13 November 2026. Built the same day. Tests: `CFBardTest`, `CFSocialActionTest`, `CFAuraTest`.

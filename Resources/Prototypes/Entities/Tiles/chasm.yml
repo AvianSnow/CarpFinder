@@ -9,6 +9,7 @@
   components:
   - type: CFDangerousTile # CarpFinder: advanced NPCs avoid this
   - type: Chasm
+  - type: CFChasmEdge # CarpFinder: creatures slip, float back, then Grab an Edge
   - type: StepTrigger
     requiredTriggeredSpeed: 0
     intersectRatio: 0.4

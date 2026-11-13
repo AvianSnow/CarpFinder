@@ -48,7 +48,7 @@ Everything below is under `Content.Shared/_CF/`.
 | `Languages/` | What a creature speaks and understands, and what it sounds like otherwise. Chat asks per listener. | `CFLanguageSystem`, `CFLanguageRules` |
 | `Magic/` | Light, Detect Magic, Read Aura, and what counts as magical | `CFMagicSenseSystem` |
 | `Scene/` | DM narration and player-started skill checks. The logic is server-side. | `CFSceneSystem` |
-| `ZLevels/` | Stairs, ladders, holes, falling rules. The stacking logic is server-side. | `CFFallRules`, `CFZLevelSystem` |
+| `ZLevels/` | Stairs, ladders, holes, falling rules, chasm edges. The stacking logic is server-side. | `CFFallRules`, `CFZLevelSystem`, `CFChasmEdgeSystem` |
 | `Crafting/` | Recipes, formulas, Craft DCs. The workbench logic is server-side. | `CFCraftingRules`, `CFWorkbenchSystem` |
 | `Preferences/` | The build stored on `HumanoidCharacterProfile` | `CFCharacterBuildData` |
 | `Shop/` | Coins, prices, the wallet, the merchant's counter and the guild pallets. Selling and coin logic are server-side. | `CFCoins`, `CFWalletSystem`, `CFMerchantSystem`, `CFCoinSystem` |
@@ -235,7 +235,7 @@ All edits carry `// CarpFinder` markers, so `grep -rn CarpFinder Content.Client 
 | Prone | `Content.Shared/Stunnable/SharedStunSystem.Knockdown.cs` | Do not force a creature up while it is being deleted. "No room to stand" ignores sensors |
 | Pointing | `Content.Shared/Pointing/SharedPointingSystem.cs` | An event for pointing at the ground, for Seek |
 | Throwing | `Content.Server/Hands/Systems/HandsSystem.cs` | A thrown weapon's reach comes from its range increments, not the hand's 8 tiles |
-| Tiles | `Tiles/lava.yml`, `liquid_plasma.yml`, `chasm.yml` | The `CFDangerousTile` marker |
+| Tiles | `Tiles/lava.yml`, `liquid_plasma.yml`, `chasm.yml` | The `CFDangerousTile` marker. `chasm.yml` also has `CFChasmEdge` |
 | Chat | `Content.Server/Chat/Systems/ChatSystem.PrivateAPI.cs`, `ChatSystem.Utility.cs` | Each listener hears speech in a language they know, or nonsense |
 | Saved characters | `Content.Server/Database/DataNodeJsonExtensions.cs` | A JSON null is read as a real null, or a build with an unpicked boost fails to load |
 | Maps | `Maps/Test/dev_map.yml`, `Maps/Nonstations/meteor-arena.yml`, `dm01-entryway.yml` | `MapAtmosphere`, so mobs can breathe |
