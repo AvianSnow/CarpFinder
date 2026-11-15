@@ -1116,6 +1116,14 @@ Tests: `CFHeritageEffectsTest`. 113 of 149 heritages have an effect, up from 84.
 - [x] `CFDailyUses` on an action entity, `CFDailyUseSystem`, restored by a long rest, greyed on the HUD. `Actions/heritages.yml`: Shift Colors, Jinx, Tail Toxin, Shadow Blur, Grow Fruit (`CFLeshyFruit`).
 - [x] `CFBonusWhile.HandsFree`; `meleeOnly` on a reaction; `CFGrantTrait`; `StrongBlooded` and `EasierBurning` options; an action's effects carry its creature's traits.
 
+#### 1.8 Scent trails, from Starlight (16 November 2026)
+
+Tests: `CFScentTest`. Ported from Starlight's Scent system with permission, credited in each file, cut down to what CF needs.
+
+- [x] `Content.*/_CF/Scent/`: `CFScent` (every character at spawn, and `CFBaseMonster`) emits `CFScentMarker` marks every 1.5 seconds, merging into the last one within a tile. They last 300 seconds and sit on visibility layer 64, so only a smeller that is sniffing is sent them.
+- [x] `CFSmeller` with the free `CFActSniff` action, from `CFGrantSense` with `Scent` and on the wolf. `CFScentServerSystem` adds the layer to the eye's mask; `CFScentClientSystem` colours each mark by its scent id, scales it by strength and fades it.
+- [x] The two icons are in `Resources/Textures/_Starlight/Interface/Actions/actions_scent.rsi`, with attribution.
+
 ### Step 2: Finish the rebuild
 
 Left from re-importing the other machine's lost work. Details of what was rebuilt are under "Rebuild status" above.

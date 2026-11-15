@@ -4,6 +4,7 @@ using Content.Shared.CF.Combat;
 using Content.Shared.CF.DamageTypes;
 using Content.Shared.CF.Languages;
 using Content.Shared.CF.Preferences;
+using Content.Shared.CF.Scent;
 using Content.Shared.CF.Spells;
 using Content.Shared.CF.Traits;
 using Content.Shared.Movement.Components;
@@ -189,6 +190,10 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
                 senses.LowLightVision = true;
                 if (!senses.Darkvision)
                     SetVision(mob, LowLightColor);
+                break;
+            case CFSense.Scent:
+                senses.ImpreciseFeet = Math.Max(senses.ImpreciseFeet, rangeFeet);
+                EnsureComp<CFSmellerComponent>(mob);
                 break;
             default:
                 senses.ImpreciseFeet = Math.Max(senses.ImpreciseFeet, rangeFeet);

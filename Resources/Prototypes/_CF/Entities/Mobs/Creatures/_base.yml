@@ -53,6 +53,8 @@
     - type: CFAbilityScore
     - type: CFCombatOptions
     - type: CFHarvestable
+    # Leaves a scent trail that a creature with the Scent sense can see (CFSmeller).
+    - type: CFScent
 
 # A monster with an animal's body: one natural attack, no hands, and Bestial noises for speech.
 - type: entity

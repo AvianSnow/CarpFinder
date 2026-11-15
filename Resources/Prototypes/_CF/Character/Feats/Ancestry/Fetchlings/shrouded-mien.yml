@@ -10,4 +10,6 @@
     - "Fetchling"
   trainedSkills:
     - Deception
-  pendingAction: true
+  grants:
+    - !type:CFGrantFeat
+      feat: CFLengthyDiversion

@@ -9,6 +9,7 @@ using Content.Shared.CF.Shop;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Factions;
 using Content.Shared.CF.Preferences;
+using Content.Shared.CF.Scent;
 using Robust.Shared.GameObjects;
 using Content.Server.CF.Companions;
 using Content.Shared.GameTicking;
@@ -491,6 +492,7 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
     {
         var options = EnsureComp<CFCombatOptionsComponent>(mob);
         EnsureComp<CFGOAPScentEmitterComponent>(mob);
+        EnsureComp<CFScentComponent>(mob);
         _features.GrantAction(mob, "CFActLeap");
         foreach (var action in BasicActions)
             _features.GrantAction(mob, action);

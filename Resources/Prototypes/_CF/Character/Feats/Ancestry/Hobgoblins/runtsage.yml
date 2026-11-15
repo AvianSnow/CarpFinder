@@ -8,4 +8,6 @@
   level: 5
   traits:
     - "Hobgoblin"
-  pendingAction: true
+  grants:
+    - !type:CFGrantFeat
+      feat: CFAdoptedAncestry

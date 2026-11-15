@@ -12,4 +12,6 @@
     - "trained in Crafting"
   trainedSkills:
     - Crafting
-  pendingAction: true
+  grants:
+    - !type:CFGrantFeat
+      feat: CFSnareCrafting

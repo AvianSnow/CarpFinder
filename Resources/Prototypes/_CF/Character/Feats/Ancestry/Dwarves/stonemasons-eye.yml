@@ -10,4 +10,6 @@
     - "Dwarf"
   trainedSkills:
     - Crafting
-  pendingAction: true
+  grants:
+    - !type:CFGrantFeat
+      feat: CFSpecialtyCrafting

@@ -8,4 +8,9 @@
   level: 5
   traits:
     - "Lizardfolk"
-  pendingAction: true
+  grants:
+    - !type:CFGrantFeat
+      feat: CFCombatClimber
+    - !type:CFGrantClimb
+      climbSpeed: true
+      successIsCritical: true

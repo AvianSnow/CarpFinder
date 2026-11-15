@@ -134,6 +134,7 @@ Class examples: `CFMySystem`, `CFMyServerSystem`, `CFMyClientSystem`, `CFExample
 | What a feat, class feature, heritage, ancestry or background gives | A `grants` list of `CFGrant` entries (`Content.Shared/_CF/Character/Grants/CFGrants.cs`), such as `!type:CFGrantBonus`. Do not add a `switch` on an id. `CFCharacterFeatureSystem` runs them |
 | Heat or cold one step less severe | `!type:CFGrantTemperatureTolerance` (`heat`, `cold`, in steps; negative is worse). `CFEnvironmentRules.Eased` applies it after gear |
 | Harder to Shove, Trip, Disarm, Grapple or Reposition, or better at it | `CFGrantBonus` with `stat: ManeuverDc` or `stat: Maneuvers`. `CFConditionSystem.RollSkill` reads both for an Athletics check with the attack trait |
+| A scent trail, and seeing one | Every character and monster has `CFScent`, which lays `CFScentMarker` marks. The Scent sense gives `CFSmeller` and its free Sniff action, which shows them. Ported from Starlight, under `_CF/Scent/` |
 | Finding creatures by hearing or scent | `!type:CFGrantSeek` (`bonus`, `rangeFeet`, `hiddenFlatDc`, `concealedFlatDc`) on `CFSeekSense`. Seek and `PassFlatCheck` read it inside the range |
 | Falling or climbing better | `CFGrantSafeFall` (`halfDistance`), `CFGrantClimb` (`bonus`, `successIsCritical`, `climbSpeed`). `CFZLevelSystem` reads both |
 | An ability used so many times a day | `CFDailyUses` on the action entity (`uses`). `CFDailyUseSystem` counts it, a long rest gives it back, and the HUD greys it. See `Resources/Prototypes/_CF/Actions/heritages.yml` |

@@ -9,3 +9,6 @@
   traits:
     - "Leshy"
   pendingAction: true
+  grants:
+    - !type:CFGrantFeat
+      feat: CFSteadyBalance

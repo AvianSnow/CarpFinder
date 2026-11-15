@@ -16,3 +16,5 @@
       type: Circumstance
       value: 1
       skill: Performance
+    - !type:CFGrantFeat
+      feat: CFImpressivePerformance

@@ -10,4 +10,6 @@
     - "Kholo"
   prerequisites:
     - "expert in Stealth"
-  pendingAction: true
+  grants:
+    - !type:CFGrantFeat
+      feat: CFTerrainStalker

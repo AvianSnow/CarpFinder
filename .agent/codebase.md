@@ -37,7 +37,8 @@ Everything below is under `Content.Shared/_CF/`.
 | `Factions/` | Party, Opposition, Neutral. Player characters fight each other only when both have PvP on (`CFPvpComponent`, the `pvp` command) | `CFFactionSystem` |
 | `Hazards/` | Traps: noticing, triggering, disabling, and creatures that build them | `CFHazardSystem`, `CFTrapLayerSystem` |
 | `Items/` | Item level, rarity, Bulk, encumbrance (a holstered weapon or shield counts half), drawing a carried consumable to a free hand (no longer on the HUD) | `CFEncumbranceSystem`, `CFQuickItemSystem` |
-| `Detection/` | Remaster Hide, Sneak, Seek and Create a Diversion. Each creature's view of a sneaker. The drawing is client-side. | `CFStealthSystem`, `CFStealthComponent` |
+| `Detection/` | Remaster Hide, Sneak, Seek and Create a Diversion. Each creature's view of a sneaker. The drawing is client-side. Keener senses for Seek and flat checks are `CFSeekSense`. | `CFStealthSystem`, `CFStealthComponent` |
+| `Scent/` | Scent trails, from Starlight: every creature leaves marks, and the Scent sense shows them. The laying is server-side and the drawing client-side. | `CFSharedScentSystem`, `CFScentComponent`, `CFSmellerComponent` |
 | `GOAP/` | The AI every CF monster thinks with: facts, steps, and goals, actions and personalities as prototypes. The logic is server-side in `Content.Server/_CF/GOAP/`. See `goap.md`. | `CFGOAPSystem`, `CFGOAPPlanner` |
 | `Harvest/` | Harvesting a dead monster for priced parts with a survival knife and a Survival check (Battlezoo Bestiary's values) | `CFHarvestSystem`, `CFHarvestRules` |
 | `Medicine/` | Healer's toolkit, Treat Wounds, Battle Medicine | `CFMedicineSystem` |

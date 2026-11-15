@@ -10,4 +10,6 @@
     - "Catfolk"
   trainedSkills:
     - Diplomacy
-  pendingAction: true
+  grants:
+    - !type:CFGrantFeat
+      feat: CFHobnobber

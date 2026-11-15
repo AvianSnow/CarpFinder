@@ -33,6 +33,7 @@
     - type: CFSenses
       lowLightVision: true
       impreciseFeet: 30
+    - type: CFSmeller
     - type: NightVision
       enabled: true
       prioritized: true
