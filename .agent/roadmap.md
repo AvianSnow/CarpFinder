@@ -4,6 +4,15 @@ Ordered plan for the next stretch of work. Each step builds on the one before it
 
 Source of rules: https://2e.aonprd.com/ (Remaster). Source of structure and assets: `C:\project\crystall-punk-14` (**read-only**: copy from it, never edit it).
 
+## Do first: thrown healing potions, 15 November
+
+Asked for on 15 November 2026. Built the same day. Tests: `CFSmashPotionTest`.
+
+- [x] A thrown healing potion breaks. On a living creature other than the thrower it heals them as if drunk, friend or enemy, with no roll and no action cost beyond the throw (`CFSmashPotion`, `CFSmashPotionSystem`).
+- [x] On a wall, an object or the floor it leaves a puddle that keeps the potion's healing for 5 minutes (`CFHealingPuddle`). A hurt creature lying prone on it is healed and the puddle is gone. Alt-click, Drink, does the same after 2 seconds. Mopping it up loses it. A second potion on the same puddle does not add up.
+- [ ] The Drink verb has no test, and nothing here has been seen in a real client: the throw, the break sound, the puddle.
+- [ ] A thrown potion always hits. There is no attack roll, so it cannot miss an ally who is moving.
+
 ## Do first: spell visuals, 15 November
 
 Asked for on 15 November 2026: areas that can be seen. Built the same day. Tests: `CFAreaFillTest`, `CFToxicSpewTest`.

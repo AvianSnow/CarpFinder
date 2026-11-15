@@ -133,6 +133,7 @@ An area with `CFAreaFill` or `CFBreathGas` is drawn on its tiles. `ResolveArea` 
 | Walk while hidden | Sneak, 1 action per `RegenSeconds` of walking | `CFStealthSystem.TrySneak` |
 | Click a creature with a healer's toolkit | Treat Wounds: 12 seconds, 3 actions spread across it, and the patient is held until it ends or they Escape | `CFMedicineSystem` |
 | Use a healer's toolkit in hand, combat mode, feat | Battle Medicine on the nearest hurt ally (1 action) | `CFMedicineSystem` |
+| Throw a healing potion | It breaks. On a living creature it heals them. Otherwise it leaves a puddle that heals whoever lies prone in it or drinks it (alt-click), once, within 5 minutes | `CFSmashPotionSystem` |
 | Aid verb on an ally | Aid (1 action) | `CFManeuverSystem.TryAid` |
 | Sleep action while buckled to a bed | Long rest: full hit points, spell slots and focus. Refused with an enemy close by, and once per 15 minutes | `CFLongRestSystem` |
 | Speech bubble button on the top bar | The language menu: choose which language you speak (free). It has no key | `CFLanguageMenuUIController`, `CFLanguageSystem` |

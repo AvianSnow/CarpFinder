@@ -6,7 +6,7 @@
   parent: BaseItem
   id: CFHealingPotionMinor
   name: healing potion (minor)
-  description: A vial of ruby-red liquid. Drink to restore 1d8 Hit Points.
+  description: A vial of ruby-red liquid. Drink to restore 1d8 Hit Points, or throw it at someone to do the same for them.
   components:
   - type: Sprite
     sprite: Objects/Specific/Chemistry/vial.rsi
@@ -50,6 +50,8 @@
     healDice: 1
     healDie: 8
     healBonus: 0
+  # Thrown, it breaks: on a creature it heals them, otherwise it leaves a puddle to roll in or drink.
+  - type: CFSmashPotion
   - type: StaticPrice
     price: 40
   - type: CFItemPrice

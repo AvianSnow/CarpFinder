@@ -27,3 +27,5 @@ cf-reagent-name-acid-splash = conjured acid
 cf-reagent-desc-acid-splash = What a splash of magical acid leaves behind. It has spent itself and soon fumes away.
 cf-reagent-name-conjured-water = conjured water
 cf-reagent-desc-conjured-water = Water called up by a spell. It dries quickly.
+cf-reagent-name-healing-draught = spilled healing potion
+cf-reagent-desc-healing-draught = A healing potion that ended up on the floor. Still good, for a few minutes, for anyone willing to roll in it or drink it.
