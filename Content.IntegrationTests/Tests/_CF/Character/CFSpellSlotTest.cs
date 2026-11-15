@@ -349,4 +349,55 @@ public sealed class CFSpellSlotTest : GameTest
             Assert.That(within.Select(p => p.Spell.Id), Is.EquivalentTo(new[] { "Sleep" }));
         });
     }
+
+    [Test]
+    public async Task AClassThatDoesNotCastGetsNoSpellsFromItsPicks()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            // A client could send spell picks for a Barbarian, bonus spells included.
+            var picks = Picks();
+            picks.Add(Pick(0, 0, "ElectricArc"));
+            picks.Add(Pick(CFSpellSlots.BonusRank, 0, "Fireball"));
+            var hero = Caster("Barbarian", picks);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(CFSpellSlots.ForClass(Server.ProtoMan.Index(new Robust.Shared.Prototypes.ProtoId<CFClassPrototype>("Barbarian"))), Is.Empty);
+                Assert.That(SEntMan.HasComponent<CFSpellbookComponent>(hero), Is.False);
+                Assert.That(Knows(hero, "CFSleep"), Is.False);
+                Assert.That(Knows(hero, "CFElectricArc"), Is.False);
+                Assert.That(Knows(hero, "CFFireball"), Is.False);
+                Assert.That(SEntMan.GetComponent<CFExperienceComponent>(hero).SpellPicks, Is.Empty);
+            });
+        });
+    }
+
+    [Test]
+    public async Task ASpellOfAnotherTraditionIsLeftOut()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            // Heal is divine and primal, Sleep arcane and occult.
+            var wizard = Caster("Wizard", new List<CFSpellPick> { Pick(1, 0, "Heal"), Pick(1, 1, "Sleep") });
+            Assert.Multiple(() =>
+            {
+                Assert.That(Knows(wizard, "CFHeal"), Is.False);
+                Assert.That(Knows(wizard, "CFSleep"), Is.True);
+                Assert.That(Book(wizard).PreparedSlots.Select(s => s.Spell.Id), Is.EqualTo(new[] { "Sleep" }));
+            });
+
+            // An angelic bloodline makes a Sorcerer divine, so the arcane and primal spells go.
+            var build = new CFCharacterBuildData
+            {
+                Class = "Sorcerer",
+                Spells = new List<CFSpellPick> { Pick(1, 0, "Heal"), Pick(1, 1, "Grease"), Pick(1, 2, "Bless") },
+            };
+            build.ClassChoices.Add("BloodlineAngelic");
+            var allowed = CFSpellSlots.Allowed(Server.ProtoMan, build);
+            Assert.That(allowed.Select(p => p.Spell.Id), Is.EquivalentTo(new[] { "Heal", "Bless" }));
+        });
+    }
 }

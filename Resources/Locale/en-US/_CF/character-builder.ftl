@@ -390,6 +390,7 @@ cf-spell-tradition-divine = Divine
 cf-spell-tradition-occult = Occult
 cf-spell-tradition-primal = Primal
 cf-spell-not-selected = Not Selected
+cf-spell-no-spellcasting = This class does not cast spells. Spells from an ancestry, heritage, background or feat are listed above.
 cf-spell-cast = Cast
 cf-spell-bonus-spells = Bonus Spells
 cf-spell-print = Print

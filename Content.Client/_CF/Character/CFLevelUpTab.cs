@@ -391,13 +391,8 @@ public sealed partial class CFLevelUpTab : BoxContainer
         if (_build == null)
             return;
 
-        var tradition = CFSpellTradition.Arcane;
-        if (_build.Class is { } classId
-            && _prototypes.TryIndex(classId, out CFClassPrototype? cls)
-            && cls.Spellcasting != null)
-        {
-            tradition = CFClassChoices.Tradition(_prototypes, _build, cls.Spellcasting.Tradition);
-        }
+        if (CFSpellSlots.TraditionOf(_prototypes, _build) is not { } tradition)
+            return;
 
         var pick = _build.Spells.FirstOrDefault(p => p.Rank == slot.Rank && p.Index == slot.Index);
         var popup = new SpellSelectionPopup(slot.Rank, tradition, _prototypes, pick is { HasSpell: true } ? pick.Spell.Id : null);

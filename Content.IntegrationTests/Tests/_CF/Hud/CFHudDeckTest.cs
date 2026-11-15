@@ -46,9 +46,9 @@ public sealed class CFHudDeckTest : GameTest
         return hero;
     }
 
-    private static CFCharacterBuildData Wizard(params string[] rankOne)
+    private static CFCharacterBuildData Witch(params string[] rankOne)
     {
-        var build = new CFCharacterBuildData { Class = "Wizard" };
+        var build = new CFCharacterBuildData { Class = "Witch" };
         for (var i = 0; i < rankOne.Length; i++)
             build.Spells.Add(new CFSpellPick { Rank = 1, Index = i, Spell = rankOne[i] });
 
@@ -72,7 +72,7 @@ public sealed class CFHudDeckTest : GameTest
         _map = await CFDevMap.Load(Pair, Footprint);
         await Server.WaitAssertion(() =>
         {
-            var hero = Built(Wizard("Bless", "Bless"));
+            var hero = Built(Witch("Bless", "Bless"));
             var book = SEntMan.GetComponent<CFSpellbookComponent>(hero);
             var spells = SEntMan.System<CFSpellSystem>();
             var spell = SEntMan.GetComponent<CFSpellComponent>(Action(hero, "CFBless"));
@@ -116,7 +116,7 @@ public sealed class CFHudDeckTest : GameTest
         _map = await CFDevMap.Load(Pair, Footprint);
         await Server.WaitAssertion(() =>
         {
-            var hero = Built(Wizard("Bless", "Charm"));
+            var hero = Built(Witch("Bless", "Charm"));
             var book = SEntMan.GetComponent<CFSpellbookComponent>(hero);
             var plan = new List<CFPreparedSlot> { new("Charm", 1), new("Charm", 1) };
 
@@ -138,7 +138,7 @@ public sealed class CFHudDeckTest : GameTest
         _map = await CFDevMap.Load(Pair, Footprint);
         await Server.WaitAssertion(() =>
         {
-            var hero = Built(Wizard("Bless"));
+            var hero = Built(Witch("Bless"));
             var book = SEntMan.GetComponent<CFSpellbookComponent>(hero);
             var planned = book.PlannedSlots.Count;
             var plan = new List<CFPreparedSlot> { new("Fireball", 1) };

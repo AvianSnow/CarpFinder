@@ -25,7 +25,6 @@ public sealed partial class SpellsTab : BoxContainer
     public SpellsTab()
     {
         RobustXamlLoader.Load(this);
-        BonusSpellsButton.OnPressed += _ => AddBonusSpell();
         PrintButton.OnPressed += _ => PrintSpells();
     }
 
@@ -47,15 +46,21 @@ public sealed partial class SpellsTab : BoxContainer
         FillGranted(profile, prototypes, build);
         SpellRanks.RemoveAllChildren();
 
-        foreach (var rank in CFSpellSlots.ForClass(cls))
+        // Bonus spells were never given to a caster, and were free at-will spells for everyone else.
+        BonusSpellsButton.Visible = false;
+
+        var ranks = CFSpellSlots.ForClass(cls);
+        foreach (var rank in ranks)
             SpellRanks.AddChild(BuildRank(build, rank.Rank, rank.Count));
 
-        var bonus = build.Spells
-            .Where(spell => spell.Rank == CFSpellSlots.BonusRank)
-            .OrderBy(spell => spell.Index)
-            .ToList();
-        if (bonus.Count > 0)
-            SpellRanks.AddChild(BuildBonus(bonus));
+        if (ranks.Count == 0)
+        {
+            SpellRanks.AddChild(new Label
+            {
+                Text = Loc.GetString("cf-spell-no-spellcasting"),
+                Margin = new Thickness(8),
+            });
+        }
     }
 
     private void FillSummary(
@@ -139,22 +144,6 @@ public sealed partial class SpellsTab : BoxContainer
             block.AddChild(SlotRow(rank, index, pick));
         }
 
-        return block;
-    }
-
-    private Control BuildBonus(List<CFSpellPick> picks)
-    {
-        var block = new BoxContainer
-        {
-            Orientation = LayoutOrientation.Vertical,
-            HorizontalExpand = true,
-            SeparationOverride = 2,
-        };
-
-        block.AddChild(ColumnHeader());
-        block.AddChild(RankTitle(CFSpellSlots.BonusRank));
-        foreach (var pick in picks)
-            block.AddChild(SlotRow(pick.Rank, pick.Index, pick));
         return block;
     }
 
@@ -252,16 +241,10 @@ public sealed partial class SpellsTab : BoxContainer
             return;
 
         var build = _profile.CFBuild;
+        if (CFSpellSlots.TraditionOf(_prototypes, build) is not { } tradition)
+            return;
+
         var pick = Find(build, rank, index);
-        var tradition = CFSpellTradition.Arcane;
-        if (build.Class != null
-            && _prototypes.TryIndex(build.Class.Value, out CFClassPrototype? cls)
-            && cls.Spellcasting != null)
-            tradition = CFClassChoices.Tradition(_prototypes, build, cls.Spellcasting.Tradition);
-
-        if (pick != null && pick.HasSpell && _prototypes.TryIndex(pick.Spell, out CFSpellPrototype? current) && current.Traditions.Count > 0)
-            tradition = current.Traditions[0];
-
         var selected = pick != null && pick.HasSpell ? pick.Spell.Id : null;
         var popup = new SpellSelectionPopup(rank, tradition, _prototypes, selected);
         var capturedRank = rank;
@@ -279,21 +262,6 @@ public sealed partial class SpellsTab : BoxContainer
             _onChanged(next);
         };
         popup.OpenCentered();
-    }
-
-    private void AddBonusSpell()
-    {
-        if (_profile == null)
-            return;
-
-        var nextIndex = 0;
-        foreach (var spell in _profile.CFBuild.Spells)
-        {
-            if (spell.Rank == CFSpellSlots.BonusRank && spell.Index >= nextIndex)
-                nextIndex = spell.Index + 1;
-        }
-
-        OpenPicker(CFSpellSlots.BonusRank, nextIndex);
     }
 
     private void PrintSpells()

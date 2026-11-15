@@ -102,25 +102,16 @@ public readonly record struct CFSpellRankSlots(int Rank, int Count);
 
 public static class CFSpellSlots
 {
-    /// <summary>Sheet shown until a class defines its own spellcasting.</summary>
-    public static readonly CFSpellRankSlots[] Preview =
-    {
-        new(0, 5),
-        new(1, 3),
-        new(2, 2),
-        new(3, 2),
-    };
-
     public const int BonusRank = -1;
 
-    /// <summary>The slots a class has at <paramref name="level"/>. The lobby builds level 1.</summary>
+    /// <summary>The slots a class has at <paramref name="level"/>: none for a class that does not cast. The lobby builds level 1.</summary>
     public static IReadOnlyList<CFSpellRankSlots> ForClass(CFClassPrototype? cls, int level = 1)
     {
+        var ranks = new List<CFSpellRankSlots>();
         var casting = cls?.Spellcasting;
         if (casting == null)
-            return Preview;
+            return ranks;
 
-        var ranks = new List<CFSpellRankSlots>();
         if (casting.Cantrips > 0)
             ranks.Add(new CFSpellRankSlots(0, casting.Cantrips));
 
@@ -132,6 +123,38 @@ public static class CFSpellSlots
         }
 
         return ranks;
+    }
+
+    /// <summary>The tradition a build's class casts from, or null when its class does not cast.</summary>
+    public static CFSpellTradition? TraditionOf(IPrototypeManager prototypes, CFCharacterBuildData build)
+    {
+        if (build.Class is not { } classId
+            || !prototypes.TryIndex(classId, out CFClassPrototype? cls)
+            || cls.Spellcasting is not { } casting)
+        {
+            return null;
+        }
+
+        return CFClassChoices.Tradition(prototypes, build, casting.Tradition);
+    }
+
+    /// <summary>
+    /// The spell picks a build may have at all: none for a class that does not cast, and otherwise only spells of the
+    /// tradition it casts from. A build comes from a client, so the server reads picks through this.
+    /// </summary>
+    public static List<CFSpellPick> Allowed(IPrototypeManager prototypes, CFCharacterBuildData build)
+    {
+        var result = new List<CFSpellPick>();
+        if (TraditionOf(prototypes, build) is not { } tradition)
+            return result;
+
+        foreach (var pick in build.Spells)
+        {
+            if (pick.HasSpell && prototypes.TryIndex(pick.Spell, out var spell) && spell.HasTradition(tradition))
+                result.Add(pick);
+        }
+
+        return result;
     }
 
     /// <summary>

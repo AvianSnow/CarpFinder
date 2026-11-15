@@ -260,7 +260,8 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         xp.AbilityBoostsLevel5 = checkedBuild.AbilityBoostsLevel5.Distinct().Take(CFAttributeMath.LevelFiveBoostCount).ToList();
         xp.ClassChoices = CFClassChoices.Selected(_prototypes, checkedBuild).Select(choice => choice.ID).ToList();
         xp.OptionPicks = CFOptionChoices.Valid(_prototypes, checkedBuild, ancestryId);
-        xp.SpellPicks = checkedBuild.Spells.Select(spell => spell.Copy()).ToList();
+        // Only spells of the tradition the class casts from, and none for a class that does not cast.
+        xp.SpellPicks = CFSpellSlots.Allowed(_prototypes, checkedBuild).Select(spell => spell.Copy()).ToList();
 
         CFAncestryPrototype? ancestry = null;
         if (ancestryId != null)
@@ -319,21 +320,15 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
     /// </summary>
     private void GrantSpellActions(EntityUid mob, Content.Shared.Preferences.HumanoidCharacterProfile profile, CFClassPrototype? cls)
     {
-        if (cls?.Spellcasting is { } casting)
-        {
-            // Picks for later levels wait for GrowSpellbook. A spell with no slot of its rank would otherwise be at will.
-            foreach (var pick in CFSpellSlots.Within(profile.CFBuild.Spells, casting.AllSlotsAt(1), _prototypes))
-            {
-                _features.GrantSpell(mob, pick.Spell);
-            }
-
+        // A class that does not cast gets nothing from the spells tab: its spells come from grants.
+        if (cls?.Spellcasting is not { } casting)
             return;
-        }
 
-        foreach (var pick in profile.CFBuild.Spells)
+        // Picks for later levels wait for GrowSpellbook. A spell with no slot of its rank would otherwise be at will.
+        var allowed = CFSpellSlots.Allowed(_prototypes, profile.CFBuild);
+        foreach (var pick in CFSpellSlots.Within(allowed, casting.AllSlotsAt(1), _prototypes))
         {
-            if (pick.HasSpell && pick.Rank >= 0)
-                _features.GrantSpell(mob, pick.Spell);
+            _features.GrantSpell(mob, pick.Spell);
         }
     }
 
@@ -403,7 +398,7 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         for (var i = 0; i < book.Slots.Count; i++)
             book.Expended.Add(0);
 
-        foreach (var pick in profile.CFBuild.Spells)
+        foreach (var pick in CFSpellSlots.Allowed(_prototypes, profile.CFBuild))
         {
             if (!pick.Expended || !pick.HasSpell || pick.Rank < 0 || pick.Rank >= book.Expended.Count)
                 continue;
@@ -463,7 +458,7 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         book.KnownAtRank.Clear();
         book.SignatureSpells.Clear();
         book.PreparableSlots = new List<int>(book.Slots);
-        foreach (var pick in CFSpellSlots.Within(profile.CFBuild.Spells, book.Slots, _prototypes))
+        foreach (var pick in CFSpellSlots.Within(CFSpellSlots.Allowed(_prototypes, profile.CFBuild), book.Slots, _prototypes))
         {
             if (pick.Rank <= 0)
                 continue;

@@ -70,12 +70,18 @@ public sealed partial class SpellSelectionPopup : DefaultWindow
         _suppress = true;
         PressTradition(tradition);
         _suppress = false;
+
+        // A character only casts from its own tradition, so the other tabs are shown but cannot be chosen.
+        TabArcane.Disabled = tradition != CFSpellTradition.Arcane;
+        TabDivine.Disabled = tradition != CFSpellTradition.Divine;
+        TabOccult.Disabled = tradition != CFSpellTradition.Occult;
+        TabPrimal.Disabled = tradition != CFSpellTradition.Primal;
         RebuildList();
     }
 
     private void SetTradition(CFSpellTradition tradition)
     {
-        if (_suppress)
+        if (_suppress || tradition != _tradition)
             return;
 
         _tradition = tradition;
