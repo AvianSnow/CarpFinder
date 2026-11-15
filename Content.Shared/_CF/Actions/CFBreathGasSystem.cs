@@ -21,7 +21,7 @@ public sealed partial class CFBreathGasSystem : EntitySystem
     [Dependency] private SharedAppearanceSystem _appearance = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private CFEffectSystem _effects = default!;
-    [Dependency] private CFBreathFlowSystem _flow = default!;
+    [Dependency] private CFAreaFillSystem _fills = default!;
 
     /// <summary>How many thicknesses a tile of cloud is drawn in.</summary>
     public const int Levels = 6;
@@ -48,7 +48,7 @@ public sealed partial class CFBreathGasSystem : EntitySystem
         if (!_net.IsServer)
             return true;
 
-        if (!_flow.TryReach(breath, user, aim, out var grid, out var from, out var reached))
+        if (!_fills.TryReach(breath, user, aim, true, out var grid, out var from, out var reached))
         {
             _popup.PopupEntity(Loc.GetString("cf-spell-no-one"), user, user);
             return true;

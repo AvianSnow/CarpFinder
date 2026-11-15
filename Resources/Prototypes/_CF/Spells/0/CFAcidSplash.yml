@@ -27,6 +27,14 @@
       die: 6
       damageType: Acid
       heightenDice: 1
+    # A small pool of spent acid where it hits.
+    landed:
+    - !type:CFFillEffect
+      shape: Square
+      sizeFeet: 5
+      reagent: CFAcidSplash
+      unitsPerTile: 15
+      spreadSeconds: 0
   - type: CFHeighten
     baseRank: 1
     interval: 2

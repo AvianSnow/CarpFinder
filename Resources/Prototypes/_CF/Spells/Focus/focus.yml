@@ -327,6 +327,9 @@
       heightenDice: 1
   - type: CFTargeting
     rangeFeet: 60
+  - type: CFAreaFill
+    tile: CFFillMotes
+    tint: true
   - type: CFAreaEffect
     shape: Burst
     sizeFeet: 10
@@ -883,6 +886,9 @@
     rank: 0
     focus: true
     sustained: true
+  - type: CFAreaFill
+    tile: CFFillRising
+    tint: true
   - type: CFAreaEffect
     shape: Emanation
     sizeFeet: 10
@@ -914,6 +920,9 @@
     sustained: true
   - type: CFTargeting
     rangeFeet: 30
+  - type: CFAreaFill
+    tile: CFFillFlame
+    spreadSeconds: 0.3
   - type: CFAreaEffect
     shape: Burst
     sizeFeet: 10
@@ -1021,6 +1030,9 @@
     rank: 0
     focus: true
     sustained: true
+  - type: CFAreaFill
+    tile: CFFillMotes
+    tint: true
   - type: CFAreaEffect
     shape: Emanation
     sizeFeet: 5
@@ -1054,6 +1066,9 @@
     rank: 0
     focus: true
     sustained: true
+  - type: CFAreaFill
+    tile: CFFillMotes
+    tint: true
   - type: CFAreaEffect
     shape: Emanation
     sizeFeet: 10

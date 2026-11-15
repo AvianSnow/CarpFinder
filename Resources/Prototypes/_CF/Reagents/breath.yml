@@ -11,3 +11,31 @@
   physicalDesc: reagent-physical-desc-cloudy
   color: "#4FD13A"
   evaporationSpeed: 2.5
+
+# What spells leave on the floor (CFAreaFill.reagent). None evaporates or slips by itself: the fill removes its puddles
+# when it ends, and the spell's own save decides who falls.
+- type: reagent
+  id: CFGrease
+  name: cf-reagent-name-grease
+  desc: cf-reagent-desc-grease
+  flavor: oily
+  physicalDesc: reagent-physical-desc-oily
+  color: "#8A7A3A"
+
+- type: reagent
+  id: CFAcidSplash
+  name: cf-reagent-name-acid-splash
+  desc: cf-reagent-desc-acid-splash
+  flavor: acid
+  physicalDesc: reagent-physical-desc-acidic
+  color: "#9FE04A"
+  evaporationSpeed: 2.5
+
+- type: reagent
+  id: CFConjuredWater
+  name: cf-reagent-name-conjured-water
+  desc: cf-reagent-desc-conjured-water
+  flavor: water
+  physicalDesc: reagent-physical-desc-translucent
+  color: "#75B1F0C0"
+  evaporationSpeed: 2.5

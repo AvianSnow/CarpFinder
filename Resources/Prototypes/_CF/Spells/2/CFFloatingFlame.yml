@@ -16,6 +16,9 @@
     rank: 2
   - type: CFTargeting
     rangeFeet: 30
+  - type: CFAreaFill
+    tile: CFFillFlame
+    spreadSeconds: 0.1
   - type: CFAreaEffect
     shape: Burst
     sizeFeet: 5

@@ -14,6 +14,9 @@
   - type: CFSpell
     spell: GaleBlast
     rank: 0
+  - type: CFAreaFill
+    tile: CFFillGust
+    spreadSeconds: 0.1
   - type: CFAreaEffect
     shape: Emanation
     sizeFeet: 5

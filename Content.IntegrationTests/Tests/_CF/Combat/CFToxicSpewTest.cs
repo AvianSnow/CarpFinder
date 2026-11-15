@@ -13,7 +13,7 @@ using Robust.Shared.Maths;
 namespace Content.IntegrationTests.Tests.CF.Combat;
 
 /// <summary>
-/// Toxic Spew (<c>CFActToxicSpew</c>): a breath that pours out as liquid (<see cref="CFBreathFlowSystem"/>). Nothing is
+/// Toxic Spew (<c>CFActToxicSpew</c>): a breath that pours out as liquid (<c>CFAreaFillSystem</c>). Nothing is
 /// granted it yet, so a test dragon carries it.
 /// </summary>
 [TestFixture]

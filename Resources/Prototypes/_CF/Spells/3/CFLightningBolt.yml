@@ -14,6 +14,9 @@
   - type: CFSpell
     spell: LightningBolt
     rank: 3
+  - type: CFAreaFill
+    tile: CFFillSparks
+    spreadSeconds: 0.15
   - type: CFAreaEffect
     shape: Line
     sizeFeet: 120

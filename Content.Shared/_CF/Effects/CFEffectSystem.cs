@@ -233,6 +233,13 @@ public sealed partial class CFEffectSystem : EntitySystem
             return 0;
         }
 
+        // An area that fills with gas, fire or liquid spreads from where it starts, and has its own way of rolling.
+        if (_gas.TryStart((source, null), user, aim))
+            return 0;
+
+        if (_fills.TryStart(source, user, aim, out var affected))
+            return affected;
+
         var origin = _transform.GetMapCoordinates(user);
         var targets = CollectArea(
             user,
@@ -423,6 +430,8 @@ public sealed partial class CFEffectSystem : EntitySystem
     private const float TouchFeet = 7.5f;
 
     [Dependency] private CFAuraSystem _auras = default!;
+    [Dependency] private CFBreathGasSystem _gas = default!;
+    [Dependency] private CFAreaFillSystem _fills = default!;
     [Dependency] private CFPsiSystem _psi = default!;
     [Dependency] private CFTauntSystem _taunts = default!;
     [Dependency] private CFReactionSystem _reactions = default!;

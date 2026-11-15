@@ -30,5 +30,11 @@
     landed:
     - !type:CFForcedMovementEffect
       feet: 5
+    - !type:CFFillEffect
+      shape: Square
+      sizeFeet: 5
+      reagent: CFConjuredWater
+      unitsPerTile: 15
+      spreadSeconds: 0
   - type: CFHeighten
     baseRank: 1

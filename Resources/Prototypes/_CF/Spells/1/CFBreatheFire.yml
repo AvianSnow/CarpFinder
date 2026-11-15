@@ -14,6 +14,9 @@
   - type: CFSpell
     spell: BreatheFire
     rank: 1
+  - type: CFAreaFill
+    tile: CFFillFlame
+    spreadSeconds: 0.3
   - type: CFAreaEffect
     shape: Cone
     sizeFeet: 15

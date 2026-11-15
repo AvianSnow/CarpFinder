@@ -98,6 +98,8 @@ Stock mobs and objects get combat stats on first contact from `CFCombatBridgeSys
 
 Anything that targets, rolls, and applies effects is data on the source entity: `CFTargeting`, `CFAreaEffect`, `CFCheck`, `CFDegreeEffects`, plus `CFProjectileDelivery`, `CFModeChoice`, `CFHeighten`. `CFEffectSystem` runs it. Effect classes are in `Effects/Types/`, written in YAML as `!type:CFDamageEffect` and so on. Do not write a new resolver.
 
+An area with `CFAreaFill` or `CFBreathGas` is drawn on its tiles. `ResolveArea` hands it to `CFAreaFillSystem` (flames, sparks, puddles) or `CFBreathGasSystem` (a cloud). Both spread from where the area starts, the caster for a cone, line or emanation and the aimed point for a burst or square, and stop at walls. Only creatures on the tiles reached roll, so such a spell no longer goes through a wall. A test of one needs clear floor (`avoidStructures: true`).
+
 `CFSpellSystem` only pays for the cast. `CFHazardSystem` only decides when a trap fires. Both hand over to `CFEffectSystem`.
 
 ## Input: how a player does each thing

@@ -4,8 +4,9 @@
 # Two ways a breath can take time to spread instead of landing at once:
 # - CFBreathGas: a cloud of gas that spreads over the area's tiles like atmos and stops at walls. Anyone on a filled tile
 #   rolls, once per breath, then the cloud thins out (CFBreathGasSystem). Poison Breath.
-# - A reagent on CFBreathWeapon: the breath pours out as that liquid for flowSeconds, and only then do the creatures
-#   standing in it roll (CFBreathFlowSystem). The puddles then evaporate. Toxic Spew.
+# - CFAreaFill with a reagent and rolls: WhenFilled: the breath pours out as that liquid for spreadSeconds, and only then
+#   do the creatures standing in it roll (CFAreaFillSystem). The puddles then evaporate. Toxic Spew.
+# Spells, bombs and traps use the same two components: see area_fills.yml.
 
 - type: entity
   abstract: true
@@ -81,9 +82,10 @@
     layers:
     - state: repulse
     color: "#4FD13A"
-  - type: CFBreathWeapon
+  - type: CFAreaFill
     reagent: CFToxicSpew
-    flowSeconds: 2
+    spreadSeconds: 2
+    rolls: WhenFilled
   - type: CFTrait
     traits:
     - Arcane
