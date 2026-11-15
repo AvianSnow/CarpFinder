@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Content.Client.CF.Languages;
 using Content.Client.UserInterface.Systems.Chat;
 using Content.IntegrationTests.Fixtures;
 using Content.IntegrationTests.Tests.CF;
@@ -11,6 +12,8 @@ using Content.Shared.Preferences;
 using Content.Shared.CF.Languages;
 using Content.Shared.CF.Preferences;
 using Content.Shared.Chat;
+using Content.Shared.Speech.Components;
+using Robust.Client.UserInterface.Controls;
 using Robust.Client.UserInterface;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Maths;
@@ -265,5 +268,113 @@ public sealed class CFLanguageTest : GameTest
             Assert.That(understood.WrappedMessage, Does.Contain("friend"));
             Assert.That(understood.WrappedMessage, Does.Contain("Goblin"), "It says which language it is in.");
         });
+    }
+
+    /// <summary>
+    /// A stock kobold body swaps every line for "Yip" or "Grrar". A player in a kobold warrior has to read their own
+    /// words, and a listener without Draconic still must not.
+    /// </summary>
+    [TestCase(InGameICChatType.Speak)]
+    [TestCase(InGameICChatType.Whisper)]
+    public async Task AKoboldUnderstandsItself(InGameICChatType type)
+    {
+        const string line = "Hello adventurer";
+        _map = await CFDevMap.Load(Pair, Footprint);
+        EntityUid kobold = default;
+        EntityUid human = default;
+
+        await Server.WaitPost(() =>
+        {
+            kobold = SEntMan.SpawnEntity("CFKoboldWarrior", _map.Local(0, 0));
+            human = SEntMan.SpawnEntity("MobHuman", _map.Local(1, 0));
+            SEntMan.AddComponent<CFLanguagesComponent>(human).Known = Picks("Common");
+            Server.PlayerMan.SetAttachedEntity(Pair.Player!, kobold);
+        });
+
+        await Pair.RunTicksSync(10);
+        Assert.That(SEntMan.HasComponent<ReplacementAccentComponent>(kobold), Is.False, "Its language replaces the noises.");
+
+        var chat = Client.ResolveDependency<IUserInterfaceManager>().GetUIController<ChatUIController>();
+        var before = chat.History.Count;
+        await Server.WaitPost(() =>
+            SEntMan.System<ChatSystem>().TrySendInGameICMessage(kobold, line, type, false, ignoreActionBlocker: true));
+        await Pair.RunTicksSync(10);
+
+        Assert.That(chat.History, Has.Count.GreaterThan(before), "The kobold heard itself.");
+        var own = chat.History[^1].Msg;
+        Assert.Multiple(() =>
+        {
+            Assert.That(own.Message, Does.Contain("Hello"));
+            Assert.That(own.WrappedMessage, Does.Contain("adventurer"));
+            Assert.That(own.WrappedMessage, Does.Contain("Draconic"), "It says which language it is in.");
+        });
+
+        await Server.WaitPost(() => Server.PlayerMan.SetAttachedEntity(Pair.Player!, human));
+        await Pair.RunTicksSync(10);
+        before = chat.History.Count;
+        await Server.WaitPost(() =>
+            SEntMan.System<ChatSystem>().TrySendInGameICMessage(kobold, line, type, false, ignoreActionBlocker: true));
+        await Pair.RunTicksSync(10);
+
+        Assert.That(chat.History, Has.Count.GreaterThan(before), "The human heard something.");
+        var foreign = chat.History[^1].Msg;
+        Assert.Multiple(() =>
+        {
+            Assert.That(foreign.Message, Does.Not.Contain("Hello"));
+            Assert.That(foreign.WrappedMessage, Does.Not.Contain("adventurer"));
+        });
+    }
+
+    /// <summary>The language menu's choice reaches the server, which only takes a language the body knows.</summary>
+    [Test]
+    public async Task TheLanguageMenuChoosesWhatYouSpeak()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        EntityUid kobold = default;
+        await Server.WaitPost(() =>
+        {
+            kobold = SEntMan.SpawnEntity("CFKoboldWarrior", _map.Local(0, 0));
+            Server.PlayerMan.SetAttachedEntity(Pair.Player!, kobold);
+        });
+        await Pair.RunTicksSync(10);
+
+        var menu = CEntMan.System<CFLanguageMenuSystem>();
+        var changes = 0;
+        void Count() => changes++;
+        menu.LanguagesChanged += Count;
+
+        Assert.That(menu.LocalLanguages, Is.Not.Null, "The client knows what its body speaks.");
+        Assert.That(CFLanguageSystem.Spoken(menu.LocalLanguages!).Id, Is.EqualTo("Draconic"));
+
+        await Client.WaitPost(() => menu.RequestSpeak("Sakvroth"));
+        await Pair.RunTicksSync(10);
+        Assert.Multiple(() =>
+        {
+            Assert.That(SEntMan.GetComponent<CFLanguagesComponent>(kobold).Speaking?.Id, Is.EqualTo("Sakvroth"));
+            Assert.That(CFLanguageSystem.Spoken(menu.LocalLanguages!).Id, Is.EqualTo("Sakvroth"), "The client was told.");
+            Assert.That(changes, Is.GreaterThan(0), "The menu was told to redraw.");
+        });
+
+        await Client.WaitPost(() => menu.RequestSpeak("Common"));
+        await Pair.RunTicksSync(10);
+        Assert.That(SEntMan.GetComponent<CFLanguagesComponent>(kobold).Speaking?.Id, Is.EqualTo("Sakvroth"), "It knows no Common.");
+
+        await Client.WaitAssertion(() =>
+        {
+            var window = new CFLanguageMenuWindow();
+            window.Show("Sakvroth", menu.LocalLanguages!.Known);
+            var buttons = window.KnownList.Children
+                .Select(panel => panel.GetChild(0).Children.OfType<Button>().Single())
+                .ToList();
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(buttons, Has.Count.EqualTo(2), "Draconic and Sakvroth.");
+                Assert.That(buttons.Count(button => button.Disabled), Is.EqualTo(1), "Only the one being spoken.");
+                Assert.That(window.CurrentLanguageLabel.Text, Does.Contain("Sakvroth"));
+            });
+        });
+
+        menu.LanguagesChanged -= Count;
     }
 }

@@ -422,7 +422,12 @@ Built on 9 November 2026, between Waves 3 and 4. How it works is under "Game HUD
 
 ### Languages
 
-Built on 6 November 2026. `Content.Shared/_CF/Languages`, and `CFSpeech` in `Content.Server/_CF/Languages/ChatSystem.CF.cs`. Tests: `CFLanguageTest`. The builder button and the Speak verb have not been used in a real client.
+Built on 6 November 2026. `Content.Shared/_CF/Languages`, and `CFSpeech` in `Content.Server/_CF/Languages/ChatSystem.CF.cs`. Tests: `CFLanguageTest`. The builder button has not been used in a real client.
+
+- [x] A player in a kobold could not read their own speech (15 November 2026). It was not the language check: the stock kobold body has a `ReplacementAccent` that swaps every line for "Yip" or "Grrar" before languages are looked at, so everyone heard that. A creature with `CFLanguages` now loses an accent that replaces whole lines (`CFLanguageAccentSystem`), and a speaker is never treated as a foreign listener of their own words.
+- [x] The language menu, after Starlight's (`C:\project\starlight-ss14`, used with permission and credited in each file): a speech bubble button on the top bar opens a list of the languages the body knows, with a Speak button each (`CFLanguageMenuWindow`, `CFLanguageMenuUIController`, `CFLanguageMenuSystem`). The Speak verb on yourself is gone. The button has no key, because upstream keybinds are not edited.
+- [ ] Not seen in a real client: the button and the menu.
+- [ ] Not taken from Starlight: speaking one line in another language with a chat prefix, languages understood but not spoken, translators, and language on the radio.
 
 - [ ] Radio is not translated. `EntitySpokeEvent` still carries the real words, so a radio or anything else listening to it hears them.
 - [x] Known languages are on the character sheet, beside Speed. Not seen in a real client.
@@ -617,6 +622,8 @@ The labels are the sections of Phase 6 in `roadmapold.md`, which has the design.
 - [ ] The decision log, once the AI has settled. `goap.md` lists the steps.
 
 ## Known bugs
+
+- Fixed on 15 November 2026: a Debug server stopped at round start in `AtmosphereSystem.ShuntTileVolume`. The Dragon Run map held 63 floor tiles saved with the sky's unchanging air, from flooring over open sky in the editor, and a wall stood on one. See "Air is not worked out while a map is paused" in `ss14rules.md`. Tests: `CFMapAirTest`. Starlight was checked for a fix and has none: its atmos is older and has no `ShuntTileVolume`.
 
 - `MaterialArbitrageTest.NoMaterialArbitrage` (stock) fails inside `ConstructionGraphPrototype.Path`, which means a construction graph has a node it cannot reach. Found on 11 November 2026 and not looked into. It is not from butchering: the harvest change touches no construction.
 

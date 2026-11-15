@@ -68,6 +68,7 @@ One directed component + event pair. A second subscriber throws `Duplicate Subsc
 
 ## Stock behaviour that surprises
 
+- A stock body can carry a `ReplacementAccent` whose prototype has `fullReplacements`: the kobold, most animals, slimes. It swaps the whole line for a noise before anything else sees it, so the speaker cannot read their own words either. `CFLanguageAccentSystem` removes it from anything with `CFLanguages`, at map init. Accents that only change words or letters, such as `LizardAccent`, stay.
 - Mobs do not collide. `MobLayer` is not in `MobMask`, so they overlap and push through `MobCollisionComponent`. `PreventCollideEvent` changes nothing between two mobs. Cancel `AttemptMobCollideEvent` and `AttemptMobTargetCollideEvent` instead. Neither event says who the other mob is.
 - A click in combat mode is a swing, even with a non-weapon in hand. `AfterInteractEvent` does not run. Use `UseInHandEvent` for anything that has to work in a fight.
 - `MeleeHitEvent.Direction` is null for a click and set for a wide swing.
@@ -110,6 +111,7 @@ One directed component + event pair. A second subscriber throws `Duplicate Subsc
 - A map saved from a running round marks entities `mapInit: true` and the map `paused: true`. Such a map loads still paused, and `NoSavedPostMapInitTest` fails. When nothing in it has run its map init into saved state (container contents, spawned mobs), deleting those two lines makes it a pre-init map again. Its `GridAtmosphere` also keeps whatever air it had, so check `uniqueMixes` for `moles: {}` (vacuum) and give rooms air.
 - A GOAP brain's Strike step calls `SetInCombatMode`, which logs an error on a body with no `CombatModeComponent`, such as a clean bot. Monster and companion bases give it.
 - `snapCardinals: true` on a sprite whose state has 4 or 8 directions crashes a Debug client the moment it is drawn (`SpriteSystem.CalculateLocalBounds` assert). Stock `BaseSign` sets it, so a directional wall-mount parented on it needs `snapCardinals: false`. Tools builds compile the assert out.
+- Air is not worked out while a map is paused, which a map in `mapping` is. A tile that is open sky gets the map's own unchanging air (`immutable: True` in `uniqueMixes`), and every such tile shares one object. Floor laid over it in the editor is saved still holding that air. A wall there then failed the assert in `ShuntTileVolume` and stopped a Debug server at round start, and an open floor tile became air that never changes. `AtmosphereSystem.UpdateTileData` now gives such a tile air of its own (a marked edit). `CFMapAirTest` loads the round map and checks it.
 - Puddles are anchored to their tile. A rule that keeps anchored things also keeps every pool of blood.
 - `StationJobsComponent.JobList` is access-restricted, and the component cannot go on a bare entity: its init reads `availableJobs`, which is required. In a test, spawn a test prototype with `StationJobs` and `availableJobs`, and use `ServerStationJobsSystem.TrySetJobSlot` and `TryGetJobSlot`.
 - `SharedContainerSystem.GetAllContainers` on an entity with no `ContainerManagerComponent` throws. `TryComp` it first when walking into items.

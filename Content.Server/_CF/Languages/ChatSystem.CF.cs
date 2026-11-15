@@ -11,6 +11,8 @@ public sealed partial class ChatSystem
     /// <summary>A line of speech, as it sounds to those with and without the language.</summary>
     private sealed class CFSpeech
     {
+        public required EntityUid Speaker { get; init; }
+
         public required ProtoId<CFLanguagePrototype> Language { get; init; }
 
         /// <summary>The nonsense heard without the language.</summary>
@@ -35,14 +37,16 @@ public sealed partial class ChatSystem
 
         return new CFSpeech
         {
+            Speaker = source,
             Language = language.ID,
             Garbled = CFLanguageRules.Garble(language.Syllables, message),
             Tagged = tagged,
         };
     }
 
+    /// <summary>Whether this listener hears nonsense. A speaker always understands their own words.</summary>
     private bool CFIsForeign(CFSpeech? speech, EntityUid? listener)
     {
-        return speech != null && !_cfLanguages.Understands(listener, speech.Language);
+        return speech != null && listener != speech.Speaker && !_cfLanguages.Understands(listener, speech.Language);
     }
 }

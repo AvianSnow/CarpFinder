@@ -1,20 +1,16 @@
 using System.Diagnostics.CodeAnalysis;
-using Content.Shared.Popups;
-using Content.Shared.Verbs;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Serialization;
 
 namespace Content.Shared.CF.Languages;
 
 /// <summary>
-/// Which language a creature speaks, and whether another creature understands it. Choosing one is a verb on yourself,
-/// because language needs no new key. <c>ChatSystem</c> asks this system for each listener.
+/// Which language a creature speaks, and whether another creature understands it. A player chooses one in the language
+/// menu, opened from the top bar. <c>ChatSystem</c> asks this system for each listener.
 /// </summary>
 public sealed partial class CFLanguageSystem : EntitySystem
 {
-    private static readonly VerbCategory SpeakCategory = new("cf-verb-speak-language", null);
-
     [Dependency] private IPrototypeManager _prototypes = default!;
-    [Dependency] private SharedPopupSystem _popup = default!;
 
     /// <summary>A creature with no languages at all understands everything: ghosts, machines, stock mobs.</summary>
     public bool Understands(EntityUid? listener, ProtoId<CFLanguagePrototype> language)
@@ -32,7 +28,8 @@ public sealed partial class CFLanguageSystem : EntitySystem
         return _prototypes.TryIndex(Spoken(languages), out language);
     }
 
-    private static ProtoId<CFLanguagePrototype> Spoken(CFLanguagesComponent languages)
+    /// <summary>The language it speaks now: the one chosen, else Common, else the first it knows. Needs one known.</summary>
+    public static ProtoId<CFLanguagePrototype> Spoken(CFLanguagesComponent languages)
     {
         if (languages.Speaking is { } speaking && languages.Known.Contains(speaking))
             return speaking;
@@ -53,30 +50,21 @@ public sealed partial class CFLanguageSystem : EntitySystem
         return true;
     }
 
-    [SubscribeLocalEvent]
-    private void OnGetVerbs(Entity<CFLanguagesComponent> ent, ref GetVerbsEvent<Verb> args)
+    /// <summary>The language menu's choice. It comes from a client, so <see cref="TrySpeak"/> checks it.</summary>
+    [EventSubscription]
+    private void OnSpeakRequest(CFSpeakLanguageEvent msg, EntitySessionEventArgs args)
     {
-        if (args.User != ent.Owner || ent.Comp.Known.Count == 0)
-            return;
-
-        var speaking = Spoken(ent.Comp);
-        foreach (var id in ent.Comp.Known)
-        {
-            if (!_prototypes.TryIndex(id, out var language))
-                continue;
-
-            var name = Loc.GetString(language.Name);
-            args.Verbs.Add(new Verb
-            {
-                Category = SpeakCategory,
-                Text = name,
-                Disabled = id == speaking,
-                Act = () =>
-                {
-                    if (TrySpeak(ent, id))
-                        _popup.PopupEntity(Loc.GetString("cf-language-now-speaking", ("language", name)), ent, ent);
-                },
-            });
-        }
+        if (args.SenderSession.AttachedEntity is { } speaker && TryComp(speaker, out CFLanguagesComponent? languages))
+            TrySpeak((speaker, languages), msg.Language);
     }
+}
+
+/// <summary>
+/// Sent by the language menu: speak this language from now on.
+/// After <c>LanguagesSetMessage</c> in Starlight (https://github.com/ss14Starlight/space-station-14).
+/// </summary>
+[Serializable, NetSerializable]
+public sealed class CFSpeakLanguageEvent : EntityEventArgs
+{
+    public string Language = string.Empty;
 }

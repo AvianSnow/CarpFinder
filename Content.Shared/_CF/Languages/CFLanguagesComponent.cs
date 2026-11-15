@@ -7,7 +7,7 @@ namespace Content.Shared.CF.Languages;
 /// What a creature can speak and understand. A creature without this speaks plainly and understands everything, so stock
 /// mobs, machines and ghosts work as they always did.
 /// </summary>
-[RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
+[RegisterComponent, NetworkedComponent, AutoGenerateComponentState(true)]
 public sealed partial class CFLanguagesComponent : Component
 {
     [DataField, AutoNetworkedField]

@@ -45,7 +45,7 @@ Everything below is under `Content.Shared/_CF/`.
 | `Outdoors/` | The outdoor map component, temperature rules, weather effects. The logic is server-side. | `CFEnvironmentRules`, `CFOutdoorsWorldSystem` |
 | `Farming/` | Plant, seed and harvest data. The logic is server-side. | `CFFarmingSystem` |
 | `Adventure/` | Site prototypes, encounter and treasure tables. Generation is server-side. | `CFEncounterRules`, `CFAdventureSiteSystem` |
-| `Languages/` | What a creature speaks and understands, and what it sounds like otherwise. Chat asks per listener. | `CFLanguageSystem`, `CFLanguageRules` |
+| `Languages/` | What a creature speaks and understands, and what it sounds like otherwise. Chat asks per listener, and a speaker always understands itself. The language menu is client-side, after Starlight's. | `CFLanguageSystem`, `CFLanguageRules` |
 | `Magic/` | Light, Detect Magic, Read Aura, and what counts as magical | `CFMagicSenseSystem` |
 | `Scene/` | DM narration and player-started skill checks. The logic is server-side. | `CFSceneSystem` |
 | `ZLevels/` | Stairs, ladders, holes, falling rules, chasm edges. The stacking logic is server-side. | `CFFallRules`, `CFZLevelSystem`, `CFChasmEdgeSystem` |
@@ -60,7 +60,7 @@ Everything below is under `Content.Shared/_CF/`.
 
 Server: `Instruments/` (`CFInstrumentSystem`, music that plays on with the window shut), `Upkeep/` (`CFDungeonCleanupSystem`, the hourly cleanup; `CFPlayerBodySystem`, job slots coming back, SSD bodies, dropping a body's bag and weapons), `Character/` (`CFCharacterSpawnSystem`, `CFExperienceSystem`, `CFGiveXpCommand`, `CFLongRestSystem`, `CFLevelUpReportSystem`), `Companions/CFCompanionSystem`, `GOAP/` (see `goap.md`), `Shop/CFShopSystem`, `Spells/CFPrestidigitationSystem`, `Temperature/` (`CFStockHeatSystem` turns stock burning into CF fire damage), `Materials/`.
 
-Client: `Hud/` (the in-game bar and radial menu), `Character/` (sheet, spells tab, shop), `Combat/` (floating numbers, flanking icon), `Effects/` (area and target overlays, mode and volley menus), `Lobby/UI/` (character builder, see `lobby-overlay.md`), `UserInterface/Systems/Character/` (the character window overlay).
+Client: `Languages/` (the language menu and its top bar button), `Hud/` (the in-game bar and radial menu), `Character/` (sheet, spells tab, shop), `Combat/` (floating numbers, flanking icon), `Effects/` (area and target overlays, mode and volley menus), `Lobby/UI/` (character builder, see `lobby-overlay.md`), `UserInterface/Systems/Character/` (the character window overlay).
 
 ## From lobby to a playable character
 
@@ -133,7 +133,7 @@ Anything that targets, rolls, and applies effects is data on the source entity: 
 | Use a healer's toolkit in hand, combat mode, feat | Battle Medicine on the nearest hurt ally (1 action) | `CFMedicineSystem` |
 | Aid verb on an ally | Aid (1 action) | `CFManeuverSystem.TryAid` |
 | Sleep action while buckled to a bed | Long rest: full hit points, spell slots and focus. Refused with an enemy close by, and once per 15 minutes | `CFLongRestSystem` |
-| Speak verb on yourself | Choose which language you speak (free) | `CFLanguageSystem` |
+| Speech bubble button on the top bar | The language menu: choose which language you speak (free). It has no key | `CFLanguageMenuUIController`, `CFLanguageSystem` |
 | Examine tab, information icon | Recall Knowledge (1 action) | `CFManeuverSystem.TryRecall` |
 | Alt+Z with a melee weapon, with panache | Confident Finisher at the enemy being aimed at (1 action) | `CFManeuverSystem.TryFinisher` |
 | Play a held instrument, as a Bard | Courageous Anthem for as long as the music lasts. 1 action to start it, nothing to keep it going. Closing the window does not stop the song while the instrument stays in hand | `CFAnthemSystem`, `CFInstrumentSystem` |
@@ -221,6 +221,7 @@ All edits carry `// CarpFinder` markers, so `grep -rn CarpFinder Content.Client 
 | Game screens | `DefaultGameScreen.xaml(.cs)`, `SeparatedChatGameScreen.xaml(.cs)` | Puts `CFGameHud` bottom centre and lifts the bag windows above it |
 | Joining a round | `Content.Server/GameTicking/ServerGameTicker.Lobby.cs`, `ServerGameTicker.Spawning.cs` | An unfinished character cannot ready up or spawn |
 | Respawn | `Content.Server/GameTicking/Commands/RespawnCommand.cs`, `Resources/engineCommandPerms.yml` | Anyone can `respawn` themselves back to the lobby for a new character. Only a moderator can name someone else. The old body drops everything it carried and is deleted, which gives its job slot back. Bodies are also found by player (`CFPlayerBodyComponent.User`) |
+| Language menu | `Content.Client/UserInterface/Systems/MenuBar/Widgets/GameTopMenuBar.xaml`, `GameTopMenuBarUIController.cs` | A speech bubble button on the top bar opens `CFLanguageMenuWindow` |
 | Ghost respawn | `Content.Client/UserInterface/Systems/Ghost/Widgets/GhostGui.xaml(.cs)` | A Respawn button left of Return to body. It asks once more, then runs `respawn` |
 | Instruments | `Content.Server/Instruments/InstrumentSystem.cs`, `Content.Client/Instruments/UI/InstrumentBoundUserInterface.cs`, `InstrumentMenu.xaml.cs` | An instrument plays on after its window closes, while it is held or, for a placed one, while the player stays in reach (`CFInstrumentSystem`). Stock's window stopped the song itself as it closed (`ExitedTree`); that line is commented out. Reopening the window does not stop it |
 | Melee | `Content.Client/Weapons/Melee/MeleeWeaponSystem.cs`, `MeleeWeaponSystem.Effects.cs` | Right-click maneuvers for shields and trait weapons, left-click aim assist, a swing animation half as long |
@@ -229,6 +230,7 @@ All edits carry `// CarpFinder` markers, so `grep -rn CarpFinder Content.Client 
 | NPCs | `Content.Server/NPC/Systems/NPCUtilitySystem.cs` | Faction hostility |
 | NPC steering | `Content.Server/NPC/Systems/NPCSteeringSystem.cs` | GOAP mobs skip stock `CollisionAvoidance`: their feelers do that job. They also aim between the 12 directions (`CFGOAPSteeringMath.Aim`), so they do not zigzag |
 | Temperature | `TemperatureSystem.cs`, `SharedTemperatureSystem.cs` | Cooking heats the surface first |
+| Air | `Content.Server/Atmos/EntitySystems/AtmosphereSystem.Processing.cs` | Floor saved with the sky's unchanging air gets air of its own, or a wall on it stops a Debug server |
 | Fire | `Content.Client/Atmos/EntitySystems/FireVisualizerSystem.cs` | Do not spawn the light during `ComponentInit`: it crashed a Debug client that first saw something already burning |
 | Icons | `SharedStatusIconSystem.cs` | Partial for the flanked icon |
 | Ghosts | `Resources/Prototypes/Entities/Mobs/Player/observer.yml` | Z-level Move up and Move down actions |

@@ -2,8 +2,11 @@ cf-language-draconic = Draconic
 cf-language-jotun = Jotun
 
 cf-language-tag = ({$language}) {$message}
-cf-language-now-speaking = You are now speaking {$language}.
-cf-verb-speak-language = Speak
+cf-language-menu-title = Languages
+cf-language-menu-tooltip = Choose the language you speak
+cf-language-menu-current = Speaking: {$language}
+cf-language-menu-none = This body speaks plainly and understands every language.
+cf-language-menu-speak = Speak
 
 cf-character-builder-languages = Languages
 cf-character-builder-languages-done = Languages ✓

@@ -218,7 +218,16 @@ namespace Content.Server.Atmos.EntitySystems
             }
 
             if (!tile.MapAtmosphere)
+            {
+                // CarpFinder: a map saved in the editor keeps the sky's shared, unchanging air on a tile that was
+                // floored over after it was loaded, because air is not worked out while a map is paused. Floor needs
+                // air of its own, or a wall there fails the assert in ShuntTileVolume and the room never changes.
+                if (tile.Air is { Immutable: true } sky)
+                    tile.Air = new GasMixture((float[]) sky.Moles.Clone(), sky.Temperature, sky.Volume);
+                // CarpFinder end
+
                 return;
+            }
 
             // Tile used to be exposed to the map's atmosphere, but isn't anymore.
             RemoveMapAtmos(ent.Comp1, tile);
