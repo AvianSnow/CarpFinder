@@ -205,7 +205,7 @@ public sealed partial class CFZLevelSystem : EntitySystem
 
         _transform.SetMapCoordinates(creature, new MapCoordinates(position, map));
 
-        var damage = FallsSafely(creature) ? 0 : CFFallRules.Damage(feet);
+        var damage = FallsSafely(creature) ? 0 : CFFallRules.Damage(FallFeet(creature, feet));
         if (damage > 0)
         {
             _effects.DealDamage(creature, creature, damage, CFDamageTypes.Bludgeoning, false);
@@ -218,7 +218,14 @@ public sealed partial class CFZLevelSystem : EntitySystem
     public bool FallsSafely(EntityUid creature)
     {
         return TryComp(creature, out CFSafeFallComponent? safe)
+               && !safe.HalfDistance
                && (!safe.NeedsFreeHand || _hands.CountFreeHands(creature) > 0);
+    }
+
+    /// <summary>The distance a fall counts as for damage: half for a creature that falls well.</summary>
+    public int FallFeet(EntityUid creature, int feet)
+    {
+        return TryComp(creature, out CFSafeFallComponent? safe) && safe.HalfDistance ? feet / 2 : feet;
     }
 
     private bool HasFloor(MapId map, System.Numerics.Vector2 position)
@@ -270,9 +277,13 @@ public sealed partial class CFZLevelSystem : EntitySystem
         if (destination is not { } end)
             return false;
 
-        if (ent.Comp.Dc > 0)
+        var options = CompOrNull<CFCombatOptionsComponent>(user);
+        if (ent.Comp.Dc > 0 && options is not { ClimbSpeed: true })
         {
-            var degree = _conditions.RollSkillAgainst(user, "Athletics", CFAbility.Strength, ent.Comp.Dc, out _);
+            var degree = _conditions.RollSkillAgainst(user, "Athletics", CFAbility.Strength, ent.Comp.Dc, out _, itemBonus: options?.ClimbBonus ?? 0);
+            if (degree == CFDegree.Success && options is { ClimbSuccessCritical: true })
+                degree = CFDegree.CriticalSuccess;
+
             if (degree == CFDegree.CriticalFailure)
             {
                 if (goingDown)

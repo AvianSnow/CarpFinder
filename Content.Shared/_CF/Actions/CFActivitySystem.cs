@@ -109,6 +109,12 @@ public sealed partial class CFActivitySystem : EntitySystem
             case CFActivityKind.SpellstrikeRecharge:
                 RechargeSpellstrike(args.Performer);
                 break;
+            case CFActivityKind.TailToxin:
+                var options = EnsureComp<CFCombatOptionsComponent>(args.Performer);
+                options.TailToxinUntil = _timing.CurTime + TimeSpan.FromSeconds(6);
+                Dirty(args.Performer, options);
+                _popup.PopupEntity(Loc.GetString("cf-act-tail-toxin"), args.Performer, args.Performer);
+                break;
         }
     }
 

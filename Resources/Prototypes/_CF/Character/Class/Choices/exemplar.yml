@@ -373,6 +373,8 @@
   grants:
     - !type:CFGrantIkon
       ikon: ScarOfTheSurvivor
+    - !type:CFGrantFeat
+      feat: CFDiehard
 
 - type: cfClassChoice
   id: SecondScarOfTheSurvivor
@@ -384,6 +386,8 @@
   grants:
     - !type:CFGrantIkon
       ikon: ScarOfTheSurvivor
+    - !type:CFGrantFeat
+      feat: CFDiehard
 
 - type: cfClassChoice
   id: ThirdScarOfTheSurvivor
@@ -395,6 +399,8 @@
   grants:
     - !type:CFGrantIkon
       ikon: ScarOfTheSurvivor
+    - !type:CFGrantFeat
+      feat: CFDiehard
 
 - type: cfClassChoice
   id: FirstBandsOfImprisonment

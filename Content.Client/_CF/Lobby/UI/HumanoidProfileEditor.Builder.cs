@@ -1,3 +1,4 @@
+using Content.Shared.CF.DamageTypes;
 using Content.Shared.CF.Languages;
 using System.IO;
 using System.Linq;
@@ -262,6 +263,12 @@ public sealed partial class HumanoidProfileEditor
         if (_prototypeManager.TryIndex<CFLanguagePrototype>(value, out var language))
             return Loc.GetString(language.Name);
 
+        if (_prototypeManager.TryIndex<CFFeatPrototype>(value, out var feat))
+            return FeatName(feat);
+
+        if (_prototypeManager.TryIndex<CFDamageTypePrototype>(value, out var damageType))
+            return Loc.GetString(damageType.Name);
+
         return SkillLabelMap().GetValueOrDefault(value, value);
     }
 
@@ -282,11 +289,17 @@ public sealed partial class HumanoidProfileEditor
         if (build.Class is { } classId && _prototypeManager.TryIndex(classId, out CFClassPrototype? cls))
             trained.UnionWith(cls.Proficiencies.Skills.Trained);
 
+        // Nor is a feat the character already has.
+        var hasFeats = CFSkills.SelectedFeats(_prototypeManager, build, ancestry, build.Class?.Id, CFExperienceComponent.MaxLevel)
+            .Select(feat => feat.ID)
+            .ToHashSet();
+
         var definitions = new List<SkillSlotDefinition>();
         foreach (var slot in slots)
         {
-            var allowed = CFOptionChoices.Allowed(_prototypeManager, slot.Choice, build)
+            var allowed = CFOptionChoices.Allowed(_prototypeManager, slot.Choice, build, ancestry)
                 .Where(id => slot.Choice.Kind != CFOptionChoiceKind.Skill || ownPicks.Contains(id) || !trained.Contains(id))
+                .Where(id => slot.Choice.Kind != CFOptionChoiceKind.Feat || ownPicks.Contains(id) || !hasFeats.Contains(id))
                 .OrderBy(OptionLabel, StringComparer.CurrentCultureIgnoreCase)
                 .ToList();
 
@@ -305,6 +318,8 @@ public sealed partial class HumanoidProfileEditor
                     CFOptionChoiceKind.Language => "cf-character-builder-option-language",
                     CFOptionChoiceKind.KeyAttribute => "cf-character-builder-option-key-attribute",
                     CFOptionChoiceKind.SaveOrPerception => "cf-character-builder-option-save",
+                    CFOptionChoiceKind.Feat => "cf-character-builder-option-feat",
+                    CFOptionChoiceKind.DamageType => "cf-character-builder-option-damage-type",
                     _ => "cf-character-builder-option-skill",
                 }),
                 Allowed = allowed,

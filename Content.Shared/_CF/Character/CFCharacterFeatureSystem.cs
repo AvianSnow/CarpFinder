@@ -1,10 +1,13 @@
 using Content.Shared.Actions;
 using Content.Shared.CF.Character.Grants;
 using Content.Shared.CF.Combat;
+using Content.Shared.CF.DamageTypes;
 using Content.Shared.CF.Languages;
 using Content.Shared.CF.Preferences;
 using Content.Shared.CF.Spells;
 using Content.Shared.CF.Traits;
+using Content.Shared.Movement.Components;
+using Content.Shared.Movement.Systems;
 using Content.Shared.Overlays;
 using Robust.Shared.Prototypes;
 
@@ -23,6 +26,10 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
 
     [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private SharedActionsSystem _actions = default!;
+    [Dependency] private MovementSpeedModifierSystem _speed = default!;
+
+    /// <summary>The Speed that stock walking and running stand for, in feet.</summary>
+    private const float BaselineSpeedFeet = 25f;
 
     /// <summary>
     /// Runs one option's grants. <paramref name="source"/> names the option, and a source that has run does nothing,
@@ -41,6 +48,63 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
         {
             grant.Apply(EntityManager, args);
         }
+    }
+
+    /// <summary>
+    /// Gives a feat: its skills, its natural attack if it beats the one the character has, its grants, and the picks made for
+    /// it. A feat the character already has does nothing, so one granted by a heritage and also picked is not doubled.
+    /// </summary>
+    /// <param name="adjustSpeed">A Speed bonus is applied here on level-up. At spawn the build's Speed already counts it.</param>
+    public void ApplyFeat(EntityUid mob, CFFeatPrototype feat, bool adjustSpeed = true)
+    {
+        if (!EnsureComp<CFCharacterFeaturesComponent>(mob).Applied.Add($"featTaken:{feat.ID}"))
+            return;
+
+        var options = EnsureComp<CFCombatOptionsComponent>(mob);
+        var combat = EnsureComp<CFCombatantComponent>(mob);
+
+        foreach (var skill in feat.TrainedSkills)
+        {
+            if (!combat.TrainedSkills.Contains(skill.Id))
+                combat.TrainedSkills.Add(skill.Id);
+        }
+
+        foreach (var lore in feat.Lores)
+        {
+            if (!combat.LoreNames.Contains(lore))
+                combat.LoreNames.Add(lore);
+        }
+
+        if (adjustSpeed && feat.SpeedBonus > 0 && TryComp(mob, out MovementSpeedModifierComponent? movement))
+        {
+            combat.SpeedFeet += feat.SpeedBonus;
+            var scale = feat.SpeedBonus / BaselineSpeedFeet;
+            _speed.ChangeBaseSpeed(
+                mob,
+                movement.BaseWalkSpeed + 2.5f * scale,
+                movement.BaseSprintSpeed + 4.5f * scale,
+                movement.BaseAcceleration);
+        }
+
+        if (feat.NaturalDie > options.NaturalDie)
+        {
+            options.NaturalDice = Math.Max(1, feat.NaturalDice);
+            options.NaturalDie = feat.NaturalDie;
+            options.NaturalType = feat.NaturalDamage;
+            options.NaturalFinesse = feat.NaturalFinesse;
+            options.NaturalAgile = feat.NaturalAgile;
+        }
+
+        Dirty(mob, combat);
+        Dirty(mob, options);
+        Apply(mob, feat.Grants, $"feat:{feat.ID}");
+        ApplyOptionPicks(mob, feat.ID);
+    }
+
+    /// <summary>Whether <see cref="ApplyFeat"/> has given this feat.</summary>
+    public bool HasFeat(EntityUid mob, ProtoId<CFFeatPrototype> feat)
+    {
+        return CompOrNull<CFCharacterFeaturesComponent>(mob)?.Applied.Contains($"featTaken:{feat.Id}") == true;
     }
 
     /// <summary>Every class feature gained by <paramref name="level"/> that has not run yet.</summary>
@@ -213,8 +277,18 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
                 continue;
             }
 
+            if (_prototypes.TryIndex(pick.Value, out CFFeatPrototype? feat))
+            {
+                ApplyFeat(mob, feat, adjustSpeed: false);
+                continue;
+            }
+
             // Read when it is needed, by CFClassChoices.KeyAbility.
             if (Enum.IsDefined(typeof(CFAbility), pick.Value))
+                continue;
+
+            // Read by the grant that asked for it, such as CFGrantChosenResistance.
+            if (_prototypes.HasIndex<CFDamageTypePrototype>(pick.Value))
                 continue;
 
             if (pick.Value is "Fortitude" or "Reflex" or "Will" or "Perception")
@@ -251,7 +325,7 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
     }
 
     /// <summary>A natural attack replaces the fist, but a smaller one does not replace a bigger one the character has.</summary>
-    public void GrantUnarmedAttack(EntityUid mob, int dice, int die, string damageType, bool finesse, bool agile)
+    public void GrantUnarmedAttack(EntityUid mob, int dice, int die, string damageType, bool finesse, bool agile, int deadly = 0, string versatile = "")
     {
         var options = EnsureComp<CFCombatOptionsComponent>(mob);
         if (die <= options.NaturalDie)
@@ -262,7 +336,50 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
         options.NaturalType = damageType;
         options.NaturalFinesse = finesse;
         options.NaturalAgile = agile;
+        options.NaturalDeadly = deadly;
+        options.NaturalVersatile = versatile;
         Dirty(mob, options);
+    }
+
+    /// <summary>Gives the natural attack the creature already has a trait, as Dogtooth Tengu makes the beak deadly.</summary>
+    public void AddUnarmedTraits(EntityUid mob, int deadly, string versatile)
+    {
+        var options = EnsureComp<CFCombatOptionsComponent>(mob);
+        if (deadly > 0)
+            options.NaturalDeadly = Math.Max(options.NaturalDeadly, deadly);
+
+        if (versatile.Length > 0)
+            options.NaturalVersatile = versatile;
+
+        Dirty(mob, options);
+    }
+
+    /// <summary>The id a grant's source stores its option picks under: <c>heritage:X</c> and <c>feat:X</c> are <c>X</c>.</summary>
+    public static string PickSource(string source)
+    {
+        foreach (var prefix in new[] { "heritage:", "feat:", "choice:", "ancestry:", "background:" })
+        {
+            if (source.StartsWith(prefix, StringComparison.Ordinal))
+                return source[prefix.Length..];
+        }
+
+        return source;
+    }
+
+    /// <summary>What the player picked for an option, or null.</summary>
+    public string? Pick(EntityUid mob, string source, int slot = 0)
+    {
+        if (!TryComp(mob, out CFExperienceComponent? xp))
+            return null;
+
+        var id = PickSource(source);
+        foreach (var pick in xp.OptionPicks)
+        {
+            if (pick.Source == id && pick.Slot == slot)
+                return pick.Value;
+        }
+
+        return null;
     }
 
     /// <summary>Lights an action up on the action bar, or turns it off, by its prototype.</summary>
@@ -347,6 +464,18 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
                 break;
             case CFCombatOption.HeftyHauler:
                 options.HeftyHauler = true;
+                break;
+            case CFCombatOption.NineLives:
+                options.NineLives = true;
+                break;
+            case CFCombatOption.ToughToKill:
+                options.ToughToKill = true;
+                break;
+            case CFCombatOption.StrongBlooded:
+                options.StrongBlooded = true;
+                break;
+            case CFCombatOption.EasierBurning:
+                options.PersistentFireDc = 10;
                 break;
             case CFCombatOption.Toughness:
                 options.Toughness = true;

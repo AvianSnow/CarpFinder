@@ -531,45 +531,7 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
     /// <summary>Trains the feat's skills, replaces the fist when it should, and runs the feat's grants.</summary>
     public void ApplyFeat(EntityUid mob, CFFeatPrototype feat, CFCombatOptionsComponent? options = null, bool adjustSpeed = true)
     {
-        options ??= EnsureComp<CFCombatOptionsComponent>(mob);
-        var combat = EnsureComp<CFCombatantComponent>(mob);
-
-        foreach (var skill in feat.TrainedSkills)
-        {
-            if (!combat.TrainedSkills.Contains(skill.Id))
-                combat.TrainedSkills.Add(skill.Id);
-        }
-
-        foreach (var lore in feat.Lores)
-        {
-            if (!combat.LoreNames.Contains(lore))
-                combat.LoreNames.Add(lore);
-        }
-
-        if (adjustSpeed && feat.SpeedBonus > 0 && TryComp(mob, out MovementSpeedModifierComponent? movement))
-        {
-            combat.SpeedFeet += feat.SpeedBonus;
-            var scale = feat.SpeedBonus / BaselineSpeedFeet;
-            _speed.ChangeBaseSpeed(
-                mob,
-                movement.BaseWalkSpeed + 2.5f * scale,
-                movement.BaseSprintSpeed + 4.5f * scale,
-                movement.BaseAcceleration);
-        }
-
-        if (feat.NaturalDie > options.NaturalDie)
-        {
-            options.NaturalDice = Math.Max(1, feat.NaturalDice);
-            options.NaturalDie = feat.NaturalDie;
-            options.NaturalType = feat.NaturalDamage;
-            options.NaturalFinesse = feat.NaturalFinesse;
-            options.NaturalAgile = feat.NaturalAgile;
-        }
-
-        Dirty(mob, combat);
-        Dirty(mob, options);
-        _features.Apply(mob, feat.Grants, $"feat:{feat.ID}");
-        _features.ApplyOptionPicks(mob, feat.ID);
+        _features.ApplyFeat(mob, feat, adjustSpeed);
     }
 
     /// <summary>Armor class follows the new level. Hit points are changed by the level-up itself.</summary>

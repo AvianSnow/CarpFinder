@@ -1,7 +1,7 @@
 """How much of the character options really work. Run from the repo root: python3 .agent/port-scripts/feature_scan.py
 
-A feat works if it has grants, or if it only needs data the game already applies (skills, lores,
-Speed, a natural attack). Needs PyYAML. Update the numbers in roadmap.md from what this prints.
+A feat works if it has grants or choices, or if it only needs data the game already applies (skills,
+lores, Speed, a natural attack). Needs PyYAML. Update the numbers in roadmap.md from what this prints.
 """
 import glob
 import re
@@ -41,7 +41,7 @@ for feat in docs['cfFeat']:
     has_data = any(feat.get(k) for k in ('trainedSkills', 'lores', 'speedBonus', 'naturalDie'))
     text = strings.get(feat.get('description'), '')
     placeholder = 'implemented later' in text or 'TBA' in text
-    state = 'works' if feat.get('grants') or (has_data and not placeholder) else 'partly' if has_data else 'nothing'
+    state = 'works' if feat.get('grants') or feat.get('choices') or (has_data and not placeholder) else 'partly' if has_data else 'nothing'
     totals[kind, state] += 1
     owner = owners[kind, str(feat.get('class') or feat.get('ancestry'))]
     owner[1] += 1
@@ -55,7 +55,7 @@ features = [x for c in docs['cfClass'] for x in c.get('features') or []]
 later = [x for x in features if 'implemented later' in str(x.get('description', ''))]
 print('Class features:', len(features), 'placeholders:', len(later))
 
-fields = ('darkvision', 'hitPoints', 'upgradeVision', 'size', 'speed', 'grants')
+fields = ('darkvision', 'hitPoints', 'upgradeVision', 'size', 'speed', 'grants', 'choices')
 print('Heritages:', len(docs['cfHeritage']), 'with an effect:', sum(any(k in h for k in fields) for h in docs['cfHeritage']))
 
 stubs = []

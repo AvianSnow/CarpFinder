@@ -115,6 +115,12 @@ public enum CFBonusStat : byte
 
     /// <summary>All Speeds, in feet. <c>CFArmorSystem</c> reads it with the other Speed penalties.</summary>
     Speed,
+
+    /// <summary>Athletics checks to Shove, Trip, Disarm, Grapple or Reposition.</summary>
+    Maneuvers,
+
+    /// <summary>The DC against someone Shoving, Tripping, Disarming, Grappling or Repositioning this creature.</summary>
+    ManeuverDc,
 }
 
 /// <summary>Bonuses of the same type do not stack: the highest bonus and the worst penalty of each type apply.</summary>

@@ -196,6 +196,10 @@ public static class CFLevelUp
             }
         }
 
+        // A feat the build has from a heritage, subclass option or another feat's choice is not offered again.
+        var extra = CFSkills.ExtraFeats(prototypes, build, ancestryId, CFExperienceComponent.MaxLevel);
+        options.RemoveAll(feat => feat.ID != current && extra.Exists(other => other.ID == feat.ID));
+
         return options
             .OrderBy(feat => feat.Level)
             .ThenBy(feat => feat.ID, StringComparer.Ordinal)
@@ -336,7 +340,7 @@ public static class CFLevelUp
             if (build.OptionPicks.Exists(pick => pick.Source == option.Source && pick.Slot == option.Slot))
                 continue;
 
-            var allowed = CFOptionChoices.Allowed(prototypes, option.Choice, build).Count;
+            var allowed = CFOptionChoices.Allowed(prototypes, option.Choice, build, ancestryId).Count;
             if (allowed > 0)
                 missing.Add($"Option: {option.Choice.Kind} for {option.Source}, slot {option.Slot}, none picked, {allowed} options");
         }

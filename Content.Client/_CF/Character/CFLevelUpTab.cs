@@ -1,3 +1,4 @@
+using Content.Shared.CF.DamageTypes;
 using System.Linq;
 using Content.Client.CF.Lobby.UI.CharacterBuilder;
 using Content.Shared.CF.Character;
@@ -412,8 +413,15 @@ public sealed partial class CFLevelUpTab : BoxContainer
 
     private Control OptionRow(CFOptionSlot slot)
     {
-        var allowed = CFOptionChoices.Allowed(_prototypes, slot.Choice, _build);
         var current = _build!.OptionPicks.FirstOrDefault(p => p.Source == slot.Source && p.Slot == slot.Slot)?.Value;
+        var allowed = CFOptionChoices.Allowed(_prototypes, slot.Choice, _build, _ancestryId);
+        if (slot.Choice.Kind == CFOptionChoiceKind.Feat)
+        {
+            // A feat the character already has is not offered again.
+            var has = CFSkills.SelectedFeats(_prototypes, _build, _ancestryId, _build.Class?.Id, CFExperienceComponent.MaxLevel);
+            allowed.RemoveAll(id => id != current && has.Exists(feat => feat.ID == id));
+        }
+
         var button = new OptionButton();
         button.AddItem(Loc.GetString("cf-levelup-choose"), 0);
         for (var i = 0; i < allowed.Count; i++)
@@ -447,6 +455,12 @@ public sealed partial class CFLevelUpTab : BoxContainer
 
         if (_prototypes.TryIndex<CFAbilitySkillPrototype>(value, out var skill))
             return Loc.GetString(skill.Name);
+
+        if (_prototypes.TryIndex<CFFeatPrototype>(value, out var feat))
+            return FeatName(feat);
+
+        if (_prototypes.TryIndex<CFDamageTypePrototype>(value, out var damageType))
+            return Loc.GetString(damageType.Name);
 
         return value;
     }

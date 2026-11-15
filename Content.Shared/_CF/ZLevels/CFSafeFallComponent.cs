@@ -7,4 +7,8 @@ public sealed partial class CFSafeFallComponent : Component
     /// <summary>It only works with a hand free, as with webbed hands.</summary>
     [DataField]
     public bool NeedsFreeHand;
+
+    /// <summary>Falls still hurt, but count as half their distance (Unbreakable Goblin).</summary>
+    [DataField]
+    public bool HalfDistance;
 }

@@ -1,3 +1,4 @@
+using Content.Shared.CF.Actions;
 using Content.Shared.Bed.Components;
 using Content.Shared.Bed.Sleep;
 using Content.Shared.Buckle.Components;
@@ -31,6 +32,7 @@ public sealed partial class CFLongRestSystem : EntitySystem
     [Dependency] private CFFactionSystem _factions = default!;
     [Dependency] private CFDyingSystem _dying = default!;
     [Dependency] private CFReactionSystem _reactions = default!;
+    [Dependency] private CFDailyUseSystem _daily = default!;
     [Dependency] private MobStateSystem _mobState = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
 
@@ -103,6 +105,7 @@ public sealed partial class CFLongRestSystem : EntitySystem
         EnsureComp<CFRestCooldownComponent>(mob).ReadyAt = _timing.CurTime + Cooldown;
         _dying.RestoreFully(mob);
         _reactions.RestoreDaily(mob);
+        _daily.Restore(mob);
 
         if (TryComp(mob, out CFSpellbookComponent? book))
         {

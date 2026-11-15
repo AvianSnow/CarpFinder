@@ -120,10 +120,12 @@ public sealed partial class CFAfflictionSystem : EntitySystem
         if (active.Stage == 0)
             return EnterStage(uid, proto, active, active.PendingStage);
 
+        // Strong-Blooded Dwarf: a successful save against a poison lowers its stage by one more.
+        var strong = proto.Traits.Contains("Poison") && CompOrNull<CFCombatOptionsComponent>(uid) is { StrongBlooded: true } ? 1 : 0;
         var change = _conditions.RollDefense(uid, proto.Defense, proto.Dc, out _, proto.Traits) switch
         {
-            CFDegree.CriticalSuccess => -2,
-            CFDegree.Success => -1,
+            CFDegree.CriticalSuccess => -2 - strong,
+            CFDegree.Success => -1 - strong,
             CFDegree.CriticalFailure when proto.FailureRaisesStage => 2,
             CFDegree.Failure when proto.FailureRaisesStage => 1,
             _ => 0,

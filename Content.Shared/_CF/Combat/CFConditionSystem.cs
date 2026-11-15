@@ -372,11 +372,16 @@ public sealed partial class CFConditionSystem : EntitySystem
         if (TryComp(attacker, out CFConditionComponent? blind) && blind.Blinded)
             dc = 11;
 
+        // Keener senses (a Whisper Elf's hearing) make the check easier against a creature close enough.
+        var sense = CompOrNull<CFSeekSenseComponent>(attacker);
+        if (sense != null && !_transform.InRange((attacker, null), (target, null), sense.RangeFeet / CFMelee.FeetPerTile))
+            sense = null;
+
         if (TryComp(target, out CFConditionComponent? cond) && cond.Concealed)
-            dc = Math.Max(dc, cond.FlatCheckDc);
+            dc = Math.Max(dc, sense is { ConcealedFlatDc: > 0 } ? Math.Min(cond.FlatCheckDc, sense.ConcealedFlatDc) : cond.FlatCheckDc);
 
         if (_stealth.IsUnseenBy(target, attacker))
-            dc = Math.Max(dc, HiddenFlatCheck);
+            dc = Math.Max(dc, sense is { HiddenFlatDc: > 0 } ? sense.HiddenFlatDc : HiddenFlatCheck);
 
         if (dc <= 0)
             return true;
@@ -705,6 +710,14 @@ public sealed partial class CFConditionSystem : EntitySystem
             defense,
             DefenseStatus(target, defense),
             Frightened(target));
+
+        // An Athletics check with the attack trait is a maneuver: Shove, Trip, Disarm, Grapple, Reposition.
+        if (attackTrait)
+        {
+            mod += _bonuses.Total(user, CFBonusStat.Maneuvers);
+            dc += _bonuses.Total(target, CFBonusStat.ManeuverDc);
+        }
+
         return CFDefense.Roll(_random, mod, dc);
     }
 

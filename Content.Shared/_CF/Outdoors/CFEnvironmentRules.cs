@@ -40,4 +40,20 @@ public static class CFEnvironmentRules
 
         return band;
     }
+
+    /// <summary>
+    /// A creature that finds heat or cold less severe, by steps of the table. A negative number of steps is worse. Heat steps
+    /// only touch heat bands and cold steps only cold ones, and neither goes past normal or the incredible end.
+    /// </summary>
+    public static CFTemperatureBand Eased(CFTemperatureBand band, int heatSteps, int coldSteps)
+    {
+        var value = (int) band;
+        const int normal = (int) CFTemperatureBand.Normal;
+        if (value > normal && heatSteps != 0)
+            value = Math.Clamp(value - heatSteps, normal, (int) CFTemperatureBand.IncredibleHeat);
+        else if (value < normal && coldSteps != 0)
+            value = Math.Clamp(value + coldSteps, (int) CFTemperatureBand.IncredibleCold, normal);
+
+        return (CFTemperatureBand) value;
+    }
 }

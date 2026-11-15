@@ -357,7 +357,12 @@ public sealed partial class CFStealthSystem : EntitySystem
             if (hider.Owner == user || before == CFDetection.Observed)
                 continue;
 
-            var degree = CFDefense.Roll(_random, _conditions.PerceptionModifier(user), _conditions.StealthDc(hider));
+            // Keener senses: a circumstance bonus to find a creature close enough to hear or smell.
+            var bonus = TryComp(user, out CFSeekSenseComponent? sense)
+                        && _transform.InRange((user, null), (hider.Owner, null), sense.RangeFeet / CFAreaGrid.FeetPerTile)
+                ? sense.SeekBonus
+                : 0;
+            var degree = CFDefense.Roll(_random, _conditions.PerceptionModifier(user) + bonus, _conditions.StealthDc(hider));
             if (!degree.IsSuccess())
                 continue;
 

@@ -6,6 +6,13 @@
   name: cf-heritage-ancient-blooded-dwarf
   description: cf-heritage-ancient-blooded-dwarf-desc
   ancestries: [Dwarf]
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-call-on-ancient-blood
+        trigger: SaveWouldFail
+        saveBonus: 1
+        trait: Magical
 
 - type: cfHeritage
   id: DeathWardenDwarf
@@ -15,6 +22,8 @@
   grants:
     - !type:CFGrantSaveUpgrade
       trait: Void
+    - !type:CFGrantSaveUpgrade
+      trait: Undead
 
 - type: cfHeritage
   id: ForgeDwarf
@@ -25,12 +34,19 @@
     - !type:CFGrantResistance
       damageType: Fire
       halfLevel: true
+    - !type:CFGrantTemperatureTolerance
+      heat: 1
 
 - type: cfHeritage
   id: RockDwarf
   name: cf-heritage-rock-dwarf
   description: cf-heritage-rock-dwarf-desc
   ancestries: [Dwarf]
+  grants:
+    - !type:CFGrantBonus
+      stat: ManeuverDc
+      type: Circumstance
+      value: 2
 
 - type: cfHeritage
   id: StrongBloodedDwarf
@@ -41,6 +57,8 @@
     - !type:CFGrantResistance
       damageType: Poison
       halfLevel: true
+    - !type:CFGrantOption
+      option: StrongBlooded
 
 - type: cfHeritage
   id: AncientElf
@@ -57,6 +75,8 @@
     - !type:CFGrantResistance
       damageType: Cold
       halfLevel: true
+    - !type:CFGrantTemperatureTolerance
+      cold: 1
 
 - type: cfHeritage
   id: CavernElf
@@ -79,18 +99,30 @@
   name: cf-heritage-whisper-elf
   description: cf-heritage-whisper-elf-desc
   ancestries: [Elf]
+  grants:
+    - !type:CFGrantSeek
+      bonus: 2
+      rangeFeet: 30
+      hiddenFlatDc: 9
+      concealedFlatDc: 3
 
 - type: cfHeritage
   id: WoodlandElf
   name: cf-heritage-woodland-elf
   description: cf-heritage-woodland-elf-desc
   ancestries: [Elf]
+  grants:
+    - !type:CFGrantClimb
+      successIsCritical: true
 
 - type: cfHeritage
   id: ChameleonGnome
   name: cf-heritage-chameleon-gnome
   description: cf-heritage-chameleon-gnome-desc
   ancestries: [Gnome]
+  grants:
+    - !type:CFGrantAction
+      action: CFActShiftColors
 
 - type: cfHeritage
   id: FeyTouchedGnome
@@ -110,6 +142,9 @@
   grants:
     - !type:CFGrantSense
       sense: Scent
+      rangeFeet: 30
+    - !type:CFGrantSeek
+      bonus: 2
       rangeFeet: 30
 
 - type: cfHeritage
@@ -140,6 +175,8 @@
     - !type:CFGrantResistance
       damageType: Fire
       halfLevel: true
+    - !type:CFGrantOption
+      option: EasierBurning
 
 - type: cfHeritage
   id: IrongutGoblin
@@ -167,6 +204,8 @@
     - !type:CFGrantResistance
       damageType: Cold
       halfLevel: true
+    - !type:CFGrantTemperatureTolerance
+      cold: 1
 
 - type: cfHeritage
   id: UnbreakableGoblin
@@ -174,6 +213,9 @@
   description: cf-heritage-unbreakable-goblin-desc
   ancestries: [Goblin]
   hitPoints: 10
+  grants:
+    - !type:CFGrantSafeFall
+      halfDistance: true
 
 - type: cfHeritage
   id: GutsyHalfling
@@ -196,6 +238,9 @@
   description: cf-heritage-jinxed-halfling-desc
   rarity: Uncommon
   ancestries: [Halfling]
+  grants:
+    - !type:CFGrantAction
+      action: CFActJinx
 
 - type: cfHeritage
   id: NomadicHalfling
@@ -234,6 +279,9 @@
   name: cf-heritage-versatile-human
   description: cf-heritage-versatile-human-desc
   ancestries: [Human]
+  choices:
+    - kind: Feat
+      featSlot: GeneralFeat
 
 - type: cfHeritage
   id: CactusLeshy
@@ -251,6 +299,9 @@
   name: cf-heritage-fruit-leshy
   description: cf-heritage-fruit-leshy-desc
   ancestries: [Leshy]
+  grants:
+    - !type:CFGrantAction
+      action: CFActGrowFruit
 
 - type: cfHeritage
   id: FungusLeshy
@@ -258,6 +309,10 @@
   description: cf-heritage-fungus-leshy-desc
   ancestries: [Leshy]
   darkvision: true
+  grants:
+    - !type:CFGrantTrait
+      add: [Fungus]
+      remove: [Plant]
 
 - type: cfHeritage
   id: GourdLeshy
@@ -285,6 +340,11 @@
   description: cf-heritage-root-leshy-desc
   ancestries: [Leshy]
   hitPoints: 10
+  grants:
+    - !type:CFGrantBonus
+      stat: ManeuverDc
+      type: Circumstance
+      value: 2
 
 - type: cfHeritage
   id: SeaweedLeshy
@@ -298,6 +358,9 @@
   name: cf-heritage-badlands-orc
   description: cf-heritage-badlands-orc-desc
   ancestries: [Orc]
+  grants:
+    - !type:CFGrantTemperatureTolerance
+      heat: 1
 
 - type: cfHeritage
   id: BattleReadyOrc
@@ -306,12 +369,18 @@
   ancestries: [Orc]
   trainedSkills:
   - Intimidation
+  grants:
+    - !type:CFGrantFeat
+      feat: CFIntimidatingGlare
 
 - type: cfHeritage
   id: DeepOrc
   name: cf-heritage-deep-orc
   description: cf-heritage-deep-orc-desc
   ancestries: [Orc]
+  grants:
+    - !type:CFGrantFeat
+      feat: CFCombatClimber
 
 - type: cfHeritage
   id: GraveOrc
@@ -339,6 +408,9 @@
   description: cf-heritage-hold-scarred-orc-desc
   ancestries: [Orc]
   hitPoints: 12
+  grants:
+    - !type:CFGrantFeat
+      feat: CFDiehard
 
 - type: cfHeritage
   id: RainfallOrc
@@ -351,6 +423,8 @@
       type: Circumstance
       value: 1
       trait: Disease
+    - !type:CFGrantClimb
+      bonus: 2
 
 - type: cfHeritage
   id: WinterOrc
@@ -359,6 +433,9 @@
   ancestries: [Orc]
   trainedSkills:
   - Survival
+  grants:
+    - !type:CFGrantTemperatureTolerance
+      cold: 1
 
 - type: cfHeritage
   id: ClawedCatfolk
@@ -402,12 +479,21 @@
   name: cf-heritage-nine-lives-catfolk
   description: cf-heritage-nine-lives-catfolk-desc
   ancestries: [Catfolk]
+  grants:
+    - !type:CFGrantFeat
+      feat: CFDiehard
+    - !type:CFGrantOption
+      option: NineLives
 
 - type: cfHeritage
   id: SharpEaredCatfolk
   name: cf-heritage-sharp-eared-catfolk
   description: cf-heritage-sharp-eared-catfolk-desc
   ancestries: [Catfolk]
+  grants:
+    - !type:CFGrantSeek
+      bonus: 2
+      rangeFeet: 30
 
 - type: cfHeritage
   id: WinterCatfolk
@@ -418,24 +504,45 @@
     - !type:CFGrantResistance
       damageType: Cold
       halfLevel: true
+    - !type:CFGrantTemperatureTolerance
+      cold: 1
 
 - type: cfHeritage
   id: ElfbaneHobgoblin
   name: cf-heritage-elfbane-hobgoblin
   description: cf-heritage-elfbane-hobgoblin-desc
   ancestries: [Hobgoblin]
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-resist-elf-magic
+        trigger: SaveWouldFail
+        saveBonus: 2
+        trait: Arcane
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-resist-elf-magic
+        trigger: SaveWouldFail
+        saveBonus: 1
+        trait: Magical
 
 - type: cfHeritage
   id: RuntbossHobgoblin
   name: cf-heritage-runtboss-hobgoblin
   description: cf-heritage-runtboss-hobgoblin-desc
   ancestries: [Hobgoblin]
+  grants:
+    - !type:CFGrantFeat
+      feat: CFGroupCoercion
 
 - type: cfHeritage
   id: ShortshanksHobgoblin
   name: cf-heritage-shortshanks-hobgoblin
   description: cf-heritage-shortshanks-hobgoblin-desc
   ancestries: [Hobgoblin]
+  grants:
+    - !type:CFGrantFeat
+      feat: CFRide
 
 - type: cfHeritage
   id: SmokeworkerHobgoblin
@@ -458,6 +565,11 @@
   name: cf-heritage-warrenbred-hobgoblin
   description: cf-heritage-warrenbred-hobgoblin-desc
   ancestries: [Hobgoblin]
+  grants:
+    - !type:CFGrantSeek
+      rangeFeet: 30
+      hiddenFlatDc: 9
+      concealedFlatDc: 3
 
 - type: cfHeritage
   id: AntKholo
@@ -480,6 +592,12 @@
   name: cf-heritage-dog-kholo
   description: cf-heritage-dog-kholo-desc
   ancestries: [Kholo]
+  grants:
+    - !type:CFGrantWhile
+      while: HandsFree
+      stat: Speed
+      type: Untyped
+      value: 5
 
 - type: cfHeritage
   id: GreatKholo
@@ -487,6 +605,11 @@
   description: cf-heritage-great-kholo-desc
   ancestries: [Kholo]
   hitPoints: 10
+  grants:
+    - !type:CFGrantBonus
+      stat: Maneuvers
+      type: Circumstance
+      value: 1
 
 - type: cfHeritage
   id: SweetbreathKholo
@@ -505,6 +628,8 @@
     - !type:CFGrantResistance
       damageType: Cold
       halfLevel: true
+    - !type:CFGrantTemperatureTolerance
+      cold: 1
 
 - type: cfHeritage
   id: WitchKholo
@@ -520,6 +645,9 @@
   name: cf-heritage-cavernstalker-kobold
   description: cf-heritage-cavernstalker-kobold-desc
   ancestries: [Kobold]
+  grants:
+    - !type:CFGrantClimb
+      successIsCritical: true
 
 - type: cfHeritage
   id: DragonscaledKobold
@@ -527,12 +655,29 @@
   description: cf-heritage-dragonscaled-kobold-desc
   ancestries: [Kobold]
   hitPoints: 10
+  grants:
+    - !type:CFGrantBonus
+      stat: Saves
+      type: Circumstance
+      value: 1
+      trait: Sleep
+    - !type:CFGrantBonus
+      stat: Saves
+      type: Circumstance
+      value: 1
+      trait: Dragon
 
 - type: cfHeritage
   id: ElementheartKobold
   name: cf-heritage-elementheart-kobold
   description: cf-heritage-elementheart-kobold-desc
   ancestries: [Kobold]
+  grants:
+    - !type:CFGrantChosenResistance
+      halfLevel: true
+  choices:
+    - kind: DamageType
+      damageTypes: [Cold, Electricity, Fire, Sonic, Acid, Poison]
 
 - type: cfHeritage
   id: SpellhornKobold
@@ -566,12 +711,20 @@
   name: cf-heritage-venomtail-kobold
   description: cf-heritage-venomtail-kobold-desc
   ancestries: [Kobold]
+  grants:
+    - !type:CFGrantAction
+      action: CFActTailToxin
 
 - type: cfHeritage
   id: CliffscaleLizardfolk
   name: cf-heritage-cliffscale-lizardfolk
   description: cf-heritage-cliffscale-lizardfolk-desc
   ancestries: [Lizardfolk]
+  grants:
+    - !type:CFGrantFeat
+      feat: CFCombatClimber
+    - !type:CFGrantClimb
+      successIsCritical: true
 
 - type: cfHeritage
   id: CloudleaperLizardfolk
@@ -596,12 +749,18 @@
     - !type:CFGrantResistance
       damageType: Fire
       halfLevel: true
+    - !type:CFGrantTemperatureTolerance
+      heat: 1
+      cold: -1
 
 - type: cfHeritage
   id: UnseenLizardfolk
   name: cf-heritage-unseen-lizardfolk
   description: cf-heritage-unseen-lizardfolk-desc
   ancestries: [Lizardfolk]
+  grants:
+    - !type:CFGrantAction
+      action: CFActShiftColors
 
 - type: cfHeritage
   id: WetlanderLizardfolk
@@ -614,6 +773,9 @@
   name: cf-heritage-woodstalker-lizardfolk
   description: cf-heritage-woodstalker-lizardfolk-desc
   ancestries: [Lizardfolk]
+  grants:
+    - !type:CFGrantFeat
+      feat: CFTerrainStalker
 
 - type: cfHeritage
   id: DeepRat
@@ -627,6 +789,15 @@
   name: cf-heritage-desert-rat
   description: cf-heritage-desert-rat-desc
   ancestries: [Ratfolk]
+  grants:
+    - !type:CFGrantTemperatureTolerance
+      heat: 1
+      cold: -1
+    - !type:CFGrantWhile
+      while: HandsFree
+      stat: Speed
+      type: Untyped
+      value: 5
 
 - type: cfHeritage
   id: LongsnoutRat
@@ -636,6 +807,9 @@
   grants:
     - !type:CFGrantSense
       sense: Scent
+      rangeFeet: 30
+    - !type:CFGrantSeek
+      bonus: 2
       rangeFeet: 30
 
 - type: cfHeritage
@@ -676,18 +850,27 @@
     - !type:CFGrantResistance
       damageType: Cold
       halfLevel: true
+    - !type:CFGrantTemperatureTolerance
+      cold: 1
 
 - type: cfHeritage
   id: TunnelRat
   name: cf-heritage-tunnel-rat
   description: cf-heritage-tunnel-rat-desc
   ancestries: [Ratfolk]
+  grants:
+    - !type:CFGrantFeat
+      feat: CFQuickSqueeze
 
 - type: cfHeritage
   id: DogtoothTengu
   name: cf-heritage-dogtooth-tengu
   description: cf-heritage-dogtooth-tengu-desc
   ancestries: [Tengu]
+  grants:
+    - !type:CFGrantUnarmedAttack
+      traitsOnly: true
+      deadly: 8
 
 - type: cfHeritage
   id: JinxedTengu
@@ -738,6 +921,7 @@
       damageType: Slashing
       finesse: true
       agile: true
+      versatile: Piercing
 
 - type: cfHeritage
   id: WavediverTengu
@@ -750,6 +934,17 @@
   name: cf-heritage-poisonhide-tripkee
   description: cf-heritage-poisonhide-tripkee-desc
   ancestries: [Tripkee]
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-toxic-skin
+        trigger: Damaged
+        meleeOnly: true
+        onEnemy:
+          - !type:CFDamageEffect
+            dice: 1
+            die: 4
+            damageType: Poison
 
 - type: cfHeritage
   id: RiversideTripkee
@@ -768,6 +963,13 @@
   name: cf-heritage-stickytoe-tripkee
   description: cf-heritage-stickytoe-tripkee-desc
   ancestries: [Tripkee]
+  grants:
+    - !type:CFGrantBonus
+      stat: ManeuverDc
+      type: Circumstance
+      value: 2
+    - !type:CFGrantClimb
+      successIsCritical: true
 
 - type: cfHeritage
   id: ThickskinTripkee
@@ -812,6 +1014,8 @@
     - !type:CFGrantResistance
       damageType: Cold
       halfLevel: true
+    - !type:CFGrantTemperatureTolerance
+      cold: 1
 
 - type: cfHeritage
   id: InuredAzarketi
@@ -846,6 +1050,12 @@
   name: cf-heritage-spined-azarketi
   description: cf-heritage-spined-azarketi-desc
   ancestries: [Azarketi]
+  grants:
+    - !type:CFGrantUnarmedAttack
+      die: 6
+      damageType: Piercing
+      finesse: true
+      agile: false
 
 - type: cfHeritage
   id: TactileAzarketi
@@ -860,6 +1070,9 @@
   ancestries: [Android]
   trainedSkills:
   - Crafting
+  grants:
+    - !type:CFGrantFeat
+      feat: CFSpecialtyCrafting
 
 - type: cfHeritage
   id: ImpersonatorAndroid
@@ -876,12 +1089,18 @@
   ancestries: [Android]
   trainedSkills:
   - Athletics
+  grants:
+    - !type:CFGrantFeat
+      feat: CFHeftyHauler
 
 - type: cfHeritage
   id: PolyglotAndroid
   name: cf-heritage-polyglot-android
   description: cf-heritage-polyglot-android-desc
   ancestries: [Android]
+  choices:
+    - kind: Language
+      count: 2
 
 - type: cfHeritage
   id: WarriorAndroid
@@ -912,6 +1131,10 @@
   name: cf-heritage-liminal-fetchling
   description: cf-heritage-liminal-fetchling-desc
   ancestries: [Fetchling]
+  grants:
+    - !type:CFGrantSeek
+      bonus: 2
+      rangeFeet: 60
 
 - type: cfHeritage
   id: ResoluteFetchling
@@ -927,6 +1150,9 @@
   name: cf-heritage-wisp-fetchling
   description: cf-heritage-wisp-fetchling-desc
   ancestries: [Fetchling]
+  grants:
+    - !type:CFGrantAction
+      action: CFActShadowBlur
 
 - type: cfHeritage
   id: CreatedFleshwarp
@@ -939,6 +1165,13 @@
   name: cf-heritage-mutated-fleshwarp
   description: cf-heritage-mutated-fleshwarp-desc
   ancestries: [Fleshwarp]
+  grants:
+    - !type:CFGrantBonus
+      stat: ManeuverDc
+      type: Circumstance
+      value: 1
+    - !type:CFGrantClimb
+      bonus: 1
 
 - type: cfHeritage
   id: ShapewroughtFleshwarp
@@ -951,6 +1184,10 @@
   name: cf-heritage-technological-fleshwarp
   description: cf-heritage-technological-fleshwarp-desc
   ancestries: [Fleshwarp]
+  grants:
+    - !type:CFGrantResistance
+      damageType: Electricity
+      halfLevel: true
 
 - type: cfHeritage
   id: CelestialEnvoyKitsune
@@ -990,6 +1227,8 @@
     - !type:CFGrantResistance
       damageType: Cold
       halfLevel: true
+    - !type:CFGrantTemperatureTolerance
+      cold: 1
 
 - type: cfHeritage
   id: Draxie
@@ -1021,6 +1260,10 @@
   description: cf-heritage-nyktera-desc
   ancestries: [Sprite]
   darkvision: true
+  grants:
+    - !type:CFGrantSeek
+      bonus: 2
+      rangeFeet: 30
 
 - type: cfHeritage
   id: Pixie
@@ -1055,6 +1298,9 @@
   ancestries: [Strix]
   trainedSkills:
   - Survival
+  grants:
+    - !type:CFGrantFeat
+      feat: CFForager
 
 - type: cfHeritage
   id: ShorelineStrix
@@ -1144,6 +1390,8 @@
     - !type:CFGrantResistance
       damageType: Fire
       halfLevel: true
+    - !type:CFGrantTemperatureTolerance
+      heat: 1
 
 - type: cfHeritage
   id: Oread
@@ -1160,12 +1408,22 @@
   name: cf-heritage-suli
   description: cf-heritage-suli-desc
   rarity: Uncommon
+  grants:
+    - !type:CFGrantChosenResistance
+      halfLevel: true
+  choices:
+    - kind: DamageType
+      damageTypes: [Acid, Cold, Electricity, Fire, Sonic]
 
 - type: cfHeritage
   id: Sylph
   name: cf-heritage-sylph
   description: cf-heritage-sylph-desc
   rarity: Uncommon
+  grants:
+    - !type:CFGrantSense
+      sense: LowLightVision
+  upgradeVision: true
 
 - type: cfHeritage
   id: Undine

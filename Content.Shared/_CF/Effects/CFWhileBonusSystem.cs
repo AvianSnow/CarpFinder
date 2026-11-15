@@ -1,6 +1,7 @@
 using Content.Shared.CF.Actions;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Items;
+using Content.Shared.Hands.EntitySystems;
 using Robust.Shared.Network;
 using Robust.Shared.Timing;
 
@@ -22,6 +23,7 @@ public sealed partial class CFWhileBonusSystem : EntitySystem
     [Dependency] private CFImplementSystem _implements = default!;
     [Dependency] private CFTacticSystem _tactics = default!;
     [Dependency] private CFInventorSystem _inventor = default!;
+    [Dependency] private SharedHandsSystem _hands = default!;
 
     public void Add(EntityUid uid, CFWhileBonus bonus)
     {
@@ -89,6 +91,7 @@ public sealed partial class CFWhileBonusSystem : EntitySystem
             CFBonusWhile.HasBanner => _tactics.HasBanner(uid),
             CFBonusWhile.WearingInnovation => _inventor.IsWearing(uid),
             CFBonusWhile.Overdriven => _inventor.IsOverdriven(uid),
+            CFBonusWhile.HandsFree => _hands.CountFreeHands(uid) >= 2,
             _ => false,
         };
     }

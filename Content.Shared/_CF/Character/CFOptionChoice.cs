@@ -1,3 +1,4 @@
+using Content.Shared.CF.DamageTypes;
 using Content.Shared.CF.Preferences;
 using Robust.Shared.Prototypes;
 
@@ -18,6 +19,12 @@ public enum CFOptionChoiceKind : byte
 
     /// <summary>One of the build's spells of <see cref="CFOptionChoice.SpellRank"/>, which can then be cast at any rank.</summary>
     SignatureSpell,
+
+    /// <summary>A feat of the player's choice, from the slot <see cref="CFOptionChoice.FeatSlot"/> takes, of <see cref="CFOptionChoice.FeatLevel"/> or lower.</summary>
+    Feat,
+
+    /// <summary>One of <see cref="CFOptionChoice.DamageTypes"/>, read by a grant such as <c>CFGrantChosenResistance</c>.</summary>
+    DamageType,
 }
 
 /// <summary>
@@ -49,4 +56,16 @@ public sealed partial class CFOptionChoice
     /// <summary>The rank a <see cref="CFOptionChoiceKind.SignatureSpell"/> choice picks from.</summary>
     [DataField]
     public int SpellRank;
+
+    /// <summary>What kind of feat a <see cref="CFOptionChoiceKind.Feat"/> choice offers: a general, skill, class or ancestry feat.</summary>
+    [DataField]
+    public CFLevelSlot FeatSlot = CFLevelSlot.GeneralFeat;
+
+    /// <summary>The highest feat level a <see cref="CFOptionChoiceKind.Feat"/> choice offers.</summary>
+    [DataField]
+    public int FeatLevel = 1;
+
+    /// <summary>What a <see cref="CFOptionChoiceKind.DamageType"/> choice can be answered with.</summary>
+    [DataField]
+    public List<ProtoId<CFDamageTypePrototype>> DamageTypes = new();
 }

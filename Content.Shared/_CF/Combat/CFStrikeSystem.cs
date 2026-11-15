@@ -422,7 +422,14 @@ public sealed partial class CFStrikeSystem : EntitySystem
             var die = opt.PowerfulFist ? Math.Max(opt.NaturalDie, 6) : opt.NaturalDie;
             var dice = Math.Max(1, opt.NaturalDice);
             var type = string.IsNullOrEmpty(opt.NaturalType) ? CFMelee.UnarmedDamageType : opt.NaturalType;
-            var traits = new CFWeaponTraits { Agile = opt.NaturalAgile, Finesse = opt.NaturalFinesse, Unarmed = true };
+            var traits = new CFWeaponTraits
+            {
+                Agile = opt.NaturalAgile,
+                Finesse = opt.NaturalFinesse,
+                Unarmed = true,
+                Deadly = opt.NaturalDeadly,
+                Versatile = opt.NaturalVersatile.Length > 0 ? new[] { opt.NaturalVersatile } : Array.Empty<string>(),
+            };
             return new CFStrikeWeaponStats(dice, die, type, proficiency, traits);
         }
 
@@ -853,6 +860,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
                     Dirty(target, defender);
                     MirrorToSs14(user, target, defender, damage, rolled.DamageType, isObject);
                     RaiseDamaged(target, user, damage);
+                    ApplyTailToxin(user, target, style, rolled.DamageType, isObject);
                 }
 
                 if (!isObject && defender.CurrentHp <= 0)
@@ -1099,6 +1107,23 @@ public sealed partial class CFStrikeSystem : EntitySystem
         {
             _effects.DealDamage(user, uid, weapon.DamageDice, weapon.DamageType, critical: false);
         }
+    }
+
+    /// <summary>Tail Toxin: the next piercing or slashing hit after the action deals persistent poison equal to the level.</summary>
+    private void ApplyTailToxin(EntityUid user, EntityUid target, CFCombatOptionsComponent? style, string damageType, bool isObject)
+    {
+        if (style == null || isObject || _timing.CurTime >= style.TailToxinUntil)
+            return;
+
+        if (!string.Equals(damageType, "Piercing", StringComparison.OrdinalIgnoreCase)
+            && !string.Equals(damageType, "Slashing", StringComparison.OrdinalIgnoreCase))
+            return;
+
+        style.TailToxinUntil = TimeSpan.Zero;
+        Dirty(user, style);
+        var level = CompOrNull<CFCombatantComponent>(user)?.Level ?? 1;
+        _bonuses.AddPersistent(target, "Poison", 0, 0, Math.Max(1, level), user);
+        _popup.PopupEntity(Loc.GetString("cf-act-tail-toxin-hit"), target);
     }
 
     private void YoureNext(EntityUid user, EntityUid downed)

@@ -61,9 +61,31 @@ public static class CFOptionChoices
         return $"class:{cls.ID}:{feature.Name}";
     }
 
-    /// <summary>The ids a choice can be answered with. A signature spell needs <paramref name="build"/>, to see what it knows.</summary>
-    public static List<string> Allowed(IPrototypeManager prototypes, CFOptionChoice choice, CFCharacterBuildData? build = null)
+    /// <summary>
+    /// The ids a choice can be answered with. A signature spell needs <paramref name="build"/>, to see what it knows, and a feat
+    /// needs it to see what it qualifies for, with <paramref name="ancestryId"/>.
+    /// </summary>
+    public static List<string> Allowed(IPrototypeManager prototypes, CFOptionChoice choice, CFCharacterBuildData? build = null, string? ancestryId = null)
     {
+        if (choice.Kind == CFOptionChoiceKind.Feat)
+        {
+            var feats = new List<string>();
+            if (build == null)
+                return feats;
+
+            foreach (var feat in prototypes.EnumeratePrototypes<CFFeatPrototype>())
+            {
+                if (FeatFits(choice, feat, build.Class?.Id, ancestryId)
+                    && CFSkills.Qualifies(prototypes, build, ancestryId, feat, choice.FeatLevel)
+                    && (choice.FeatSlot != CFLevelSlot.ClassFeat || CFClassChoices.MeetsRequirement(prototypes, build, feat)))
+                {
+                    feats.Add(feat.ID);
+                }
+            }
+
+            return feats;
+        }
+
         if (choice.Kind == CFOptionChoiceKind.SignatureSpell)
         {
             var known = new List<string>();
@@ -87,6 +109,9 @@ public static class CFOptionChoices
 
         if (choice.Kind == CFOptionChoiceKind.WeaponGroup)
             return Enum.GetNames<CFWeaponGroup>().ToList();
+
+        if (choice.Kind == CFOptionChoiceKind.DamageType)
+            return choice.DamageTypes.Select(type => type.Id).ToList();
 
         if (choice.Kind == CFOptionChoiceKind.Language)
             return CFLanguageRules.Pickable(prototypes, null).Select(language => language.ID).ToList();
@@ -112,16 +137,38 @@ public static class CFOptionChoices
             .ToList();
     }
 
+    /// <summary>Whether a feat is of the kind and level a <see cref="CFOptionChoiceKind.Feat"/> choice offers. Prerequisites are not checked here.</summary>
+    public static bool FeatFits(CFOptionChoice choice, CFFeatPrototype feat, string? classId, string? ancestryId)
+    {
+        return choice.FeatSlot switch
+        {
+            CFLevelSlot.ClassFeat => feat.FitsClass(classId, choice.FeatLevel),
+            CFLevelSlot.AncestryFeat => feat.Fits(ancestryId, choice.FeatLevel),
+            CFLevelSlot.SkillFeat or CFLevelSlot.BonusSkillFeat => feat.FitsSkillSlot(choice.FeatLevel),
+            _ => feat.FitsGeneralSlot(choice.FeatLevel),
+        };
+    }
+
     /// <summary>The build's answers that fit something it has. The same answer cannot fill two slots of one option.</summary>
-    public static List<CFOptionPick> Valid(IPrototypeManager prototypes, CFCharacterBuildData build, string? ancestryId)
+    /// <param name="checkFeats">
+    /// Whether a feat pick has to qualify, which reads the build's skill ranks. Reading those ranks comes back here for the skills
+    /// the picks train, so that path passes false and takes a feat pick of the right kind as it is.
+    /// </param>
+    public static List<CFOptionPick> Valid(IPrototypeManager prototypes, CFCharacterBuildData build, string? ancestryId, bool checkFeats = true)
     {
         var result = new List<CFOptionPick>();
         foreach (var slot in Slots(prototypes, build, ancestryId))
         {
             var pick = build.OptionPicks.FirstOrDefault(p => p.Source == slot.Source && p.Slot == slot.Slot);
-            if (pick == null
-                || !Allowed(prototypes, slot.Choice, build).Contains(pick.Value)
-                || result.Exists(other => other.Source == pick.Source && other.Value == pick.Value))
+            if (pick == null || result.Exists(other => other.Source == pick.Source && other.Value == pick.Value))
+                continue;
+
+            if (slot.Choice.Kind == CFOptionChoiceKind.Feat && !checkFeats)
+            {
+                if (!prototypes.TryIndex<CFFeatPrototype>(pick.Value, out var feat) || !FeatFits(slot.Choice, feat, build.Class?.Id, ancestryId))
+                    continue;
+            }
+            else if (!Allowed(prototypes, slot.Choice, build, ancestryId).Contains(pick.Value))
             {
                 continue;
             }
@@ -136,7 +183,7 @@ public static class CFOptionChoices
     public static List<string> TrainedSkills(IPrototypeManager prototypes, CFCharacterBuildData build, string? ancestryId, int level)
     {
         var result = new List<string>();
-        var picks = Valid(prototypes, build, ancestryId);
+        var picks = Valid(prototypes, build, ancestryId, checkFeats: false);
         foreach (var slot in Slots(prototypes, build, ancestryId, level))
         {
             if (slot.Choice.Kind != CFOptionChoiceKind.Skill)

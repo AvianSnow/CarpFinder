@@ -14,6 +14,9 @@ public enum CFActivityKind : byte
     ConstructTrap,
     SpellstrikeRecharge,
     MagusAnalysis,
+
+    /// <summary>Venomtail Kobold: the next piercing or slashing hit within 6 seconds deals persistent poison.</summary>
+    TailToxin,
 }
 
 /// <summary>

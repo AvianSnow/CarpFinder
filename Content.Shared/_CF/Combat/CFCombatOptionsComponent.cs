@@ -199,6 +199,18 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public bool HeftyHauler;
 
+    /// <summary>Nine Lives Catfolk: the dying value does not raise the recovery check's DC.</summary>
+    [DataField, AutoNetworkedField]
+    public bool NineLives;
+
+    /// <summary>The Guardian's Tough to Kill: once a day, the first time dying would reach 3 or more it stays at 2.</summary>
+    [DataField, AutoNetworkedField]
+    public bool ToughToKill;
+
+    /// <summary>Whether Tough to Kill has been used since the last long rest.</summary>
+    [DataField, AutoNetworkedField]
+    public bool ToughToKillUsed;
+
     /// <summary>Recovery checks are 1 easier.</summary>
     [DataField, AutoNetworkedField]
     public bool Toughness;
@@ -303,6 +315,38 @@ public sealed partial class CFCombatOptionsComponent : Component
 
     [DataField, AutoNetworkedField]
     public bool NaturalAgile = true;
+
+    /// <summary>The deadly die of the natural attack, or 0.</summary>
+    [DataField, AutoNetworkedField]
+    public int NaturalDeadly;
+
+    /// <summary>A damage type the natural attack can deal instead (the versatile trait), or empty.</summary>
+    [DataField, AutoNetworkedField]
+    public string NaturalVersatile = "";
+
+    /// <summary>Strong-Blooded Dwarf: a successful save against a poison lowers its stage by one more.</summary>
+    [DataField, AutoNetworkedField]
+    public bool StrongBlooded;
+
+    /// <summary>The flat check DC to end persistent fire damage, or 0 for the usual 15 (Charhide Goblin: 10).</summary>
+    [DataField, AutoNetworkedField]
+    public int PersistentFireDc;
+
+    /// <summary>A circumstance bonus to Athletics checks to Climb.</summary>
+    [DataField, AutoNetworkedField]
+    public int ClimbBonus;
+
+    /// <summary>A climb Speed: climbing is a plain move, with no check.</summary>
+    [DataField, AutoNetworkedField]
+    public bool ClimbSpeed;
+
+    /// <summary>A success on a check to Climb is a critical success.</summary>
+    [DataField, AutoNetworkedField]
+    public bool ClimbSuccessCritical;
+
+    /// <summary>Venomtail Kobold: until this time, the next Strike that hits with a piercing or slashing weapon poisons.</summary>
+    [DataField, AutoNetworkedField]
+    public TimeSpan TailToxinUntil;
 }
 
 /// <summary>One reaction per full action pool. The value is which reaction was spent.</summary>
@@ -375,6 +419,10 @@ public enum CFCombatOption : byte
     RagingThrower,
     Diehard,
     HeftyHauler,
+    NineLives,
+    ToughToKill,
+    StrongBlooded,
+    EasierBurning,
     Toughness,
     SecondWind,
     CrushingGrab,

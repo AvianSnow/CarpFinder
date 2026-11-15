@@ -14,6 +14,9 @@ public enum CFBonusWhile : byte
     HasBanner,
     WearingInnovation,
     Overdriven,
+
+    /// <summary>Both hands empty, as a Dog Kholo running on all fours.</summary>
+    HandsFree,
 }
 
 /// <summary>A lasting bonus that only counts while the creature is in a state. See <see cref="CFWhileBonusSystem"/>.</summary>

@@ -169,7 +169,10 @@ public sealed partial class CFOutdoorsWorldSystem : EntitySystem
             heat |= gear.Kind == CFTemperatureGearKind.Heat;
         }
 
-        return CFEnvironmentRules.Felt(band, cold, heat, _armor.TryGetWornArmor(uid, out _));
+        var felt = CFEnvironmentRules.Felt(band, cold, heat, _armor.TryGetWornArmor(uid, out _));
+        return TryComp(uid, out CFTemperatureToleranceComponent? tolerance)
+            ? CFEnvironmentRules.Eased(felt, tolerance.HeatSteps, tolerance.ColdSteps)
+            : felt;
     }
 
     private void ApplyWeather(CFWeatherEffectsComponent effects, EntityUid map)

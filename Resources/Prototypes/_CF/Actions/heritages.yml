@@ -1,0 +1,102 @@
+# Actions heritages give. Granted with CFGrantAction. Daily ones carry CFDailyUses, and a long rest gives them back.
+
+# Chameleon Gnome, Unseen Lizardfolk: shift your colors to match the surroundings.
+- type: entity
+  parent: CFActivityInstant
+  id: CFActShiftColors
+  name: Shift Colors
+  description: Shift your coloring to match the surroundings. +2 circumstance bonus to Stealth for 10 minutes.
+  components:
+  - type: CFEffectAction
+  - type: CFTrait
+    traits:
+    - Concentrate
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFBonusEffect
+      stat: SkillChecks
+      type: Circumstance
+      value: 2
+      skill: Stealth
+      durationSeconds: 600
+      popup: cf-act-shift-colors-popup
+
+# Jinxed Halfling: once a day, curse a creature with clumsiness.
+- type: entity
+  parent: CFActivityTarget
+  id: CFActJinx
+  name: Jinx
+  description: Two actions, once a day. A creature within 30 feet makes a Will save against your class DC. On a failure it is clumsy 1 for a minute, clumsy 2 on a critical failure.
+  components:
+  - type: TargetAction
+    range: 6.25
+  - type: CFRadialSlot
+    group: Action
+    actions: 2
+  - type: CFDailyUses
+  - type: CFTrait
+    traits:
+    - Curse
+    - Occult
+  - type: CFEffectAction
+  - type: CFCheck
+    defense: Will
+    dcSource: Class
+  - type: CFDegreeEffects
+    failure:
+    - !type:CFApplyConditionEffect
+      condition: Clumsy
+      value: 1
+      durationSeconds: 60
+    criticalFailure:
+    - !type:CFApplyConditionEffect
+      condition: Clumsy
+      value: 2
+      durationSeconds: 60
+
+# Venomtail Kobold: once a day, venom on a piercing or slashing weapon.
+- type: entity
+  parent: CFActivityInstant
+  id: CFActTailToxin
+  name: Tail Toxin
+  description: Once a day. Your next Strike within 6 seconds that hits with a piercing or slashing weapon deals persistent poison damage equal to your level.
+  components:
+  - type: CFActivity
+    kind: TailToxin
+  - type: CFDailyUses
+  - type: CFTrait
+    traits:
+    - Manipulate
+
+# Wisp Fetchling: once a day, blur into shadow.
+- type: entity
+  parent: CFActivityInstant
+  id: CFActShadowBlur
+  name: Shadow Blur
+  description: Once a day. You blur into shadow and are concealed for 6 seconds.
+  components:
+  - type: CFEffectAction
+  - type: CFDailyUses
+  - type: CFTrait
+    traits:
+    - Concentrate
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFApplyConditionEffect
+      condition: Concealed
+      durationSeconds: 6
+
+# Fruit Leshy: a fruit grows each day.
+- type: entity
+  parent: CFActivityInstant
+  id: CFActGrowFruit
+  name: Grow Fruit
+  description: Once a day. A fruit grows from your body and drops at your feet. Eaten, it restores 1d8 Hit Points.
+  components:
+  - type: CFEffectAction
+  - type: CFDailyUses
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFSpawnEffect
+      prototype: CFLeshyFruit
+      at: Target

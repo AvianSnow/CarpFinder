@@ -1,484 +1,368 @@
 # CarpFinder roadmap
 
-Ordered plan for the next stretch of work. Each step builds on the one before it. Tick items off as they land, and move finished work to `roadmapold.md`, which also holds the history of everything already built.
+The plan for the next stretch of work. Tick items off as they land, and move finished work to `roadmapold.md`, which holds the history of everything already built. Everything ticked off up to 15 November 2026 was moved there on that day.
 
 Source of rules: https://2e.aonprd.com/ (Remaster). Source of structure and assets: `C:\project\crystall-punk-14` (**read-only**: copy from it, never edit it).
 
-## Do first: thrown healing potions, 15 November
-
-Asked for on 15 November 2026. Built the same day. Tests: `CFSmashPotionTest`.
-
-- [x] A thrown healing potion breaks. On a living creature other than the thrower it heals them as if drunk, friend or enemy, with no roll and no action cost beyond the throw (`CFSmashPotion`, `CFSmashPotionSystem`).
-- [x] On a wall, an object or the floor it leaves a puddle that keeps the potion's healing for 5 minutes (`CFHealingPuddle`). A hurt creature lying prone on it is healed and the puddle is gone. Alt-click, Drink, does the same after 2 seconds. Mopping it up loses it. A second potion on the same puddle does not add up.
-- [ ] The Drink verb has no test, and nothing here has been seen in a real client: the throw, the break sound, the puddle.
-- [ ] A thrown potion always hits. There is no attack roll, so it cannot miss an ally who is moving.
-
-## Do first: spell visuals, 15 November
-
-Asked for on 15 November 2026: areas that can be seen. Built the same day. Tests: `CFAreaFillTest`, `CFToxicSpewTest`.
-
-- [x] `CFAreaFill` on any area source fills its tiles with a tile effect or puddles, nearest first (`CFAreaFillSystem`). It took over the breath's liquid flow: `CFBreathFlowSystem` is gone, and Toxic Spew uses `CFAreaFill` with `rolls: WhenFilled`.
-- [x] Fire: Fireball, Breathe Fire, Floating Flame and Earth's Bile leave flames for 2.5 seconds (`CFFillFlame`). They light the room and burn nothing. Swap the tile for `CFFire` for fire that burns and spreads.
-- [x] Grease leaves slick puddles for a minute. Everyone on them rolls as it is cast, then whoever moves faster than a walk, at most once every 3 seconds. A mopped puddle leaves the area.
-- [x] Lightning Bolt (sparks), Gust of Wind and Gale Blast (dust), and motes in the spell's colour for Bless, Bane, Calm, Telekinetic Rend, Discomfiting Whisper, Nymph's Grace and Garden of Healing.
-- [x] `!type:CFFillEffect` leaves something seen around one hit: Acid Splash an acid puddle, Hydraulic Push water. Meant for alchemical bombs too.
-- [x] A spell with a fill stops at walls, as the breath does. Spells without one still pass through them.
-- [ ] No bomb exists yet to use `CFFillEffect`. A lingering fill ends if its source is deleted, so a thrown bomb that should leave a zone with a save needs the zone to keep its own check and effects.
-- [ ] Bless and Bane are still one pulse, not an aura that follows the caster for a minute.
-- [ ] The three-action Heal and Harm emanations are not built, so they have no area to draw.
-- [ ] Thrall blasts (`CFThrallBlastEffect`) and nested areas do not draw anything.
-- [ ] Not seen in a real client: every one of these looks, and whether the walk threshold on grease feels right.
-
-## Do first: GOAP movement, 13 November
-
-Asked for on 13 November 2026: mobs moved twitchily. Built the same day. How it works is under "Moving smoothly" and "Companions" in `goap.md`. Tests: `CFGOAPMovementTest`, `CFGOAPSteeringMathTest`.
-
-- [x] Mobs aim between stock's 12 steering directions, so walking at an angle no longer zigzags (a marked edit in `NPCSteeringSystem`).
-- [x] Arriving slows down and stops, and a stopped mob stays put until its goal moves off. A mob that had stopped used to walk on, because stock keeps old interest.
-- [x] Idle: pick a spot inside the home range, walk there slowing down, rest 1.5 to 4 seconds, pick another.
-- [x] Attacking: closing slows down and stops just out of the target's body, inside reach. Melee is ready while closing, so it swings the moment it is in reach, and while striking it walks with a target that moves instead of waiting for the next think.
-- [x] Following: a companion keeps 1.5 tiles behind its master, walks at their pace, and stops behind them when they stop. Several fan out to the sides.
-- [x] Pointing is an order. At a creature: the companion is told where it is and is not leashed back while it lives. At the master: it drops the fight and ignores enemies until it is back.
-- [x] The safety circle pushed creatures off anything within about 1.67 tiles of another combatant, because it measured to the flanking sensor. It measures to bodies now.
-- [ ] Not seen in a real client: how any of this looks, and whether the rests and slowing distances feel right. They are profile fields (`arriveRadius`, `wanderRestMin`, `wanderRestMax`, `wanderDistance`).
-- [ ] A recalled companion ignores enemies even when hit on the way back. `StayAlive` can still make one run from an ordered target.
-- [ ] A companion's place behind its master only follows the way they walked. Teleporting or being pulled leaves it on its own side.
-
-## Do first: chasm edges, 13 November
-
-Asked for on 13 November 2026. Built the same day. Tests: `CFChasmEdgeTest`.
-
-- [x] Touching a chasm no longer drops a creature. Stock's step trigger counted the 2.5 tile flanking sensor as the body, so one pixel over the edge was a fall. A creature now slips only once its centre is over the hole (`CFChasmEdgeSystem`, `CFChasmEdge` on `FloorChasmEntity`).
-- [x] A slip pops up "Falling...", stops the creature, and makes it weightless for 4 seconds, so it drifts and can steer back onto solid ground. Getting its centre off the hole ends the slip.
-- [x] After 4 seconds still over the hole, it spends its reaction on Grab an Edge: a Reflex save against DC 10 (untrained). A success puts it on the nearest solid, unwalled tile within 10 feet with nothing in the way. A failure, no reaction left, being unconscious, or no ledge in reach falls as stock does. Players and monsters alike; items still drop at once.
-- [ ] A successful grab moves the creature straight onto the ledge. It is not a thrown leap with an arc, because a throw can land short and slip again.
-- [ ] NPCs do not steer themselves out during the slip. They rely on the save.
-- [ ] Grab an Edge does not check for bound hands.
-- [ ] Not seen in a real client: the drift, the popups, and the Weightless alert that shows while slipping.
-
-## Do first: Bard fixes, 13 November
-
-Asked for on 13 November 2026. Built the same day. Tests: `CFBardTest`, `CFSocialActionTest`, `CFAuraTest`.
-
-- [x] Auras are drawn as a ring on the owner's drawn position (`CFAuraOverlaySystem`), so they glide with the owner instead of jumping a tile at a time. Who is inside is the same circle on the server: a creature counts when its centre is within `CFAuraSystem.Radius` (the size, plus half the owner's square), not by tiles.
-- [x] Courageous Anthem is an aura on the Bard (`CFAuraNeeds.Anthem`, 60 feet, the Bard included). The action runs it for a real minute (`CFActivitySystem.AnthemLasts`). Playing a held instrument costs 1 action to start it and then keeps it going while the music plays, ending 2 seconds after. Using it again never shortens or stacks it.
-- [x] Every Bard starts with a virtuoso's lute (`CFVirtuosoLute`) in the backpack: percussion and program changes are on, so a MIDI file plays each channel in its own voice. `CFGrantItem` now puts what it grants in the backpack, or at the character's feet without one.
-- [x] Closing the instrument window no longer stops the song. It plays on while the player holds the instrument in either hand and is conscious, or stays within reach of a placed one such as a piano, and reopening the window shows it playing so Play stops it (`CFInstrumentSystem`, marked edits in the stock `InstrumentSystem`, its BUI and `InstrumentMenu`). Fixed again after the first playtest: stock's window stopped the song from the client as it closed (`InstrumentMenu.ExitedTree`), which no server test could see, because the test client has no MIDI.
-- [x] Aura bonuses show in the HUD's status row. They have no end time while a creature stands inside, and the row skipped every such bonus as a lasting one from a feat or equipment. `CFBonusSystem.TimedTotal` now counts a bonus whose source is an aura (`CFAuraSystem.IsAuraSource`). The anthem's +1 against fear is still not shown, as it only counts against fear.
-- [x] The item status panels: a change in one hand redrew both panels with that hand's item (missing braces in `HandsUIController.UpdateHandStatus`).
-- [ ] "Instruments are used up when used in hand": not reproduced. On the server, using a lute, flute or the virtuoso's lute in hand twice leaves it in hand (`UsingAnInstrumentInHandKeepsIt`). Possibly the status panel bug above. Needs steps from a real client.
-- [ ] Not seen in a real client: the ring, the lute's tint and glow, songs playing on with the window shut.
-- [ ] The virtuoso's lute keeps stock's MIDI limits, so a very busy song can still give finger cramps.
-
-## Do first: level up bug, 13 November
-
-Reported on 13 November 2026: a Sorcerer reaching level 5 was told to pick a language with no language to pick, and could not accept. Fixed the same day. Tests: `CFLevelUpTest`.
-
-- [x] The language at level 5 only counts as a pick when there is a language left to learn. The tab listed only languages the character does not already speak, but the count ignored those, so a character who already spoke every common language was stuck. Both now use `CFLevelUp.LanguageOptions`. Whether this is the exact case seen is not certain: it was not reproduced in a real client.
-- [x] Accept is never blocked. Picks left open are skipped, and the tab says so.
-- [x] Every level taken with picks open writes a JSON report to `logs/cf-levelup/` beside the server's log files (`CFLevelUpReportSystem`), and a warning in the server log naming it. It holds what was left open, each slot's pick and options, the character's class, ancestry, level, Hit Points, ability modifiers and known languages before the level, and the builds before, as sent and after.
-- [ ] Read the next report that comes in, and fix what it shows.
-
-## Do first: holstering, 13 November
-
-Asked for on 13 November 2026. Built the same day. Tests: `CFHolsterTest`.
-
-- [x] Every weapon can be worn on the belt, back or neck, and every shield on the back or neck. `.agent/port-scripts/holsters.py` writes each one's `Clothing` block. A slot its sprite has no state for borrows another carry state: a sword on the belt or back uses CP14's back sheath (`equipped-NECK`), a dagger on the back uses its belt state. Firearms, the dart and the steel shield have no carry sprite and are not drawn while worn.
-- [x] A weapon or shield worn in those slots counts half its own Bulk, rounded up, so a light item stays light (`CFEncumbranceSystem.IsHolstered`). What is inside it, such as a loaded bolt, counts in full. Our rule, not PF2e's.
-- [ ] The back slot is where the adventurer's kit goes, so a shield or weapon there means carrying the kit some other way.
-- [ ] Not seen in a real client: how each weapon looks on the belt and back, and which side it hangs on.
-
-## Do first: HUD fixes, 11 November
-
-Asked for on 11 November 2026, after the HUD and menus list. Built the same day. Tests: `CFHudDeckTest`, `CFDeckLogicTest`.
-
-- [x] The separated chat layout lost the ID, belt, bag, pocket and suit storage slots, leaving only the hands. A screen change left the old screen's containers holding those slot groups. The HUD now claims them whenever it appears (`CFGameHud.ClaimSlotGroups`).
-- [x] The deck has no Items tab or section. All is Basic, Spells & Features and Custom, with two dividers. A saved layout with four sections falls back to the default.
-- [x] With Basic, Class or Spells chosen, 1 to 0 use that tab's first row and Shift with 1 to 0 its second, and each button shows its key. Asked for as Alt: Alt with a number has no stock bind and keybinds are not edited, so it is Shift, which stock already binds for the second hotbar row. All and Custom keep the keys on the numbered hotbar.
-- [ ] The keys follow the chosen tab even while the deck is slid shut. Check in play whether they should only work while it is open.
-- [ ] Not seen in a real client: the slots on the separated layout, and the keys on a deck tab.
-
-## Do first: HUD and menus, 11 November
-
-Asked for on 11 November 2026. Built the same day. Tests: `CFLevelUpTest`, `CFUpkeepTest`.
-
-- [x] **The lobby builds level 1 only.** The level 2 to 5 panels are hidden, option choices are level 1's, and the spells tab offers level 1's slots (`CFSpellSlots.ForClass(cls, level)`).
-- [x] The spells tab lists spells the character already gets from its ancestry, heritage, background, class, subclass, feats and their cantrip choices (`CFLevelUp.GrantedSpells`), so they are not picked again. The Level Up tab shows the same list.
-- [x] **Levels are taken in game.** XP no longer levels a character: reaching 1000 shows a popup, and the character sheet's Level Up tab (`CFLevelUpTab`) asks for that level's picks: class, ancestry, skill and general feats, skill increases, the four level 5 boosts and the language an Intelligence boost brings, the new spell slots, and the option choices the new feats and features have. Accept stays off until everything that has something to choose is chosen. It sends `CFLevelUpRequestEvent`. The server reads only that level's picks (`CFLevelUp.TakeLevel`), checks them as it checks a lobby build (`CFCharacterSpawnSystem.CopyLevelPicks`), and runs `LevelUp`. The build lives on `CFExperienceComponent.Build`. `CFExperienceSystem.TryLevelUp` with no picks takes the ones the character already has, which tests use through `AddXpAndLevelUp`.
-- [ ] Older saved characters still hold the level 2 to 5 picks the lobby used to take. The Level Up tab starts from them, and the player can change them.
-- [ ] Not seen in a real client: the Level Up tab, its feat and spell windows, and the popup.
-- [x] **Respawn from the ghost.** A Respawn button left of Return to body, which asks once more before running `respawn`. The old body drops everything it wore and held where it lay, then goes, and its job slot opens. The body remembers its player (`CFPlayerBodyComponent.User`), so it is found even when the ghost could not return to it. SSD and cleanup removals now drop everything too, not only the bag, weapons and wallet.
-- [ ] Not seen in a real client: the Respawn button.
-
-## Do first: monsters, summons and companions, 11 November
-
-Asked for on 11 November 2026, after the 10 November playtest list. Built the same day. Tests: `CFMonsterTest`, `CFThrallTest`, `CFCompanionGoapTest`, `CFHarvestTest`.
-
-- [x] **One monster base.** `CFBaseMonster` in `Mobs/Creatures/_base.yml` holds what every monster is: GOAP brain, ghost role, Monster faction, combat mode, `CFCombatant` that dies at 0 Hit Points, `CFAbilityScore`, `CFCombatOptions` and `CFHarvestable`. `CFBaseCreature` is the animal body on top of it. Humanoid monsters list their stock body first and `CFBaseMonster` second. `CFMonsterTest` fails a monster that cannot be harvested or does not die at 0. A monster on a stock body still sets its own `HTN`, `NpcFactionMember` and `GhostRole`, because the stock body's copy wins.
-- [x] **Summoned creatures.** `CFSummoned` gives the Summoned trait. When one dies or its time is up it vanishes in a puff of smoke (`CFSummonPuff`) and leaves no body, so it cannot be looted or harvested (`CFSummonedSystem`). Thralls have it.
-- [ ] No spell summons a creature yet (Summon Animal and the like). A new one gives what it calls `CFSummoned`, and `CFSpawnEffect` would need a way to bind it to the caster.
-- [x] **Companions think with GOAP.** `CFCompanionBase` has `CFGOAPBrain` as a parent, so animal companions, familiars, eidolons, constructs and thralls all do. They attack enemies they see by themselves: only the Opposition alliance, so neutral creatures are left alone unless pointed at. Their home is their master (`CFGOAPCompanionSensorSystem`), within 3 tiles, and the lair leash (`CFGOAPLair`, 10 tiles or 20 seconds) brings them back mid-chase, though they still fight what is in reach.
-- [x] Pointing helps. At a creature, it goes for that one first while it can see it. At the master, it comes straight back. At an item, it fetches it, with its brain paused for the trip. At the floor, it forgets the creature it was sent at.
-- [x] **Thralls work.** They stood still because they ran the old companion task, which waited for an order, and pointing skipped them on purpose. Now they fight on their brains like any companion, follow, and answer pointing. Command a Thrall and Thrall Charge still pick the nearest one.
-- [x] Create Thrall has a 60-second cooldown, as long as a thrall lasts (`useDelay` on the action).
-- [ ] Not seen in a real client: companions fighting by themselves, coming back, fetching, and the smoke puff.
-- [ ] A companion with a player in it gets nothing from pointing but the popup.
-
-## Do first: playtest feedback, 10 November
-
-Requests from the playtest on the night of 10 November 2026, noted on 11 November. These come before everything else on this roadmap, in this order: PvP and server upkeep (3 to 5) are small and fix what hurt most on a long-running server, then money (1), then monster parts (2), which sells through the new money.
-
-### 1. Money in a wallet
-
-Built on 11 November 2026. `CFWallet`, `CFWalletSystem`, `CFCoinSystem`, `CFMerchantSystem`. Tests: `CFEconomyTest`, `CFCharacterSetupTest`.
-
-- [x] A wallet (`CFWallet`, CP14's sprite) that goes in a pocket and only takes coins. Every character spawns with one in a pocket, holding their leftover starting coin.
-- [x] The wallet is the money. The shop, the counter and the guild spend from the coins in the first wallet the character carries (held, worn, in a pocket, or in the bag), breaking coins and putting the change back. Coins elsewhere do not count. Using coins in hand puts them in the wallet. `CFPurseComponent` and the right-click-yourself verb are gone.
-- [x] A wallet in a dead body can be looted like any item, and SSD and respawned bodies drop it (5).
-
-Two ways to sell, and both are always there:
-
-- [x] **The guild pallets.** `CFWoodenPalletSell` and `CFWoodenPalletBuy` get `CFGuildPallet` (in `finish.py`, since the file is ported). Opening a sell pallet lists the goods lying on it and sells them all to the Merchants' Guild, which keeps 50% because it teleports them away by magic, `fullResale` items included. A merchant is a guild member and keeps the full worth. No console was needed: the pallet opens the trading window itself.
-- [x] A merchant standing within 2 tiles of a buy pallet gets their shop orders on it instead of in hand. Opening a buy pallet says so. Only merchants can order.
-- [x] **A merchant's counter** (`CFMerchantCounter`) is for selling to the player merchant, and only a merchant can open it. An adventurer places goods on it. The merchant's window lists each one with its Market price and Your price in separate columns. Your price is four boxes (pp, gp, sp, cp), filled with the market price, which the merchant can type over. Buy sends what is typed (`CFCounterBuyMessage.Copper`), takes it from the merchant's wallet and lays the coins on the counter for the adventurer to pick up. Bought goods wait under Items stored, a window laid out like the shop, where the merchant takes each one or sells it to the guild at full worth. Changed on 11 November 2026: no till, no counter-wide rate, and no record of who placed what. Any merchant can work any counter, since the job has one slot. Tests: `CFEconomyTest`.
-- [ ] Anyone can pick up the coins laid on the counter, not only the adventurer who sold.
-- [ ] What a merchant charges is not on the counter: they sell by hand, trading coins and goods.
-- [ ] Not seen in a real client: the wallet in a pocket, the counter's till controls, and opening a pallet. A pallet is drawn under the goods on it, so it may need right-click, Open, when something lies on it.
-- [ ] Coins dropped from a broken wallet, or more coins than fit, go to the hands or the floor. Not tried with a full wallet.
-
-### 2. Monster parts and harvesting
-
-Built on 11 November 2026. `CFHarvestSystem`, `CFHarvestRules`, `CFHarvestable`, `CFSurvivalKnife`. Tests: `CFHarvestTest`.
-
-- [x] Each monster's parts value is Battlezoo Bestiary's monster parts by creature level (Battlezoo Bestiary p. 133, Tables 2A to 2C), read from its level, so a rebalance moves it. We use the Light column (2A), because CarpFinder still drops coin as treasure and parts come on top of it. The table is in `CFHarvestRules`, from https://pf2easy.com/index.php?id=19435. Battlezoo gathers parts with no check; the Survival roll is ours.
-- [x] Harvesting is butchering. Use a survival knife on a dead monster, or its Harvest verb: 5 seconds, once per body, and only for a character trained in Survival. Every monster has `CFHarvestable`. It replaces stock butchering: a stock mob that could be butchered by knife (`ToolRefinable`) or on the kitchen spike (`Butcherable`) gets `CFHarvestable` instead, with that list as its parts, so nothing is butchered without the check. A finished harvest removes the body: everything it wore or held drops, and its parts are scattered where it lay. It is not gibbed, so no organs are left. Every harvest gives generic monster parts (`CFMonsterParts`) plus the meat, bone and leather the monster lists, and the generic parts keep what rounding leaves so the total is exact. A critical failure removes the body with no parts. Player characters are never harvested. Changed on 11 November 2026; the body used to stay.
-- [x] The harvest rolls Survival against the DC for the monster's level: a critical failure ruins the parts, a failure keeps half the value, a success all of it, and a critical success one and a half times.
-- [x] The meat, leather, scraps and bone a monster gives are its parts and share its value (`CFPartsValue`, per item in a stack). Every monster also gives `CFMonsterParts`. Parts are treasure: the cleanup keeps them, and they sell to a merchant at their counter at the merchant's price, or on a guild sell pallet for half, or full for a merchant.
-- [x] Meat on the drop lists: `CFFoodMeatBoar` for the boar, `CFFoodMeatMonster` for the bear, wolf and dragon.
-- [x] A survival knife (`CFSurvivalKnife`, 5 sp, a d4 slashing agile finesse knife) is in every adventurer's kit and in the merchant's shop. It uses the dagger's sprite.
-- [ ] Merging two stacks of harvested parts keeps the receiving stack's value per item, so their worth can drift.
-- [ ] Kobolds, goblins and hobgoblins give generic monster parts. Decide whether humanoids should give anything.
-- [ ] Not seen in a real client: the Harvest verb, the do-after, and the popups.
-- [ ] Later: Battlezoo's refining and imbuing, crafting parts into gear. Bulk by size, and Gathering More through Earn Income, are not built.
-
-### 3. PvP only by choice
-
-Built on 11 November 2026. `CFPvpComponent`, `CFFactionSystem.CanHarm`, the `pvp` command (`CFPvpCommand`). Tests: `CFPvpTest`.
-
-- [x] The four groups are a party with each other (`factions.yml`). Monsters still oppose everyone.
-- [x] A `pvp` console command, typed in chat as `/pvp on`, `/pvp off`, or `/pvp` to toggle. Off by default. Two player characters can harm each other only when both have it on. This covers merchants too, who used to be fair game as Neutral.
-- [x] It covers everything that asks `CanHarm` or `GetAlliance`: Strikes, spells and areas, projectiles, thrown weapons, maneuvers, reactions and flanking. Players always fight monsters: only player characters get `CFPvpComponent`, at spawn, so a ghost in a monster body is still a monster.
-- [x] Crossed swords on the left of a player with PvP on (`CFPvpIcon`), and an examine line.
-- [x] Turning it off waits 30 seconds after the player last hurt, or was hurt by, another player with PvP on (`CFDamagedEvent`).
-- [ ] Not seen in a real client: the icon, and `/pvp` typed in chat.
-- [ ] A player's companion, eidolon or thrall follows its faction, so it never fights another player even with PvP on.
-
-### 4. The dungeon wizard cleans up
-
-Built on 11 November 2026. `CFDungeonCleanupSystem`, on `CFStationBasic` so every CF map has it. Tests: `CFUpkeepTest`.
-
-- [x] Every hour a cleanup runs, with announcements from "The Dungeon Wizard" 15 minutes, 1 minute and 10 seconds before, then one saying how much was swept away. The interval and warnings are fields on `CFDungeonCleanup`, so a DM can change them in VV.
-- [x] Cleaned, on every map that is not paused: dead monsters, blood and other puddles, and loose weapons and items.
-- [x] Kept: anything inside a container; containers themselves; living creatures; bodies whose player can still return to them; coins and `fullResale` treasure, which monster parts will be; anchored things apart from puddles.
-- [x] Kept: everything the mapper placed, spawners' loot included. Anything created within a second of its map counts as the mapper's.
-- [x] Dead adventurers whose player can no longer return drop their bag and weapons, then go, as in 5.
-- [ ] Not seen in a real round: the announcements, and how long a sweep takes on a big map.
-- [ ] A mapped item that is picked up and dropped somewhere else still counts as the mapper's, so it is never cleaned.
-
-### 5. Respawning and SSD players
-
-Built on 11 November 2026. `CFPlayerBodySystem`. Tests: `CFUpkeepTest`.
-
-- [x] `respawn` deletes the old body after dropping its bag and weapons. Marked lines in `RespawnCommand.cs`.
-- [x] Any player body gives its job slot back when it is deleted, however that happens (`CFPlayerBodyComponent`, through `ServerStationJobsSystem.TryAdjustJobSlot`).
-- [x] A body left without its player for 15 minutes is removed: its bag and weapons are dropped on the ground first. Ghosting out of a body counts as leaving it, as stock's SSD does, so a dead player who waits 15 minutes as a ghost loses the body. The time is `SsdLimit` on the component.
-- [ ] Drop the wallet too, once it exists (1).
-- [ ] Not tried with a real player: respawning, and coming back after the body was removed.
-
-## Playtest feedback, 9 November
-
-Complaints from a playtest, noted on 9 November 2026. Built on 9 November 2026. Tests: `CFPlaytestFeedbackTest`.
-
-- [ ] Not seen in a real client: the sparkles and their colours, the aura border, the faster swing, and aim assist with a real mouse.
-
-### Spell effects
-
-- [x] A creature targeted by a spell with a save gets sparkle particles, coloured by the type of spell. `CFVfxSystem`, with the colour from the spell's damage type, or from its traits if it deals none.
-- [x] A caster gets particles while casting, so people around them can tell. A subtle spell shows none.
-- [x] Healing puts healing sparkles on both the healer and the one being healed. It is in `CFEffectSystem.Heal`, so anything that heals gets them.
-- [x] An aura has a hard line where it ends, drawn as a magic border. `CFAuraOverlaySystem`. It is only drawn while the aura is doing something.
-
-### Combat
-
-- [x] Melee aim assist. `CFMeleeAimSystem`: a left-click hits the closest enemy in reach within 60 degrees of the cursor, wherever the cursor is. Clicking an enemy in reach still hits that enemy. Neutral creatures and hidden ones have to be clicked. Right-click maneuvers do not use it.
-- [x] Action pool cooldown goes to 1.2 seconds (`RegenSeconds`). It was really 1, not the 1.45 the docs said, so players are a little slower than before.
-- [x] Cut the melee hit animation in half, so it is much faster.
-
-### GOAP
-
-- [x] All mobs have a pool cooldown of 1.5 seconds, stock HTN mobs as well as GOAP ones (`NpcRegenSeconds`). Players stay at 1.2. A monster with a player in it counts as a player.
-- [x] All mobs get a `ThinkingTimer`, default 1 second, which gives them a moment to think about their next attack. It is checked where a Strike or shot is attempted, so both AIs get it. Swings at doors and other obstacles do not wait.
-- [x] Demoralize and Feint from GOAP wait for it as well (`CFGOAPManeuverStepSystem`). Tests: `CFGOAPTest`.
-- [x] `thinkingTimer` is a field on `CFCombatant` in each creature's YAML, so it can differ per mob. A smarter mob with higher reflex, such as a boss, thinks faster. Every creature uses the default until someone sets one.
-
-### Medical kit
-
-- [x] A medic healing someone with a kit force grapples them, so they cannot run away. There is no roll. The patient can still break out of it with Escape, which ends the treatment.
-- [x] Rebalance: healing someone takes 12 seconds and costs 3 actions, one every 4 seconds starting at once. Running out of actions ends it.
-- [x] The creature being healed gets the magic healing sparkles here too, at each of the 3 actions and when it heals.
-
-### Character setup
-
-Built on 9 November 2026. Tests: `CFCharacterSetupTest`.
-
-- [ ] Not seen in a real client: the ABCJ panel and Accept, the shop inside Character Setup, and how the clothes look on each body.
-- [x] A character cannot ready up or join without an ancestry, background, class and job. Late join still opens the job list first, and is refused when a job is picked.
-- [x] The ABCJ panel is Ancestry, Sprite, Background, Class, Job, Accept. Everything else stays hidden until Accept, which also saves.
-- [x] The shop in Character Setup uses the merchant layout, with search and a quantity. It only sells what the job's loadouts offer, not a merchant's whole catalogue.
-- [x] Everyone starts in clothes and shoes, with an adventurer's kit on their back: a backpack holding rope, a torch, flint and steel, a ration and a canteen of water. The kit is where extra copies go. Striking the flint on a torch has not been tried in a real client.
-- [x] Extra copies are stored per job (`CFCoins.CopiesOf`), so two jobs that sell the same item do not share a count. Tests: `CFCharacterSetupTest`.
+Order: Step 1 first, working down its lists. The loose ends after it are small and can be taken when that system is next touched.
 
 ## Step 1: Make character options work
 
-Players can pick hundreds of options that do nothing. This step gives them effects.
+Players can pick hundreds of options that do nothing, or only part of what they say. Each of those has `TBA` in its text. This step is the list of features those notes are waiting on, from a scan of every `TBA` on 15 November 2026, in the order to work through: heritages, ancestry feats, class feats, class features and subclasses, spells.
+
+The pipeline all of this runs on is built: grants, stances, flourishes, spellshapes, reactions, auras, subclass choices, level-up and focus spells. How each works is in `Projectinstructions.md`, and how it landed is in `roadmapold.md`.
 
 ### Where it stands
 
-Measured on 9 November 2026. `python3 .agent/port-scripts/feature_scan.py` prints these numbers, per class and ancestry.
+Measured on 16 November 2026, after 1.1 to 1.19 landed. `python .agent/port-scripts/feature_scan.py` prints the first three columns, per class and ancestry. The last column is a count of lines with `TBA` in the `.ftl` or YAML.
 
-| Option | Total | Works | Does nothing yet |
-|---|---|---|---|
-| Class feats | 585 | 111, and 2 in part | 472, each with its own note and `TBA` |
-| Ancestry feats | 255 | 70, and 6 in part | 179 |
-| Class features | 181 | No placeholders are left | The parts still missing say `TBA` |
-| Heritages | 149 | 67 | 82 |
-| Ancestries | 23 | Boosts, HP, Speed, size, darkvision, languages | Traits are labels |
-| General and skill feats | 131 | 12 | Pickable in the builder, marked `(TBA)` until they work. See 1e |
-| Backgrounds | 324 | Boosts, skills and the skill feat they name | 259 grant one, but few of those feats do anything yet (1e) |
-| Spells | 62 | 62 | All have an effect. Prestidigitation has its own system and works |
-| Focus spells | | The pipeline works (1f) | Filled class by class. Many hexes, compositions and domain spells are still `TBA` |
+| Option                  | Total | Works                                                                     | Lines with `TBA`                                                                                                              |
+| ----------------------- | ----- | ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| Heritages               | 149   | 113 have an effect                                                        | 93 in `heritages.ftl`: 36 heritages do nothing, the rest are missing a part                                                   |
+| Ancestry feats          | 255   | 78, and 5 in part                                                         | 117 in `feats-ancestry.ftl`. 172 feats do nothing, so about 60 have no `TBA` and still need one                               |
+| Class feats             | 585   | 128, and 2 in part (the scan now counts a feat with `choices`)            | 486 in `feats-class.ftl`                                                                                                      |
+| Class features          | 181   | No placeholders                                                           | 62 in the class files                                                                                                         |
+| Subclass options        |       | Every class has its options                                               | 316 in `class-choices.ftl`. Runes repeat 6 times, ikons and tactics 3 times, implements twice, so about 150 different options |
+| General and skill feats | 131   | 12 in `general_feats.py`'s `WORKING`, and the scan agrees                 | Marked `(TBA)` in the builder. See "General and skill feats"                                                                  |
+| Spells                  | 62    | All 62 have an action                                                     | None in `spells.ftl`                                                                                                          |
+| Focus spells            | 34    | The pipeline works                                                        | 11 in `Spells/Focus/focus.yml`                                                                                                |
+| Deities                 | 7     | Skill, favored weapon, font                                               | 7: domains                                                                                                                    |
 
-### What blocks it
+Best per class: Monk 14 of 29 feats, Fighter 12 of 31, Rogue 11 of 27. Worst: Exemplar 0 of 13, Runesmith 0 of 19, Thaumaturge 0 of 14, Alchemist 1 of 21, Gunslinger 1 of 19, Inventor 1 of 19, Investigator 1 of 20. Kitsune and Sprite have no working ancestry feat.
 
-Neither of the original blockers is left. Subclass options exist for every class that has them (1g), and the placeholder feats and features now carry their own notes or `TBA`. What is left is building each `TBA`, and `CFFeatureCoverageTest` stops new placeholders coming back.
+### How to work through it
 
-### 1a. One pipeline for what an option grants
+- Build the feature, then fill every option listed under it. For each option: read it on Archives of Nethys, write its note in our own words, add its `grants`, take `TBA` out of the text, and add a test where it does more than a stat change.
+- An option that cannot work in play keeps its flavour text and the word `TBA`.
+- Run `feature_scan.py` after each feature and update the table above.
+- `CFFeatureCoverageTest` stops placeholders coming back.
+- One feature often serves several lists. It is written where it is first met, and later lists point back to it.
 
-Built on 6 November 2026, except where marked. Tests: `CFGrantTest`. What changed and why is in `roadmapold.md`.
+### Notes that look out of date
 
-- [x] `CFGrant`: an abstract data class like `CFEffect`, written in YAML as `!type:CFGrantBonus` and so on.
-- [x] A `grants` list on `cfFeat`, `CFClassFeature`, `cfHeritage`, `cfAncestry` and `cfBackground`.
-- [x] A `grants` list on the class choices.
-- [x] `CFCharacterFeatureSystem.Apply(mob, grants, source)`, called at spawn and on level-up.
-- [x] Move both `switch` statements into YAML. The flags on `CFCombatOptionsComponent` stay for now, set by `!type:CFGrantOption`.
-- [x] Permanent bonuses in `CFBonusSystem`, and bonuses that only count against a trait. This replaces `SavesVsFear`.
-- [x] A hook that lets a grant change a save's degree, matching `AdjustDefense`: `CFBonusSystem.UpgradeSave`, called from `CFConditionSystem.RollDefense`.
-- [x] Traits on `CFEffectArgs`, read from the source, so any check can ask what it is rolling against.
-- [x] A bonus against a trait counts on saves, Perception, attacks and AC (`CFBonusSystem.AgainstSource`). Tests: `CFGeneralFeatTest`.
-- [ ] On attacks and AC it reads the creature's traits only, not those of the weapon or spell.
-- [x] The ids in `CFGrantProficiency` are checked by `CFFeatureCoverageTest`, so a typo fails a test.
-- [ ] Low-light vision is a dimmer darkvision overlay, chosen by eye and not seen in a real client.
+These say something is not built that this roadmap says is built. Check each, then give it its effect or fix the note. They are the cheapest wins on the list.
 
-| Grant | What it does | First uses |
-|---|---|---|
-| `CFGrantProficiency` | Raises a rank: a save, Perception, a weapon group, armor, spellcasting | About 30 class features: Weapon Expertise, Reflex Expertise, Perception Expertise |
-| `CFGrantBonus` | A bonus to a save, skill or AC, always or against a trait | About 57 ancestry feats |
-| `CFGrantSaveUpgrade` | One degree better against a trait | Bravery, Death Warden Dwarf |
-| `CFGrantResistance` | Fixed, or half level | Forge Dwarf, Arctic Elf, Strong-Blooded Dwarf |
-| `CFGrantWeaponFamiliarity` | Treats listed weapons as simpler | About 22 ancestry feats |
-| `CFGrantSense` | Low-light vision, scent, imprecise senses | Heritages, ancestry feats |
-| `CFGrantMovement` | `TBA`, not built. Climb, swim and fly all wait | 6 ancestry feats |
-| `CFGrantSpell` | An innate spell or a cantrip. A ranked spell is at will until 1f adds daily uses and focus | Seer Elf, Adapted Cantrip, every focus spell |
-| `CFGrantItem` | Starting gear | Clan Pistol, Alchemist's potions |
-| `CFGrantAction` | Adds an action to the wheel | 236 action and 30 free action feats |
-| `CFGrantReaction` | A trigger and what it does. See 1b | 63 reaction feats |
-| `CFGrantOption` | Sets a `CFCombatOptionsComponent` flag | Everything already coded |
+- [ ] "There are no deities yet": Deadly Simplicity, Emblazon Armament, Deity's Domain, Splinter Faith (Champion and Cleric). Deities exist. What they lack is domains (see 4, Cleric).
+- [ ] "Counteracting is not built yet": Counter Thought. `CFCounteractSystem` and the `EnemyCastsSpell` trigger exist.
+- [ ] "Battle forms are not built yet": Form Control. `CFBattleFormSystem` exists, so Untamed Form can be built on it.
+- [ ] "Explode is not built yet": Searing Restoration. Explode works.
+- [ ] "A construct companion. Those are not built yet": Prototype Companion, and with it Advanced Construct Companion.
+- [ ] "The temporary Hit Points and the time limit: TBA" on the Barbarian's Rage feature. Temporary Hit Points work. Only the time limit is left.
+- [ ] "Its benefit and conflux spell depend on recharging Spellstrike" on all ten hybrid studies and the Magus feature. Recharging works. What is missing is each study's own benefit and conflux spell.
+- [x] Options that name a feat which already works and do not give it: Diehard (Hold-Scarred Orc, Nine Lives Catfolk, Scar of the Survivor, the Guardian's level 3 feature), Hefty Hauler (Laborer Android). Done on 15 November 2026 with `CFGrantFeat` (1.1). Nine Lives' recovery checks and Tough to Kill's once-a-day hold at dying 2 came with it.
+- [ ] "Familiars are not built yet" on 14 feats. `cfPet` and `CFPetMath` already mention familiars. Find out what exists before building 3.8.
 
-### 1b. The shapes actions come in
+### 1. Heritages
 
-Most action feats share one of a few shapes, so build the shape once. An action is an entity with `CFActivity` and the usual `CFTargeting`, `CFCheck` and `CFDegreeEffects`. Do not write a new resolver.
+36 of 149 do nothing, and 57 more are missing a part. What is left needs swimming (1.3), the `Light` layer (1.9), difficult terrain (1.11), the lineage feats (1.15), skill actions (1.16) or a changing sprite (1.18). Everything else landed on 15 and 16 November 2026: `CFHeritageTest`, `CFGrantFeatTest`, `CFHeritageEffectsTest`.
 
-- [x] Stances (21 feats). `CFStance` on an action, parented on `CFActStanceBase` in `Actions/stances.yml`, run by `CFStanceSystem`. Built on 9 November 2026, with Point-Blank, Mountain, Crane, Dragon and Tiger. The other 16 stances are filled in their waves. Tests: `CFStanceTest`.
-  - One at a time, and another stance action waits 6 seconds. Using the same action again is Dismiss, which costs its action and does not wait.
-  - It ends on being knocked out, when armor breaks an unarmored requirement, or on another stance action. Real time has no encounters, so it does not end when a fight does.
-  - [x] Falling asleep ends a stance, from the condition or stock sleep. Paralyzed does not, because it is not being knocked out. Tests: `CFStanceTest`.
-  - [ ] Not seen in a real client: the action button lighting up while in a stance.
-  - [x] A stance can need a ranged weapon, a melee weapon, a free hand or a shield in hand (`requiresRangedWeapon` and so on on `CFStance`), and ends when the creature lets go. Point-Blank Stance needs a ranged weapon. Mountain Stance's touching the ground is not checked, because nothing in the game flies yet. Tests: `CFStanceTest`.
-- [x] Flourishes (36). Add `CFFlourish` to an action. `CFActionPoolSystem` allows one until the pool is next full. Flurry of Blows and Sudden Charge use it, and Vicious Swing keeps its code path. The rest are filled in their waves.
-- [x] Spellshape (34 feats). `CFSpellshape` on an action, parented on `CFActSpellshapeBase` in `Actions/spellshapes.yml`, run by `CFSpellshapeSystem`. Built on 9 November 2026, with Reach Spell (7 classes) and Widen Spell (5 classes). The other 22 are filled in their waves. Tests: `CFSpellshapeTest`.
-  - It waits for the next spell, and is lost after 6 seconds or when an action is spent on anything else. Free actions and reactions do not end it, though the rules say they should.
-  - Touch spells have `touch: true` on `CFTargeting`: they reach the next tile in every direction, diagonals too, and Reach Spell makes that 30 feet. Tests: `CFTouchRangeTest`.
-  - [ ] Not seen in a real client: the widened area overlay and the action button lighting up.
-- [ ] Reactions (63 feats). `CFGrantReaction` holds a `CFReaction`: a trigger, what has to be true, and what it does. `CFReactionSystem` runs them. Built on 9 November 2026, with Nimble Dodge, Flashy Dodge, Deflect Projectile, Charmed Life, Orc Ferocity and Wounded Rage. Tests: `CFReactionTest`.
-  - Reactions stay automatic and off the wheel. One only fires when it would change the outcome, so it is not wasted, and the character effectively sees the roll first. That is a deliberate change from PF2e.
-  - Triggers so far: `AttackWouldHit`, `SaveWouldFail`, `Damaged`, `WouldDrop`, `EnemyLeftReach`. `perDay` limits are restored by a long rest.
-  - `EnemyLeftReach` fires when an enemy leaves the reach circle under its own power. Walking out is PF2e's Step: it costs 1 action and does not provoke, and with no actions left it provokes anyway. It is only charged when the watcher could have answered, and one Step covers everyone left within a second. Moving about inside reach does not provoke either, because in real time that would fire on every footstep. Reactive Strike and Stand Still use it. Tests: `CFLeftReachTest`.
-  - `WouldBeDamaged` and `AllyWouldBeDamaged` fire as damage is about to land, through `CFReactionSystem.AnswerDamage`, and need the enemy in the owner's aura. Each Champion cause is one of these. Tests: `CFChampionCauseTest`.
-  - [ ] Causes where the rules let the enemy choose always use its refusal, as a mindless creature would: Iron Command, Glimpse of Redemption.
-  - [x] Reactions go in an order (`CFReactionOrderComponent`). For each trigger, the first one in the order that would change the outcome fires. A new reaction goes above every lower-level one, and the player can reorder them on the character window's Reactions tab. Reactive Strike, Shield Block, Reactive Shield and You're Next have places in it too. Tests: `CFReactionTest`. The tab has not been seen in a real client.
-  - [x] Triggers `CriticallyHit` (Scars of Steel) and `AllyWouldBeHit` (Guardian's Deflection). Tests: `CFReactionTest`.
-  - [ ] Shield Block runs before the other damage reactions in code. It waits when a reaction ranked above it could answer, but one ranked below it never gets the chance once it fires.
-  - [x] Trigger `EnemyCastsSpell`. Counterspell (Wizard and Witch) spends a prepared charge of the same spell to counteract it, at that charge's rank, when an enemy within 60 feet casts it in sight. A countered spell's slot is still spent. Subtle spells cannot be countered. Tests: `CFReactionTest`.
-  - [ ] A response that moves the creature, for No Escape and Reactive Pursuit.
-  - [ ] NPCs do not walk to avoid Reactive Strike. They always run.
-  - [x] Spell attacks trigger `AttackWouldHit`, as melee, so Deflect Projectile does not answer one. Reactive Shield still only answers Strikes. Tests: `CFReactionTest`.
-  - [ ] Reactive Strike, Shield Block and You're Next are still flags on `CFCombatOptionsComponent`, though they take their place in the order. Reactive Shield is answered in `CFReactionSystem.AnswerAttack`, in its place.
-- [x] Auras. `CFAura` on a creature and `CFAuraEffect` entries, added with `!type:CFGrantAura`, run by `CFAuraSystem`. Built on 9 November 2026 for the Champion's aura, with Aura of Courage, Aura of Despair, Divine Health and Shields of the Spirit. Tests: `CFAuraTest`.
-  - It looks up who is inside 4 times a second, through `CFEffectSystem.CollectArea`, only for creatures that have an aura. It is not a physics sensor: a 15-foot sensor would make the problems in `ss14rules.md` about the flanking sensor much worse, and would be a circle where emanations are tiles.
-  - "At the end of your turn" is every 6 seconds, on the owner's own timer. A placeholder: the timing will probably change.
-  - [ ] Not seen in a real client, nor is its border (`CFAuraOverlaySystem`).
-  - [ ] Bard compositions, Hampering Stance and Channeled Protection can use this when their waves come. A choice of when to suppress the aura is not built.
+- [x] **1.1 A grant that gives a feat** (`CFGrantFeat`), and a feat of the player's choice (`kind: Feat` in `choices`, with `featSlot` and `featLevel`). Built on 15 November 2026. Tests: `CFGrantFeatTest`. Still needed by about 20 ancestry feats (2.2) and the Bard's muses, which can use it now.
+    - [x] Gives a feat that works today: Hold-Scarred Orc and Nine Lives Catfolk (Diehard), Laborer Android (Hefty Hauler).
+    - [x] Gives a feat that is itself `TBA`: Battle-Ready Orc (Intimidating Glare), Runtboss Hobgoblin (Group Coercion), Shortshanks Hobgoblin (Ride), Deep Orc and Cliffscale Lizardfolk (Combat Climber), Woodstalker Lizardfolk (Terrain Stalker), Tunnel Rat (Quick Squeeze), Artisan Android (Specialty Crafting), Scavenger Strix (Forager). Each works as soon as its feat does. Empty Sky Kitsune waits: Kitsune Spell Familiarity is not imported.
+    - [x] A slot for a feat of the player's choice: Versatile Human and General Training (a level 1 general feat), Natural Ambition (a level 1 class feat).
+    - [ ] Skilled Human: the skill becomes expert at level 5. Needs a grant that waits for a level.
+    - Ancient Elf needs multiclass dedications, which do not exist. Leave it `TBA`.
+- [x] **1.2 Heat and cold one step less severe**: `CFGrantTemperatureTolerance` (`heat`, `cold` in steps, negative is worse) on `CFTemperatureTolerance`, read by `CFEnvironmentRules.Eased`. All 13 heritages have it. Sandstrider Lizardfolk and Desert Rat also feel cold one step worse.
+- [ ] **1.3 Swimming and breathing water.** Decided: port swimming from another fork. Seaweed Leshy, Tunnelflood Kobold, Wetlander Lizardfolk, Wavediver Tengu, Riverside Tripkee, Shoreline Strix, Undine, River Azarketi, Mistbreath Azarketi, Tactile Azarketi, Lotus Leshy, Rainfall Orc.
+- [x] **1.4 Climb Speeds and better climbing.** `CFGrantClimb` (`bonus`, `successIsCritical`, `climbSpeed`, which skips the check) on `CFCombatOptions`, read by `CFZLevelSystem.Climb`. Woodland Elf, Cavernstalker Kobold, Cliffscale Lizardfolk and Stickytoe Tripkee count a success as critical, which stands in for climbing faster. Mutated Fleshwarp +1, Rainfall Orc +2. Shortshanks Hobgoblin (not off-guard while climbing) stays `TBA`: climbing is one move here.
+- [x] **1.5 Falling**: `halfDistance` on `CFGrantSafeFall`, read by `CFZLevelSystem.FallFeet`. Unbreakable Goblin. The remaster Sylph has no fall rule, only low-light vision, which it now has. Later Cat Fall, Leshy Glide, Dancing Leaf, Plummeting Roll.
+- [x] **1.6 Harder to move**: `CFBonusStat.ManeuverDc` and `CFBonusStat.Maneuvers`, read by `CFConditionSystem.RollSkill` for every Athletics check with the attack trait. Rock Dwarf and Root Leshy +2 DC, Stickytoe Tripkee +2 DC, Mutated Fleshwarp +1 DC, Great Kholo +1 to the checks. The remaster Sylph has no such rule. Forced movement cut in half is still `TBA`.
+- [x] **1.7 A bonus called up before a save**: `CFGrantReaction` on `SaveWouldFail` with `saveBonus` and `trait: Magical`. Ancient-Blooded Dwarf +1. Elfbane Hobgoblin has two, +2 against Arcane first and +1 against any magic.
+- [x] **1.8 Finding creatures**: `CFGrantSeek` on `CFSeekSense` (`bonus`, `rangeFeet`, `hiddenFlatDc`, `concealedFlatDc`). `CFStealthSystem.TrySeek` adds the bonus inside the range, and `CFConditionSystem.PassFlatCheck` uses the easier DCs. Whisper Elf (+2, DC 3 and 9), Sensate Gnome, Sharp-Eared Catfolk, Longsnout Rat, Nyktera, Liminal Fetchling (60 feet), Warrenbred Hobgoblin (the DCs). Hearing is not modelled, so the range stands in for it. Still `TBA`: Point Out, Hunting Catfolk's Track, Tactile Azarketi (water), Deep Fetchling (darkness).
+    - [ ] **Scent trails for players, from Starlight** (decided 16 November 2026). `C:\project\starlight-ss14` has a scent system under `Content.*/_Starlight/Scent/` (about 1,800 lines, credit Starlight in each ported file): a creature with `ScentComponent` leaves a chain of short-lived `ScentMarker` entities, a `SmellerComponent` toggles a scent-vision overlay that draws them, one scent can be tracked for a while, and objects keep `ScentTrace`s that a sniff reveals. GOAP mobs already follow scent through the influence maps (`CFGOAPScentEmitter`), so this gives players with the Scent sense the same thing to see. Port it as `CF*` under `_CF/Scent/`: `CFGrantSense` with `Scent` gives the smeller, every creature emits, and the range is `ImpreciseFeet`. Then Hunting Catfolk's Track, Sensate Gnome and Longsnout Rat read the trail instead of `CFGrantSeek`'s range, and 6d's Survival and Cover Tracks have something to work on. Leave out the sneeze, the sniff window and smoke lockout unless they are wanted.
+- [ ] **1.9 Concealment from smoke, fog, rain and darkness**, and heritages that see through it. Smokeworker Hobgoblin, Stormtossed Tengu, Murkeyed Azarketi. Waits for the `Light` layer (Step 5, 6c) for darkness.
+- [x] **1.10 Hiding better**: `CFActShiftColors` (`Actions/heritages.yml`), +2 circumstance to Stealth for 10 minutes, for Chameleon Gnome and Unseen Lizardfolk. Wisp Fetchling's Shadow Blur is a daily action (1.13). Take Cover without an obstacle in forest (Woodland Elf, Woodstalker Lizardfolk) waits for terrain.
+- [ ] **1.11 Difficult terrain**: tiles that slow, and options that ignore them. Wildwood Halfling, Jungle Catfolk, Tunnel Rat. Also 3.14.
+- [x] **1.12 Natural attacks with traits**: `deadly`, `versatile` and `traitsOnly` on `CFGrantUnarmedAttack`, carried on `CFCombatOptions.NaturalDeadly` and `NaturalVersatile` into the Strike's traits. Dogtooth Tengu (deadly d8 on the beak), Taloned Tengu (versatile piercing), Spined Azarketi (1d6 piercing finesse). A character still has one natural attack, so a smaller one is not added beside a bigger one. The sprites' spark (Draxie, Luminous Sprite, Melixie, Nyktera, Pixie) is a ranged natural attack and stays `TBA`. Also Crunch and Vicious Incisors (2.8).
+- [x] **1.13 Abilities used once a day.** `CFDailyUses` on an action entity (`uses`), counted by `CFDailyUseSystem` and given back by a long rest; the HUD greys a spent one. Jinx (two actions, Will save, clumsy 1 or 2), Tail Toxin (`CFActivityKind.TailToxin`: the next piercing or slashing hit within 6 seconds adds persistent poison equal to the level), Shadow Blur (concealed 6 seconds), Grow Fruit (`CFLeshyFruit`, 1d8). Poisonhide Tripkee's Toxic Skin is a `Damaged` reaction with `meleeOnly` and 1d4 poison on the attacker; its growth with level and the save are `TBA`. Innate spells with daily uses (5.8) are not done.
+- [x] **1.14 A choice of energy type**: `kind: DamageType` with `damageTypes` in `choices`, and `CFGrantChosenResistance` (`amount`, `halfLevel`) reads the pick through `CFCharacterFeatureSystem.Pick`. Elementheart Kobold, Suli. Later Dragon instinct, Energy Heart, the Elemental bloodline can use the same pick.
+- [ ] **1.15 Lineage feats.** Changeling, Nephilim, Aiuvarin, Dromaar, Dhampir, Dragonblood, Duskwalker, Oread and Beastkin give low-light vision and nothing else, because their feats are not imported. Import them. Aiuvarin and Dromaar also need the rule that opens elf and orc feats to another ancestry. Dhampir's void healing can reuse the Undead eidolon's.
+- [ ] **1.16 Narrow skill bonuses, and the skill actions they belong to.** Make an Impression, Coerce, Impersonate, Subsist, Track, Identify Magic and Squeeze are not actions. Decide which become actions and which stay `TBA`. Ant Kholo, Sweetbreath Kholo, Witch Kholo, Songbird Strix, Impersonator Android, Shadow Rat, Liminal Catfolk, Seer Elf, Runtboss Hobgoblin, Warmarch Hobgoblin, Scavenger Strix, Grig (jumps).
+- [ ] **1.17 Afflictions**: Strong-Blooded Dwarf is done (`StrongBlooded` on `CFCombatOptions`: a success lowers a poison's stage by one more). Still to do: immunity to one disease (Sewer Rat), Created Fleshwarp, Irongut Goblin. `CFAfflictionSystem` has the stages.
+- [ ] **1.18 Shedding light and changing shape.** Light: Bright Fetchling, Luminous Sprite, Ancient Scale Azarketi. An alternate form that changes the sprite: Celestial Envoy, Empty Sky and Earthly Wilds Kitsune. Fungus Leshy swaps the plant trait for fungus.
+- [ ] **1.19 Small ones that need no new system.**
+    - [x] Dog Kholo and Desert Rat: Speed 30 with both hands free (`CFGrantWhile` with `while: HandsFree`).
+    - [ ] Hillock Halfling: a long rest already restores every Hit Point, so only the Treat Wounds snack is left.
+    - [x] Polyglot Android and Nomadic Halfling: two extra languages through `choices`. One more per Multilingual is still `TBA`.
+    - [x] Technological Fleshwarp: electricity resistance.
+    - [x] Charhide Goblin: the flat check to end persistent fire is DC 10 (`EasierBurning`, `CFCombatOptions.PersistentFireDc`).
+    - [ ] Frilled Lizardfolk and Dark Fields Kitsune: Demoralize has no language penalty here, so that part is moot. Frilled's bigger fright after a Stride and Dark Fields' reaction are `TBA`.
+    - [x] Death Warden Dwarf: `CFEffectSystem.SourceTraits` now adds the acting creature's traits to an action's, so a save upgrade against Undead counts against an undead caster's spell.
+    - [x] Dragonscaled Kobold: +1 circumstance to saves against Sleep and against Dragon (the breath comes from the dragon, so its traits count). Paralysis has no trait.
+    - [x] Fungus Leshy swaps Plant for Fungus with `CFGrantTrait` (`add`, `remove`). Sylph has low-light vision, as the remaster gives it.
+    - Jinxed Tengu: curse and misfortune traits. Doomed does not exist (3.13).
+    - Fey-Touched Gnome and Wellspring Gnome: swapping the cantrip each day (3.15), and the tradition of later gnome spells.
+    - Gourd Leshy (storage), Snaptongue Tripkee (touch spells at reach), Draxie (telepathy), Melixie (speaking to insects), Shapewrought Fleshwarp, Pixie's size.
 
-### 1c. Subclasses
+### 2. Ancestry feats
 
-Built on 9 November 2026. `CFClassChoices` decides what counts as a valid pick. Tests: `CFClassChoiceTest`. The builder buttons have not been clicked in a real client.
+179 of 255 do nothing. Only 119 say `TBA`, and most of those say only "TBA - action will be added" with no note of what the feat does.
 
-- [x] A `cfClassChoice` prototype with `grants`, and `ClassChoices` on `CFCharacterBuildData`. No database migration: a build saved without the field loads with an empty list.
-- [x] A button in the builder, using the same list as Heritage. There is one button per `slot` a class has options in, so a class needs only its options.
-- [x] `cfDeity`, for classes with `usesDeity` (Cleric and Champion). Deities are data on the character, not a religion system.
-- [x] Rogue's rackets, in `Class/Choices/rogue.yml`. The Thief is finished. The others give their skills, armor and key attribute, and the rest is marked `TBA`.
-- [x] Seven placeholder gods in `Character/deities.yml`, for Clerics and Champions. Each gives a skill, a favored weapon (`CFGrantWeaponFamiliarity`, which counts it as simple) and what Divine Font casts. Not clicked in a real client. Tests: `CFClassChoiceTest`.
-- [ ] Replace the placeholder names and lore when the setting is written. Domains, bonus spells, edicts and anathema are not built. A Champion's cause is not checked against the deity's holy or unholy side.
-- [x] A Ruffian, Scoundrel or Mastermind picks its key attribute with a `KeyAttribute` entry in `choices`, and keeps the racket's until it does. Not clicked in a real client. Tests: `CFGeneralFeatTest`.
-- [ ] Fill each class's choices in its wave.
+- [ ] **2.1 Write the missing notes.** Every ancestry feat with no effect gets a short note in our own words and `TBA`, as class feats have. About 60 have neither, and about 70 have only the stock line. `CFFeatureCoverageTest` checks class feats for this: extend it to ancestry feats.
+- [ ] **2.2 Feats that give another feat** (1.1). The ancestry part can work at once; the named feat works when 1e reaches it. Alchemical Scholar, Anchoring Roots, Uncanny Agility, Animal Accomplice, Friend of the Sea, Clever Improviser, Cultural Adaptability, Runtsage, Gnome Obsession, Harmlessly Cute, Pack Stalker, Rough Rider, Seven Changes Performance, Shrouded Mien, Snare Setter, Stonemason's Eye, Story Crooner, Tangle of Limbs, Well-Met Traveler, Gecko's Grip. General Training and Natural Ambition are done (1.1).
+- [ ] **2.3 Critical specialization by weapon group**, already listed under Step 4. It finishes all 11 weapon familiarity feats (Catfolk, Dwarven, Elven, Gnome, Goblin, Halfling, Hobgoblin, Kholo, Kobold, Orc, Tengu, Tripkee) and 12 class features (4). Access to uncommon weapons is the other half: decide whether rarity limits what a character can buy.
+- [ ] **2.4 Reactions.** Each needs its note first, then a trigger. Ally's Shelter, Bounce Boost, Cringe, Eat Fortune, Goblin Scuttle, Hunter's Defense, Noble Bloom, Rekindled Light, Shadow Blending, Shed Tail, Squawk, Step Lively, Strix Vengeance, Vomit Stomach, Defy Death. New triggers are under 3.5. Goblin Scuttle and Step Lively move the creature (3.4).
+- [ ] **2.5 Rerolls and fortune**: a `SkillCheckWouldFail` trigger. Halfling Luck on skill checks, Elven Persistence, Lucky Break, Ask the Bones, Squawk, and the Barbarian's Spiritual Guides.
+- [ ] **2.6 Actions.** Most fit `CFEffectAction` or `CFStrikeAction` once their note is written.
+    - Likely small: Kobold Breath on `CFActBreathBase` (and Kobold Momentum), Goblin Song and Loud Singer, Terrifying Croak, Grovel, Kneecap, Catfolk Dance, Shame the Sin, Envenom Fangs, Spark Fist, Rabid Sprint, Ratfolk Roll, Boulder Roll.
+    - Need looking at: Absorb Strength, Extinguish Light, Frog Geyser, Grasping Reach, Leech-Clip, Left-Hand Blood, Light Paws, Long-Nosed Form, Magpie Snatch, One-Toed Hop, Project Persona, Swamp Stealth, Energized Font, Razzle-Dazzle, Quick Stow, Scamper.
+- [ ] **2.7 Flying and gliding.** Decided on 15 November 2026: flying is over open sky, space tiles, chasms and holes. Open sky must first be something to fall into.
+    - [ ] **Falling into the void.** A tile with no floor, or a space tile, acts as a chasm does today (`CFChasmEdgeSystem`). A creature whose centre is over it slips: "Falling...", weightless, and free to steer back. The grace is 2 seconds, not the chasm's 4. Then it spends its reaction on Grab an Edge: a Reflex save against DC 10, landing on the nearest solid tile within 10 feet. A failure, no reaction, being unconscious or no ledge in reach falls into the void and dies. A chasm drops to the level below. The void has nothing below, so the body is lost: it drops nothing to loot, and the job slot comes back through `CFPlayerBodySystem`. Items still drop and are gone at once. `CFChasmEdge` can hold the grace and DC, on whatever marks open sky. Check how stock already treats an entity off the grid. Tests: a creature over open sky grabs the edge on a success and dies on a failure.
+    - [ ] **A `Flying` trait** (`cfTrait`), and a fly Speed on `CFCombatant`. A creature with it never slips, over the void, a chasm or a hole, and nothing below it triggers. Monsters set it in YAML. A character gets it from a grant (`CFGrantMovement` was dropped on 6 November; bring it back for this).
+    - [ ] **Flying over only what is empty.** A tile with a wall, a window or a hard structure still blocks a flyer, as it blocks a walker. Floor is fine.
+    - [ ] **GOAP.** A flyer's steering and paths may cross open sky. Walkers treat it as lava and chasms are treated now: dangerous and not hard. A flyer that loses the trait mid-air (killed, a spell ends) slips like anyone else.
+    - [ ] **Then the options.** Fledgling Flight and Soaring Flight (fly Speed for a while, an action), Leshy Glide and Tripkee Glide (gliding: falls slowly and drifts, so a jump off an island is not death). Air elementals, dragons and other monsters with a printed fly Speed. The Juvenile Horned Dragon's flying, listed under Step 3.
+    - Left from chasm edges: a successful grab moves straight onto the ledge, not a leap with an arc. NPCs do not steer themselves out during the slip; they rely on the save. Grab an Edge does not check for bound hands.
+- [ ] **2.8 Parts missing from feats that mostly work.**
+    - Traits on a natural attack (1.12): Crunch (grapple), Vicious Incisors (backstabber).
+    - Dazzled and deafened (3.13): Blast Resistance.
+    - Underwater (1.3): Aquatic Elf Warrior, Mariner's Fire, Marsh Runner.
+    - A bonus to a DC against one skill: Stone Face.
+    - Make an Impression (1.16): Draconic Sycophant, Fey Fellowship.
+    - Other Speed penalties: Unburdened Iron. A free check near an illusion: Illusion Sense. Going without food: Parthenogenic Hatchling. Dragon's Presence. Explosive Savant. Climb Speed (1.4): Gecko's Grip.
+    - A choice in `choices`: Ancestral Longevity (a skill), Touch of the Sea (the cantrip), Adapted Cantrip and Adaptive Adept.
+- [ ] **2.9 Snares.** Snare Setter and Snare Genius can use `CFTrapLayerSystem`, which the kobold trapper already builds traps with.
+- [ ] **2.10 Feats that need a heritage the game does not have.** Briny Beverage (kijimuna gnome), Crocodile's Twin and Spirit Coffin (bakuwa or makari lizardfolk), Glorious Gamtu, Phantom Visage, Phantom Resemblance and Tangle of Limbs (dokkaebi goblin), Soaring Flight (skyborn tengu), Tripkee Glide (windweb tripkee), Leshy Glide (leaf leshy). Import those heritages or remove the feats.
+- [ ] **2.11 Pets.** Animal Accomplice and Friend of the Sea give a Pet, which is a familiar (3.8).
+- [ ] Human, Kitsune and Sprite have no working ancestry feat at all. Android, Azarketi and Fleshwarp have no feats, because theirs are pre-remaster.
 
-### 1d. Level-up
+### 3. Class feats: features several classes share
 
-All of this is picked in the lobby and stored on `CFCharacterBuildData`, the way `ClassFeatLevel2` is. `LevelUp` only hands it over. The builder slots have not been clicked in a real client. Tests: `CFLevelChoicesTest`.
+463 of 585 do nothing. These are the shapes that come up in more than one class. Feats only one class has are under that class in 4.
 
-- [x] Slots for levels 2 to 5: skill increases at 3 and 5, ability boosts at 5, a general feat at 3, and skill feats at 2 and 4. Picked on the Level Up tab since 11 November 2026, not in the lobby.
-- [x] The same choices copied to `CFExperienceComponent` at spawn, checked again there because they come from a client, and applied by `LevelUp`.
-- [x] Run class features from `LevelUp` when their level is reached.
-- [x] The feat a background names, at level 1: `skillFeats` on `cfBackground`, read through `CFSkills.SelectedFeats`. It needs no qualifying and cannot be taken again in a slot. Three backgrounds name two feats and get both, which has not been checked against the rules (Hermean Heritor and the ones with Hefty Hauler or Diehard). Contract Negotiator and Ravening's Desperation are from other books and are not granted.
-- [x] Extra slots for classes that get more: `bonusSkillFeats` and `bonusSkillIncreases` on `cfClass`. Only the Rogue has them (skill feats at 1, 3, 5 and increases at 2, 4). Not clicked in a real client. Check whether the Investigator should too.
-- [x] Changing a pick clears any later feat the build no longer qualifies for (`CFSkills.DropUnqualifiedFeats`), in the builder and again at spawn. Changing ancestry goes around it, so that case is only caught at spawn. Tests: `CFLevelChoicesTest`.
-- [x] Spell slots grow with level. `laterSlots` on a class's `spellcasting` holds its Spells per Day table from Archives of Nethys, `GrowSpellbook` applies it on level up, and the builder offers every slot through level 5. Tests: `CFSpellSlotTest`. A pick only counts once the slot for it has arrived, by its order in that rank. A Wizard's curriculum slot is not built, and Divine Font's extra slots stay at rank 1 where the table moves them to the highest rank.
-- [ ] The level cap stays at 5, so spells stop at rank 3.
+- [ ] **3.1 A Strike that adds a maneuver**: an effect in `onHit` that Shoves, Grapples, Repositions or knocks prone. Brutish Shove, Combat Grab, Sleek Reposition, Slam Down, Aggressive Block (Fighter, Guardian), Powerful Shove, Flurry of Maneuvers, Unsteadying Strike, Topple the Titans, Dastardly Dash, Flying Tackle, Leading Dance, Mug, Lunge with a maneuver, Wolf Stance's trip.
+- [ ] **3.2 One action that Strikes several targets, or twice.** Swipe (Barbarian, Fighter), Quick Reversal, Double Shot, Paired Shots, Hunted Shot (a bow holds one arrow), Impaling Finisher, Rebounding Toss, Split Shot, Devastating Spellstrike. Combining the damage of two Strikes before resistance: Twin Takedown, Double Slice (Step 4), and two ikon transcendences.
+- [ ] **3.3 Movement inside an action**: a Stride, Step or Leap as part of it. Tactics already stand in for one with +10 feet Speed for 3 seconds, and Sudden Charge works. Barreling Charge (Barbarian, Fighter), Bashing Charge, Defensive Advance (Champion, Guardian), Flying Kick, Parting Shot, Ghostly Stride, Underhanded Assault, Explosive Leap, Black Powder Boost, Retreating Finisher, Dancing Leaf, Guarded Movement, Hit the Dirt's Leap, Tiger Stance's Step.
+- [ ] **3.4 A reaction that moves the creature.** No Escape, Reactive Pursuit, Defensive Swap, Distant Waterbird's Poise, Divert Streamflow, Exploit Blunder, Rapid Response, Clever Gambit, Nimble Reprisal, Unimpeded Step, Intercept Attack's Step, and from 2.4 Goblin Scuttle and Step Lively.
+- [ ] **3.5 New reaction triggers.**
+    - Forced movement: Blade Brake.
+    - A misfortune effect: Turn Away Misfortune, Eat Fortune.
+    - A failed skill check (2.5): Spiritual Guides.
+    - A creature dying nearby: the Necromancer's Inevitable Return, Portents of the Haruspex.
+    - The damage's type: Void Siphon.
+    - An enemy failing a save against your spell: Emotional Push.
+    - An ally dropping: Rapid Response.
+    - Being hit while holding a shield, for a Magus: Emergency Targe.
+    - A critical hit on a reaction Strike stopping the enemy: Disrupt Prey, Stand Still.
+    - Each needs its note first: Body Shield, Fake Out, Not So Fast, Rune Ward, Reactive Dismissal, No! No! I Created You!, Divine Aegis.
+- [ ] **3.6 Drawing as part of an action.** `CFQuickItemSystem` draws a consumable to a free hand. Quick Draw (Gunslinger, Ranger, Rogue), Brandishing Draw, Lightning Swap (Exemplar, Fighter), Quick Bomber, Call Implement, Call Wizardly Tools, Spirit Sheath, Instant Backup.
+- [ ] **3.7 Parries and guards.** Most are a `CFEffectAction` that needs something in hand, as Twin Parry is. Dueling Parry, Raise Haft, Raise a Tome, Defensive Armaments, Elegant Buckler, Covering Stance, Shield Warfare, Shield Your Eyes, Shielded Attrition, Haft-Striker Stance (Fighter, Ranger, Rogue), Phalanx Formation. Area Armor is an aura. The +2 against a parry weapon is missing from Twin Parry and Extravagant Parry.
+- [ ] **3.8 Familiars.** A `cfPet` kind with abilities picked each day. Familiar (Magus, Sorcerer, Thaumaturge, Wizard), Enhanced Familiar (7 classes), Alchemical, Glyph, Undead, Spirit and Leshy Familiar and their Enhanced feats, Familiar's Language, Scatter Swarm, Leshy Familiar Secrets, the Witch's patron familiar, the Leaf order, the Shaman practice, and Pet (2.11).
+- [ ] **3.9 Animal companions through feats, and mounts.** Animal Companion (Ranger says `TBA`; check the Druid's), Mature Animal Companion, Companion's Cry, Commander's Companion, the Animal order. Mounts and the Ride feat: Faithful Steed, Acclimated Mount, Galloping Launch, Steed Form, Rough Rider. "Companions have no inventory" (Step 4) is in the way of barding.
+- [ ] **3.10 Summoning.** No spell summons a creature. `CFSummoned` and `CFCompanionSystem.Bind` are ready, and `CFSpawnEffect` needs a way to bind what it spawns to the caster. Then Summon Animal and the like, Call of the Wild, Elemental Summons, Rites of Convocation, Thoughtform Summoning, Primal Evolution.
+- [ ] **3.11 Recall Knowledge inside another action, and what it tells.** `CFManeuverSystem.TryRecall` exists. Combat Assessment (Commander, Fighter), Combat Reading, Monster Hunter, Monster Warden, Known Weaknesses, Observational Analysis, Strategic Assessment, Whispers of Weakness, Predictable, the Mastermind racket, the Outwit edge, Breached Defenses, Esoteric Warden. Lore skills that do not exist: Warfare, Undead, Esoteric (Diverse Lore), Bardic, Underworld.
+- [ ] **3.12 The start of a fight.** Real time has no initiative, and 14 options hang on it. Decide what stands in for it, such as the first sight of an enemy after a quiet spell, and raise an event. After You, Swaggering Initiative, Even the Odds, Favored Prey, Oracular Warning, Rapid Assessment, Scout's Warning (Ranger, Rogue), Recognize Ambush, Desperate Prayer, Moment of Clarity, the Barbarian's Quick-Tempered, the Rogue's Surprise Attack, the Gunslinger's initial deeds.
+- [ ] **3.13 Missing conditions.** Add each to `CFConditionKind` with its rule.
+    - Stunned: Stunning Blows, the Psychic's cantrips.
+    - Dazzled: the Pluuna rune, Blast Resistance, the Mournful epithet.
+    - Fatigued: Second Wind, Furious Finish.
+    - Enfeebled: Cruelty. Drained: the Spirit fascination. Doomed: Jinxed Tengu. Deafened, fascinated (Fascinating Performance).
+    - Persistent bleed from a critical hit: Tiger Stance, Bloodletting Claws, Scalpel's Point. Stopping it: Clotting Elixirs.
+- [ ] **3.14 Difficult terrain** (1.11). Favored Terrain, Hampering Stance and Not So Fast, Dragon Stance, Unimpeded Step, Forest Passage, the Lyskel rune, the Flesh fascination, Snowdrift Spell. A lingering `CFAreaFill` could carry it.
+- [ ] **3.15 Choices made each day.** A pick at each long rest, on the sheet beside Spell Preparation. Flexible Studies, Oath of the Defender, Oath of the Slayer, Arcane Evolution, Favored Prey, Favored Terrain, Gadget Specialist, Munitions Crafter, Talisman Esoterica, familiar abilities, the Animist's primary apparition, Fey-Touched Gnome.
+- [ ] **3.16 Extra damage on a Strike after casting a spell.** Small: a short bonus set when a spell is cast. Bespell Strikes (Oracle, Sorcerer, Wizard), Psi Strikes, Apparition's Enhancement.
+- [ ] **3.17 Spellshapes left.** Energy Ablation and Vampiric Spell need a spellshape that reads the spell's damage. Nonlethal Spell, Cryptic Spell, Snowdrift Spell, Incriminating Spell, Grasping Spirits Spell, Spiritual Expansion Spell, Elemental Defense. Knowledge of Shapes makes Reach or Widen free.
+- [ ] **3.18 Scrolls, talismans, staves and wands** as items. Scroll Thaumaturgy, Striker's Scroll, Talisman Esoterica, the Wand implement, CP14's magic staves (Step 4), the Noble Branch ikon's staves.
+- [ ] **3.19 Stealing and sabotage**: a Steal action, and damaging what a creature holds. Mug, Plant Evidence, Sabotage, Tamper, the Deft epithet.
+- [ ] **3.20 Disguises and performing in a fight.** Scoundrel's Surprise, Wolf in Sheep's Clothing, Quick Disguise. Perform as an action: Fascinating Performance, Focused Fascination, Enjoy the Show, the Battledancer style.
+- [ ] **3.21 Trap finding.** Trap Finder (Investigator, Rogue): the AC bonus and noticing traps without Seeking. Seek the Hidden Glyphs. Haunt Ingenuity needs haunts.
+- [ ] **3.22 Water** (1.3). Convergent Tides, Flood Stance, Student of Water, Swan Dive, Diving Armor, Amphibious Form, Raging Athlete, Flamboyant Athlete.
+- [ ] **3.23 Needs a game master, or exploration and downtime.** Decide for each: a DM tool through `CFSceneSystem`, the world clock, or flavour text with `TBA`. Glean Lore, That's Odd, the five investigation feats (Detective's Readiness, Eliminate Red Herrings, Solid Lead, Underworld Investigator, Ongoing Investigation) and Pursue a Lead, Sacral Lord (Champion, Oracle), Ritual Researcher, Undead Creator, Lie Detector, Animal Empathy (Druid, Ranger), Plant Empathy, Zoophonic Communication.
 
-### 1e. Skill and general feats
+### 4. Class features and subclasses
 
-`Feats/General/feats.yml` holds 131 feats through level 4 from Player Core, Player Core 2 and GM Core, with the site's one line summaries. `.agent/port-scripts/general_feats.py` rewrites that file from Archives of Nethys, so put fixes in the script. Of 74 feats backgrounds name, 65 match by name.
+What each class still lacks: class features, subclass options, and the feats only that class has. Shared features are named by their number in 3. Critical specialization (2.3) is missing from the weapon features of Fighter, Ranger, Rogue, Barbarian, Commander, Gunslinger, Inventor, Monk and Swashbuckler, and from the Ruffian racket.
 
-- [ ] Effects for the rest. 12 work so far: Battle Medicine, Multilingual, Arcane Sense, Armor Proficiency, Canny Acumen, Diehard, Fleet, Hefty Hauler, Shield Block, Skill Training, Toughness and Weapon Proficiency. `general_feats.py` keeps them in `WORKING`. Weapon Proficiency only gives martial weapons, not the advanced weapon a character already trained in martial would get. Toughness and Fleet do not show in the builder's preview. Tests: `CFGeneralFeatTest`.
-- [x] Prerequisites that name another feat, an attribute or a heritage are data (`requiresFeats`, `requiresAbility`, `requiresHeritage`), written by `.agent/port-scripts/prerequisites.py`. Run it after `general_feats.py`. The builder only lists feats the build qualifies for, and `CFSkills.DropUnqualifiedFeats` clears one that stops qualifying, for class and ancestry slots too. Tests: `CFLevelChoicesTest`.
+- [ ] **Fighter.** Advanced weapons should stop at expert. Feats: 3.1, 3.2, 3.3, 3.6, 3.7, and Overextending Feint.
+- [ ] **Rogue.** Surprise Attack (3.12). Deny Advantage against hidden creatures. Rackets: Mastermind (off-guard from Recall Knowledge, 3.11), Ruffian (critical specialization), Scoundrel (the stronger Feint and the Step after it). Feats: Distracting Feint, Twin Distraction, Poison Weapon (see Alchemist), Head Stomp's kin, 3.19, 3.20.
+- [ ] **Ranger.** Critical specialization against the prey. Being hard to track. The Outwit edge's skill bonuses. Warden spells: Initiate Warden, Advanced Warden, Natural Conduit. Hunter's Aim ignoring concealment, Crossbow Ace, Running Reload, Cover-style feats, 3.9, 3.11.
+- [ ] **Cleric.** Domains: a `cfDomain` prototype with a focus spell, listed on each `cfDeity` (all seven say `TBA`). Then Domain Initiate (the Cloistered doctrine gives it), Expanded Domain Initiate, Deity's Domain, Domain Acumen, Splinter Faith. Deadly Simplicity (the Warpriest doctrine gives it), Emblazon Armament, Versatile Font, Warpriest's Armor later ranks. Heal and Harm shaping: the three-action emanations first (5), then Channel Smite, Directed Channel, Divine Castigation, Communal Healing, Panic the Dead, Sap Life, Divine Infusion, Overwhelming Harm, Invert Harm, Restorative Strike, Sacred Ground. Divine Disharmony. Replace the placeholder pantheon when the setting is written.
+- [ ] **Wizard.** Each school's focus spell and extra curriculum slot (seven schools: only Battle Magic has its spell). Drain Bonded Item. The thesis. Linked Focus, Spellbook Prodigy, Call Wizardly Tools, Spell Protection Array.
+- [ ] **Bard.** Compositions as spells: the anthem is an aura today. Hymn of Healing, Rallying Anthem, Triple Time, Song of Strength, Uplifting Overture, Lingering Composition, Directed Audience, Courageous Advance, In Tune, Zoophonic Composition, Bestial Snarling. Each muse's feat (Bardic Lore, Lingering Composition, Versatile Performance, Martial Performance) through `CFGrantFeat`, and the Polymath's phantasmal minion. Multifarious Muse, Esoteric Polymath, Versatile Signature, Loremaster's Etude.
+- [ ] **Druid.** Untamed Form on battle forms, then Form Control and Anthropomorphic Shape. Each order's feat and order spell: Animal (Animal Companion, heal animal), Leaf (Leshy Familiar), Storm (Storm Born), Untamed. Order Explorer and Order Magic. Verdant Weapon. Anathema, Wildsong and the bond are flavour: decide.
+- [ ] **Witch.** Hexes and the hex cantrip. Each of the seven patrons: its tradition (as a bloodline sets it, with `tradition` on `cfClassChoice`), hex cantrip and familiar gift. Lessons (Basic Lesson), Cackle, Witch's Armaments, Sympathetic Strike. Familiars (3.8).
+- [ ] **Barbarian.** A time limit and cooldown on Rage, then fatigue, Second Wind and Furious Finish. Instincts: Animal (choosing the animal, no weapons in hand), Dragon (the breath's damage type, 1.14), Fury (the extra feat), Giant (oversized weapons), Spirit (spirit damage), Superstition (damage against casters). Morph effects: Brutal Crush, Creature Comforts, Rip and Tear. Senses while raging (`CFGrantWhile` with a sense): Acute Scent, Acute Vision, Supernatural Senses. Adrenaline Rush's Bulk, Raging Intimidation's feats, Oversized Throw, Shake It Off, The Harder They Fall.
+- [ ] **Champion.** The deity's boon (blessed weapon or shield). The cause is not checked against the deity's holy or unholy side. Causes where the enemy chooses always use its refusal. Cause feats: Brilliant Flash, Iron Repercussions, Ongoing Selfishness, Vicious Vengeance, Weight of Guilt, Nimble Reprisal, Unimpeded Step. Two-action versions: Mercy, Cruelty, Security. Oaths (3.15, and Oath of the Avenger). Faithful Steed (3.9). Sanctified Soul.
+- [ ] **Monk.** Qi spells: Qi Spells, Elemental Fist, Harmonize Self. The monk trait on weapons: Monastic Weaponry, Shooting Stars Stance, Waterfowl Stance, Monastic Archer Stance. The missing half of each stance: Crane (jumps), Dragon (backswing, terrain), Tiger (bleed, Step), Wolf (trip), Mountain, Cobra (poison resistance), Rushing Goat, Stumbling, Reflective Ripple, Twisting Petal. The other 11 stances. Stunning Blows (3.13). Mystic Strikes needs something that resists non-magical attacks.
+- [ ] **Swashbuckler.** Panache from each style's own action: Battledancer (Perform), Fencer (Create a Diversion), Gymnast (Reposition), Rascal (Dirty Trick), Wit (Bon Mot). The +1 to bravado checks. Opportune Riposte's Disarm. Half Speed bonus without panache. Slots for the extra skill feat and increase. Flying Blade, Twirling Throw, Goading Feint, Disarming Flair, Cheaters Always Prosper, One for All, 3.3, 3.12.
+- [ ] **Investigator.** Intelligence on the stored Devise a Stratagem attack. Certain Stratagem, Athletic Strategist, Shared Stratagem, Person of Interest, Takedown Expert, Scalpel's Point. Methodologies: Alchemical Sciences (vials), Empiricism, Forensic Medicine, Interrogation. Slots for the extra skill feats at odd levels (as the Rogue's `bonusSkillFeats`). Investigations (3.23).
+- [ ] **Alchemist.** The class barely works: 1 of 21 feats. Decide on CP14 alchemy (Step 3) first. Then versatile vials, Quick Alchemy, infused items and daily preparation. The four research fields. Bombs, with a zone that keeps its own check (see "Loose ends", spell visuals): Quick Bomber, Far Lobber, Smoke Bomb, Healing Bomb, Alchemical Shot. Mutagens: Regurgitate Mutagen, Revivifying Mutagen. Poisons on `CFAfflictionSystem`, applied to a weapon: Poison Weapon, Blowgun Poisoner, Pernicious Poison, Tenacious Toxins, Personalized Poisoning. Elixirs: Clotting Elixirs, Invigorating Elixir, Soothing Vials, Fermenting Liquors, Numbing Spice Exhalation, Cauldron. Alchemical Assessment, Efficient Alchemy, Enduring Alchemy, Improvise Admixture, Alchemical Discoveries, Alchemical Familiar, Reverse Engineer.
+- [ ] **Sorcerer.** Blood magic for each of the 13 bloodlines, and their focus spells. Anoint Ally, Bleed Out, Blood Rising, Propelling Sorcery, Tap into Blood. The four Evolution feats. Demonic's caustic blast, Hag's illusory disguise, an element other than fire for Elemental (1.14).
+- [ ] **Oracle.** The curse and the cursebound condition. Revelation spells for the eight mysteries, and the rank 1 spell of Ancestors, Bones, Cosmos and Lore. Foretell Harm, Thousand Visions, Meddling Futures, Trance of Celerity's curse part, Domain Acumen, Divine Aegis.
+- [ ] **Magus.** Each hybrid study's benefit and conflux spell (ten studies). Choosing which spell goes into a Spellstrike, and counting it as two attacks. Arcane Cascade matching the last spell's type. Study feats: Burning Cascade, Devastating Spellstrike, Distracting Spellstrike, Shattering Spellstrike, Exploding Bullet, Starlit Eyes, Student of the Staff, Heaven-Earth Encompassing Sleeves, Emergency Targe. Expansive Spellstrike, Striker's Scroll (3.18), Running Recharge, Steady Spellcasting (nothing disrupts a spell).
+- [ ] **Thaumaturge.** 0 of 14 feats. Esoterica and adept benefits. Implements that give only the item: Bell, Censer, Mirror. Missing parts: Chalice's sip, Lantern revealing the unseen, Shield surviving destruction, Tome's skills, Wand spending more. A Censer sprite. Feats: Ammunition Thaumaturgy, Call Implement, Paired Link, Divine Disharmony, Root to Life, 3.11, 3.18.
+- [ ] **Gunslinger.** Misfires and cleaning, then Risky Reload and Instant Backup. Each way's deed and the other half of its reload. Spellshot. Combination weapons for the Triggerbrand. Capacity weapons. Sword and Pistol, Pistol Twirl (Feint at range), Warning Shot (Demoralize by gunshot), Cover Fire, Assisting Shot, Guiding Shot, Fake Out, Blast Lock (Force Open with `CFLockSystem`), Crossbow Crack Shot, Dual-Weapon Reload, Munitions Crafter, the second save against being controlled.
+- [ ] **Inventor.** Construct modifications, its second attack, and being broken and repaired. Weapon modifications' razing and hampering, and bases other than the longsword. Rebuilding a destroyed innovation, changing it in downtime, the Inventor skill feat. Feats: Built-in Tools, Collapse Armor, Collapse Construct, Diving Armor, Oil Fire, Dual-Form Weapon, Wukong Extension, Duo Dragon Kick, Haphazard Repair, Variable Core, Gadget Specialist, No! No! I Created You!.
+- [ ] **Psychic.** The missing psi cantrips and amps: telekinetic hand, message, forbidden thought, warp step, distortion lens, and amps for detect magic, guidance, figment and shield. Each conscious mind's rank 1 spell. Oscillating Wave alternating. Gathered Lore's Recall the Teachings, Emotional Acceptance's bonus. Amps from feats: Mental Balm, Homing Beacon, Warp Space, Astral Tether. Counter Thought, Violent Unleash, Mental Buffer's increase, Ancestral Mind, Psychic Rapport.
+- [ ] **Commander.** A folio of five and swapping tactics (Adaptive Stratagem, Tactical Expansion). The unbuilt tactics: Double Team, End It!, Coordinating Maneuvers, Mountaineering Training, Naval Training, Passage of Lines, Protective Screen, Shadows in the Moonlight. A real Stride or Step for the squad. Plant Banner, Banner Twirl, Banner's Inspiration's save, losing the banner. Warfare Lore, and Deceptive Tactics on it. Officer's Medical Training on Intelligence, Shielded Recovery, Armored Regiment Training.
+- [ ] **Guardian.** Taunts do not change who an NPC attacks. Intercept Attack's Step, Ever Ready. Bodyguard (choosing the ally), Larger Than Life (size in maneuvers), Hampering Stance, Shoulder Check, Body Shield, 3.7.
+- [ ] **Necromancer.** Regaining Focus by destroying a thrall. Consume Thrall (Puppeteer), Thrall Teamwork (Reaper), Inevitable Return (3.5). Thralls check the tile is free, and their Strikes count for the Necromancer's penalty. Swapping void and vitality. Fascinations: Flesh (slowed, difficult terrain), Spirit (drained). Grave spells and feats: Muscle Barrier, Song of the Soul, Bony Barrage's armor, Widespread Fascination, The Hallowed Dead, The Unholy Dead, Mobile Thralls, Reach of the Dead, Osteo Armaments, Draining Strike, Death Speaker, Bone Speaker. Thrall blasts draw nothing on the floor.
+- [ ] **Animist.** The 40 or so apparition spells that do not exist (5). The Crafter's and Stalker's vessel spells. Changing the primary apparition on Refocus, Relinquish Control (the Medium practice), sensing spirits and the AC bonus (Seer), a spirit familiar (Shaman). Apparition spells cast from a higher slot. Channeler's Stance and Channeled Protection, Walk the Wilds, Apparition Sense.
+- [ ] **Exemplar.** 0 of 13 feats. Transcendences for Bands of Imprisonment, Fetching Bangles, Horn of Plenty, Skybearer's Belt, Victor's Wreath, Pelt of the Beast and Shadow Sheath. Shadow Sheath's copies, Fetching Bangles' aura, Horn of Plenty's elixirs. AC against ranged only (Gaze Sharp as Steel). Skin Hard as Horn should not count against critical hits. Epithets at level 3: Cunning, Deft, Mournful, Proud. Every feat still needs its own note: Hurl at the Horizon, Leap the Falls, Only the Worthy, Red-Gold Mortality, Steel on Steel, Through the Needle's Eye, Twin Stars, Energized Spark, Sanctified Soul, Vow of Mortal Defiance.
+- [ ] **Runesmith.** 0 of 19 feats. Invocations for Baruiel, Ledria, Oljinex, Pluuna (dazzled), Tilus and Zohk (a teleport). Passives: lowering a resistance (Atryl, Thullax), damage on concentrating or standing still (Camonica, Ranshu), a bonus while a shield is raised (Holtrik), light (Pluuna), scent (Rehgog), a shared language (Tilus), Speed (Zohk), Marssyl's push, Lyskel's clumsy and terrain. The level 5 diacritic runes. Etching on a creature, invoking on two creatures, Magical Crafting and property rune formulas, materials for rune items. Every feat still needs its own note: Backup Runic Enhancement, Engraving Strike, Fortifying Knock, Remote Detonation, Rune-Singer, Rune Ward, Runic Tattoo, Smithing Weapons, Transpose Etching, Invisible Ink, Ghostly Resonance, Terrifying Invocation, Song of Glorious Invocation, Artist's Attendance, Pattern Flight, Writing on the Wall.
+- [ ] **Summoner.** Each eidolon type's ability: Aberrant, Angel, Beast, Construct, Demon, Devotion Phantom, Elemental, Fey, Psychopomp, Swarm, and the rest of Dragon, Ooze and Undead. The second, agile attack and the primary's traits. Act Together, Share Senses, runes and gear on an eidolon. One body per type instead of the placeholder. Protect Companion counting only in reach. Evolution feats: Advanced Weaponry, Amphibious Form, Bloodletting Claws, Dual Studies, Energy Heart, Dual Energy Heart, Expanded Senses, Glider Form, Magical Understudy, Ranged Combatant, Shrink Down, Skilled Partner, Steed Form, Vibration Sense, Meld into Eidolon, Reactive Dismissal. Link spells: Extend Boost, Lifelink Surge, Unfetter Eidolon.
+
+### 5. Spells
+
+All 62 spells in the catalog have an action and an effect. What is left is spells that do not exist, and parts of ones that do.
+
+- [ ] **5.1 Compare each spell with its text.** The scan only finds a spell with no effect at all. `feature_scan.py` still lists Animal Form and Prestidigitation as having none, because both run on their own systems: teach it about them.
+- [ ] **5.2 Three-action Heal and Harm**, the 30-foot emanations. The Cleric's shaping feats wait on them.
+- [ ] **5.3 Bless and Bane as auras** that follow the caster for a minute. They are one pulse today.
+- [ ] **5.4 Summon spells** (3.10).
+- [ ] **5.5 Spells other options name and the game lacks.**
+    - Animist apparitions: Mending, Knock, Ghostly Weapon, Protector Tree, Gentle Breeze, Safe Passage, Deja Vu, Curse of Lost Time, Telekinetic Hand, Ill Omen, Veil of Privacy, Message, Blistering Invective, Hypercognition, Caustic Blast, Grim Tendrils, Acid Grip, Aqueous Orb, Create Food, Enthrall, Dizzying Colors, Hypnotize, Slashing Gust, Tailwind, Propulsive Breeze, Wall of Wind, Puff of Poison, Stupefy, Gouging Claw, Runic Body, Vomit Swarm, Wall of Thorns, Interposing Earth, Exploding Earth, Rousing Splash, Mist, Crashing Wave. Lurker, Shepherd, Speaker and Stalker teach nothing yet.
+    - Sorcerer: caustic blast, illusory disguise. Bard: phantasmal minion. Druid: heal animal. Heritages and ancestry feats: ghost sound, spout.
+    - Psychic: telekinetic hand, message, forbidden thought, warp step, distortion lens.
+    - Walls (Wall of Wind, Wall of Thorns) and a teleport are new shapes for the effect pipeline.
+- [ ] **5.6 Focus spells that are missing.** Wizard schools (6), Witch hexes, Sorcerer bloodlines (13), Oracle revelations (8), Cleric domains, Druid order spells (3), Ranger warden spells, Monk qi spells, Magus conflux spells (10), Bard compositions, Summoner link spells (3), the Champion's two-action versions.
+- [ ] **5.7 Focus spells missing a part** (`Spells/Focus/focus.yml`).
+    - Lay on Hands: damaging undead and the AC bonus. Touch of the Void: healing undead. Both need the undead trait read on the target.
+    - Embodiment of Battle: martial training, Reactive Strike, the penalty to spells.
+    - River Carving Mountains: cover against ranged attacks, difficult terrain.
+    - Trickster's Mirrors: the mirrors and glass shards.
+    - Devouring Dark Form: reach, grapple, the shark form.
+    - Darkened Forest Form's bite: free Recall Knowledge, spitting venom.
+    - Gift of the Anemos (the Step, Shove, jump and off-guard aura).
+    - Crown of Prophets: the second bonus, free Seek, Recall Knowledge and its price.
+    - Protect Companion's resistance, and Boost Eidolon's other evolutions.
+- [ ] **5.8 Daily uses for innate spells.** A ranked spell from `CFGrantSpell` is at will (1.13).
+- [ ] **5.9 Counteracting** cannot end asleep, paralyzed, sickened, darkvision, resistances, quickened or slowed, and does not suppress magic items.
+- [ ] **5.10 Battle forms.** They add Strength to damage where the rules give the form's +1 only. Each animal has one attack. Frog, shark and snake, climb and swim Speeds, Athletics +9, senses, and dismissing the form are not built. The body does not change shape.
+- [ ] **5.11 Command, Figment, Sigil.** A commanded player only sees the order. Figment has no sound mode, and no NPC reacts to it. Sigil cannot go on a creature or be hidden.
+- [ ] **5.12 Slots.** Apparition spells only resolve at their own rank. A Wizard's curriculum slot is not built. The level cap stays at 5, so spells stop at rank 3.
+- [ ] **5.13 Spells without a fill still pass through walls.** Line of effect is a `CFTargeting` flag that no spell turns on.
+
+### General and skill feats
+
+`Feats/General/feats.yml` holds 131 feats through level 4 from Player Core, Player Core 2 and GM Core, with the site's one line summaries. `.agent/port-scripts/general_feats.py` rewrites that file from Archives of Nethys, so put fixes in the script. Of 74 feats backgrounds name, 65 match by name. 259 of 324 backgrounds grant one.
+
+- [ ] Effects for the rest. 12 work: Battle Medicine, Multilingual, Arcane Sense, Armor Proficiency, Canny Acumen, Diehard, Fleet, Hefty Hauler, Shield Block, Skill Training, Toughness and Weapon Proficiency. `general_feats.py` keeps them in `WORKING`. Tests: `CFGeneralFeatTest`.
+- [ ] First the ones other options hand out (1.1, 2.2): Intimidating Glare, Group Coercion, Ride, Combat Climber, Terrain Stalker, Quick Squeeze, Specialty Crafting, Forager, Steady Balance, Untrained Improvisation, Adopted Ancestry, Assurance, Shameless Request, Quick Disguise, Lengthy Diversion, Snare Crafting, Impressive Performance, Titan Wrestler, Hobnobber, Alchemical Crafting, Cat Fall, Pet, Bon Mot, Dirty Trick, Fascinating Performance, Pickpocket.
+- [ ] Weapon Proficiency only gives martial weapons, not the advanced weapon a character already trained in martial would get. Toughness and Fleet do not show in the builder's preview.
 - [ ] 119 prerequisites are still text only: familiars, class features such as Spellstrike, an innovation, a focus pool, an age.
 - [ ] The 2 background feats with no match, from other books: Contract Negotiator and Ravening's Desperation.
+- [ ] Three backgrounds name two feats and get both, which has not been checked against the rules (Hermean Heritor and the ones with Hefty Hauler or Diehard).
 
-### 1f. Spells
+### Left open in the pipeline
 
-- [x] Dispel Magic, on PF2e counteract rules (`CFCounteractSystem`). Spells cast through a spell action remember what they put on a creature: bonuses, and conditions `EndCondition` can end. Dispel Magic aims at an enemy's spell first, then the highest rank. Tests: `CFCounteractTest`.
-- [ ] Counteracting cannot end asleep, paralyzed, sickened, darkvision, resistances, quickened or slowed yet, and does not suppress magic items.
-- [ ] Counter Thought (Psychic) can use `EnemyCastsSpell`, but needs a way to read a mental spell's traits and its own counteract rank.
-- [x] Animal Form, as a battle form (`CFBattleFormSystem`). A mode menu picks ape, bear, bull, canine, cat or deer. For a minute the caster fights with the animal's attack at +9 to hit and +1 damage, has AC 16 plus level and 5 temporary Hit Points, and moves at the animal's Speed. Its own attack and AC count instead when higher. No spells or weapons in the form, and it ends at 0 Hit Points. Tests: `CFBattleFormTest`. Not seen in a real client.
-- [ ] Battle forms still add Strength to damage, where the rules give the form's +1 only. Each animal has one attack. Frog, shark and snake, climb and swim Speeds, Athletics +9, senses, and dismissing the form are not built. The body does not change shape.
-- [x] Figment conjures a ghostly copy of a random shop item that vanishes when touched and fades after a minute. Sigil paints a glowing crayon rune on the floor, one per caster. Know the Way puts an arrow a tile north of the caster that points north on any screen rotation. Tests: `CFUtilityCantripTest`. Not seen in a real client, so the arrow's direction and the tint are unchecked by eye.
-- [x] Command picks Approach, Drop, Fall, Flee or Halt from a radial menu, then a creature. On a failed Will save it obeys for 6 seconds, 12 on a critical failure. GOAP brains plan `Obey`. Stock HTN mobs have their HTN paused and are walked by GOAP steering. It is linguistic, so a creature that does not understand the caster's language ignores it, and animals know only Bestial. Tests: `CFCommandTest`. Not seen in a real client.
-- [ ] A player who is commanded to approach, flee or halt only sees the order.
-- [ ] Figment has no sound mode, and nothing makes an NPC react to it. Sigil cannot go on a creature or be hidden.
-- [x] Focus spells: `focus: true` on `CFSpell` and `CFGrantFocusSpell`, up to 3 Focus Points, refilled by a long rest. Refocus gives one back after 10 world minutes (2.5 real minutes at the default clock), and moving or being hurt interrupts it. In `Spells/Focus/`. Tempest Surge and Force Bolt are the first ones. Tests: `CFFocusTest`.
-- [x] Casting from a higher slot. A spell resolves at the rank of the slot it was paid from (`CFSpellComponent.ResolvedRank`). A prepared caster puts it in a higher slot in the lobby or on the sheet. A spontaneous caster has to learn it at that rank (`KnownAtRank`). Tests: `CFSpellSlotTest`. Not seen in a real client.
-- [x] A spell castable at several ranks opens a radial menu of them, before its mode or bolt count (`CFRankMenuSystem`). The rank is sent on the perform request and checked when it is paid for. Tests: `CFSpellSlotTest`. Not seen in a real client.
-- [ ] Apparition spells still only resolve at their own rank.
-- [x] Signature Spells: one spell of each rank, picked in the builder through a `SignatureSpell` entry in `choices`, cast at any rank with a slot from level 3. For Bard, Oracle, Psychic, Sorcerer and Summoner. Not clicked in a real client. Tests: `CFSpellSlotTest`.
-- [x] Divine Font's slots sit at the cleric's highest rank and move up as it levels (`FontSlots`), so Heal and Harm heighten. They are still Charisma modifier, at least 1, where the rules say 1 plus Charisma. Kept on purpose. Tests: `CFSpellSlotTest`.
-- [ ] Compare each spell's effects with its text. The scan only finds spells with no effect at all, not spells with part of one.
+Gaps in the parts of Step 1 that are built. Take them when the system is next touched.
 
-### 1g. Waves
+**Grants**
 
-Do 1a to 1d first, then work through these. For each entry: read it on Archives of Nethys, replace the placeholder in its `.ftl` with a short note in our own words, add its `grants`, and add a test where it does more than a stat change. An entry that cannot work in play keeps its flavour text and the word `TBA`. A class is finished when every feature and feat has grants or `TBA`.
+- [ ] A bonus against a trait: on attacks and AC it reads the creature's traits only, not those of the weapon or spell.
 
-| Wave | Options | Feats |
-|---|---|---|
-| 1 | Ancestries and heritages. Mostly grants, and no subclass needed. Worked through on 9 November 2026. Heritages: 60 have working effects and 77 are marked `TBA`. Ancestry feats: 38 new ones work, and the rest are marked. Entries that only had `TBA` added still need their text checked against the rules when each is built. Tests: `CFHeritageTest`, `CFAncestryFeatTest` | 255, and 149 heritages |
-| | Wave 1 waits on: climb, swim and fly, a rule for choosing another ancestry's feats, and a `cfFeat` that needs a heritage (prerequisites are text) | |
-| 2 | Fighter, Rogue, Ranger. First pass on 9 November 2026: class features, Hunter's Edge, Sneak Attack limits and 9 passive feats work, and the rest say `TBA`. Tests: `CFWave2Test`. Strike actions: `CFStrikeAction` in `Actions/strikes.yml`, with Intimidating Strike, Dual-Handed Assault, Lunge, Head Stomp, Twin Takedown and Hunter's Aim (tests: `CFStrikeActionTest`). Still to do: Strikes that hit several targets (Swipe, Quick Reversal, Double Shot), Strikes that add a maneuver (Brutish Shove, Slam Down, Sleek Reposition, Combat Grab), and two shots from a bow that holds one arrow (Hunted Shot) | 81 |
-| 3 | Cleric, Wizard, Bard, Druid, Witch. Started on 9 November 2026: focus spells, all subclasses as choices, and class features that are rank raises. Most subclasses are still mostly `TBA`: their feats and focus spells. Feats worked through on 9 November 2026: 15 work, and the rest say `TBA`, mostly waiting on composition spells, domains, familiars, battle forms and the Witch's lessons. Feats that need a muse, order, racket or doctrine now require it (`requiresChoice`). Tests: `CFWave3Test` | 105 |
-| 4 | Barbarian, Champion, Monk, Swashbuckler, Investigator, Alchemist, Sorcerer, Oracle. First pass on 9 November 2026: every subclass is a choice, level 1 to 5 class features are done or say `TBA`, every feat has its own note, and 22 more feats work. Tests: `CFWave4Test`. A Sorcerer's bloodline sets its tradition (`tradition` on `cfClassChoice`). Still to do: Alchemist versatile vials and Quick Alchemy, blood magic and bloodline focus spells, Oracle curses and revelation spells, a time limit on Rage, and Intelligence on a stored Devise a Stratagem roll. Witch patrons could set their tradition the same way | 179 |
-| 5 | Magus, Thaumaturge, Gunslinger, Inventor, Psychic, Commander, Guardian, Necromancer, Animist, Exemplar, Runesmith. First pass on 9 November 2026: subclasses that mean something today are choices, level 1 to 5 class features are done or say `TBA`, and every feat has its own note. Tests: `CFWave5Test`. The systems this wave waited on are built: see the list below, which also says what each still lacks | 197 |
-| 6 | Summoner. First pass on 9 November 2026. An eidolon is a companion ordered by pointing, and a ghost role so another player can take it: `CFEidolonServerSystem`, `Companions/eidolons.yml`, and three builder slots in `Choices/summoner.yml` (type, key attribute, attack). Hit Points are one pool, kept in step by comparing both bodies each tick. It has its own action pool, where the rules share one, because a second player would otherwise be spending the Summoner's actions. It stays within 100 feet. Tests: `CFEidolonTest`. All 15 types set a tradition, skills and attributes. Every type uses one placeholder body. Furious Strike, Tendril Strike and Dragon Breath work, the Ooze's resistance and the Undead's void healing work, and the other types' abilities say `TBA`. Not built: the second attack and the primary attack's traits, Act Together, Share Senses, runes and gear on eidolons, and most evolution feats | 23 |
+**Stances, spellshapes, reactions and auras**
 
-Witch familiars, Druid animal companions and Summoner eidolons all lean on `cfPet`, and "Companions have no inventory" under Step 4 gets in their way.
+- [ ] Reactions (63 feats). What is left is the list below, and the triggers under 3.4 and 3.5. `CFGrantReaction` holds a `CFReaction`: a trigger, what has to be true, and what it does. `CFReactionSystem` runs them. Built on 9 November 2026, with Nimble Dodge, Flashy Dodge, Deflect Projectile, Charmed Life, Orc Ferocity and Wounded Rage. Tests: `CFReactionTest`.
+    - Reactions stay automatic and off the wheel. One only fires when it would change the outcome, so it is not wasted, and the character effectively sees the roll first. That is a deliberate change from PF2e.
+    - Triggers so far: `AttackWouldHit`, `SaveWouldFail`, `Damaged`, `WouldDrop`, `EnemyLeftReach`. `perDay` limits are restored by a long rest.
+    - `EnemyLeftReach` fires when an enemy leaves the reach circle under its own power. Walking out is PF2e's Step: it costs 1 action and does not provoke, and with no actions left it provokes anyway. It is only charged when the watcher could have answered, and one Step covers everyone left within a second. Moving about inside reach does not provoke either, because in real time that would fire on every footstep. Reactive Strike and Stand Still use it. Tests: `CFLeftReachTest`.
+    - `WouldBeDamaged` and `AllyWouldBeDamaged` fire as damage is about to land, through `CFReactionSystem.AnswerDamage`, and need the enemy in the owner's aura. Each Champion cause is one of these. Tests: `CFChampionCauseTest`.
+    - [ ] Causes where the rules let the enemy choose always use its refusal, as a mindless creature would: Iron Command, Glimpse of Redemption.
+    - [ ] Shield Block runs before the other damage reactions in code. It waits when a reaction ranked above it could answer, but one ranked below it never gets the chance once it fires.
+    - [ ] A response that moves the creature, for No Escape and Reactive Pursuit.
+    - [ ] NPCs do not walk to avoid Reactive Strike. They always run.
+    - [ ] Reactive Strike, Shield Block and You're Next are still flags on `CFCombatOptionsComponent`, though they take their place in the order. Reactive Shield is answered in `CFReactionSystem.AnswerAttack`, in its place.
+- [ ] Auras: Bard compositions, Hampering Stance and Channeled Protection can use this when they are built (4). A choice of when to suppress the aura is not built.
 
-- [x] Feats with no effect show `(TBA)` in the builder's lists.
-- [x] Heritages show `(TBA)` in the builder when they have no effect at all. One with part of its rules working keeps its name and says which part is `TBA` in its text. Tests: `CFHeritageTest`.
-- [x] Unfinished class features show `(TBA)` in the class's description in the builder, when nothing about them works yet (`CFClassFeature.Unfinished`). Not seen in a real client.
-- [x] `CFFeatureCoverageTest`: fails on a placeholder in any class, on a class feat with no effect and no `TBA`, on a mistyped proficiency, and on an option in the files that did not load.
-- [x] Kineticist is not included, and its stray feat file is gone.
-- [x] A pass on 10 November 2026: Twin Parry (Fighter, Ranger), Raise Symbol (Cleric) and Story Crooner's Performance bonus work. `CFEffectAction` can need a melee weapon in each hand. Tests: `CFEffectActionFeatTest`. Most of the 465 class feats still marked `TBA` wait on a missing system (mounts, climb and swim, compositions, familiars, temporary Hit Points from actions), not on data.
-- [x] Temporary Hit Points (`CFTemporaryHpSystem`, `CFTemporaryHpEffect`). Damage takes them first, they do not stack, and they can run out or end with their source. Rage gives level plus Constitution, once a minute, ending with the Rage. Second Wind and Armored Courage work. Battle forms use them too. Tests: `CFTemporaryHpTest`.
-- [ ] Rage has no time limit and no cooldown. Second Wind's fatigue is not built. Energy Ablation and Vampiric Spell need a spellshape that reads the spell's damage.
+**Subclasses and deities**
 
-### Systems Wave 5 is waiting on
+- [ ] Replace the placeholder names and lore when the setting is written. Domains, bonus spells, edicts and anathema are not built. A Champion's cause is not checked against the deity's holy or unholy side.
 
-Do all of these before Wave 6. Smallest first, each landing working and tested.
+**Level-up**
 
-- [x] Recharging Spellstrike. `SpellstrikeSpent` on `CFCombatOptionsComponent`, recharged by its action or by a spell with `conflux: true`. Tests: `CFGuardianMagusTest`. Choosing which spell goes into the Strike, and counting as two attacks for Multiple Attack Penalty: not built. Each hybrid study's own conflux spell: not built.
-- [x] Taunt. `CFTauntSystem`, and Intercept Attack as the `InterceptsDamage` trigger. Tests: `CFGuardianMagusTest`. Taunts do not change who an NPC chooses to attack, and an area that also holds the taunter still counts as ignoring them. Intercept Attack does not move the Guardian.
-- [x] Firearms. `Entities/Objects/Weapons/Ranged/CFFirearms.yml`, on the crossbow pipeline: each shot pays for its reload. `CFReloadSystem` loads from what the user carries, and a slinger's reload prepays the next shot. Concussive, kickback and scatter are trait rules. Tests: `CFFirearmTest`. Misfires are not built, because nothing tracks cleaning a weapon. Scatter only splashes enemies. Capacity weapons and combination weapons are not built.
-- [x] Implements. `CFImplement` on an item, in `Entities/Objects/Misc/CFImplements.yml`, and `CFImplementSystem` for what is held. Tests: `CFImplementTest`. Implement's Empowerment and the initiate benefits of Amulet, Chalice, Lantern, Regalia, Shield, Tome, Wand and Weapon work, in part. Bell, Censer and Mirror give the item only. Adept benefits and esoterica are not built. The Censer has no art of its own and uses the Arabian lamp.
-- [x] Psi amps. `CFPsiSystem`. `CFActAmp` is a free spellshape that arms the next psi cantrip, which spends a Focus Point. What an amp does is data on `CFPsiCantrip` on the spell's action. Unleash Psyche and three of four psyche actions work. Tests: `CFPsiTest`. Amps from feats (Mental Balm, Homing Beacon, Warp Space), forbidden thought, distortion lens, warp step, message and telekinetic hand are not built. Telekinetic Rend is one 10-foot burst, not two 5-foot ones. Stunned, the temporary Hit Points on Frostbite and the Oscillating Wave's alternation are not built.
-- [x] Tactics and the banner. `CFTacticSystem`, `Actions/tactics.yml`, and the item `CFCommanderBanner`. Three tactics are picked in the builder as `cfClassChoice` slots, because everything is chosen in the lobby. The squad is the Commander plus 2 + Intelligence nearest allies in the banner's 30 feet. Tests: `CFTacticTest`. Seven of the level 1 tactics work. Real time cannot make other players move, so a tactic's Stride or Step is +10 feet Speed for 3 seconds. Double Team, End it!, Coordinating Maneuvers, Mountaineering and Naval Training, Passage of Lines, Protective Screen and Shadows in the Moonlight are not built, and nor are the folio, Plant Banner, Warfare Lore or the penalty for losing the banner.
-- [x] Innovations. `CFInventorSystem`, items in `Entities/Objects/Misc/CFInnovations.yml`, the construct in `Companions/constructs.yml`. A class choice picks the innovation and another its modification. Overdrive, Explode and the unstable check work. A broken innovation is usable again after the time Refocus takes. Tests: `CFInnovationTest`. The construct has the prototype's statistics from Guns & Gears, on a stock clean bot body. Its second attack, and being broken and repaired at 0 Hit Points, are not built. Companions level with their owner through `CFCompanionSystem.MatchOwnerLevel`. Tests: `CFCompanionLevelTest`. Construct modifications, Ranged Blunt Shot, weapons other than the longsword base, razing and hampering are not built.
-- [x] Thralls. `CFThrallSystem` (Shared) and `CFThrallServerSystem`. `CFThrall` in `Companions/thralls.yml`, a level -1 summoned companion with 1 Hit Point that fights on a GOAP brain since 11 November. Create Thrall, Thrall Charge, Command a Thrall and the grave spells cast on a thrall through `CFThrallBlastEffect`. Tests: `CFThrallTest`. Thralls spawn beside the Necromancer without checking the tile is free. Their Strikes do not count toward the Necromancer's Multiple Attack Penalty. Inevitable Return, Consume Thrall, Thrall Teamwork, Song of the Soul, Muscle Barrier and regaining Focus by destroying a thrall are not built.
-- [x] Apparitions. `CFApparitionSystem`, `CFApparitions` and `CFSustain` in `Spells/`. Two apparitions are picked in the builder (`Choices/apparitions.yml`), the Primary slot and the Second, and `group` keeps a build from taking one twice. Apparition slots are their own pool on `CFSpellbookComponent`, spent like a spontaneous caster's. Sustaining is using the action again: 1 action, no Focus Point, once per 6 seconds, lapsing after 12, for up to a minute. Tests: `CFApparitionTest`. One apparition slot per rank, at levels 1, 3 and 5, from the class table. Most apparition spells do not exist in the game yet, so each option's text says which are missing, and some apparitions teach nothing yet. Traveling Workshop and Darkened Forest Form are not built, so Crafter and Stalker have no vessel. Several vessels are partial, and their summaries say how. Heightening apparition spells waits for casting from a higher slot (1f). Changing primary on Refocus, Relinquish Control, Apparition Sense, spirit familiars and Channeler's Stance are not built.
-- [x] Ikons. `CFIkonSystem`, `cfIkon` prototypes in `Combat/ikons.yml`, actions in `Actions/ikons.yml`, and three builder slots in `Choices/exemplar.yml`. A Shift action per ikon moves the spark, and a transcendence is greyed out until it can be used. Weapon ikons are whatever matching weapon is in hand, not a chosen item. Worn ikons need no item at all. After a transcendence the spark goes to the next ikon, because real time has no pause to choose in. Tests: `CFIkonTest`. Not built: Shadow Sheath's copies, Fetching Bangles, Horn of Plenty, the transcendences of Bands, Pelt, Skybearer's Belt, Shadow Sheath and Victor's Wreath, Diehard on the Scar, armor against ranged only and melee only, and every Exemplar feat that imbues an ikon. Root epithets train their skill at level 1, not 3. Only Brave and Radiant do anything more. Spirit damage is dealt as a second hit, so it shows as its own number.
-- [x] Runes. `CFRuneSystem`, `Combat/runes.yml`, `Actions/runes.yml`, `Crafting/rune_recipes.yml`, and six builder slots in `Choices/runesmith.yml`. A `craftingRecipe` with `attachRune: true` puts its result on a weapon or armor lying on the bench instead of making an item, so the workbench is how item runes and etched Runesmith runes get on things. Recipes follow the normal level rule, so only +1 weapon potency and striking are attachable to weapons at level cap 5, with armor potency at level 5. Trace Rune is one action per rune, 1 action adjacent and 2 from further away, and lasts 12 seconds. Invoke Rune targets a creature and sets off up to two runes on it and what it holds. Tests: `CFRuneTest`. Passives and invocations that need something unbuilt say so in each option: Baruiel, Ledria, Oljinex, Pluuna, Tilus and Zohk have no invocation yet. Not built: etching on a creature, invoking runes on two different creatures at once, the level 5 diacritic runes, shield and armor property runes, the artisan's toolkit requirement, upgrading a rune by paying the difference, and Magical Crafting. Rune items use a placeholder sprite from CP14's magic trap sheet. Materials to craft a rune item itself are not defined, so they come from the shop or as loot.
+- [ ] The level cap stays at 5, so spells stop at rank 3.
 
-### Action HUD
-
-Built on 9 November 2026, between Waves 3 and 4. How it works is under "Game HUD" in `ss14.md`. Tests: `CFDeckLogicTest`, `CFHudDeckTest`. Accepted in a real client on 9 November 2026.
+**Action HUD**
 
 - [ ] Section widths are saved for the deck as a whole, not per character.
 - [ ] Custom / Passives only holds the numbered hotbar. Nothing in the game is a passive toggle yet.
 - [ ] The Common tab's icons are stock placeholders. Grapple, Feint, Aid and Recall Knowledge do not look like what they do.
 - [ ] Throw and Stride have no button, because stock's inputs are already the whole action. Reposition and Sneak have none either.
 - [ ] The sheet's Preparation window can overwrite a slot but not empty one.
-- [x] Prepared casters can put a lower-rank spell in a higher slot, by dragging it there. Add uses its own rank first.
-- [x] The Items tab is gone (11 November 2026): items are used in hand. The All tab is Basic, Spells & Features and Custom, with two dividers.
+
+**Languages**
+
+- [ ] Not taken from Starlight: speaking one line in another language with a chat prefix, languages understood but not spoken, translators, and language on the radio.
+- [ ] Radio is not translated. `EntitySpokeEvent` still carries the real words, so a radio or anything else listening to it hears them.
+- [ ] Languages from a heritage or a background.
+
+**Rest**
+
+- [ ] It restores hit points, wounded, spell slots and focus. Conditions, Battle Medicine immunity and other daily limits are left alone.
 
 ### Decided
 
 - **The lobby builds level 1, and each later level is picked in play.** Changed on 11 November 2026, from picking every level up to 5 in the lobby. When a character has the XP, the player picks the level on the character sheet's Level Up tab and accepts it.
 - **Unfinished options are marked in the builder**, not hidden, so a player can see what is coming.
 - **Exploration and downtime options run on the world clock** where that works. Otherwise they keep their flavour text with the word `TBA` on its own, so `TBA` can be searched for later.
-- **Swimming, flying and climbing are `TBA`.** Swimming will be ported from another fork, because SS14 has water entities. Climb speeds are not built, and `CFZLevelClimb` always rolls.
+- **Flying is over open sky, space tiles, chasms and holes**, and open sky is a fall into the void with a 2 second grace and Grab an Edge (2.7). Decided on 15 November 2026.
+- **Swimming and climbing are `TBA`.** Swimming will be ported from another fork, because SS14 has water entities. Climb speeds are not built, and `CFZLevelClimb` always rolls.
 - **Deities are our own pantheon**, not Golarion's named gods. Speaking to a god is stock SS14 prayer, which sends the message to the admins, so there is no religion system to build.
 - **Languages matter**, for roleplay: talk a goblin out of a fight in its own tongue. See "Languages" below.
 
-### Languages
+## Loose ends from finished work
 
-Built on 6 November 2026. `Content.Shared/_CF/Languages`, and `CFSpeech` in `Content.Server/_CF/Languages/ChatSystem.CF.cs`. Tests: `CFLanguageTest`. The builder button has not been used in a real client.
+What was left open when each of these was built. The finished parts are in `roadmapold.md` under the same names.
 
-- [x] A player in a kobold could not read their own speech (15 November 2026). It was not the language check: the stock kobold body has a `ReplacementAccent` that swaps every line for "Yip" or "Grrar" before languages are looked at, so everyone heard that. A creature with `CFLanguages` now loses an accent that replaces whole lines (`CFLanguageAccentSystem`), and a speaker is never treated as a foreign listener of their own words.
-- [x] The language menu, after Starlight's (`C:\project\starlight-ss14`, used with permission and credited in each file): a speech bubble button on the top bar opens a list of the languages the body knows, with a Speak button each (`CFLanguageMenuWindow`, `CFLanguageMenuUIController`, `CFLanguageMenuSystem`). The Speak verb on yourself is gone. The button has no key, because upstream keybinds are not edited.
-- [ ] Not seen in a real client: the button and the menu.
-- [ ] Not taken from Starlight: speaking one line in another language with a chat prefix, languages understood but not spoken, translators, and language on the radio.
+### Spell visuals
 
-- [ ] Radio is not translated. `EntitySpokeEvent` still carries the real words, so a radio or anything else listening to it hears them.
-- [x] Known languages are on the character sheet, beside Speed. Not seen in a real client.
-- [x] Multilingual and Nomadic Halfling teach languages through a `Language` entry in `choices`, so the player picks. Only common languages are offered. `CFGrantLanguage` was not needed. Tests: `CFLevelChoicesTest`.
-- [x] A level 5 boost that raises Intelligence teaches one more language. The builder adds a slot for it, and `LevelUp` hands it over at level 5 (`xp.LanguageLevel5`). Tests: `CFLanguageTest`.
-- [x] Kobolds speak Draconic and Sakvroth, not Common, so a party needs one of those to talk to them. Tests: `CFLanguageTest`.
-- [x] Animals speak `Bestial` and mindless undead and oozes `Mindless`: noises no one can learn, so a player in one of their bodies cannot talk or understand speech. Tests: `CFLanguageTest`.
-- [ ] Languages from a heritage or a background.
+- [ ] No bomb exists yet to use `CFFillEffect`. A lingering fill ends if its source is deleted, so a thrown bomb that should leave a zone with a save needs the zone to keep its own check and effects.
 
-### Rest
+- [ ] The three-action Heal and Harm emanations are not built, so they have no area to draw.
 
-Built on 6 November 2026. `CFLongRestSystem`. Tests: `CFLongRestTest`.
+### GOAP movement
 
-- [x] A long rest is refused with a living enemy within 50 feet and in the open, and has a cooldown of 15 real minutes per character. This replaces PF2e's 8 hours and once a day, on purpose, for pace. It only counts creatures whose `cfFaction` opposes the sleeper's. Tests: `CFLongRestTest`.
-- [ ] It restores hit points, wounded, spell slots and focus. Conditions, Battle Medicine immunity and other daily limits are left alone.
+- [ ] A recalled companion ignores enemies even when hit on the way back. `StayAlive` can still make one run from an ordered target.
+- [ ] A companion's place behind its master only follows the way they walked. Teleporting or being pulled leaves it on its own side.
+
+### Bard
+
+- [ ] The virtuoso's lute keeps stock's MIDI limits, so a very busy song can still give finger cramps.
+
+### Level up
+
+- [ ] Read the next report that comes in, and fix what it shows.
+
+### Holstering
+
+- [ ] The back slot is where the adventurer's kit goes, so a shield or weapon there means carrying the kit some other way.
+
+### HUD
+
+- [ ] The keys follow the chosen tab even while the deck is slid shut. Check in play whether they should only work while it is open.
+
+### Levels in game, and respawn
+
+- [ ] Older saved characters still hold the level 2 to 5 picks the lobby used to take. The Level Up tab starts from them, and the player can change them.
+
+### Monsters, summons and companions
+
+- [ ] No spell summons a creature yet (Summon Animal and the like). A new one gives what it calls `CFSummoned`, and `CFSpawnEffect` would need a way to bind it to the caster.
+- [ ] A companion with a player in it gets nothing from pointing but the popup.
+
+### Money
+
+- [ ] What a merchant charges is not on the counter: they sell by hand, trading coins and goods.
+
+### Monster parts and harvesting
+
+- [ ] Merging two stacks of harvested parts keeps the receiving stack's value per item, so their worth can drift.
+- [ ] Kobolds, goblins and hobgoblins give generic monster parts. Decide whether humanoids should give anything.
+- [ ] Later: Battlezoo's refining and imbuing, crafting parts into gear. Bulk by size, and Gathering More through Earn Income, are not built.
+
+### PvP
+
+- [ ] A player's companion, eidolon or thrall follows its faction, so it never fights another player even with PvP on.
+
+### Respawning and SSD players
+
+- [ ] Drop the wallet too, once it exists (1).
 
 ## Step 2: Finish the rebuild
 
-Left from re-importing the other machine's lost work. Details of what was rebuilt are in `roadmapold.md`.
-
-- [x] The `Chemicals` guide failure. That entry no longer exists, and all 57 guide entries pass.
-- [x] Recipes: the 59 from `recipes.py` are in `recipes_ported.yml`. Known limits: stack groups use the plain material, so birch planks do not count. Cooking recipes wait for a station. 73 results are not ported (clothing, backpacks, vials, CP14's key and lock items). 4 need an unported ingredient: Screwdriver, ElfPlushie, AgaricPlushie, SkeletonPlushie.
-- [x] Recipes of our own for the Phase 3 weapons, in `recipes_weapons.yml`.
-- [x] `Sharp` has no replacement: butchering goes through the kitchen spike. `ToggleableLightVisuals` is now `ToggleableVisuals`. Both are in `ss14rules.md`.
-- [x] `CFSiteWallStone` is back to `CFWallStone`. Standing has a test: `StandingCostsOneActionAndWaitsForIt`.
-- [x] `codebase.md` and `ss14rules.md` have the new folders and the engine differences from the port.
+The checklist is done and in `roadmapold.md`. These notes stay, because they are still true.
 
 ### Check before trusting
 
@@ -506,25 +390,25 @@ Traps found while porting:
 The rule for what comes over, and how, is under Phase 3b in `roadmapold.md`: RPG mechanics yes, new game systems no.
 
 - [ ] Tools, materials, keys and locks (Pick a Lock / Force Open).
-  - Still to do for locks: portable lock items, repairing a broken toolkit, and shoddy improvised picks. A critical Force Open unlocks but does not swing the door open.
+    - Still to do for locks: portable lock items, repairing a broken toolkit, and shoddy improvised picks. A critical Force Open unlocks but does not swing the door open.
 - [ ] Workbenches and recipes on the PF2e Crafting rules.
-  - Recipes: `recipes.yml` and `recipes_ported.yml` hold what CP14 had and this branch can make. Add the rest as their items land. `CFWorkbench` itself has no recipes yet, because all 37 of its results are missing. The 8 vampire recipes stay out. The cooking table waits for cooking.
-  - Not done: Alchemical Crafting and Magical Crafting feat checks (no such recipes yet), batches of consumables, repairing items, `CP14StackGroup` and solution requirements, and reverse-engineering formulas.
+    - Recipes: `recipes.yml` and `recipes_ported.yml` hold what CP14 had and this branch can make. Add the rest as their items land. `CFWorkbench` itself has no recipes yet, because all 37 of its results are missing. The 8 vampire recipes stay out. The cooking table waits for cooking.
+    - Not done: Alchemical Crafting and Magical Crafting feat checks (no such recipes yet), batches of consumables, repairing items, `CP14StackGroup` and solution requirements, and reverse-engineering formulas.
 - [ ] Creatures with PF2e stat blocks. `importcreatures.md` is the guide.
-  - Each creature has one Strike, its first printed melee Strike. A second Strike needs a way to pick between attacks. Special abilities wait for the planned better AI, not for this row. They are not in: Grab, venom and disease, Ferocity, charges, Filth Wave, the ooze's extra acid. Pack Attack is in (`packAttackDie`), on the wolf and the velociraptor. The stat block comment on each creature lists what is missing. Immunity to critical hits and precision is not in either.
-  - Size does not change a creature's body yet, so the Large bear is a Medium body.
-  - Goblin Warrior, as a melee and a ranged variant on the `_CE` goblin body, with the new `CFDogslicer`. Goblin Scuttle is not in. Tests: `CFGoblinWarriorTest`. Not seen in a real client.
-  - Hobgoblin Soldier, on the same body: longsword and shield, or shortbow with the longsword drawn when out of arrows. Reactive Strike and Shield Block are in, and GOAP now raises a held shield on seeing an enemy (`RaiseShield`). Formation is not in. Tests: `CFHobgoblinSoldierTest`. Not seen in a real client.
-  - Wolf, on the stock corgi sprite, and a `WolfPack` encounter of four that flank. Pack Attack, low-light vision and scent are in. Knockdown is not, because Trip is not an action. Tests: `CFWolfTest`. Not seen in a real client.
-  - Juvenile Horned Dragon, from the Beginner Box Adventure on Demiplane, on a sprite made for CarpFinder. Jaws, Poison Breath (`CFBreathWeapon`, used by the AI and by a player in the body) and Draconic Momentum. Since 12 November 2026 the breath is a toxic cloud (`CFBreathGas`, `CFBreathGasSystem`): gas let out over 1.5 seconds and shared between neighbouring tiles as atmos does, but only over the cone's tiles it can reach, so walls, closed doors and open sky stop it. It fills the cone in about 2 seconds. Anyone on a tile once it has thickened rolls, once per breath, including someone who walks in while it lingers, and it is gone in about 12 seconds. Each tile is drawn with the stock tritium gas sheet (`CFBreathCloudPoison`), thicker with more gas. It is not real atmos, which cannot keep to a cone and whose tritium burns and irradiates. Not seen in a real client: the look of the cloud. A liquid version, Toxic Spew (`CFActToxicSpew`, `CFAreaFill`, stock puddles of `CFToxicSpew`), is kept for another creature and granted to nothing yet. Tests: `CFToxicSpewTest`. It keeps its lair (`CFGOAPLair`): breathes when charged, waits in the lair while it recharges, closes only within 3 tiles, and goes home after 8 tiles or 10 seconds away. Draconic Frenzy, Twisting Tail, the poison on its jaws, and flying and swimming are not in. Tests: `CFJuvenileHornedDragonTest`. Not seen in a real client, nor is the cone outline while a player aims the breath.
-  - Still to port: livestock (pig, sheep, rabbit, cat; there is no printed stat block for most), zombies (they need CP14's humanoid species), watchers, spineguard, flem, cackle, bone hound, mole, myconids, ice spectre, whistler, mosquito, hydra, fairy. CP14-only monsters need a PF2e creature of a matching level chosen first.
-  - Monsters are harvested for priced parts with a survival knife and a Survival check, through `CFHarvestable` (see Monster parts under Do first). Boar, bear, wolf and dragon give leather, bone and meat.
+    - Each creature has one Strike, its first printed melee Strike. A second Strike needs a way to pick between attacks. Special abilities wait for the planned better AI, not for this row. They are not in: Grab, venom and disease, Ferocity, charges, Filth Wave, the ooze's extra acid. Pack Attack is in (`packAttackDie`), on the wolf and the velociraptor. The stat block comment on each creature lists what is missing. Immunity to critical hits and precision is not in either.
+    - Size does not change a creature's body yet, so the Large bear is a Medium body.
+    - Goblin Warrior, as a melee and a ranged variant on the `_CE` goblin body, with the new `CFDogslicer`. Goblin Scuttle is not in. Tests: `CFGoblinWarriorTest`.
+    - Hobgoblin Soldier, on the same body: longsword and shield, or shortbow with the longsword drawn when out of arrows. Reactive Strike and Shield Block are in, and GOAP now raises a held shield on seeing an enemy (`RaiseShield`). Formation is not in. Tests: `CFHobgoblinSoldierTest`.
+    - Wolf, on the stock corgi sprite, and a `WolfPack` encounter of four that flank. Pack Attack, low-light vision and scent are in. Knockdown is not, because Trip is not an action. Tests: `CFWolfTest`.
+    - Juvenile Horned Dragon, from the Beginner Box Adventure on Demiplane, on a sprite made for CarpFinder. Jaws, Poison Breath (`CFBreathWeapon`, used by the AI and by a player in the body) and Draconic Momentum. Since 12 November 2026 the breath is a toxic cloud (`CFBreathGas`, `CFBreathGasSystem`): gas let out over 1.5 seconds and shared between neighbouring tiles as atmos does, but only over the cone's tiles it can reach, so walls, closed doors and open sky stop it. It fills the cone in about 2 seconds. Anyone on a tile once it has thickened rolls, once per breath, including someone who walks in while it lingers, and it is gone in about 12 seconds. Each tile is drawn with the stock tritium gas sheet (`CFBreathCloudPoison`), thicker with more gas. It is not real atmos, which cannot keep to a cone and whose tritium burns and irradiates. A liquid version, Toxic Spew (`CFActToxicSpew`, `CFAreaFill`, stock puddles of `CFToxicSpew`), is kept for another creature and granted to nothing yet. Tests: `CFToxicSpewTest`. It keeps its lair (`CFGOAPLair`): breathes when charged, waits in the lair while it recharges, closes only within 3 tiles, and goes home after 8 tiles or 10 seconds away. Draconic Frenzy, Twisting Tail, the poison on its jaws, and flying and swimming are not in. Tests: `CFJuvenileHornedDragonTest`.
+    - Still to port: livestock (pig, sheep, rabbit, cat; there is no printed stat block for most), zombies (they need CP14's humanoid species), watchers, spineguard, flem, cackle, bone hound, mole, myconids, ice spectre, whistler, mosquito, hydra, fairy. CP14-only monsters need a PF2e creature of a matching level chosen first.
+    - Monsters are harvested for priced parts with a survival knife and a Survival check, through `CFHarvestable` (see Monster parts under Do first). Boar, bear, wolf and dragon give leather, bone and meat.
 - [ ] Raw materials and coins.
-  - Not done: raw materials have no price, so they cannot be sold. Giving stack prototypes a Price needs a shop fix first: the shop charges the listed price per prototype, whatever the stack holds, so `CFIronBar10` would be a bargain. Also not done: coin Bulk (1,000 coins is 1 Bulk), art objects, and coins as monster loot.
+    - Not done: raw materials have no price, so they cannot be sold. Giving stack prototypes a Price needs a shop fix first: the shop charges the listed price per prototype, whatever the stack holds, so `CFIronBar10` would be a bargain. Also not done: coin Bulk (1,000 coins is 1 Bulk), art objects, and coins as monster loot.
 - [ ] Items left out of the consumables port.
-  - Not ported here: monster toxins (creatures row), cooking pots and their recipes (crafting row), smoking pipes and chromium jelly (they need plants from the farming row).
+    - Not ported here: monster toxins (creatures row), cooking pots and their recipes (crafting row), smoking pipes and chromium jelly (they need plants from the farming row).
 - [ ] Decide on CP14 alchemy.
-  - CP14 alchemy (magic essences, `Target Effects` reagents, 67 reactions, cauldron brewing): **open question.** PF2e alchemy is the Crafting skill and formulas, not mixing reagents, so this may be a new game system. Left out until decided.
+    - CP14 alchemy (magic essences, `Target Effects` reagents, 67 reactions, cauldron brewing): **open question.** PF2e alchemy is the Crafting skill and formulas, not mixing reagents, so this may be a new game system. Left out until decided.
 
 ## Step 4: Close the rules gaps
 
@@ -550,11 +434,10 @@ Smaller gaps found while building the earlier phases. Take them when the system 
 - [ ] Darkness does not count as concealment yet. It waits for the `Light` layer (6c).
 - [ ] Recall Knowledge picks a skill by trait once creatures have trait data.
 - [ ] Treat Wounds always uses the highest DC the healer's rank allows. The rule lets them choose.
-- [ ] The spin, sprite hiding, instrument, Hide verb, Alt+Z and pointing inputs have only been tested through code, not played in a real client.
 
 ## Step 5: AI
 
-The labels are the sections of Phase 6 in `roadmapold.md`, which has the design. `goap.md` is how it works now.
+The labels are the sections of Phase 6 in `roadmapold.md`, which has the design. A label with nothing open is left out. `goap.md` is how it works now.
 
 **6a. Steering behaviours (can start now)**
 
@@ -586,14 +469,8 @@ The labels are the sections of Phase 6 in `roadmapold.md`, which has the design.
 **6g. Verify**
 
 - [ ] A purpose-built test map. See proposal 1 in `ai-testing.md`, which covers this and the corridor, side room and closet.
-- [x] Measure how much slower GOAP is than stock HTN, with the same mobs on the same map. Measured on 10 November 2026 with `CFGOAPStressTest`, results in `ai-testing.md`. At 30 mobs GOAP costs about 1 ms per tick against stock's 0.1 to 0.4, about 3% of a 30 tick server's time. That is cheap enough to move every mob to GOAP.
-- [x] Sleep mode: a brain sleeps with no living player within 60 feet, and wakes when one comes in. It waits 10 seconds after the last player leaves before sleeping, and stays awake while it can see an enemy. Being hurt wakes it and its group. A sleeping mob costs nothing. `CFGOAPSleepSystem`, tests: `CFGOAPSleepTest`.
-- [x] GOAP steering is most of its cost. Three speedups on 10 November 2026: feelers look every third tick, long sight rays every 0.25 seconds, and walls and lava are kept on the grid instead of searched for each tick. GOAP AI time fell about 30% idle and 10 to 20% in fights, 0.77 ms for 30 idle mobs. See "Feelers and the safety circle" in `goap.md`.
-- [x] Calm goals (`Idle`, `GoHome`) think once a second instead of twice, and cast no long rays. On open floor they cast no rays at all. GOAP AI for 30 idle mobs went from 0.77 to 0.64 ms. The open floor part has not been measured, because the stress map is a maze.
-- [x] A mob that opens a door walks through it, then builds its field again from the far side. Tests: `ItWalksThroughADoorThenBuildsANewField`. Not seen in a real client.
 - [ ] Measure the stress test on an open map too, where the calm open floor skip can show.
 - [ ] More steering speedups, listed in `ai-testing.md` under the stress test. Steering is still about 0.45 ms of GOAP's 0.77 at 30 idle mobs.
-- [x] GOAP kobolds deal far less damage than stock ones in the stress test (226 against 1,191 at 30 mobs). This is intended: stock AI spams attacks, and GOAP flanks, repositions, holds back and runs.
 
 **6h. Encounters**
 
@@ -612,9 +489,6 @@ The labels are the sections of Phase 6 in `roadmapold.md`, which has the design.
 **6j. Tactics (6 November 2026)**
 
 - [ ] Balance: a creature with discipline waits out Multiple Attack Penalty, so it hits much harder over a long fight. Worked out at 4 to 5 times for a +8 attack against AC 18. Check this in play, and drop `discipline` if it is too much.
-- [x] Every CF monster thinks with GOAP, from its base (10 November 2026). Animals use `Beast` tactics, the sewer ooze and skeleton guards `Mindless`, kobold warriors `Default`. Encounters replace tactics only when they name some, and a leader with `keepOwnLists` keeps its own. Stock SS14 mobs keep their own AI. Companions moved to GOAP on 11 November. Tests: `CFMonsterTest`, `CFGOAPEncounterTest`, `CFSkeletonguardTest`. Not seen in a real client.
-- [x] Monsters live in a folder per creature type under `Entities/Mobs/Creatures/`, with the type on `CFTrait`. `MonstrousHumanoid` and `Outsider` were added as traits, though the remaster has neither.
-- [x] GOAP for companions, eidolons, thralls and constructs (11 November 2026). See the first Do first section. Tests: `CFCompanionGoapTest`.
 - [ ] Choosing spells. See `goap-weights.md`.
 
 **6j2. The kobold trapper (6 November 2026)**
@@ -631,7 +505,6 @@ The labels are the sections of Phase 6 in `roadmapold.md`, which has the design.
 
 - [ ] A mob cannot follow a trail through a door. A closed door takes no scent, and `FollowScent` does not use `Navigate`, so it never opens one. It also flips between `HuntTarget` and `Investigate` as scent comes and goes.
 - [ ] `Investigate` never Seeks, so a hidden creature beside the mob is not looked for without a node.
-- [x] `Wander` ran at full speed, could jam in a corridor, and paced at the edge of its home range. Replaced on 13 November 2026 by walks to spots it can reach in a straight line, inside its range, with rests between (see GOAP movement under Do first).
 - [ ] A routed creature that can still see its enemy never hides, because the flee map ignores line of sight.
 - [ ] Swings at obstacles ignore `discipline`, so the pool stays empty and it stays at -10.
 

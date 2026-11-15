@@ -73,6 +73,10 @@ public sealed partial class CFReaction
     [DataField]
     public bool RangedOnly;
 
+    /// <summary>Only against a melee attack, such as a creature that touches this one.</summary>
+    [DataField]
+    public bool MeleeOnly;
+
     [DataField]
     public bool NeedsToSeeAttacker;
 

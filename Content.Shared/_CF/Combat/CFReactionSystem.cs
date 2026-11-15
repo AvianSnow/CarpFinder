@@ -844,6 +844,9 @@ public sealed partial class CFReactionSystem : EntitySystem
         if (reaction.RangedOnly && !ranged)
             return false;
 
+        if (reaction.MeleeOnly && ranged)
+            return false;
+
         if (reaction.NeedsToSeeAttacker && _stealth.IsUnseenBy(attacker, target))
             return false;
 

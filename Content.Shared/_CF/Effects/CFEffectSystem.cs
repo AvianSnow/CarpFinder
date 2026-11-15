@@ -1,3 +1,4 @@
+using Content.Shared.Actions.Components;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
 using Content.Shared.CF.Actions;
@@ -618,6 +619,14 @@ public sealed partial class CFEffectSystem : EntitySystem
         var traits = new HashSet<ProtoId<CFTraitPrototype>>();
         if (TryComp(source, out CFTraitComponent? own))
             traits.UnionWith(own.Traits);
+
+        // An action carries its creature's traits too, so a save upgrade against undead counts against a ghoul's spell.
+        if (TryComp(source, out ActionComponent? action)
+            && action.AttachedEntity is { } creature
+            && TryComp(creature, out CFTraitComponent? creatureTraits))
+        {
+            traits.UnionWith(creatureTraits.Traits);
+        }
 
         if (TryComp(source, out CFSpellComponent? spell))
             traits.Add("Magical");

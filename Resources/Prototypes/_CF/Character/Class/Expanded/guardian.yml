@@ -65,7 +65,12 @@
           action: CFActTaunt
     - level: 3
       name: "Tough To Kill"
-      description: "Diehard, and staying up longer at 0 Hit Points: TBA"
+      description: "You gain the Diehard feat, so you die at dying 5 instead of 4. Once a day, the first time your dying value would reach 3 or more, it stays at 2 instead."
+      grants:
+        - !type:CFGrantFeat
+          feat: CFDiehard
+        - !type:CFGrantOption
+          option: ToughToKill
     - level: 5
       name: "Unbreakable Expertise"
       description: "Expert with medium and heavy armor."

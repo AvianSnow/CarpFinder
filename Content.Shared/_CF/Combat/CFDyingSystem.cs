@@ -248,6 +248,12 @@ public sealed partial class CFDyingSystem : EntitySystem
     /// <summary>A long rest: full hit points and no wounded. The dead and dying get nothing.</summary>
     public void RestoreFully(EntityUid target)
     {
+        if (TryComp(target, out CFCombatOptionsComponent? options) && options.ToughToKillUsed)
+        {
+            options.ToughToKillUsed = false;
+            Dirty(target, options);
+        }
+
         if (!TryComp(target, out CFCombatantComponent? combat) || !_mobState.IsAlive(target))
             return;
 
@@ -354,8 +360,10 @@ public sealed partial class CFDyingSystem : EntitySystem
     /// <summary>The DC of this creature's next recovery check.</summary>
     public int RecoveryDc(EntityUid uid, CFCombatantComponent combatant)
     {
-        return CFDyingTrackerComponent.BaseRecoveryDc + combatant.Dying
-               - (CompOrNull<CFCombatOptionsComponent>(uid)?.Toughness == true ? 1 : 0);
+        var options = CompOrNull<CFCombatOptionsComponent>(uid);
+        return CFDyingTrackerComponent.BaseRecoveryDc
+               + (options?.NineLives == true ? 0 : combatant.Dying)
+               - (options?.Toughness == true ? 1 : 0);
     }
 
     private void AttemptRecoveryCheck(EntityUid uid, CFCombatantComponent combatant)
@@ -398,6 +406,18 @@ public sealed partial class CFDyingSystem : EntitySystem
         EntityUid? origin,
         bool knockedOut)
     {
+        // Tough to Kill: once a day, the first time dying would reach 3 or more, it stays at 2.
+        if (value >= 3
+            && TryComp(target, out CFCombatOptionsComponent? options)
+            && options.ToughToKill
+            && !options.ToughToKillUsed)
+        {
+            value = 2;
+            options.ToughToKillUsed = true;
+            Dirty(target, options);
+            PopupPvs(Loc.GetString("cf-combat-tough-to-kill"), target, PopupType.Medium);
+        }
+
         combatant.Dying = Math.Max(0, value);
         Dirty(target, combatant);
 

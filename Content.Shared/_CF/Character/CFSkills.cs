@@ -1,4 +1,5 @@
 using System.Linq;
+using Content.Shared.CF.Character.Grants;
 using Content.Shared.CF.Preferences;
 using Content.Shared.Humanoid.Prototypes;
 using Robust.Shared.Prototypes;
@@ -254,6 +255,90 @@ public static class CFSkills
                 if (bonusLevel <= level && build.BonusSkillFeats.TryGetValue(bonusLevel, out var id))
                     AddFeat(prototypes, result, new ProtoId<CFFeatPrototype>(id), feat => feat.FitsSkillSlot(bonusLevel));
             }
+        }
+
+        foreach (var feat in ExtraFeats(prototypes, build, ancestryId, level, result))
+        {
+            AddFeat(prototypes, result, feat.ID, _ => true);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Feats the build has without a feat slot: given outright by a <see cref="CFGrantFeat"/> on its heritage, background,
+    /// subclass options, class features or feats, or chosen for a <see cref="CFOptionChoiceKind.Feat"/> choice on one of those.
+    /// A chosen feat only has to be of the right kind here. Whether it qualifies is checked when the pick is validated.
+    /// </summary>
+    /// <param name="slotFeats">The feats from the build's slots, whose grants and choices are read too. Null reads them itself.</param>
+    public static List<CFFeatPrototype> ExtraFeats(
+        IPrototypeManager prototypes,
+        CFCharacterBuildData build,
+        string? ancestryId,
+        int level,
+        IReadOnlyList<CFFeatPrototype>? slotFeats = null)
+    {
+        var result = new List<CFFeatPrototype>();
+        var classId = build.Class?.Id;
+
+        void Read(string source, IEnumerable<CFGrant> grants, IEnumerable<CFOptionChoice> choices)
+        {
+            foreach (var grant in grants.OfType<CFGrantFeat>())
+            {
+                AddFeat(prototypes, result, grant.Feat, _ => true);
+            }
+
+            var index = 0;
+            foreach (var choice in choices)
+            {
+                for (var i = 0; i < choice.Count; i++, index++)
+                {
+                    if (choice.Kind != CFOptionChoiceKind.Feat)
+                        continue;
+
+                    var slot = index;
+                    var pick = build.OptionPicks.FirstOrDefault(p => p.Source == source && p.Slot == slot);
+                    if (pick != null)
+                        AddFeat(prototypes, result, new ProtoId<CFFeatPrototype>(pick.Value), feat => CFOptionChoices.FeatFits(choice, feat, classId, ancestryId));
+                }
+            }
+        }
+
+        if (build.Heritage is { } heritageId
+            && prototypes.TryIndex(heritageId, out CFHeritagePrototype? heritage)
+            && heritage.Fits(ancestryId))
+        {
+            Read(heritage.ID, heritage.Grants, heritage.Choices);
+        }
+
+        if (build.Background is { } backgroundId && prototypes.TryIndex(backgroundId, out CFBackgroundPrototype? background))
+            Read(background.ID, background.Grants, Array.Empty<CFOptionChoice>());
+
+        foreach (var choice in CFClassChoices.Selected(prototypes, build))
+        {
+            Read(choice.ID, choice.Grants, choice.Choices);
+            foreach (var feature in choice.Features)
+            {
+                if (feature.Level <= level)
+                    Read(choice.ID, feature.Grants, Array.Empty<CFOptionChoice>());
+            }
+        }
+
+        if (classId != null && prototypes.TryIndex<CFClassPrototype>(classId, out var cls))
+        {
+            foreach (var feature in cls.Features)
+            {
+                if (feature.Level <= level)
+                    Read(CFOptionChoices.FeatureSource(cls, feature), feature.Grants, feature.Choices);
+            }
+        }
+
+        // Only the slot feats hand out more feats, so a feat given by another feat does not give a third.
+        var featsRead = slotFeats ?? SelectedFeats(prototypes, build, ancestryId, classId, level);
+        foreach (var feat in featsRead.ToList())
+        {
+            if (!result.Contains(feat))
+                Read(feat.ID, feat.Grants, feat.Choices);
         }
 
         return result;

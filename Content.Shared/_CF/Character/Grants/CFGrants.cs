@@ -5,6 +5,8 @@ using Content.Shared.CF.Actions;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.DamageTypes;
+using Content.Shared.CF.Detection;
+using Content.Shared.CF.Outdoors;
 using Content.Shared.CF.Effects;
 using Content.Shared.CF.Traits;
 using Content.Shared.CF.ZLevels;
@@ -517,10 +519,11 @@ public sealed partial class CFGrantUnarmedAttack : CFGrant
     [DataField]
     public int Dice = 1;
 
-    [DataField(required: true)]
+    /// <summary>Required unless <see cref="TraitsOnly"/>.</summary>
+    [DataField]
     public int Die;
 
-    [DataField(required: true)]
+    [DataField]
     public string DamageType = string.Empty;
 
     [DataField]
@@ -529,22 +532,44 @@ public sealed partial class CFGrantUnarmedAttack : CFGrant
     [DataField]
     public bool Agile;
 
+    /// <summary>The deadly die, or 0.</summary>
+    [DataField]
+    public int Deadly;
+
+    /// <summary>A damage type it can deal instead, or empty.</summary>
+    [DataField]
+    public string Versatile = string.Empty;
+
+    /// <summary>Only add the traits to the attack the character already has, as Dogtooth Tengu makes the beak deadly.</summary>
+    [DataField]
+    public bool TraitsOnly;
+
     public override void Apply(IEntityManager entities, CFGrantArgs args)
     {
-        entities.System<CFCharacterFeatureSystem>().GrantUnarmedAttack(args.Mob, Dice, Die, DamageType, Finesse, Agile);
+        var features = entities.System<CFCharacterFeatureSystem>();
+        if (TraitsOnly)
+            features.AddUnarmedTraits(args.Mob, Deadly, Versatile);
+        else
+            features.GrantUnarmedAttack(args.Mob, Dice, Die, DamageType, Finesse, Agile, Deadly, Versatile);
     }
 }
 
-/// <summary>Falling never hurts this character.</summary>
+/// <summary>Falling never hurts this character, or with <see cref="HalfDistance"/> hurts half as much.</summary>
 public sealed partial class CFGrantSafeFall : CFGrant
 {
     /// <summary>It only works with a hand free.</summary>
     [DataField]
     public bool NeedsFreeHand;
 
+    /// <summary>Falls count as half their distance instead of none.</summary>
+    [DataField]
+    public bool HalfDistance;
+
     public override void Apply(IEntityManager entities, CFGrantArgs args)
     {
-        entities.EnsureComponent<CFSafeFallComponent>(args.Mob).NeedsFreeHand = NeedsFreeHand;
+        var safe = entities.EnsureComponent<CFSafeFallComponent>(args.Mob);
+        safe.NeedsFreeHand = NeedsFreeHand;
+        safe.HalfDistance = HalfDistance;
     }
 }
 
@@ -585,5 +610,140 @@ public sealed partial class CFGrantOption : CFGrant
 
         if (PointMark is { } mark)
             features.SetPointMark(args.Mob, mark);
+    }
+}
+
+/// <summary>
+/// Another feat, with everything it gives. The builder counts it as taken, so it is not offered again and feats that need it
+/// see it. A feat the character already has is not doubled.
+/// </summary>
+public sealed partial class CFGrantFeat : CFGrant
+{
+    [DataField(required: true)]
+    public ProtoId<CFFeatPrototype> Feat;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        var prototypes = IoCManager.Resolve<IPrototypeManager>();
+        if (prototypes.TryIndex(Feat, out var feat))
+            entities.System<CFCharacterFeatureSystem>().ApplyFeat(args.Mob, feat, adjustSpeed: false);
+    }
+}
+
+/// <summary>Heat or cold one step less severe, by the temperature table. Negative is one step worse.</summary>
+public sealed partial class CFGrantTemperatureTolerance : CFGrant
+{
+    [DataField]
+    public int Heat;
+
+    [DataField]
+    public int Cold;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        var tolerance = entities.EnsureComponent<CFTemperatureToleranceComponent>(args.Mob);
+        tolerance.HeatSteps += Heat;
+        tolerance.ColdSteps += Cold;
+    }
+}
+
+/// <summary>Keener senses for finding creatures. See <see cref="CFSeekSenseComponent"/>.</summary>
+public sealed partial class CFGrantSeek : CFGrant
+{
+    [DataField]
+    public int Bonus;
+
+    [DataField]
+    public int RangeFeet = 30;
+
+    [DataField]
+    public int HiddenFlatDc;
+
+    [DataField]
+    public int ConcealedFlatDc;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        var sense = entities.EnsureComponent<CFSeekSenseComponent>(args.Mob);
+        sense.SeekBonus = Math.Max(sense.SeekBonus, Bonus);
+        sense.RangeFeet = Math.Max(sense.RangeFeet, RangeFeet);
+        if (HiddenFlatDc > 0)
+            sense.HiddenFlatDc = sense.HiddenFlatDc > 0 ? Math.Min(sense.HiddenFlatDc, HiddenFlatDc) : HiddenFlatDc;
+
+        if (ConcealedFlatDc > 0)
+            sense.ConcealedFlatDc = sense.ConcealedFlatDc > 0 ? Math.Min(sense.ConcealedFlatDc, ConcealedFlatDc) : ConcealedFlatDc;
+
+        entities.Dirty(args.Mob, sense);
+    }
+}
+
+/// <summary>Better at climbing: a bonus, a success that counts as a critical success, or a climb Speed that needs no check.</summary>
+public sealed partial class CFGrantClimb : CFGrant
+{
+    [DataField]
+    public int Bonus;
+
+    [DataField]
+    public bool SuccessIsCritical;
+
+    [DataField]
+    public bool ClimbSpeed;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        var options = entities.EnsureComponent<CFCombatOptionsComponent>(args.Mob);
+        options.ClimbBonus += Bonus;
+        options.ClimbSuccessCritical |= SuccessIsCritical;
+        options.ClimbSpeed |= ClimbSpeed;
+        entities.Dirty(args.Mob, options);
+    }
+}
+
+/// <summary>Adds traits to the creature, or takes some away, as a Fungus Leshy is fungus and not plant.</summary>
+public sealed partial class CFGrantTrait : CFGrant
+{
+    [DataField]
+    public List<ProtoId<CFTraitPrototype>> Add = new();
+
+    [DataField]
+    public List<ProtoId<CFTraitPrototype>> Remove = new();
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        var traits = entities.EnsureComponent<CFTraitComponent>(args.Mob);
+        foreach (var trait in Remove)
+        {
+            traits.Traits.Remove(trait);
+        }
+
+        foreach (var trait in Add)
+        {
+            traits.Traits.Add(trait);
+        }
+
+        entities.Dirty(args.Mob, traits);
+    }
+}
+
+/// <summary>
+/// A resistance to the damage type the player chose for this option (a <c>DamageType</c> entry in its <c>choices</c>),
+/// as an Elementheart Kobold picks its element. Nothing happens until a type is picked.
+/// </summary>
+public sealed partial class CFGrantChosenResistance : CFGrant
+{
+    [DataField]
+    public int Amount;
+
+    [DataField]
+    public bool HalfLevel;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        var features = entities.System<CFCharacterFeatureSystem>();
+        if (features.Pick(args.Mob, args.Source) is not { } type
+            || !IoCManager.Resolve<IPrototypeManager>().HasIndex<CFDamageTypePrototype>(type))
+            return;
+
+        entities.System<CFBonusSystem>().AddPermanentResistance(args.Mob, type, Amount, HalfLevel);
     }
 }

@@ -1,3 +1,4 @@
+using Content.Shared.CF.Actions;
 using System.Numerics;
 using Content.Client.UserInterface.Systems.Actions.Controls;
 using Content.Shared.CF.Character;
@@ -55,9 +56,13 @@ public sealed class CFActionOverlay : Control
         overlay._castable = true;
         overlay._ready = 0;
         overlay._total = 0;
-        if (button.Action is not { } action
-            || caster is not { } user
-            || !entities.TryGetComponent(action, out CFSpellComponent? spell))
+        if (button.Action is not { } action || caster is not { } user)
+            return;
+
+        if (entities.TryGetComponent(action, out CFDailyUsesComponent? daily) && daily.Spent)
+            overlay._castable = false;
+
+        if (!entities.TryGetComponent(action, out CFSpellComponent? spell))
             return;
 
         overlay._castable = entities.System<CFSpellSystem>().HasSlot(user, spell);
