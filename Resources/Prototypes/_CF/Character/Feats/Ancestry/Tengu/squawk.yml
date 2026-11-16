@@ -9,4 +9,10 @@
   traits:
     - "Tengu"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-feat-squawk
+        trigger: SkillCheckWouldFail
+        criticalFailureIsFailure: true
+        skills: [Deception, Diplomacy, Intimidation]

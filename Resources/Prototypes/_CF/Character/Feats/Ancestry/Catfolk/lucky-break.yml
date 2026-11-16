@@ -12,3 +12,9 @@
     - "Cat's Luck"
   requiresFeats:
     - CFCatsLuck
+  grants:
+    - !type:CFGrantWidenReaction
+      name: cf-feat-cats-luck
+      anySave: true
+      andSkillChecks: true
+      skills: [Acrobatics, Athletics]

@@ -747,3 +747,26 @@ public sealed partial class CFGrantChosenResistance : CFGrant
         entities.System<CFBonusSystem>().AddPermanentResistance(args.Mob, type, Amount, HalfLevel);
     }
 }
+
+/// <summary>Widens a reaction the character already has, found by its name: Lucky Break makes Cat's Luck cover more saves and skills.</summary>
+public sealed partial class CFGrantWidenReaction : CFGrant
+{
+    [DataField(required: true)]
+    public LocId Name;
+
+    /// <summary>Drops the reaction's limit to one save.</summary>
+    [DataField]
+    public bool AnySave;
+
+    [DataField]
+    public List<string> Skills = new();
+
+    /// <summary>The reaction answers failed skill checks too.</summary>
+    [DataField]
+    public bool AndSkillChecks;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        entities.System<CFReactionSystem>().Widen(args.Mob, Name, AnySave, Skills, AndSkillChecks);
+    }
+}

@@ -18,3 +18,4 @@
         rerolls: true
         free: true
         perDay: 1
+        andSkillChecks: true

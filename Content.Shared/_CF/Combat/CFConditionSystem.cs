@@ -608,6 +608,14 @@ public sealed partial class CFConditionSystem : EntitySystem
         return true;
     }
 
+    /// <summary>A d20 against a DC with a skill modifier already worked out, with the creature's reactions to a bad roll.</summary>
+    private CFDegree RollSkillCheck(EntityUid user, string skill, int modifier, int dc)
+    {
+        var d20 = _random.Next(1, 21);
+        var total = d20 + modifier;
+        return _reactions.AnswerSkillCheck(user, skill, d20, modifier, dc, ref total, CFDegrees.DegreeOfSuccess(d20, modifier, dc));
+    }
+
     public bool TryDemoralize(EntityUid user, EntityUid target, int circumstance = 0)
     {
         if (!TryGetDemoralizeCheck(user, target, out var skill, out var dc, circumstance))
@@ -621,7 +629,7 @@ public sealed partial class CFConditionSystem : EntitySystem
         }
 
         cond.DemoralizedUntil[user] = _timing.CurTime + TimeSpan.FromSeconds(60);
-        var degree = CFDefense.Roll(_random, skill, dc);
+        var degree = RollSkillCheck(user, "Intimidation", skill, dc);
         if (degree is CFDegree.Success or CFDegree.CriticalSuccess)
         {
             ApplyFrightened(target, degree == CFDegree.CriticalSuccess ? 2 : 1);
@@ -656,7 +664,7 @@ public sealed partial class CFConditionSystem : EntitySystem
         if (!TryGetFeintCheck(user, target, out var skill, out var dc))
             return false;
 
-        var degree = CFDefense.Roll(_random, skill, dc);
+        var degree = RollSkillCheck(user, "Deception", skill, dc);
         if (degree is not (CFDegree.Success or CFDegree.CriticalSuccess))
         {
             if (degree == CFDegree.CriticalFailure)
@@ -718,7 +726,9 @@ public sealed partial class CFConditionSystem : EntitySystem
             dc += _bonuses.Total(target, CFBonusStat.ManeuverDc);
         }
 
-        return CFDefense.Roll(_random, mod, dc);
+        var d20 = _random.Next(1, 21);
+        var total = d20 + mod;
+        return _reactions.AnswerSkillCheck(user, skill, d20, mod, dc, ref total, CFDegrees.DegreeOfSuccess(d20, mod, dc));
     }
 
     /// <summary>
@@ -746,7 +756,7 @@ public sealed partial class CFConditionSystem : EntitySystem
 
         var d20 = _random.Next(1, 21);
         total = d20 + mod;
-        return CFDegrees.DegreeOfSuccess(d20, mod, dc);
+        return _reactions.AnswerSkillCheck(user, skill, d20, mod, dc, ref total, CFDegrees.DegreeOfSuccess(d20, mod, dc));
     }
 
     /// <summary>

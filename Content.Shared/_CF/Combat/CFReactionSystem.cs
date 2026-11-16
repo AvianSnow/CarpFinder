@@ -794,6 +794,104 @@ public sealed partial class CFReactionSystem : EntitySystem
         return degree;
     }
 
+    /// <summary>
+    /// A rolled skill check's result, after the creature's reactions. A reaction only fires when it would make the result
+    /// better, so a daily reroll is not spent on a check it cannot help. Called from <see cref="CFConditionSystem"/> for skill
+    /// checks against a creature or a DC, Demoralize and Feint.
+    /// </summary>
+    public CFDegree AnswerSkillCheck(
+        EntityUid uid,
+        string skill,
+        int d20,
+        int modifier,
+        int dc,
+        ref int total,
+        CFDegree degree)
+    {
+        if (degree == CFDegree.CriticalSuccess || !TryComp(uid, out CFReactionsComponent? reactions))
+            return degree;
+
+        foreach (var known in Ordered(uid, reactions))
+        {
+            var reaction = known.Reaction;
+            var covers = reaction.Trigger == CFReactionTrigger.SkillCheckWouldFail
+                         || reaction.Trigger == CFReactionTrigger.SaveWouldFail && reaction.AndSkillChecks;
+            if (!covers
+                || reaction.Skills.Count > 0 && !reaction.Skills.Contains(skill)
+                || !CanFire(uid, known))
+            {
+                continue;
+            }
+
+            CFCombatantComponent? combat = null;
+            if (reaction.NeedsTrained
+                && (!TryComp(uid, out combat) || CFDefense.SkillRank(_prototypes, combat, skill) < CFProficiencyRank.Trained))
+                continue;
+
+            if (reaction.CriticalFailureIsFailure)
+            {
+                if (degree != CFDegree.CriticalFailure || !TrySpend(uid, known))
+                    continue;
+
+                return CFDegree.Failure;
+            }
+
+            if (degree.IsSuccess())
+                continue;
+
+            if (reaction.ResultOfProficiency > 0)
+            {
+                combat ??= CompOrNull<CFCombatantComponent>(uid);
+                var level = combat?.Level ?? 1;
+                var rank = combat != null ? CFDefense.SkillRank(_prototypes, combat, skill) : CFProficiencyRank.Untrained;
+                var fixedTotal = reaction.ResultOfProficiency + CFSkills.ProficiencyBonus(level, rank);
+                var fixedDegree = CFDegrees.DegreeOfSuccess(10, fixedTotal - 10, dc);
+                if (fixedDegree <= degree || !TrySpend(uid, known))
+                    continue;
+
+                total = fixedTotal;
+                return fixedDegree;
+            }
+
+            if (!reaction.Rerolls || !TrySpend(uid, known))
+                continue;
+
+            var second = _random.Next(1, 21);
+            var rerolled = CFDegrees.DegreeOfSuccess(second, modifier, dc);
+            if (reaction.KeepsBetter && rerolled <= degree)
+                return degree;
+
+            total = second + modifier;
+            return rerolled;
+        }
+
+        return degree;
+    }
+
+    /// <summary>Changes a reaction the creature already has, by its name: Lucky Break widens Cat's Luck to more saves and to skills.</summary>
+    public void Widen(EntityUid uid, string name, bool anySave, IReadOnlyList<string> skills, bool andSkillChecks)
+    {
+        if (!TryComp(uid, out CFReactionsComponent? reactions))
+            return;
+
+        foreach (var known in reactions.Known)
+        {
+            if (known.Reaction.Name != name)
+                continue;
+
+            if (anySave)
+                known.Reaction.Save = null;
+
+            foreach (var skill in skills)
+            {
+                if (!known.Reaction.Skills.Contains(skill))
+                    known.Reaction.Skills.Add(skill);
+            }
+
+            known.Reaction.AndSkillChecks |= andSkillChecks;
+        }
+    }
+
     /// <summary>True if a reaction kept the creature up at 1 Hit Point, a step further from death.</summary>
     public bool TrySurviveDrop(EntityUid uid, CFCombatantComponent combat)
     {

@@ -1129,6 +1129,14 @@ Tests: `CFScentTest`. Ported from Starlight's Scent system with permission, cred
 - [x] Every ancestry feat with no effect has a note in our words and `TBA`, written from the Archives of Nethys text. The search index at `elasticsearch.aonprd.com/aon/_search?q=category:feat AND trait:<ancestry> AND (level:1 OR level:5)` returns an ancestry's feats as JSON in one fetch, where the site's own feat list pages are built by script and come back empty.
 - [x] 17 feats grant the general feat they name with `CFGrantFeat`; 16 more got an effect from existing grants. `DefyDeath` and `EasierBleeding` joined `CFCombatOptions`.
 
+#### 2.5 Rerolls on skill checks (16 November 2026)
+
+Tests: `CFSkillLuckTest`.
+
+- [x] `CFReactionTrigger.SkillCheckWouldFail`, answered by `CFReactionSystem.AnswerSkillCheck`. `CFConditionSystem.RollSkill`, `RollSkillAgainst`, `TryDemoralize` and `TryFeint` roll their d20 in the open and pass it through. New reaction fields: `skills`, `andSkillChecks`, `needsTrained`, `resultOfProficiency`, `criticalFailureIsFailure`.
+- [x] `CFGrantWidenReaction` edits a known reaction by its name, for feats that improve another feat's reaction.
+- [x] Halfling Luck, Elven Persistence, Lucky Break, Squawk.
+
 ### Step 2: Finish the rebuild
 
 Left from re-importing the other machine's lost work. Details of what was rebuilt are under "Rebuild status" above.

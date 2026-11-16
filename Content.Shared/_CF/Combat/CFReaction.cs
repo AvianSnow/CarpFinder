@@ -50,6 +50,9 @@ public enum CFReactionTrigger : byte
 
     /// <summary>An enemy this creature can see, within <see cref="CFReaction.RangeFeet"/>, casts a spell.</summary>
     EnemyCastsSpell,
+
+    /// <summary>A skill check this creature rolled has come up short of a better result.</summary>
+    SkillCheckWouldFail,
 }
 
 /// <summary>
@@ -116,6 +119,26 @@ public sealed partial class CFReaction
     /// <summary>Only for this save. Null means any.</summary>
     [DataField]
     public CFDefenseType? Save;
+
+    /// <summary>With <see cref="CFReactionTrigger.SkillCheckWouldFail"/>, only these skills. Empty means any.</summary>
+    [DataField]
+    public List<string> Skills = new();
+
+    /// <summary>A <see cref="CFReactionTrigger.SaveWouldFail"/> reaction that answers failed skill checks too, as Halfling Luck does.</summary>
+    [DataField]
+    public bool AndSkillChecks;
+
+    /// <summary>Only for a skill the creature is trained in.</summary>
+    [DataField]
+    public bool NeedsTrained;
+
+    /// <summary>A failed skill check's result becomes this plus the creature's proficiency bonus instead. 0 means off.</summary>
+    [DataField]
+    public int ResultOfProficiency;
+
+    /// <summary>A critical failure becomes a plain failure.</summary>
+    [DataField]
+    public bool CriticalFailureIsFailure;
 
     /// <summary>Only against a source with this trait.</summary>
     [DataField]

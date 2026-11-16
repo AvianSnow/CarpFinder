@@ -13,6 +13,13 @@
   prerequisites:
     - "spirit instinct"
   action: Reaction
-  pendingAction: true
   requiresChoice:
     - InstinctSpirit
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-feat-spiritual-guides
+        trigger: SkillCheckWouldFail
+        rerolls: true
+        keepsBetter: true
+        perDay: 1
