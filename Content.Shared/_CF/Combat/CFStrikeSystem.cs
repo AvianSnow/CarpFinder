@@ -860,7 +860,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
                     Dirty(target, defender);
                     MirrorToSs14(user, target, defender, damage, rolled.DamageType, isObject);
                     RaiseDamaged(target, user, damage);
-                    ApplyTailToxin(user, target, style, rolled.DamageType, isObject);
+                    ApplyTailToxin(user, target, style, rolled.DamageType, rolled.Traits.Unarmed, isObject);
                 }
 
                 if (!isObject && defender.CurrentHp <= 0)
@@ -1110,19 +1110,29 @@ public sealed partial class CFStrikeSystem : EntitySystem
     }
 
     /// <summary>Tail Toxin: the next piercing or slashing hit after the action deals persistent poison equal to the level.</summary>
-    private void ApplyTailToxin(EntityUid user, EntityUid target, CFCombatOptionsComponent? style, string damageType, bool isObject)
+    private void ApplyTailToxin(EntityUid user, EntityUid target, CFCombatOptionsComponent? style, string damageType, bool unarmed, bool isObject)
     {
         if (style == null || isObject || _timing.CurTime >= style.TailToxinUntil)
             return;
 
-        if (!string.Equals(damageType, "Piercing", StringComparison.OrdinalIgnoreCase)
-            && !string.Equals(damageType, "Slashing", StringComparison.OrdinalIgnoreCase))
+        if (style.ToxinUnarmedOnly)
+        {
+            if (!unarmed)
+                return;
+        }
+        else if (!string.Equals(damageType, "Piercing", StringComparison.OrdinalIgnoreCase)
+                 && !string.Equals(damageType, "Slashing", StringComparison.OrdinalIgnoreCase))
+        {
             return;
+        }
 
         style.TailToxinUntil = TimeSpan.Zero;
         Dirty(user, style);
         var level = CompOrNull<CFCombatantComponent>(user)?.Level ?? 1;
-        _bonuses.AddPersistent(target, "Poison", 0, 0, Math.Max(1, level), user);
+        if (style.ToxinDice > 0)
+            _bonuses.AddPersistent(target, "Poison", style.ToxinDice, style.ToxinDie, 0, user);
+        else
+            _bonuses.AddPersistent(target, "Poison", 0, 0, Math.Max(1, level), user);
         _popup.PopupEntity(Loc.GetString("cf-act-tail-toxin-hit"), target);
     }
 

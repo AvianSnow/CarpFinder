@@ -12,3 +12,6 @@
     - "Goblin Song"
   requiresFeats:
     - CFGoblinSong
+  grants:
+    - !type:CFGrantAction
+      action: CFActGoblinSongLoud

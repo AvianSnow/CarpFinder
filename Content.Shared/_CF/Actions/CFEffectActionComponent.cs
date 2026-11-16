@@ -15,4 +15,8 @@ public sealed partial class CFEffectActionComponent : Component
     /// <summary>Needs medium or heavy armor worn, as Armored Courage does.</summary>
     [DataField]
     public bool NeedsMediumOrHeavyArmor;
+
+    /// <summary>Needs both hands empty, as Rabid Sprint does.</summary>
+    [DataField]
+    public bool NeedsBothHandsFree;
 }

@@ -173,6 +173,9 @@ Class examples: `CFMySystem`, `CFMyServerSystem`, `CFMyClientSystem`, `CFExample
 | An Exemplar's ikon | A `cfIkon` in `Combat/ikons.yml`, a `CFActShift` action and a `CFActTrans` action with `CFIkonTranscendence` in `Actions/ikons.yml`, and `!type:CFGrantIkon` on a `cfClassChoice` |
 | An Animist's apparition, or a spell that is sustained | A `cfClassChoice` pair in `Choices/apparitions.yml` with `!type:CFGrantApparition`. `sustained: true` on `CFSpell` for a focus spell that is kept going by using it again (`CFSustain`) |
 | A grave spell, or anything a Necromancer casts through a thrall | A spell in `Spells/Focus/focus.yml` with a whitelist of `CFThrall` and a `CFThrallBlastEffect` |
+| An action where the user rolls a skill against a creature's defense DC (Goblin Song, Catfolk Dance) | `CFCheck` with `defense` and `skill`. The degree is the user's, so put the result in `success` and `criticalSuccess` |
+| An action that Demoralizes or Feints at its own range | A `CFActivityTarget` action with `CFActivity` `kind: Demoralize` or `Feint` and a `TargetAction` range |
+| One of several actions, by what the player picked for the option | `!type:CFGrantChosenAction` with an `actions` map from pick values to action ids, beside a `choices` entry |
 | An action that only applies effects | An action parented on `CFActivityInstant` or `CFActivityTarget` with `CFEffectAction` and `CFDegreeEffects` (`Resources/Prototypes/_CF/Actions/effects.yml`). Grant it with `CFGrantAction` |
 | A Swashbuckler finisher | A Strike action with `finisher: true` on its `CFStrikeAction`. It needs panache and spends it |
 | An action that is a Strike with something extra | An action parented on `CFActStrikeBase` with a `CFStrikeAction` (`Resources/Prototypes/_CF/Actions/strikes.yml`). Say what it needs and put effects in `onHit` and `onCritical` |

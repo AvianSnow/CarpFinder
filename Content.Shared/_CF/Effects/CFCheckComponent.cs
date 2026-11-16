@@ -19,6 +19,13 @@ public sealed partial class CFCheckComponent : Component
     [DataField]
     public bool BasicSave = true;
 
+    /// <summary>
+    /// When set, the user rolls this skill against the DC of <see cref="Defense"/> instead of the target saving, as Goblin
+    /// Song rolls Performance against Will DC. The degree is then the user's, so <c>success</c> effects run when it lands.
+    /// </summary>
+    [DataField]
+    public string? Skill;
+
     [DataField]
     public CFDcSource DcSource = CFDcSource.Spell;
 

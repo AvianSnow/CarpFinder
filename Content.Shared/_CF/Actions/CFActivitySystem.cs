@@ -110,12 +110,24 @@ public sealed partial class CFActivitySystem : EntitySystem
                 RechargeSpellstrike(args.Performer);
                 break;
             case CFActivityKind.TailToxin:
-                var options = EnsureComp<CFCombatOptionsComponent>(args.Performer);
-                options.TailToxinUntil = _timing.CurTime + TimeSpan.FromSeconds(6);
-                Dirty(args.Performer, options);
-                _popup.PopupEntity(Loc.GetString("cf-act-tail-toxin"), args.Performer, args.Performer);
+                Envenom(args.Performer, dice: 0, die: 0, unarmedOnly: false);
+                break;
+            case CFActivityKind.EnvenomFangs:
+                Envenom(args.Performer, dice: 1, die: 6, unarmedOnly: true);
                 break;
         }
+    }
+
+    /// <summary>Venom on the creature's weapon or fangs for 6 seconds. Dice of 0 means persistent poison equal to the level.</summary>
+    private void Envenom(EntityUid user, int dice, int die, bool unarmedOnly)
+    {
+        var options = EnsureComp<CFCombatOptionsComponent>(user);
+        options.TailToxinUntil = _timing.CurTime + TimeSpan.FromSeconds(6);
+        options.ToxinDice = dice;
+        options.ToxinDie = die;
+        options.ToxinUnarmedOnly = unarmedOnly;
+        Dirty(user, options);
+        _popup.PopupEntity(Loc.GetString("cf-act-tail-toxin"), user, user);
     }
 
     [SubscribeLocalEvent]
@@ -138,6 +150,12 @@ public sealed partial class CFActivitySystem : EntitySystem
         {
             case CFActivityKind.Flurry:
                 Flurry(args.Performer, args.Target);
+                break;
+            case CFActivityKind.Demoralize:
+                _conditions.TryDemoralize(args.Performer, args.Target);
+                break;
+            case CFActivityKind.Feint:
+                _conditions.TryFeint(args.Performer, args.Target);
                 break;
             case CFActivityKind.Spellstrike:
                 Spellstrike(args.Performer, args.Target);

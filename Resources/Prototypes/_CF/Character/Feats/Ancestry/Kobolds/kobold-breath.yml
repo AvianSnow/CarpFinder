@@ -14,4 +14,15 @@
   requiresHeritage:
     - DragonscaledKobold
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantChosenAction
+      actions:
+        Fire: CFActKoboldBreathFire
+        Cold: CFActKoboldBreathCold
+        Electricity: CFActKoboldBreathElectricity
+        Acid: CFActKoboldBreathAcid
+        Sonic: CFActKoboldBreathSonic
+        Poison: CFActKoboldBreathPoison
+  choices:
+    - kind: DamageType
+      damageTypes: [Fire, Cold, Electricity, Acid, Sonic, Poison]

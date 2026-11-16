@@ -26,6 +26,13 @@ public sealed partial class CFEffectActionSystem : EntitySystem
             return;
         }
 
+        if (ent.Comp.NeedsBothHandsFree && _hands.CountFreeHands(args.User) < 2)
+        {
+            args.Cancelled = true;
+            args.Reason = Loc.GetString("cf-act-needs-both-hands");
+            return;
+        }
+
         if (!ent.Comp.NeedsWeaponInEachHand)
             return;
 

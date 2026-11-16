@@ -9,4 +9,6 @@
   traits:
     - "Catfolk"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActCatfolkDance

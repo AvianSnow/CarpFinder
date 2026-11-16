@@ -11,4 +11,6 @@
   prerequisites:
     - "trained in Intimidation"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActTerrifyingCroak

@@ -1,0 +1,290 @@
+# Actions ancestry feats give. Granted with CFGrantAction, or CFGrantChosenAction where the feat has a choice.
+
+# Goblin Song: Performance against one enemy's Will DC within 30 feet.
+- type: entity
+  parent: CFActivityTarget
+  id: CFActGoblinSong
+  name: Goblin Song
+  description: Sing at an enemy within 30 feet, Performance against its Will DC. On a success it takes -1 status to Perception and Will saves for 6 seconds, a minute on a critical success.
+  components:
+  - type: TargetAction
+    range: 6.25
+  - type: CFEffectAction
+  - type: CFTrait
+    traits:
+    - Auditory
+    - Concentrate
+    - Linguistic
+  - type: CFCheck
+    defense: Will
+    skill: Performance
+    basicSave: false
+  - type: CFDegreeEffects
+    success:
+    - !type:CFBonusEffect
+      stat: Perception
+      type: Status
+      value: -1
+      durationSeconds: 6
+    - !type:CFBonusEffect
+      stat: Will
+      type: Status
+      value: -1
+      durationSeconds: 6
+    criticalSuccess:
+    - !type:CFBonusEffect
+      stat: Perception
+      type: Status
+      value: -1
+      durationSeconds: 60
+    - !type:CFBonusEffect
+      stat: Will
+      type: Status
+      value: -1
+      durationSeconds: 60
+
+# Loud Singer: the same song, heard at 60 feet.
+- type: entity
+  parent: CFActGoblinSong
+  id: CFActGoblinSongLoud
+  name: Goblin Song (Loud)
+  description: Sing at an enemy within 60 feet, Performance against its Will DC. On a success it takes -1 status to Perception and Will saves for 6 seconds, a minute on a critical success.
+  components:
+  - type: TargetAction
+    range: 12.25
+
+# Terrifying Croak: Demoralize at 30 feet.
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTerrifyingCroak
+  name: Terrifying Croak
+  description: Demoralize a creature within 30 feet with a croak. Needs trained Intimidation.
+  components:
+  - type: TargetAction
+    range: 6.25
+  - type: Sprite
+    layers:
+    - texture: Interface/Actions/scream.png
+  - type: CFActivity
+    kind: Demoralize
+  - type: CFTrait
+    traits:
+    - Auditory
+    - Concentrate
+    - Emotion
+    - Fear
+    - Mental
+
+# Grovel: Feint at 30 feet.
+- type: entity
+  parent: CFActivityTarget
+  id: CFActGrovel
+  name: Grovel
+  description: Feint a creature within 30 feet by grovelling. Needs trained Deception.
+  components:
+  - type: TargetAction
+    range: 6.25
+  - type: Sprite
+    layers:
+    - texture: Interface/Actions/harmOff.png
+  - type: CFActivity
+    kind: Feint
+  - type: CFTrait
+    traits:
+    - Auditory
+    - Concentrate
+    - Emotion
+    - Mental
+
+# Catfolk Dance: Acrobatics against an adjacent creature's Reflex DC.
+- type: entity
+  parent: CFActivityTarget
+  id: CFActCatfolkDance
+  name: Catfolk Dance
+  description: Dance around an adjacent creature, Acrobatics against its Reflex DC. On a success it takes -2 circumstance to Reflex saves for 6 seconds, and a critical success also leaves it off-guard.
+  components:
+  - type: CFEffectAction
+  - type: CFTrait
+    traits:
+    - Move
+  - type: CFCheck
+    defense: Reflex
+    skill: Acrobatics
+    basicSave: false
+  - type: CFDegreeEffects
+    success:
+    - !type:CFBonusEffect
+      stat: Reflex
+      type: Circumstance
+      value: -2
+      durationSeconds: 6
+    criticalSuccess:
+    - !type:CFBonusEffect
+      stat: Reflex
+      type: Circumstance
+      value: -2
+      durationSeconds: 6
+    - !type:CFOffGuardEffect
+
+# Kneecap: a Strike that slows.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActKneecap
+  name: Kneecap
+  description: A Strike at the legs. If it hits, the target takes -10 feet status to Speed for 6 seconds, -15 feet on a critical hit. It deals its usual damage here, where the rules deal none.
+  components:
+  - type: CFStrikeAction
+    onHit:
+    - !type:CFBonusEffect
+      stat: Speed
+      type: Status
+      value: -10
+      durationSeconds: 6
+    onCritical:
+    - !type:CFBonusEffect
+      stat: Speed
+      type: Status
+      value: -15
+      durationSeconds: 6
+
+# Rabid Sprint: three Strides for two actions, with both hands free.
+- type: entity
+  parent: CFActivityInstant
+  id: CFActRabidSprint
+  name: Rabid Sprint
+  description: "Run on all fours with both hands free: +10 feet Speed for 6 seconds. Costs 2 actions."
+  components:
+  - type: CFRadialSlot
+    group: Action
+    actions: 2
+  - type: CFEffectAction
+    needsBothHandsFree: true
+  - type: CFTrait
+    traits:
+    - Flourish
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFBonusEffect
+      stat: Speed
+      type: Status
+      value: 10
+      durationSeconds: 6
+
+# Envenom Fangs: venom on the fangs for the next unarmed hit.
+- type: entity
+  parent: CFActivityInstant
+  id: CFActEnvenomFangs
+  name: Envenom Fangs
+  description: Once a day. Your next unarmed Strike within 6 seconds that hits adds 1d6 persistent poison damage. The rules allow it once an hour.
+  components:
+  - type: CFActivity
+    kind: EnvenomFangs
+  - type: CFDailyUses
+  - type: CFTrait
+    traits:
+    - Manipulate
+
+# Kobold Breath, one per benefactor. A 15-foot cone, 1d4 damage with a basic Reflex save against the class DC, one more
+# die at levels 3 and 5, and 1d4 rounds to recharge. The 30-foot line is not offered yet.
+- type: entity
+  abstract: true
+  parent: CFActBreathBase
+  id: CFActKoboldBreathBase
+  name: Kobold Breath
+  description: A 15-foot cone of your benefactor's breath. 1d4 damage, basic Reflex against your class DC, with another die at levels 3 and 5. 2 actions, then 1d4 rounds to recharge.
+  components:
+  - type: Sprite
+    sprite: Objects/Magic/magicactions.rsi
+    layers:
+    - state: repulse
+  - type: CFAreaEffect
+    shape: Cone
+    sizeFeet: 15
+  - type: CFCheck
+    defense: Reflex
+    basicSave: true
+    dcSource: Class
+
+- type: entity
+  parent: CFActKoboldBreathBase
+  id: CFActKoboldBreathFire
+  components:
+  - type: CFTrait
+    traits: [Arcane, Fire]
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 4
+      damageType: Fire
+      diceEveryLevels: 2
+
+- type: entity
+  parent: CFActKoboldBreathBase
+  id: CFActKoboldBreathCold
+  components:
+  - type: CFTrait
+    traits: [Arcane, Cold]
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 4
+      damageType: Cold
+      diceEveryLevels: 2
+
+- type: entity
+  parent: CFActKoboldBreathBase
+  id: CFActKoboldBreathElectricity
+  components:
+  - type: CFTrait
+    traits: [Arcane, Electricity]
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 4
+      damageType: Electricity
+      diceEveryLevels: 2
+
+- type: entity
+  parent: CFActKoboldBreathBase
+  id: CFActKoboldBreathAcid
+  components:
+  - type: CFTrait
+    traits: [Arcane, Acid]
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 4
+      damageType: Acid
+      diceEveryLevels: 2
+
+- type: entity
+  parent: CFActKoboldBreathBase
+  id: CFActKoboldBreathSonic
+  components:
+  - type: CFTrait
+    traits: [Arcane, Sonic]
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 4
+      damageType: Sonic
+      diceEveryLevels: 2
+
+- type: entity
+  parent: CFActKoboldBreathBase
+  id: CFActKoboldBreathPoison
+  components:
+  - type: CFTrait
+    traits: [Arcane, Poison]
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 4
+      damageType: Poison
+      diceEveryLevels: 2

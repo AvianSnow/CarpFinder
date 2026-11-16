@@ -11,4 +11,6 @@
   prerequisites:
     - "Iruxi Armaments (Fangs)"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActEnvenomFangs

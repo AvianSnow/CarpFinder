@@ -1137,6 +1137,15 @@ Tests: `CFSkillLuckTest`.
 - [x] `CFGrantWidenReaction` edits a known reaction by its name, for feats that improve another feat's reaction.
 - [x] Halfling Luck, Elven Persistence, Lucky Break, Squawk.
 
+#### 2.6 Ancestry feat actions (16 November 2026)
+
+Tests: `CFAncestryActionTest`. `Resources/Prototypes/_CF/Actions/ancestry.yml`.
+
+- [x] `skill` on `CFCheck`: the user rolls that skill against the target's defense DC instead of the target saving, and the degree is the user's. Goblin Song, Catfolk Dance.
+- [x] `CFActivityKind.Demoralize` and `Feint` for an action that does either at its own range. `EnvenomFangs` shares Tail Toxin's venom, now with `ToxinDice`, `ToxinDie` and `ToxinUnarmedOnly` on `CFCombatOptions`.
+- [x] `needsBothHandsFree` on `CFEffectAction`. `CFGrantChosenAction` grants one of several actions by the option's pick.
+- [x] Nine feats: Kobold Breath, Goblin Song, Loud Singer, Terrifying Croak, Grovel, Catfolk Dance, Kneecap, Rabid Sprint, Envenom Fangs.
+
 ### Step 2: Finish the rebuild
 
 Left from re-importing the other machine's lost work. Details of what was rebuilt are under "Rebuild status" above.

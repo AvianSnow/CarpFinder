@@ -770,3 +770,20 @@ public sealed partial class CFGrantWidenReaction : CFGrant
         entities.System<CFReactionSystem>().Widen(args.Mob, Name, AnySave, Skills, AndSkillChecks);
     }
 }
+
+/// <summary>
+/// One of several actions, by what the player picked for this option: Kobold Breath gives the breath of the chosen element.
+/// Keys are the pick's values, such as damage type ids. Nothing happens until a pick is made.
+/// </summary>
+public sealed partial class CFGrantChosenAction : CFGrant
+{
+    [DataField(required: true)]
+    public Dictionary<string, EntProtoId> Actions = new();
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        var features = entities.System<CFCharacterFeatureSystem>();
+        if (features.Pick(args.Mob, args.Source) is { } pick && Actions.TryGetValue(pick, out var action))
+            features.GrantAction(args.Mob, action);
+    }
+}

@@ -1,3 +1,4 @@
+using Content.Shared.CF.Preferences;
 using Content.Shared.Actions.Components;
 using System.Diagnostics.CodeAnalysis;
 using System.Numerics;
@@ -464,6 +465,13 @@ public sealed partial class CFEffectSystem : EntitySystem
             args.Degree = RollAttack(user, target, check, stats.AttackBonus + taunted);
             landed = args.Degree.IsSuccess();
             _auras.NoteAttacked(target, user);
+        }
+        else if (check is { Skill: { } skill, Defense: not CFDefenseType.None })
+        {
+            // A skill check against the target's defense DC: Goblin Song, Catfolk Dance.
+            var ability = _prototypes.TryIndex<CFAbilitySkillPrototype>(skill, out var skillProto) ? skillProto.Ability : CFAbility.Dexterity;
+            args.Degree = _conditions.RollSkill(user, target, skill, ability, check.Defense);
+            landed = args.Degree.IsSuccess();
         }
         else if (check != null && check.Defense != CFDefenseType.None)
         {

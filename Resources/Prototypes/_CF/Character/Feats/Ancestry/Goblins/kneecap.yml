@@ -9,4 +9,6 @@
   traits:
     - "Goblin"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActKneecap

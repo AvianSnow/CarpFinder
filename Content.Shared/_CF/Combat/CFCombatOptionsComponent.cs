@@ -355,6 +355,17 @@ public sealed partial class CFCombatOptionsComponent : Component
     /// <summary>Venomtail Kobold: until this time, the next Strike that hits with a piercing or slashing weapon poisons.</summary>
     [DataField, AutoNetworkedField]
     public TimeSpan TailToxinUntil;
+
+    /// <summary>The persistent poison the venom deals, as dice. 0 dice means the creature's level.</summary>
+    [DataField, AutoNetworkedField]
+    public int ToxinDice;
+
+    [DataField, AutoNetworkedField]
+    public int ToxinDie;
+
+    /// <summary>The venom is on the creature's fangs, so only an unarmed hit delivers it.</summary>
+    [DataField, AutoNetworkedField]
+    public bool ToxinUnarmedOnly;
 }
 
 /// <summary>One reaction per full action pool. The value is which reaction was spent.</summary>

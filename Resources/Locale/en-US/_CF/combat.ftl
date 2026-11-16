@@ -79,6 +79,7 @@ cf-reaction-reactive-strike = Reactive Strike
 cf-reaction-call-on-ancient-blood = Call on Ancient Blood
 cf-reaction-resist-elf-magic = Resist Elf Magic
 cf-reaction-toxic-skin = Toxic Skin
+cf-act-needs-both-hands = You need both hands free.
 cf-act-daily-spent = Used up for today. A long rest gives it back.
 cf-act-tail-toxin = Venom glistens on your weapon
 cf-act-tail-toxin-hit = Poisoned!
