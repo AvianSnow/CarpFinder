@@ -42,4 +42,8 @@ public sealed partial class CFGOAPEncounterPrototype : IPrototype
     /// <summary>Added to each creature's actions, on top of its own. A brain with <c>keepOwnLists</c> is left alone.</summary>
     [DataField]
     public List<ProtoId<CFGOAPActionPrototype>> Actions = new();
+
+    /// <summary>Things laid down beside the group when it spawns: a tribe's mortar, bucket, knife and clippers.</summary>
+    [DataField]
+    public List<EntProtoId> Supplies = new();
 }

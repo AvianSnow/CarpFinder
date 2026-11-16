@@ -11,6 +11,7 @@
   - CFCrossbow
   equipment:
     pocket1: CFLightHammer
+    back: CFKoboldBackpack
 
 - type: entity
   parent: [ MobBaseKobold, CFBaseMonster ]
@@ -39,7 +40,7 @@
       hand_right:
         location: Right
   - type: Inventory
-    templateId: CFKoboldTrapper
+    templateId: CFKobold
     speciesId: monkey
   - type: Loadout
     prototypes: [ CFKoboldTrapperGear ]

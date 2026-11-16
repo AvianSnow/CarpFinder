@@ -1,6 +1,8 @@
-# The stock monkey template kobolds use, plus a pocket. A kobold has no jumpsuit, so this pocket does not depend on one.
+# The stock monkey template kobolds use, plus a pocket, a belt and a back slot. A kobold has no jumpsuit, so the pocket
+# does not depend on one. The tribe's members carry a pack on the back (CFKoboldBackpack) and stash in it what they
+# cannot put in a store.
 - type: inventoryTemplate
-  id: CFKoboldTrapper
+  id: CFKobold
   slots:
   - name: head
     slotTexture: head
@@ -49,3 +51,24 @@
     uiWindowPos: 0,1
     strippingWindowPos: 0,4
     displayName: Pocket
+  - name: belt
+    slotTexture: belt
+    fullTextureName: template_small
+    slotFlags: BELT
+    slotGroup: CFBelt
+    stripTime: 6
+    uiWindowPos: 3,1
+    strippingWindowPos: 1,5
+    displayName: Belt
+  - name: back
+    slotTexture: back
+    fullTextureName: template_small
+    slotFlags: BACK
+    slotGroup: CFBag
+    stripTime: 6
+    uiWindowPos: 3,0
+    strippingWindowPos: 0,5
+    displayName: Back
+    blacklist:
+      tags:
+      - PetOnly

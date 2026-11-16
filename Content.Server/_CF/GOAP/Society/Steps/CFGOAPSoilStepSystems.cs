@@ -1,4 +1,5 @@
 using Content.Shared.Botany.Components;
+using Content.Shared.Botany.Items.Components;
 using Content.Shared.Botany.Systems;
 using Content.Shared.CF.GOAP;
 using Content.Shared.Chemistry.EntitySystems;
@@ -142,9 +143,16 @@ public sealed partial class CFGOAPFeedSoilStepSystem : CFGOAPErrandStepSystem
     }
 }
 
-/// <summary>Takes a seed and plants it in a plot that was empty when last looked at, the way a player does.</summary>
+/// <summary>
+/// Takes a seed and plants it in a plot that was empty when last looked at, the way a player does. With no seed
+/// about, it takes the clippers to a grown plant first and clips a seed from it, as a player does with stock's
+/// sample taker, then plants that.
+/// </summary>
 public sealed partial class CFGOAPPlantSeedStepSystem : CFGOAPErrandStepSystem
 {
+    private const float SeedReach = 1.5f;
+
+    [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private SharedInteractionSystem _interaction = default!;
 
     protected override CFGOAPStep Kind => CFGOAPStep.PlantSeed;
@@ -154,18 +162,115 @@ public sealed partial class CFGOAPPlantSeedStepSystem : CFGOAPErrandStepSystem
         return Society.TryFindPlot(errand.Uid, errand.Tribe.Comp, Xform.GetMapCoordinates(errand.Uid), CFPlotNeed.Plant, out target);
     }
 
+    public override void Begin(Entity<CFGOAPComponent> ent, CFGOAPActionPrototype action)
+    {
+        if (TryGetErrand(ent, out var before))
+        {
+            before.Social.Working = null;
+            before.Social.Acted = false;
+        }
+
+        base.Begin(ent, action);
+    }
+
     protected override EntityUid? PickTool(CFErrand errand, EntityUid target)
     {
-        return Society.TryFindSeed(errand.Uid, errand.Tribe.Comp, Xform.GetMapCoordinates(errand.Uid), out var seed) ? seed : null;
+        var here = Xform.GetMapCoordinates(errand.Uid);
+        var tribe = errand.Tribe.Comp;
+        if (Society.TryFindSeed(errand.Uid, tribe, here, out var seed))
+            return seed;
+
+        if (!Society.TryFindClippers(errand.Uid, tribe, here, out var clippers)
+            || !Society.TryFindPlot(errand.Uid, tribe, here, CFPlotNeed.Sample, out var grown))
+            return null;
+
+        errand.Social.Working = grown;
+        Tribes.Claim(tribe, grown, errand.Uid);
+        return clippers;
+    }
+
+    protected override EntityUid? Detour(CFErrand errand, EntityUid target)
+    {
+        // Until a seed is in hand, the way goes past the grown plant.
+        var social = errand.Social;
+        if (social.Working is not { } grown || social.Tool is { } tool && HasComp<SeedComponent>(tool))
+            return null;
+
+        return grown;
+    }
+
+    protected override void AtDetour(CFErrand errand, EntityUid detour)
+    {
+        var uid = errand.Uid;
+        var social = errand.Social;
+        var tribe = errand.Tribe.Comp;
+        if (!social.Acted)
+        {
+            if (social.Tool is { } clippers && Hands.IsHolding(uid, clippers))
+            {
+                if (TryComp(detour, out PlantTrayComponent? tray) && tray.PlantEntity is { } plant && !TerminatingOrDeleted(plant))
+                    _interaction.InteractUsing(uid, clippers, plant, Transform(plant).Coordinates, checkCanInteract: false, checkCanUse: false);
+
+                Hands.TryDrop(uid, clippers);
+                Tribes.Release(tribe, clippers, uid);
+            }
+
+            social.Tool = null;
+            social.Acted = true;
+            Society.Look(tribe, detour);
+            return;
+        }
+
+        // The seed packet fell at its feet, if the plant gave one.
+        var here = Xform.GetMapCoordinates(uid);
+        EntityUid? found = null;
+        var nearest = float.MaxValue;
+        foreach (var seed in _lookup.GetEntitiesInRange<SeedComponent>(here, SeedReach))
+        {
+            if (Containers.IsEntityInContainer(seed))
+                continue;
+
+            var distance = (Xform.GetMapCoordinates(seed).Position - here.Position).Length();
+            if (distance >= nearest)
+                continue;
+
+            nearest = distance;
+            found = seed;
+        }
+
+        Tribes.Release(tribe, detour, uid);
+        social.Working = null;
+        if (found is { } packet && Hands.TryPickupAnyHand(uid, packet))
+        {
+            social.Tool = packet;
+            Tribes.Claim(tribe, packet, uid);
+            return;
+        }
+
+        // Too young to clip, or the clippers missed. Nothing to plant this time.
+        social.Errand = null;
     }
 
     protected override bool Finish(CFErrand errand, EntityUid target, CFGOAPActionPrototype action)
     {
-        if (errand.Social.Tool is { } seed && Hands.IsHolding(errand.Uid, seed))
+        if (errand.Social.Tool is { } seed && HasComp<SeedComponent>(seed) && Hands.IsHolding(errand.Uid, seed))
             _interaction.InteractUsing(errand.Uid, seed, target, Transform(target).Coordinates, checkCanInteract: false, checkCanUse: false);
 
         Society.Look(errand.Tribe.Comp, target);
         return true;
+    }
+
+    public override void End(Entity<CFGOAPComponent> ent, CFGOAPActionPrototype action)
+    {
+        base.End(ent, action);
+        if (!TryGetErrand(ent, out var errand))
+            return;
+
+        if (errand.Social.Working is { } grown)
+            Tribes.Release(errand.Tribe.Comp, grown, ent);
+
+        errand.Social.Working = null;
+        errand.Social.Acted = false;
     }
 }
 

@@ -14,7 +14,7 @@ public sealed class CFSocietyPromptTest
     {
         var state = new CFSocietyState { Name = "Sniv", Role = "Scout", Hunger = 75, Thirst = 10, StockLow = true };
         state.Inventory.Add("Rusty Dagger");
-        state.Nearby.Add(new CFSocietyNearby("Adventurer_1", "Armed, Holding Bread"));
+        state.Nearby.Add(new CFSocietyNearby("Adventurer_1", "Armed, Holding Bread", Stranger: true));
         state.Nearby.Add(new CFSocietyNearby("Kobold_Grik", "Hunger: 80/100"));
         state.Memory.Add("Heard footsteps near the west tunnel.");
         return state;
@@ -29,14 +29,36 @@ public sealed class CFSocietyPromptTest
         Assert.That(world, Does.Contain("TribeFoodStock: Low"));
         Assert.That(world, Does.Contain("NearbyEntities: [Adventurer_1 (Armed, Holding Bread), Kobold_Grik (Hunger: 80/100)]"));
         Assert.That(world, Does.Contain("RecentMemory: \"Heard footsteps near the west tunnel.\""));
+        Assert.That(world, Does.Not.Contain("Heard:"), "Nobody has spoken to Sniv.");
+
+        var spoken = Sniv();
+        spoken.Heard = "Adventurer_1 said to us: 'Give us passage'";
+        Assert.That(CFSocietyPrompt.World(spoken), Does.EndWith("\nHeard: Adventurer_1 said to us: 'Give us passage'"));
     }
 
     [Test]
     public void TheGrammarOnlyAllowsKnownGoalsAndTheCreaturesNamed()
     {
         var grammar = CFSocietyPrompt.Grammar(Sniv());
-        Assert.That(grammar, Does.Contain("goal ::= \"DefendNest\" | \"ParleyForFood\" | \"ShareResource\" | \"Socialize\" | \"GatherFood\""));
-        Assert.That(grammar, Does.Contain("target ::= \"\" | \"Adventurer_1\" | \"Kobold_Grik\""));
+        Assert.That(grammar, Does.Contain("choice ::= \"\\\"DefendNest\\\", \\\"target\\\": \" stranger | \"\\\"ParleyForFood\\\", \\\"target\\\": \" stranger"
+                                          + " | \"\\\"ShareResource\\\", \\\"target\\\": \" mate | \"\\\"Socialize\\\", \\\"target\\\": \" mate"
+                                          + " | \"\\\"GatherFood\\\", \\\"target\\\": \" \"\\\"\\\"\"\n"));
+        Assert.That(grammar, Does.Contain("stranger ::= \"\\\"Adventurer_1\\\"\"\n"));
+        Assert.That(grammar, Does.Contain("mate ::= \"\\\"Kobold_Grik\\\"\"\n"));
+        // llama.cpp rejected the whole request when the class held a real newline instead of the escape.
+        Assert.That(grammar, Does.Contain(@"line ::= [^""\\\n]{0,120}" + "\n"));
+
+        // With something said to it, the line cannot be empty.
+        var spoken = Sniv();
+        spoken.Heard = "Adventurer_1 said to us: 'Hello'";
+        Assert.That(CFSocietyPrompt.Grammar(spoken), Does.Contain(@"line ::= [^""\\\n]{3,120}" + "\n"));
+        Assert.That(grammar.Split('\n').Length, Is.EqualTo(6), "Five rules, each on its own line, with a newline after the last.");
+
+        // Alone, the only answer left is GatherFood.
+        var alone = CFSocietyPrompt.Grammar(new CFSocietyState());
+        Assert.That(alone, Does.Contain("choice ::= \"\\\"GatherFood\\\", \\\"target\\\": \" \"\\\"\\\"\"\n"));
+        Assert.That(alone, Does.Not.Contain("stranger ::="));
+        Assert.That(alone, Does.Not.Contain("mate ::="));
     }
 
     [Test]

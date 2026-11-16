@@ -140,13 +140,16 @@ public sealed partial class CFHarvestSystem : EntitySystem
                && CFDefense.SkillRank(_prototypes, combat, Skill) >= CFProficiencyRank.Trained;
     }
 
-    /// <summary>Starts harvesting a dead monster. False, with a popup, when the user cannot.</summary>
-    public bool TryStartHarvest(EntityUid user, Entity<CFHarvestableComponent> target, EntityUid knife)
+    /// <summary>
+    /// Starts harvesting a dead monster. False, with a popup, when the user cannot. A tribe butchering what it hunted
+    /// passes <paramref name="requireTraining"/> false: it knows its own game, whatever its stat block trained.
+    /// </summary>
+    public bool TryStartHarvest(EntityUid user, Entity<CFHarvestableComponent> target, EntityUid knife, bool requireTraining = true)
     {
         if (!IsHarvestable(target))
             return false;
 
-        if (!CanHarvest(user))
+        if (requireTraining && !CanHarvest(user))
         {
             _popup.PopupEntity(Loc.GetString("cf-harvest-untrained"), target, user);
             return false;

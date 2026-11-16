@@ -35,6 +35,11 @@ once('Tiles/woodplank.yml','itemDrop: CFFloorLucensWoodPlanks','itemDrop: CFWood
 once('tools.yml','spawn: CFWeaponShovelIron','spawn: CFShovel')
 once('tools.yml','spawn: CFWeaponHammerIron','spawn: CFLightHammer')
 sub('Ported/Objects/Tools/Entities_Objects_Tools_rope.yml','_CP14/Objects/Tools/rope.rsi','_CE/Objects/Tools/rope.rsi')
+# A loaf is sliced with a knife (the port drops CP14's SliceableFood). The kobold tribe slices its bread this way.
+sub('Ported/Objects/Food/Entities_Objects_Consumable_Food_dough.yml',
+    '  id: CFFoodBread\n  parent: CFFoodDoughLarge\n  name: bread\n  description: Crispy and so flavourful!\n  components:\n',
+    '  id: CFFoodBread\n  parent: CFFoodDoughLarge\n  name: bread\n  description: Crispy and so flavourful!\n  components:\n'
+    '  - type: ToolRefinable\n    qualityNeeded: Slicing\n    verbText: refined-slice-verb-name\n    refineResult:\n    - id: CFFoodBreadSlice\n      amount: 4\n')
 once('Recipes/Construction/Graphs/Structures/Walls/wall_wooden_birch.yml','tool: CFWoodenHammering','tool: CFHammering')
 for a,b in [('CFBeeerBreeze','CFBeerBreeze'),('CFBeeerBlowLaw','CFBeerBlowLaw'),('CFBeeerGerbil','CFBeerGerbil'),('graph: CFWoodenBarrel','graph: CFCraneBarrel')]:
     once('Entities/Structures/Furniture/barrel_crane.yml',a,b)

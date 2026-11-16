@@ -41,6 +41,12 @@
   name: bread
   description: Crispy and so flavourful!
   components:
+  - type: ToolRefinable
+    qualityNeeded: Slicing
+    verbText: refined-slice-verb-name
+    refineResult:
+    - id: CFFoodBreadSlice
+      amount: 4
   - type: CFItemPrice
     copper: 10
   - type: Sprite

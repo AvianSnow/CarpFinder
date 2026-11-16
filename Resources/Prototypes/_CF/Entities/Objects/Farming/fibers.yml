@@ -19,6 +19,11 @@
         base2: ""
   - type: StaticPrice
     price: 1
+  # Wheat tags, so a mortar grinds it as it grinds stock wheat.
+  - type: Tag
+    tags:
+    - Wheat
+    - CFWheat
 
 - type: entity
   id: CFCotton

@@ -33,8 +33,11 @@ public static class CFSocietyRules
     }
 }
 
-/// <summary>Something near the creature asking, under the name the model is given for it.</summary>
-public readonly record struct CFSocietyNearby(string Label, string Notes);
+/// <summary>
+/// Something near the creature asking, under the name the model is given for it. A stranger can be defended against
+/// or asked for food; a tribemate can be shared with or talked to. The grammar keeps each goal to its own kind.
+/// </summary>
+public readonly record struct CFSocietyNearby(string Label, string Notes, bool Stranger = false);
 
 /// <summary>Everything one question tells the model. Kept short, so a small model on a CPU answers in seconds.</summary>
 public sealed class CFSocietyState
@@ -50,6 +53,9 @@ public sealed class CFSocietyState
     public bool StockLow;
     public List<CFSocietyNearby> Nearby = new();
     public List<string> Memory = new();
+
+    /// <summary>What a stranger just said to it, if anything. The answer's line is a reply to this.</summary>
+    public string? Heard;
 }
 
 public readonly record struct CFSocietyAnswer(CFSocietyGoal Goal, string Target, string Utterance);
@@ -69,6 +75,11 @@ public static class CFSocietyPrompt
         "3. Share extra food with hungry tribemates.\n" +
         "4. Chat with nearby kobolds when safe to spread news.\n" +
         "5. With no adventurers near and low food, gather food.\n" +
+        "\n" +
+        "Hunger and Thirst run from 0 (full) to 100 (starving). 80/100 is very hungry.\n" +
+        "Goals: DefendNest and ParleyForFood target an Adventurer. ShareResource and Socialize target a Kobold. GatherFood has no target.\n" +
+        "The utterance is one short line in the kobold's own rough voice, under 15 words, or empty.\n" +
+        "If there is a Heard line, an Adventurer is talking to you: the utterance is your reply to it, in your own words. Never repeat what they said.\n" +
         "\n" +
         "Output ONLY valid JSON matching this schema:\n" +
         "{\"goal\": \"DefendNest|ParleyForFood|ShareResource|Socialize|GatherFood\", \"target\": \"string\", \"utterance\": \"short spoken line or empty\"}";
@@ -102,34 +113,67 @@ public static class CFSocietyPrompt
         text.Append("]\n");
         text.Append("RecentMemory: ");
         text.Append(state.Memory.Count == 0 ? "\"Nothing new.\"" : "\"" + string.Join(" ", state.Memory).Replace('"', '\'') + "\"");
+        if (state.Heard != null)
+            text.Append("\nHeard: ").Append(state.Heard.Replace('"', '\''));
+
         return text.ToString();
     }
 
     /// <summary>
-    /// A GBNF grammar for llama.cpp, so the model cannot write anything but one of the five goals and one of the
-    /// creatures it was told about.
+    /// A GBNF grammar for llama.cpp, so the model cannot write anything but one of the five goals, each with a
+    /// target of the kind it is about: a stranger for DefendNest and ParleyForFood, a tribemate for ShareResource and
+    /// Socialize, nothing for GatherFood. A goal with nobody of its kind in sight is left out, so with nothing near
+    /// the only answer is GatherFood. Without this a small model parleys with its own tribemates, which is dropped.
     /// </summary>
     public static string Grammar(CFSocietyState state)
     {
-        var targets = new StringBuilder("\"\"");
+        var strangers = new StringBuilder();
+        var mates = new StringBuilder();
         foreach (var nearby in state.Nearby)
         {
-            targets.Append(" | \"").Append(nearby.Label).Append('"');
+            var list = nearby.Stranger ? strangers : mates;
+            if (list.Length > 0)
+                list.Append(" | ");
+
+            list.Append("\"\\\"").Append(nearby.Label).Append("\\\"\"");
         }
 
-        var goals = new StringBuilder();
-        foreach (var goal in Enum.GetNames<CFSocietyGoal>())
+        var choices = new StringBuilder();
+        void Choice(CFSocietyGoal goal, string target)
         {
-            if (goals.Length > 0)
-                goals.Append(" | ");
+            if (choices.Length > 0)
+                choices.Append(" | ");
 
-            goals.Append('"').Append(goal).Append('"');
+            choices.Append("\"\\\"").Append(goal).Append("\\\", \\\"target\\\": \" ").Append(target);
         }
 
-        return "root ::= \"{\\\"goal\\\": \\\"\" goal \"\\\", \\\"target\\\": \\\"\" target \"\\\", \\\"utterance\\\": \\\"\" line \"\\\"}\"\n"
-               + "goal ::= " + goals + "\n"
-               + "target ::= " + targets + "\n"
-               + "line ::= [^\"\\\\\\n]*\n";
+        if (strangers.Length > 0)
+        {
+            Choice(CFSocietyGoal.DefendNest, "stranger");
+            Choice(CFSocietyGoal.ParleyForFood, "stranger");
+        }
+
+        if (mates.Length > 0)
+        {
+            Choice(CFSocietyGoal.ShareResource, "mate");
+            Choice(CFSocietyGoal.Socialize, "mate");
+        }
+
+        Choice(CFSocietyGoal.GatherFood, "\"\\\"\\\"\"");
+
+        var grammar = new StringBuilder();
+        grammar.Append("root ::= \"{\\\"goal\\\": \" choice \", \\\"utterance\\\": \\\"\" line \"\\\"}\"\n");
+        grammar.Append("choice ::= ").Append(choices).Append('\n');
+        if (strangers.Length > 0)
+            grammar.Append("stranger ::= ").Append(strangers).Append('\n');
+        if (mates.Length > 0)
+            grammar.Append("mate ::= ").Append(mates).Append('\n');
+
+        // GBNF wants the newline in the class written as the escape \n. A real newline there made llama.cpp refuse
+        // every request with "failed to parse grammar". The line is capped so a cut-off answer is rare, and with
+        // something to answer it cannot be empty: a small model otherwise leaves a greeting unanswered.
+        grammar.Append(state.Heard != null ? @"line ::= [^""\\\n]{3,120}" : @"line ::= [^""\\\n]{0,120}").Append('\n');
+        return grammar.ToString();
     }
 
     /// <summary>The body of a chat completion request, as llama.cpp's server and others like it take.</summary>

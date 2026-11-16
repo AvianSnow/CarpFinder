@@ -4,16 +4,27 @@ using Content.Server.CF.GOAP.Steering;
 using Content.Server.CF.Temperature;
 using Content.Server.Chat.Systems;
 using Content.Shared.Atmos.Components;
+using Content.Shared.Body;
+using Content.Shared.Body.Components;
 using Content.Shared.Botany.Components;
+using Content.Shared.Botany.Items.Components;
+using Content.Shared.CF.Alchemy;
+using Content.Shared.CF.Cooking;
+using Content.Shared.CF.Shop;
+using Content.Shared.CF.Temperature;
 using Content.Shared.Buckle.Components;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Factions;
 using Content.Shared.CF.GOAP;
+using Content.Shared.CF.Harvest;
 using Content.Shared.CF.Hazards;
+using Content.Shared.CF.Languages;
 using Content.Shared.Chat;
 using Content.Shared.Chemistry.Components;
 using Content.Shared.Hands.EntitySystems;
+using Content.Shared.Humanoid;
 using Content.Shared.Interaction.Events;
+using Content.Shared.Inventory;
 using Content.Shared.Item;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
@@ -21,7 +32,15 @@ using Content.Shared.Nutrition.Components;
 using Content.Shared.Nutrition.EntitySystems;
 using Content.Shared.Nutrition.Prototypes;
 using Content.Shared.Storage;
+using Content.Shared.Storage.EntitySystems;
+using Content.Shared.Tag;
+using Content.Shared.Temperature.Components;
+using Content.Shared.Tools;
+using Content.Shared.Tools.Components;
+using Content.Shared.Tools.Systems;
+using Robust.Shared.Containers;
 using Robust.Shared.Map;
+using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
@@ -45,6 +64,9 @@ public sealed partial class CFGOAPTribeSystem : EntitySystem
     private static readonly TimeSpan UpkeepInterval = TimeSpan.FromSeconds(1);
     private static readonly TimeSpan DemandInterval = TimeSpan.FromSeconds(9);
 
+    /// <summary>How long an animal a fed tribe let be is left alone before the tribe decides about it again.</summary>
+    private static readonly TimeSpan GameLookAgain = TimeSpan.FromSeconds(60);
+
     /// <summary>Appetite never takes a member below this share of full, so a tribe with no food is hungry, not dead.</summary>
     private const float AppetiteFloor = 0.12f;
 
@@ -55,14 +77,21 @@ public sealed partial class CFGOAPTribeSystem : EntitySystem
 
     private static readonly ProtoId<CFGOAPGoalPrototype>[] TribeGoals =
     {
-        "Parley", "Drink", "Eat", "ShareFood", "StockFood", "TendCrops", "Socialize",
+        "Parley", "Drink", "Eat", "ShareFood", "StockFood", "TendCrops", "KeepNest", "Socialize",
     };
 
     private static readonly ProtoId<CFGOAPActionPrototype>[] TribeActions =
     {
-        "Parley", "Drink", "Eat", "TakeStoredFood", "PickUpFood", "CookFood", "StoreFood", "GiveFood", "InspectSoil",
-        "WaterSoil", "FeedSoil", "PlantSeed", "Harvest", "Chat",
+        "Parley", "Drink", "Eat", "TakeStoredFood", "PickUpFood", "PrepareFood", "StoreFood", "GiveFood", "InspectSoil",
+        "WaterSoil", "FeedSoil", "PlantSeed", "Harvest", "KeepNest", "Chat",
     };
+
+    /// <summary>Tags of what a mortar grinds. The tribe knows wheat is for grinding before it finds a mortar.</summary>
+    private static readonly ProtoId<TagPrototype>[] Grindable = { "Wheat", "CFWheat" };
+
+    private static readonly ProtoId<TagPrototype> RawTag = "Raw";
+    private static readonly ProtoId<TagPrototype> TrashTag = "Trash";
+    private static readonly ProtoId<ToolQualityPrototype> Slicing = "Slicing";
 
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private IRobustRandom _random = default!;
@@ -71,9 +100,16 @@ public sealed partial class CFGOAPTribeSystem : EntitySystem
     [Dependency] private IngestionSystem _ingestion = default!;
     [Dependency] private MobStateSystem _mobState = default!;
     [Dependency] private SatiationSystem _satiation = default!;
+    [Dependency] private SharedContainerSystem _containers = default!;
     [Dependency] private SharedHandsSystem _hands = default!;
+    [Dependency] private InventorySystem _inventory = default!;
+    [Dependency] private SharedStorageSystem _storage = default!;
+    [Dependency] private SharedToolSystem _tools = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
+    [Dependency] private TagSystem _tags = default!;
+    [Dependency] private BodySystem _body = default!;
     [Dependency] private CFFactionSystem _factions = default!;
+    [Dependency] private CFLanguageSystem _language = default!;
     [Dependency] private CFGOAPSteeringSystem _steering = default!;
     [Dependency] private CFSocietyAdvisorSystem _advisor = default!;
 
@@ -154,8 +190,8 @@ public sealed partial class CFGOAPTribeSystem : EntitySystem
             fires.Add(fire);
         }
 
-        // Stock's bonfire, which always burns.
-        foreach (var fire in _lookup.GetEntitiesInRange<IgniteOnBuckleComponent>(here, range))
+        // Stock bonfires, which always burn.
+        foreach (var fire in _lookup.GetEntitiesInRange<AlwaysHotComponent>(here, range))
         {
             fires.Add(fire);
         }
@@ -224,10 +260,20 @@ public sealed partial class CFGOAPTribeSystem : EntitySystem
     {
         var tribe = ent.Comp;
         tribe.NextSurvey = _timing.CurTime + SurveyInterval;
+        // What members carry in their packs is remembered across surveys; only the shared stores are counted again.
+        foreach (var store in tribe.Stores)
+        {
+            tribe.Stock.Remove(store);
+        }
+
         tribe.Stores.Clear();
         tribe.Plots.Clear();
         tribe.Waters.Clear();
         tribe.Fires.Clear();
+        tribe.Mortars.Clear();
+        tribe.Knives.Clear();
+        tribe.Clippers.Clear();
+        tribe.Butchers.Clear();
         tribe.FoodStock = 0;
         if (tribe.Nest is not { } nest || !Exists(nest.EntityId))
             return;
@@ -247,11 +293,32 @@ public sealed partial class CFGOAPTribeSystem : EntitySystem
                 continue;
 
             tribe.Stores.Add(store);
-            foreach (var item in store.Comp.Container.ContainedEntities)
-            {
-                if (IsFood(item))
-                    tribe.FoodStock++;
-            }
+            tribe.FoodStock += LookInto(tribe, store).Food;
+        }
+
+        // Its tools, lying about the nest. One in somebody's hand is theirs for now.
+        foreach (var mortar in _lookup.GetEntitiesInRange<CFMortarComponent>(here, tribe.NestTiles))
+        {
+            if (!_containers.IsEntityInContainer(mortar))
+                tribe.Mortars.Add(mortar);
+        }
+
+        foreach (var clippers in _lookup.GetEntitiesInRange<BotanySampleTakerComponent>(here, tribe.NestTiles))
+        {
+            if (!_containers.IsEntityInContainer(clippers))
+                tribe.Clippers.Add(clippers);
+        }
+
+        foreach (var knife in _lookup.GetEntitiesInRange<CFHarvestToolComponent>(here, tribe.NestTiles))
+        {
+            if (!_containers.IsEntityInContainer(knife))
+                tribe.Butchers.Add(knife);
+        }
+
+        foreach (var tool in _lookup.GetEntitiesInRange<ToolComponent>(here, tribe.NestTiles))
+        {
+            if (HasComp<ItemComponent>(tool) && !_containers.IsEntityInContainer(tool) && _tools.HasQuality(tool, Slicing.Id, tool.Comp))
+                tribe.Knives.Add(tool);
         }
 
         foreach (var water in _lookup.GetEntitiesInRange<DrainableSolutionComponent>(here, tribe.NestTiles))
@@ -369,11 +436,201 @@ public sealed partial class CFGOAPTribeSystem : EntitySystem
         }
     }
 
+    /// <summary>Something to eat, or something that becomes food with work: wheat, flour, dough, a loaf to slice.</summary>
     public bool IsFood(EntityUid uid)
+    {
+        return Stage(uid) != CFFoodStage.None;
+    }
+
+    /// <summary>Food that can be eaten as it is, by anyone with an ordinary stomach.</summary>
+    public bool IsEdible(EntityUid uid)
     {
         return HasComp<ItemComponent>(uid)
                && TryComp(uid, out EdibleComponent? edible)
+               && !edible.RequiresSpecialDigestion
                && _ingestion.GetEdibleType((uid, edible)) == IngestionSystem.Food;
+    }
+
+    /// <summary>Whether this creature can digest this food. Stock wheat wants a cow.</summary>
+    public bool CanEat(EntityUid eater, EntityUid food)
+    {
+        return TryComp(food, out EdibleComponent? edible)
+               && _ingestion.GetEdibleType((food, edible)) == IngestionSystem.Food
+               && _body.TryGetOrgansWithComponent<StomachComponent>(eater, out var stomachs)
+               && _ingestion.IsDigestibleBy(food, stomachs, out _);
+    }
+
+    /// <summary>
+    /// How far along food is. Wheat is ground, flour is mixed into water, dough and raw meat are cooked, a loaf is
+    /// sliced, and the rest is eaten. Whether the tribe can do the next step is <see cref="CFGOAPSocietySensorSystem.TryFindStation"/>.
+    /// </summary>
+    public CFFoodStage Stage(EntityUid uid)
+    {
+        if (!HasComp<ItemComponent>(uid))
+            return CFFoodStage.None;
+
+        if (HasComp<CFMixIntoComponent>(uid))
+            return CFFoodStage.Mix;
+
+        if (HasComp<TemperatureComponent>(uid)
+            && (_tags.HasTag(uid, RawTag)
+                || TryComp(uid, out CFTemperatureTransformationComponent? heat) && CFTemperatureTransformationSystem.IsCookable(heat)))
+            return CFFoodStage.Cook;
+
+        foreach (var tag in Grindable)
+        {
+            if (_tags.HasTag(uid, tag))
+                return CFFoodStage.Grind;
+        }
+
+        if (!IsEdible(uid))
+            return CFFoodStage.None;
+
+        if (TryComp(uid, out ToolRefinableComponent? refinable) && refinable.QualityNeeded == Slicing)
+            return CFFoodStage.Slice;
+
+        return CFFoodStage.Ready;
+    }
+
+    /// <summary>A coin, a potion, or anything else the tribe keeps in its stores because it is worth something.</summary>
+    public bool IsValuable(EntityUid uid)
+    {
+        return HasComp<ItemComponent>(uid)
+               && !IsFood(uid)
+               && (HasComp<CFCoinComponent>(uid)
+                   || HasComp<CFAlchemicalItemComponent>(uid)
+                   || TryComp(uid, out CFItemPriceComponent? price) && price.FullResale);
+    }
+
+    /// <summary>Rubbish, by the stock trash tag.</summary>
+    public bool IsRubbish(EntityUid uid)
+    {
+        return HasComp<ItemComponent>(uid) && _tags.HasTag(uid, TrashTag);
+    }
+
+    /// <summary>Something the fire burns: planks, logs, coal.</summary>
+    public bool IsFuel(EntityUid uid)
+    {
+        return HasComp<ItemComponent>(uid) && HasComp<CFFireplaceFuelComponent>(uid);
+    }
+
+    /// <summary>
+    /// An animal the tribe hunts rather than talks to: alive, speaks no language, is nobody's character, and can be
+    /// butchered, and is no humanoid. A pig, a chicken, a boar. Anything with a tongue or a face, however hostile, is a stranger.
+    /// </summary>
+    public bool IsGame(EntityUid uid)
+    {
+        return HasComp<MobStateComponent>(uid)
+               && _mobState.IsAlive(uid)
+               && HasComp<CFHarvestableComponent>(uid)
+               && !HasComp<CFGOAPSocialComponent>(uid)
+               && !HasComp<CFLanguagesComponent>(uid)
+               && !HasComp<CFPvpComponent>(uid)
+               && !HasComp<ActorComponent>(uid)
+               && !HasComp<HumanoidProfileComponent>(uid);
+    }
+
+    /// <summary>
+    /// The nearest store with room for this, as far as the tribe knows. With none, a member falls back on the pack
+    /// on its own back, so what it carries does not end up on the ground.
+    /// </summary>
+    public bool TryFindStore(CFGOAPTribeComponent tribe, EntityUid item, MapCoordinates here, out EntityUid store, EntityUid? member = null)
+    {
+        store = default;
+        var nearest = float.MaxValue;
+        foreach (var candidate in tribe.Stores)
+        {
+            if (TerminatingOrDeleted(candidate) || !_storage.CanInsert(candidate, item, out _))
+                continue;
+
+            var distance = (_transform.GetMapCoordinates(candidate).Position - here.Position).Length();
+            if (distance >= nearest)
+                continue;
+
+            nearest = distance;
+            store = candidate;
+        }
+
+        if (nearest < float.MaxValue)
+            return true;
+
+        if (member is not { } who || !TryGetPack(who, out var pack) || !_storage.CanInsert(pack, item, out _))
+            return false;
+
+        store = pack;
+        return true;
+    }
+
+    /// <summary>The pack on a member's back, if it wears one that holds things.</summary>
+    public bool TryGetPack(EntityUid member, out EntityUid pack)
+    {
+        pack = default;
+        if (!_inventory.TryGetSlotEntity(member, "back", out var worn) || !HasComp<StorageComponent>(worn.Value))
+            return false;
+
+        pack = worn.Value;
+        return true;
+    }
+
+    /// <summary>
+    /// Counts what a store holds, from its contents. The survey does this for every store, and a hungry member for a
+    /// store nobody has looked into for a while, in case something was put there that the tribe did not see.
+    /// </summary>
+    public CFStoreRecord LookInto(CFGOAPTribeComponent tribe, EntityUid store)
+    {
+        var record = new CFStoreRecord { At = _timing.CurTime };
+        if (tribe.Stock.TryGetValue(store, out var old) && tribe.Stores.Contains(store))
+            tribe.FoodStock = Math.Max(0, tribe.FoodStock - old.Food);
+
+        tribe.Stock[store] = record;
+        if (!TryComp(store, out StorageComponent? storage))
+            return record;
+
+        foreach (var item in storage.Container.ContainedEntities)
+        {
+            Count(record, item, 1);
+        }
+
+        return record;
+    }
+
+    /// <summary>A member put this in a store, so the count of what is there follows without anyone looking.</summary>
+    public void NoteStored(CFGOAPTribeComponent tribe, EntityUid store, EntityUid item)
+    {
+        Note(tribe, store, item, 1);
+    }
+
+    /// <summary>A member took this out of a store.</summary>
+    public void NoteTaken(CFGOAPTribeComponent tribe, EntityUid store, EntityUid item)
+    {
+        Note(tribe, store, item, -1);
+    }
+
+    private void Note(CFGOAPTribeComponent tribe, EntityUid store, EntityUid item, int by)
+    {
+        if (!tribe.Stock.TryGetValue(store, out var record))
+            tribe.Stock[store] = record = new CFStoreRecord();
+
+        var food = record.Food;
+        Count(record, item, by);
+
+        // The tribe counts only what is in a shared store. A pack is one member and nobody else can reach it.
+        if (tribe.Stores.Contains(store))
+            tribe.FoodStock = Math.Max(0, tribe.FoodStock + record.Food - food);
+    }
+
+    private void Count(CFStoreRecord record, EntityUid item, int by)
+    {
+        // A loaf or raw meat can be eaten as it is, so it is food, however much better it would be sliced or cooked.
+        var stage = Stage(item);
+        if (IsEdible(item))
+            record.Food = Math.Max(0, record.Food + by);
+        else if (stage != CFFoodStage.None)
+            record.Ingredients = Math.Max(0, record.Ingredients + by);
+        else if (IsValuable(item))
+            record.Valuables = Math.Max(0, record.Valuables + by);
+        else if (IsFuel(item))
+            record.Fuel = Math.Max(0, record.Fuel + by);
     }
 
     public bool IsDrink(EntityUid uid)
@@ -489,6 +746,66 @@ public sealed partial class CFGOAPTribeSystem : EntitySystem
         Witness(tribe, _transform.GetMapCoordinates(speaker), heard, speaker);
     }
 
+    /// <summary>How far a whisper carries, in tiles: stock's clear whisper range.</summary>
+    private const float WhisperTiles = 2f;
+
+    /// <summary>
+    /// A stranger speaking near the tribe. Every member in earshot remembers the words if it knows the language, or
+    /// that it was spoken to in a tongue it does not know, and the leader asks the language model at once, so the
+    /// tribe can answer. A tribemate's own lines go round through <see cref="Say"/>.
+    /// </summary>
+    [SubscribeLocalEvent]
+    private void OnSpoke(EntitySpokeEvent args)
+    {
+        if (TryGetTribe(args.Source, out _) || !HasComp<MobStateComponent>(args.Source))
+            return;
+
+        var where = _transform.GetMapCoordinates(args.Source);
+        var reach = args.ObfuscatedMessage != null ? WhisperTiles : EarshotTiles;
+        var query = EntityQueryEnumerator<CFGOAPTribeComponent>();
+        while (query.MoveNext(out var uid, out var tribe))
+        {
+            Hear((uid, tribe), args.Source, args.Message, where, reach);
+        }
+    }
+
+    /// <summary>What one tribe makes of a stranger's words.</summary>
+    public void Hear(Entity<CFGOAPTribeComponent> tribe, EntityUid speaker, string words, MapCoordinates where, float reach)
+    {
+        var heard = false;
+        var leaderHeard = false;
+        foreach (var member in Members(tribe))
+        {
+            var at = _transform.GetMapCoordinates(member);
+            if (at.MapId != where.MapId || (at.Position - where.Position).Length() > reach)
+                continue;
+
+            if (!heard)
+            {
+                // Hearing someone is meeting them.
+                heard = true;
+                Meet(tribe, member, speaker);
+            }
+
+            var label = tribe.Comp.Strangers[speaker].Label;
+            var understood = !_language.TryGetSpoken(speaker, out var language) || _language.Understands(member, language.ID);
+            var text = understood
+                ? Loc.GetString("cf-tribe-memory-stranger-said", ("who", label), ("line", Clean(words)))
+                : Loc.GetString("cf-tribe-memory-strange-tongue", ("who", label));
+            Remember(member, text, speaker);
+            if (TryComp(member, out CFGOAPSocialComponent? social))
+            {
+                social.Heard = text;
+                social.HeardAt = _timing.CurTime;
+            }
+
+            leaderHeard |= member == tribe.Comp.Leader;
+        }
+
+        if (leaderHeard && tribe.Comp.Leader is { } leader)
+            _advisor.Ask(tribe, leader, urgent: true);
+    }
+
     /// <summary>A line from a language model is one short sentence of plain text, whatever it sent.</summary>
     public static string Clean(string line)
     {
@@ -528,10 +845,29 @@ public sealed partial class CFGOAPTribeSystem : EntitySystem
             return known.Stance;
 
         var now = _timing.CurTime;
+
+        // An animal is nobody to talk to. A tribe that wants food hunts it; one that does not lets it be for a while.
+        if (IsGame(stranger))
+        {
+            var wanted = Situation(tribe, stranger).Hungry;
+            var game = new CFTribeStranger
+            {
+                Stance = wanted ? CFTribeStance.Hostile : CFTribeStance.Peace,
+                PeaceUntil = now + GameLookAgain,
+                Label = $"Beast_{++tribe.Comp.StrangersMet}",
+            };
+            tribe.Comp.Strangers[stranger] = game;
+            if (wanted)
+                Witness(tribe, _transform.GetMapCoordinates(stranger), Loc.GetString("cf-tribe-memory-game", ("who", Name(stranger))));
+
+            return game.Stance;
+        }
+
         var record = new CFTribeStranger
         {
             Stance = CFSocietyRules.Greet(Situation(tribe, stranger)),
             ParleyUntil = now + tribe.Comp.ParleyPatience,
+            Label = $"Adventurer_{++tribe.Comp.StrangersMet}",
         };
         tribe.Comp.Strangers[stranger] = record;
 

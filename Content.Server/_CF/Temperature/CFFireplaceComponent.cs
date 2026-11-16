@@ -1,4 +1,5 @@
 using Robust.Shared.Audio;
+using Robust.Shared.Prototypes;
 
 namespace Content.Server.CF.Temperature;
 
@@ -22,6 +23,14 @@ public sealed partial class CFFireplaceComponent : Component
 
     [DataField]
     public bool DeleteOnEmpty;
+
+    /// <summary>What a piece of burnt fuel leaves beside the fire, for the soil. Null for nothing.</summary>
+    [DataField]
+    public EntProtoId? Ash = "CFAsh1";
+
+    /// <summary>The chance each piece of fuel leaves some.</summary>
+    [DataField]
+    public float AshChance = 1f;
 
     [DataField]
     public TimeSpan UpdateFrequency = TimeSpan.FromSeconds(1f);

@@ -86,7 +86,10 @@ public enum CFGOAPFact : ulong
     /// <summary>It holds something to eat.</summary>
     HasFood = 1ul << 47,
 
-    /// <summary>The food it holds is raw, and its tribe has a fire burning to cook it on.</summary>
+    /// <summary>
+    /// The food it holds is not ready to eat, and its tribe has what the next step needs: a fire for raw meat or
+    /// dough, a mortar for wheat, water for flour, a knife for a loaf. See <c>CFGOAPTribeSystem.Stage</c>.
+    /// </summary>
     FoodRaw = 1ul << 48,
 
     /// <summary>Food lies in sight, and it has a hand free for it.</summary>
@@ -118,6 +121,12 @@ public enum CFGOAPFact : ulong
 
     /// <summary>Its tribe is talking to its target instead of fighting it. KillTarget does not count while this holds.</summary>
     Parleying = 1ul << 58,
+
+    /// <summary>
+    /// Something in or about the nest wants tidying, and it can do it: rubbish or a puddle near the nest, a coin or a
+    /// potion lying loose with a store to put it in, or something in its own hand that nobody can use.
+    /// </summary>
+    NestUntended = 1ul << 63,
 
     // Never sensed. These only exist as what a goal wants, so a plan has something to reach.
     CropsTended = 1ul << 59,
@@ -213,8 +222,11 @@ public enum CFGOAPStep : byte
     /// <summary>Carry held food to one of the tribe's stores and put it in.</summary>
     StoreFood,
 
-    /// <summary>Hold raw food over the tribe's fire until it is cooked.</summary>
-    Cook,
+    /// <summary>
+    /// Takes the food it holds one stage nearer to eating: grinds wheat at the mortar, mixes flour into water, holds
+    /// raw meat or dough over the fire, or slices a loaf with the knife.
+    /// </summary>
+    Prepare,
 
     /// <summary>Walk to a plot and look at it: water, nutrients, and what grows there.</summary>
     InspectSoil,
@@ -239,6 +251,9 @@ public enum CFGOAPStep : byte
 
     /// <summary>Stand off from its target and make the tribe's demand, without attacking.</summary>
     Parley,
+
+    /// <summary>Throws rubbish out of the nest, wipes up a puddle, or puts a loose valuable in a store.</summary>
+    KeepNest,
 }
 
 /// <summary>How an action's worth is worked out when planning. See <c>CFGOAPTacticsSystem</c>.</summary>

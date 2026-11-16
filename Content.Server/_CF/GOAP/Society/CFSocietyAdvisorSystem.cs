@@ -26,6 +26,9 @@ public sealed partial class CFSocietyAdvisorSystem : EntitySystem
     private static readonly TimeSpan ForceTime = TimeSpan.FromSeconds(20);
 
     private static readonly TimeSpan LineTime = TimeSpan.FromSeconds(30);
+
+    /// <summary>How long something a stranger said is still worth answering.</summary>
+    private static readonly TimeSpan HeardTime = TimeSpan.FromSeconds(60);
     private static readonly TimeSpan WarnInterval = TimeSpan.FromMinutes(1);
 
     private static readonly ProtoId<CFGOAPGoalPrototype> ShareGoal = "ShareFood";
@@ -160,7 +163,15 @@ public sealed partial class CFSocietyAdvisorSystem : EntitySystem
             }
 
             if (CFSocietyPrompt.TryParse(reply.Content, out var answer))
+            {
+                // Seen on the server console, so a round with the model on can be followed.
+                Log.Info($"Society model: {answer.Goal} {answer.Target} \"{answer.Utterance}\"");
                 Apply(reply.Member, answer, reply.Labels);
+            }
+            else if (reply.Error == null)
+            {
+                Log.Info($"Society model answered with nothing the game could use: {reply.Content}");
+            }
         }
     }
 
@@ -190,15 +201,18 @@ public sealed partial class CFSocietyAdvisorSystem : EntitySystem
             state.Memory.Add(memory.Text);
         }
 
+        if (member.Comp.Heard != null && _timing.CurTime < member.Comp.HeardAt + HeardTime)
+            state.Heard = member.Comp.Heard;
+
         var here = _transform.GetMapCoordinates(member);
-        var count = 0;
         foreach (var (stranger, record) in tribe.Comp.Strangers)
         {
             var at = _transform.GetMapCoordinates(stranger);
             if (at.MapId != here.MapId || (at.Position - here.Position).Length() > CFGOAPTribeSystem.EarshotTiles * 1.5f)
                 continue;
 
-            var label = $"Adventurer_{++count}";
+            // The label was fixed when the tribe met them, so what they said is remembered under the same name.
+            var label = record.Label;
             labels[label] = stranger;
             var notes = _tribes.IsArmed(stranger) ? "Armed" : "Unarmed";
             if (_tribes.TryHeldFood(stranger, out var food))
@@ -208,7 +222,7 @@ public sealed partial class CFSocietyAdvisorSystem : EntitySystem
             else if (record.Settled)
                 notes += ", AttackedUs";
 
-            state.Nearby.Add(new CFSocietyNearby(label, notes));
+            state.Nearby.Add(new CFSocietyNearby(label, notes, Stranger: true));
         }
 
         foreach (var mate in _tribes.Members(tribe))
@@ -263,7 +277,11 @@ public sealed partial class CFSocietyAdvisorSystem : EntitySystem
 
                 var stance = answer.Goal == CFSocietyGoal.DefendNest ? CFTribeStance.Hostile : CFTribeStance.Parley;
                 if (!_tribes.TrySetStance(tribe.Comp, stranger, stance))
+                {
+                    // The tribe's mind is made up about them, at peace or at war, but it can still answer them.
+                    _tribes.Say(member, line);
                     return;
+                }
 
                 if (stance == CFTribeStance.Hostile)
                 {

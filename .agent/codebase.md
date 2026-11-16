@@ -241,7 +241,7 @@ All edits carry `// CarpFinder` markers, so `grep -rn CarpFinder Content.Client 
 | Prone | `Content.Shared/Stunnable/SharedStunSystem.Knockdown.cs` | Do not force a creature up while it is being deleted. "No room to stand" ignores sensors |
 | Pointing | `Content.Shared/Pointing/SharedPointingSystem.cs` | An event for pointing at the ground, for Seek |
 | Throwing | `Content.Server/Hands/Systems/HandsSystem.cs` | A thrown weapon's reach comes from its range increments, not the hand's 8 tiles |
-| Tiles | `Tiles/lava.yml`, `liquid_plasma.yml`, `chasm.yml` | The `CFDangerousTile` marker. `chasm.yml` also has `CFChasmEdge` |
+| Tiles | `Tiles/lava.yml`, `liquid_plasma.yml`, `chasm.yml`, `water.yml` | The `CFDangerousTile` marker. `chasm.yml` also has `CFChasmEdge`. `water.yml` gets `DrawableSolution` and `Edible`, so open water is drunk from and drawn into a bucket, and a tribe counts it as its water |
 | Chat | `Content.Server/Chat/Systems/ChatSystem.PrivateAPI.cs`, `ChatSystem.Utility.cs` | Each listener hears speech in a language they know, or nonsense |
 | Saved characters | `Content.Server/Database/DataNodeJsonExtensions.cs` | A JSON null is read as a real null, or a build with an unpicked boost fails to load |
 | Maps | `Maps/Test/dev_map.yml`, `Maps/Nonstations/meteor-arena.yml`, `dm01-entryway.yml` | `MapAtmosphere`, so mobs can breathe |

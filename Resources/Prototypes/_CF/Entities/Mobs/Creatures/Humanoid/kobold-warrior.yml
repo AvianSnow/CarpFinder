@@ -9,6 +9,8 @@
   id: CFKoboldWarriorGear
   inhand:
   - CFSpear
+  equipment:
+    back: CFKoboldBackpack
 
 - type: entity
   parent: [ MobBaseKobold, CFBaseMonster ]
@@ -45,6 +47,9 @@
         location: Left
       hand_right:
         location: Right
+  - type: Inventory
+    templateId: CFKobold
+    speciesId: monkey
   - type: Loadout
     prototypes: [ CFKoboldWarriorGear ]
   - type: MovementSpeedModifier

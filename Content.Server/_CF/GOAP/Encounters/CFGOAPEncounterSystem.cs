@@ -183,6 +183,12 @@ public sealed partial class CFGOAPEncounterSystem : EntitySystem
             Enlist(ent, mob, encounter);
         }
 
+        // What the group brought with it, laid down between its members.
+        for (var i = 0; i < encounter.Supplies.Count; i++)
+        {
+            Spawn(encounter.Supplies[i], SpawnPoint(ent, i * 2 + 1, encounter.Supplies.Count * 2));
+        }
+
         var spawned = new CFEncounterSpawnedEvent(encounter);
         RaiseLocalEvent(ent, ref spawned);
     }

@@ -20,6 +20,9 @@ public sealed class CFTribeStranger
 {
     public CFTribeStance Stance;
 
+    /// <summary>The short name the language model knows this one by, such as Adventurer_2. Fixed from the first meeting.</summary>
+    public string Label = string.Empty;
+
     /// <summary>When talking ends and fighting starts.</summary>
     public TimeSpan ParleyUntil;
 
@@ -50,7 +53,72 @@ public sealed class CFSoilRecord
     /// <summary>There is a crop to pick, or a dead plant to clear.</summary>
     public bool Ready;
 
+    /// <summary>A living plant grown enough for the clippers to take a seed from, and not sampled yet.</summary>
+    public bool Sampleable;
+
     public TimeSpan At;
+}
+
+/// <summary>
+/// What a tribe knows is in one of its stores, from living there. The survey counts it, and whoever puts something
+/// in or takes something out keeps the count right in between, so nobody has to open a crate to know what it holds.
+/// </summary>
+public sealed class CFStoreRecord
+{
+    /// <summary>Things that can be eaten as they are.</summary>
+    public int Food;
+
+    /// <summary>Wheat, flour, dough and the like: food that still wants work.</summary>
+    public int Ingredients;
+
+    /// <summary>Coins, potions and other things worth keeping.</summary>
+    public int Valuables;
+
+    /// <summary>Planks, logs and coal for the fire.</summary>
+    public int Fuel;
+
+    /// <summary>When a member last looked inside, or the survey last counted it.</summary>
+    public TimeSpan At;
+}
+
+/// <summary>How far along a piece of food is, and so what the next errand with it does.</summary>
+public enum CFFoodStage : byte
+{
+    /// <summary>Not food at all.</summary>
+    None,
+
+    /// <summary>Wheat: ground at a mortar into flour.</summary>
+    Grind,
+
+    /// <summary>Flour: mixed into water for dough.</summary>
+    Mix,
+
+    /// <summary>Dough or raw meat: held over the fire.</summary>
+    Cook,
+
+    /// <summary>A loaf: cut into slices with a knife, so it goes round. It can also be eaten whole.</summary>
+    Slice,
+
+    /// <summary>Eaten as it is.</summary>
+    Ready,
+}
+
+/// <summary>What a member keeping the nest found to do.</summary>
+public enum CFChoreKind : byte
+{
+    None,
+
+    /// <summary>The fire is out or nearly through its fuel, or a poor plot wants ash: a piece of fuel goes in.</summary>
+    FeedFire,
+
+    /// <summary>Rubbish near the nest: carried to the edge and thrown out.</summary>
+    Rubbish,
+
+    /// <summary>A puddle near the nest: wiped up.</summary>
+    Puddle,
+
+    /// <summary>A coin or a potion lying loose, or something in its own hand nobody can use: put in a store.</summary>
+    Valuable,
 }
 
 /// <summary>
@@ -91,6 +159,10 @@ public sealed partial class CFGOAPTribeComponent : Component
     /// <summary>A plot with less than this share of its nutrients gets fertilizer.</summary>
     [DataField, ViewVariables(VVAccess.ReadWrite)]
     public float PoorBelow = 0.25f;
+
+    /// <summary>With less than this left to burn, and nothing waiting in it, the fire is fed.</summary>
+    [DataField, ViewVariables(VVAccess.ReadWrite)]
+    public float LowFuel = 30f;
 
     /// <summary>How long what was seen at a plot is trusted before someone looks again.</summary>
     [DataField, ViewVariables(VVAccess.ReadWrite)]
@@ -135,9 +207,29 @@ public sealed partial class CFGOAPTribeComponent : Component
     [ViewVariables]
     public List<EntityUid> Fires = new();
 
-    /// <summary>Pieces of food in <see cref="Stores"/>, counted at the last survey.</summary>
+    /// <summary>Mortars lying round the nest, for grinding wheat.</summary>
+    [ViewVariables]
+    public List<EntityUid> Mortars = new();
+
+    /// <summary>Knives lying round the nest, for slicing a loaf.</summary>
+    [ViewVariables]
+    public List<EntityUid> Knives = new();
+
+    /// <summary>Clippers lying round the nest, for taking seeds from a grown plant.</summary>
+    [ViewVariables]
+    public List<EntityUid> Clippers = new();
+
+    /// <summary>Survival knives lying round the nest, for butchering what the tribe hunts.</summary>
+    [ViewVariables]
+    public List<EntityUid> Butchers = new();
+
+    /// <summary>Pieces of food in <see cref="Stores"/> that can be eaten as they are, as far as the tribe knows.</summary>
     [ViewVariables]
     public int FoodStock;
+
+    /// <summary>What each store holds, as far as the tribe knows. See <see cref="CFStoreRecord"/>.</summary>
+    [ViewVariables]
+    public Dictionary<EntityUid, CFStoreRecord> Stock = new();
 
     /// <summary>How many questions its members have sent a language model, and how many answers were usable.</summary>
     [ViewVariables]
@@ -160,6 +252,9 @@ public sealed partial class CFGOAPTribeComponent : Component
     public Dictionary<EntityUid, CFSoilRecord> Soil = new();
 
     public Dictionary<EntityUid, CFTribeStranger> Strangers = new();
+
+    /// <summary>How many strangers the tribe has met, so each gets a label of its own.</summary>
+    public int StrangersMet;
 
     /// <summary>Who is on their way to what, and until when, so two members do not go for the same thing.</summary>
     public Dictionary<EntityUid, (EntityUid Worker, TimeSpan Until)> Claims = new();
@@ -185,6 +280,11 @@ public sealed partial class CFGOAPSocialComponent : Component
     [ViewVariables]
     public List<CFTribeMemory> Memory = new();
 
+    /// <summary>The last thing a stranger said to it, under the stranger's label, for the model to answer.</summary>
+    public string? Heard;
+
+    public TimeSpan HeardAt;
+
     /// <summary>What the current errand is going to: a plot, a store, a tribemate.</summary>
     [ViewVariables]
     public EntityUid? Errand;
@@ -192,6 +292,16 @@ public sealed partial class CFGOAPSocialComponent : Component
     /// <summary>A thing the errand needs first, such as the bucket or the seed.</summary>
     [ViewVariables]
     public EntityUid? Tool;
+
+    /// <summary>What the errand is working on besides: the loaf being sliced, the plant being clipped for a seed.</summary>
+    public EntityUid? Working;
+
+    /// <summary>Whether the errand has done its one irreversible thing yet, such as clipping the plant.</summary>
+    public bool Acted;
+
+    /// <summary>What the tidying errand found.</summary>
+    [ViewVariables]
+    public CFChoreKind Chore;
 
     /// <summary>When it got to where the errand is, or null while it is still walking.</summary>
     public TimeSpan? ArrivedAt;

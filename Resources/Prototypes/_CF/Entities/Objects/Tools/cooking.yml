@@ -1,0 +1,47 @@
+# Bread from wheat, by hand: wheat is ground at the mortar into flour, flour used on water (a bucket, the well) is
+# dough, dough held over a fire is bread, and a knife slices the loaf. The kobold tribe does the same (society.yml).
+
+- type: entity
+  parent: BaseItem
+  id: CFMortarAndPestle
+  name: mortar and pestle
+  description: A heavy stone bowl and its pestle. Grinds wheat into flour.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Item
+    size: Normal
+  - type: Sprite
+    sprite: _CP14/Objects/Specific/Alchemy/mortar_pestle.rsi
+    layers:
+    - state: mortar_base
+    - state: pestle
+  - type: CFMortar
+    grinds:
+      Wheat: CFFlour
+      CFWheat: CFFlour
+  - type: CFItemPrice
+    copper: 50
+  - type: CFBulk
+    bulk: 1
+
+- type: entity
+  parent: BaseItem
+  id: CFFlour
+  name: sack of flour
+  description: Ground wheat. Mixed into water it makes dough.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Item
+    size: Small
+  - type: Sprite
+    sprite: Objects/Consumable/Food/ingredients.rsi
+    state: flour-small
+  - type: Tag
+    tags:
+    - CFFlour
+  - type: CFMixInto
+    reagent: Water
+    amount: 10
+    result: CFFoodDoughLarge
+  - type: CFItemPrice
+    copper: 2

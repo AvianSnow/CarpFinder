@@ -48,6 +48,15 @@
   priority: 1.9
   notWhen: [ TargetVisible ]
 
+# The fire fed and relit (and stoked for ash when a plot is poor), rubbish thrown out of the nest, puddles wiped up,
+# coins, potions and fuel put in the stores, and anything in its own hand that nobody can use put away.
+- type: cfGoapGoal
+  id: KeepNest
+  avoids: [ NestUntended ]
+  priority: 1.8
+  onlyWhen: [ NestUntended ]
+  notWhen: [ TargetVisible ]
+
 - type: cfGoapGoal
   id: Socialize
   wants: [ Socialized ]
@@ -94,11 +103,19 @@
   gives: [ HasFood ]
   cost: 1.5
 
+# One stage of work on what it holds: wheat ground at the mortar, flour mixed into water, dough or raw meat held over
+# the fire, a loaf sliced. Thinking sees what it holds afterwards and plans the next stage, so bread takes four of these.
 - type: cfGoapAction
-  id: CookFood
-  step: Cook
+  id: PrepareFood
+  step: Prepare
   needs: [ HasFood, FoodRaw ]
   removes: [ FoodRaw ]
+
+- type: cfGoapAction
+  id: KeepNest
+  step: KeepNest
+  needs: [ NestUntended ]
+  removes: [ NestUntended ]
 
 - type: cfGoapAction
   id: StoreFood
@@ -172,6 +189,15 @@
   actions:
   - TakeFlank
   - StrikeFlanked
+  # Laid down beside them: a mortar for wheat, a bucket for the well, a knife for a loaf, a survival knife for what
+  # they hunt, clippers for seeds, and planks for the fire.
+  supplies:
+  - CFMortarAndPestle
+  - CFBucket
+  - KitchenKnife
+  - CFSurvivalKnife
+  - HydroponicsToolClippers
+  - CFWoodenPlanks10
 
 # A spawner already set to the tribe. It spawns as the map starts, because a tribe lives whether or not anyone watches.
 - type: entity
