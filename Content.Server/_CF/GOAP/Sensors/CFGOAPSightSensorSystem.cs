@@ -1,5 +1,6 @@
 using System.Numerics;
 using Content.Server.CF.GOAP.Encounters;
+using Content.Server.CF.GOAP.Society;
 using Content.Server.CF.GOAP.Steering;
 using Content.Server.CF.GOAP.Tactics;
 using Content.Shared.CF.Companions;
@@ -39,6 +40,7 @@ public sealed partial class CFGOAPSightSensorSystem : EntitySystem
     [Dependency] private CFGOAPEncounterSystem _encounters = default!;
     [Dependency] private CFGOAPSteeringSystem _steering = default!;
     [Dependency] private CFGOAPTacticsSystem _tactics = default!;
+    [Dependency] private CFGOAPTribeSystem _tribes = default!;
     [Dependency] private CFStealthSystem _stealth = default!;
 
     [SubscribeLocalEvent]
@@ -55,7 +57,10 @@ public sealed partial class CFGOAPSightSensorSystem : EntitySystem
         }
 
         if (!TryFindBestEnemy(args.Creature, args.Here, out var seen) && !TryGetFelt(uid, out seen))
+        {
+            ForgetIfAtPeace(args.Creature);
             return;
+        }
 
         seen = PackTarget(uid, seen);
         Follow(args.Creature, seen);
@@ -89,7 +94,17 @@ public sealed partial class CFGOAPSightSensorSystem : EntitySystem
     private bool TryGetFelt(EntityUid uid, out EntityUid felt)
     {
         felt = CompOrNull<CFGOAPSteeringComponent>(uid)?.Felt ?? default;
-        return felt.IsValid() && !TerminatingOrDeleted(felt);
+        return felt.IsValid() && !TerminatingOrDeleted(felt) && !_tribes.AtPeaceWith(uid, felt);
+    }
+
+    /// <summary>A creature its tribe has made peace with is not hunted or looked for any more.</summary>
+    private void ForgetIfAtPeace(Entity<CFGOAPComponent> ent)
+    {
+        if (ent.Comp.Target is not { } target || !_tribes.AtPeaceWith(ent, target))
+            return;
+
+        ent.Comp.Target = null;
+        ent.Comp.Lkp = null;
     }
 
     /// <summary>
@@ -107,6 +122,7 @@ public sealed partial class CFGOAPSightSensorSystem : EntitySystem
             if (mob.Owner == uid
                 || !_mobState.IsAlive(mob)
                 || !_factions.CanHarm(uid, mob)
+                || _tribes.AtPeaceWith(uid, mob)
                 || _stealth.Detection(mob, uid) == CFDetection.Undetected)
                 continue;
 
@@ -135,7 +151,7 @@ public sealed partial class CFGOAPSightSensorSystem : EntitySystem
         if (!_encounters.TryGetGroup(uid, out var group))
             return seen;
 
-        if (group.Target is { } shared && !TerminatingOrDeleted(shared) && _mobState.IsAlive(shared))
+        if (group.Target is { } shared && !TerminatingOrDeleted(shared) && _mobState.IsAlive(shared) && !_tribes.AtPeaceWith(uid, shared))
         {
             return _stealth.Detection(shared, uid) != CFDetection.Undetected && _examine.InRangeUnOccluded(uid, shared, SightTiles)
                 ? shared

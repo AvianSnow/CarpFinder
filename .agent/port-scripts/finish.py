@@ -300,6 +300,13 @@ need=sorted(k for k in used if k in entries and k not in have)
 lost=sorted(k for k in used if k not in entries and k not in have)
 open('Resources/Locale/en-US/_CF/ported.ftl','w').write('# Strings from CP14 that ported prototypes use.\n\n'+'\n'.join('\n'.join(entries[k]) for k in need)+'\n')
 print('locale written',len(need),'not found',len(lost),lost[:12])
+# The well and the bucket held no water: SolutionContainerManager is the obsolete form, and left both with a
+# capacity of 0. See "Ported prototypes must bring what they reference" in ss14rules.md.
+sub(S+'/well.yml','  - type: SolutionContainerManager\n    solutions:\n      pool:\n        maxVol: 9999999 #.inf seems to break the whole yaml file, but would definitely be preferable.\n        reagents:\n        - ReagentId: Water\n          Quantity: 9999999\n','  - type: Solution\n    id: pool\n    solution:\n      maxVol: 9999999 #.inf seems to break the whole yaml file, but would definitely be preferable.\n      reagents:\n      - ReagentId: Water\n        Quantity: 9999999\n')
+sub(S+'/well.yml','  - type: SolutionContainerManager\\n    solutions:\\n      pool:\\n        maxVol: 999\\n        reagents:\\n        - ReagentId: Water\\n          Quantity: (\\d+)\\n','  - type: Solution\\n    id: pool\\n    solution:\\n      maxVol: 999\\n      reagents:\\n      - ReagentId: Water\\n        Quantity: \\1\\n',regex=True)
+sub(S+'/well.yml','  id: CFStoneWell\n  parent: BaseStructure\n','  id: CFStoneWell\n  parent: [ BaseStructure, Solution ]\n')
+sub(W+'/Objects/Tools/Entities_Objects_Tools_bucket.yml','  - type: SolutionContainerManager\n    solutions:\n      bucket:\n        maxVol: 50\n','  - type: Solution\n    id: bucket\n    solution:\n      maxVol: 50\n')
+sub(W+'/Objects/Tools/Entities_Objects_Tools_bucket.yml','  parent: BaseItem\n  id: CFBucket\n','  parent: [ BaseItem, Solution ]\n  id: CFBucket\n')
 # Food prices live in their own table, so a re-port keeps them.
 import food_prices
 miss += food_prices.apply()

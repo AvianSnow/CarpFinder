@@ -54,11 +54,13 @@
   onlyWhen: [ LeftLair ]
   notWhen: [ TargetInReach ]
 
+# Not while its tribe is still talking to the target (society.yml).
 - type: cfGoapGoal
   id: KillTarget
   wants: [ TargetHurt ]
   priority: 5
   onlyWhen: [ TargetVisible ]
+  notWhen: [ Parleying ]
 
 - type: cfGoapGoal
   id: HuntTarget

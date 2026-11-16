@@ -1,7 +1,7 @@
 # Ported from CP14 by the CF converter.
 
 - type: entity
-  parent: BaseItem
+  parent: [ BaseItem, Solution ]
   id: CFBucket
   name: bucket
   description: It's a boring old bucket.
@@ -37,10 +37,10 @@
   - type: ClothingSpeedModifier
     walkModifier: 0.96
     sprintModifier: 0.80
-  - type: SolutionContainerManager
-    solutions:
-      bucket:
-        maxVol: 50
+  - type: Solution
+    id: bucket
+    solution:
+      maxVol: 50
   - type: Injector
     solutionName: bucket
     ignoreMobs: true

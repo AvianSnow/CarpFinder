@@ -143,6 +143,10 @@ public sealed partial class CFGOAPComponent : Component
     [DataField]
     public TimeSpan SleepDelay = TimeSpan.FromSeconds(10);
 
+    /// <summary>It stays awake with no player near, as a tribe's members do, so their life goes on unwatched.</summary>
+    [DataField]
+    public bool NeverSleeps;
+
     /// <summary>When a player was last within <see cref="WakeFeet"/>, or something last woke it.</summary>
     public TimeSpan LastWoken;
 

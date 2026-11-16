@@ -14,6 +14,9 @@ public enum CFItemUse : byte
     Key = 1 << 4,
     Thrown = 1 << 5,
     Consumable = 1 << 6,
+
+    /// <summary>Worked into soil, it adds nutrients. A tribe's farmers look for it.</summary>
+    Fertilizer = 1 << 7,
 }
 
 /// <summary>Lets an advanced NPC recognise an item. See the GOAP actions that look for it.</summary>

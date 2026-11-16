@@ -14,6 +14,8 @@ Character builder + PF2e spawn/combat MVP notes: `character-builder.md`.
 
 How GOAP is laid out and how to add to it: `goap.md`. What its weights are for, and the plan for mobs casting spells: `goap-weights.md`. Where mappers place AI hints: `investigation-nodes.md`.
 
+How a group lives as a tribe (hunger, farming, stores, talk, parley), and the language model that advises it: `society.md`.
+
 How to test the AI, what `Skipped` really means, and what is known to fail: `ai-testing.md`. Read it before running AI tests.
 
 Map of the codebase: `codebase.md`. Start there to find something.
@@ -153,6 +155,7 @@ Class examples: `CFMySystem`, `CFMyServerSystem`, `CFMyClientSystem`, `CFExample
 | Bulk and encumbrance | `CFBulk`, `CFEncumbranceSystem`; clumsy from `CFConditionSystem.Clumsy`. A weapon or shield worn on the belt, back or neck counts half (`CFEncumbranceSystem.IsHolstered`) |
 | A new weapon or shield | Run `.agent/port-scripts/holsters.py` after adding it, so it can be worn on the belt, back and neck (shields: back and neck) with the right sprites. `CFHolsterTest` fails until you do |
 | A group that fights together | An `encounter` prototype in `Resources/Prototypes/_CF/GOAP/encounters.yml`, placed with `CFEncounterSpawner`. Its tactics, goals and actions go onto each member's brain, and a stock mob it spawns gets one |
+| A group that lives together: eats, farms, stores food, and talks before it fights | An `encounter` with `tribe: true` (`Resources/Prototypes/_CF/GOAP/society.yml`). `CFGOAPTribeSystem` holds what it knows, and a new chore is a `CFGOAPErrandStepSystem`. See `society.md` |
 | A monster's AI | Every CF monster thinks with GOAP: `CFBaseMonster`, which every monster has as a parent, has `CFGOAPBrain`. Set `CFGOAP.profile` to a `cfGoapProfile` and `CFGOAP.tactics` to a `goapTactics`. A leader that fights unlike its group sets `keepOwnLists: true`. Stock SS14 mobs keep stock HTN |
 | A stance or a flourish | A stance is an action parented on `CFActStanceBase` with a `CFStance` (`Resources/Prototypes/_CF/Actions/stances.yml`). A flourish is any action with `CFFlourish`. Grant either with `CFGrantAction` |
 | An option where the player picks a cantrip or skill | A `choices` list on the `cfFeat`, `cfHeritage` or `cfClassChoice`. Read answers through `CFOptionChoices`, not `CFBuild.OptionPicks` directly |

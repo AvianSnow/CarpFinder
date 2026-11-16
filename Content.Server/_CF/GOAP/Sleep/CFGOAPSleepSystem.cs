@@ -72,7 +72,7 @@ public sealed partial class CFGOAPSleepSystem : EntitySystem
                 continue;
 
             players ??= PlayerPositions();
-            if (IsPlayerNear(uid, goap, players))
+            if (goap.NeverSleeps || IsPlayerNear(uid, goap, players))
             {
                 goap.LastWoken = now;
                 if (!HasComp<ActiveNPCComponent>(uid))

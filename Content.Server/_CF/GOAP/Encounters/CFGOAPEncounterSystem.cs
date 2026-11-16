@@ -1,4 +1,5 @@
 using System.Numerics;
+using Content.Server.CF.GOAP.Society;
 using Content.Server.CF.GOAP.Steering;
 using Content.Server.NPC.HTN;
 using Content.Shared.CF.Effects.Areas;
@@ -127,7 +128,7 @@ public sealed partial class CFGOAPEncounterSystem : EntitySystem
                 continue;
 
             spawner.NextCheck = now + CheckInterval;
-            if (IsAdventurerNear((uid, spawner)))
+            if (spawner.Immediate || IsAdventurerNear((uid, spawner)))
                 Spawn((uid, spawner));
         }
     }
@@ -181,6 +182,9 @@ public sealed partial class CFGOAPEncounterSystem : EntitySystem
             var mob = Spawn(mobs[i % mobs.Count], SpawnPoint(ent, i, count));
             Enlist(ent, mob, encounter);
         }
+
+        var spawned = new CFEncounterSpawnedEvent(encounter);
+        RaiseLocalEvent(ent, ref spawned);
     }
 
     private List<string> MobList(Entity<CFGOAPEncounterSpawnerComponent> ent, CFGOAPEncounterPrototype encounter)

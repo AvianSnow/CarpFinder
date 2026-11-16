@@ -17,6 +17,25 @@ public sealed class CFCVars : CVars
     public static readonly CVarDef<bool> GoapSleep =
         CVarDef.Create("cf.goap_sleep", true, CVar.SERVERONLY);
 
+    /// <summary>
+    /// A tribe's leader asks a local language model what the tribe should do. Off, or with the model out of reach, the
+    /// built-in rules decide, so a tribe works either way. See <c>.agent/society.md</c>.
+    /// </summary>
+    public static readonly CVarDef<bool> SocietyLlm =
+        CVarDef.Create("cf.society_llm", false, CVar.SERVERONLY);
+
+    /// <summary>The chat completion endpoint. The default is llama.cpp's <c>llama-server</c> on this machine.</summary>
+    public static readonly CVarDef<string> SocietyLlmUrl =
+        CVarDef.Create("cf.society_llm_url", "http://127.0.0.1:8080/v1/chat/completions", CVar.SERVERONLY);
+
+    /// <summary>Seconds before an answer is given up on. A 3B model on a CPU takes a few seconds for 60 tokens.</summary>
+    public static readonly CVarDef<float> SocietyLlmTimeout =
+        CVarDef.Create("cf.society_llm_timeout", 20f, CVar.SERVERONLY);
+
+    /// <summary>The shortest wait between two questions from one creature, in seconds.</summary>
+    public static readonly CVarDef<float> SocietyLlmCooldown =
+        CVarDef.Create("cf.society_llm_cooldown", 15f, CVar.SERVERONLY);
+
     /// <summary>Keeps the HUD deck open instead of closing it 5 seconds after the mouse leaves.</summary>
     public static readonly CVarDef<bool> HudDeckPinned =
         CVarDef.Create("cf.hud_deck_pinned", false, CVar.CLIENTONLY | CVar.ARCHIVE);

@@ -39,7 +39,7 @@ Everything below is under `Content.Shared/_CF/`.
 | `Items/` | Item level, rarity, Bulk, encumbrance (a holstered weapon or shield counts half), drawing a carried consumable to a free hand (no longer on the HUD) | `CFEncumbranceSystem`, `CFQuickItemSystem` |
 | `Detection/` | Remaster Hide, Sneak, Seek and Create a Diversion. Each creature's view of a sneaker. The drawing is client-side. Keener senses for Seek and flat checks are `CFSeekSense`. | `CFStealthSystem`, `CFStealthComponent` |
 | `Scent/` | Scent trails, from Starlight: every creature leaves marks, and the Scent sense shows them. The laying is server-side and the drawing client-side. | `CFSharedScentSystem`, `CFScentComponent`, `CFSmellerComponent` |
-| `GOAP/` | The AI every CF monster thinks with: facts, steps, and goals, actions and personalities as prototypes. The logic is server-side in `Content.Server/_CF/GOAP/`. See `goap.md`. | `CFGOAPSystem`, `CFGOAPPlanner` |
+| `GOAP/` | The AI every CF monster thinks with: facts, steps, and goals, actions and personalities as prototypes. The logic is server-side in `Content.Server/_CF/GOAP/`. See `goap.md`. Tribes are in its `Society/` folder: see `society.md`. | `CFGOAPSystem`, `CFGOAPPlanner` |
 | `Harvest/` | Harvesting a dead monster for priced parts with a survival knife and a Survival check (Battlezoo Bestiary's values) | `CFHarvestSystem`, `CFHarvestRules` |
 | `Medicine/` | Healer's toolkit, Treat Wounds, Battle Medicine | `CFMedicineSystem` |
 | `Locks/` | Keys, Pick a Lock, Force Open, on top of the stock `Lock` | `CFLockSystem` |
@@ -271,4 +271,5 @@ Radial actions are entities in `Resources/Prototypes/_CF/Actions/activities.yml`
 | `CFMobKoboldTrapper` | A GOAP leader that shoots, lays traps and draws a hammer when cornered. Set a spawner's `encounter` to `KoboldAmbush` for it and three warriors |
 | Any monster | Ghosts can take every monster above from the ghost role menu, through `CFMonsterGhostRole` |
 | `CFEncounterSpawner` | Spawns an `encounter` when a player comes within `triggerFeet` (90). Edit it in VV as an aghost: `mobs` takes ids separated by commas, and `amount` is how many (`CFMobWolf` and 2 is two wolves; 0 is one of each typed mob). Left alone it is `SmallGroup`, four kobold warriors |
+| `CFEncounterSpawnerKoboldTribe` | Spawns the `KoboldTribe` encounter at once: five warriors and a trapper that live round the nearest fire, farm, store food and ask strangers for food. `/Maps/_CF/KoboldSocietyTest2.yml` has one. See `society.md` |
 | `CFEncounterSpawnerDragonLair` | The same, set to `DragonLair`: the juvenile horned dragon, which guards the spot it appears on. Dragon Run has one beside `CFBoneDragon` |

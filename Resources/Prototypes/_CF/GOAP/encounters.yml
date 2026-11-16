@@ -160,6 +160,7 @@
   wants: [ TrapLaid ]
   priority: 5.5
   onlyWhen: [ CanLayTrap ]
+  notWhen: [ Parleying ]
 
 - type: cfGoapAction
   id: ConstructTrap

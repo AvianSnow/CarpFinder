@@ -34,6 +34,13 @@ public sealed partial class CFGOAPEncounterSpawnerComponent : Component
     [DataField, ViewVariables(VVAccess.ReadWrite)]
     public float TriggerFeet = 90f;
 
+    /// <summary>
+    /// It spawns as soon as the map runs, without waiting for a player to come near. For a group that has a life of
+    /// its own, such as a tribe.
+    /// </summary>
+    [DataField, ViewVariables(VVAccess.ReadWrite)]
+    public bool Immediate;
+
     /// <summary>Whether it is waiting to spawn. It turns off after spawning. Turn it back on to spawn again.</summary>
     [DataField, ViewVariables(VVAccess.ReadWrite)]
     public bool Armed = true;

@@ -515,6 +515,18 @@ The labels are the sections of Phase 6 in `roadmapold.md`, which has the design.
 - [ ] Players roll for free, as in stock. PF2e has no fixed cost here, so it has no action cost for now.
 - [ ] A creature that falls in lava still relies on its steering to get out. The steps it would run there were not tested on real lava.
 
+**6n. Tribes (16 November 2026)**
+
+A kobold tribe that eats, drinks, farms, stores food, shares it, talks, and asks strangers for food before fighting, with a local language model that may pick its goals. How it works, and the full list of what is left, is in `society.md`. Tests: `CFGOAPSocietyTest`, `CFSocietyPromptTest`.
+
+- [ ] Not played yet: the tribe on `KoboldSocietyTest2.yml`, and a parley with a real player.
+- [ ] Nobody lights the fire or feeds it, so the tribe only cooks on stock's bonfire or one lit by hand.
+- [ ] Nothing in the tribe makes fertilizer. Ash is the only one, and `FungalSoil` starts with no nutrients.
+- [ ] Tribute is only food dropped from a hand: not thrown, and not handed over.
+- [ ] Hunting, sleeping in beds, and roles that change what a member does.
+- [ ] `CFGOAPFact` has one bit left.
+- [ ] 21 other `_CF` prototype files still use `SolutionContainerManager`. The well and the bucket held nothing because of it, and were fixed. Check the rest.
+
 **Debug code to remove**
 
 - [ ] The decision log, once the AI has settled. `goap.md` lists the steps.

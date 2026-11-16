@@ -4,6 +4,8 @@ The AI every CF monster thinks with. Each monster base has `CFGOAPBrain` as a pa
 
 This is our own design, under the repo's MIT licence. **Do not copy from `crystall-edge`.** Its `_CE` code is all rights reserved, and using it needs TheShuEd's written consent. A port of its GOAP was thrown away before it was ever committed, for that reason.
 
+A group that lives as a tribe, and the language model that advises it, are in `society.md`.
+
 To test it, read `ai-testing.md`. For where mappers put hints, read `investigation-nodes.md`. For what the weights mean and how mobs will choose spells, read `goap-weights.md`. Open items are under Step 5 in `roadmap.md`, and the history is under Phase 6 in `roadmapold.md`.
 
 ## Layout
@@ -27,8 +29,9 @@ Content.Server/_CF/GOAP/
   Encounters/           The spawner and groups
   Influence/            Scent and noise maps
   Nodes/                Investigation nodes
+  Society/              Tribes: needs, farming, stores, talk, strangers, and the language model. See society.md
 Resources/Prototypes/_CF/GOAP/
-  goap.yml  tactics.yml  encounters.yml
+  goap.yml  tactics.yml  encounters.yml  society.yml
 ```
 
 ## One think
@@ -58,6 +61,7 @@ Built on 13 November 2026 to stop twitching. Tests: `CFGOAPMovementTest`, `CFGOA
 
 `CFGOAPSleepSystem` puts a brain to sleep while no living player is within `WakeFeet` (default 60) and wakes it when one comes in. Sleeping is stock `NPCSystem.SleepNPC`: it removes `ActiveNPCComponent`, so HTN, the plan, sensors and steering all stop, and the operator's `TaskShutdown` ends the step. The brain keeps `Target`, `Lkp` and `Home`, so it carries on from there when woken. Waking is `WakeNPC`, and HTN starts the operator again.
 
+- A brain with `NeverSleeps` stays awake whatever the players do. A tribe sets it on its members.
 - It only sleeps once no player has been near for `SleepDelay` (default 10 seconds), so walking along the edge of the range does not flip it. A new creature waits out the delay too.
 - It stays awake while it can see an enemy, is on fire, or is under a Command order, and sleeps once that ends. Freezing mid-fight would look wrong.
 - Being hurt by an enemy wakes it and its whole encounter group, so an arrow from past 60 feet still gets an answer. `CFGOAPPainSensorSystem` calls `Wake`.

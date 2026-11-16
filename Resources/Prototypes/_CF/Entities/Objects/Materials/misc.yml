@@ -8,6 +8,9 @@
   components:
   - type: Item
     size: Tiny
+  # A tribe's farmers work it into poor soil (CFGOAPStep.FeedSoil).
+  - type: CFItemUse
+    uses: Fertilizer
   - type: Sprite
     sprite: _CP14/Objects/Materials/ash.rsi
     layers:

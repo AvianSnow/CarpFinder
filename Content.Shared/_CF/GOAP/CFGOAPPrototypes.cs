@@ -75,7 +75,55 @@ public enum CFGOAPFact : ulong
     /// <summary>It is a companion with a master it can walk to.</summary>
     HasMaster = 1ul << 43,
 
+    // A tribe's life. CFGOAPSocietySensorSystem sets these, and only for a creature with CFGOAPSocial.
+
+    /// <summary>Its hunger is low enough to do something about. It stays set until it has eaten its fill.</summary>
+    Hungry = 1ul << 45,
+
+    /// <summary>It is thirsty, and its tribe knows of water.</summary>
+    Thirsty = 1ul << 46,
+
+    /// <summary>It holds something to eat.</summary>
+    HasFood = 1ul << 47,
+
+    /// <summary>The food it holds is raw, and its tribe has a fire burning to cook it on.</summary>
+    FoodRaw = 1ul << 48,
+
+    /// <summary>Food lies in sight, and it has a hand free for it.</summary>
+    LooseFood = 1ul << 49,
+
+    /// <summary>Its tribe's stores hold food, and it has a hand free for it.</summary>
+    StoredFood = 1ul << 50,
+
+    /// <summary>A plot of the tribe's soil has not been looked at for a while.</summary>
+    SoilUnchecked = 1ul << 51,
+
+    /// <summary>A plot was dry when last looked at, and there is a bucket and water to do something about it.</summary>
+    SoilDry = 1ul << 52,
+
+    /// <summary>A plot was low on nutrients when last looked at, and there is fertilizer to hand.</summary>
+    SoilPoor = 1ul << 53,
+
+    /// <summary>A plot was empty when last looked at, and there is a seed to hand.</summary>
+    CanPlant = 1ul << 54,
+
+    /// <summary>A plot had a crop to pick, or a dead plant to clear, when last looked at.</summary>
+    CropReady = 1ul << 55,
+
+    /// <summary>It holds food it does not need, and a hungry tribemate with none is near.</summary>
+    MateHungry = 1ul << 56,
+
+    /// <summary>A tribemate is near, nothing is wrong, and it has not talked for a while.</summary>
+    WantsChat = 1ul << 57,
+
+    /// <summary>Its tribe is talking to its target instead of fighting it. KillTarget does not count while this holds.</summary>
+    Parleying = 1ul << 58,
+
     // Never sensed. These only exist as what a goal wants, so a plan has something to reach.
+    CropsTended = 1ul << 59,
+    FoodStored = 1ul << 60,
+    Socialized = 1ul << 61,
+    Shared = 1ul << 62,
     TargetHurt = 1 << 20,
     Safe = 1 << 21,
     Idled = 1 << 22,
@@ -150,6 +198,47 @@ public enum CFGOAPStep : byte
 
     /// <summary>A companion keeps behind its master, and stops there when they stop.</summary>
     Follow,
+
+    // A tribe's errands. Each walks to something and does one thing there. See Content.Server/_CF/GOAP/Society.
+
+    /// <summary>Eat what it holds until it is full or the food is gone.</summary>
+    Eat,
+
+    /// <summary>Walk to the tribe's water and drink until it is no longer thirsty.</summary>
+    Drink,
+
+    /// <summary>Pick up loose food, or take some out of a store when the action says <c>fromStore</c>.</summary>
+    TakeFood,
+
+    /// <summary>Carry held food to one of the tribe's stores and put it in.</summary>
+    StoreFood,
+
+    /// <summary>Hold raw food over the tribe's fire until it is cooked.</summary>
+    Cook,
+
+    /// <summary>Walk to a plot and look at it: water, nutrients, and what grows there.</summary>
+    InspectSoil,
+
+    /// <summary>Fetch a bucket, fill it at the tribe's water, and pour it on a dry plot.</summary>
+    WaterSoil,
+
+    /// <summary>Work fertilizer into a poor plot.</summary>
+    FeedSoil,
+
+    /// <summary>Fetch a seed and plant it in an empty plot.</summary>
+    PlantSeed,
+
+    /// <summary>Pick a ripe crop, or clear a dead plant.</summary>
+    Harvest,
+
+    /// <summary>Hand held food to a hungry tribemate.</summary>
+    GiveFood,
+
+    /// <summary>Walk up to a tribemate and tell them the latest thing it remembers.</summary>
+    Chat,
+
+    /// <summary>Stand off from its target and make the tribe's demand, without attacking.</summary>
+    Parley,
 }
 
 /// <summary>How an action's worth is worked out when planning. See <c>CFGOAPTacticsSystem</c>.</summary>
@@ -243,6 +332,10 @@ public sealed partial class CFGOAPActionPrototype : IPrototype
     /// <summary>What <see cref="CFGOAPStep.Maneuver"/> does.</summary>
     [DataField]
     public CFBasicAction Maneuver;
+
+    /// <summary><see cref="CFGOAPStep.TakeFood"/> takes from the tribe's stores, not from the ground.</summary>
+    [DataField]
+    public bool FromStore;
 
     /// <summary>How its worth changes with the fight. Its cost is divided by that worth, and nothing means ruled out.</summary>
     [DataField]

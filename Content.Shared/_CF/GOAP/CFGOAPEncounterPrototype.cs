@@ -28,6 +28,13 @@ public sealed partial class CFGOAPEncounterPrototype : IPrototype
     [DataField]
     public float RoutAt;
 
+    /// <summary>
+    /// The group lives as a tribe: it keeps a nest, eats, drinks, farms, stores food and talks to strangers before
+    /// fighting them. See <c>CFGOAPTribeSystem</c>.
+    /// </summary>
+    [DataField]
+    public bool Tribe;
+
     /// <summary>Added to each creature's goals, on top of its own. A brain with <c>keepOwnLists</c> is left alone.</summary>
     [DataField]
     public List<ProtoId<CFGOAPGoalPrototype>> Goals = new();

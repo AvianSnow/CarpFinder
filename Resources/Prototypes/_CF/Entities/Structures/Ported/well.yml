@@ -2,7 +2,7 @@
 
 - type: entity
   id: CFStoneWell
-  parent: BaseStructure
+  parent: [ BaseStructure, Solution ]
   categories: [ ForkFiltered ]
   name: well
   description: At the bottom of this well gurgles clear water. If you have a bucket, you can reach it.
@@ -16,13 +16,13 @@
     - state: icon
   - type: DrawableSolution
     solution: pool
-  - type: SolutionContainerManager
-    solutions:
-      pool:
-        maxVol: 9999999 #.inf seems to break the whole yaml file, but would definitely be preferable.
-        reagents:
-        - ReagentId: Water
-          Quantity: 9999999
+  - type: Solution
+    id: pool
+    solution:
+      maxVol: 9999999 #.inf seems to break the whole yaml file, but would definitely be preferable.
+      reagents:
+      - ReagentId: Water
+        Quantity: 9999999
   - type: DrainableSolution
     solution: pool
   - type: Edible
@@ -43,13 +43,13 @@
     sprite: _CP14/Structures/Specific/Farming/well.rsi
     layers:
     - state: broken
-  - type: SolutionContainerManager
-    solutions:
-      pool:
-        maxVol: 999
-        reagents:
-        - ReagentId: Water
-          Quantity: 200
+  - type: Solution
+    id: pool
+    solution:
+      maxVol: 999
+      reagents:
+      - ReagentId: Water
+        Quantity: 200
 
 - type: entity
   id: CFStoneWellGrovelling
@@ -65,10 +65,10 @@
     sprite: _CP14/Structures/Specific/Farming/well.rsi
     layers:
     - state: grovelling
-  - type: SolutionContainerManager
-    solutions:
-      pool:
-        maxVol: 999
-        reagents:
-        - ReagentId: Water
-          Quantity: 50
+  - type: Solution
+    id: pool
+    solution:
+      maxVol: 999
+      reagents:
+      - ReagentId: Water
+        Quantity: 50
