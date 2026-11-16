@@ -10,3 +10,5 @@
     - "Human"
   prerequisites:
     - "spellcasting class feature"
+  choices:
+    - kind: Cantrip

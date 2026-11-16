@@ -1124,6 +1124,11 @@ Tests: `CFScentTest`. Ported from Starlight's Scent system with permission, cred
 - [x] `CFSmeller` with the free `CFActSniff` action, from `CFGrantSense` with `Scent` and on the wolf. `CFScentServerSystem` adds the layer to the eye's mask; `CFScentClientSystem` colours each mark by its scent id, scales it by strength and fades it.
 - [x] The two icons are in `Resources/Textures/_Starlight/Interface/Actions/actions_scent.rsi`, with attribution.
 
+#### 2.1 and 2.2 Ancestry feat notes, and feats that give a feat (16 November 2026)
+
+- [x] Every ancestry feat with no effect has a note in our words and `TBA`, written from the Archives of Nethys text. The search index at `elasticsearch.aonprd.com/aon/_search?q=category:feat AND trait:<ancestry> AND (level:1 OR level:5)` returns an ancestry's feats as JSON in one fetch, where the site's own feat list pages are built by script and come back empty.
+- [x] 17 feats grant the general feat they name with `CFGrantFeat`; 16 more got an effect from existing grants. `DefyDeath` and `EasierBleeding` joined `CFCombatOptions`.
+
 ### Step 2: Finish the rebuild
 
 Left from re-importing the other machine's lost work. Details of what was rebuilt are under "Rebuild status" above.

@@ -12,3 +12,6 @@
     - "dragonscaled kobold heritage"
   requiresHeritage:
     - DragonscaledKobold
+  grants:
+    - !type:CFGrantSaveUpgrade
+      trait: Fear

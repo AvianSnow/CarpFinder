@@ -12,4 +12,10 @@
     - "Mental"
     - "Visual"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-feat-cringe
+        trigger: CriticallyHit
+        resistFlat: 2
+        resistLevel: true

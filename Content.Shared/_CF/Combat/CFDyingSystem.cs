@@ -363,7 +363,8 @@ public sealed partial class CFDyingSystem : EntitySystem
         var options = CompOrNull<CFCombatOptionsComponent>(uid);
         return CFDyingTrackerComponent.BaseRecoveryDc
                + (options?.NineLives == true ? 0 : combatant.Dying)
-               - (options?.Toughness == true ? 1 : 0);
+               - (options?.Toughness == true ? 1 : 0)
+               - (options?.DefyDeath == true ? 1 : 0);
     }
 
     private void AttemptRecoveryCheck(EntityUid uid, CFCombatantComponent combatant)

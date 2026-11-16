@@ -332,6 +332,14 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public int PersistentFireDc;
 
+    /// <summary>The flat check DC to end persistent bleed damage, or 0 for the usual 15 (Scar-Thick Skin: 10).</summary>
+    [DataField, AutoNetworkedField]
+    public int PersistentBleedDc;
+
+    /// <summary>Defy Death: recovery checks are 1 easier.</summary>
+    [DataField, AutoNetworkedField]
+    public bool DefyDeath;
+
     /// <summary>A circumstance bonus to Athletics checks to Climb.</summary>
     [DataField, AutoNetworkedField]
     public int ClimbBonus;
@@ -423,6 +431,8 @@ public enum CFCombatOption : byte
     ToughToKill,
     StrongBlooded,
     EasierBurning,
+    EasierBleeding,
+    DefyDeath,
     Toughness,
     SecondWind,
     CrushingGrab,

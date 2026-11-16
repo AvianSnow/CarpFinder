@@ -8,3 +8,6 @@
   level: 1
   traits:
     - "Halfling"
+  grants:
+    - !type:CFGrantClimb
+      successIsCritical: true

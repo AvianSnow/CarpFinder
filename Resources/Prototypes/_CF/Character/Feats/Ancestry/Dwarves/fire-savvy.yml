@@ -9,3 +9,6 @@
   rarity: Uncommon
   traits:
     - "Dwarf"
+  grants:
+    - !type:CFGrantOption
+      option: EasierBurning

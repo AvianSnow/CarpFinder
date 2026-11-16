@@ -12,3 +12,9 @@
     - "dragonscaled kobold heritage"
   requiresHeritage:
     - DragonscaledKobold
+  grants:
+    - !type:CFGrantChosenResistance
+      halfLevel: true
+  choices:
+    - kind: DamageType
+      damageTypes: [Acid, Cold, Electricity, Fire, Sonic, Poison]

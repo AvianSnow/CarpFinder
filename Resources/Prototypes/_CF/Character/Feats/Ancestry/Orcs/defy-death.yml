@@ -12,3 +12,6 @@
     - "Orc Ferocity"
   requiresFeats:
     - CFOrcFerocity
+  grants:
+    - !type:CFGrantOption
+      option: DefyDeath

@@ -10,3 +10,5 @@
     - "Elf"
   prerequisites:
     - "at least 100 years old"
+  choices:
+    - kind: Skill

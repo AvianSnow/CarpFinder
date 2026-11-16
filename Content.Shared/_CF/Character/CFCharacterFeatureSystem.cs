@@ -482,6 +482,12 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
             case CFCombatOption.EasierBurning:
                 options.PersistentFireDc = 10;
                 break;
+            case CFCombatOption.EasierBleeding:
+                options.PersistentBleedDc = 10;
+                break;
+            case CFCombatOption.DefyDeath:
+                options.DefyDeath = true;
+                break;
             case CFCombatOption.Toughness:
                 options.Toughness = true;
                 break;

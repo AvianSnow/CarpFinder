@@ -8,3 +8,6 @@
   level: 5
   traits:
     - "Orc"
+  grants:
+    - !type:CFGrantClimb
+      successIsCritical: true

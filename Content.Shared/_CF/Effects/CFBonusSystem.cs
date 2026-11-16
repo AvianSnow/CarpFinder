@@ -549,8 +549,11 @@ public sealed partial class CFBonusSystem : EntitySystem
                 _effects.DealDamage(source, uid, amount, entry.DamageType, critical: false);
 
                 var dc = PersistentFlatCheckDc;
-                if (entry.DamageType.Id == "Fire" && CompOrNull<CFCombatOptionsComponent>(uid) is { PersistentFireDc: > 0 } easier)
+                var easier = CompOrNull<CFCombatOptionsComponent>(uid);
+                if (entry.DamageType.Id == "Fire" && easier is { PersistentFireDc: > 0 })
                     dc = easier.PersistentFireDc;
+                else if (entry.DamageType.Id == "Bleed" && easier is { PersistentBleedDc: > 0 })
+                    dc = easier.PersistentBleedDc;
 
                 if (_random.Next(1, 21) >= dc)
                     comp.Entries.RemoveAt(i);
