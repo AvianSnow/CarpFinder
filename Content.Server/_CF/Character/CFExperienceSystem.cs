@@ -276,6 +276,9 @@ public sealed partial class CFExperienceSystem : EntitySystem
         }
 
         _spawn.RefreshArmorClass(mob);
+        if (xp.Build != null)
+            _spawn.EnsureCompanion(mob, xp.Build, combat.Level);
+
         _companions.MatchOwnerLevel(mob, combat);
         _popup.PopupEntity(Loc.GetString("cf-xp-level", ("level", combat.Level)), mob, mob);
     }

@@ -136,7 +136,7 @@ These said something was not built that this roadmap said was built. All were ch
 
 ### 3. Class feats: features several classes share
 
-Worked through in one run on 17 November 2026. Done or partly done: 3.1 to 3.7, 3.11 to 3.13, 3.16, 3.17, 3.21. 3.10 summoning followed the same day. Not started, because each is a system of its own that has to be seen in play: 3.8 familiars, 3.9 mounts, 3.14 difficult terrain, 3.15 daily choices, 3.18 scrolls and wands, 3.19 stealing, 3.20 disguises, 3.22 water (waits for swimming, 1.3), 3.23 (each needs a decision).
+Worked through in one run on 17 November 2026. Done or partly done: 3.1 to 3.7, 3.11 to 3.13, 3.16, 3.17, 3.21. 3.10 summoning and the familiars' bodies (3.8) followed the same day. Not started, because each is a system of its own that has to be seen in play: 3.9 mounts, 3.14 difficult terrain, 3.15 daily choices, 3.18 scrolls and wands, 3.19 stealing, 3.20 disguises, 3.22 water (waits for swimming, 1.3), 3.23 (each needs a decision).
 
 463 of 585 do nothing. These are the shapes that come up in more than one class. Feats only one class has are under that class in 4.
 
@@ -162,13 +162,12 @@ Worked through in one run on 17 November 2026. Done or partly done: 3.1 to 3.7, 
 - [ ] **3.7 Parries and guards.** `CFEffectAction` can ask for `needsTwoHanded` (`Melee` or `Ranged`) and `needsWeaponAndFreeHand`.
     - [x] Done on 17 November 2026: Dueling Parry, Raise Haft, Defensive Armaments (each an action that gives AC for 6 seconds), Elegant Buckler (`ElegantBuckler`: a shield that gives +1 gives +2), Shield Warfare (`ShieldWarfare`), Shield Your Eyes (`CFGrantWhile` with the new `ShieldRaised`).
     - [ ] Still to do: Raise a Tome, Covering Stance, Shielded Attrition, Haft-Striker Stance (Fighter, Ranger, Rogue), Phalanx Formation, Area Armor (an aura). The +2 with a weapon that has the parry trait is missing from Twin Parry, Extravagant Parry and Raise Haft. Elegant Buckler's panache, and Shield Your Eyes turning a critical failure into a failure.
-- [ ] **3.8 Familiars.** The body exists (see "Notes that look out of date"). Still to do:
-    - Every familiar spawns as `CFSummon`, a fox with a fighting brain, because no `cfPet` familiar names an `entity`. Give each its own Tiny body, and a brain that follows and does not Strike.
-    - Familiar and master abilities picked each day (3.15): two, and more from Enhanced Familiar (7 classes) and its Glyph and Undead versions.
-    - What each kind adds: Alchemical, Glyph, Undead, Spirit and Leshy Familiar, Familiar's Language, Scatter Swarm, Leshy Familiar Secrets, the Witch's patron familiar and its gift, the Shaman practice, and Pet (2.11).
-    - The Leaf order does not give Leshy Familiar yet.
-    - A pet only spawns with the character. One gained from a level taken in play arrives at the next spawn, and one from a feat given by another option (`CFSkills.ExtraFeats`) is not seen at all.
-    - The Pet tab has no tab for a construct, so it is always the first one.
+- [ ] **3.8 Familiars.** Bodies built on 17 November 2026 (`CFFamiliarTest`).
+    - [x] Each of the eight `cfPet` familiars has its own body in `Companions/familiars.yml`, on a stock animal: bat, cat, fox and snake as themselves, the raven and owl as a parrot, the rat as a mouse and the toad as a frog, until there is art for them. A familiar is `peaceful` on `CFCompanion`: the sight sensor gives it no enemy and an order to attack is ignored, so it follows, comes when called and fetches, and never fights.
+    - [x] A pet from a feat another option hands out counts (`CFPetMath.BuildGrants` reads `CFSkills.ExtraFeats`), so the Leaf order's Leshy Familiar and the Animal order's Animal Companion work: both orders now give their feat. A pet gained from a level taken in play appears at once (`CFCharacterSpawnSystem.EnsureCompanion`, from `CFExperienceSystem.LevelUp`).
+    - [ ] Familiar and master abilities picked each day (3.15): two, and more from Enhanced Familiar (7 classes) and its Glyph and Undead versions.
+    - [ ] What each kind adds: Alchemical, Glyph, Undead, Spirit and Leshy Familiar, Familiar's Language, Scatter Swarm, Leshy Familiar Secrets, the Witch's patron familiar and its gift, the Shaman practice, and Pet (2.11). Every familiar feat gives the same choice of eight bodies.
+    - [ ] A familiar that drops stays down: it does not come back the next day. The Pet tab has no tab for a construct, so it is always the first one.
 - [ ] **3.9 Animal companions through feats, and mounts.** Animal Companion (Ranger says `TBA`; check the Druid's), Mature Animal Companion, Companion's Cry, Commander's Companion, the Animal order. Mounts and the Ride feat: Faithful Steed, Acclimated Mount, Galloping Launch, Steed Form, Rough Rider. "Companions have no inventory" (Step 4) is in the way of barding.
 - [ ] **3.10 Summoning.** Built on 17 November 2026 (`CFSummonTest`). `!type:CFSummonEffect` calls a creature for a while: it raises `CFSummonRequestEvent`, and the server's `CFSummonedSystem` spawns it, binds it to the caster as a companion and sends it back when `CFSummoned.Until` passes. A summoned creature is its real monster, listed first as a parent, with `CFSummonedCreature` second (`Entities/Mobs/summons.yml`).
     - [x] Summon Animal (`Spells/1/CFSummonAnimal.yml`, arcane and primal): a giant rat at rank 1, a wolf at rank 2, a boar at rank 3, for a minute. It fights the caster's enemies by itself and goes first for what the caster points at.
@@ -573,6 +572,8 @@ A kobold tribe that eats, drinks, farms, stores food, shares it, talks, and asks
 - Fixed on 15 November 2026: a Debug server stopped at round start in `AtmosphereSystem.ShuntTileVolume`. The Dragon Run map held 63 floor tiles saved with the sky's unchanging air, from flooring over open sky in the editor, and a wall stood on one. See "Air is not worked out while a map is paused" in `ss14rules.md`. Tests: `CFMapAirTest`. Starlight was checked for a fix and has none: its atmos is older and has no `ShuntTileVolume`.
 
 - The YAML linter (`dotnet run --project Content.YAMLLinter -c Tools`) reports 190 errors, seen on 17 November 2026 and not looked into. Most are guidebook entries that do not exist, stock ones and those named in `_CF/Guidebook/newplayer.yml`. `_CF/Entities/Effects/scent.yml` sets `icon` and `iconOn` on `Action`, which has no such fields. `CFMapAirTest.RoundMap` names an unknown prototype kind.
+
+- `CFGOAPSocietyTest.AHungryTribeHuntsAPigAndEatsIt` is unreliable. Measured on 17 November 2026, alone: it failed 1 run in 5 on commit `25f19f9ea9` and 6 in 12 with the familiar work on top, which touches nothing a tribe or a pig uses, so the difference may be chance. Which of its steps fails was not caught. Not looked into.
 
 - `MaterialArbitrageTest.NoMaterialArbitrage` (stock) fails inside `ConstructionGraphPrototype.Path`, which means a construction graph has a node it cannot reach. Found on 11 November 2026 and not looked into. It is not from butchering: the harvest change touches no construction.
 

@@ -49,7 +49,8 @@ public sealed partial class CFGOAPSightSensorSystem : EntitySystem
         var uid = args.Creature.Owner;
 
         // Called back by its master, it comes straight back and leaves every fight alone until it is there.
-        if (TryComp(uid, out CFCompanionComponent? companion) && companion.Recalled)
+        // A peaceful one, such as a familiar, never has an enemy at all.
+        if (TryComp(uid, out CFCompanionComponent? companion) && (companion.Recalled || companion.Peaceful))
         {
             args.Creature.Comp.Target = null;
             args.Creature.Comp.Lkp = null;

@@ -280,6 +280,10 @@ public sealed partial class CFCompanionSystem : EntitySystem
     /// </summary>
     private void Order(EntityUid companion, CFCompanionComponent comp, EntityUid target)
     {
+        // A familiar is not sent at anyone.
+        if (comp.Peaceful)
+            return;
+
         EndFetch(companion, comp);
         comp.Following = false;
         comp.Recalled = false;

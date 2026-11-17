@@ -73,23 +73,43 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
     /// </summary>
     private void SpawnCompanion(EntityUid mob, Content.Shared.Preferences.HumanoidCharacterProfile profile)
     {
-        var build = profile.CFBuild;
+        SpawnCompanion(mob, profile.CFBuild, CFAttributeMath.Snapshot(_prototypes, profile), 0);
+    }
+
+    /// <summary>
+    /// A level taken in play can bring a companion or familiar the character did not spawn with. If the build now grants one
+    /// and none is following, it appears. Its AC is set from its master by <c>CFCompanionSystem.MatchOwnerLevel</c>.
+    /// </summary>
+    public void EnsureCompanion(EntityUid mob, CFCharacterBuildData build, int level)
+    {
+        var query = EntityQueryEnumerator<CFCompanionComponent>();
+        while (query.MoveNext(out _, out var existing))
+        {
+            if (existing.Summoner == mob && !string.IsNullOrEmpty(existing.PetId))
+                return;
+        }
+
+        SpawnCompanion(mob, build, null, level);
+    }
+
+    private void SpawnCompanion(EntityUid mob, CFCharacterBuildData build, CFCharacterSheet? sheet, int level)
+    {
         CFPetPrototype? pet = null;
         if (!string.IsNullOrEmpty(build.PetId)
             && _prototypes.TryIndex<CFPetPrototype>(build.PetId, out var saved)
-            && CFPetMath.BuildGrants(_prototypes, build, saved.Kind))
+            && CFPetMath.BuildGrants(_prototypes, build, saved.Kind, level))
         {
             pet = saved;
         }
-        else if (CFPetMath.BuildGrants(_prototypes, build, CFPetKind.Companion))
+        else if (CFPetMath.BuildGrants(_prototypes, build, CFPetKind.Companion, level))
         {
             pet = FirstPet(CFPetKind.Companion);
         }
-        else if (CFPetMath.BuildGrants(_prototypes, build, CFPetKind.Familiar))
+        else if (CFPetMath.BuildGrants(_prototypes, build, CFPetKind.Familiar, level))
         {
             pet = FirstPet(CFPetKind.Familiar);
         }
-        else if (CFPetMath.BuildGrants(_prototypes, build, CFPetKind.Construct))
+        else if (CFPetMath.BuildGrants(_prototypes, build, CFPetKind.Construct, level))
         {
             pet = FirstPet(CFPetKind.Construct);
         }
@@ -109,7 +129,6 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         if (!string.IsNullOrWhiteSpace(build.PetName))
             _meta.SetEntityName(companion, build.PetName.Trim());
 
-        var sheet = CFAttributeMath.Snapshot(_prototypes, profile);
         var block = CFPetMath.Present(pet, build, sheet);
         var combat = EnsureComp<CFCombatantComponent>(companion);
         combat.Level = block.Level;

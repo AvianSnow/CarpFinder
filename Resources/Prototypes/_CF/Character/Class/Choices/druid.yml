@@ -7,6 +7,9 @@
   description: cf-class-choice-order-animal-desc
   trainedSkills:
   - Athletics
+  grants:
+  - !type:CFGrantFeat
+    feat: CFAnimalCompanion
 
 - type: cfClassChoice
   id: OrderLeaf
@@ -16,6 +19,9 @@
   description: cf-class-choice-order-leaf-desc
   trainedSkills:
   - Diplomacy
+  grants:
+  - !type:CFGrantFeat
+    feat: CFLeshyFamiliar
 
 - type: cfClassChoice
   id: OrderStorm

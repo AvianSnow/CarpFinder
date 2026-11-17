@@ -39,9 +39,9 @@ cf-class-choice-doctrine-warpriest-desc = Trained in light and medium armor, exp
 
 cf-class-choice-order = Druidic Order
 cf-class-choice-order-animal = Animal
-cf-class-choice-order-animal-desc = You are trained in Athletics. The Animal Companion feat and heal animal: TBA
+cf-class-choice-order-animal-desc = You are trained in Athletics, and have the Animal Companion feat: pick the animal on the Pet tab. The heal animal order spell: TBA
 cf-class-choice-order-leaf = Leaf
-cf-class-choice-order-leaf-desc = You are trained in Diplomacy. The Leshy Familiar feat and its order spell: TBA
+cf-class-choice-order-leaf-desc = You are trained in Diplomacy, and have the Leshy Familiar feat: pick the familiar on the Pet tab. Its order spell: TBA
 cf-class-choice-order-storm = Storm
 cf-class-choice-order-storm-desc = You are trained in Acrobatics and can cast tempest surge as a focus spell. The Storm Born feat: TBA
 cf-class-choice-order-untamed = Untamed

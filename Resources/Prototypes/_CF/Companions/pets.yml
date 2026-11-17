@@ -4,6 +4,7 @@
 
 - type: cfPet
   id: CFFamiliarBat
+  entity: CFFamiliarBodyBat
   name: Bat
   kind: Familiar
   size: Tiny
@@ -30,6 +31,7 @@
 
 - type: cfPet
   id: CFFamiliarCat
+  entity: CFFamiliarBodyCat
   name: Cat
   kind: Familiar
   size: Tiny
@@ -53,6 +55,7 @@
 
 - type: cfPet
   id: CFFamiliarRaven
+  entity: CFFamiliarBodyRaven
   name: Raven
   kind: Familiar
   size: Tiny
@@ -78,6 +81,7 @@
 
 - type: cfPet
   id: CFFamiliarOwl
+  entity: CFFamiliarBodyOwl
   name: Owl
   kind: Familiar
   size: Tiny
@@ -103,6 +107,7 @@
 
 - type: cfPet
   id: CFFamiliarRat
+  entity: CFFamiliarBodyRat
   name: Rat
   kind: Familiar
   size: Tiny
@@ -127,6 +132,7 @@
 
 - type: cfPet
   id: CFFamiliarToad
+  entity: CFFamiliarBodyToad
   name: Toad
   kind: Familiar
   size: Tiny
@@ -152,6 +158,7 @@
 
 - type: cfPet
   id: CFFamiliarFox
+  entity: CFFamiliarBodyFox
   name: Fox
   kind: Familiar
   size: Tiny
@@ -176,6 +183,7 @@
 
 - type: cfPet
   id: CFFamiliarSnake
+  entity: CFFamiliarBodySnake
   name: Snake
   kind: Familiar
   size: Tiny

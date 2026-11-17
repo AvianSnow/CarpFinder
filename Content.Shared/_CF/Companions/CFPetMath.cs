@@ -25,12 +25,21 @@ public static class CFPetMath
     }
 
     /// <summary>The saved build actually has this companion or familiar, not only the option to take one.</summary>
-    public static bool BuildGrants(IPrototypeManager prototypes, CFCharacterBuildData build, CFPetKind kind)
+    /// <param name="atLevel">The character's level, when it is not the build's own: a level taken in play.</param>
+    public static bool BuildGrants(IPrototypeManager prototypes, CFCharacterBuildData build, CFPetKind kind, int atLevel = 0)
     {
         if (kind == CFPetKind.Construct && build.ClassChoices.Contains("InnovationConstruct"))
             return true;
 
-        var level = Math.Max(1, build.Level);
+        var level = Math.Max(1, Math.Max(atLevel, build.Level));
+
+        // A feat that another option hands out, such as the Leaf order's Leshy Familiar, counts as much as a picked one.
+        foreach (var extra in CFSkills.ExtraFeats(prototypes, build, null, level))
+        {
+            if (Gives(extra, kind))
+                return true;
+        }
+
         if (kind != CFPetKind.Construct && build.Class != null && prototypes.TryIndex(build.Class.Value, out CFClassPrototype? cls))
         {
             foreach (var feature in cls.Features)
