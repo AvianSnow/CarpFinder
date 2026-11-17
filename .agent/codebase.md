@@ -50,7 +50,7 @@ Everything below is under `Content.Shared/_CF/`.
 | `Languages/` | What a creature speaks and understands, and what it sounds like otherwise. Chat asks per listener, and a speaker always understands itself. The language menu is client-side, after Starlight's. | `CFLanguageSystem`, `CFLanguageRules` |
 | `Magic/` | Light, Detect Magic, Read Aura, and what counts as magical | `CFMagicSenseSystem` |
 | `Scene/` | DM narration and player-started skill checks. The logic is server-side. | `CFSceneSystem` |
-| `ZLevels/` | Stairs, ladders, holes, falling rules, chasm edges. The stacking logic is server-side. | `CFFallRules`, `CFZLevelSystem`, `CFChasmEdgeSystem` |
+| `ZLevels/` | CrystallEdge's z-levels, ported with eshhhed's permission: a stack of maps drawn one over another, vertical physics (`CFZPhysics`) that falls through empty tiles, look up, flight, wall ladders, roofs and weather by level, speech heard a level away. The Player Core fall damage, our stairs and ladders, and chasm edges are ours. See `zlevels.md`. | `CFSharedZLevelsSystem`, `CFZLevelDamageSystem`, `CFFallRules`, `CFChasmEdgeSystem` |
 | `Crafting/` | Recipes with a category, formulas and the handbook per category, Craft DCs. The workbench logic is server-side. | `CFCraftingRules`, `CFWorkbenchSystem` |
 | `Preferences/` | The build stored on `HumanoidCharacterProfile` | `CFCharacterBuildData` |
 | `Shop/` | Coins, prices, the wallet, the merchant's counter and the guild pallets. Selling and coin logic are server-side. | `CFCoins`, `CFWalletSystem`, `CFMerchantSystem`, `CFCoinSystem` |
@@ -240,7 +240,8 @@ All edits carry `// CarpFinder` markers, so `grep -rn CarpFinder Content.Client 
 | Air | `Content.Server/Atmos/EntitySystems/AtmosphereSystem.Processing.cs` | Floor saved with the sky's unchanging air gets air of its own, or a wall on it stops a Debug server |
 | Fire | `Content.Client/Atmos/EntitySystems/FireVisualizerSystem.cs` | Do not spawn the light during `ComponentInit`: it crashed a Debug client that first saw something already burning |
 | Icons | `SharedStatusIconSystem.cs` | Partial for the flanked icon |
-| Ghosts | `Resources/Prototypes/Entities/Mobs/Player/observer.yml` | Z-level Move up and Move down actions |
+| Ghosts | `Resources/Prototypes/Entities/Mobs/Player/observer.yml` | Z-level Move up and Move down actions (`CFZLevelGhostMover`), and a `CFZPhysics` that never falls |
+| Z-levels | `Content.Client/Viewport/ScalingViewport.cs`, `Content.Client/Parallax/ParallaxOverlay.cs`, `Content.Shared/Maps/ContentTileDefinition.cs`, `Content.Shared/Throwing/ThrownItemSystem.cs`, `Content.Shared/Light/Components/LightCycleComponent.cs`, `Content.Shared/Movement/Systems/SharedMoverController.Input.cs`, `Content.Shared/Weather/SharedWeatherSystem.cs`, `Content.Client/Light/EntitySystems/GridStencilSystem.cs`, `Content.Client/Overlays/StencilOverlay.Weather.cs`, `Tiles/space.yml`, `Tiles/plating.yml`, `Entities/Mobs/base.yml`, `Entities/Objects/base_item.yml`, `Entities/Structures/base_structure.yml`, `Entities/Structures/Furniture/chairs.yml` | What the CrystallEdge integration guide asks for: the viewport draws every level in view, the sky only under the lowest, tiles can be `transparent`, a thrown item does not land in mid-air, levels share one time of day, the camera does not snap when changing level, weather stops under a floor on the level above and over empty tiles under one, open sky and lattice are transparent, and every mob, item, loose structure and seat has `CFZPhysics`. See `zlevels.md` |
 | Prone | `Content.Shared/Stunnable/SharedStunSystem.Knockdown.cs` | Do not force a creature up while it is being deleted. "No room to stand" ignores sensors |
 | Pointing | `Content.Shared/Pointing/SharedPointingSystem.cs` | An event for pointing at the ground, for Seek |
 | Throwing | `Content.Server/Hands/Systems/HandsSystem.cs` | A thrown weapon's reach comes from its range increments, not the hand's 8 tiles |
@@ -273,6 +274,7 @@ Radial actions are entities in `Resources/Prototypes/_CF/Actions/activities.yml`
 | `/Maps/Nonstations/meteor-arena.yml` | The arena all integration tests load, through `CFDevMap` |
 | `CFMobKoboldTrapper` | A GOAP leader that shoots, lays traps and draws a hammer when cornered. Set a spawner's `encounter` to `KoboldAmbush` for it and three warriors |
 | Any monster | Ghosts can take every monster above from the ghost role menu, through `CFMonsterGhostRole` |
+| `CFZLevelTest` | A two-level map (`forcemap CFZLevelTest`): stairs, a ladder and a hole down to a cellar, with the cellar listed in the station's `CFStationZLevels.mapsBelow` |
 | `CFEncounterSpawner` | Spawns an `encounter` when a player comes within `triggerFeet` (90). Edit it in VV as an aghost: `mobs` takes ids separated by commas, and `amount` is how many (`CFMobWolf` and 2 is two wolves; 0 is one of each typed mob). Left alone it is `SmallGroup`, four kobold warriors |
 | `CFEncounterSpawnerKoboldTribe` | Spawns the `KoboldTribe` encounter at once: five warriors and a trapper that live round the nearest fire, farm, store food and ask strangers for food. `/Maps/_CF/KoboldSocietyTest2.yml` has one. See `society.md` |
 | `CFEncounterSpawnerDragonLair` | The same, set to `DragonLair`: the juvenile horned dragon, which guards the spot it appears on. Dragon Run has one beside `CFBoneDragon` |

@@ -7,6 +7,7 @@
   description: Wooden bed. Better than nothing.
   categories: [ ForkFiltered ]
   components:
+  - type: CFZPhysics # CarpFinder: falls to the level below when loose over an opening
   - type: HealOnBuckle
     damage:
       types:

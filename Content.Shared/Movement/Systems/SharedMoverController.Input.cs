@@ -271,7 +271,8 @@ namespace Content.Shared.Movement.Systems
             var mapId = args.Transform.MapUid;
 
             // If we change maps then reset eye rotation entirely.
-            if (oldMapId != mapId)
+            // CarpFinder: not between levels of one stack, or the camera would snap every time you take the stairs
+            if (oldMapId != mapId && !IsLevelChange(oldMapId, mapId))
             {
                 entity.Comp.RelativeEntity = relative;
                 entity.Comp.TargetRelativeRotation = Angle.Zero;
@@ -619,6 +620,15 @@ namespace Content.Shared.Movement.Systems
                 return false;
             }
         }
+
+        // CarpFinder: two maps that are levels of the same stack
+        private bool IsLevelChange(EntityUid? oldMap, EntityUid? newMap)
+        {
+            return TryComp(oldMap, out Content.Shared.CF.ZLevels.Core.Components.CFZMapComponent? a)
+                   && TryComp(newMap, out Content.Shared.CF.ZLevels.Core.Components.CFZMapComponent? b)
+                   && a.NetworkUid == b.NetworkUid;
+        }
+        // CarpFinder end
     }
 
     [Flags]

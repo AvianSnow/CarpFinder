@@ -9,6 +9,7 @@
   placement:
     mode: PlaceFree
   components:
+  - type: CFZPhysics # CarpFinder: falls to the level below when loose over an opening
   - type: Animateable
   - type: Clickable
   - type: InteractionOutline

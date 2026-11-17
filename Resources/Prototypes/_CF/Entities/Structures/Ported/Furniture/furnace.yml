@@ -71,6 +71,7 @@
   parent: CFBaseFireplace
   description: A furnace fueled by wood, coal, or any other burning material. Handy for heating your food or drinks.
   components:
+  - type: CFZPhysics # CarpFinder: falls to the level below when loose over an opening
   - type: Sprite
     sprite: _CP14/Structures/Furniture/furnace.rsi
     layers:

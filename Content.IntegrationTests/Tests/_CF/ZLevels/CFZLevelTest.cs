@@ -2,7 +2,8 @@ using Robust.Shared.Prototypes;
 using System.Collections.Generic;
 using System.Numerics;
 using Content.IntegrationTests.Fixtures;
-using Content.Server.CF.ZLevels;
+using Content.Server.CF.ZLevels.Core;
+using Content.Server.CF.ZLevels.Portals;
 using Content.Shared.GameTicking;
 using Content.Server.Maps;
 using Content.Shared.Atmos.Components;
@@ -12,6 +13,8 @@ using Content.Shared.CF.Combat;
 using Content.Shared.CF.Effects;
 using Content.Shared.CF.Preferences;
 using Content.Shared.CF.ZLevels;
+using Content.Shared.CF.ZLevels.Core.Components;
+using Content.Shared.CF.ZLevels.Ghost;
 using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Maps;
 using Content.Shared.Stunnable;
@@ -24,12 +27,19 @@ using Robust.Shared.Physics.Systems;
 
 namespace Content.IntegrationTests.Tests.CF.ZLevels;
 
-/// <summary>Stacked maps, stairs, ladders, holes and falling. Levels are small bare maps built here.</summary>
+/// <summary>
+/// Stacked maps, falling through open air, stairs, ladders and holes. Levels are small bare maps built here and
+/// joined into one network, as the station's own are at round start.
+/// </summary>
 [TestFixture]
-[TestOf(typeof(CFZLevelSystem))]
+[TestOf(typeof(CFZLevelsSystem))]
+[TestOf(typeof(CFZLevelPortalSystem))]
 public sealed class CFZLevelTest : GameTest
 {
     private const int Hp = 500;
+
+    /// <summary>A fall of one level is 10 feet, which is 5 damage.</summary>
+    private const int OneLevel = 5;
 
     public override PoolSettings PoolSettings => new() { Connected = false };
 
@@ -64,23 +74,28 @@ public sealed class CFZLevelTest : GameTest
 
     private readonly List<(MapId Map, Entity<MapGridComponent> Grid)> _levels = new();
 
-    private CFZLevelSystem Levels => SEntMan.System<CFZLevelSystem>();
+    private CFZLevelsSystem Levels => SEntMan.System<CFZLevelsSystem>();
+    private CFZLevelPortalSystem Portals => SEntMan.System<CFZLevelPortalSystem>();
+    private SharedMapSystem Maps => SEntMan.System<SharedMapSystem>();
 
-    /// <summary>A level with a square of floor, or none at all for open air.</summary>
-    private MapId Level(bool floor = true)
+    /// <summary>
+    /// A level with a square of floor <paramref name="half"/> tiles each way from the middle, or none at all for open
+    /// air. A hero with no player has no mover friction, so after a leap it slides on for as long as the test runs,
+    /// and off the edge of the floor it would fall: the leap test asks for a wide one.
+    /// </summary>
+    private MapId Level(bool floor = true, int half = 4)
     {
-        var maps = SEntMan.System<SharedMapSystem>();
-        maps.CreateMap(out var id);
-        var grid = maps.CreateGridEntity(id);
+        Maps.CreateMap(out var id);
+        var grid = Maps.CreateGridEntity(id);
         var plating = Server.ResolveDependency<ITileDefinitionManager>()["Plating"];
-        for (var x = -4; x <= 4; x++)
+        for (var x = -half; x <= half; x++)
         {
-            for (var y = -4; y <= 4; y++)
+            for (var y = -half; y <= half; y++)
             {
                 // A level of open air keeps one far tile so the grid exists.
-                var open = !floor && (x, y) != (4, 4);
+                var open = !floor && (x, y) != (half, half);
                 if (!open)
-                    maps.SetTile(grid.Owner, grid.Comp, new Vector2i(x, y), new Tile(plating.TileId));
+                    Maps.SetTile(grid.Owner, grid.Comp, new Vector2i(x, y), new Tile(plating.TileId));
             }
         }
 
@@ -88,10 +103,32 @@ public sealed class CFZLevelTest : GameTest
         return id;
     }
 
+    /// <summary>Joins levels into one network, from the lowest up.</summary>
+    private void Combine(params MapId[] maps)
+    {
+        var network = Levels.CreateMapNetwork();
+        var depths = new Dictionary<EntityUid, int>();
+        for (var i = 0; i < maps.Length; i++)
+        {
+            depths[Maps.GetMapOrInvalid(maps[i])] = i;
+        }
+
+        Assert.That(Levels.TryAddMapsIntoNetwork(network, depths));
+    }
+
+    /// <summary>The map so many levels from this one, or null.</summary>
+    private MapId? Offset(MapId map, int offset)
+    {
+        if (!Levels.TryMapOffset(Maps.GetMapOrInvalid(map), offset, out _, out var found))
+            return null;
+
+        return found.MapId;
+    }
+
     private EntityCoordinates At(MapId map, int x, int y)
     {
         var (_, grid) = _levels.Find(l => l.Map == map);
-        return SEntMan.System<SharedMapSystem>().GridTileToLocal(grid.Owner, grid.Comp, new Vector2i(x, y));
+        return Maps.GridTileToLocal(grid.Owner, grid.Comp, new Vector2i(x, y));
     }
 
     private EntityUid Hero(MapId map, int x = 0, int y = 0)
@@ -119,6 +156,15 @@ public sealed class CFZLevelTest : GameTest
         Assert.That(CFFallRules.Damage(feet), Is.EqualTo(damage));
     }
 
+    [TestCase(1f, 10)]
+    [TestCase(2f, 20)]
+    [TestCase(0.95f, 10)]
+    public void TheLandingSpeedSaysHowFarItFell(float levels, int feet)
+    {
+        var speed = MathF.Sqrt(2 * 9.8f * levels);
+        Assert.That(CFFallRules.FeetFromImpact(speed, 9.8f), Is.EqualTo(feet));
+    }
+
     [Test]
     public async Task LevelsKnowTheirNeighbours()
     {
@@ -126,12 +172,13 @@ public sealed class CFZLevelTest : GameTest
         {
             var low = Level();
             var high = Level();
-            Levels.Combine(new[] { low, high });
+            Combine(low, high);
 
-            Assert.That(Levels.MapAtOffset(low, 1), Is.EqualTo(high));
-            Assert.That(Levels.MapAtOffset(high, -1), Is.EqualTo(low));
-            Assert.That(Levels.MapAtOffset(low, -1), Is.Null);
-            Assert.That(Levels.MapAtOffset(high, 1), Is.Null);
+            Assert.That(Offset(low, 1), Is.EqualTo(high));
+            Assert.That(Offset(high, -1), Is.EqualTo(low));
+            Assert.That(Offset(low, -1), Is.Null);
+            Assert.That(Offset(high, 1), Is.Null);
+            Assert.That(SEntMan.GetComponent<CFZMapComponent>(Maps.GetMapOrInvalid(high)).Depth, Is.EqualTo(1));
         });
     }
 
@@ -144,19 +191,19 @@ public sealed class CFZLevelTest : GameTest
         {
             low = Level();
             var high = Level();
-            Levels.Combine(new[] { low, high });
+            Combine(low, high);
             SEntMan.SpawnAtPosition("CFZLevelHole", At(high, 0, 0));
             hero = Hero(high, 3, 3);
             SEntMan.System<SharedTransformSystem>().SetCoordinates(hero, At(high, 0, 0));
             SEntMan.System<SharedPhysicsSystem>().WakeBody(hero);
         });
 
-        await Pair.RunTicksSync(10);
+        await Pair.RunTicksSync(60);
 
         await Server.WaitAssertion(() =>
         {
             Assert.That(MapOf(hero), Is.EqualTo(low));
-            Assert.That(Health(hero), Is.EqualTo(Hp - 5), "A 10-foot fall deals 5.");
+            Assert.That(Health(hero), Is.EqualTo(Hp - OneLevel), "A 10-foot fall deals 5.");
             Assert.That(SEntMan.HasComponent<KnockedDownComponent>(hero), "Taking fall damage leaves you prone.");
         });
     }
@@ -170,9 +217,9 @@ public sealed class CFZLevelTest : GameTest
         EntityUid hero = default;
         await Server.WaitPost(() =>
         {
-            low = Level();
-            high = Level();
-            Levels.Combine(new[] { low, high });
+            low = Level(half: 40);
+            high = Level(half: 40);
+            Combine(low, high);
             SEntMan.SpawnAtPosition("CFZLevelHole", At(high, holeX, 0));
             hero = Hero(high, 0, 0);
             var transform = SEntMan.System<SharedTransformSystem>();
@@ -181,7 +228,7 @@ public sealed class CFZLevelTest : GameTest
             SEntMan.System<CFActivitySystem>().Leap(hero);
         });
 
-        await Pair.RunTicksSync(60);
+        await Pair.RunTicksSync(90);
 
         await Server.WaitAssertion(() =>
         {
@@ -192,30 +239,69 @@ public sealed class CFZLevelTest : GameTest
     [Test]
     public async Task FallsPassThroughOpenAir()
     {
+        MapId bottom = default;
+        EntityUid hero = default;
+        await Server.WaitPost(() =>
+        {
+            bottom = Level();
+            var air = Level(floor: false);
+            var sky = Level(floor: false);
+            Combine(bottom, air, sky);
+            hero = Hero(sky);
+        });
+
+        await Pair.RunTicksSync(90);
+
         await Server.WaitAssertion(() =>
         {
-            var bottom = Level();
-            var air = Level(floor: false);
-            var top = Level();
-            Levels.Combine(new[] { bottom, air, top });
-            var hero = Hero(top);
-
-            Assert.That(Levels.Fall(hero), Is.EqualTo(20));
             Assert.That(MapOf(hero), Is.EqualTo(bottom));
-            Assert.That(Health(hero), Is.EqualTo(Hp - 10));
+            Assert.That(Health(hero), Is.EqualTo(Hp - 2 * OneLevel), "Two levels is 20 feet, which is 10 damage.");
+        });
+    }
+
+    [Test]
+    public async Task LooseFurnitureFallsThroughOpenAir()
+    {
+        MapId bottom = default;
+        MapId air = default;
+        EntityUid overAir = default;
+        EntityUid onFloor = default;
+        await Server.WaitPost(() =>
+        {
+            bottom = Level();
+            air = Level(floor: false);
+            Combine(bottom, air);
+            overAir = SEntMan.SpawnAtPosition("CFSmallWoodenCrate", At(air, 0, 0));
+            onFloor = SEntMan.SpawnAtPosition("CFSmallWoodenCrate", At(bottom, 2, 2));
+        });
+
+        await Pair.RunTicksSync(60);
+
+        await Server.WaitAssertion(() =>
+        {
+            Assert.That(MapOf(overAir), Is.EqualTo(bottom), "A crate over nothing falls to the floor below.");
+            Assert.That(MapOf(onFloor), Is.EqualTo(bottom), "A crate on a floor stays where it is.");
+            Assert.That(SEntMan.GetComponent<CFZPhysicsComponent>(overAir).LocalPosition, Is.EqualTo(0f).Within(0.05f), "It comes to rest on the floor.");
         });
     }
 
     [Test]
     public async Task NothingBelowMeansNoFall()
     {
+        MapId air = default;
+        EntityUid hero = default;
+        await Server.WaitPost(() =>
+        {
+            air = Level(floor: false);
+            Combine(air, Level());
+            hero = Hero(air);
+        });
+
+        await Pair.RunTicksSync(60);
+
         await Server.WaitAssertion(() =>
         {
-            var low = Level();
-            Levels.Combine(new[] { low, Level() });
-            var hero = Hero(low);
-
-            Assert.That(Levels.Fall(hero), Is.Zero);
+            Assert.That(MapOf(hero), Is.EqualTo(air), "With no level below there is nowhere to fall to.");
             Assert.That(Health(hero), Is.EqualTo(Hp));
         });
     }
@@ -229,7 +315,7 @@ public sealed class CFZLevelTest : GameTest
         {
             low = Level();
             var high = Level();
-            Levels.Combine(new[] { low, high });
+            Combine(low, high);
 
             var stairs = SEntMan.SpawnAtPosition("CFStairsDownStoneAutoLink", At(high, 0, 0));
             Assert.That(SEntMan.GetComponent<LinkedEntityComponent>(stairs).LinkedEntities, Has.Count.EqualTo(1));
@@ -239,7 +325,7 @@ public sealed class CFZLevelTest : GameTest
             SEntMan.System<SharedPhysicsSystem>().WakeBody(hero);
         });
 
-        await Pair.RunTicksSync(10);
+        await Pair.RunTicksSync(30);
 
         await Server.WaitAssertion(() =>
         {
@@ -263,18 +349,18 @@ public sealed class CFZLevelTest : GameTest
         {
             var low = Level();
             var high = Level();
-            Levels.Combine(new[] { low, high });
+            Combine(low, high);
             var ladder = Ladder(high);
             var hero = Hero(high, 1, 0);
 
             var item = SEntMan.SpawnAtPosition("CFHoodedLantern", At(high, 1, 0));
             var hands = SEntMan.System<SharedHandsSystem>();
             Assert.That(hands.TryPickupAnyHand(hero, item, checkActionBlocker: false));
-            Assert.That(Levels.Climb(ladder, hero), Is.False, "Climbing takes two free hands.");
+            Assert.That(Portals.Climb(ladder, hero), Is.False, "Climbing takes two free hands.");
             Assert.That(MapOf(hero), Is.EqualTo(high));
 
             SEntMan.DeleteEntity(item);
-            Assert.That(Levels.Climb(ladder, hero));
+            Assert.That(Portals.Climb(ladder, hero));
             Assert.That(MapOf(hero), Is.EqualTo(low));
         });
     }
@@ -282,23 +368,31 @@ public sealed class CFZLevelTest : GameTest
     [Test]
     public async Task CriticalFailureOnTheWayDownFalls()
     {
-        await Server.WaitAssertion(() =>
+        MapId low = default;
+        EntityUid hero = default;
+        await Server.WaitPost(() =>
         {
-            var low = Level();
+            low = Level();
             var high = Level();
-            Levels.Combine(new[] { low, high });
+            Combine(low, high);
             var ladder = Ladder(high, dc: 90);
-            var hero = Hero(high, 1, 0);
+            hero = Hero(high, 1, 0);
             SEntMan.GetComponent<CFAbilityScoreComponent>(hero).AbilityModifiers[CFAbility.Strength] = -60;
 
             // A natural 20 lifts this to a plain failure, so allow a few tries.
             for (var i = 0; i < 20 && MapOf(hero) == high; i++)
             {
-                Assert.That(Levels.Climb(ladder, hero), Is.False);
+                Assert.That(Portals.Climb(ladder, hero), Is.False);
             }
 
-            Assert.That(MapOf(hero), Is.EqualTo(low));
-            Assert.That(Health(hero), Is.EqualTo(Hp - 5));
+            Assert.That(MapOf(hero), Is.EqualTo(low), "A critical failure on the way down is a fall.");
+        });
+
+        await Pair.RunTicksSync(60);
+
+        await Server.WaitAssertion(() =>
+        {
+            Assert.That(Health(hero), Is.EqualTo(Hp - OneLevel));
         });
     }
 
@@ -309,15 +403,15 @@ public sealed class CFZLevelTest : GameTest
         {
             var low = Level();
             var high = Level();
-            Levels.Combine(new[] { low, high });
+            Combine(low, high);
             var ghost = SEntMan.SpawnAtPosition("MobObserver", At(low, 0, 0));
 
-            var mover = SEntMan.GetComponent<CFZLevelMoverComponent>(ghost);
-            Assert.That(mover.UpActionEntity, Is.Not.Null, "The ghost should get its action buttons.");
-            Assert.That(mover.DownActionEntity, Is.Not.Null);
-            Assert.That(Levels.Shift(ghost, 1));
+            var mover = SEntMan.GetComponent<CFZLevelGhostMoverComponent>(ghost);
+            Assert.That(mover.ZLevelUpActionEntity, Is.Not.Null, "The ghost should get its action buttons.");
+            Assert.That(mover.ZLevelDownActionEntity, Is.Not.Null);
+            Assert.That(Levels.TryMoveUp(ghost));
             Assert.That(MapOf(ghost), Is.EqualTo(high));
-            Assert.That(Levels.Shift(ghost, 1), Is.False, "There is nothing higher.");
+            Assert.That(Levels.TryMoveUp(ghost), Is.False, "There is nothing higher.");
         });
     }
 
@@ -328,7 +422,7 @@ public sealed class CFZLevelTest : GameTest
         {
             var low = Level();
             var high = Level();
-            Levels.Combine(new[] { low, high });
+            Combine(low, high);
 
             var caster = Hero(high, 3, 3);
             var sameLevel = Hero(high);
@@ -351,11 +445,10 @@ public sealed class CFZLevelTest : GameTest
             var map = Server.ProtoMan.Index(new ProtoId<GameMapPrototype>("CFZLevelTest"));
             SEntMan.System<GameTicker>().LoadGameMap(map, out var ground);
 
-            var below = Levels.MapAtOffset(ground, -1);
+            var below = Offset(ground, -1);
             Assert.That(below, Is.Not.Null, "The cellar should load under the station.");
 
-            var maps = SEntMan.System<SharedMapSystem>();
-            var cellar = maps.GetMapOrInvalid(below!.Value);
+            var cellar = Maps.GetMapOrInvalid(below!.Value);
             Assert.That(SEntMan.GetComponent<MapAtmosphereComponent>(cellar).Space, Is.False, "Saved maps keep the sky air.");
 
             var linked = 0;
@@ -368,7 +461,7 @@ public sealed class CFZLevelTest : GameTest
 
             Assert.That(linked, Is.EqualTo(2), "The stairs and the ladder both reach the cellar.");
 
-            maps.InitializeMap(ground);
+            Maps.InitializeMap(ground);
             var ends = 0;
             var built = SEntMan.AllEntityQueryEnumerator<LinkedEntityComponent, TransformComponent>();
             while (built.MoveNext(out var link, out var xform))

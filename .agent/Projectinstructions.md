@@ -12,6 +12,8 @@ Read and follow everything in this folder before making CF or upstream-touching 
 
 Character builder + PF2e spawn/combat MVP notes: `character-builder.md`.
 
+How levels stack, how things fall between them, and what the CrystallEdge port changed: `zlevels.md`.
+
 How GOAP is laid out and how to add to it: `goap.md`. What its weights are for, and the plan for mobs casting spells: `goap-weights.md`. Where mappers place AI hints: `investigation-nodes.md`.
 
 How a group lives as a tribe (hunger, farming, stores, talk, parley), and the language model that advises it: `society.md`.
@@ -138,7 +140,10 @@ Class examples: `CFMySystem`, `CFMyServerSystem`, `CFMyClientSystem`, `CFExample
 | Harder to Shove, Trip, Disarm, Grapple or Reposition, or better at it | `CFGrantBonus` with `stat: ManeuverDc` or `stat: Maneuvers`. `CFConditionSystem.RollSkill` reads both for an Athletics check with the attack trait |
 | A scent trail, and seeing one | Every character and monster has `CFScent`, which lays `CFScentMarker` marks. The Scent sense gives `CFSmeller` and its free Sniff action, which shows them. Ported from Starlight, under `_CF/Scent/` |
 | Finding creatures by hearing or scent | `!type:CFGrantSeek` (`bonus`, `rangeFeet`, `hiddenFlatDc`, `concealedFlatDc`) on `CFSeekSense`. Seek and `PassFlatCheck` read it inside the range |
-| Falling or climbing better | `CFGrantSafeFall` (`halfDistance`), `CFGrantClimb` (`bonus`, `successIsCritical`, `climbSpeed`). `CFZLevelSystem` reads both |
+| Falling or climbing better | `CFGrantSafeFall` (`halfDistance`), `CFGrantClimb` (`bonus`, `successIsCritical`, `climbSpeed`). `CFZLevelDamageSystem` reads the first, `CFZLevelPortalSystem.Climb` the second |
+| A map with levels above or below | `CFStationZLevels` on the station with `mapsBelow` and `mapsAbove` (`Resources/Prototypes/_CF/ZLevels/test_map.yml`). `CFSharedZLevelsSystem.TryMapUp`, `TryMapDown`, `TryMove` to read and cross the stack. See `zlevels.md` |
+| Something that falls, or must not | `CFZPhysics`: every mob and item has it, and so do crates, chests, barrels, seats, tables, beds and cabinets. A new piece of furniture that can be moved gets it too. `velocityGravity: false` floats, `autoStep: false` ignores stairs. A hole is an empty tile, or `CFZLevelHole`. A soft landing spot is `CFSoftSurface` |
+| What a fall does | `CFFallRules.Damage(feet)`, half the feet fallen, through `CFZLevelDamageSystem`. One level is `CFFallRules.LevelFeet` (10) |
 | An ability used so many times a day | `CFDailyUses` on the action entity (`uses`). `CFDailyUseSystem` counts it, a long rest gives it back, and the HUD greys it. See `Resources/Prototypes/_CF/Actions/heritages.yml` |
 | A choice of energy type | `kind: DamageType` with `damageTypes` in `choices`, then a grant that reads the pick with `CFCharacterFeatureSystem.Pick`, such as `!type:CFGrantChosenResistance` |
 | Adding or removing a creature trait | `!type:CFGrantTrait` with `add` and `remove` |

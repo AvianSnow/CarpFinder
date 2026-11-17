@@ -33,6 +33,7 @@
   parent: BaseStructure
   abstract: true
   components:
+  - type: CFZPhysics # CarpFinder: falls to the level below when loose over an opening
 # These might/might not be a good idea
 #  - type: MovedByPressure
 #  - type: DamageOnHighSpeedImpact

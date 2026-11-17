@@ -47,6 +47,7 @@
   parent: BaseControllable
   id: BaseMob
   components:
+  - type: CFZPhysics # CarpFinder: mobs fall between levels
   - type: MobCollision
   - type: Physics
     bodyType: KinematicController

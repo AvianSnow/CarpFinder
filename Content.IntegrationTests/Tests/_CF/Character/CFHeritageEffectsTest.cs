@@ -2,7 +2,7 @@ using System.Linq;
 using Content.IntegrationTests.Fixtures;
 using Content.IntegrationTests.Tests.CF;
 using Content.Server.CF.Character;
-using Content.Server.CF.ZLevels;
+using Content.Shared.CF.ZLevels.Damage;
 using Content.Shared.Actions;
 using Content.Shared.CF.Actions;
 using Content.Shared.CF.Character;
@@ -126,7 +126,7 @@ public sealed class CFHeritageEffectsTest : GameTest
             hiddenDc = whisper.HiddenFlatDc;
             concealedDc = whisper.ConcealedFlatDc;
             var goblin = Built("Goblin", "UnbreakableGoblin");
-            var levels = SEntMan.System<CFZLevelSystem>();
+            var levels = SEntMan.System<CFZLevelDamageSystem>();
             goblinFeet = levels.FallFeet(goblin, 40);
             goblinSafe = levels.FallsSafely(goblin);
             elfCrit = SEntMan.GetComponent<CFCombatOptionsComponent>(Built("Elf", "WoodlandElf")).ClimbSuccessCritical;

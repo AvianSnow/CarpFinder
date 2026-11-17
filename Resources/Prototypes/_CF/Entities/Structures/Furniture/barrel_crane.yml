@@ -6,6 +6,7 @@
   suffix: Empty
   categories: [ForkFiltered]
   components:
+    - type: CFZPhysics # CarpFinder: falls to the level below when loose over an opening
     - type: Sprite
       drawdepth: Mobs
       sprite: _CP14/Structures/Furniture/Barrels/crane_barrel.rsi

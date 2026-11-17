@@ -6,6 +6,7 @@
   categories: [ ForkFiltered ]
   abstract: true
   components:
+  - type: CFZPhysics # CarpFinder: falls to the level below when loose over an opening
   - type: Sprite
     drawdepth: Mobs
     layers:

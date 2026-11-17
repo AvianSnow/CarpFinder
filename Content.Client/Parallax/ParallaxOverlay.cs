@@ -1,6 +1,8 @@
 using System.Numerics;
 using Content.Client.Parallax.Managers;
+using Content.Client.Viewport;
 using Content.Shared.CCVar;
+using Content.Shared.CF.ZLevels.Core.EntitySystems;
 using Content.Shared.Parallax.Biomes;
 using Robust.Client.GameObjects;
 using Robust.Client.Graphics;
@@ -21,6 +23,7 @@ public sealed partial class ParallaxOverlay : Overlay
     [Dependency] private IParallaxManager _manager = default!;
     private readonly SharedMapSystem _mapSystem;
     private readonly ParallaxSystem _parallax;
+    private readonly CFSharedZLevelsSystem _zLevels; // CarpFinder
 
     public override OverlaySpace Space => OverlaySpace.WorldSpaceBelowWorld;
 
@@ -30,6 +33,7 @@ public sealed partial class ParallaxOverlay : Overlay
         IoCManager.InjectDependencies(this);
         _mapSystem = _entManager.System<SharedMapSystem>();
         _parallax = _entManager.System<ParallaxSystem>();
+        _zLevels = _entManager.System<CFSharedZLevelsSystem>(); // CarpFinder
     }
 
     protected override bool BeforeDraw(in OverlayDrawArgs args)
@@ -37,7 +41,12 @@ public sealed partial class ParallaxOverlay : Overlay
         if (args.MapId == MapId.Nullspace || _entManager.HasComponent<BiomeComponent>(_mapSystem.GetMapOrInvalid(args.MapId)))
             return false;
 
-        return true;
+        // CarpFinder: the sky is only drawn under the lowest level in view, or it would cover the levels below
+        if (args.Viewport.Eye is ScalingViewport.ZEye zEye)
+            return zEye.LowestDepth == zEye.Depth;
+
+        return !_zLevels.TryMapDown(args.MapUid, out _);
+        // CarpFinder end
     }
 
     protected override void Draw(in OverlayDrawArgs args)

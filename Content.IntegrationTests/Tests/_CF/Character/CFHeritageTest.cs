@@ -3,7 +3,7 @@ using System.Linq;
 using Content.IntegrationTests.Fixtures;
 using Content.IntegrationTests.Tests.CF;
 using Content.Server.CF.Character;
-using Content.Server.CF.ZLevels;
+using Content.Shared.CF.ZLevels.Damage;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Character.Grants;
 using Content.Shared.CF.Checks;
@@ -245,7 +245,7 @@ public sealed class CFHeritageTest : GameTest
         bool leaf = false, freeHand = false, fullHands = true, plain = true;
         await Server.WaitPost(() =>
         {
-            var zLevels = SEntMan.System<CFZLevelSystem>();
+            var zLevels = SEntMan.System<CFZLevelDamageSystem>();
             var hands = SEntMan.System<SharedHandsSystem>();
             leaf = zLevels.FallsSafely(Hero("LeafLeshy"));
             plain = zLevels.FallsSafely(Hero());

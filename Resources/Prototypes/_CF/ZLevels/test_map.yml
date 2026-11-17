@@ -17,8 +17,8 @@
             CFBeta: [ 0, 6 ]
             CFMerchant: [ -1, -1 ]
         - type: CFStationZLevels
-          levels:
-            -1: /Maps/_CF/ZLevels/cellar.yml
+          mapsBelow:
+            - /Maps/_CF/ZLevels/cellar.yml
 
 # A CF settlement: jobs and spawning, with none of the Nanotrasen shuttles, cargo or evacuation.
 - type: entity

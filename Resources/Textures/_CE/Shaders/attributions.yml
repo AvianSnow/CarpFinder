@@ -1,0 +1,4 @@
+- files: ["zblur.swsl", "zfog.swsl"]
+  license: "CC-BY-SA-4.0"
+  copyright: "CrystallEdge's z-level shaders by TheShuEd (eshhhed), used with their permission. CrystallEdge textures are CC-BY-SA-4.0 while they stay in their _CE folder with this license."
+  source: "https://github.com/crystallpunk-14/crystall-edge/tree/master/Resources/Textures/_CE/Shaders"

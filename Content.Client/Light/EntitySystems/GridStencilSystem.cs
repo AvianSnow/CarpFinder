@@ -113,7 +113,8 @@ public sealed partial class GridStencilSystem : EntitySystem
         in OverlayDrawArgs args,
         string key,
         string name,
-        TileStencilPredicate predicate)
+        TileStencilPredicate predicate,
+        bool ignoreEmpty = true) // CarpFinder: false lets the predicate mask empty tiles, which a roof on the level above can cover
     {
         var viewport = args.Viewport;
         var target = viewport.RenderTarget;
@@ -155,7 +156,7 @@ public sealed partial class GridStencilSystem : EntitySystem
                 {
                     var transform = _xform.GetWorldMatrix(grid.Owner);
                     var worldToTextureMatrix = Matrix3x2.Multiply(transform, invMatrix);
-                    var tiles = _map.GetTilesIntersecting(grid.Owner, grid, worldBounds);
+                    var tiles = _map.GetTilesIntersecting(grid.Owner, grid, worldBounds, ignoreEmpty); // CarpFinder: ignoreEmpty
                     worldHandle.SetTransform(worldToTextureMatrix);
                     _rects.Clear();
 

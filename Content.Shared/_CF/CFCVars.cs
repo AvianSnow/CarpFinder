@@ -4,7 +4,7 @@ using Robust.Shared.Configuration;
 namespace Content.Shared.CF;
 
 [CVarDefs]
-public sealed class CFCVars : CVars
+public sealed partial class CFCVars : CVars
 {
     /// <summary>A character needs an ancestry, background, class and job before it can ready up or join.</summary>
     public static readonly CVarDef<bool> RequireCompleteCharacter =

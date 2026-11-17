@@ -1,0 +1,112 @@
+# The CrystallEdge z-level system's own entities, ported with permission from eshhhed. Shaders and icons are
+# CrystallEdge's, under their CC licenses (see the meta.json and attributions.yml beside each).
+
+# Each player gets one of these on every level in view, so the client is sent that level too.
+- type: entity
+  id: CFZLevelEye
+  save: false
+  categories: [ HideSpawnMenu ]
+
+# A puff of dust where a creature lands hard.
+- type: entity
+  id: CFDustEffect
+  name: dust
+  suffix: VFX
+  categories: [ HideSpawnMenu ]
+  save: false
+  components:
+  - type: Sprite
+    sprite: _CE/Effects/dust.rsi
+    drawdepth: Items
+    layers:
+    - state: dust
+  - type: Physics
+    canCollide: false
+  - type: Tag
+    tags:
+    - HideContextMenu
+  - type: TimedDespawn
+    lifetime: 0.5
+
+# Levels below the one in view are drawn blurred and dimmed, and under a drifting fog.
+- type: shader
+  id: CFZBlur
+  kind: source
+  path: "/Textures/_CE/Shaders/zblur.swsl"
+
+- type: shader
+  id: CFZFog
+  kind: source
+  path: "/Textures/_CE/Shaders/zfog.swsl"
+
+# Every player has this: show the level above, where its floor lets you see it.
+- type: entity
+  parent: BaseToggleAction
+  id: CFActionToggleLookUp
+  categories: [ HideSpawnMenu ]
+  name: Look up
+  description: Lift your head and look at the level above.
+  components:
+  - type: Action
+    checkCanInteract: false
+  - type: Sprite
+    sprite: _CE/Actions/zlevels.rsi
+    layers:
+    - state: eye_down
+      map: ["enum.ActionVisuals.Icon"]
+    - state: eye_up
+      map: ["enum.ActionVisuals.IconToggled"]
+      visible: false
+
+# Flight, for anything with CFControllableFlight: toggle it, then go up or down a level.
+- type: entity
+  parent: BaseAction
+  id: CFActionZFlightUp
+  categories: [ HideSpawnMenu ]
+  name: Fly up
+  description: Fly up one level.
+  components:
+  - type: Action
+    useDelay: 1.5
+  - type: Sprite
+    sprite: _CE/Actions/zlevels.rsi
+    layers:
+    - state: up
+      map: ["enum.ActionVisuals.Icon"]
+  - type: InstantAction
+    event: !type:CFZFlightActionUp
+
+- type: entity
+  parent: BaseAction
+  id: CFActionZFlightDown
+  categories: [ HideSpawnMenu ]
+  name: Fly down
+  description: Fly down one level.
+  components:
+  - type: Action
+    useDelay: 1.5
+  - type: Sprite
+    sprite: _CE/Actions/zlevels.rsi
+    layers:
+    - state: down
+      map: ["enum.ActionVisuals.Icon"]
+  - type: InstantAction
+    event: !type:CFZFlightActionDown
+
+- type: entity
+  parent: BaseToggleAction
+  id: CFActionZFlightToggle
+  categories: [ HideSpawnMenu ]
+  name: Toggle flight
+  description: Take off, or land.
+  components:
+  - type: Action
+    useDelay: 1.5
+  - type: Sprite
+    sprite: _CE/Actions/zlevels.rsi
+    layers:
+    - state: toggle_flight
+      map: ["enum.ActionVisuals.Icon"]
+    - state: toggle_flight_on
+      map: ["enum.ActionVisuals.IconToggled"]
+      visible: false

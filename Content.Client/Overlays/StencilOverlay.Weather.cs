@@ -28,7 +28,8 @@ public sealed partial class StencilOverlay
                 _entManager.TryGetComponent(grid.Owner, out RoofComponent? roofComp);
                 // Ignored tiles for stencil.
                 return !_weather.CanWeatherAffect((grid.Owner, grid.Comp, roofComp), tile);
-            });
+            },
+            ignoreEmpty: false); // CarpFinder: an empty tile under the roof of the level above is dry too
 
         worldHandle.SetTransform(Matrix3x2.Identity);
         worldHandle.UseShader(_protoManager.Index(StencilMask).Instance());

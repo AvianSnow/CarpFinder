@@ -39,7 +39,10 @@
   description: Boo!
   categories: [ HideSpawnMenu ]
   components:
-  - type: CFZLevelMover # CarpFinder: ghosts and admins move between levels
+  - type: CFZLevelGhostMover # CarpFinder: ghosts and admins move between levels
+  - type: CFZPhysics # CarpFinder: a ghost has a height, but never falls or climbs stairs
+    autoStep: false
+    velocityGravity: false
   - type: Sprite
     sprite: Mobs/Ghosts/ghost_human.rsi
     color: "#fff8"
