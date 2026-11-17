@@ -29,3 +29,10 @@ cf-reagent-name-conjured-water = conjured water
 cf-reagent-desc-conjured-water = Water called up by a spell. It dries quickly.
 cf-reagent-name-healing-draught = spilled healing potion
 cf-reagent-desc-healing-draught = A healing potion that ended up on the floor. Still good, for a few minutes, for anyone willing to roll in it or drink it.
+
+cf-reagent-name-wort = wort
+cf-reagent-desc-wort = Wheat mashed in water. Left in a barrel, it becomes beer.
+cf-reagent-name-must = must
+cf-reagent-desc-must = Crushed fruit in water. Left in a barrel, it becomes wine.
+cf-reagent-name-pumpkin-mash = pumpkin mash
+cf-reagent-desc-pumpkin-mash = Pumpkin mashed in water. Left in a barrel, it becomes ale.

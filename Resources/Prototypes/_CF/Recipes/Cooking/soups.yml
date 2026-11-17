@@ -1,0 +1,161 @@
+# Dishes a pot, pan or pie plate makes. From CP14's Recipes/Cooking.
+
+- type: cookingRecipe
+  id: InedibleSoup
+  foodType: Soup
+  foodData:
+    name: cf-soup-recipe-trash-name
+    desc: cf-soup-recipe-trash-desc
+    visuals:
+    - sprite: _CP14/Objects/Consumable/Food/Soups/misc.rsi
+      state: trash
+  requirements:
+  - !type:CFAlwaysMet
+
+# 1 req
+
+# We dont have 1 req for soups because all soups is water + something
+
+# 2 req
+
+- type: cookingRecipe
+  id: MeatSoup
+  foodType: Soup
+  foodData:
+    name: cf-soup-recipe-meat-name
+    desc: cf-soup-recipe-meat-desc
+    visuals:
+    - sprite: _CP14/Objects/Consumable/Food/Soups/misc.rsi
+      state: meat
+  requirements:
+  - !type:CFReagentRequired
+    amount: 20
+    reagents:
+    - Water
+  - !type:CFTagRequired
+    tags:
+    - CFMeat
+
+- type: cookingRecipe
+  id: CheeseSoup
+  foodType: Soup
+  foodData:
+    name: cf-soup-recipe-cheese-name
+    desc: cf-soup-recipe-cheese-desc
+    visuals:
+    - sprite: _CP14/Objects/Consumable/Food/Soups/misc.rsi
+      state: cheese
+  requirements:
+  - !type:CFReagentRequired
+    amount: 20
+    reagents:
+    - Water
+  - !type:CFTagRequired
+    tags:
+    - CFCheese
+
+- type: cookingRecipe
+  id: PumpkinPuree
+  foodType: Soup
+  foodData:
+    name: cf-soup-recipe-pumpkin-puree-name
+    desc: cf-soup-recipe-pumpkin-puree-desc
+    visuals:
+    - sprite: _CP14/Objects/Consumable/Food/Soups/misc.rsi
+      state: pumpkin
+  requirements:
+  - !type:CFReagentRequired
+    amount: 20
+    reagents:
+    - Water #TODO: Milk Cream!!
+  - !type:CFTagRequired
+    tags:
+    - CFPumpkin
+
+# 3 req
+
+- type: cookingRecipe
+  id: VegSoup
+  foodType: Soup
+  foodData:
+    name: cf-soup-recipe-veg-name
+    desc: cf-soup-recipe-veg-desc
+    visuals:
+    - sprite: _CP14/Objects/Consumable/Food/Soups/misc.rsi
+      state: veg_stew
+  requirements:
+  - !type:CFReagentRequired
+    amount: 20
+    reagents:
+    - Water
+  - !type:CFTagRequired
+    tags:
+    - CFSalad
+    - CFVegetable
+  - !type:CFTagBlocked
+    tags:
+    - CFMeat
+
+- type: cookingRecipe
+  id: MeatCheeseSoup
+  foodType: Soup
+  foodData:
+    name: cf-soup-recipe-meat-cheese-name
+    desc: cf-soup-recipe-meat-cheese-desc
+    visuals:
+    - sprite: _CP14/Objects/Consumable/Food/Soups/misc.rsi
+      state: meat2
+  requirements:
+  - !type:CFReagentRequired
+    amount: 20
+    reagents:
+    - Water
+  - !type:CFTagRequired
+    tags:
+    - CFMeat
+  - !type:CFTagRequired
+    tags:
+    - CFCheese
+
+- type: cookingRecipe
+  id: MeatSaladSoup
+  foodType: Soup
+  foodData:
+    name: cf-soup-recipe-meat-salad-name
+    desc: cf-soup-recipe-meat-salad-desc
+    visuals:
+    - sprite: _CP14/Objects/Consumable/Food/Soups/misc.rsi
+      state: meat_salad
+  requirements:
+  - !type:CFReagentRequired
+    amount: 20
+    reagents:
+    - Water
+  - !type:CFTagRequired
+    tags:
+    - CFMeat
+  - !type:CFTagRequired
+    tags:
+    - CFSalad
+    - CFVegetable
+
+- type: cookingRecipe
+  id: MonsterBrew
+  foodType: Soup
+  foodData:
+    name: cf-soup-recipe-monster-brew-name
+    desc: cf-soup-recipe-monster-brew-desc
+    visuals:
+    - sprite: _CP14/Objects/Consumable/Food/Soups/misc.rsi
+      state: mole
+  requirements:
+  - !type:CFReagentRequired
+    amount: 20
+    reagents:
+    - Water
+  - !type:CFTagRequired
+    tags:
+    - CFMeatMonster
+  - !type:CFTagRequired
+    tags:
+    - CFEgg

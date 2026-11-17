@@ -45,12 +45,13 @@ Everything below is under `Content.Shared/_CF/`.
 | `Locks/` | Keys, Pick a Lock, Force Open, on top of the stock `Lock` | `CFLockSystem` |
 | `Outdoors/` | The outdoor map component, temperature rules, weather effects. The logic is server-side. | `CFEnvironmentRules`, `CFOutdoorsWorldSystem` |
 | `Farming/` | Plant, seed and harvest data. The logic is server-side. | `CFFarmingSystem` |
+| `Cooking/` | The mortar, mixing flour into water, pots and pans that cook a dish from what is in them, serving it, and barrels that brew. A fire heats what is on it from `Content.Server/_CF/Temperature/CFFireHeaterSystem`. | `CFSharedCookerSystem`, `CFFermenterSystem`, `CFMortarSystem` |
 | `Adventure/` | Site prototypes, encounter and treasure tables. Generation is server-side. | `CFEncounterRules`, `CFAdventureSiteSystem` |
 | `Languages/` | What a creature speaks and understands, and what it sounds like otherwise. Chat asks per listener, and a speaker always understands itself. The language menu is client-side, after Starlight's. | `CFLanguageSystem`, `CFLanguageRules` |
 | `Magic/` | Light, Detect Magic, Read Aura, and what counts as magical | `CFMagicSenseSystem` |
 | `Scene/` | DM narration and player-started skill checks. The logic is server-side. | `CFSceneSystem` |
 | `ZLevels/` | Stairs, ladders, holes, falling rules, chasm edges. The stacking logic is server-side. | `CFFallRules`, `CFZLevelSystem`, `CFChasmEdgeSystem` |
-| `Crafting/` | Recipes, formulas, Craft DCs. The workbench logic is server-side. | `CFCraftingRules`, `CFWorkbenchSystem` |
+| `Crafting/` | Recipes with a category, formulas and the handbook per category, Craft DCs. The workbench logic is server-side. | `CFCraftingRules`, `CFWorkbenchSystem` |
 | `Preferences/` | The build stored on `HumanoidCharacterProfile` | `CFCharacterBuildData` |
 | `Shop/` | Coins, prices, the wallet, the merchant's counter and the guild pallets. Selling and coin logic are server-side. | `CFCoins`, `CFWalletSystem`, `CFMerchantSystem`, `CFCoinSystem` |
 | `Spells/` | Paying for a cast, prepared charges, spellshapes, Prestidigitation | `CFSpellSystem`, `CFPreparedSpells`, `CFSpellshapeSystem` |
@@ -252,7 +253,7 @@ The character editor and character window are swapped with csproj `Compile Remov
 
 ## Prototype kinds
 
-`adventureSite`, `craftingRecipe`, `cfAbility`, `cfAbilitySkill`, `cfAncestry`, `cfBackground`, `cfClass`, `cfClassChoice`, `cfDamageType`, `cfDeity`, `cfFaction`, `cfFeat`, `cfGoapAction`, `cfGoapGoal`, `cfGoapProfile`, `encounter`, `goapTactics`, `cfHeritage`, `cfIkon`, `cfJobGroup`, `cfRune`, `language`, `cfMaterial`, `cfPet`, `cfPetGear`, `cfPropertyRune`, `cfSpell`, `cfTrait`.
+`adventureSite`, `cookingRecipe`, `craftingRecipe`, `cfAbility`, `cfAbilitySkill`, `cfAncestry`, `cfBackground`, `cfClass`, `cfClassChoice`, `cfDamageType`, `cfDeity`, `cfFaction`, `cfFeat`, `cfGoapAction`, `cfGoapGoal`, `cfGoapProfile`, `encounter`, `goapTactics`, `cfHeritage`, `cfIkon`, `cfJobGroup`, `cfRune`, `language`, `cfMaterial`, `cfPet`, `cfPetGear`, `cfPropertyRune`, `cfSpell`, `cfTrait`.
 
 Radial actions are entities in `Resources/Prototypes/_CF/Actions/activities.yml`, and each spell is an action entity in `Resources/Prototypes/_CF/Spells/{0,1,2,3}/`. Feats with `pendingAction: true` have data but no behaviour yet.
 

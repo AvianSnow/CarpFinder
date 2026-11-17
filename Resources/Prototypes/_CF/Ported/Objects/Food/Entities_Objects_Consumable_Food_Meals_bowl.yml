@@ -12,10 +12,15 @@
   - type: Item
     shape:
     - 0,0,1,0
-  - type: SolutionContainerManager
-    solutions:
-      food:
-        maxVol: 30
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 30
+  - type: CFFoodHolder
+    displacementRsiPath: _CP14/Objects/Consumable/Food/Soups/displacement.rsi
+    foodType: Soup
+    solutionId: food
+    canAcceptFood: true
   - type: Appearance
   - type: SolutionContainerVisuals
   - type: Edible

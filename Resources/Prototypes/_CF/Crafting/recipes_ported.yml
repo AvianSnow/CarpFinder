@@ -3,6 +3,7 @@
 - type: craftingRecipe
   id: WeaponShieldWooden
   tag: CFRecipeAnvil
+  category: Armor
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -16,6 +17,7 @@
 - type: craftingRecipe
   id: WeaponTowerShieldWooden
   tag: CFRecipeAnvil
+  category: Armor
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -27,8 +29,20 @@
   result: CFTowerShield
 
 - type: craftingRecipe
+  id: PlatePie
+  tag: CFRecipeAnvil
+  category: Food
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFIronBar
+    count: 1
+  result: CFPlatePie
+
+- type: craftingRecipe
   id: Scissors
   tag: CFRecipeAnvil
+  category: Tools
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -39,6 +53,7 @@
 - type: craftingRecipe
   id: CrossboltIron
   tag: CFRecipeAnvil
+  category: Weapons
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -50,6 +65,7 @@
 - type: craftingRecipe
   id: BaseLightCrossbow
   tag: CFRecipeAnvil
+  category: Weapons
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -66,6 +82,7 @@
 - type: craftingRecipe
   id: BaseCrossbow
   tag: CFRecipeAnvil
+  category: Weapons
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -79,6 +96,7 @@
 - type: craftingRecipe
   id: Fork
   tag: CFRecipeAnvil
+  category: Farming
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -90,6 +108,7 @@
 - type: craftingRecipe
   id: Spoon
   tag: CFRecipeAnvil
+  category: Food
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -101,6 +120,7 @@
 - type: craftingRecipe
   id: SteelGobletCopper
   tag: CFRecipeAnvil
+  category: Food
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -111,6 +131,7 @@
 - type: craftingRecipe
   id: SteelGobletIron
   tag: CFRecipeAnvil
+  category: Food
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -121,6 +142,7 @@
 - type: craftingRecipe
   id: SteelGobletGold
   tag: CFRecipeAnvil
+  category: Food
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -129,8 +151,176 @@
   result: CFSteelGobletGold
 
 - type: craftingRecipe
+  id: FryingPan
+  tag: CFRecipeAnvil
+  category: Food
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFIronBar
+    count: 2
+  - !type:CFStackRequirement
+    stack: CFWoodenPlanks
+    count: 1
+  result: CFFryingPan
+
+- type: craftingRecipe
+  id: CookingPot
+  tag: CFRecipeAnvil
+  category: Food
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFIronBar
+    count: 3
+  result: CFCookingPot
+
+- type: craftingRecipe
+  id: FoodMeatLamb
+  tag: CFRecipeCooking
+  category: Food
+  craftTime: 2
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFFoodMeatLambSlice
+    count: 2
+  - !type:CFItemRequirement
+    protoId: CFFoodEgg
+    count: 1
+  result: CFFoodMeatLambCutlet
+
+- type: craftingRecipe
+  id: FoodDoughLarge
+  tag: CFRecipeCooking
+  category: Food
+  craftTime: 2
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFFoodDoughMedium
+    count: 4
+  result: CFFoodDoughLarge
+
+- type: craftingRecipe
+  id: FoodDoughMedium
+  tag: CFRecipeCooking
+  category: Food
+  craftTime: 1
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFWheat
+    count: 1
+  result: CFFoodDoughMedium
+
+- type: craftingRecipe
+  id: FoodDoughMediumFlat
+  tag: CFRecipeCooking
+  category: Food
+  craftTime: 2
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFFoodDoughMedium
+    count: 1
+  result: CFFoodDoughMediumFlat
+
+- type: craftingRecipe
+  id: SeedWheat
+  tag: CFRecipeCooking
+  category: Farming
+  craftTime: 1
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFWheat
+    count: 1
+  result: CFSeedWheat
+  resultCount: 3
+
+- type: craftingRecipe
+  id: SeedTomato
+  tag: CFRecipeCooking
+  category: Farming
+  craftTime: 1
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFFoodTomatoes
+    count: 1
+  result: CFSeedTomato
+  resultCount: 3
+
+- type: craftingRecipe
+  id: SeedCabbage
+  tag: CFRecipeCooking
+  category: Farming
+  craftTime: 1
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFFoodCabbage
+    count: 1
+  result: CFSeedCabbage
+  resultCount: 3
+
+- type: craftingRecipe
+  id: SeedPumpkin
+  tag: CFRecipeCooking
+  category: Farming
+  craftTime: 1
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFFoodPumpkin
+    count: 1
+  result: CFSeedPumpkin
+  resultCount: 3
+
+- type: craftingRecipe
+  id: SeedCucumber
+  tag: CFRecipeCooking
+  category: Farming
+  craftTime: 1
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFFoodCucumber
+    count: 1
+  result: CFSeedCucumber
+
+- type: craftingRecipe
+  id: SeedPepper
+  tag: CFRecipeCooking
+  category: Farming
+  craftTime: 1
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFFoodPepper
+    count: 1
+  result: CFSeedPepper
+  resultCount: 2
+
+- type: craftingRecipe
+  id: SeedSage
+  tag: CFRecipeCooking
+  category: Farming
+  craftTime: 1
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFWildSage
+    count: 1
+  result: CFSeedSage
+  resultCount: 2
+
+- type: craftingRecipe
+  id: SeedCotton
+  tag: CFRecipeCooking
+  category: Farming
+  craftTime: 1
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFCotton
+    count: 1
+  result: CFSeedCotton
+  resultCount: 2
+
+- type: craftingRecipe
   id: Bucket
   tag: CFRecipeWorkbench
+  category: Tools
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -144,6 +334,7 @@
 - type: craftingRecipe
   id: BucketLucens
   tag: CFRecipeWorkbench
+  category: Tools
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -157,6 +348,7 @@
 - type: craftingRecipe
   id: HandLabeler
   tag: CFRecipeWorkbench
+  category: Tools
   craftTime: 3
   requirements:
   - !type:CFStackRequirement
@@ -179,6 +371,7 @@
 - type: craftingRecipe
   id: WoodenBeerMug
   tag: CFRecipeWorkbench
+  category: Food
   craftTime: 3
   requirements:
   - !type:CFStackRequirement
@@ -189,6 +382,7 @@
 - type: craftingRecipe
   id: PlateWooden
   tag: CFRecipeWorkbench
+  category: Food
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -199,6 +393,7 @@
 - type: craftingRecipe
   id: BowlWooden
   tag: CFRecipeWorkbench
+  category: Food
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -207,8 +402,23 @@
   result: CFBowlWooden
 
 - type: craftingRecipe
+  id: Lighter
+  tag: CFRecipeWorkbench
+  category: Tools
+  craftTime: 4
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFStone
+    count: 2
+  - !type:CFStackRequirement
+    stack: CFIronBar
+    count: 1
+  result: CFLighter
+
+- type: craftingRecipe
   id: Bow
   tag: CFRecipeWorkbench
+  category: Weapons
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -222,6 +432,7 @@
 - type: craftingRecipe
   id: CrayonWhite
   tag: CFRecipeWorkbench
+  category: Goods
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -235,6 +446,7 @@
 - type: craftingRecipe
   id: CrayonRed
   tag: CFRecipeWorkbench
+  category: Goods
   craftTime: 1
   requirements:
   - !type:CFItemRequirement
@@ -248,6 +460,7 @@
 - type: craftingRecipe
   id: CrayonBlue
   tag: CFRecipeWorkbench
+  category: Goods
   craftTime: 1
   requirements:
   - !type:CFItemRequirement
@@ -261,6 +474,7 @@
 - type: craftingRecipe
   id: CrayonYellow
   tag: CFRecipeWorkbench
+  category: Goods
   craftTime: 1
   requirements:
   - !type:CFItemRequirement
@@ -274,6 +488,7 @@
 - type: craftingRecipe
   id: CrayonGreen
   tag: CFRecipeWorkbench
+  category: Goods
   craftTime: 1
   requirements:
   - !type:CFItemRequirement
@@ -287,6 +502,7 @@
 - type: craftingRecipe
   id: CrayonPurple
   tag: CFRecipeWorkbench
+  category: Goods
   craftTime: 1
   requirements:
   - !type:CFItemRequirement
@@ -300,6 +516,7 @@
 - type: craftingRecipe
   id: FluteInstrument
   tag: CFRecipeWorkbench
+  category: Goods
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -310,6 +527,7 @@
 - type: craftingRecipe
   id: LyraInstrument
   tag: CFRecipeWorkbench
+  category: Goods
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -323,6 +541,7 @@
 - type: craftingRecipe
   id: LuteInstrument
   tag: CFRecipeWorkbench
+  category: Goods
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -336,6 +555,7 @@
 - type: craftingRecipe
   id: OpenSign
   tag: CFRecipeWorkbench
+  category: Goods
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -346,6 +566,7 @@
 - type: craftingRecipe
   id: RopeFromCloth
   tag: CFRecipeWorkbench
+  category: Tools
   craftTime: 4
   requirements:
   - !type:CFStackRequirement
@@ -356,6 +577,7 @@
 - type: craftingRecipe
   id: FloorTileFoundation
   tag: CFRecipeWorkbench
+  category: Building
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -367,6 +589,7 @@
 - type: craftingRecipe
   id: FloorTileMarbleBrick
   tag: CFRecipeWorkbench
+  category: Building
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -378,6 +601,7 @@
 - type: craftingRecipe
   id: FloorTileMarbleSmallbricks
   tag: CFRecipeWorkbench
+  category: Building
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -389,6 +613,7 @@
 - type: craftingRecipe
   id: FloorTileStonebricks
   tag: CFRecipeWorkbench
+  category: Building
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -400,6 +625,7 @@
 - type: craftingRecipe
   id: FloorTileStonebricksSmallCarved
   tag: CFRecipeWorkbench
+  category: Building
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -411,6 +637,7 @@
 - type: craftingRecipe
   id: FloorTileStonebricksSmallCarved2
   tag: CFRecipeWorkbench
+  category: Building
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -422,6 +649,7 @@
 - type: craftingRecipe
   id: FloorTileStonebricksSquareCarved
   tag: CFRecipeWorkbench
+  category: Building
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -433,6 +661,7 @@
 - type: craftingRecipe
   id: FloorTileOakWoodplanks
   tag: CFRecipeWorkbench
+  category: Building
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -444,6 +673,7 @@
 - type: craftingRecipe
   id: FloorTileOakWoodplanksBig
   tag: CFRecipeWorkbench
+  category: Building
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -455,6 +685,7 @@
 - type: craftingRecipe
   id: FloorTileOakWoodplanksCruciform
   tag: CFRecipeWorkbench
+  category: Building
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -466,6 +697,7 @@
 - type: craftingRecipe
   id: FloorTileOakWoodplanksStairs
   tag: CFRecipeWorkbench
+  category: Building
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -477,6 +709,7 @@
 - type: craftingRecipe
   id: FloorTileBirchWoodplanks
   tag: CFRecipeWorkbench
+  category: Building
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -488,6 +721,7 @@
 - type: craftingRecipe
   id: FloorTileBirchWoodplanksBig
   tag: CFRecipeWorkbench
+  category: Building
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -499,6 +733,7 @@
 - type: craftingRecipe
   id: FloorTileBirchWoodplanksCruciform
   tag: CFRecipeWorkbench
+  category: Building
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -510,6 +745,7 @@
 - type: craftingRecipe
   id: FloorTileBirchWoodplanksStairs
   tag: CFRecipeWorkbench
+  category: Building
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -519,8 +755,37 @@
   resultCount: 4
 
 - type: craftingRecipe
+  id: SackFarming
+  tag: CFRecipeSewing
+  category: Farming
+  craftTime: 2
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFString
+    count: 1
+  - !type:CFStackRequirement
+    stack: CFCloth
+    count: 5
+  result: CFSackFarming
+
+- type: craftingRecipe
+  id: SackFarmingSeed
+  tag: CFRecipeSewing
+  category: Farming
+  craftTime: 2
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFString
+    count: 1
+  - !type:CFStackRequirement
+    stack: CFCloth
+    count: 2
+  result: CFSackFarmingSeed
+
+- type: craftingRecipe
   id: HumanPlushie
   tag: CFRecipeSewing
+  category: Goods
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -534,6 +799,7 @@
 - type: craftingRecipe
   id: DwarfPlushie
   tag: CFRecipeSewing
+  category: Goods
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -550,6 +816,7 @@
 - type: craftingRecipe
   id: GoblinPlushie
   tag: CFRecipeSewing
+  category: Goods
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -566,6 +833,7 @@
 - type: craftingRecipe
   id: TieflingPlushie
   tag: CFRecipeSewing
+  category: Goods
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -582,6 +850,7 @@
 - type: craftingRecipe
   id: SilvaPlushie
   tag: CFRecipeSewing
+  category: Goods
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -598,6 +867,7 @@
 - type: craftingRecipe
   id: CarcatPlushie
   tag: CFRecipeSewing
+  category: Goods
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -614,6 +884,7 @@
 - type: craftingRecipe
   id: FrogPlushie
   tag: CFRecipeSewing
+  category: Goods
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -630,6 +901,7 @@
 - type: craftingRecipe
   id: FloorCarpetItemBlue10
   tag: CFRecipeSewing
+  category: Building
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -646,6 +918,7 @@
 - type: craftingRecipe
   id: FloorCarpetItemRed10
   tag: CFRecipeSewing
+  category: Building
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -662,6 +935,7 @@
 - type: craftingRecipe
   id: FloorCarpetItemCyan10
   tag: CFRecipeSewing
+  category: Building
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -681,6 +955,7 @@
 - type: craftingRecipe
   id: FloorCarpetItemGreen10
   tag: CFRecipeSewing
+  category: Building
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -697,6 +972,7 @@
 - type: craftingRecipe
   id: FloorCarpetItemOrange10
   tag: CFRecipeSewing
+  category: Building
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -716,6 +992,7 @@
 - type: craftingRecipe
   id: FloorCarpetItemPurple10
   tag: CFRecipeSewing
+  category: Building
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -732,6 +1009,7 @@
 - type: craftingRecipe
   id: FloorCarpetItemBlack10
   tag: CFRecipeSewing
+  category: Building
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -748,6 +1026,7 @@
 - type: craftingRecipe
   id: FloorCarpetItemYellow10
   tag: CFRecipeSewing
+  category: Building
   craftTime: 2
   requirements:
   - !type:CFStackRequirement

@@ -94,7 +94,7 @@ public sealed partial class CFPlantGatherableComponent : Component
     public SoundSpecifier GatherSound = new SoundPathSpecifier("/Audio/Effects/Footsteps/grass1.ogg");
 }
 
-/// <summary>Grows into <see cref="PlantProto"/> when planted in soil.</summary>
+/// <summary>Grows into <see cref="PlantProto"/> when planted in soil: a <see cref="SoilTile"/>, or anything with <see cref="CFSoilComponent"/>.</summary>
 [RegisterComponent, NetworkedComponent]
 public sealed partial class CFSeedComponent : Component
 {
@@ -107,6 +107,13 @@ public sealed partial class CFSeedComponent : Component
     [DataField]
     public HashSet<ProtoId<ContentTileDefinition>> SoilTile = new() { "CFFloorDirtSeedbed" };
 }
+
+/// <summary>
+/// Soil a seed can go in wherever it stands, such as a built seedbed. Dug soil is a tile instead
+/// (<see cref="CFSeedComponent.SoilTile"/>). A plant growing in it goes with it when it is taken up.
+/// </summary>
+[RegisterComponent, NetworkedComponent]
+public sealed partial class CFSoilComponent : Component;
 
 public enum CFPlantVisualLayers : byte
 {

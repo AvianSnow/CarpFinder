@@ -38,7 +38,13 @@ public sealed partial class CFFormulaComponent : Component
     [DataField]
     public List<ProtoId<CFCraftingRecipePrototype>> Recipes = new();
 
-    /// <summary>A basic crafter's book: also teaches every common level 0 recipe.</summary>
+    /// <summary>
+    /// A trade's handbook: also teaches every common recipe of these kinds, up to <see cref="MaxLevel"/>.
+    /// </summary>
     [DataField]
-    public bool AllBasic;
+    public List<CFRecipeCategory> Categories = new();
+
+    /// <summary>The highest item level <see cref="Categories"/> teaches.</summary>
+    [DataField]
+    public int MaxLevel;
 }

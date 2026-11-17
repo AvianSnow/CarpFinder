@@ -62,12 +62,15 @@ public sealed partial class CFWorkbenchSystem : EntitySystem
                 learned++;
         }
 
-        if (formula.Comp.AllBasic)
+        if (formula.Comp.Categories.Count > 0)
         {
             foreach (var recipe in _prototypes.EnumeratePrototypes<CFCraftingRecipePrototype>())
             {
+                if (!formula.Comp.Categories.Contains(recipe.Category))
+                    continue;
+
                 var (level, rarity) = ItemStats(recipe);
-                if (level == 0 && rarity == CFRarity.Common && book.Known.Add(recipe.ID))
+                if (level <= formula.Comp.MaxLevel && rarity == CFRarity.Common && book.Known.Add(recipe.ID))
                     learned++;
             }
         }

@@ -4,6 +4,7 @@
 - type: craftingRecipe
   id: Dagger
   tag: CFRecipeAnvil
+  category: Weapons
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -14,6 +15,7 @@
 - type: craftingRecipe
   id: Sickle
   tag: CFRecipeAnvil
+  category: Weapons
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -27,6 +29,7 @@
 - type: craftingRecipe
   id: Hatchet
   tag: CFRecipeAnvil
+  category: Weapons
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -40,6 +43,7 @@
 - type: craftingRecipe
   id: LightHammer
   tag: CFRecipeAnvil
+  category: Weapons
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -53,6 +57,7 @@
 - type: craftingRecipe
   id: Shovel
   tag: CFRecipeAnvil
+  category: Tools
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -66,6 +71,7 @@
 - type: craftingRecipe
   id: Spear
   tag: CFRecipeAnvil
+  category: Weapons
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -79,6 +85,7 @@
 - type: craftingRecipe
   id: Pick
   tag: CFRecipeAnvil
+  category: Tools
   craftTime: 3
   requirements:
   - !type:CFStackRequirement
@@ -92,6 +99,7 @@
 - type: craftingRecipe
   id: Scimitar
   tag: CFRecipeAnvil
+  category: Weapons
   craftTime: 3
   requirements:
   - !type:CFStackRequirement
@@ -105,6 +113,7 @@
 - type: craftingRecipe
   id: Longsword
   tag: CFRecipeAnvil
+  category: Weapons
   craftTime: 3
   requirements:
   - !type:CFStackRequirement
@@ -118,6 +127,7 @@
 - type: craftingRecipe
   id: Rapier
   tag: CFRecipeAnvil
+  category: Weapons
   craftTime: 3
   requirements:
   - !type:CFStackRequirement
@@ -131,6 +141,7 @@
 - type: craftingRecipe
   id: BattleAxe
   tag: CFRecipeAnvil
+  category: Weapons
   craftTime: 3
   requirements:
   - !type:CFStackRequirement
@@ -144,6 +155,7 @@
 - type: craftingRecipe
   id: Warhammer
   tag: CFRecipeAnvil
+  category: Weapons
   craftTime: 3
   requirements:
   - !type:CFStackRequirement
@@ -157,6 +169,7 @@
 - type: craftingRecipe
   id: Greatsword
   tag: CFRecipeAnvil
+  category: Weapons
   craftTime: 4
   requirements:
   - !type:CFStackRequirement
@@ -170,6 +183,7 @@
 - type: craftingRecipe
   id: Buckler
   tag: CFRecipeAnvil
+  category: Armor
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -183,6 +197,7 @@
 - type: craftingRecipe
   id: SteelShield
   tag: CFRecipeAnvil
+  category: Armor
   craftTime: 3
   requirements:
   - !type:CFStackRequirement
@@ -193,6 +208,7 @@
 - type: craftingRecipe
   id: Dart
   tag: CFRecipeAnvil
+  category: Weapons
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -204,6 +220,7 @@
 - type: craftingRecipe
   id: Staff
   tag: CFRecipeWorkbench
+  category: Weapons
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -214,6 +231,7 @@
 - type: craftingRecipe
   id: Longbow
   tag: CFRecipeWorkbench
+  category: Weapons
   craftTime: 3
   requirements:
   - !type:CFStackRequirement
@@ -227,6 +245,7 @@
 - type: craftingRecipe
   id: Arrow
   tag: CFRecipeWorkbench
+  category: Weapons
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -238,6 +257,7 @@
 - type: craftingRecipe
   id: Sling
   tag: CFRecipeLeatherWorking
+  category: Weapons
   craftTime: 2
   requirements:
   - !type:CFStackRequirement

@@ -34,13 +34,22 @@ public sealed partial class CFWorkbenchWindow : DefaultWindow
     public void UpdateState(CFWorkbenchState state)
     {
         _entries = state.Entries;
-        _entries.Sort((a, b) => string.CompareOrdinal(ResultName(a), ResultName(b)));
+        _entries.Sort((a, b) =>
+        {
+            var byCategory = Category(a).CompareTo(Category(b));
+            return byCategory != 0 ? byCategory : string.CompareOrdinal(ResultName(a), ResultName(b));
+        });
         Rebuild();
     }
 
     private string ResultName(CFWorkbenchEntry entry)
     {
         return _prototypes.Index(_prototypes.Index(entry.Recipe).Result).Name;
+    }
+
+    private CFRecipeCategory Category(CFWorkbenchEntry entry)
+    {
+        return _prototypes.Index(entry.Recipe).Category;
     }
 
     private void Rebuild()
@@ -50,6 +59,7 @@ public sealed partial class CFWorkbenchWindow : DefaultWindow
 
         var filter = SearchBar.Text.Trim();
         CFWorkbenchEntry? selected = null;
+        CFRecipeCategory? heading = null;
 
         foreach (var entry in _entries)
         {
@@ -59,6 +69,19 @@ public sealed partial class CFWorkbenchWindow : DefaultWindow
             var name = ResultName(entry);
             if (filter.Length > 0 && !name.Contains(filter, StringComparison.OrdinalIgnoreCase))
                 continue;
+
+            // Entries are sorted by category, so a new one starts a new heading.
+            var category = Category(entry);
+            if (heading != category)
+            {
+                heading = category;
+                RecipeList.AddChild(new Label
+                {
+                    Text = Loc.GetString($"cf-recipe-category-{category.ToString().ToLowerInvariant()}"),
+                    StyleClasses = { "LabelSubText" },
+                    Margin = new Thickness(0, 4, 0, 0),
+                });
+            }
 
             var button = new Button { Text = name, ToggleMode = false };
             if (!entry.HasMaterials || entry.Blocked != null)

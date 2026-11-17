@@ -17,6 +17,10 @@ public sealed partial class CFCraftingRecipePrototype : IPrototype
     [DataField(required: true)]
     public ProtoId<TagPrototype> Tag;
 
+    /// <summary>What kind of thing it makes. A formula book teaches one or more categories, and the bench window groups by it.</summary>
+    [DataField(required: true)]
+    public CFRecipeCategory Category;
+
     [DataField]
     public TimeSpan CraftTime = TimeSpan.FromSeconds(1);
 
@@ -32,4 +36,23 @@ public sealed partial class CFCraftingRecipePrototype : IPrototype
     /// <summary>The result is a rune. It is put on a matching item on the bench instead of being made. See <c>CFRuneSystem</c>.</summary>
     [DataField]
     public bool AttachRune;
+}
+
+/// <summary>
+/// The kinds of recipe. Each has a name in <c>crafting.ftl</c> (<c>cf-recipe-category-tools</c>, ...).
+/// </summary>
+public enum CFRecipeCategory : byte
+{
+    Tools,
+    Materials,
+    Weapons,
+    Armor,
+    Clothing,
+    Bags,
+    Building,
+    Food,
+    Farming,
+    Alchemy,
+    Goods,
+    Runes,
 }

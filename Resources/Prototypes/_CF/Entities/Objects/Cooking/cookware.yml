@@ -1,0 +1,231 @@
+# Pots, pans and pie plates, from CP14's Objects/Specific/Cooking. Ingredients go in the storage, and a fire under
+# it (anything with CFFireHeater: the bonfire, the furnace) cooks them into a dish of the cookingRecipe they fit.
+
+- type: entity
+  abstract: true
+  parent: BaseStorageItem
+  id: CFCookerBase
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    noRot: true
+  - type: Appearance
+  - type: GenericVisualizer
+    visuals:
+      enum.StorageVisuals.Open:
+        base:
+          True: { state: opened }
+          False: { state: closed }
+      enum.CFCookingVisuals.Cooking:
+        cook:
+          True: { visible: true }
+          False: { visible: false }
+      enum.CFCookingVisuals.Burning:
+        burn:
+          True: { visible: true }
+          False: { visible: false }
+  - type: ContainerContainer
+    containers:
+      storagebase: !type:Container
+        ents: []
+  - type: Storage
+    maxItemSize: Normal
+    grid:
+    - 0,0,3,3
+    whitelist:
+      components:
+      - Edible
+      tags:
+      - CFFitInFryingPan
+    blacklist:
+      components:
+      - CFFoodHolder
+      - FoodSequenceStartPoint
+      - SolutionTransfer
+  - type: Temperature
+  - type: DoAfter
+  - type: AmbientSound
+    enabled: false
+    volume: 5
+    range: 5
+    sound:
+      path: /Audio/_CP14/Ambience/pan_frying.ogg
+
+- type: entity
+  parent: CFCookerBase
+  id: CFCookingPot
+  name: cooking pot
+  description: A big iron pot. Fill it with water and whatever you have, set it on a fire, and ladle the soup into bowls.
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Consumable/Food/Soups/cooking_pot.rsi
+    layers:
+    - state: base
+      map: ["enum.StorageVisualLayers.Base"]
+    - map: ["cp14_foodLayers"]
+    - state: closed
+      map: [ base ]
+    - state: cooking
+      visible: false
+      map: [ cook ]
+    - state: cooking
+      visible: false
+      color: "#38312e"
+      map: [ burn ]
+  - type: Solution
+    id: cooker
+    solution:
+      maxVol: 150
+  - type: CFFoodHolder
+    foodType: Soup
+    solutionId: cooker
+    displacementRsiPath: _CP14/Objects/Consumable/Food/Soups/displacement_pot.rsi
+    maxDisplacementFillLevels: 2
+    canGiveFood: true
+  - type: CFFoodCooker
+    foodType: Soup
+    solutionId: cooker
+  - type: Item
+    size: Ginormous
+  - type: MultiHandedItem
+  - type: RefillableSolution
+    solution: cooker
+  - type: Spillable
+    solution: cooker
+  - type: SolutionItemStatus
+    solution: cooker
+  - type: ExaminableSolution
+    solution: cooker
+  - type: AmbientSound
+    sound:
+      path: /Audio/_CP14/Ambience/pot_brewing.ogg
+  - type: PhysicalComposition
+    materialComposition:
+      CFIron: 30
+  - type: Storage
+    storageOpenSound: /Audio/_CP14/Effects/pan_open.ogg
+    storageCloseSound: /Audio/_CP14/Effects/pan_close.ogg
+    storageInsertSound: /Audio/Items/toolbox_insert.ogg
+    storageRemoveSound: /Audio/Items/toolbox_insert.ogg
+  - type: CFBulk
+    bulk: 2
+  - type: CFItemPrice
+    copper: 80 # ours: 8 sp, between Player Core's cookware (1 gp for a set) and a single pot
+
+- type: entity
+  parent: CFCookerBase
+  id: CFFryingPan
+  name: frying pan
+  description: "You can always watch three things: how fire burns, how water flows, and how delicious meat is cooked."
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Consumable/Food/Meals/frying_pan.rsi
+    layers:
+    - state: base
+      map: ["enum.StorageVisualLayers.Base"]
+    - map: ["cp14_foodLayers"]
+    - state: closed
+      map: [ base ]
+    - state: cooking
+      visible: false
+      map: [ cook ]
+    - state: cooking
+      visible: false
+      color: "#38312e"
+      map: [ burn ]
+  - type: Storage
+    storageOpenSound: /Audio/_CP14/Effects/pan_open.ogg
+    storageCloseSound: /Audio/_CP14/Effects/pan_close.ogg
+    storageInsertSound: /Audio/Items/toolbox_insert.ogg
+    storageRemoveSound: /Audio/Items/toolbox_insert.ogg
+  - type: Solution
+    id: cooker
+    solution:
+      maxVol: 100
+  - type: CFFoodHolder
+    foodType: Meal
+    solutionId: cooker
+    displacementRsiPath: _CP14/Objects/Consumable/Food/Meals/displacement_pan.rsi
+    maxDisplacementFillLevels: 2
+    canGiveFood: true
+  - type: CFFoodCooker
+    foodType: Meal
+    solutionId: cooker
+  - type: Item
+    size: Ginormous
+  - type: MultiHandedItem
+  - type: RefillableSolution
+    solution: cooker
+  - type: DrainableSolution
+    solution: cooker
+  - type: Spillable
+    solution: cooker
+  - type: PhysicalComposition
+    materialComposition:
+      CFIron: 20
+      CFWoodenPlanks: 10
+  - type: CFBulk
+    bulk: 1
+  - type: CFItemPrice
+    copper: 50 # ours: 5 sp
+
+# The pie is baked and eaten in its plate, and cut into pieces with a knife.
+- type: entity
+  parent: CFCookerBase
+  id: CFPlatePie
+  name: pie plate
+  description: A mould for a pie. Fill it with dough and a filling, bake it on a fire, and cut it with a knife.
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Consumable/Food/Pies/plate.rsi
+    layers:
+    - state: iron
+    - map: ["cp14_foodLayers"]
+    - map: ["enum.StorageFillLayers.Fill"]
+  - type: Item
+    size: Normal
+    shape:
+    - 0,0,1,1
+  - type: PhysicalComposition
+    materialComposition:
+      CFIron: 10
+  - type: CFFoodCooker
+    foodType: Pie
+    solutionId: cooker
+  - type: CFFoodHolder
+    foodType: Pie
+    solutionId: cooker
+  - type: Storage
+    maxItemSize: Small
+    grid:
+    - 0,0,2,2
+  - type: StorageFillVisualizer
+    maxFillLevels: 3
+    fillBaseName: raw
+  - type: Solution
+    id: cooker
+    solution:
+      maxVol: 50
+  - type: GenericVisualizer
+    visuals:
+      enum.CFCookingVisuals.Cooking:
+        cook:
+          True: { visible: true }
+          False: { visible: false }
+      enum.CFCookingVisuals.Burning:
+        burn:
+          True: { visible: true }
+          False: { visible: false }
+  - type: Edible
+    edible: Food
+    transferAmount: 2.5
+    solution: cooker
+    destroyOnEmpty: false
+    trash:
+    - CFPlatePie
+  - type: Spillable
+    solution: cooker
+  - type: CFBulk
+    bulk: 0.1
+  - type: CFItemPrice
+    copper: 20 # ours: 2 sp

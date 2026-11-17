@@ -206,6 +206,34 @@ public sealed class CFOutdoorsTest : GameTest
         });
     }
 
+    /// <summary>A built seedbed is soil on any floor, and what grows in it goes when it is taken up.</summary>
+    [Test]
+    public async Task ABuiltSeedbedTakesASeedAndTakesThePlantWithIt()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        EntityUid bed = default;
+        EntityUid plant = default;
+        await Server.WaitAssertion(() =>
+        {
+            var item = SEntMan.SpawnEntity("CFSeedWheat", _map.Local(2, 1));
+            var seed = new Entity<CFSeedComponent>(item, SEntMan.GetComponent<CFSeedComponent>(item));
+            Assert.That(Farming.CanPlant(seed, _map.Local(0, 0), null), Is.False, "Bare floor is not soil.");
+
+            bed = SEntMan.SpawnEntity("CFSeedbed", _map.Local(0, 0));
+            Assert.That(SEntMan.GetComponent<TransformComponent>(bed).Anchored, "A seedbed is found by its tile, so it must be anchored.");
+            Assert.That(Farming.CanPlant(seed, _map.Local(0, 0), null));
+
+            plant = Farming.TryPlant(seed, _map.Local(0, 0), null)!.Value;
+            var second = SEntMan.SpawnEntity("CFSeedWheat", _map.Local(2, 1));
+            Assert.That(Farming.CanPlant((second, SEntMan.GetComponent<CFSeedComponent>(second)), _map.Local(0, 0), null), Is.False);
+
+            SEntMan.DeleteEntity(bed);
+        });
+
+        await Pair.RunTicksSync(5);
+        await Server.WaitAssertion(() => Assert.That(SEntMan.Deleted(plant), "The plant should go with its seedbed."));
+    }
+
     [Test]
     public async Task CropsGrowOnSunAndWaterThenHarvest()
     {

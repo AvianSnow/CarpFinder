@@ -1,0 +1,229 @@
+# Dishes a pot, pan or pie plate makes. From CP14's Recipes/Cooking.
+
+- type: cookingRecipe
+  id: InedibleMeal
+  foodType: Meal
+  foodData:
+    name: cf-meal-recipe-trash-name
+    desc: cf-meal-recipe-trash-desc
+    visuals:
+    - sprite: _CP14/Objects/Consumable/Food/Meals/misc.rsi
+      state: trash
+  requirements:
+  - !type:CFAlwaysMet
+
+# 1 req
+
+- type: cookingRecipe
+  id: GreenSalad
+  foodType: Meal
+  foodData:
+    name: cf-meal-recipe-green-salad-name
+    desc: cf-meal-recipe-green-salad-desc
+    visuals:
+    - sprite: _CP14/Objects/Consumable/Food/Meals/misc.rsi
+      state: green_salad
+  requirements:
+  - !type:CFTagRequired
+    tags:
+    - CFSalad
+    - CFVegetable
+
+- type: cookingRecipe
+  id: MeatPlate
+  foodType: Meal
+  foodData:
+    name: cf-meal-recipe-meat-plate-name
+    desc: cf-meal-recipe-meat-plate-desc
+    visuals:
+    - sprite: _CP14/Objects/Consumable/Food/Meals/misc.rsi
+      state: meat_plate
+  requirements:
+  - !type:CFTagRequired
+    tags: 
+    - CFMeat
+    - CFMeatSlice
+
+- type: cookingRecipe
+  id: BreadPlate
+  foodType: Meal
+  foodData:
+    name: cf-meal-recipe-bread-plate-name
+    desc: cf-meal-recipe-bread-plate-desc
+    visuals:
+    - sprite: _CP14/Objects/Consumable/Food/Meals/misc.rsi
+      state: bread_plate
+  requirements:
+  - !type:CFTagRequired
+    tags:
+    - CFDough
+
+- type: cookingRecipe
+  id: MashedPotato
+  foodType: Meal
+  foodData:
+    name: cf-meal-recipe-mashed-potato-name
+    desc: cf-meal-recipe-mashed-potato-desc
+    visuals:
+    - sprite: _CP14/Objects/Consumable/Food/Meals/misc.rsi
+      state: mashed_potato
+  requirements:
+  - !type:CFTagRequired
+    tags: 
+    - CFPotato
+
+# 2 req
+
+- type: cookingRecipe
+  id: GreenSaladMeat
+  foodType: Meal
+  foodData:
+    name: cf-meal-recipe-green-salad-meat-name
+    desc: cf-meal-recipe-green-salad-meat-desc
+    visuals:
+    - sprite: _CP14/Objects/Consumable/Food/Meals/misc.rsi
+      state: green_salad_meat
+  requirements:
+  - !type:CFTagRequired
+    tags: 
+    - CFSalad
+    - CFVegetable
+  - !type:CFTagRequired
+    tags: 
+    - CFMeat
+
+- type: cookingRecipe
+  id: MonsterEgg
+  foodType: Meal
+  foodData:
+    name: cf-meal-recipe-monster-egg-name
+    desc: cf-meal-recipe-monster-egg-desc
+    visuals:
+    - sprite: _CP14/Objects/Consumable/Food/Meals/misc.rsi
+      state: monster_egg
+  requirements:
+  - !type:CFTagRequired
+    tags: 
+    - CFEgg
+  - !type:CFTagRequired
+    tags: 
+    - CFMeatMonster
+
+- type: cookingRecipe
+  id: MashedPotatoMeat
+  foodType: Meal
+  foodData:
+    name: cf-meal-recipe-mashed-potato-meat-name
+    desc: cf-meal-recipe-mashed-potato-meat-desc
+    visuals:
+    - sprite: _CP14/Objects/Consumable/Food/Meals/misc.rsi
+      state: mashed_potato_meat
+  requirements:
+  - !type:CFTagRequired
+    tags: 
+    - CFPotato
+  - !type:CFTagRequired
+    tags:
+    - CFMeat
+
+- type: cookingRecipe
+  id: MashedPotatoSalad
+  foodType: Meal
+  foodData:
+    name: cf-meal-recipe-mashed-potato-salad-name
+    desc: cf-meal-recipe-mashed-potato-salad-desc
+    visuals:
+    - sprite: _CP14/Objects/Consumable/Food/Meals/misc.rsi
+      state: mashed_potato_salad
+  requirements:
+  - !type:CFTagRequired
+    tags: 
+    - CFPotato
+  - !type:CFTagRequired
+    tags:
+    - CFSalad
+    - CFVegetable
+
+- type: cookingRecipe
+  id: CheeseBread
+  foodType: Meal
+  foodData:
+    name: cf-meal-recipe-cheese-bread-name
+    desc: cf-meal-recipe-cheese-bread-desc
+    visuals:
+    - sprite: _CP14/Objects/Consumable/Food/Meals/misc.rsi
+      state: cheese_bread
+  requirements:
+  - !type:CFTagRequired
+    tags: 
+    - CFDough
+  - !type:CFTagRequired
+    tags:
+    - CFCheese
+
+# 3 req
+
+- type: cookingRecipe
+  id: ZellasianBreakfast
+  foodType: Meal
+  foodData:
+    name: cf-meal-recipe-zellasian-breakfast-name
+    desc: cf-meal-recipe-zellasian-breakfast-desc
+    visuals:
+    - sprite: _CP14/Objects/Consumable/Food/Meals/misc.rsi
+      state: zellasian_breakfast
+  requirements:
+  - !type:CFTagRequired
+    tags: 
+    - CFEgg
+  - !type:CFTagRequired
+    tags: 
+    - CFDough
+  - !type:CFTagRequired
+    tags: 
+    - CFMeat
+
+- type: cookingRecipe
+  id: StuffedPotato
+  foodType: Meal
+  foodData:
+    name: cf-meal-recipe-stuffed-potato-name
+    desc: cf-meal-recipe-stuffed-potato-desc
+    visuals:
+    - sprite: _CP14/Objects/Consumable/Food/Meals/misc.rsi
+      state: stuffed_potato
+  requirements:
+  - !type:CFTagRequired
+    tags:
+    - CFMeatSlice
+  - !type:CFTagRequired
+    tags:
+    - CFCheese
+  - !type:CFTagRequired
+    tags:
+    - CFPotato
+
+# 4 req
+
+- type: cookingRecipe
+  id: HamInCheese
+  foodType: Meal
+  foodData:
+    name: cf-meal-recipe-pig-cheese-name
+    desc: cf-meal-recipe-pig-cheese-desc
+    visuals:
+    - sprite: _CP14/Objects/Consumable/Food/Meals/misc.rsi
+      state: pig_cheese
+  requirements:
+  - !type:CFTagRequired
+    tags:
+    - CFMeatPig
+  - !type:CFTagRequired
+    tags:
+    - CFMeatLeg
+  - !type:CFTagRequired
+    tags:
+    - CFCheese
+  - !type:CFTagRequired
+    tags:
+    - CFSalad

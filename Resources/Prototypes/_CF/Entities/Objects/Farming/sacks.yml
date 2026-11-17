@@ -1,0 +1,81 @@
+# Sacks, from CP14's Objects/Specific/Farming/sack.yml. Both pick up a whole pile at once.
+
+- type: entity
+  parent: BaseStorageItem
+  id: CFSackFarming
+  name: produce sack
+  description: A cloth sack for carrying a harvest.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Storage/sack.rsi
+    state: icon
+  - type: Item
+    size: Huge
+    shape:
+    - 0,0,3,3
+  - type: Storage
+    maxItemSize: Normal
+    grid:
+    - 0,0,3,3
+    quickInsert: true
+    areaInsert: true
+  - type: Dumpable
+  - type: PhysicalComposition
+    materialComposition:
+      CFCloth: 55
+  - type: CFBulk
+    bulk: 0.1
+  - type: CFItemPrice
+    copper: 1 # Player Core: a sack is 1 cp
+
+- type: entity
+  parent: BaseStorageItem
+  id: CFSackFarmingSeed
+  name: seed sack
+  description: A small sack for seeds.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Storage/sack.rsi
+    state: seed
+  - type: Item
+    size: Normal
+    shape:
+    - 0,0,3,3
+  - type: Storage
+    maxItemSize: Small
+    grid:
+    - 0,0,3,3
+    quickInsert: true
+    areaInsert: true
+  - type: Dumpable
+  - type: PhysicalComposition
+    materialComposition:
+      CFCloth: 25
+  - type: CFBulk
+    bulk: 0.1
+  - type: CFItemPrice
+    copper: 1
+
+# A farmer's start: one of each seed that has to be sown.
+- type: entity
+  parent: CFSackFarmingSeed
+  id: CFSackFarmingSeedFull
+  name: seed sack
+  suffix: Full
+  description: A small sack of seeds, one kind of each.
+  components:
+  - type: StorageFill
+    contents:
+    - id: CFSeedWheat
+      amount: 2
+    - id: CFSeedPumpkin
+    - id: CFSeedCucumber
+    - id: CFSeedTomato
+    - id: CFSeedCabbage
+    - id: CFSeedPepper
+    - id: CFSeedSage
+    - id: CFSeedCotton
+  - type: CFItemPrice
+    copper: 50 # ours: nine seeds at 5 cp, and the sack

@@ -15,25 +15,211 @@
   - type: CFItemPrice
     copper: 50 # level 0 formula: 5 sp
 
+# A handbook per trade: reading one teaches every common level 0 recipe of its kind.
+# A recipe above level 0 still needs its own formula.
 - type: entity
+  abstract: true
   parent: BaseItem
-  id: CFBasicCraftersBook
-  name: basic crafter's book
-  description: Formulas for all the common level 0 items. Read it in hand to learn them.
+  id: CFBaseFormulaBook
+  description: A trade's handbook. Read it in hand to learn its recipes.
   components:
   - type: Item
     size: Small
   - type: Sprite
     sprite: Objects/Misc/books.rsi
-    state: book_icon
-  - type: CFFormula
-    allBasic: true
   - type: CFItem
     level: 0
   - type: CFBulk
     bulk: 0.1
   - type: CFItemPrice
-    copper: 10 # 1 sp
+    copper: 50 # ours: 5 sp, the price of one level 0 formula
+
+- type: entity
+  parent: CFBaseFormulaBook
+  id: CFFormulaBookTools
+  name: toolmaker's handbook
+  description: Formulas for tools, from a bucket to a set of scissors. Read it in hand to learn them.
+  components:
+  - type: Sprite
+    layers:
+    - state: paper
+    - state: cover_base
+      color: "#6b4a2b"
+    - state: icon_wrench
+    - state: detail_rivets
+  - type: CFFormula
+    categories:
+    - Tools
+
+- type: entity
+  parent: CFBaseFormulaBook
+  id: CFFormulaBookMaterials
+  name: smelter's primer
+  description: Formulas for bars, glass, leather, cloth and string. Read it in hand to learn them.
+  components:
+  - type: Sprite
+    layers:
+    - state: paper
+    - state: cover_base
+      color: "#5a5f66"
+    - state: icon_diamond
+    - state: detail_rivets
+  - type: CFFormula
+    categories:
+    - Materials
+
+- type: entity
+  parent: CFBaseFormulaBook
+  id: CFFormulaBookWeapons
+  name: weaponsmith's handbook
+  description: Formulas for weapons and ammunition. Read it in hand to learn them.
+  components:
+  - type: Sprite
+    layers:
+    - state: paper
+    - state: cover_base
+      color: "#7a1f1f"
+    - state: icon_stunbaton
+    - state: detail_rivets
+  - type: CFFormula
+    categories:
+    - Weapons
+
+- type: entity
+  parent: CFBaseFormulaBook
+  id: CFFormulaBookArmor
+  name: armorer's handbook
+  description: Formulas for shields and armor. Read it in hand to learn them.
+  components:
+  - type: Sprite
+    layers:
+    - state: paper
+    - state: cover_base
+      color: "#2f4f7a"
+    - state: icon_temple
+    - state: detail_rivets
+  - type: CFFormula
+    categories:
+    - Armor
+
+- type: entity
+  parent: CFBaseFormulaBook
+  id: CFFormulaBookClothing
+  name: tailor's pattern book
+  description: Formulas for clothing. Read it in hand to learn them.
+  components:
+  - type: Sprite
+    layers:
+    - state: paper
+    - state: cover_base
+      color: "#7a3f7a"
+    - state: icon_letter_P
+    - state: detail_rivets
+  - type: CFFormula
+    categories:
+    - Clothing
+
+- type: entity
+  parent: CFBaseFormulaBook
+  id: CFFormulaBookBags
+  name: saddler's pattern book
+  description: Formulas for backpacks, satchels and belts. Read it in hand to learn them.
+  components:
+  - type: Sprite
+    layers:
+    - state: paper
+    - state: cover_base
+      color: "#8a5a2b"
+    - state: icon_briefcase
+    - state: detail_rivets
+  - type: CFFormula
+    categories:
+    - Bags
+
+- type: entity
+  parent: CFBaseFormulaBook
+  id: CFFormulaBookBuilding
+  name: builder's manual
+  description: Formulas for floor tiles, carpets and wallpaper. Read it in hand to learn them.
+  components:
+  - type: Sprite
+    layers:
+    - state: paper
+    - state: cover_base
+      color: "#6e6a5c"
+    - state: icon_mount
+    - state: detail_rivets
+  - type: CFFormula
+    categories:
+    - Building
+
+- type: entity
+  parent: CFBaseFormulaBook
+  id: CFFormulaBookFood
+  name: cookbook
+  description: Formulas for tableware, dough and other things made at a cooking table. Read it in hand to learn them.
+  components:
+  - type: Sprite
+    layers:
+    - state: paper
+    - state: cover_base
+      color: "#b0702a"
+    - state: icon_apple
+    - state: detail_rivets
+  - type: CFFormula
+    categories:
+    - Food
+
+- type: entity
+  parent: CFBaseFormulaBook
+  id: CFFormulaBookFarming
+  name: farmer's almanac
+  description: Formulas for seeds and farming gear. Read it in hand to learn them.
+  components:
+  - type: Sprite
+    layers:
+    - state: paper
+    - state: cover_base
+      color: "#3f7a35"
+    - state: icon_cabbage
+    - state: detail_rivets
+  - type: CFFormula
+    categories:
+    - Farming
+
+- type: entity
+  parent: CFBaseFormulaBook
+  id: CFFormulaBookAlchemy
+  name: alchemist's notebook
+  description: Formulas for vials and other alchemist's gear. Read it in hand to learn them.
+  components:
+  - type: Sprite
+    layers:
+    - state: paper
+    - state: cover_base
+      color: "#2a7a72"
+    - state: icon_chemical
+    - state: detail_rivets
+  - type: CFFormula
+    categories:
+    - Alchemy
+
+- type: entity
+  parent: CFBaseFormulaBook
+  id: CFFormulaBookGoods
+  name: toymaker's catalog
+  description: Formulas for toys, instruments, crayons and signs. Read it in hand to learn them.
+  components:
+  - type: Sprite
+    layers:
+    - state: paper
+    - state: cover_base
+      color: "#a03a6a"
+    - state: icon_possum
+    - state: detail_rivets
+  - type: CFFormula
+    categories:
+    - Goods
 
 - type: entity
   parent: CFBaseFormula

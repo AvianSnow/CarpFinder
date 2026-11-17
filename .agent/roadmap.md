@@ -429,8 +429,10 @@ The rule for what comes over, and how, is under Phase 3b in `roadmapold.md`: RPG
 - [ ] Tools, materials, keys and locks (Pick a Lock / Force Open).
     - Still to do for locks: portable lock items, repairing a broken toolkit, and shoddy improvised picks. A critical Force Open unlocks but does not swing the door open.
 - [ ] Workbenches and recipes on the PF2e Crafting rules.
-    - Recipes: `recipes.yml` and `recipes_ported.yml` hold what CP14 had and this branch can make. Add the rest as their items land. `CFWorkbench` itself has no recipes yet, because all 37 of its results are missing. The 8 vampire recipes stay out. The cooking table waits for cooking.
-    - Not done: Alchemical Crafting and Magical Crafting feat checks (no such recipes yet), batches of consumables, repairing items, `CP14StackGroup` and solution requirements, and reverse-engineering formulas.
+    - Done on 17 November 2026: every recipe has a `category`, and the one book that taught everything is replaced by a handbook per category at 5 sp each (`CFFormulaBookTools`, `Materials`, `Weapons`, `Armor`, `Clothing`, `Bags`, `Building`, `Food`, `Farming`, `Alchemy`, `Goods`). The bench window groups its list by category. The cooking table has its 12 recipes (dough, cutlets, seeds from produce), and the anvil makes the cooking pot, frying pan and pie plate. Tests: `CFCraftingTest`.
+    - 77 of CP14's recipes are in `recipes_ported.yml`, through `recipes.py`. 68 results are still not ported, so the Clothing, Bags and Alchemy handbooks teach nothing yet: clothing (22), backpacks, satchels and belts, vials, crossbolts of other metals, CP14's key and lock items, the smoking pipe, the wrench. 4 need an unported ingredient (Screwdriver and three plushies).
+    - `world.py`, `props.py` and `finish.py` no longer reproduce the tree: on 17 November 2026 `world.py` deleted `Ported/Keys/keys.yml`, `Ported/Misc/extras.yml` and a torch graph, and `finish.py` stopped on a missing file. Do not run them without fixing that. `recipes.py` and the new `produce.py` are safe. The plates, bowls and fireplace base were edited by hand, in the generated folders.
+    - Not done: Alchemical Crafting and Magical Crafting feat checks (no such recipes yet), batches of consumables, repairing items, `CP14StackGroup` and solution requirements, and reverse-engineering formulas. Structures are still the stock construction menu, with no book of their own.
 - [ ] Creatures with PF2e stat blocks. `importcreatures.md` is the guide.
     - Each creature has one Strike, its first printed melee Strike. A second Strike needs a way to pick between attacks. Special abilities wait for the planned better AI, not for this row. They are not in: Grab, venom and disease, Ferocity, charges, Filth Wave, the ooze's extra acid. Pack Attack is in (`packAttackDie`), on the wolf and the velociraptor. The stat block comment on each creature lists what is missing. Immunity to critical hits and precision is not in either.
     - Size does not change a creature's body yet, so the Large bear is a Medium body.
@@ -442,8 +444,14 @@ The rule for what comes over, and how, is under Phase 3b in `roadmapold.md`: RPG
     - Monsters are harvested for priced parts with a survival knife and a Survival check, through `CFHarvestable` (see Monster parts under Do first). Boar, bear, wolf and dragon give leather, bone and meat.
 - [ ] Raw materials and coins.
     - Not done: raw materials have no price, so they cannot be sold. Giving stack prototypes a Price needs a shop fix first: the shop charges the listed price per prototype, whatever the stack holds, so `CFIronBar10` would be a bargain. Also not done: coin Bulk (1,000 coins is 1 Bulk), art objects, and coins as monster loot.
-- [ ] Items left out of the consumables port.
-    - Not ported here: monster toxins (creatures row), cooking pots and their recipes (crafting row), smoking pipes and chromium jelly (they need plants from the farming row).
+- [ ] Food and drink production.
+    - Done on 17 November 2026 (`CFCookerTest`): a fire heats what is set on it (`CFFireHeater`), so dough on a bonfire bakes without Prestidigitation. CP14's pot, pan and pie plate cook the dish their contents fit (25 `cookingRecipe`s: meals, soups, pies), and a plate or bowl takes it. A baked pie is cut with a knife into its pieces, and the plate is left. Vegetables have slices and the tags the recipes read, and there is an apple. Sacks for produce and seeds.
+    - Brewing is ours, because CP14 only had drinks ready made: wheat, fruit or pumpkin used on a barrel with 10 water becomes wort, must or pumpkin mash, and that ferments into beer, wine or ale, 1 unit every 3 seconds (`CFFermenter`).
+    - Fixed on the way: every barrel used `SolutionContainerManager` and held nothing, the water and beer barrels included.
+    - Our changes from CP14: a pot is heated by degrees, not joules, and cooks while it gets `CFHeatedEvent`. A dish that is cut does not use stock's `ToolRefinable`, which other systems may not write to.
+    - [ ] Not played yet: the look of a dish in the pot and on a plate (the client layers and displacement maps are untested), cooking and burning sounds, and how long a fire takes in play.
+    - [ ] No apple tree, so wine needs stock fruit. Sandwiches (`foodSequenceElement`) are not ported. Bread on a fire never burns. A pot keeps cooking on a furnace as on a bonfire, with no difference between them.
+    - [ ] Not ported: monster toxins (creatures row), smoking pipes and chromium jelly, wild plants.
 - [ ] Decide on CP14 alchemy.
     - CP14 alchemy (magic essences, `Target Effects` reagents, 67 reactions, cauldron brewing): **open question.** PF2e alchemy is the Crafting skill and formulas, not mixing reagents, so this may be a new game system. Left out until decided.
 
@@ -564,7 +572,7 @@ A kobold tribe that eats, drinks, farms, stores food, shares it, talks, and asks
 - [x] Fixed 16 November 2026, from play: a tribe sat hungry beside a full crate, because a loaf with no knife about or raw meat with no fire did not count as food after the bread chain came in. Anything edible as it is counts again. A hungry member that knows of no food also goes and looks in a chest nobody has checked for 90 seconds, in case a player filled it, and what it finds is what the tribe knows. Tests: `AHungryMemberTakesFoodOutOfTheCrate`, `AHungryMemberLooksInAChestItThinksIsEmpty`.
 - [ ] Sleeping in beds, and roles that change what a member does.
 - [ ] `CFGOAPFact` has no bit left: `MessNearby` took the last. The next tribe fact has to fold into a sensor or replace one.
-- [ ] 21 other `_CF` prototype files still use `SolutionContainerManager`. The well and the bucket held nothing because of it, and were fixed. Check the rest.
+- [ ] Other `_CF` prototype files still use `SolutionContainerManager`. The well, the bucket and (17 November 2026) every barrel held nothing because of it, and were fixed. Check the rest.
 
 **Debug code to remove**
 

@@ -3,6 +3,7 @@
 - type: craftingRecipe
   id: AttachWeaponPotency1
   tag: CFRecipeWorkbench
+  category: Runes
   craftTime: 4
   attachRune: true
   requirements:
@@ -16,6 +17,7 @@
 - type: craftingRecipe
   id: AttachStriking
   tag: CFRecipeWorkbench
+  category: Runes
   craftTime: 4
   attachRune: true
   requirements:
@@ -29,6 +31,7 @@
 - type: craftingRecipe
   id: AttachArmorPotency1
   tag: CFRecipeWorkbench
+  category: Runes
   craftTime: 4
   attachRune: true
   requirements:
@@ -42,6 +45,7 @@
 - type: craftingRecipe
   id: AttachResilient
   tag: CFRecipeWorkbench
+  category: Runes
   craftTime: 4
   attachRune: true
   requirements:
@@ -55,6 +59,7 @@
 - type: craftingRecipe
   id: AttachFlaming
   tag: CFRecipeWorkbench
+  category: Runes
   craftTime: 4
   attachRune: true
   requirements:
@@ -68,6 +73,7 @@
 - type: craftingRecipe
   id: AttachFrost
   tag: CFRecipeWorkbench
+  category: Runes
   craftTime: 4
   attachRune: true
   requirements:
@@ -81,6 +87,7 @@
 - type: craftingRecipe
   id: AttachShock
   tag: CFRecipeWorkbench
+  category: Runes
   craftTime: 4
   attachRune: true
   requirements:
@@ -94,6 +101,7 @@
 - type: craftingRecipe
   id: AttachCorrosive
   tag: CFRecipeWorkbench
+  category: Runes
   craftTime: 4
   attachRune: true
   requirements:
@@ -107,6 +115,7 @@
 - type: craftingRecipe
   id: AttachThundering
   tag: CFRecipeWorkbench
+  category: Runes
   craftTime: 4
   attachRune: true
   requirements:
@@ -120,6 +129,7 @@
 - type: craftingRecipe
   id: EtchEsvadir
   tag: CFRecipeWorkbench
+  category: Runes
   craftTime: 4
   attachRune: true
   requirements:
@@ -131,6 +141,7 @@
 - type: craftingRecipe
   id: EtchHoltrik
   tag: CFRecipeWorkbench
+  category: Runes
   craftTime: 4
   attachRune: true
   requirements:
@@ -142,6 +153,7 @@
 - type: craftingRecipe
   id: EtchMarssyl
   tag: CFRecipeWorkbench
+  category: Runes
   craftTime: 4
   attachRune: true
   requirements:
@@ -153,6 +165,7 @@
 - type: craftingRecipe
   id: EtchOljinex
   tag: CFRecipeWorkbench
+  category: Runes
   craftTime: 4
   attachRune: true
   requirements:

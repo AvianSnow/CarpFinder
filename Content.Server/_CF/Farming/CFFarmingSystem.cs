@@ -137,15 +137,14 @@ public sealed partial class CFFarmingSystem : EntitySystem
             return false;
 
         var tile = _maps.GetTileRef(grid, gridComp, position);
-        if (!seed.Comp.SoilTile.Contains(_turf.GetContentTileDefinition(tile).ID))
-        {
-            Tell(user, Loc.GetString("cf-farming-soil-wrong", ("seed", seed.Owner)));
-            return false;
-        }
+        var soil = seed.Comp.SoilTile.Contains(_turf.GetContentTileDefinition(tile).ID);
 
         var anchored = _maps.GetAnchoredEntitiesEnumerator(grid, gridComp, tile.GridIndices);
         while (anchored.MoveNext(out var other))
         {
+            if (HasComp<CFSoilComponent>(other))
+                soil = true;
+
             if (!HasComp<CFPlantComponent>(other))
                 continue;
 
@@ -153,7 +152,26 @@ public sealed partial class CFFarmingSystem : EntitySystem
             return false;
         }
 
-        return true;
+        if (!soil)
+            Tell(user, Loc.GetString("cf-farming-soil-wrong", ("seed", seed.Owner)));
+
+        return soil;
+    }
+
+    /// <summary>A seedbed that is taken up or broken takes what grew in it along.</summary>
+    [SubscribeLocalEvent]
+    private void OnSoilRemoved(Entity<CFSoilComponent> ent, ref EntityTerminatingEvent args)
+    {
+        var xform = Transform(ent);
+        if (xform.GridUid is not { } grid || !TryComp(grid, out MapGridComponent? gridComp) || TerminatingOrDeleted(grid))
+            return;
+
+        var anchored = _maps.GetAnchoredEntitiesEnumerator(grid, gridComp, _maps.CoordinatesToTile(grid, gridComp, xform.Coordinates));
+        while (anchored.MoveNext(out var other))
+        {
+            if (HasComp<CFPlantComponent>(other))
+                QueueDel(other);
+        }
     }
 
     private void Tell(EntityUid? user, string message)

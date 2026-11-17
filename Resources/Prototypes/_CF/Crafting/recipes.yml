@@ -3,6 +3,7 @@
 - type: craftingRecipe
   id: IronBuckle
   tag: CFRecipeAnvil
+  category: Materials
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -13,6 +14,7 @@
 - type: craftingRecipe
   id: RatArmor
   tag: CFRecipeAnvil
+  category: Armor
   craftTime: 4
   requirements:
   - !type:CFStackRequirement
@@ -23,6 +25,7 @@
 - type: craftingRecipe
   id: ThievesToolkit
   tag: CFRecipeAnvil
+  category: Tools
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -32,6 +35,7 @@
 - type: craftingRecipe
   id: CopperBar
   tag: CFRecipeMeltingFurnace
+  category: Materials
   craftTime: 1
   requirements:
   - !type:CFMaterialRequirement
@@ -42,6 +46,7 @@
 - type: craftingRecipe
   id: IronBar
   tag: CFRecipeMeltingFurnace
+  category: Materials
   craftTime: 1
   requirements:
   - !type:CFMaterialRequirement
@@ -52,6 +57,7 @@
 - type: craftingRecipe
   id: GoldBar
   tag: CFRecipeMeltingFurnace
+  category: Materials
   craftTime: 1
   requirements:
   - !type:CFMaterialRequirement
@@ -62,6 +68,7 @@
 - type: craftingRecipe
   id: MithrilBar
   tag: CFRecipeMeltingFurnace
+  category: Materials
   craftTime: 1
   requirements:
   - !type:CFMaterialRequirement
@@ -72,6 +79,7 @@
 - type: craftingRecipe
   id: GlassFromQuartz
   tag: CFRecipeMeltingFurnace
+  category: Materials
   craftTime: 1
   requirements:
   - !type:CFItemRequirement
@@ -81,6 +89,7 @@
 - type: craftingRecipe
   id: GlassFromShards
   tag: CFRecipeMeltingFurnace
+  category: Materials
   craftTime: 1
   requirements:
   - !type:CFItemRequirement
@@ -91,6 +100,7 @@
 - type: craftingRecipe
   id: LeatherFromScraps
   tag: CFRecipeLeatherWorking
+  category: Materials
   craftTime: 2
   requirements:
   - !type:CFItemRequirement
@@ -103,6 +113,7 @@
 - type: craftingRecipe
   id: LeatherFromThin
   tag: CFRecipeLeatherWorking
+  category: Materials
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -115,6 +126,7 @@
 - type: craftingRecipe
   id: Cloth
   tag: CFRecipeSewing
+  category: Materials
   craftTime: 1
   requirements:
   - !type:CFItemRequirement
@@ -125,6 +137,7 @@
 - type: craftingRecipe
   id: StringFromWeb
   tag: CFRecipeSewing
+  category: Materials
   craftTime: 1
   requirements:
   - !type:CFItemRequirement
@@ -135,6 +148,7 @@
 - type: craftingRecipe
   id: StringFromCloth
   tag: CFRecipeSewing
+  category: Materials
   craftTime: 1
   requirements:
   - !type:CFStackRequirement
@@ -145,6 +159,7 @@
 - type: craftingRecipe
   id: WallpaperBlack
   tag: CFRecipeSewing
+  category: Building
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -157,6 +172,7 @@
 - type: craftingRecipe
   id: WallpaperGreen
   tag: CFRecipeSewing
+  category: Building
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -169,6 +185,7 @@
 - type: craftingRecipe
   id: WallpaperPurple
   tag: CFRecipeSewing
+  category: Building
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -181,6 +198,7 @@
 - type: craftingRecipe
   id: WallpaperRed
   tag: CFRecipeSewing
+  category: Building
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -193,6 +211,7 @@
 - type: craftingRecipe
   id: WallpaperYellow
   tag: CFRecipeSewing
+  category: Building
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -205,6 +224,7 @@
 - type: craftingRecipe
   id: WallpaperWhite
   tag: CFRecipeSewing
+  category: Building
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -215,6 +235,7 @@
 - type: craftingRecipe
   id: WallpaperWhite2
   tag: CFRecipeSewing
+  category: Building
   craftTime: 2
   requirements:
   - !type:CFStackRequirement
@@ -225,6 +246,7 @@
 - type: craftingRecipe
   id: ClothFromCotton
   tag: CFRecipeSewing
+  category: Materials
   craftTime: 1
   requirements:
   - !type:CFItemRequirement
@@ -235,6 +257,7 @@
 - type: craftingRecipe
   id: StringFromCotton
   tag: CFRecipeSewing
+  category: Materials
   craftTime: 1
   requirements:
   - !type:CFItemRequirement

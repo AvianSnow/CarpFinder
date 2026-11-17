@@ -48,9 +48,59 @@
     - CFCrowbarLevered
 
 - type: loadout
-  id: CFLoadoutBasicCraftersBook
+  id: CFLoadoutFormulaBookTools
   inhand:
-    - CFBasicCraftersBook
+    - CFFormulaBookTools
+
+- type: loadout
+  id: CFLoadoutFormulaBookMaterials
+  inhand:
+    - CFFormulaBookMaterials
+
+- type: loadout
+  id: CFLoadoutFormulaBookWeapons
+  inhand:
+    - CFFormulaBookWeapons
+
+- type: loadout
+  id: CFLoadoutFormulaBookArmor
+  inhand:
+    - CFFormulaBookArmor
+
+- type: loadout
+  id: CFLoadoutFormulaBookClothing
+  inhand:
+    - CFFormulaBookClothing
+
+- type: loadout
+  id: CFLoadoutFormulaBookBags
+  inhand:
+    - CFFormulaBookBags
+
+- type: loadout
+  id: CFLoadoutFormulaBookBuilding
+  inhand:
+    - CFFormulaBookBuilding
+
+- type: loadout
+  id: CFLoadoutFormulaBookFood
+  inhand:
+    - CFFormulaBookFood
+
+- type: loadout
+  id: CFLoadoutFormulaBookFarming
+  inhand:
+    - CFFormulaBookFarming
+
+- type: loadout
+  id: CFLoadoutFormulaBookAlchemy
+  inhand:
+    - CFFormulaBookAlchemy
+
+- type: loadout
+  id: CFLoadoutFormulaBookGoods
+  inhand:
+    - CFFormulaBookGoods
 
 - type: loadout
   id: CFLoadoutColdWeather
@@ -235,7 +285,17 @@
     - CFLoadoutHealersToolkit
     - CFLoadoutCrowbar
     - CFLoadoutCrowbarLevered
-    - CFLoadoutBasicCraftersBook
+    - CFLoadoutFormulaBookTools
+    - CFLoadoutFormulaBookMaterials
+    - CFLoadoutFormulaBookWeapons
+    - CFLoadoutFormulaBookArmor
+    - CFLoadoutFormulaBookClothing
+    - CFLoadoutFormulaBookBags
+    - CFLoadoutFormulaBookBuilding
+    - CFLoadoutFormulaBookFood
+    - CFLoadoutFormulaBookFarming
+    - CFLoadoutFormulaBookAlchemy
+    - CFLoadoutFormulaBookGoods
     - CFLoadoutColdWeather
     - CFLoadoutDesertClothing
 

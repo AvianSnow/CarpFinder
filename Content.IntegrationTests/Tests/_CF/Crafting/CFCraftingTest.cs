@@ -64,6 +64,7 @@ public sealed class CFCraftingTest : GameTest
 - type: craftingRecipe
   id: CFCraftTestRelicRecipe
   tag: CFRecipeAnvil
+  category: Materials
   requirements:
   - !type:CFStackRequirement
     stack: CFIronBar
@@ -180,17 +181,65 @@ public sealed class CFCraftingTest : GameTest
     }
 
     [Test]
-    public async Task BasicCraftersBookTeachesLevelZeroButNotHigher()
+    public async Task AHandbookTeachesItsOwnKindAtLevelZero()
     {
         _map = await CFDevMap.Load(Pair, Footprint);
         await Server.WaitAssertion(() =>
         {
             var mob = Human();
-            Teach(mob, "CFBasicCraftersBook");
+            Teach(mob, "CFFormulaBookMaterials");
 
             var known = SEntMan.GetComponent<CFFormulaBookComponent>(mob).Known;
             Assert.That(known, Does.Contain(new ProtoId<CFCraftingRecipePrototype>("IronBuckle")));
-            Assert.That(known, Does.Not.Contain(new ProtoId<CFCraftingRecipePrototype>("CFCraftTestRelicRecipe")));
+            Assert.That(known, Does.Not.Contain(new ProtoId<CFCraftingRecipePrototype>("Dagger")), "A dagger is a weapon.");
+            Assert.That(known, Does.Not.Contain(new ProtoId<CFCraftingRecipePrototype>("CFCraftTestRelicRecipe")), "Level 5.");
+
+            Teach(mob, "CFFormulaBookWeapons");
+            Assert.That(known, Does.Contain(new ProtoId<CFCraftingRecipePrototype>("Dagger")));
+        });
+    }
+
+    /// <summary>Every common level 0 recipe is in some handbook, and every bench has something to make.</summary>
+    [Test]
+    public async Task EveryBasicRecipeHasAHandbookAndEveryBenchHasRecipes()
+    {
+        await Server.WaitAssertion(() =>
+        {
+            var taught = new HashSet<CFRecipeCategory>();
+            var benchTags = new HashSet<string>();
+            foreach (var proto in Server.ProtoMan.EnumeratePrototypes<EntityPrototype>())
+            {
+                if (proto.TryComp<CFFormulaComponent>(out var formula, SEntMan.ComponentFactory))
+                    taught.UnionWith(formula.Categories);
+
+                if (!proto.Abstract && proto.TryComp<CFWorkbenchComponent>(out var bench, SEntMan.ComponentFactory))
+                {
+                    foreach (var tag in bench.RecipeTags)
+                    {
+                        benchTags.Add(tag);
+                    }
+                }
+            }
+
+            var recipeTags = new HashSet<string>();
+            Assert.Multiple(() =>
+            {
+                foreach (var recipe in Server.ProtoMan.EnumeratePrototypes<CFCraftingRecipePrototype>())
+                {
+                    recipeTags.Add(recipe.Tag);
+                    if (recipe.ID.Contains("Test"))
+                        continue;
+
+                    Assert.That(benchTags, Does.Contain(recipe.Tag.Id), $"{recipe.ID} has no bench that makes it.");
+                    if (recipe.Category != CFRecipeCategory.Runes)
+                        Assert.That(taught, Does.Contain(recipe.Category), $"{recipe.ID}: no handbook teaches {recipe.Category}.");
+                }
+
+                foreach (var tag in benchTags)
+                {
+                    Assert.That(recipeTags, Does.Contain(tag), $"A bench offers {tag}, and nothing is made there.");
+                }
+            });
         });
     }
 

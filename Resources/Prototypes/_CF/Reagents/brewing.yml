@@ -1,0 +1,49 @@
+# What a barrel brews from (CFFermenter). Each ferments into a drink from Ported/Reagents: beer, wine, ale.
+
+- type: reagent
+  id: CFWort
+  name: cf-reagent-name-wort
+  desc: cf-reagent-desc-wort
+  group: Drinks
+  flavor: sweet
+  physicalDesc: reagent-physical-desc-cloudy
+  color: "#b99a5b"
+  pricePerUnit: 0.05
+  metabolisms:
+    Digestion:
+      effects:
+      - !type:Satiate
+        satiationType: Thirst
+        factor: 1
+
+- type: reagent
+  id: CFMust
+  name: cf-reagent-name-must
+  desc: cf-reagent-desc-must
+  group: Drinks
+  flavor: sweet
+  physicalDesc: reagent-physical-desc-pulpy
+  color: "#7a2f4f"
+  pricePerUnit: 0.05
+  metabolisms:
+    Digestion:
+      effects:
+      - !type:Satiate
+        satiationType: Thirst
+        factor: 1
+
+- type: reagent
+  id: CFPumpkinMash
+  name: cf-reagent-name-pumpkin-mash
+  desc: cf-reagent-desc-pumpkin-mash
+  group: Drinks
+  flavor: sweet
+  physicalDesc: reagent-physical-desc-pulpy
+  color: "#c9772a"
+  pricePerUnit: 0.05
+  metabolisms:
+    Digestion:
+      effects:
+      - !type:Satiate
+        satiationType: Thirst
+        factor: 1

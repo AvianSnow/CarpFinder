@@ -20,6 +20,15 @@
 
 - type: entity
   parent: CFBaseFormula
+  id: CFFormulaPlatePie
+  name: formula (pie plate)
+  components:
+  - type: CFFormula
+    recipes:
+    - PlatePie
+
+- type: entity
+  parent: CFBaseFormula
   id: CFFormulaScissors
   name: formula (scissors)
   components:
@@ -101,6 +110,132 @@
 
 - type: entity
   parent: CFBaseFormula
+  id: CFFormulaFryingPan
+  name: formula (frying pan)
+  components:
+  - type: CFFormula
+    recipes:
+    - FryingPan
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaCookingPot
+  name: formula (cooking pot)
+  components:
+  - type: CFFormula
+    recipes:
+    - CookingPot
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFoodMeatLamb
+  name: formula (lamb cutlet)
+  components:
+  - type: CFFormula
+    recipes:
+    - FoodMeatLamb
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFoodDoughLarge
+  name: formula (large piece of dough)
+  components:
+  - type: CFFormula
+    recipes:
+    - FoodDoughLarge
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFoodDoughMedium
+  name: formula (medium piece of dough)
+  components:
+  - type: CFFormula
+    recipes:
+    - FoodDoughMedium
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFoodDoughMediumFlat
+  name: formula (rolled dough)
+  components:
+  - type: CFFormula
+    recipes:
+    - FoodDoughMediumFlat
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaSeedWheat
+  name: formula (wheat seeds)
+  components:
+  - type: CFFormula
+    recipes:
+    - SeedWheat
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaSeedTomato
+  name: formula (tomato seeds)
+  components:
+  - type: CFFormula
+    recipes:
+    - SeedTomato
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaSeedCabbage
+  name: formula (cabbage seeds)
+  components:
+  - type: CFFormula
+    recipes:
+    - SeedCabbage
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaSeedPumpkin
+  name: formula (pumpkin seeds)
+  components:
+  - type: CFFormula
+    recipes:
+    - SeedPumpkin
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaSeedCucumber
+  name: formula (cucumber seeds)
+  components:
+  - type: CFFormula
+    recipes:
+    - SeedCucumber
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaSeedPepper
+  name: formula (pepper seeds)
+  components:
+  - type: CFFormula
+    recipes:
+    - SeedPepper
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaSeedSage
+  name: formula (sage seeds)
+  components:
+  - type: CFFormula
+    recipes:
+    - SeedSage
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaSeedCotton
+  name: formula (cotton seeds)
+  components:
+  - type: CFFormula
+    recipes:
+    - SeedCotton
+
+- type: entity
+  parent: CFBaseFormula
   id: CFFormulaBucket
   name: formula (bucket)
   components:
@@ -152,6 +287,15 @@
   - type: CFFormula
     recipes:
     - BowlWooden
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaLighter
+  name: formula (flint and steel)
+  components:
+  - type: CFFormula
+    recipes:
+    - Lighter
 
 - type: entity
   parent: CFBaseFormula
@@ -395,6 +539,24 @@
   - type: CFFormula
     recipes:
     - FloorTileBirchWoodplanksStairs
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaSackFarming
+  name: formula (produce sack)
+  components:
+  - type: CFFormula
+    recipes:
+    - SackFarming
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaSackFarmingSeed
+  name: formula (seed sack)
+  components:
+  - type: CFFormula
+    recipes:
+    - SackFarmingSeed
 
 - type: entity
   parent: CFBaseFormula

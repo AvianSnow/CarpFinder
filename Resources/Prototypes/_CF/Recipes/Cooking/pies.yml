@@ -1,0 +1,63 @@
+# Dishes a pot, pan or pie plate makes. From CP14's Recipes/Cooking.
+
+- type: cookingRecipe
+  id: InediblePie
+  foodType: Pie
+  foodData:
+    name: cf-soup-recipe-pie-name
+    desc: cf-soup-recipe-pie-desc
+    visuals:
+    - sprite: _CP14/Objects/Consumable/Food/Pies/misc.rsi
+      state: veg
+    sliceProto: CFFoodPiePieceTrash
+  requirements:
+  - !type:CFAlwaysMet
+
+# 1 Req
+
+- type: cookingRecipe
+  id: PieVeg
+  foodType: Pie
+  foodData:
+    name: cf-soup-recipe-pie-name
+    desc: cf-soup-recipe-pie-desc
+    visuals:
+    - sprite: _CP14/Objects/Consumable/Food/Pies/misc.rsi
+      state: veg
+    sliceProto: CFFoodPiePieceVeg
+  requirements:
+  - !type:CFTagRequired
+    tags:
+    - CFSalad
+    - CFVegetable
+
+- type: cookingRecipe
+  id: PieMeat
+  foodType: Pie
+  foodData:
+    name: cf-soup-recipe-pie-name
+    desc: cf-soup-recipe-pie-desc
+    visuals:
+    - sprite: _CP14/Objects/Consumable/Food/Pies/misc.rsi
+      state: meat
+    sliceProto: CFFoodPiePieceMeat
+  requirements:
+  - !type:CFTagRequired
+    tags: 
+    - CFMeat
+    - CFMeatSlice
+
+- type: cookingRecipe
+  id: PiePumpkin
+  foodType: Pie
+  foodData:
+    name: cf-soup-recipe-pie-name
+    desc: cf-soup-recipe-pie-desc
+    visuals:
+    - sprite: _CP14/Objects/Consumable/Food/Pies/misc.rsi
+      state: meat
+    sliceProto: CFFoodPiePiecePumpkin
+  requirements:
+  - !type:CFTagRequired
+    tags: 
+    - CFPumpkin

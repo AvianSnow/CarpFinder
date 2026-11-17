@@ -45,6 +45,7 @@
   - type: ItemPlacer
     maxEntities: 4
   - type: CFFireplace
+  - type: CFFireHeater
   - type: ContainerContainer
     containers:
       storagebase: !type:Container

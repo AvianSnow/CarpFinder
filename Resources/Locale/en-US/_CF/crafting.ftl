@@ -16,3 +16,16 @@ cf-craft-learned = You learn { $count ->
    *[other] { $count } new formulas
 }.
 cf-craft-learned-nothing = You learn nothing new.
+
+cf-recipe-category-tools = Tools
+cf-recipe-category-materials = Materials
+cf-recipe-category-weapons = Weapons
+cf-recipe-category-armor = Armor and shields
+cf-recipe-category-clothing = Clothing
+cf-recipe-category-bags = Bags and belts
+cf-recipe-category-building = Building
+cf-recipe-category-food = Food and tableware
+cf-recipe-category-farming = Farming
+cf-recipe-category-alchemy = Alchemy
+cf-recipe-category-goods = Goods
+cf-recipe-category-runes = Runes

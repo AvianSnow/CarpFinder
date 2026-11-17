@@ -1,0 +1,35 @@
+- type: construction
+  parent: BaseFurniture
+  id: CFSeedbed
+  graph: CFSeedbed
+  startNode: start
+  targetNode: CFSeedbed
+  objectType: Structure
+  canRotate: false
+  conditions:
+  - !type:TileNotBlocked
+
+- type: constructionGraph
+  id: CFSeedbed
+  start: start
+  graph:
+    - node: start
+      actions:
+        - !type:DestroyEntity {}
+      edges:
+        - to: CFSeedbed
+          steps:
+            - material: CFWoodenPlanks
+              amount: 2
+              doAfter: 3
+    - node: CFSeedbed
+      entity: CFSeedbed
+      edges:
+      - to: start
+        steps:
+        - tool: Prying
+          doAfter: 3
+        completed:
+        - !type:SpawnPrototype
+          prototype: CFWoodenPlanks1
+          amount: 2
