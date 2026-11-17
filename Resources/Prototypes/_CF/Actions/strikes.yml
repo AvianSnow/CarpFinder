@@ -167,3 +167,77 @@
   - type: CFStrikeAction
     unarmedOnly: true
     reloads: true
+
+# Brutish Shove: a press. A two-handed weapon's Strike that also Shoves.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActBrutishShove
+  name: Brutish Shove
+  description: A Strike with a two-handed weapon, after another attack this turn. A hit leaves the target off-guard for 6 seconds and shoves it 5 feet, 10 on a critical hit. A miss still leaves it off-guard.
+  components:
+  - type: CFStrikeAction
+    press: true
+    twoHandedWeapon: true
+    effectsNeedDamage: false
+    onHit:
+    - !type:CFOffGuardEffect
+    - !type:CFForcedMovementEffect
+      feet: 5
+    onCritical:
+    - !type:CFOffGuardEffect
+    - !type:CFForcedMovementEffect
+      feet: 10
+    onFailure:
+    - !type:CFOffGuardEffect
+
+# Combat Grab: a press. A Strike that grabs with the free hand.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActCombatGrab
+  name: Combat Grab
+  description: A melee Strike with one hand free, after another attack this turn. If it hits, you grab the target for 6 seconds, or until it Escapes.
+  components:
+  - type: CFStrikeAction
+    press: true
+    needsFreeHand: true
+    effectsNeedDamage: false
+    onHit:
+    - !type:CFGrabEffect
+      durationSeconds: 6
+
+# Slam Down: a Strike, then a Trip.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActSlamDown
+  name: Slam Down
+  description: A melee Strike. If it deals damage, roll Athletics against the target's Reflex DC to knock it prone. A critical success also deals 1d6 bludgeoning, and a critical failure knocks you prone. Costs 2 actions.
+  components:
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFTrait
+    traits:
+    - Flourish
+  - type: CFFlourish
+  - type: CFStrikeAction
+    onHit:
+    - !type:CFTripEffect
+
+# Unsteadying Strike: the target is easier to Shove, Grapple, Reposition and Disarm.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActUnsteadyingStrike
+  name: Unsteadying Strike
+  description: A melee Strike. If it hits, the target takes -2 circumstance to its DCs against being Shoved, Grappled, Repositioned or Disarmed for 6 seconds.
+  components:
+  - type: CFTrait
+    traits:
+    - Flourish
+  - type: CFFlourish
+  - type: CFStrikeAction
+    effectsNeedDamage: false
+    onHit:
+    - !type:CFBonusEffect
+      stat: ManeuverDc
+      type: Circumstance
+      value: -2
+      durationSeconds: 6

@@ -393,6 +393,93 @@
   - type: CFItemPrice
     copper: 100
 
+# Flails. Both are drawn with Crystall Edge's mace until there is flail art.
+- type: entity
+  parent: [ CFBaseWeapon, CFBaseWeaponCarryNeck ]
+  id: CFFlail
+  name: flail
+  description: A spiked ball on a chain. It can knock a foe down on a critical hit.
+  components:
+  - type: Sprite
+    sprite: _CE/Objects/Tools/Weapons/Melee/Mace/sheriff.rsi
+    state: icon
+  - type: Item
+    size: Normal
+    sprite: _CE/Objects/Tools/Weapons/Melee/Mace/sheriff.rsi
+  - type: Clothing
+    quickEquip: false
+    sprite: _CE/Objects/Tools/Weapons/Melee/Mace/sheriff.rsi
+    slots:
+    - belt
+    - back
+    - neck
+    clothingVisuals:
+      belt:
+      - sprite: _CE/Objects/Tools/Weapons/Melee/Mace/sheriff.rsi
+        state: equipped-NECK
+      back:
+      - sprite: _CE/Objects/Tools/Weapons/Melee/Mace/sheriff.rsi
+        state: equipped-NECK
+  - type: CFWeapon
+    damageDie: 6
+    damageType: Bludgeoning
+    category: Martial
+    group: Flail
+    hands: One
+  - type: CFBulk
+    bulk: 1
+  - type: CFTrait
+    traits:
+    - Disarm
+    - Sweep
+    - Trip
+  - type: CFItemPrice
+    copper: 80
+
+- type: entity
+  parent: [ CFBaseWeapon, CFBaseWeaponCarryNeck ]
+  id: CFWarFlail
+  name: war flail
+  description: A long-hafted flail swung in both hands.
+  components:
+  - type: Sprite
+    sprite: _CE/Objects/Tools/Weapons/Melee/Mace/sheriff.rsi
+    state: icon
+  - type: Item
+    size: Large
+    sprite: _CE/Objects/Tools/Weapons/Melee/Mace/sheriff.rsi
+  - type: Clothing
+    quickEquip: false
+    sprite: _CE/Objects/Tools/Weapons/Melee/Mace/sheriff.rsi
+    slots:
+    - belt
+    - back
+    - neck
+    clothingVisuals:
+      belt:
+      - sprite: _CE/Objects/Tools/Weapons/Melee/Mace/sheriff.rsi
+        state: equipped-NECK
+      back:
+      - sprite: _CE/Objects/Tools/Weapons/Melee/Mace/sheriff.rsi
+        state: equipped-NECK
+  - type: CFWeapon
+    damageDie: 10
+    damageType: Bludgeoning
+    category: Martial
+    group: Flail
+    hands: Two
+  - type: CFBulk
+    bulk: 2
+  - type: CFTrait
+    traits:
+    - Disarm
+    - Sweep
+    - Trip
+  - type: CFItemPrice
+    copper: 200
+  - type: Wieldable
+  - type: MeleeRequiresWield
+
 - type: entity
   parent: [ CFBaseWeapon, CFBaseWeaponCarryNeck ]
   id: CFSpear

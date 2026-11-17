@@ -13,3 +13,6 @@
       criticalSpecializationLevel: 5
       traits:
       - Gnoll
+      weapons:
+      - CFFlail
+      - CFWarFlail

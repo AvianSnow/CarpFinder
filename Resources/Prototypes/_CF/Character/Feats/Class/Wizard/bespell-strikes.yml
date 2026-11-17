@@ -11,4 +11,5 @@
     - "Sorcerer"
     - "Wizard"
   action: Free
-  pendingAction: true
+  grants:
+    - !type:CFGrantBespell

@@ -590,6 +590,9 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
             case CFCombatOption.DeadlySimplicity:
                 options.DeadlySimplicity = true;
                 break;
+            case CFCombatOption.AggressiveBlock:
+                options.AggressiveBlock = true;
+                break;
             case CFCombatOption.GuardianArmor:
                 options.GuardianArmor = true;
                 break;

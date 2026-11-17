@@ -102,6 +102,20 @@ public sealed partial class CFStrikeActionSystem : EntitySystem
             return _interaction.InRangeUnobstructed(user, target, feet + 1f) ? null : "cf-strike-action-no-line";
         }
 
+        if (action.Press && CompOrNull<CFActionPoolComponent>(user)?.MapAttacks is null or 0)
+            return "cf-strike-action-needs-press";
+
+        if (action.NeedsFreeHand && _hands.CountFreeHands(user) == 0)
+            return "cf-strike-action-needs-hand";
+
+        if (action.TwoHandedWeapon
+            && (!_hands.TryGetActiveItem(user, out var big)
+                || !HasComp<CFMeleeWeaponComponent>(big.Value)
+                || CompOrNull<CFWeaponComponent>(big.Value)?.Hands != CFWeaponHands.Two))
+        {
+            return "cf-strike-action-needs-two-handed";
+        }
+
         if (action.Groups.Count > 0
             && (!_hands.TryGetActiveItem(user, out var grouped)
                 || !TryComp(grouped.Value, out CFWeaponComponent? data)
@@ -189,10 +203,23 @@ public sealed partial class CFStrikeActionSystem : EntitySystem
 
     private void RunEffects(Entity<CFStrikeActionComponent> ent, EntityUid user, EntityUid target, CFDegree degree, int damage)
     {
-        if (degree is not (CFDegree.Success or CFDegree.CriticalSuccess) || ent.Comp.EffectsNeedDamage && damage <= 0)
-            return;
+        List<CFEffect> effects;
+        if (degree == CFDegree.Failure)
+        {
+            if (ent.Comp.OnFailure.Count == 0)
+                return;
 
-        var effects = degree == CFDegree.CriticalSuccess && ent.Comp.OnCritical.Count > 0 ? ent.Comp.OnCritical : ent.Comp.OnHit;
+            effects = ent.Comp.OnFailure;
+        }
+        else if (degree is not (CFDegree.Success or CFDegree.CriticalSuccess) || ent.Comp.EffectsNeedDamage && damage <= 0)
+        {
+            return;
+        }
+        else
+        {
+            effects = degree == CFDegree.CriticalSuccess && ent.Comp.OnCritical.Count > 0 ? ent.Comp.OnCritical : ent.Comp.OnHit;
+        }
+
         _effects.Run(effects, new CFEffectArgs
         {
             User = user,

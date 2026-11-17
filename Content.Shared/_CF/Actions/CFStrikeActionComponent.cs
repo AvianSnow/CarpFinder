@@ -82,6 +82,22 @@ public sealed partial class CFStrikeActionComponent : Component
     [DataField]
     public bool DifferentTarget;
 
+    /// <summary>Needs a melee weapon held in both hands, as Brutish Shove does.</summary>
+    [DataField]
+    public bool TwoHandedWeapon;
+
+    /// <summary>Needs a hand free, as Combat Grab does to take hold.</summary>
+    [DataField]
+    public bool NeedsFreeHand;
+
+    /// <summary>The press trait: only after another attack this turn, so while the multiple attack penalty is running.</summary>
+    [DataField]
+    public bool Press;
+
+    /// <summary>Runs on the target after a miss that is not a critical miss.</summary>
+    [DataField]
+    public List<CFEffect> OnFailure = new();
+
     /// <summary>Runs on the target after a hit.</summary>
     [DataField]
     public List<CFEffect> OnHit = new();

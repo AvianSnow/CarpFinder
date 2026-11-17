@@ -1,3 +1,7 @@
+using Robust.Shared.Prototypes;
+using Content.Shared.CF.Spells;
+using Content.Shared.CF.Effects;
+using Content.Shared.CF.Preferences;
 using System;
 using System.Linq;
 using Content.IntegrationTests.Fixtures;
@@ -269,6 +273,164 @@ public sealed class CFStrikeActionTest : GameTest
             Assert.That(after, Is.Zero);
             Assert.That(empty, Is.False, "It cannot fire with no arrow on the bow.");
         });
+    }
+
+    private void Attacked(EntityUid hero)
+    {
+        SEntMan.GetComponent<CFActionPoolComponent>(hero).MapAttacks = 1;
+    }
+
+    [Test]
+    public async Task BrutishShoveIsAPressWithATwoHandedWeapon()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        bool first = true, oneHanded = true, used = false, offGuard = false;
+        await Server.WaitPost(() =>
+        {
+            var hero = Spawn("CFStrikeActionHero");
+            var foe = Spawn("CFStrikeActionFoe", 1);
+            var action = Grant(hero, "CFActBrutishShove");
+            Hold(hero, "CFGreatsword");
+            first = Use(hero, action, foe);
+
+            var other = Spawn("CFStrikeActionHero");
+            var same = Grant(other, "CFActBrutishShove");
+            Hold(other, "CFLongsword");
+            Attacked(other);
+            oneHanded = Use(other, same, foe);
+
+            Attacked(hero);
+            used = Use(hero, action, foe);
+            offGuard = Conditions.IsOffGuardTo(foe, hero);
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(first, Is.False, "A press needs an attack before it this turn.");
+            Assert.That(oneHanded, Is.False, "It needs a two-handed weapon.");
+            Assert.That(used, Is.True);
+            Assert.That(offGuard, Is.True);
+        });
+    }
+
+    [Test]
+    public async Task CombatGrabGrabsForAWhileAndSlamDownTrips()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        bool grabbed = false, timed = false, prone = false;
+        var eased = 0;
+        await Server.WaitPost(() =>
+        {
+            var hero = Spawn("CFStrikeActionHero");
+            Hold(hero, "CFLongsword");
+
+            var foe = Spawn("CFStrikeActionFoe", 1);
+            Attacked(hero);
+            Use(hero, Grant(hero, "CFActCombatGrab"), foe);
+            var cond = SEntMan.GetComponent<CFConditionComponent>(foe);
+            grabbed = cond.Grabbed && cond.Grabber == hero;
+            timed = cond.GrabbedUntil > SGameTiming.CurTime;
+
+            var second = Spawn("CFStrikeActionFoe", 1);
+            SEntMan.GetComponent<CFAbilityScoreComponent>(second).AbilityModifiers[CFAbility.Dexterity] = -20;
+            Use(hero, Grant(hero, "CFActSlamDown"), second);
+            prone = Conditions.IsProne(second);
+
+            // Another creature: Slam Down and Unsteadying Strike are both flourishes, one a turn.
+            var commander = Spawn("CFStrikeActionHero");
+            Hold(commander, "CFLongsword");
+            var third = Spawn("CFStrikeActionFoe", 1);
+            Use(commander, Grant(commander, "CFActUnsteadyingStrike"), third);
+            eased = SEntMan.System<CFBonusSystem>().Total(third, CFBonusStat.ManeuverDc);
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(grabbed, Is.True);
+            Assert.That(timed, Is.True, "Combat Grab lets go after a while.");
+            Assert.That(prone, Is.True, "Slam Down trips what it hurts.");
+            Assert.That(eased, Is.EqualTo(-2), "Unsteadying Strike makes the next maneuver easier.");
+        });
+    }
+
+    [Test]
+    public async Task BespellStrikesChargesTheNextHitAfterARealSpell()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        bool afterCantrip = true, afterSpell = false, afterHit = true, psiCantrip = false;
+        int plain = 0, charged = 0;
+        await Server.WaitPost(() =>
+        {
+            var spells = SEntMan.System<CFSpellSystem>();
+            var strikes = SEntMan.System<CFStrikeSystem>();
+            var features = SEntMan.System<CFCharacterFeatureSystem>();
+            var cantrip = SEntMan.GetComponent<CFSpellComponent>(SEntMan.SpawnEntity("CFElectricArc", Robust.Shared.Map.MapCoordinates.Nullspace));
+            var fear = SEntMan.GetComponent<CFSpellComponent>(SEntMan.SpawnEntity("CFFear", Robust.Shared.Map.MapCoordinates.Nullspace));
+
+            var wizard = Spawn("CFStrikeActionHero");
+            features.Apply(wizard, Server.ProtoMan.Index(new ProtoId<CFFeatPrototype>("CFBespellStrikesWizard")).Grants, "feat:CFBespellStrikesWizard");
+            var options = SEntMan.GetComponent<CFCombatOptionsComponent>(wizard);
+            var foe = Spawn("CFStrikeActionFoe", 1);
+
+            // A d1 weapon, so every hit deals the same and the extra die shows.
+            var fist = strikes.UnarmedStats(wizard) with { DamageDie = 1 };
+            strikes.PerformStrike(wizard, foe, fist, wizard, melee: true, countMap: false, fixedMap: 0);
+            plain = Hurt(foe);
+
+            spells.NoteBespell(wizard, cantrip);
+            afterCantrip = options.BespellUntil > SGameTiming.CurTime;
+            spells.NoteBespell(wizard, fear);
+            afterSpell = options.BespellUntil > SGameTiming.CurTime;
+
+            strikes.PerformStrike(wizard, foe, fist, wizard, melee: true, countMap: false, fixedMap: 0);
+            charged = Hurt(foe) - plain;
+            afterHit = options.BespellUntil > SGameTiming.CurTime;
+
+            var psychic = Spawn("CFStrikeActionHero");
+            features.Apply(psychic, Server.ProtoMan.Index(new ProtoId<CFFeatPrototype>("CFPsiStrikes")).Grants, "feat:CFPsiStrikes");
+            spells.NoteBespell(psychic, cantrip);
+            psiCantrip = SEntMan.GetComponent<CFCombatOptionsComponent>(psychic).BespellUntil > SGameTiming.CurTime;
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(afterCantrip, Is.False, "A cantrip does not charge Bespell Strikes.");
+            Assert.That(afterSpell, Is.True);
+            Assert.That(charged, Is.GreaterThan(plain), "The charged hit deals the extra die.");
+            Assert.That(afterHit, Is.False, "One hit uses it up.");
+            Assert.That(psiCantrip, Is.True, "Psi Strikes works after a cantrip too.");
+        });
+    }
+
+    [Test]
+    public async Task AggressiveBlockShovesTheAttackerAway()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint, avoidStructures: true);
+        EntityUid hero = default, foe = default;
+        await Server.WaitPost(() =>
+        {
+            hero = Spawn("CFStrikeActionHero");
+            foe = Spawn("CFStrikeActionFoe", 1);
+            var options = SEntMan.GetComponent<CFCombatOptionsComponent>(hero);
+            options.ShieldBlock = true;
+            options.AggressiveBlock = true;
+            var shield = Spawn("CFSteelShield");
+            SEntMan.System<SharedHandsSystem>().TryPickupAnyHand(hero, shield);
+            SEntMan.System<CFShieldSystem>().SetRaised((shield, SEntMan.GetComponent<CFShieldComponent>(shield)), true);
+
+            var strikes = SEntMan.System<CFStrikeSystem>();
+            strikes.PerformStrike(foe, hero, strikes.UnarmedStats(foe), foe, melee: true, countMap: false, fixedMap: 0);
+        });
+        await Pair.RunSeconds(1f);
+
+        var distance = 0f;
+        await Server.WaitPost(() =>
+        {
+            var xform = SEntMan.System<SharedTransformSystem>();
+            distance = (xform.GetWorldPosition(foe) - xform.GetWorldPosition(hero)).Length();
+        });
+
+        Assert.That(distance, Is.GreaterThan(1.2f), "Shoved back from 1 tile away.");
     }
 
     private int Arrows(EntityUid bow)

@@ -33,7 +33,6 @@ public sealed class CFAncestryFeatActionTest : GameTest
     public override PoolSettings PoolSettings => new() { Connected = false };
 
     // Strength 40: every Strike hits, and nothing passes a save against the hero's class DC.
-    // The game has no flail yet, so Leech-Clip is tried with a test one.
     [TestPrototypes]
     private const string Prototypes = @"
 - type: entity
@@ -66,13 +65,6 @@ public sealed class CFAncestryFeatActionTest : GameTest
       Strength: 0
   - type: CFFaction
     faction: Monster
-
-- type: entity
-  parent: CFWarhammer
-  id: CFFeatActionTestFlail
-  components:
-  - type: CFWeapon
-    group: Flail
 ";
 
     private CFDevMap _map = default!;
@@ -238,7 +230,7 @@ public sealed class CFAncestryFeatActionTest : GameTest
             without = SEntMan.System<CFBonusSystem>().Total(foe, CFBonusStat.Speed) == 0 ? null : "slowed";
 
             hands.TryDrop(hobgoblin);
-            hands.TryPickupAnyHand(hobgoblin, Spawn("CFFeatActionTestFlail"));
+            hands.TryPickupAnyHand(hobgoblin, Spawn("CFFlail"));
             Actions.PerformAction(hobgoblin, action, new CFActivityTargetEvent { Target = foe });
             speed = SEntMan.System<CFBonusSystem>().Total(foe, CFBonusStat.Speed);
         });

@@ -48,6 +48,49 @@ public sealed partial class CFForcedMovementEffect : CFEffect
     }
 }
 
+/// <summary>The user grabs the target with no check, as Combat Grab does after its Strike. It lets go after a while.</summary>
+public sealed partial class CFGrabEffect : CFEffect
+{
+    [DataField]
+    public float DurationSeconds = 6f;
+
+    public override void Apply(IEntityManager entities, CFEffectArgs args)
+    {
+        if (args.Target is not { } target || target == args.User)
+            return;
+
+        entities.System<CFConditionSystem>().ApplyGrabbed(target, args.User, DurationSeconds);
+    }
+}
+
+/// <summary>
+/// The user rolls Athletics against the target's Reflex DC to knock it prone, as a Trip. A critical success also deals
+/// 1d6 bludgeoning damage, and a critical failure knocks the user prone.
+/// </summary>
+public sealed partial class CFTripEffect : CFEffect
+{
+    public override void Apply(IEntityManager entities, CFEffectArgs args)
+    {
+        if (args.Target is not { } target || target == args.User)
+            return;
+
+        var conditions = entities.System<CFConditionSystem>();
+        switch (conditions.RollSkill(args.User, target, "Athletics", Content.Shared.CF.Preferences.CFAbility.Strength, Content.Shared.CF.Checks.CFDefenseType.Reflex, attackTrait: true))
+        {
+            case Content.Shared.CF.Checks.CFDegree.CriticalSuccess:
+                conditions.KnockProne(target);
+                entities.System<CFEffectSystem>().DealDamage(args.User, target, entities.System<CFEffectSystem>().Roll(1, 6, 0), "Bludgeoning", critical: false);
+                break;
+            case Content.Shared.CF.Checks.CFDegree.Success:
+                conditions.KnockProne(target);
+                break;
+            case Content.Shared.CF.Checks.CFDegree.CriticalFailure:
+                conditions.KnockProne(args.User);
+                break;
+        }
+    }
+}
+
 /// <summary>A dying creature loses the dying condition and wakes at 1 HP.</summary>
 public sealed partial class CFStabilizeEffect : CFEffect
 {

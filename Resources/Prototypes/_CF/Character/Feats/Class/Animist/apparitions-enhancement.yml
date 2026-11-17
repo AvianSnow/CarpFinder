@@ -12,4 +12,6 @@
     - "Divine"
     - "Spirit"
   action: Free
-  pendingAction: true
+  grants:
+    - !type:CFGrantBespell
+      damageType: Spirit

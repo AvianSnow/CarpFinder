@@ -246,7 +246,24 @@ public sealed partial class CFSpellSystem : EntitySystem
                 return false;
         }
 
+        NoteBespell(caster, spell.Comp);
         return true;
+    }
+
+    /// <summary>How long after a spell a Strike still carries its energy. The rules say until the end of the turn.</summary>
+    public static readonly TimeSpan BespellLasts = TimeSpan.FromSeconds(6);
+
+    /// <summary>A spell was cast, so a character with Bespell Strikes or the like has its next Strike charged.</summary>
+    public void NoteBespell(EntityUid caster, CFSpellComponent spell)
+    {
+        if (!TryComp(caster, out CFCombatOptionsComponent? options) || options.BespellDie <= 0)
+            return;
+
+        var cantrip = spell.Rank == 0 && !spell.Focus;
+        if (cantrip && !options.BespellCantrips)
+            return;
+
+        options.BespellUntil = _timing.CurTime + BespellLasts;
     }
 
     public bool TrySpend(EntityUid caster, CFSpellComponent spell)

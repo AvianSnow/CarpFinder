@@ -141,7 +141,11 @@ public sealed partial class CFConditionSystem : EntitySystem
                 dirty = true;
             }
 
-            if (cond.Grabbed && (cond.Grabber is not { } grabber || !Exists(grabber) || !InMelee(grabber, uid)))
+            if (cond.Grabbed
+                && (cond.Grabber is not { } grabber
+                    || !Exists(grabber)
+                    || !InMelee(grabber, uid)
+                    || cond.GrabbedUntil != TimeSpan.Zero && now >= cond.GrabbedUntil))
             {
                 cond.Grabbed = false;
                 cond.Grabber = null;
@@ -220,7 +224,8 @@ public sealed partial class CFConditionSystem : EntitySystem
         _popup.PopupEntity(Loc.GetString("cf-cond-frightened", ("value", cond.Frightened)), target);
     }
 
-    public void ApplyGrabbed(EntityUid target, EntityUid grabber)
+    /// <param name="seconds">How long the grab holds if it is not escaped first. 0 means until it is escaped.</param>
+    public void ApplyGrabbed(EntityUid target, EntityUid grabber, float seconds = 0f)
     {
         if (_reactions.TrySlipGrab(target))
             return;
@@ -228,6 +233,7 @@ public sealed partial class CFConditionSystem : EntitySystem
         var cond = Ensure(target);
         cond.Grabbed = true;
         cond.Grabber = grabber;
+        cond.GrabbedUntil = seconds > 0f ? _timing.CurTime + TimeSpan.FromSeconds(seconds) : TimeSpan.Zero;
         cond.Immobilized = true;
         cond.ImmobilizedUntil = _timing.CurTime + TimeSpan.FromSeconds(60);
         Dirty(target, cond);

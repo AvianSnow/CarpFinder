@@ -75,6 +75,9 @@ public sealed partial class CFConditionComponent : Component
 
     public EntityUid? Grabber;
 
+    /// <summary>When a grab that only lasts a while lets go, as Combat Grab's does. Zero means it holds until escaped.</summary>
+    public TimeSpan GrabbedUntil;
+
     public EntityUid? Charmer;
 
     public HashSet<EntityUid> OffGuardTo = new();

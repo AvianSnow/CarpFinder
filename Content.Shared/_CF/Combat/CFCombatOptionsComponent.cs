@@ -79,6 +79,29 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public bool HumbleStrikes;
 
+    /// <summary>
+    /// Bespell Strikes and the like: after casting a spell, the next Strike that hits deals one die of this size more.
+    /// 0 means the character has no such feat.
+    /// </summary>
+    [DataField]
+    public int BespellDie;
+
+    /// <summary>The damage type of <see cref="BespellDie"/>.</summary>
+    [DataField]
+    public string BespellType = "Force";
+
+    /// <summary>A cantrip sets it off too, as Psi Strikes allows.</summary>
+    [DataField]
+    public bool BespellCantrips;
+
+    /// <summary>A spell has been cast, and the next Strike before this time gets <see cref="BespellDie"/>.</summary>
+    [DataField]
+    public TimeSpan BespellUntil;
+
+    /// <summary>Shield Block against an enemy in reach also shoves it 5 feet away (Aggressive Block).</summary>
+    [DataField, AutoNetworkedField]
+    public bool AggressiveBlock;
+
     /// <summary>The deity's favored weapon, when it is a simple weapon, has a damage die one step larger.</summary>
     [DataField, AutoNetworkedField]
     public bool DeadlySimplicity;
@@ -475,6 +498,7 @@ public enum CFCombatOption : byte
     WeaponImplement,
     ExpertOverdrive,
     DeadlySimplicity,
+    AggressiveBlock,
 }
 
 public enum CFPointMark : byte

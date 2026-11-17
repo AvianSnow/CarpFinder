@@ -274,6 +274,32 @@ public sealed partial class CFGrantBreathMomentum : CFGrant
     }
 }
 
+/// <summary>
+/// Spell energy carried into a weapon: after the character casts a spell, its next Strike that hits within 6 seconds deals
+/// a die more of some damage type. Bespell Strikes, Psi Strikes, Apparition's Enhancement.
+/// </summary>
+public sealed partial class CFGrantBespell : CFGrant
+{
+    [DataField]
+    public int Die = 6;
+
+    [DataField]
+    public ProtoId<CFDamageTypePrototype> DamageType = "Force";
+
+    /// <summary>A cantrip counts as the spell too.</summary>
+    [DataField]
+    public bool Cantrips;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        var options = entities.EnsureComponent<CFCombatOptionsComponent>(args.Mob);
+        options.BespellDie = Die;
+        options.BespellType = DamageType.Id;
+        options.BespellCantrips |= Cantrips;
+        entities.Dirty(args.Mob, options);
+    }
+}
+
 /// <summary>A sense beyond normal sight.</summary>
 public sealed partial class CFGrantSense : CFGrant
 {

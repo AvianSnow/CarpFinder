@@ -895,6 +895,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
                     RaiseDamaged(target, user, damage);
                     ApplyTailToxin(user, target, style, rolled.DamageType, rolled.Traits.Unarmed, isObject, rolled.Item != null);
                     ApplySparkFist(user, target, style, rolled, isObject);
+                    ApplyBespell(user, target, style, criticalHit, isObject);
                 }
 
                 if (!isObject && defender.CurrentHp <= 0)
@@ -1099,6 +1100,13 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (!_conditions.TrySpendReaction(target, CFReactions.Block))
             return damage;
 
+        // Aggressive Block: the blocker's free action pushes an attacker that is close enough to be pushed.
+        if (CompOrNull<CFCombatOptionsComponent>(target)?.AggressiveBlock == true
+            && CFFlanking.InReach(_transform.GetWorldPosition(target), _transform.GetWorldPosition(attacker), CFFlanking.DefaultReachFeet))
+        {
+            _conditions.Push(target, attacker, 5);
+        }
+
         return _shields.Block(target, shield, damage);
     }
 
@@ -1149,6 +1157,17 @@ public sealed partial class CFStrikeSystem : EntitySystem
     }
 
     /// <summary>Tail Toxin: the next piercing or slashing hit after the action deals persistent poison equal to the level.</summary>
+    /// <summary>Bespell Strikes and the like: the first hit after a spell deals one more die, doubled on a critical hit.</summary>
+    private void ApplyBespell(EntityUid user, EntityUid target, CFCombatOptionsComponent? style, bool critical, bool isObject)
+    {
+        if (style == null || isObject || style.BespellDie <= 0 || _timing.CurTime >= style.BespellUntil)
+            return;
+
+        style.BespellUntil = TimeSpan.Zero;
+        var amount = _random.Next(1, style.BespellDie + 1);
+        _effects.DealDamage(user, target, critical ? amount * 2 : amount, style.BespellType, critical: false);
+    }
+
     /// <summary>Spark Fist: a fist hit burns the target and the attacker alike, 1 fire damage per weapon die.</summary>
     private void ApplySparkFist(EntityUid user, EntityUid target, CFCombatOptionsComponent? style, CFStrikeWeaponStats weapon, bool isObject)
     {
