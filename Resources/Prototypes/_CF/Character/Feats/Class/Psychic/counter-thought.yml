@@ -10,4 +10,11 @@
     - "Occult"
     - "Psychic"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-counter-thought
+        trigger: EnemyCastsSpell
+        counterspellSlot: true
+        trait: Mental
+        rangeFeet: 60

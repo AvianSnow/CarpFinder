@@ -20,9 +20,6 @@ public sealed class CFFeatureCoverageTest : GameTest
 {
     private const string Placeholder = "implemented later";
 
-    /// <summary><see cref="Content.Shared.CF.Companions.CFPetMath"/> looks for this feat by its id.</summary>
-    private const string AnimalCompanion = "CFAnimalCompanion";
-
     public override PoolSettings PoolSettings => new() { Connected = false };
 
     private static readonly Dictionary<string, Type> Kinds = new()
@@ -178,8 +175,7 @@ public sealed class CFFeatureCoverageTest : GameTest
                                 || feat.TrainedSkills.Count > 0
                                 || feat.Lores.Count > 0
                                 || feat.SpeedBonus != 0
-                                || feat.NaturalDie != 0
-                                || feat.ID == AnimalCompanion;
+                                || feat.NaturalDie != 0;
                 if (!hasEffect && !text.Contains("TBA") && !text.Contains("ot applied in play"))
                     silent.Add(feat.ID);
             }

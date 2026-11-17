@@ -813,11 +813,8 @@ public sealed partial class CFConditionSystem : EntitySystem
     /// </summary>
     public int ArmorClassModifier(EntityUid uid)
     {
-        var modifier = _bonuses.Total(uid, CFBonusStat.ArmorClass) + _shields.RaisedBonus(uid) - Frightened(uid) - Clumsy(uid);
-        if (TryComp(uid, out CFCombatOptionsComponent? style) && style.Raging)
-            modifier -= 1;
-
-        return modifier;
+        // Rage has no AC penalty: that was the legacy rule, and Player Core 2 dropped it.
+        return _bonuses.Total(uid, CFBonusStat.ArmorClass) + _shields.RaisedBonus(uid) - Frightened(uid) - Clumsy(uid);
     }
 
     /// <summary>Bonuses to one skill: those to all skills, and those to this skill alone.</summary>

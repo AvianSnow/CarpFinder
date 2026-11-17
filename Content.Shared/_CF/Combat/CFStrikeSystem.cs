@@ -75,6 +75,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private SharedAudioSystem _audio = default!;
     [Dependency] private ThrownItemSystem _thrownItems = default!;
+    [Dependency] private CFEmblazonSystem _emblazon = default!;
 
     /// <summary>Unconscious / dying creatures are off-guard (−4 AC status, simplified).</summary>
     private const int DownedAcPenalty = 4;
@@ -618,6 +619,16 @@ public sealed partial class CFStrikeSystem : EntitySystem
         };
     }
 
+    /// <summary>The weapon is the favored weapon of the attacker's deity, and a simple weapon whatever it counts as for them.</summary>
+    private bool IsFavoredSimple(CFCombatantComponent attacker, EntityUid weapon)
+    {
+        return attacker.FavoredWeapons.Count > 0
+               && TryComp(weapon, out CFWeaponComponent? data)
+               && data.Category == CFWeaponCategory.Simple
+               && MetaData(weapon).EntityPrototype is { } proto
+               && attacker.FavoredWeapons.Contains(proto.ID);
+    }
+
     private bool ResolveStrike(
         EntityUid user,
         EntityUid target,
@@ -743,8 +754,12 @@ public sealed partial class CFStrikeSystem : EntitySystem
         var targetAc = ArmorClassAgainst(user, target, defender, melee, unseen, isObject, alreadyDown);
 
         var rolled = weapon with { DamageType = ChooseDamageType(target, weapon) };
-        if (style is { HumbleStrikes: true } && weapon.Proficiency == CFWeaponCategory.Simple.Proficiency())
+        // Die size goes up one step at most, however many things would raise it.
+        if (style is { HumbleStrikes: true } && weapon.Proficiency == CFWeaponCategory.Simple.Proficiency()
+            || style is { DeadlySimplicity: true } && IsFavoredSimple(attackerCombat, weaponUid))
+        {
             rolled = rolled with { DamageDie = Math.Min(12, rolled.DamageDie + 2) };
+        }
 
         extraDice += _runes.NextStrikeDice(user, weapon);
         if (extraDice > 0)
@@ -761,6 +776,15 @@ public sealed partial class CFStrikeSystem : EntitySystem
             damageMod += rolled.Agile ? style.RageDamage / 2 : style.RageDamage;
 
         damageMod += _bonuses.Total(user, CFBonusStat.Damage, melee ? CFBonusStat.MeleeDamage : null);
+
+        // An emblazoned weapon's +1 is a status bonus, so it adds nothing on top of another one.
+        if (_emblazon.Bonus(user, weaponUid) > 0
+            && _bonuses.TotalOfType(user, CFBonusStat.Damage, CFBonusType.Status) < 1
+            && (!melee || _bonuses.TotalOfType(user, CFBonusStat.MeleeDamage, CFBonusType.Status) < 1))
+        {
+            damageMod += 1;
+        }
+
         if (style != null && style.MarkedTarget == target && _timing.CurTime < style.MarkedUntil)
             damageMod += style.MarkedDamage;
 

@@ -119,6 +119,10 @@ public sealed partial class CFCombatantComponent : Component
     [DataField, AutoNetworkedField]
     public List<EntProtoId> FamiliarWeapons = new();
 
+    /// <summary>The favored weapon of the character's deity.</summary>
+    [DataField, AutoNetworkedField]
+    public List<EntProtoId> FavoredWeapons = new();
+
     /// <summary>Weapons with these traits count as one category simpler for this character.</summary>
     [DataField, AutoNetworkedField]
     public List<ProtoId<CFTraitPrototype>> FamiliarWeaponTraits = new();

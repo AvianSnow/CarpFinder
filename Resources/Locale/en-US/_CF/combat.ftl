@@ -85,7 +85,11 @@ cf-act-tail-toxin = Venom glistens on your weapon
 cf-act-tail-toxin-hit = Poisoned!
 cf-act-shift-colors-popup = Colors shift to match the surroundings
 cf-reaction-name-reactive-strike = Reactive Strike
+cf-emblazon-cannot = You need a deity, and a weapon or shield in your active hand.
+cf-emblazon-done = You draw your deity's symbol on {THE($item)}.
+cf-emblazon-examine = It bears the symbol of [color=gold]{$deity}[/color].
 cf-reaction-counterspell = Counterspell
+cf-reaction-counter-thought = Counter Thought
 cf-reaction-countered = The spell is countered!
 cf-reaction-counter-failed = The counterspell fails.
 cf-reaction-name-shield-block = Shield Block

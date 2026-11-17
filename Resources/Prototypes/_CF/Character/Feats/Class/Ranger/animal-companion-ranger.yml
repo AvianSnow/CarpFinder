@@ -8,4 +8,6 @@
   level: 1
   traits:
     - "Ranger"
-  pendingAction: true
+  grants:
+    - !type:CFGrantPet
+      kind: Companion

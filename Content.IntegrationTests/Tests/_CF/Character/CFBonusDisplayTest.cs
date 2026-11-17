@@ -97,7 +97,7 @@ public sealed class CFBonusDisplayTest : GameTest
             Assert.Multiple(() =>
             {
                 Assert.That(conditions.DefenseModifier(hero, CFDefenseType.Fortitude), Is.EqualTo(2 + 1 + 4 + 1 - 2));
-                Assert.That(conditions.ArmorClassModifier(hero), Is.EqualTo(1 - 2 - 1));
+                Assert.That(conditions.ArmorClassModifier(hero), Is.EqualTo(1 - 2), "Rage has no AC penalty in the remaster.");
                 Assert.That(bonuses.TimedTotal(hero, CFBonusStat.Saves), Is.EqualTo(1));
             });
 

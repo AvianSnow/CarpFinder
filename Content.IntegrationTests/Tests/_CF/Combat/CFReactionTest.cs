@@ -241,6 +241,42 @@ public sealed class CFReactionTest : GameTest
     }
 
     [Test]
+    public async Task CounterThoughtSpendsASlotAgainstAMentalSpellOnly()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        bool mental = false, other = true, dry = true;
+        int afterMental = -1, afterOther = -1;
+        await Server.WaitPost(() =>
+        {
+            var psychic = Hero("CFCounterThought");
+            var book = SEntMan.EnsureComponent<CFSpellbookComponent>(psychic);
+            book.Slots = new List<int> { 5, 1 };
+            book.Expended = new List<int> { 0, 0 };
+
+            var foe = SpawnHere("CFReactionTestFoe");
+            var barrage = SEntMan.GetComponent<CFSpellComponent>(SEntMan.SpawnEntity("CFForceBarrage", Robust.Shared.Map.MapCoordinates.Nullspace));
+            other = Reactions.TryCounterspell(foe, barrage, d20: 20);
+            afterOther = book.Expended[1];
+
+            var fear = SEntMan.GetComponent<CFSpellComponent>(SEntMan.SpawnEntity("CFFear", Robust.Shared.Map.MapCoordinates.Nullspace));
+            mental = Reactions.TryCounterspell(foe, fear, d20: 20);
+            afterMental = book.Expended[1];
+
+            Options(psychic).ReactionSpent = 0;
+            dry = Reactions.TryCounterspell(foe, fear, d20: 20);
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(other, Is.False, "Force Barrage is not a mental spell.");
+            Assert.That(afterOther, Is.Zero);
+            Assert.That(mental, Is.True);
+            Assert.That(afterMental, Is.EqualTo(1), "It costs the slot the spell would have.");
+            Assert.That(dry, Is.False, "No slot left to spend.");
+        });
+    }
+
+    [Test]
     public async Task ScarsOfSteelTakesThePhysicalPartOfACriticalHit()
     {
         _map = await CFDevMap.Load(Pair, Footprint);

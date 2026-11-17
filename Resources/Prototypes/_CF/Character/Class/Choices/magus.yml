@@ -33,6 +33,9 @@
   slot: cf-class-choice-hybrid-study
   name: cf-class-choice-studysparklingtarge
   description: cf-class-choice-studysparklingtarge-desc
+  grants:
+    - !type:CFGrantOption
+      option: ShieldBlock
 
 - type: cfClassChoice
   id: StudyStarlitSpan

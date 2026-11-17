@@ -89,6 +89,41 @@ public sealed class CFTemporaryHpTest : GameTest
     }
 
     [Test]
+    public async Task ARageRunsOut()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        EntityUid hero = default;
+        bool started = false, stillAfterASecond = false, ended = true;
+        var lasts = System.TimeSpan.Zero;
+        await Server.WaitPost(() =>
+        {
+            hero = Hero();
+            SEntMan.System<CFActivitySystem>().SetRaging(hero, true);
+            started = SEntMan.GetComponent<CFCombatOptionsComponent>(hero).Raging;
+            lasts = SEntMan.GetComponent<CFRagingComponent>(hero).EndsAt - Server.Timing.CurTime;
+        });
+        await Pair.RunSeconds(1f);
+        await Server.WaitPost(() =>
+        {
+            stillAfterASecond = SEntMan.GetComponent<CFCombatOptionsComponent>(hero).Raging;
+            SEntMan.GetComponent<CFRagingComponent>(hero).EndsAt = Server.Timing.CurTime;
+        });
+        await Pair.RunSeconds(0.5f);
+        await Server.WaitPost(() =>
+        {
+            ended = !SEntMan.GetComponent<CFCombatOptionsComponent>(hero).Raging && !SEntMan.HasComponent<CFRagingComponent>(hero);
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(started, Is.True);
+            Assert.That(lasts, Is.EqualTo(CFActivitySystem.RageLasts));
+            Assert.That(stillAfterASecond, Is.True);
+            Assert.That(ended, Is.True, "It ends when its time is up.");
+        });
+    }
+
+    [Test]
     public async Task RageGivesThemOnceAMinuteUnlessSecondWind()
     {
         _map = await CFDevMap.Load(Pair, Footprint);

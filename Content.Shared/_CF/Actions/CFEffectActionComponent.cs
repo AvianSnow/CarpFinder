@@ -19,4 +19,8 @@ public sealed partial class CFEffectActionComponent : Component
     /// <summary>Needs both hands empty, as Rabid Sprint does.</summary>
     [DataField]
     public bool NeedsBothHandsFree;
+
+    /// <summary>An Inventor's unstable action: it needs the innovation in use and working, and may stop it afterwards.</summary>
+    [DataField]
+    public bool Unstable;
 }

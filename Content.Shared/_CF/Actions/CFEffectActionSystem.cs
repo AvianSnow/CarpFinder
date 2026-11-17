@@ -13,6 +13,7 @@ public sealed partial class CFEffectActionSystem : EntitySystem
     [Dependency] private CFEffectSystem _effects = default!;
     [Dependency] private SharedHandsSystem _hands = default!;
     [Dependency] private CFArmorSystem _armor = default!;
+    [Dependency] private CFInventorSystem _inventor = default!;
 
     [SubscribeLocalEvent]
     private void OnAttempt(Entity<CFEffectActionComponent> ent, ref ActionAttemptEvent args)
@@ -23,6 +24,13 @@ public sealed partial class CFEffectActionSystem : EntitySystem
         {
             args.Cancelled = true;
             args.Reason = Loc.GetString("cf-act-needs-armor");
+            return;
+        }
+
+        if (ent.Comp.Unstable && !_inventor.CanUseUnstable(args.User))
+        {
+            args.Cancelled = true;
+            args.Reason = Loc.GetString("cf-inventor-unstable-cannot");
             return;
         }
 
@@ -57,8 +65,12 @@ public sealed partial class CFEffectActionSystem : EntitySystem
             return;
 
         args.Handled = true;
-        if (_net.IsServer)
-            _effects.ResolveTarget(ent, args.Performer, args.Performer);
+        if (!_net.IsServer)
+            return;
+
+        _effects.ResolveTarget(ent, args.Performer, args.Performer);
+        if (ent.Comp.Unstable)
+            _inventor.RollUnstable(args.Performer);
     }
 
     [SubscribeLocalEvent]
@@ -68,7 +80,11 @@ public sealed partial class CFEffectActionSystem : EntitySystem
             return;
 
         args.Handled = true;
-        if (_net.IsServer)
-            _effects.ResolveTarget(ent, args.Performer, args.Target);
+        if (!_net.IsServer)
+            return;
+
+        _effects.ResolveTarget(ent, args.Performer, args.Target);
+        if (ent.Comp.Unstable)
+            _inventor.RollUnstable(args.Performer);
     }
 }

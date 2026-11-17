@@ -40,7 +40,7 @@
   features:
     - level: 1
       name: "Familiar (Witch)"
-      description: "Your patron's familiar: TBA"
+      description: "Your patron's familiar. Pick it on the Pet tab. It follows you, on a stand-in body. Its familiar abilities and your patron's gift: TBA"
     - level: 1
       name: "Hexes"
       description: "Hex spells: TBA"

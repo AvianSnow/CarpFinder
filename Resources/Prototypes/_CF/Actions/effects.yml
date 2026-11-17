@@ -258,6 +258,41 @@
 
 - type: entity
   parent: CFActivityInstant
+  id: CFActEmblazonArmament
+  name: Emblazon Armament
+  description: Draw your deity's symbol on the weapon or shield in your active hand. A follower of your deity deals 1 more damage with the weapon, or the shield has 1 more Hardness for them. Your last symbol fades. You can draw another in 10 minutes.
+  components:
+  - type: Action
+    useDelay: 600
+  - type: CFRadialSlot
+    actions: 3
+  - type: CFEmblazonAction
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActSearingRestoration
+  name: Searing Restoration
+  description: A small blast from your innovation closes wounds. You or an adjacent creature regain 1d10 Hit Points, and 1d10 more at level 3 and every 2 levels after, and get a flat check to stop bleeding. An unstable action.
+  components:
+  - type: EntityTargetAction
+    canTargetSelf: true
+    whitelist:
+      components:
+      - MobState
+    event: !type:CFActivityTargetEvent
+  - type: CFEffectAction
+    unstable: true
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFHealEffect
+      dice: 1
+      die: 10
+      diceEveryLevels: 2
+    - !type:CFRecoverPersistentEffect
+      damageType: Bleed
+
+- type: entity
+  parent: CFActivityInstant
   id: CFActTwinParry
   name: Twin Parry
   description: With a melee weapon in each hand, +1 circumstance bonus to AC for 6 seconds.

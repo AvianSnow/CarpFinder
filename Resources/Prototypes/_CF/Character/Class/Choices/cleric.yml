@@ -32,6 +32,8 @@
     rank: Expert
   - !type:CFGrantOption
     option: ShieldBlock
+  - !type:CFGrantFeat
+    feat: CFDeadlySimplicity
   features:
   - level: 3
     name: Second Doctrine

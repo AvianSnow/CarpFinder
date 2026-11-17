@@ -7,6 +7,7 @@ using Content.Shared.CF.Hazards;
 using Content.Shared.CF.Preferences;
 using Content.Shared.CF.Spells;
 using Content.Shared.Hands.EntitySystems;
+using Content.Shared.Mobs.Systems;
 using Content.Shared.Popups;
 using Content.Shared.Throwing;
 using Robust.Shared.Network;
@@ -46,6 +47,7 @@ public sealed partial class CFActivitySystem : EntitySystem
     [Dependency] private ThrowingSystem _throwing = default!;
     [Dependency] private CFTemporaryHpSystem _tempHp = default!;
     [Dependency] private CFAuraSystem _auras = default!;
+    [Dependency] private MobStateSystem _mobState = default!;
 
     [SubscribeLocalEvent]
     private void OnSpellAttempt(Entity<CFSpellComponent> spell, ref ActionAttemptEvent args)
@@ -182,9 +184,31 @@ public sealed partial class CFActivitySystem : EntitySystem
     public const string RageSource = "rage";
     private static readonly TimeSpan RageTempHpWait = TimeSpan.FromMinutes(1);
 
+    /// <summary>How long a Rage lasts. The player may also end it sooner, which stands in for the encounter ending.</summary>
+    public static readonly TimeSpan RageLasts = TimeSpan.FromMinutes(1);
+
+    public override void Update(float frameTime)
+    {
+        base.Update(frameTime);
+        if (!_net.IsServer)
+            return;
+
+        var now = _timing.CurTime;
+        var query = EntityQueryEnumerator<CFRagingComponent>();
+        while (query.MoveNext(out var uid, out var raging))
+        {
+            if (now < raging.EndsAt && _mobState.IsAlive(uid))
+                continue;
+
+            SetRaging(uid, false);
+            _popup.PopupEntity(Loc.GetString("cf-act-rage-end"), uid, uid);
+        }
+    }
+
     /// <summary>
     /// Starts or ends a Rage. Starting gives temporary Hit Points equal to level plus Constitution modifier, but only once a
-    /// minute unless the creature has Second Wind. They last until the Rage ends.
+    /// minute unless the creature has Second Wind. They last until the Rage ends, which it does after
+    /// <see cref="RageLasts"/> or when the creature drops.
     /// </summary>
     public void SetRaging(EntityUid user, bool raging)
     {
@@ -196,6 +220,7 @@ public sealed partial class CFActivitySystem : EntitySystem
         if (raging)
         {
             var now = _timing.CurTime;
+            EnsureComp<CFRagingComponent>(user).EndsAt = now + RageLasts;
             if (opt.SecondWind || now >= opt.RageTempHpReadyAt)
             {
                 var level = CompOrNull<CFCombatantComponent>(user)?.Level ?? 1;
@@ -206,6 +231,7 @@ public sealed partial class CFActivitySystem : EntitySystem
         }
         else
         {
+            RemCompDeferred<CFRagingComponent>(user);
             _tempHp.Clear(user, RageSource);
         }
 

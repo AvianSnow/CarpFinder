@@ -10,6 +10,8 @@
     - "Druid"
   prerequisites:
     - "leaf order"
-  pendingAction: true
   requiresChoice:
     - OrderLeaf
+  grants:
+    - !type:CFGrantPet
+      kind: Familiar

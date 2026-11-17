@@ -64,7 +64,7 @@
   parent: CFActivityInstant
   id: CFActRage
   name: Rage
-  description: +2 damage and -1 AC until you end the rage. You cannot cast spells while raging.
+  description: +2 damage on melee Strikes for a minute, or until you end the rage. You cannot cast spells while raging.
   components:
   - type: CFActivity
     kind: Rage

@@ -183,6 +183,13 @@ public sealed partial class CFReaction
     [DataField]
     public bool CounterspellPrepared;
 
+    /// <summary>
+    /// With <see cref="CFReactionTrigger.EnemyCastsSpell"/>: spends a spell slot to counteract the spell, the one the spell
+    /// would have cost or the next one left above it (Counter Thought). <see cref="Trait"/> limits which spells.
+    /// </summary>
+    [DataField]
+    public bool CounterspellSlot;
+
     /// <summary>This attribute's modifier also comes off the damage, when it is positive.</summary>
     [DataField]
     public CFAbility? ResistAbility;

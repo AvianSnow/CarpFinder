@@ -159,13 +159,16 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
         Dirty(mob, options);
     }
 
-    public void AddFamiliarity(EntityUid mob, List<EntProtoId> weapons, List<ProtoId<CFTraitPrototype>> traits)
+    public void AddFamiliarity(EntityUid mob, List<EntProtoId> weapons, List<ProtoId<CFTraitPrototype>> traits, bool favored = false)
     {
         var combat = EnsureComp<CFCombatantComponent>(mob);
         foreach (var weapon in weapons)
         {
             if (!combat.FamiliarWeapons.Contains(weapon))
                 combat.FamiliarWeapons.Add(weapon);
+
+            if (favored && !combat.FavoredWeapons.Contains(weapon))
+                combat.FavoredWeapons.Add(weapon);
         }
 
         foreach (var trait in traits)
@@ -583,6 +586,9 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
                 break;
             case CFCombatOption.HumbleStrikes:
                 options.HumbleStrikes = true;
+                break;
+            case CFCombatOption.DeadlySimplicity:
+                options.DeadlySimplicity = true;
                 break;
             case CFCombatOption.GuardianArmor:
                 options.GuardianArmor = true;

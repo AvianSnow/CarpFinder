@@ -19,6 +19,7 @@ public sealed partial class CFShieldSystem : EntitySystem
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private CFActionPoolSystem _actions = default!;
     [Dependency] private Content.Shared.Movement.Systems.MovementSpeedModifierSystem _speed = default!;
+    [Dependency] private CFEmblazonSystem _emblazon = default!;
 
     /// <summary>A shield in either hand that is not broken.</summary>
     public bool TryGetUsableShield(EntityUid user, out Entity<CFShieldComponent> shield)
@@ -157,7 +158,7 @@ public sealed partial class CFShieldSystem : EntitySystem
         if (damage <= 0)
             return 0;
 
-        var blocked = Math.Min(damage, shield.Comp.Hardness);
+        var blocked = Math.Min(damage, shield.Comp.Hardness + _emblazon.Bonus(user, shield));
         var through = damage - blocked;
         if (blocked > 0)
             _popup.PopupEntity(Loc.GetString("cf-act-shield-block", ("amount", blocked)), user);

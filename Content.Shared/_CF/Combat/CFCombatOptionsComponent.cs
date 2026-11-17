@@ -79,6 +79,10 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public bool HumbleStrikes;
 
+    /// <summary>The deity's favored weapon, when it is a simple weapon, has a damage die one step larger.</summary>
+    [DataField, AutoNetworkedField]
+    public bool DeadlySimplicity;
+
     /// <summary>In medium or heavy armor, physical damage is reduced by 1 + half the creature's level.</summary>
     [DataField, AutoNetworkedField]
     public bool GuardianArmor;
@@ -458,6 +462,7 @@ public enum CFCombatOption : byte
     ImplementEmpowerment,
     WeaponImplement,
     ExpertOverdrive,
+    DeadlySimplicity,
 }
 
 public enum CFPointMark : byte

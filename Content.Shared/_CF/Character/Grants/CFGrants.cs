@@ -230,9 +230,13 @@ public sealed partial class CFGrantWeaponFamiliarity : CFGrant
     [DataField]
     public List<ProtoId<CFTraitPrototype>> Traits = new();
 
+    /// <summary>These are a deity's favored weapon, which feats such as Deadly Simplicity look for.</summary>
+    [DataField]
+    public bool Favored;
+
     public override void Apply(IEntityManager entities, CFGrantArgs args)
     {
-        entities.System<CFCharacterFeatureSystem>().AddFamiliarity(args.Mob, Weapons, Traits);
+        entities.System<CFCharacterFeatureSystem>().AddFamiliarity(args.Mob, Weapons, Traits, Favored);
     }
 }
 
@@ -510,6 +514,21 @@ public sealed partial class CFGrantAction : CFGrant
     public override void Apply(IEntityManager entities, CFGrantArgs args)
     {
         entities.System<CFCharacterFeatureSystem>().GrantAction(args.Mob, Action);
+    }
+}
+
+/// <summary>
+/// The option gives an animal companion, a familiar or a construct companion. The body is spawned with the character by
+/// the server's spawn system, from the Pet tab's pick, so there is nothing to apply here: <see cref="CFPetMath"/> looks
+/// for this grant to know the build has one.
+/// </summary>
+public sealed partial class CFGrantPet : CFGrant
+{
+    [DataField(required: true)]
+    public CFPetKind Kind;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
     }
 }
 

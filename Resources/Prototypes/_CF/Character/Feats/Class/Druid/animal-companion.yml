@@ -12,3 +12,6 @@
     - "animal order"
   requiresChoice:
     - OrderAnimal
+  grants:
+    - !type:CFGrantPet
+      kind: Companion

@@ -153,6 +153,46 @@ public sealed class CFInnovationTest : GameTest
     }
 
     [Test]
+    public async Task SearingRestorationNeedsTheInnovationAndHeals()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        bool without = true, with = false;
+        int least = int.MaxValue, most = 0;
+        await Server.WaitPost(() =>
+        {
+            var hero = Spawn();
+            Features.Apply(hero, Server.ProtoMan.Index(new ProtoId<CFFeatPrototype>("CFSearingRestoration")).Grants, "feat:CFSearingRestoration");
+            var action = Action(hero, "CFActSearingRestoration");
+            var first = new ActionAttemptEvent(hero, hero);
+            SEntMan.EventBus.RaiseLocalEvent(action, ref first);
+            without = !first.Cancelled;
+
+            Wear(hero, "CFInnovationPowerSuit");
+            var second = new ActionAttemptEvent(hero, hero);
+            SEntMan.EventBus.RaiseLocalEvent(action, ref second);
+            with = !second.Cancelled;
+
+            var combat = SEntMan.GetComponent<CFCombatantComponent>(hero);
+            var effects = SEntMan.System<CFEffectSystem>();
+            for (var i = 0; i < 60; i++)
+            {
+                combat.CurrentHp = 100;
+                effects.ResolveTarget(action, hero, hero);
+                least = System.Math.Min(least, combat.CurrentHp - 100);
+                most = System.Math.Max(most, combat.CurrentHp - 100);
+            }
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(without, Is.False);
+            Assert.That(with, Is.True);
+            Assert.That(least, Is.GreaterThanOrEqualTo(1));
+            Assert.That(most, Is.InRange(6, 10), "1d10 at level 1.");
+        });
+    }
+
+    [Test]
     public async Task AFailedUnstableCheckStopsTheInnovation()
     {
         _map = await CFDevMap.Load(Pair, Footprint);
@@ -260,6 +300,26 @@ public sealed class CFInnovationTest : GameTest
             Assert.That(CFPetMath.BuildGrants(Server.ProtoMan, build, CFPetKind.Construct), Is.False);
             build.ClassChoices.Add("InnovationConstruct");
             Assert.That(CFPetMath.BuildGrants(Server.ProtoMan, build, CFPetKind.Construct), Is.True);
+        });
+    }
+
+    /// <summary>A feat says which pet it gives with a grant, so the Pet tab and the spawn agree on it.</summary>
+    [Test]
+    public async Task AFeatGivesThePetItsGrantNames()
+    {
+        await Server.WaitAssertion(() =>
+        {
+            var inventor = new CFCharacterBuildData { Class = "Inventor", ClassFeat = "CFPrototypeCompanion" };
+            var wizard = new CFCharacterBuildData { Class = "Wizard", ClassFeat = "CFFamiliarWizard" };
+            var later = new CFCharacterBuildData { Class = "Wizard", ClassFeatLevel2 = "CFFamiliarWizard" };
+            Assert.Multiple(() =>
+            {
+                Assert.That(CFPetMath.BuildGrants(Server.ProtoMan, inventor, CFPetKind.Construct), Is.True);
+                Assert.That(CFPetMath.BuildGrants(Server.ProtoMan, inventor, CFPetKind.Familiar), Is.False);
+                Assert.That(CFPetMath.BuildGrants(Server.ProtoMan, wizard, CFPetKind.Familiar), Is.True);
+                Assert.That(CFPetMath.BuildGrants(Server.ProtoMan, wizard, CFPetKind.Companion), Is.False);
+                Assert.That(CFPetMath.BuildGrants(Server.ProtoMan, later, CFPetKind.Familiar), Is.False, "A level 2 feat waits for level 2.");
+            });
         });
     }
 }

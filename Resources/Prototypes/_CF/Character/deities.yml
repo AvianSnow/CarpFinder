@@ -12,6 +12,7 @@
   grants:
     - !type:CFGrantWeaponFamiliarity
       weapons: [ CFSpear ]
+      favored: true
 
 - type: cfDeity
   id: Keth
@@ -23,6 +24,7 @@
   grants:
     - !type:CFGrantWeaponFamiliarity
       weapons: [ CFLongsword ]
+      favored: true
 
 - type: cfDeity
   id: Brannoch
@@ -34,6 +36,7 @@
   grants:
     - !type:CFGrantWeaponFamiliarity
       weapons: [ CFWarhammer ]
+      favored: true
 
 - type: cfDeity
   id: Vaelis
@@ -44,6 +47,7 @@
   grants:
     - !type:CFGrantWeaponFamiliarity
       weapons: [ CFShortbow ]
+      favored: true
 
 - type: cfDeity
   id: Morvane
@@ -54,6 +58,7 @@
   grants:
     - !type:CFGrantWeaponFamiliarity
       weapons: [ CFStaff ]
+      favored: true
 
 - type: cfDeity
   id: Sivri
@@ -65,6 +70,7 @@
   grants:
     - !type:CFGrantWeaponFamiliarity
       weapons: [ CFDagger ]
+      favored: true
 
 - type: cfDeity
   id: Ombrix
@@ -76,3 +82,4 @@
   grants:
     - !type:CFGrantWeaponFamiliarity
       weapons: [ CFGreatsword ]
+      favored: true

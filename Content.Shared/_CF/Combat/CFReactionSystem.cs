@@ -59,6 +59,7 @@ public sealed partial class CFReactionSystem : EntitySystem
     [Dependency] private CFTauntSystem _taunts = default!;
     [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private CFEffectSystem _effects = default!;
+    [Dependency] private CFSpellSystem _spells = default!;
     [Dependency] private CFManeuverSystem _maneuvers = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private SharedPhysicsSystem _physics = default!;
@@ -540,17 +541,42 @@ public sealed partial class CFReactionSystem : EntitySystem
             foreach (var known in Ordered(uid, reactions))
             {
                 if (known.Reaction.Trigger != CFReactionTrigger.EnemyCastsSpell
-                    || !known.Reaction.CounterspellPrepared
                     || !WithinFeet(uid, caster, known.Reaction.RangeFeet)
                     || !TryComp(uid, out CFSpellbookComponent? book)
-                    || CFPreparedSpells.Charges(book, spell.Spell).Ready <= 0
-                    || !TrySpend(uid, known))
+                    || !CanFire(uid, known))
                 {
                     continue;
                 }
 
-                var rank = CFPreparedSpells.Spend(book, spell.Spell, spell.Rank);
-                Dirty(uid, book);
+                int rank;
+                if (known.Reaction.CounterspellPrepared)
+                {
+                    if (CFPreparedSpells.Charges(book, spell.Spell).Ready <= 0 || !TrySpend(uid, known))
+                        continue;
+
+                    rank = CFPreparedSpells.Spend(book, spell.Spell, spell.Rank);
+                    Dirty(uid, book);
+                }
+                else if (known.Reaction.CounterspellSlot)
+                {
+                    if (known.Reaction.Trait is { } trait
+                        && (!_prototypes.TryIndex(spell.Spell, out var cast) || !cast.Traits.Contains(trait)))
+                    {
+                        continue;
+                    }
+
+                    // The slot the spell itself would have cost, or the next one up that is left.
+                    rank = Math.Max(1, spell.Rank);
+                    while (rank < book.Slots.Count && !_spells.TrySpendAnySlot(uid, rank))
+                        rank++;
+
+                    if (rank >= book.Slots.Count || !TrySpend(uid, known))
+                        continue;
+                }
+                else
+                {
+                    continue;
+                }
 
                 var mine = CFCasting.Spellcasting(_prototypes, CompOrNull<CFCombatantComponent>(uid), CompOrNull<CFAbilityScoreComponent>(uid));
                 var theirs = CFCasting.Spellcasting(_prototypes, CompOrNull<CFCombatantComponent>(caster), CompOrNull<CFAbilityScoreComponent>(caster));

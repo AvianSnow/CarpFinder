@@ -40,7 +40,7 @@
       description: "Rage as a free action when a fight begins. Real time has no initiative to set it off: TBA"
     - level: 1
       name: "Rage"
-      description: "Rage is on your action wheel. While raging, melee Strikes deal +2 damage, or +1 with an agile attack, and your AC takes -1. The temporary Hit Points and the time limit: TBA"
+      description: "Rage is on your action wheel. While raging, melee Strikes deal +2 damage, or +1 with an agile attack. You gain temporary Hit Points equal to your level plus your Constitution modifier, once a minute. A Rage lasts 1 minute, or until you drop or end it yourself."
       grants:
         - !type:CFGrantOption
           option: CanRage

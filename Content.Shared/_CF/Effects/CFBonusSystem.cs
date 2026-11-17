@@ -532,6 +532,25 @@ public sealed partial class CFBonusSystem : EntitySystem
         });
     }
 
+    /// <summary>
+    /// An extra flat check to end persistent damage of one type, as help from someone gives. True if it ended.
+    /// </summary>
+    public bool TryRecoverPersistent(EntityUid uid, ProtoId<CFDamageTypePrototype> type, int dc, int? d20 = null)
+    {
+        if (!TryComp(uid, out CFPersistentDamageComponent? comp))
+            return false;
+
+        var index = comp.Entries.FindIndex(entry => entry.DamageType == type);
+        if (index < 0 || (d20 ?? _random.Next(1, 21)) < dc)
+            return false;
+
+        comp.Entries.RemoveAt(index);
+        if (comp.Entries.Count == 0)
+            RemCompDeferred<CFPersistentDamageComponent>(uid);
+
+        return true;
+    }
+
     private void TickPersistent(TimeSpan now)
     {
         var query = EntityQueryEnumerator<CFPersistentDamageComponent>();

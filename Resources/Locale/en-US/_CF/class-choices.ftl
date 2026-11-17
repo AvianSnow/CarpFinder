@@ -35,7 +35,7 @@ cf-class-choice-doctrine = Doctrine
 cf-class-choice-doctrine-cloistered = Cloistered Cleric
 cf-class-choice-doctrine-cloistered-desc = At level 3 you become an expert in Fortitude saves. The Domain Initiate feat at level 1: TBA
 cf-class-choice-doctrine-warpriest = Warpriest
-cf-class-choice-doctrine-warpriest-desc = Trained in light and medium armor, expert in Fortitude saves, and Shield Block. At level 3 you are trained in martial weapons. Deadly Simplicity: TBA
+cf-class-choice-doctrine-warpriest-desc = Trained in light and medium armor, expert in Fortitude saves, and Shield Block. At level 3 you are trained in martial weapons. You have Deadly Simplicity, which makes your deity's favored weapon hit harder when it is a simple weapon.
 
 cf-class-choice-order = Druidic Order
 cf-class-choice-order-animal = Animal
@@ -208,25 +208,25 @@ cf-reaction-glimpse-of-redemption = Glimpse of Redemption
 
 cf-class-choice-hybrid-study = Hybrid Study
 cf-class-choice-studyalooffirmament = Aloof Firmament
-cf-class-choice-studyalooffirmament-desc = Its benefit and conflux spell depend on recharging Spellstrike: TBA
+cf-class-choice-studyalooffirmament-desc = Cat Fall in light or no armor. In Arcane Cascade, lighter jumps that set off no reactions, and a harder sword Strike after one: TBA. Its conflux spell: TBA
 cf-class-choice-studyinexorableiron = Inexorable Iron
-cf-class-choice-studyinexorableiron-desc = Its benefit and conflux spell depend on recharging Spellstrike: TBA
+cf-class-choice-studyinexorableiron-desc = In Arcane Cascade with a melee weapon in both hands, temporary Hit Points equal to half your level, again each turn: TBA. Its conflux spell, Thunderous Strike: TBA
 cf-class-choice-studylaughingshadow = Laughing Shadow
-cf-class-choice-studylaughingshadow-desc = Its benefit and conflux spell depend on recharging Spellstrike: TBA
+cf-class-choice-studylaughingshadow-desc = In Arcane Cascade, +5 feet Speed, or +10 unarmored, and more damage against an off-guard creature while one hand is free: TBA. Its conflux spell, Dimensional Assault: TBA
 cf-class-choice-studyresurgentmaelstrom = Resurgent Maelstrom
-cf-class-choice-studyresurgentmaelstrom-desc = Its benefit and conflux spell depend on recharging Spellstrike: TBA
+cf-class-choice-studyresurgentmaelstrom-desc = Improvised weapons with no penalty, a larger die and extra traits: TBA. Its conflux spell: TBA
 cf-class-choice-studysparklingtarge = Sparkling Targe
-cf-class-choice-studysparklingtarge-desc = Its benefit and conflux spell depend on recharging Spellstrike: TBA
+cf-class-choice-studysparklingtarge-desc = You have Shield Block. In Arcane Cascade, your raised shield also adds to saves against magic and can block magical damage: TBA. Its conflux spell: TBA
 cf-class-choice-studystarlitspan = Starlit Span
-cf-class-choice-studystarlitspan-desc = Its benefit and conflux spell depend on recharging Spellstrike: TBA
+cf-class-choice-studystarlitspan-desc = Spellstrike with a ranged weapon, inside its first range increment: TBA. Its conflux spell, Shooting Star: TBA
 cf-class-choice-studytwistingtree = Twisting Tree
-cf-class-choice-studytwistingtree-desc = Its benefit and conflux spell depend on recharging Spellstrike: TBA
+cf-class-choice-studytwistingtree-desc = A staff in one hand is agile with a d6 die. In both hands it has parry, reach and trip: TBA. Its conflux spell, Spinning Staff: TBA
 cf-class-choice-studytwofoldtine = Twofold Tine
-cf-class-choice-studytwofoldtine-desc = Its benefit and conflux spell depend on recharging Spellstrike: TBA
+cf-class-choice-studytwofoldtine-desc = In Arcane Cascade, a Strike with one melee weapon raises the stance's extra damage to 2 for the weapon in your other hand: TBA. Its conflux spell, Force Fling: TBA
 cf-class-choice-studyunfurlingbrocade = Unfurling Brocade
-cf-class-choice-studyunfurlingbrocade-desc = Its benefit and conflux spell depend on recharging Spellstrike: TBA
+cf-class-choice-studyunfurlingbrocade-desc = A length of cloth becomes a bladed scarf you can wield in one hand: TBA. Its conflux spell: TBA
 cf-class-choice-studyvolatilespark = Volatile Spark
-cf-class-choice-studyvolatilespark-desc = Its benefit and conflux spell depend on recharging Spellstrike: TBA
+cf-class-choice-studyvolatilespark-desc = Spellstrike with a firearm, inside its first range increment, and reloading as you enter Arcane Cascade: TBA. Its conflux spell, Booming Blast: TBA
 
 cf-class-choice-implement = First Implement
 
