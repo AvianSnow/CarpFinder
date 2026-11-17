@@ -893,7 +893,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
                     Dirty(target, defender);
                     MirrorToSs14(user, target, defender, damage, rolled.DamageType, isObject);
                     RaiseDamaged(target, user, damage);
-                    ApplyTailToxin(user, target, style, rolled.DamageType, rolled.Traits.Unarmed, isObject);
+                    ApplyTailToxin(user, target, style, rolled.DamageType, rolled.Traits.Unarmed, isObject, rolled.Item != null);
+                    ApplySparkFist(user, target, style, rolled, isObject);
                 }
 
                 if (!isObject && defender.CurrentHp <= 0)
@@ -901,7 +902,9 @@ public sealed partial class CFStrikeSystem : EntitySystem
                     if (_dying.KnockOut(target, defender, criticalHit, user))
                     {
                         _popup.PopupEntity(Loc.GetString("cf-combat-strike-defeated"), target, user);
-                        if (weapon.Traits.Nonlethal)
+                        // Spark Fist makes the fist lethal while it lasts.
+                        var sparking = style != null && weapon.Item == null && _timing.CurTime < style.SparkFistUntil;
+                        if (weapon.Traits.Nonlethal && !sparking)
                             _dying.KnockOutNonlethal(target, defender);
 
                         YoureNext(user, target);
@@ -1146,12 +1149,35 @@ public sealed partial class CFStrikeSystem : EntitySystem
     }
 
     /// <summary>Tail Toxin: the next piercing or slashing hit after the action deals persistent poison equal to the level.</summary>
-    private void ApplyTailToxin(EntityUid user, EntityUid target, CFCombatOptionsComponent? style, string damageType, bool unarmed, bool isObject)
+    /// <summary>Spark Fist: a fist hit burns the target and the attacker alike, 1 fire damage per weapon die.</summary>
+    private void ApplySparkFist(EntityUid user, EntityUid target, CFCombatOptionsComponent? style, CFStrikeWeaponStats weapon, bool isObject)
+    {
+        if (style == null || isObject || weapon.Item != null || !weapon.Traits.Unarmed || _timing.CurTime >= style.SparkFistUntil)
+            return;
+
+        var fire = Math.Max(1, weapon.DamageDice);
+        _effects.DealDamage(user, target, fire, "Fire", critical: false);
+        _effects.DealDamage(user, user, fire, "Fire", critical: false);
+    }
+
+    private void ApplyTailToxin(
+        EntityUid user,
+        EntityUid target,
+        CFCombatOptionsComponent? style,
+        string damageType,
+        bool unarmed,
+        bool isObject,
+        bool heldWeapon)
     {
         if (style == null || isObject || _timing.CurTime >= style.TailToxinUntil)
             return;
 
-        if (style.ToxinUnarmedOnly)
+        if (style.ToxinAnyWeapon)
+        {
+            if (!heldWeapon)
+                return;
+        }
+        else if (style.ToxinUnarmedOnly)
         {
             if (!unarmed)
                 return;

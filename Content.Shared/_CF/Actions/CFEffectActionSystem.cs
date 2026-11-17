@@ -14,6 +14,8 @@ public sealed partial class CFEffectActionSystem : EntitySystem
     [Dependency] private SharedHandsSystem _hands = default!;
     [Dependency] private CFArmorSystem _armor = default!;
     [Dependency] private CFInventorSystem _inventor = default!;
+    [Dependency] private Content.Shared.Mobs.Systems.MobStateSystem _mobState = default!;
+    [Dependency] private Content.Shared.CF.Factions.CFFactionSystem _factions = default!;
 
     [SubscribeLocalEvent]
     private void OnAttempt(Entity<CFEffectActionComponent> ent, ref ActionAttemptEvent args)
@@ -24,6 +26,14 @@ public sealed partial class CFEffectActionSystem : EntitySystem
         {
             args.Cancelled = true;
             args.Reason = Loc.GetString("cf-act-needs-armor");
+            return;
+        }
+
+        if (ent.Comp.NeedsDeadEnemy
+            && (args.Target is not { } corpse || !_mobState.IsDead(corpse) || !_factions.CanHarm(args.User, corpse)))
+        {
+            args.Cancelled = true;
+            args.Reason = Loc.GetString("cf-act-needs-dead-enemy");
             return;
         }
 

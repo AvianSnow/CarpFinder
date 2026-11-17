@@ -47,6 +47,7 @@ public sealed partial class CFActivitySystem : EntitySystem
     [Dependency] private ThrowingSystem _throwing = default!;
     [Dependency] private CFTemporaryHpSystem _tempHp = default!;
     [Dependency] private CFAuraSystem _auras = default!;
+    [Dependency] private CFEffectSystem _effects = default!;
     [Dependency] private MobStateSystem _mobState = default!;
 
     [SubscribeLocalEvent]
@@ -76,6 +77,10 @@ public sealed partial class CFActivitySystem : EntitySystem
             case CFActivityKind.Leap when !_maneuvers.CanUse(args.User, CFBasicAction.Leap):
                 args.Cancelled = true;
                 args.Reason = Loc.GetString("cf-act-leap-cannot");
+                break;
+            case CFActivityKind.LeftHandBlood when !HoldsWeapon(args.User):
+                args.Cancelled = true;
+                args.Reason = Loc.GetString("cf-act-needs-weapon");
                 break;
             case CFActivityKind.ConstructTrap when !_traps.CanConstruct(args.User):
                 args.Cancelled = true;
@@ -117,17 +122,31 @@ public sealed partial class CFActivitySystem : EntitySystem
             case CFActivityKind.EnvenomFangs:
                 Envenom(args.Performer, dice: 1, die: 6, unarmedOnly: true);
                 break;
+            case CFActivityKind.LeftHandBlood:
+                _effects.DealDamage(args.Performer, args.Performer, 1, "Slashing", critical: false);
+                Envenom(args.Performer, dice: 1, die: 4, unarmedOnly: false, anyWeapon: true);
+                break;
+            case CFActivityKind.SparkFist:
+                var fist = EnsureComp<CFCombatOptionsComponent>(args.Performer);
+                fist.SparkFistUntil = _timing.CurTime + TimeSpan.FromSeconds(6);
+                Dirty(args.Performer, fist);
+                _popup.PopupEntity(Loc.GetString("cf-act-spark-fist"), args.Performer, args.Performer);
+                break;
         }
     }
 
-    /// <summary>Venom on the creature's weapon or fangs for 6 seconds. Dice of 0 means persistent poison equal to the level.</summary>
-    private void Envenom(EntityUid user, int dice, int die, bool unarmedOnly)
+    /// <summary>
+    /// Venom on the creature's weapon or fangs for 6 seconds. Dice of 0 means persistent poison equal to the level.
+    /// <paramref name="anyWeapon"/> is poison on a held weapon, whatever kind of damage it deals.
+    /// </summary>
+    private void Envenom(EntityUid user, int dice, int die, bool unarmedOnly, bool anyWeapon = false)
     {
         var options = EnsureComp<CFCombatOptionsComponent>(user);
         options.TailToxinUntil = _timing.CurTime + TimeSpan.FromSeconds(6);
         options.ToxinDice = dice;
         options.ToxinDie = die;
         options.ToxinUnarmedOnly = unarmedOnly;
+        options.ToxinAnyWeapon = anyWeapon;
         Dirty(user, options);
         _popup.PopupEntity(Loc.GetString("cf-act-tail-toxin"), user, user);
     }
@@ -170,6 +189,17 @@ public sealed partial class CFActivitySystem : EntitySystem
                 StrikeHeld(args.Performer, args.Target);
                 break;
         }
+    }
+
+    private bool HoldsWeapon(EntityUid user)
+    {
+        foreach (var held in _hands.EnumerateHeld(user))
+        {
+            if (HasComp<CFWeaponComponent>(held))
+                return true;
+        }
+
+        return false;
     }
 
     private void ToggleRage(EntityUid user)

@@ -12,3 +12,5 @@
     - "Kobold Breath"
   requiresFeats:
     - CFKoboldBreath
+  grants:
+    - !type:CFGrantBreathMomentum

@@ -20,6 +20,10 @@ public sealed partial class CFEffectActionComponent : Component
     [DataField]
     public bool NeedsBothHandsFree;
 
+    /// <summary>The target has to be a dead enemy, as Absorb Strength needs a corpse.</summary>
+    [DataField]
+    public bool NeedsDeadEnemy;
+
     /// <summary>An Inventor's unstable action: it needs the innovation in use and working, and may stop it afterwards.</summary>
     [DataField]
     public bool Unstable;

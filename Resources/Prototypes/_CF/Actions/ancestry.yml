@@ -288,3 +288,115 @@
       die: 4
       damageType: Poison
       diceEveryLevels: 2
+
+# Absorb Strength: temporary Hit Points from an enemy's corpse.
+- type: entity
+  parent: CFActivityTarget
+  id: CFActAbsorbStrength
+  name: Absorb Strength
+  description: Eat a piece of a dead enemy beside you. You gain temporary Hit Points equal to its level for a minute. Once an hour.
+  components:
+  - type: Action
+    useDelay: 3600
+  - type: CFEffectAction
+    needsDeadEnemy: true
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFTemporaryHpEffect
+      fromTargetLevel: true
+      durationSeconds: 60
+
+# Frog Geyser: a 20-foot line of water that pushes. Fortitude against the class DC.
+- type: entity
+  parent: CFActBreathBase
+  id: CFActFrogGeyser
+  name: Frog Geyser
+  description: Spray a 20-foot line of water. Each creature in it rolls Fortitude against your class DC, and is pushed 5 feet on a success, 10 feet on a failure, and also knocked prone on a critical failure. Costs 2 actions.
+  components:
+  - type: CFBreathWeapon
+    rechargeDice: 0
+  - type: CFTrait
+    traits: [Water]
+  - type: CFAreaEffect
+    shape: Line
+    sizeFeet: 20
+  - type: CFCheck
+    defense: Fortitude
+    basicSave: false
+    dcSource: Class
+  - type: CFDegreeEffects
+    success:
+    - !type:CFForcedMovementEffect
+      feet: 5
+    failure:
+    - !type:CFForcedMovementEffect
+      feet: 10
+    criticalFailure:
+    - !type:CFForcedMovementEffect
+      feet: 10
+    - !type:CFApplyConditionEffect
+      condition: Prone
+      durationSeconds: 3
+
+# Leech-Clip: a flail Strike that slows.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActLeechClip
+  name: Leech-Clip
+  description: A Strike with a flail. If it hits, the target takes -10 feet status to Speed for 6 seconds, -15 feet on a critical hit. Costs 2 actions.
+  components:
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFStrikeAction
+    groups: [ Flail ]
+    onHit:
+    - !type:CFBonusEffect
+      stat: Speed
+      type: Status
+      value: -10
+      durationSeconds: 6
+    onCritical:
+    - !type:CFBonusEffect
+      stat: Speed
+      type: Status
+      value: -15
+      durationSeconds: 6
+
+# Left-Hand Blood: your own blood as poison on a held weapon.
+- type: entity
+  parent: CFActivityInstant
+  id: CFActLeftHandBlood
+  name: Left-Hand Blood
+  description: Take 1 slashing damage to poison a weapon you hold. Its next hit within 6 seconds also deals 1d4 persistent poison damage. Once an hour.
+  components:
+  - type: Action
+    useDelay: 3600
+  - type: CFActivity
+    kind: LeftHandBlood
+
+# Energized Font: a Focus Point back.
+- type: entity
+  parent: CFActivityInstant
+  id: CFActEnergizedFont
+  name: Energized Font
+  description: You regain 1 Focus Point. Once a day.
+  components:
+  - type: CFEffectAction
+  - type: CFDailyUses
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFRegainFocusEffect
+
+# Spark Fist: black powder on the fist.
+- type: entity
+  parent: CFActivityInstant
+  id: CFActSparkFist
+  name: Spark Fist
+  description: For 6 seconds your fist is lethal, and each hit with it deals 1 fire damage to the target and 1 to you. Once a minute.
+  components:
+  - type: Action
+    useDelay: 60
+  - type: CFActivity
+    kind: SparkFist
+  - type: CFTrait
+    traits: [Fire, Manipulate]

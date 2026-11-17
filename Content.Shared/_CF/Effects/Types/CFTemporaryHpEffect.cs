@@ -15,11 +15,22 @@ public sealed partial class CFTemporaryHpEffect : CFEffect
     [DataField]
     public float DurationSeconds = 60f;
 
+    /// <summary>The user gets them, and the amount also counts the target's level once (Absorb Strength).</summary>
+    [DataField]
+    public bool FromTargetLevel;
+
     public override void Apply(IEntityManager entities, CFEffectArgs args)
     {
         var target = args.Target ?? args.User;
         var level = entities.GetComponentOrNull<CFCombatantComponent>(args.User)?.Level ?? 1;
-        entities.System<CFTemporaryHpSystem>().Grant(target, Amount + PerLevel * level, DurationSeconds, $"effect:{args.Source}");
+        var amount = Amount + PerLevel * level;
+        if (FromTargetLevel)
+        {
+            amount += entities.GetComponentOrNull<CFCombatantComponent>(target)?.Level ?? 0;
+            target = args.User;
+        }
+
+        entities.System<CFTemporaryHpSystem>().Grant(target, amount, DurationSeconds, $"effect:{args.Source}");
     }
 }
 
@@ -37,5 +48,21 @@ public sealed partial class CFReduceFrightenedEffect : CFEffect
 
         condition.Frightened = Math.Max(0, condition.Frightened - By);
         entities.Dirty(target, condition);
+    }
+}
+
+/// <summary>The user regains Focus Points, up to its pool (Energized Font).</summary>
+public sealed partial class CFRegainFocusEffect : CFEffect
+{
+    [DataField]
+    public int Points = 1;
+
+    public override void Apply(IEntityManager entities, CFEffectArgs args)
+    {
+        if (!entities.TryGetComponent(args.User, out Content.Shared.CF.Character.CFSpellbookComponent? book))
+            return;
+
+        book.FocusSpent = Math.Max(0, book.FocusSpent - Points);
+        entities.Dirty(args.User, book);
     }
 }

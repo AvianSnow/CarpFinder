@@ -265,6 +265,15 @@ public sealed partial class CFGrantCriticalSpecialization : CFGrant
     }
 }
 
+/// <summary>A critical hit with a Strike recharges the character's breath weapons, as Kobold Momentum does for Kobold Breath.</summary>
+public sealed partial class CFGrantBreathMomentum : CFGrant
+{
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        entities.EnsureComponent<CFDraconicMomentumComponent>(args.Mob);
+    }
+}
+
 /// <summary>A sense beyond normal sight.</summary>
 public sealed partial class CFGrantSense : CFGrant
 {

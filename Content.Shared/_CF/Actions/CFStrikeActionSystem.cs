@@ -102,6 +102,14 @@ public sealed partial class CFStrikeActionSystem : EntitySystem
             return _interaction.InRangeUnobstructed(user, target, feet + 1f) ? null : "cf-strike-action-no-line";
         }
 
+        if (action.Groups.Count > 0
+            && (!_hands.TryGetActiveItem(user, out var grouped)
+                || !TryComp(grouped.Value, out CFWeaponComponent? data)
+                || !action.Groups.Contains(data.Group)))
+        {
+            return "cf-strike-action-needs-group";
+        }
+
         if (action.TwoWeapons
             && (!_hands.TryGetActiveItem(user, out var main)
                 || !HasComp<CFMeleeWeaponComponent>(main.Value)

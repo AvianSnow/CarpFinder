@@ -374,6 +374,14 @@ public sealed partial class CFCombatOptionsComponent : Component
     /// <summary>The venom is on the creature's fangs, so only an unarmed hit delivers it.</summary>
     [DataField, AutoNetworkedField]
     public bool ToxinUnarmedOnly;
+
+    /// <summary>The poison is on a held weapon, so any hit with a weapon delivers it, whatever damage it deals.</summary>
+    [DataField]
+    public bool ToxinAnyWeapon;
+
+    /// <summary>Spark Fist: until this time a fist hit is lethal, and deals fire damage to the target and to this creature.</summary>
+    [DataField]
+    public TimeSpan SparkFistUntil;
 }
 
 /// <summary>One reaction per full action pool. The value is which reaction was spent.</summary>

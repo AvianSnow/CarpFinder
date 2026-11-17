@@ -14,4 +14,6 @@
   prerequisites:
     - "expert in Crafting"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActSparkFist

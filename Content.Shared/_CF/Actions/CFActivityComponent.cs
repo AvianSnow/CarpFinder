@@ -26,6 +26,12 @@ public enum CFActivityKind : byte
 
     /// <summary>Feint the target, at whatever range the action allows (Grovel).</summary>
     Feint,
+
+    /// <summary>Left-Hand Blood: 1 slashing damage to the user, and the held weapon's next hit within 6 seconds deals 1d4 persistent poison.</summary>
+    LeftHandBlood,
+
+    /// <summary>Spark Fist: for 6 seconds a fist hit is lethal and deals fire damage to the target and to the user.</summary>
+    SparkFist,
 }
 
 /// <summary>

@@ -1,3 +1,4 @@
+using Content.Shared.CF.Combat;
 using Content.Shared.CF.Effects;
 
 namespace Content.Shared.CF.Actions;
@@ -84,6 +85,10 @@ public sealed partial class CFStrikeActionComponent : Component
     /// <summary>Runs on the target after a hit.</summary>
     [DataField]
     public List<CFEffect> OnHit = new();
+
+    /// <summary>The weapon in the active hand has to be of one of these groups, as Leech-Clip needs a flail. Empty means any.</summary>
+    [DataField]
+    public List<CFWeaponGroup> Groups = new();
 
     /// <summary>Runs instead of <see cref="OnHit"/> on a critical hit, if it has anything in it.</summary>
     [DataField]
