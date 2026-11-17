@@ -17,3 +17,4 @@
         acBonus: 2
         rangedOnly: true
         needsToSeeAttacker: true
+        leavesProne: true

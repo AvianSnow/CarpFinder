@@ -247,6 +247,7 @@ public sealed partial class CFSpellSystem : EntitySystem
         }
 
         NoteBespell(caster, spell.Comp);
+        _spellshapes.NoteCast(caster, spell.Comp);
         return true;
     }
 

@@ -27,6 +27,13 @@ public sealed partial class CFSpellshapeComponent : Component
     [DataField]
     public bool Widens;
 
+    /// <summary>
+    /// The caster gains resistance equal to the spell's rank, for 6 seconds, to the energy the spell deals (Energy Ablation).
+    /// The rules let the caster choose which energy.
+    /// </summary>
+    [DataField]
+    public bool EnergyAblation;
+
     /// <summary>The next Untamed Form is 2 ranks lower and lasts an hour (Form Control). <c>CFBattleFormSystem</c> reads it.</summary>
     [DataField]
     public bool FormControl;

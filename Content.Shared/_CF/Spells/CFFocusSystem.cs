@@ -1,7 +1,6 @@
 using Content.Shared.Actions.Events;
 using Content.Shared.CF.Actions;
 using Content.Shared.CF.Character;
-using Content.Shared.CF.Time;
 using Content.Shared.DoAfter;
 using Content.Shared.Popups;
 using Robust.Shared.Network;
@@ -19,18 +18,16 @@ public sealed partial class CFRefocusComponent : Component
 public sealed partial class CFRefocusDoAfterEvent : SimpleDoAfterEvent;
 
 /// <summary>
-/// Focus Points: what focus spells cost. A long rest refills them all. Refocus gives one back after 10 minutes on the world
-/// clock, and moving or being hurt interrupts it.
+/// Focus Points: what focus spells cost. A long rest refills them all. Refocus gives one back after a minute of real time,
+/// where the rules take 10 minutes, and moving or being hurt interrupts it.
 /// </summary>
 public sealed partial class CFFocusSystem : EntitySystem
 {
     /// <summary>A creature's focus pool never holds more than this.</summary>
     public const int MaxFocusPoints = 3;
 
-    private const float RefocusWorldSeconds = 600f;
-
-    /// <summary>The world clock's usual pace, for a map with no clock.</summary>
-    private const float DefaultWorldRate = 4f;
+    /// <summary>How long Refocus takes, in real seconds. It does not follow the world clock.</summary>
+    public const float RefocusSeconds = 60f;
 
     [Dependency] private INetManager _net = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
@@ -43,11 +40,7 @@ public sealed partial class CFFocusSystem : EntitySystem
 
     public TimeSpan RefocusTime()
     {
-        var query = EntityQueryEnumerator<CFTimeComponent>();
-        if (query.MoveNext(out var clock) && clock.TryGetRealSeconds(RefocusWorldSeconds, CFTimeScale.CarpFinder, out var seconds))
-            return TimeSpan.FromSeconds(seconds);
-
-        return TimeSpan.FromSeconds(RefocusWorldSeconds / DefaultWorldRate);
+        return TimeSpan.FromSeconds(RefocusSeconds);
     }
 
     [SubscribeLocalEvent]

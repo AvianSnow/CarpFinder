@@ -241,3 +241,196 @@
       type: Circumstance
       value: -2
       durationSeconds: 6
+
+# Swipe: one swing at two foes that stand side by side.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActSwipe
+  name: Swipe
+  description: A wide swing. Strike your target, and also an enemy beside it that is within your reach, at the same penalty. It counts as two attacks. Costs 2 actions.
+  components:
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFTrait
+    traits:
+    - Flourish
+  - type: CFFlourish
+  - type: CFStrikeAction
+    second: BesideTarget
+
+# Quick Reversal: a press. Both of two enemies in reach.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActQuickReversal
+  name: Quick Reversal
+  description: After another attack this turn, with two enemies in your reach, Strike one and then the other at the same penalty. The second Strike does not add to your multiple attack penalty.
+  components:
+  - type: CFTrait
+    traits:
+    - Flourish
+  - type: CFFlourish
+  - type: CFStrikeAction
+    press: true
+    second: OtherInReach
+    needsSecond: true
+    secondIsFree: true
+
+# Double Shot: two arrows at two targets.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActDoubleShot
+  name: Double Shot
+  description: Shoot your target and the nearest other enemy you can see within 60 feet, each at -2. It needs two arrows. Costs 2 actions.
+  components:
+  - type: TargetAction
+    range: 200
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFTrait
+    traits:
+    - Flourish
+  - type: CFFlourish
+  - type: CFStrikeAction
+    ranged: true
+    attackBonus: -2
+    second: OtherInRange
+
+# Hunted Shot: two arrows at the prey.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActHuntedShot
+  name: Hunted Shot
+  description: Two quick shots at your hunted prey. It needs two arrows.
+  components:
+  - type: TargetAction
+    range: 200
+  - type: CFTrait
+    traits:
+    - Flourish
+  - type: CFFlourish
+  - type: CFStrikeAction
+    ranged: true
+    preyOnly: true
+    twice: true
+
+# Impaling Finisher: through one foe into the one behind it.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActImpalingFinisher
+  name: Impaling Finisher
+  description: A finisher. Strike your target, and also an enemy standing straight behind it, at the same penalty. It counts as two attacks.
+  components:
+  - type: CFStrikeAction
+    finisher: true
+    second: BehindTarget
+
+# Actions with a Stride, Step or Leap in them. The user really moves: a short rush toward the target, or a hop away.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActDefensiveAdvance
+  name: Defensive Advance
+  description: Raise your shield, rush up to 25 feet to an enemy and Strike it. Costs 2 actions.
+  components:
+  - type: TargetAction
+    range: 6.5
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFTrait
+    traits:
+    - Flourish
+  - type: CFFlourish
+  - type: CFStrikeAction
+    raisesShield: true
+    closesFeet: 25
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActBarrelingCharge
+  name: Barreling Charge
+  description: Rush up to 25 feet to an enemy, through anyone in the way, and Strike it. Costs 2 actions.
+  components:
+  - type: TargetAction
+    range: 6.5
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFTrait
+    traits:
+    - Flourish
+  - type: CFFlourish
+  - type: CFStrikeAction
+    closesFeet: 25
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActFlyingKick
+  name: Flying Kick
+  description: Leap up to 15 feet at an enemy and Strike it with an unarmed attack. Costs 2 actions.
+  components:
+  - type: TargetAction
+    range: 4.5
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFStrikeAction
+    unarmedOnly: true
+    closesFeet: 15
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActPartingShot
+  name: Parting Shot
+  description: Hop 5 feet back from your target and shoot it. It is off-guard against the shot. Costs 2 actions.
+  components:
+  - type: TargetAction
+    range: 200
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFStrikeAction
+    ranged: true
+    stepsBackFeet: 5
+    targetOffGuard: true
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActRetreatingFinisher
+  name: Retreating Finisher
+  description: A finisher. If it misses, you can walk out of reach in the next 2 seconds at no cost and without setting off a reaction.
+  components:
+  - type: CFStrikeAction
+    finisher: true
+    onFailure:
+    - !type:CFFreeStepEffect
+      durationSeconds: 2
+
+# Furious Finish: the rest of the Rage in one blow.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActFuriousFinish
+  name: Furious Finish
+  description: A Strike while raging. If it hits, it deals 1 more damage for each round your Rage had left, up to 10. Your Rage then ends and you are fatigued for 1 minute.
+  components:
+  - type: CFStrikeAction
+    endsRage: true
+
+# Combat Assessment: a Strike that also sizes the enemy up.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActCombatAssessment
+  name: Combat Assessment
+  description: A melee Strike. If it hits, you also Recall Knowledge about the target at no extra cost.
+  components:
+  - type: CFStrikeAction
+    effectsNeedDamage: false
+    onHit:
+    - !type:CFRecallEffect
+
+# Quick Draw: a weapon out of its holster and into the enemy in one motion.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActQuickDraw
+  name: Quick Draw
+  description: Draw a weapon worn on your belt, back or neck into a free hand and Strike with it, all for 1 action. A bow shoots the arrow it has nocked.
+  components:
+  - type: TargetAction
+    range: 200
+  - type: CFStrikeAction
+    drawsWeapon: true

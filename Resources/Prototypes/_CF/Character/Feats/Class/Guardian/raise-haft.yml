@@ -8,4 +8,6 @@
   level: 2
   traits:
     - "Guardian"
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActRaiseHaft

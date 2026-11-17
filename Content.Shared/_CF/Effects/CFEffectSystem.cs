@@ -480,6 +480,16 @@ public sealed partial class CFEffectSystem : EntitySystem
 
             args.Degree = _conditions.RollDefense(target, check.Defense, stats.Dc + taunted, out _, args.Traits);
             landed = !args.Degree.IsSuccess();
+
+            // Emotional Push: a failed save against the caster's emotion spell leaves the enemy open to it.
+            if (landed
+                && user != target
+                && args.Traits.Contains("Emotion")
+                && HasComp<CFSpellComponent>(source)
+                && CompOrNull<CFCombatOptionsComponent>(user)?.EmotionalPush == true)
+            {
+                _conditions.SetOffGuardTo(target, user, 6f);
+            }
         }
 
         RunDegreeEffects(source, args, landed);

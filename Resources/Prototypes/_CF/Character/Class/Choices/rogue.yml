@@ -18,6 +18,9 @@
         - Religion
     - kind: KeyAttribute
       abilities: [ Dexterity, Intelligence ]
+  grants:
+    - !type:CFGrantOption
+      option: MastermindRecall
 
 - type: cfClassChoice
   id: Ruffian

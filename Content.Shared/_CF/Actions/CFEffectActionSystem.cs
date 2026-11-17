@@ -37,6 +37,20 @@ public sealed partial class CFEffectActionSystem : EntitySystem
             return;
         }
 
+        if (ent.Comp.NeedsTwoHanded != CFTwoHandedNeed.No && !HoldsTwoHanded(args.User, ent.Comp.NeedsTwoHanded))
+        {
+            args.Cancelled = true;
+            args.Reason = Loc.GetString("cf-strike-action-needs-two-handed");
+            return;
+        }
+
+        if (ent.Comp.NeedsWeaponAndFreeHand && !HoldsOneWeaponOnly(args.User))
+        {
+            args.Cancelled = true;
+            args.Reason = Loc.GetString("cf-strike-action-needs-free-hand");
+            return;
+        }
+
         if (ent.Comp.Unstable && !_inventor.CanUseUnstable(args.User))
         {
             args.Cancelled = true;
@@ -66,6 +80,34 @@ public sealed partial class CFEffectActionSystem : EntitySystem
 
         args.Cancelled = true;
         args.Reason = Loc.GetString("cf-act-needs-two-weapons");
+    }
+
+    private bool HoldsTwoHanded(EntityUid user, CFTwoHandedNeed need)
+    {
+        foreach (var held in _hands.EnumerateHeld(user))
+        {
+            if (CompOrNull<CFWeaponComponent>(held)?.Hands != CFWeaponHands.Two)
+                continue;
+
+            if (need == CFTwoHandedNeed.Ranged ? HasComp<CFRangedWeaponComponent>(held) : HasComp<CFMeleeWeaponComponent>(held))
+                return true;
+        }
+
+        return false;
+    }
+
+    private bool HoldsOneWeaponOnly(EntityUid user)
+    {
+        if (_hands.CountFreeHands(user) == 0)
+            return false;
+
+        foreach (var held in _hands.EnumerateHeld(user))
+        {
+            if (HasComp<CFMeleeWeaponComponent>(held) && CompOrNull<CFWeaponComponent>(held)?.Hands != CFWeaponHands.Two)
+                return true;
+        }
+
+        return false;
     }
 
     [SubscribeLocalEvent]

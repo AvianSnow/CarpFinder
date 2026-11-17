@@ -12,3 +12,6 @@
     - "forensic medicine methodology"
   requiresChoice:
     - MethodForensicMedicine
+  grants:
+    - !type:CFGrantOption
+      option: ScalpelsPoint

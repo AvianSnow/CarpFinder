@@ -8,4 +8,16 @@
   level: 2
   traits:
     - "Guardian"
-  pendingAction: true
+  grants:
+    - !type:CFGrantWhile
+      while: ShieldRaised
+      stat: Saves
+      type: Circumstance
+      value: 2
+      trait: Visual
+    - !type:CFGrantWhile
+      while: ShieldRaised
+      stat: Saves
+      type: Circumstance
+      value: 2
+      trait: Light

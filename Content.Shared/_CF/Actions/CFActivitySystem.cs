@@ -47,6 +47,7 @@ public sealed partial class CFActivitySystem : EntitySystem
     [Dependency] private ThrowingSystem _throwing = default!;
     [Dependency] private CFTemporaryHpSystem _tempHp = default!;
     [Dependency] private CFAuraSystem _auras = default!;
+    [Dependency] private Robust.Shared.Prototypes.IPrototypeManager _prototypes = default!;
     [Dependency] private CFEffectSystem _effects = default!;
     [Dependency] private MobStateSystem _mobState = default!;
 
@@ -73,6 +74,12 @@ public sealed partial class CFActivitySystem : EntitySystem
                 when !TryComp(args.User, out CFCombatOptionsComponent? rage) || !rage.CanRage:
                 args.Cancelled = true;
                 args.Reason = Loc.GetString("cf-act-cannot");
+                break;
+            case CFActivityKind.Rage
+                when CompOrNull<CFCombatOptionsComponent>(args.User)?.Raging != true
+                     && _conditions.Value(args.User, CFConditionKind.Fatigued) > 0:
+                args.Cancelled = true;
+                args.Reason = Loc.GetString("cf-act-rage-fatigued");
                 break;
             case CFActivityKind.Leap when !_maneuvers.CanUse(args.User, CFBasicAction.Leap):
                 args.Cancelled = true;
@@ -202,6 +209,24 @@ public sealed partial class CFActivitySystem : EntitySystem
         return false;
     }
 
+    /// <summary>How long fatigue lasts: a minute of real time. The rules end it with a 10 minute rest.</summary>
+    public const float FatigueSeconds = 60f;
+
+    /// <summary>Fatigued for <see cref="FatigueSeconds"/>, as after Second Wind or Furious Finish. A fatigued creature cannot Rage.</summary>
+    public void Fatigue(EntityUid user)
+    {
+        _conditions.ApplyCondition(user, CFConditionKind.Fatigued, 1, FatigueSeconds, user, 0);
+    }
+
+    /// <summary>How many rounds of the creature's Rage are left, for Furious Finish. 0 when it is not raging.</summary>
+    public int RageRoundsLeft(EntityUid user)
+    {
+        if (!TryComp(user, out CFRagingComponent? raging))
+            return 0;
+
+        return Math.Clamp((int) Math.Ceiling((raging.EndsAt - _timing.CurTime).TotalSeconds / 6.0), 0, 10);
+    }
+
     private void ToggleRage(EntityUid user)
     {
         if (!TryComp(user, out CFCombatOptionsComponent? opt) || !opt.CanRage)
@@ -253,6 +278,8 @@ public sealed partial class CFActivitySystem : EntitySystem
             EnsureComp<CFRagingComponent>(user).EndsAt = now + RageLasts;
             if (opt.SecondWind || now >= opt.RageTempHpReadyAt)
             {
+                // Second Wind takes the temporary Hit Points early, and pays for it with fatigue when the Rage ends.
+                EnsureComp<CFRagingComponent>(user).Tiring = now < opt.RageTempHpReadyAt;
                 var level = CompOrNull<CFCombatantComponent>(user)?.Level ?? 1;
                 var constitution = CompOrNull<CFAbilityScoreComponent>(user)?.GetModifier(CFAbility.Constitution) ?? 0;
                 _tempHp.Grant(user, level + constitution, 0f, RageSource);
@@ -261,6 +288,9 @@ public sealed partial class CFActivitySystem : EntitySystem
         }
         else
         {
+            if (CompOrNull<CFRagingComponent>(user)?.Tiring == true)
+                Fatigue(user);
+
             RemCompDeferred<CFRagingComponent>(user);
             _tempHp.Clear(user, RageSource);
         }
@@ -276,6 +306,8 @@ public sealed partial class CFActivitySystem : EntitySystem
             opt.Prey = target;
             opt.PreyHitThisTurn = false;
             _popup.PopupEntity(Loc.GetString("cf-act-hunt-prey"), user, user);
+            if (opt.MonsterHunter)
+                _maneuvers.TryRecall(user, target, free: true);
         }
         else
         {
@@ -293,14 +325,27 @@ public sealed partial class CFActivitySystem : EntitySystem
         opt.StratagemRoll = _random.Next(1, 21);
         opt.StratagemTarget = target;
         Dirty(user, opt);
+        if (opt.KnownWeaknesses)
+            _maneuvers.TryRecall(user, target, free: true);
         _popup.PopupEntity(Loc.GetString("cf-act-stratagem", ("roll", opt.StratagemRoll)), user, user);
     }
 
     private void Flurry(EntityUid user, EntityUid target)
     {
         var stats = _strikes.UnarmedStats(user);
-        _strikes.PerformStrike(user, target, stats, user, melee: true);
-        _strikes.PerformStrike(user, target, stats, user, melee: true);
+        var hurt = false;
+        void Resolved(CFDegree degree, int damage) => hurt |= degree.IsSuccess() && damage > 0;
+        _strikes.PerformStrike(user, target, stats, user, melee: true, resolved: Resolved);
+        _strikes.PerformStrike(user, target, stats, user, melee: true, resolved: Resolved);
+
+        // Stunning Blows: both Strikes went at one creature, so one that hurt it may stun.
+        if (!hurt || CompOrNull<CFCombatOptionsComponent>(user)?.StunningBlows != true)
+            return;
+
+        var dc = CFCasting.ClassDc(_prototypes, CompOrNull<CFCombatantComponent>(user), CompOrNull<CFAbilityScoreComponent>(user)).Dc;
+        var save = _conditions.RollDefense(target, CFDefenseType.Fortitude, dc, out _);
+        if (!save.IsSuccess())
+            _conditions.ApplyCondition(target, CFConditionKind.Stunned, save == CFDegree.CriticalFailure ? 3 : 1, 0f, user, 0);
     }
 
     private void Spellstrike(EntityUid user, EntityUid target)
@@ -372,6 +417,15 @@ public sealed partial class CFActivitySystem : EntitySystem
         if (tiles == 0)
             return;
 
+        if (CompOrNull<CFCombatOptionsComponent>(user)?.DancingLeaf == true)
+            tiles++;
+
+        LeapBy(user, tiles);
+    }
+
+    /// <summary>Jumps the way the creature faces, this many tiles.</summary>
+    public void LeapBy(EntityUid user, float tiles)
+    {
         var xform = Transform(user);
         var landing = xform.Coordinates.Offset(xform.LocalRotation.ToWorldVec() * tiles);
         _throwing.TryThrow(user, landing, LeapThrowSpeed, doSpin: false);

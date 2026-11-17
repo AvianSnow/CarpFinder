@@ -11,6 +11,8 @@
   prerequisites:
     - "sparkling targe hybrid study"
   action: Reaction
-  pendingAction: true
   requiresChoice:
     - StudySparklingTarge
+  grants:
+    - !type:CFGrantOption
+      option: ReactiveShield

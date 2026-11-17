@@ -76,6 +76,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
     [Dependency] private SharedAudioSystem _audio = default!;
     [Dependency] private ThrownItemSystem _thrownItems = default!;
     [Dependency] private CFEmblazonSystem _emblazon = default!;
+    [Dependency] private CFFightSystem _fights = default!;
     [Dependency] private CFCriticalSpecializationSystem _criticalSpecialization = default!;
 
     /// <summary>Unconscious / dying creatures are off-guard (−4 AC status, simplified).</summary>
@@ -388,10 +389,10 @@ public sealed partial class CFStrikeSystem : EntitySystem
     }
 
     /// <summary>A melee Strike made as a reaction. It neither takes nor adds to the multiple attack penalty.</summary>
-    public bool ReactionStrike(EntityUid user, EntityUid target)
+    public bool ReactionStrike(EntityUid user, EntityUid target, int attackPenalty = 0)
     {
         return TryMeleeWeapon(user, out var stats, out var weapon)
-               && PerformStrike(user, target, stats, weapon, melee: true, countMap: false, fixedMap: 0);
+               && PerformStrike(user, target, stats, weapon, melee: true, attackPenalty: attackPenalty, countMap: false, fixedMap: 0);
     }
 
     /// <summary>
@@ -472,6 +473,9 @@ public sealed partial class CFStrikeSystem : EntitySystem
             bonus = Math.Max(own, form.AttackModifier);
         }
         bonus -= _conditions.Frightened(user);
+        if (!weapon.Ranged)
+            bonus -= _conditions.Value(user, CFConditionKind.Enfeebled);
+
         bonus += _conditions.ProneAttackPenalty(user);
         if (weapon.Ranged)
             bonus -= _conditions.Clumsy(user);
@@ -664,6 +668,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
             return false;
         }
 
+        _fights.NoteAttack(user, target);
+
         if (_conditions.IsCalmed(user) || _conditions.IsCharmedAgainst(user, target))
         {
             _popup.PopupEntity(Loc.GetString("cf-cond-cannot-harm"), user, user);
@@ -761,7 +767,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
         var rolled = weapon with { DamageType = ChooseDamageType(target, weapon) };
         // Die size goes up one step at most, however many things would raise it.
         if (style is { HumbleStrikes: true } && weapon.Proficiency == CFWeaponCategory.Simple.Proficiency()
-            || style is { DeadlySimplicity: true } && IsFavoredSimple(attackerCombat, weaponUid))
+            || style is { DeadlySimplicity: true } && IsFavoredSimple(attackerCombat, weaponUid)
+            || style is { ShieldWarfare: true } && HasComp<CFShieldComponent>(weaponUid))
         {
             rolled = rolled with { DamageDie = Math.Min(12, rolled.DamageDie + 2) };
         }
@@ -777,6 +784,9 @@ public sealed partial class CFStrikeSystem : EntitySystem
 
         var damageMod = CFMelee.DamageBonus(attackerAbilities, rolled, attackerCombat, style?.FinesseDexterity == true) + pointBlank;
         damageMod += CFMelee.ForcefulBonus(rolled, attacksBefore);
+        if (melee)
+            damageMod -= _conditions.Value(user, CFConditionKind.Enfeebled);
+
         if (style is { Raging: true } && (melee || style.RagingThrower && weapon.ThrownStrike))
             damageMod += rolled.Agile ? style.RageDamage / 2 : style.RageDamage;
 
@@ -949,6 +959,16 @@ public sealed partial class CFStrikeSystem : EntitySystem
 
             var landed = new CFLandedCriticalEvent(target);
             RaiseLocalEvent(user, ref landed);
+        }
+
+        if (criticalHit && damage > 0 && !isObject)
+        {
+            // A stance's own attack may bleed, as a tiger's claws do.
+            if (weapon.Item == null && _stances.Current(user)?.Attack is { CriticalBleedDie: > 0 } claws)
+                _bonuses.AddPersistent(target, "Bleed", 1, claws.CriticalBleedDie, 0, user);
+
+            if (usedStratagem && style is { ScalpelsPoint: true } && rolled.DamageType is "Piercing" or "Slashing")
+                _bonuses.AddPersistent(target, "Bleed", 1, 6, 0, user);
         }
 
         if (criticalHit && damage > 0 && !isObject && style != null)

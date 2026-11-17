@@ -1,3 +1,5 @@
+using Content.Shared.CF.Combat;
+using Content.Shared.CF.Checks;
 using Content.Shared.CF.Actions;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Effects;
@@ -20,6 +22,7 @@ public sealed partial class CFSpellshapeSystem : EntitySystem
     [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private CFCharacterFeatureSystem _features = default!;
+    [Dependency] private CFBonusSystem _bonuses = default!;
 
     public override void Update(float frameTime)
     {
@@ -61,6 +64,27 @@ public sealed partial class CFSpellshapeSystem : EntitySystem
     public bool IsAmping(EntityUid user)
     {
         return Current(user) is { Amp: true };
+    }
+
+    private static readonly string[] Energies = { "Acid", "Cold", "Electricity", "Fire", "Force", "Sonic", "Vitality", "Void" };
+
+    /// <summary>A spell is being cast. A spellshape that answers the spell itself, such as Energy Ablation, does so here.</summary>
+    public void NoteCast(EntityUid user, CFSpellComponent spell)
+    {
+        if (Current(user) is not { EnergyAblation: true } || !_prototypes.TryIndex(spell.Spell, out var proto))
+            return;
+
+        foreach (var energy in Energies)
+        {
+            if (!proto.Traits.Contains(energy))
+                continue;
+
+            var rank = Math.Max(1, spell.Focus || spell.Rank == 0
+                ? CFCasting.CantripRank(CompOrNull<CFCombatantComponent>(user)?.Level ?? 1)
+                : spell.ResolvedRank);
+            _bonuses.AddResistance(user, energy, rank, weakness: false, 6f);
+            return;
+        }
     }
 
     public bool IsFormControl(EntityUid user)

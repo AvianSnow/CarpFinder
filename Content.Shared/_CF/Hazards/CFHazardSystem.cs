@@ -1,3 +1,4 @@
+using Content.Shared.CF.Traits;
 using Content.Shared.CF.Actions;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Checks;
@@ -130,11 +131,16 @@ public sealed partial class CFHazardSystem : EntitySystem
         if (!hazard.Comp.Rolled.Add(creature) || !IsVictim(hazard, creature))
             return false;
 
+        // A bonus to find traps, such as Trap Finder's, counts here: every hazard is a trap for this check.
+        var traits = new HashSet<ProtoId<CFTraitPrototype>> { "Trap" };
+        if (TryComp(hazard, out CFTraitComponent? own))
+            traits.UnionWith(own.Traits);
+
         var modifier = CFDefense.PerceptionModifier(
             _prototypes,
             CompOrNull<CFCombatantComponent>(creature),
             CompOrNull<CFAbilityScoreComponent>(creature),
-            _bonuses.Total(creature, CFBonusStat.Perception),
+            _bonuses.Total(creature, CFBonusStat.Perception, traits: traits),
             _conditions.Frightened(creature));
         var d20 = _random.Next(1, 21);
         var degree = CFDegrees.DegreeOfSuccess(d20, modifier, hazard.Comp.StealthDc);

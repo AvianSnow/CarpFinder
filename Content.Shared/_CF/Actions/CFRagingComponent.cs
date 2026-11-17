@@ -11,4 +11,8 @@ public sealed partial class CFRagingComponent : Component
 {
     [DataField(customTypeSerializer: typeof(TimeOffsetSerializer)), AutoPausedField]
     public TimeSpan EndsAt;
+
+    /// <summary>This Rage leaves the creature fatigued when it ends, because Second Wind took its temporary Hit Points early.</summary>
+    [DataField]
+    public bool Tiring;
 }

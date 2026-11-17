@@ -48,6 +48,43 @@ public sealed partial class CFForcedMovementEffect : CFEffect
     }
 }
 
+/// <summary>
+/// For a while the user can leave an enemy's reach at no cost and without setting off a reaction: a free Step, or a Stride
+/// that does not provoke.
+/// </summary>
+public sealed partial class CFFreeStepEffect : CFEffect
+{
+    [DataField]
+    public float DurationSeconds = 2f;
+
+    public override void Apply(IEntityManager entities, CFEffectArgs args)
+    {
+        entities.System<CFReactionSystem>().CoverSteps(args.User, DurationSeconds);
+    }
+}
+
+/// <summary>The user jumps the way it faces, this many feet.</summary>
+public sealed partial class CFLeapEffect : CFEffect
+{
+    [DataField(required: true)]
+    public int Feet;
+
+    public override void Apply(IEntityManager entities, CFEffectArgs args)
+    {
+        entities.System<Content.Shared.CF.Actions.CFActivitySystem>().LeapBy(args.User, Feet / CFMelee.FeetPerTile);
+    }
+}
+
+/// <summary>A free Recall Knowledge about the target, as part of another action (Combat Assessment).</summary>
+public sealed partial class CFRecallEffect : CFEffect
+{
+    public override void Apply(IEntityManager entities, CFEffectArgs args)
+    {
+        if (args.Target is { } target && target != args.User)
+            entities.System<Content.Shared.CF.Actions.CFManeuverSystem>().TryRecall(args.User, target, free: true);
+    }
+}
+
 /// <summary>The user grabs the target with no check, as Combat Grab does after its Strike. It lets go after a while.</summary>
 public sealed partial class CFGrabEffect : CFEffect
 {

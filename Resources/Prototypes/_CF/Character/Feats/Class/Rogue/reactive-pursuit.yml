@@ -9,4 +9,9 @@
   traits:
     - "Rogue"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-reactive-pursuit
+        trigger: EnemyLeftReach
+        follows: true

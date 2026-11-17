@@ -71,3 +71,32 @@
     actions: 0
   - type: CFSpellshape
     amp: true
+
+- type: entity
+  parent: CFActSpellshapeBase
+  id: CFActEnergyAblation
+  name: Energy Ablation
+  description: If your next spell deals acid, cold, electricity, fire, force, sonic, vitality or void damage, you gain resistance to that energy equal to the spell's rank for 6 seconds. Lost if you spend an action on anything else first.
+  components:
+  - type: CFSpellshape
+    energyAblation: true
+
+- type: entity
+  parent: CFActSpellshapeBase
+  id: CFActSpiritualExpansionSpell
+  name: Spiritual Expansion Spell
+  description: Your next burst, cone or line spell with no duration gets bigger. Lost if you spend an action on anything else first.
+  components:
+  - type: CFSpellshape
+    widens: true
+
+- type: entity
+  parent: CFActSpellshapeBase
+  id: CFActGraspingSpiritsSpell
+  name: Grasping Spirits Spell
+  description: Your next spell with a range reaches 30 feet further. Once per 10 minutes. Lost if you spend an action on anything else first.
+  components:
+  - type: Action
+    useDelay: 600
+  - type: CFSpellshape
+    extraRangeFeet: 30

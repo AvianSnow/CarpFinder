@@ -159,18 +159,18 @@ public sealed class CFFocusTest : GameTest
             SEntMan.System<SharedActionsSystem>().PerformAction(hero, refocus);
         });
 
-        await Pair.RunSeconds(60f);
+        await Pair.RunSeconds(30f);
         var halfway = 0;
         await Server.WaitPost(() => halfway = Book(hero).FocusSpent);
 
-        await Pair.RunSeconds(95f);
+        await Pair.RunSeconds(35f);
         var done = 1;
         await Server.WaitPost(() => done = Book(hero).FocusSpent);
 
         Assert.Multiple(() =>
         {
             Assert.That(full, Is.True, "There is nothing to refocus.");
-            Assert.That(halfway, Is.EqualTo(1), "It takes 10 minutes on the world clock.");
+            Assert.That(halfway, Is.EqualTo(1), "It takes a minute of real time.");
             Assert.That(done, Is.Zero);
         });
     }

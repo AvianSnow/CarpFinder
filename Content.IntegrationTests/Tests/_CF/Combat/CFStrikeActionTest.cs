@@ -403,6 +403,178 @@ public sealed class CFStrikeActionTest : GameTest
     }
 
     [Test]
+    public async Task SwipeAndQuickReversalStrikeASecondEnemy()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        bool lone = true, reversed = false;
+        int swipedFirst = 0, swipedSecond = 0, far = -1, attacks = 0, reversedSecond = 0, attacksAfterReversal = 0;
+        await Server.WaitPost(() =>
+        {
+            var hero = Spawn("CFStrikeActionHero");
+            Hold(hero, "CFLongsword");
+            var first = Spawn("CFStrikeActionFoe", 1);
+            var beside = SEntMan.SpawnEntity("CFStrikeActionFoe", _map.Local(1, 1));
+            var distant = Spawn("CFStrikeActionFoe", 5);
+
+            Use(hero, Grant(hero, "CFActSwipe"), first);
+            swipedFirst = Hurt(first);
+            swipedSecond = Hurt(beside);
+            far = Hurt(distant);
+            attacks = SEntMan.GetComponent<CFActionPoolComponent>(hero).MapAttacks;
+
+            var alone = Spawn("CFStrikeActionHero", 5);
+            Hold(alone, "CFLongsword");
+            Attacked(alone);
+            lone = Use(alone, Grant(alone, "CFActQuickReversal"), distant);
+
+            var fighter = Spawn("CFStrikeActionHero");
+            Hold(fighter, "CFLongsword");
+            Attacked(fighter);
+            var before = Hurt(beside);
+            reversed = Use(fighter, Grant(fighter, "CFActQuickReversal"), first);
+            reversedSecond = Hurt(beside) - before;
+            attacksAfterReversal = SEntMan.GetComponent<CFActionPoolComponent>(fighter).MapAttacks;
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(swipedFirst, Is.GreaterThan(0));
+            Assert.That(swipedSecond, Is.GreaterThan(0), "The enemy beside the target is hit too.");
+            Assert.That(far, Is.Zero, "Nobody out of reach.");
+            Assert.That(attacks, Is.EqualTo(2), "A Swipe counts as two attacks.");
+            Assert.That(lone, Is.False, "Quick Reversal needs a second enemy in reach.");
+            Assert.That(reversed, Is.True);
+            Assert.That(reversedSecond, Is.GreaterThan(0));
+            Assert.That(attacksAfterReversal, Is.EqualTo(2), "The one before it and its first Strike: the second is free.");
+        });
+    }
+
+    [Test]
+    public async Task DefensiveAdvanceRaisesTheShieldRushesInAndStrikes()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint, avoidStructures: true);
+        EntityUid hero = default, foe = default;
+        var raised = false;
+        var hurt = 0;
+        await Server.WaitPost(() =>
+        {
+            hero = Spawn("CFStrikeActionHero");
+            foe = Spawn("CFStrikeActionFoe", 4);
+            var shield = Spawn("CFSteelShield");
+            SEntMan.System<SharedHandsSystem>().TryPickupAnyHand(hero, shield);
+            var action = Grant(hero, "CFActDefensiveAdvance");
+            Use(hero, action, foe);
+            raised = SEntMan.GetComponent<CFShieldComponent>(shield).Raised;
+            hurt = Hurt(foe);
+        });
+        await Pair.RunSeconds(1.5f);
+
+        var distance = 0f;
+        await Server.WaitPost(() =>
+        {
+            var xform = SEntMan.System<SharedTransformSystem>();
+            distance = (xform.GetWorldPosition(foe) - xform.GetWorldPosition(hero)).Length();
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(raised, Is.True);
+            Assert.That(hurt, Is.GreaterThan(0), "The Strike at the end of the rush.");
+            Assert.That(distance, Is.LessThan(2.5f), "It started 4 tiles away and closed in.");
+        });
+    }
+
+    [Test]
+    public async Task AParryNeedsTheRightThingInHand()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        bool duelWithGreatsword = true, duelWithSword = false, haftWithSword = true, haftWithGreatsword = false;
+        var ac = 0;
+        await Server.WaitPost(() =>
+        {
+            var duelist = Spawn("CFStrikeActionHero");
+            var duel = Grant(duelist, "CFActDuelingParry");
+            var haft = Grant(duelist, "CFActRaiseHaft");
+            Hold(duelist, "CFLongsword");
+            duelWithSword = CanUse(duelist, duel, duelist);
+            haftWithSword = CanUse(duelist, haft, duelist);
+            SEntMan.System<SharedActionsSystem>().PerformAction(duelist, duel, new CFActivityInstantEvent());
+            ac = SEntMan.System<CFBonusSystem>().Total(duelist, CFBonusStat.ArmorClass);
+
+            var guardian = Spawn("CFStrikeActionHero");
+            Hold(guardian, "CFGreatsword");
+            duelWithGreatsword = CanUse(guardian, Grant(guardian, "CFActDuelingParry"), guardian);
+            haftWithGreatsword = CanUse(guardian, Grant(guardian, "CFActRaiseHaft"), guardian);
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(duelWithSword, Is.True);
+            Assert.That(ac, Is.EqualTo(2), "Dueling Parry is +2 to AC.");
+            Assert.That(haftWithSword, Is.False, "Raise Haft needs a two-handed weapon.");
+            Assert.That(duelWithGreatsword, Is.False, "Dueling Parry needs a one-handed weapon.");
+            Assert.That(haftWithGreatsword, Is.True);
+        });
+    }
+
+    [Test]
+    public async Task RapidResponseRunsToAFallenAlly()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint, avoidStructures: true);
+        EntityUid cleric = default, ally = default;
+        await Server.WaitPost(() =>
+        {
+            cleric = Spawn("CFStrikeActionHero");
+            SEntMan.System<CFCharacterFeatureSystem>().Apply(
+                cleric,
+                Server.ProtoMan.Index(new ProtoId<CFFeatPrototype>("CFRapidResponse")).Grants,
+                "feat:CFRapidResponse");
+            ally = Spawn("CFStrikeActionHero", 5);
+            SEntMan.System<CFReactionSystem>().AnswerAllyDropped(ally);
+        });
+        await Pair.RunSeconds(1.5f);
+
+        var distance = 0f;
+        await Server.WaitPost(() =>
+        {
+            var xform = SEntMan.System<SharedTransformSystem>();
+            distance = (xform.GetWorldPosition(ally) - xform.GetWorldPosition(cleric)).Length();
+        });
+
+        Assert.That(distance, Is.LessThan(2.5f), "It started 5 tiles away and ran to the ally's side.");
+    }
+
+    [Test]
+    public async Task QuickDrawTakesTheWeaponOffTheBeltAndStrikes()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        bool empty = true, worn = false, used = false, inHand = false;
+        var hurt = 0;
+        await Server.WaitPost(() =>
+        {
+            var hero = Spawn("CFStrikeActionHero");
+            var foe = Spawn("CFStrikeActionFoe", 1);
+            var action = Grant(hero, "CFActQuickDraw");
+            empty = CanUse(hero, action, foe) && Use(hero, action, foe) && Hurt(foe) > 0;
+
+            var sword = Spawn("CFLongsword");
+            worn = SEntMan.System<Content.Shared.Inventory.InventorySystem>().TryEquip(hero, sword, "belt", silent: true, force: true);
+            used = Use(hero, action, foe);
+            hurt = Hurt(foe);
+            inHand = SEntMan.System<SharedHandsSystem>().IsHolding(hero, sword);
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(empty, Is.False, "Nothing to draw.");
+            Assert.That(worn, Is.True);
+            Assert.That(used, Is.True);
+            Assert.That(inHand, Is.True, "The sword left the belt for a hand.");
+            Assert.That(hurt, Is.GreaterThan(0));
+        });
+    }
+
+    [Test]
     public async Task AggressiveBlockShovesTheAttackerAway()
     {
         _map = await CFDevMap.Load(Pair, Footprint, avoidStructures: true);

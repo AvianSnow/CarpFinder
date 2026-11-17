@@ -24,6 +24,7 @@ public sealed partial class CFWhileBonusSystem : EntitySystem
     [Dependency] private CFTacticSystem _tactics = default!;
     [Dependency] private CFInventorSystem _inventor = default!;
     [Dependency] private SharedHandsSystem _hands = default!;
+    [Dependency] private Content.Shared.CF.Combat.CFShieldSystem _shields = default!;
 
     public void Add(EntityUid uid, CFWhileBonus bonus)
     {
@@ -92,6 +93,7 @@ public sealed partial class CFWhileBonusSystem : EntitySystem
             CFBonusWhile.WearingInnovation => _inventor.IsWearing(uid),
             CFBonusWhile.Overdriven => _inventor.IsOverdriven(uid),
             CFBonusWhile.HandsFree => _hands.CountFreeHands(uid) >= 2,
+            CFBonusWhile.ShieldRaised => _shields.TryGetRaisedShield(uid, out _),
             _ => false,
         };
     }

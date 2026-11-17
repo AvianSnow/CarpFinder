@@ -20,6 +20,14 @@ public sealed partial class CFEffectActionComponent : Component
     [DataField]
     public bool NeedsBothHandsFree;
 
+    /// <summary>Needs a weapon held in both hands: a melee one, a ranged one, or either.</summary>
+    [DataField]
+    public CFTwoHandedNeed NeedsTwoHanded = CFTwoHandedNeed.No;
+
+    /// <summary>Needs a one-handed melee weapon in one hand and nothing in the other, as Dueling Parry does.</summary>
+    [DataField]
+    public bool NeedsWeaponAndFreeHand;
+
     /// <summary>The target has to be a dead enemy, as Absorb Strength needs a corpse.</summary>
     [DataField]
     public bool NeedsDeadEnemy;
@@ -27,4 +35,11 @@ public sealed partial class CFEffectActionComponent : Component
     /// <summary>An Inventor's unstable action: it needs the innovation in use and working, and may stop it afterwards.</summary>
     [DataField]
     public bool Unstable;
+}
+
+public enum CFTwoHandedNeed : byte
+{
+    No,
+    Melee,
+    Ranged,
 }

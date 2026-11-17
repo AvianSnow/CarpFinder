@@ -17,6 +17,9 @@ public enum CFBonusWhile : byte
 
     /// <summary>Both hands empty, as a Dog Kholo running on all fours.</summary>
     HandsFree,
+
+    /// <summary>A shield is raised.</summary>
+    ShieldRaised,
 }
 
 /// <summary>A lasting bonus that only counts while the creature is in a state. See <see cref="CFWhileBonusSystem"/>.</summary>

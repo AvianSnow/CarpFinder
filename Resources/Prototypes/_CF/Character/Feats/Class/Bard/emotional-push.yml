@@ -10,4 +10,6 @@
     - "Bard"
     - "Concentrate"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantOption
+      option: EmotionalPush

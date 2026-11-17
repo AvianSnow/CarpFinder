@@ -63,6 +63,9 @@ public enum CFReactionTrigger : byte
 
     /// <summary>This creature is becoming sickened.</summary>
     Sickened,
+
+    /// <summary>An ally within <see cref="CFReaction.RangeFeet"/> has dropped to 0 Hit Points.</summary>
+    AllyDropped,
 }
 
 /// <summary>
@@ -142,6 +145,21 @@ public sealed partial class CFReaction
     /// <summary>With <see cref="CFReactionTrigger.Sickened"/>, how much comes off the sickened value.</summary>
     [DataField]
     public int SickenedLess;
+
+    /// <summary>
+    /// The creature rushes toward whoever set the reaction off, up to its Speed, and that move sets off no reactions: an enemy
+    /// that left its reach (No Escape, Reactive Pursuit) or an ally that dropped (Rapid Response).
+    /// </summary>
+    [DataField]
+    public bool Follows;
+
+    /// <summary>Only while raging.</summary>
+    [DataField]
+    public bool WhileRaging;
+
+    /// <summary>The creature ends up prone after using it, as Hit the Dirt! does.</summary>
+    [DataField]
+    public bool LeavesProne;
 
     /// <summary>The creature is off-guard for 6 seconds after using it.</summary>
     [DataField]

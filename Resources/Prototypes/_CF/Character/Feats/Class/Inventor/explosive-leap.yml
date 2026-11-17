@@ -12,4 +12,6 @@
     - "Move"
     - "Unstable"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActExplosiveLeap

@@ -96,6 +96,7 @@
       - Finesse
       - Nonlethal
       - Unarmed
+      criticalBleedDie: 4
 
 # Wave 4. What the game cannot do yet is marked TBA in feats-class.ftl.
 - type: entity

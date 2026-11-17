@@ -13,4 +13,6 @@
   prerequisites:
     - "trained in Athletics"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActBarrelingCharge

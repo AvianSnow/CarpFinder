@@ -82,6 +82,51 @@ public sealed partial class CFStrikeActionComponent : Component
     [DataField]
     public bool DifferentTarget;
 
+    /// <summary>
+    /// The user rushes up to this many feet toward the target before the Strike, which stands in for the Stride or Leap in
+    /// actions such as Defensive Advance and Flying Kick. Give the action a <c>TargetAction</c> range to match.
+    /// </summary>
+    [DataField]
+    public int ClosesFeet;
+
+    /// <summary>The user hops this many feet away from the target before the Strike, as Parting Shot's Step.</summary>
+    [DataField]
+    public int StepsBackFeet;
+
+    /// <summary>Raises a held shield first, at no extra cost (Defensive Advance).</summary>
+    [DataField]
+    public bool RaisesShield;
+
+    /// <summary>The target is off-guard against this Strike (Parting Shot).</summary>
+    [DataField]
+    public bool TargetOffGuard;
+
+    /// <summary>
+    /// Quick Draw: with no weapon in hand, draws one worn on the belt, back or neck into a free hand first, at no extra
+    /// cost, and Strikes with it, melee or ranged.
+    /// </summary>
+    [DataField]
+    public bool DrawsWeapon;
+
+    /// <summary>
+    /// Furious Finish: needs a Rage, adds the rounds it has left to the damage, up to 10, then ends it and leaves the user
+    /// fatigued.
+    /// </summary>
+    [DataField]
+    public bool EndsRage;
+
+    /// <summary>A second Strike with the same weapon, at another enemy. Which one is up to <see cref="CFSecondStrike"/>.</summary>
+    [DataField]
+    public CFSecondStrike Second = CFSecondStrike.None;
+
+    /// <summary>The action cannot be used unless there is someone for <see cref="Second"/> to go at (Quick Reversal).</summary>
+    [DataField]
+    public bool NeedsSecond;
+
+    /// <summary>The second Strike does not add to the multiple attack penalty (Quick Reversal).</summary>
+    [DataField]
+    public bool SecondIsFree;
+
     /// <summary>Needs a melee weapon held in both hands, as Brutish Shove does.</summary>
     [DataField]
     public bool TwoHandedWeapon;
@@ -109,4 +154,25 @@ public sealed partial class CFStrikeActionComponent : Component
     /// <summary>Runs instead of <see cref="OnHit"/> on a critical hit, if it has anything in it.</summary>
     [DataField]
     public List<CFEffect> OnCritical = new();
+}
+
+/// <summary>
+/// Who an action's second Strike goes at. It is made at the same multiple attack penalty as the first. The rules roll one
+/// attack and one damage for both targets of a Swipe: here each gets its own roll.
+/// </summary>
+public enum CFSecondStrike : byte
+{
+    None,
+
+    /// <summary>An enemy beside the first target and within the user's reach (Swipe).</summary>
+    BesideTarget,
+
+    /// <summary>An enemy beside the first target and straight behind it (Impaling Finisher).</summary>
+    BehindTarget,
+
+    /// <summary>Another enemy within the user's reach (Quick Reversal).</summary>
+    OtherInReach,
+
+    /// <summary>With a ranged weapon: the nearest other enemy in sight within 60 feet (Double Shot). It needs a second arrow.</summary>
+    OtherInRange,
 }

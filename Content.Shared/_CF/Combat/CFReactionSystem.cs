@@ -63,6 +63,7 @@ public sealed partial class CFReactionSystem : EntitySystem
     [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private CFEffectSystem _effects = default!;
     [Dependency] private CFSpellSystem _spells = default!;
+    [Dependency] private Content.Shared.Throwing.ThrowingSystem _throwing = default!;
     [Dependency] private CFManeuverSystem _maneuvers = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private SharedPhysicsSystem _physics = default!;
@@ -196,7 +197,16 @@ public sealed partial class CFReactionSystem : EntitySystem
                     continue;
 
                 _popup.PopupEntity(Loc.GetString("cf-reaction-reactive-strike"), watcher);
-                _strikes.ReactionStrike(watcher, mover);
+                _strikes.ReactionStrike(watcher, mover, MovementGuard(mover));
+                return;
+            }
+
+            if (candidate.Reaction.Trigger == CFReactionTrigger.EnemyLeftReach && candidate.Reaction.Follows)
+            {
+                if (!TrySpend(watcher, candidate))
+                    continue;
+
+                Rush(watcher, mover);
                 return;
             }
 
@@ -209,9 +219,66 @@ public sealed partial class CFReactionSystem : EntitySystem
                 continue;
             }
 
-            _strikes.ReactionStrike(watcher, mover);
+            _strikes.ReactionStrike(watcher, mover, MovementGuard(mover));
             return;
         }
+    }
+
+    /// <summary>How fast a creature covers the ground when a reaction moves it. Stock's jump speed.</summary>
+    private const float RushSpeed = 10f;
+
+    /// <summary>Moves <paramref name="uid"/> toward <paramref name="toward"/>, up to its Speed and stopping beside it. The move sets off no reactions.</summary>
+    private void Rush(EntityUid uid, EntityUid toward)
+    {
+        var gap = _transform.GetWorldPosition(toward) - _transform.GetWorldPosition(uid);
+        var distance = gap.Length();
+        var speed = (CompOrNull<CFCombatantComponent>(uid)?.SpeedFeet ?? 25) / CFMelee.FeetPerTile;
+        var tiles = Math.Min(speed, distance - 1f);
+        if (tiles <= 0.1f)
+            return;
+
+        CoverSteps(uid, 2f);
+        _throwing.TryThrow(uid, Transform(uid).Coordinates.Offset(gap / distance * tiles), RushSpeed, doSpin: false);
+    }
+
+    /// <summary>An ally has dropped. Someone with a reaction for it, such as Rapid Response, runs to them.</summary>
+    public void AnswerAllyDropped(EntityUid dropped)
+    {
+        if (!_net.IsServer)
+            return;
+
+        foreach (var (uid, reactions) in _lookup.GetEntitiesInRange<CFReactionsComponent>(Transform(dropped).Coordinates, DropSearchRange))
+        {
+            if (uid == dropped || _factions.CanHarm(uid, dropped))
+                continue;
+
+            foreach (var known in Ordered(uid, reactions))
+            {
+                if (known.Reaction.Trigger != CFReactionTrigger.AllyDropped
+                    || !known.Reaction.Follows
+                    || !WithinFeet(uid, dropped, known.Reaction.RangeFeet)
+                    || !TrySpend(uid, known))
+                {
+                    continue;
+                }
+
+                Rush(uid, dropped);
+                break;
+            }
+        }
+    }
+
+    /// <summary>Guarded Movement: +4 circumstance to AC against a reaction the creature's own movement set off, as a penalty to that attack.</summary>
+    private int MovementGuard(EntityUid mover)
+    {
+        return CompOrNull<CFCombatOptionsComponent>(mover)?.GuardedMovement == true ? -4 : 0;
+    }
+
+    /// <summary>For a while, leaving an enemy's reach costs the creature nothing and sets nothing off: a free Step, or a Stride that does not provoke.</summary>
+    public void CoverSteps(EntityUid uid, float seconds)
+    {
+        if (TryComp(uid, out CFActionPoolComponent? pool))
+            pool.StepCoveredUntil = _timing.CurTime + TimeSpan.FromSeconds(seconds);
     }
 
     public const string ReactiveStrikeKey = "builtin:ReactiveStrike";
@@ -1154,6 +1221,7 @@ public sealed partial class CFReactionSystem : EntitySystem
     {
         return (known.Reaction.PerDay <= 0 || known.UsedToday < known.Reaction.PerDay)
                && _timing.CurTime >= known.ReadyAt
+               && (!known.Reaction.WhileRaging || CompOrNull<CFCombatOptionsComponent>(uid)?.Raging == true)
                && (known.Reaction.Implement is not { } kind || _implements.IsHolding(uid, kind))
                && _mobState.IsAlive(uid)
                && TryComp(uid, out CFCombatOptionsComponent? options)
@@ -1174,6 +1242,9 @@ public sealed partial class CFReactionSystem : EntitySystem
         known.UsedToday++;
         if (known.Reaction.CooldownSeconds > 0f)
             known.ReadyAt = _timing.CurTime + TimeSpan.FromSeconds(known.Reaction.CooldownSeconds);
+
+        if (known.Reaction.LeavesProne)
+            _conditions.KnockProne(uid);
 
         if (known.Reaction.LeavesOffGuard)
             _conditions.ApplyCondition(uid, CFConditionKind.OffGuard, 0, (float) MarkLasts.TotalSeconds, uid, 0);

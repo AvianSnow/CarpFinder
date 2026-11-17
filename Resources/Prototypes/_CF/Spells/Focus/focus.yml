@@ -71,7 +71,7 @@
   parent: CFActivityInstant
   id: CFActRefocus
   name: Refocus
-  description: Spend 10 minutes on the world clock to regain 1 Focus Point. Moving or being hurt interrupts it.
+  description: Spend 1 minute to regain 1 Focus Point. Moving or being hurt interrupts it.
   components:
   - type: CFRefocus
   - type: CFRadialSlot

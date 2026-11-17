@@ -593,6 +593,42 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
             case CFCombatOption.AggressiveBlock:
                 options.AggressiveBlock = true;
                 break;
+            case CFCombatOption.GuardedMovement:
+                options.GuardedMovement = true;
+                break;
+            case CFCombatOption.DancingLeaf:
+                options.DancingLeaf = true;
+                break;
+            case CFCombatOption.StunningBlows:
+                options.StunningBlows = true;
+                break;
+            case CFCombatOption.ScalpelsPoint:
+                options.ScalpelsPoint = true;
+                break;
+            case CFCombatOption.ElegantBuckler:
+                options.ElegantBuckler = true;
+                break;
+            case CFCombatOption.ShieldWarfare:
+                options.ShieldWarfare = true;
+                break;
+            case CFCombatOption.QuickTempered:
+                options.QuickTempered = true;
+                break;
+            case CFCombatOption.SurpriseAttack:
+                options.SurpriseAttack = true;
+                break;
+            case CFCombatOption.MastermindRecall:
+                options.MastermindRecall = true;
+                break;
+            case CFCombatOption.MonsterHunter:
+                options.MonsterHunter = true;
+                break;
+            case CFCombatOption.KnownWeaknesses:
+                options.KnownWeaknesses = true;
+                break;
+            case CFCombatOption.EmotionalPush:
+                options.EmotionalPush = true;
+                break;
             case CFCombatOption.GuardianArmor:
                 options.GuardianArmor = true;
                 break;

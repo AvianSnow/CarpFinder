@@ -92,6 +92,16 @@ public sealed partial class CFConditionComponent : Component
 
     public TimeSpan ClumsyUntil;
 
+    /// <summary>
+    /// Enfeebled, drained, doomed, dazzled, fatigued, deafened and fascinated, by kind. The value is the condition's value,
+    /// or 1 for one that has none. Read through <c>CFConditionSystem.Value</c>.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public Dictionary<CFConditionKind, int> Values = new();
+
+    /// <summary>When each entry of <see cref="Values"/> ends.</summary>
+    public Dictionary<CFConditionKind, TimeSpan> ValueUntil = new();
+
     /// <summary>Stupefied value: a penalty to Will saves and Perception.</summary>
     [DataField, AutoNetworkedField]
     public int StupefiedValue;
@@ -160,4 +170,28 @@ public enum CFConditionKind : byte
     /// <summary>Blocks damage once. Value is the hardness (shield cantrip).</summary>
     SpellShield,
     OffGuard,
+
+    /// <summary>Value is the enfeebled value: a penalty to melee attack and damage rolls and Strength-based checks.</summary>
+    Enfeebled,
+
+    /// <summary>Value is the drained value: a penalty to Fortitude saves. The lost Hit Points are not taken.</summary>
+    Drained,
+
+    /// <summary>Value is the doomed value: the creature dies at a dying value that much lower.</summary>
+    Doomed,
+
+    /// <summary>Everything is concealed to the creature: a DC 5 flat check to target anything.</summary>
+    Dazzled,
+
+    /// <summary>-1 to AC and saves.</summary>
+    Fatigued,
+
+    /// <summary>-2 to Perception.</summary>
+    Deafened,
+
+    /// <summary>-2 to Perception and skill checks.</summary>
+    Fascinated,
+
+    /// <summary>Not kept: the creature loses that many actions at once.</summary>
+    Stunned,
 }

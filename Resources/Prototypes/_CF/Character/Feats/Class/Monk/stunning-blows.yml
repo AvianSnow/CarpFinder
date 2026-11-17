@@ -10,3 +10,6 @@
     - "Monk"
   prerequisites:
     - "Flurry of Blows"
+  grants:
+    - !type:CFGrantOption
+      option: StunningBlows

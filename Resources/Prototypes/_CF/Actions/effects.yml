@@ -348,3 +348,74 @@
       perLevel: 1
       durationSeconds: 60
     - !type:CFReduceFrightenedEffect
+
+# Ghostly Stride: a move that sets off no reactions.
+- type: entity
+  parent: CFActivityInstant
+  id: CFActGhostlyStride
+  name: Ghostly Stride
+  description: For 3 seconds you can leave an enemy's reach at no cost and without setting off a reaction.
+  components:
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFFreeStepEffect
+      durationSeconds: 3
+
+# Explosive Leap: the innovation throws its Inventor 30 feet.
+- type: entity
+  parent: CFActivityInstant
+  id: CFActExplosiveLeap
+  name: Explosive Leap
+  description: A blast from your innovation throws you 30 feet the way you are facing. An unstable action.
+  components:
+  - type: CFEffectAction
+    unstable: true
+  - type: CFTrait
+    traits: [Fire]
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFLeapEffect
+      feet: 30
+
+# Parries. Each is +AC for 6 seconds, with something particular in hand.
+- type: entity
+  parent: CFActivityInstant
+  id: CFActDuelingParry
+  name: Dueling Parry
+  description: With a one-handed melee weapon and your other hand free, +2 circumstance bonus to AC for 6 seconds.
+  components:
+  - type: CFEffectAction
+    needsWeaponAndFreeHand: true
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFBonusEffect
+      stat: ArmorClass
+      type: Circumstance
+      value: 2
+      durationSeconds: 6
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActRaiseHaft
+  name: Raise Haft
+  description: With a melee weapon in both hands, +1 circumstance bonus to AC for 6 seconds.
+  components:
+  - type: CFEffectAction
+    needsTwoHanded: Melee
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFBonusEffect
+      stat: ArmorClass
+      type: Circumstance
+      value: 1
+      durationSeconds: 6
+
+- type: entity
+  parent: CFActRaiseHaft
+  id: CFActDefensiveArmaments
+  name: Defensive Armaments
+  description: With a crossbow or firearm in both hands, +1 circumstance bonus to AC for 6 seconds.
+  components:
+  - type: CFEffectAction
+    needsTwoHanded: Ranged

@@ -98,6 +98,54 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField]
     public TimeSpan BespellUntil;
 
+    /// <summary>A creature identified with Recall Knowledge is off-guard to this one: 6 seconds, or a minute on a critical success (Mastermind).</summary>
+    [DataField]
+    public bool MastermindRecall;
+
+    /// <summary>Hunt Prey comes with a free Recall Knowledge about the prey (Monster Hunter).</summary>
+    [DataField]
+    public bool MonsterHunter;
+
+    /// <summary>Devise a Stratagem comes with a free Recall Knowledge about the target (Known Weaknesses).</summary>
+    [DataField]
+    public bool KnownWeaknesses;
+
+    /// <summary>An enemy that fails its save against this creature's emotion spell is off-guard to it for 6 seconds (Emotional Push).</summary>
+    [DataField]
+    public bool EmotionalPush;
+
+    /// <summary>Rages for free as a fight begins (Quick-Tempered). See <see cref="CFFightSystem"/>.</summary>
+    [DataField]
+    public bool QuickTempered;
+
+    /// <summary>A creature that has not acted yet is off-guard to this one when it starts the fight (Surprise Attack).</summary>
+    [DataField]
+    public bool SurpriseAttack;
+
+    /// <summary>A raised shield that gives +1 to AC, which is a buckler, gives +2 (Elegant Buckler).</summary>
+    [DataField]
+    public bool ElegantBuckler;
+
+    /// <summary>A shield bash rolls a damage die one step larger (Shield Warfare).</summary>
+    [DataField]
+    public bool ShieldWarfare;
+
+    /// <summary>Flurry of Blows that hurts its target may stun it (Stunning Blows).</summary>
+    [DataField]
+    public bool StunningBlows;
+
+    /// <summary>A critical hit with a stored Devise a Stratagem roll that deals piercing or slashing damage also bleeds (Scalpel's Point).</summary>
+    [DataField]
+    public bool ScalpelsPoint;
+
+    /// <summary>+4 circumstance to AC against reactions set off by this creature's movement (Guarded Movement).</summary>
+    [DataField]
+    public bool GuardedMovement;
+
+    /// <summary>A Leap goes 5 feet further (Dancing Leaf).</summary>
+    [DataField]
+    public bool DancingLeaf;
+
     /// <summary>Shield Block against an enemy in reach also shoves it 5 feet away (Aggressive Block).</summary>
     [DataField, AutoNetworkedField]
     public bool AggressiveBlock;
@@ -499,6 +547,18 @@ public enum CFCombatOption : byte
     ExpertOverdrive,
     DeadlySimplicity,
     AggressiveBlock,
+    GuardedMovement,
+    DancingLeaf,
+    StunningBlows,
+    ScalpelsPoint,
+    ElegantBuckler,
+    ShieldWarfare,
+    QuickTempered,
+    SurpriseAttack,
+    MastermindRecall,
+    MonsterHunter,
+    KnownWeaknesses,
+    EmotionalPush,
 }
 
 public enum CFPointMark : byte

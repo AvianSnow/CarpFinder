@@ -81,6 +81,10 @@ public sealed partial class CFStanceAttack
 
     [DataField]
     public List<ProtoId<CFTraitPrototype>> Traits = new();
+
+    /// <summary>A critical hit that deals damage also deals one die of this size as persistent bleed (Tiger Stance).</summary>
+    [DataField]
+    public int CriticalBleedDie;
 }
 
 /// <summary>On a creature that has used a stance. It stays after the stance ends, to keep the wait for the next one.</summary>

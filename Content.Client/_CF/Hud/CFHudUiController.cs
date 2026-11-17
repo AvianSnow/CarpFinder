@@ -189,6 +189,15 @@ public sealed partial class CFHudUiController : UIController
             Add("stupefied", false, stupefied);
         if (cond is { SickenedValue: > 0 })
             Add("sickened", false, cond.SickenedValue);
+        if (cond != null)
+        {
+            foreach (var (kind, value) in cond.Values)
+            {
+                // Only enfeebled, drained and doomed have a value worth showing.
+                var valued = kind is CFConditionKind.Enfeebled or CFConditionKind.Drained or CFConditionKind.Doomed;
+                Add(kind.ToString().ToLowerInvariant(), false, valued ? value : 0);
+            }
+        }
         if (cond is { Grabbed: true })
             Add("grabbed", false);
         if (cond is { Immobilized: true })

@@ -1,7 +1,7 @@
 cf-class-choice-racket = Rogue's Racket
 
 cf-class-choice-mastermind = Mastermind
-cf-class-choice-mastermind-desc = You win by knowing more than your mark. Intelligence is your key attribute, and you are trained in Society. You also choose one of Arcana, Nature, Occultism or Religion. Making a creature off-guard by identifying it with Recall Knowledge: TBA
+cf-class-choice-mastermind-desc = You win by knowing more than your mark. Intelligence is your key attribute, and you are trained in Society. You also choose one of Arcana, Nature, Occultism or Religion. A creature you identify with Recall Knowledge is off-guard to you for 6 seconds, or a minute on a critical success.
 cf-class-choice-ruffian = Ruffian
 cf-class-choice-ruffian-desc = You hurt people for a living. Strength is your key attribute, and you are trained in Intimidation and medium armor. Sneak Attack works with any simple weapon up to d8, or martial or advanced weapon up to d6. A critical hit with such a weapon on an off-guard creature gets its critical specialization.
 cf-class-choice-scoundrel = Scoundrel
@@ -14,7 +14,7 @@ cf-class-choice-hunters-edge = Hunter's Edge
 cf-class-choice-edge-flurry = Flurry
 cf-class-choice-edge-flurry-desc = Your multiple attack penalty against your prey is -3 and -6, or -2 and -4 with an agile weapon.
 cf-class-choice-edge-outwit = Outwit
-cf-class-choice-edge-outwit-desc = +1 circumstance to AC against your prey's attacks. The +2 to Deception, Intimidation, Stealth and Recall Knowledge against it: TBA
+cf-class-choice-edge-outwit-desc = +1 circumstance to AC against your prey's attacks. +2 circumstance to Recall Knowledge about it. The +2 to Deception, Intimidation and Stealth against it: TBA
 cf-class-choice-edge-precision = Precision
 cf-class-choice-edge-precision-desc = The first time you hit your prey each turn, you deal 1d8 extra precision damage.
 

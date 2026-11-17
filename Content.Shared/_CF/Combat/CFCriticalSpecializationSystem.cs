@@ -232,9 +232,8 @@ public sealed partial class CFCriticalSpecializationSystem : EntitySystem
                 break;
             case CFWeaponGroup.Firearm:
             case CFWeaponGroup.Sling:
-                // Stunned 1 is one lost action.
                 if (!_conditions.RollDefense(target, CFDefenseType.Fortitude, dc, out _).IsSuccess())
-                    _actions.TrySpendActions(target, 1, stealthy: true);
+                    _conditions.ApplyCondition(target, CFConditionKind.Stunned, 1, 0f, user, 0);
                 break;
             case CFWeaponGroup.Knife:
             case CFWeaponGroup.Dart:

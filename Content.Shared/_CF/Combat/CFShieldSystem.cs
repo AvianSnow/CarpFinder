@@ -71,7 +71,11 @@ public sealed partial class CFShieldSystem : EntitySystem
         if (!TryGetRaisedShield(user, out var shield))
             return 0;
 
-        return InCover(user, shield) ? shield.Comp.TakeCoverBonus : shield.Comp.AcBonus;
+        if (InCover(user, shield))
+            return shield.Comp.TakeCoverBonus;
+
+        // Elegant Buckler: only a buckler gives as little as +1.
+        return shield.Comp.AcBonus == 1 && CompOrNull<CFCombatOptionsComponent>(user)?.ElegantBuckler == true ? 2 : shield.Comp.AcBonus;
     }
 
     private bool InCover(EntityUid user, Entity<CFShieldComponent> shield)

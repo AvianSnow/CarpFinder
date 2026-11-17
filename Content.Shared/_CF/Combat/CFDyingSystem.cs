@@ -38,6 +38,7 @@ public sealed partial class CFDyingSystem : EntitySystem
     [Dependency] private MobThresholdSystem _mobThresholds = default!;
     [Dependency] private DamageableSystem _damageable = default!;
     [Dependency] private BloodstreamSystem _bloodstream = default!;
+    [Dependency] private CFConditionSystem _conditions = default!;
 
     public override void Update(float frameTime)
     {
@@ -174,6 +175,7 @@ public sealed partial class CFDyingSystem : EntitySystem
         dying += combatant.Wounded;
         SetDying(target, combatant, dying, origin, knockedOut: true);
         SyncSs14Critical(target, origin);
+        _reactions.AnswerAllyDropped(target);
         PopupPvs(Loc.GetString("cf-combat-dying-gain", ("value", combatant.Dying)), target, PopupType.MediumCaution);
         return true;
     }
@@ -354,7 +356,10 @@ public sealed partial class CFDyingSystem : EntitySystem
     /// <summary>The dying value this creature dies at.</summary>
     public int DeathValue(EntityUid uid)
     {
-        return CFDyingTrackerComponent.DeathValue + (CompOrNull<CFCombatOptionsComponent>(uid)?.Diehard == true ? 1 : 0);
+        // Doomed brings death that much closer, but never to before dying 1.
+        return Math.Max(1, CFDyingTrackerComponent.DeathValue
+                           + (CompOrNull<CFCombatOptionsComponent>(uid)?.Diehard == true ? 1 : 0)
+                           - _conditions.Value(uid, CFConditionKind.Doomed));
     }
 
     /// <summary>The DC of this creature's next recovery check.</summary>

@@ -9,4 +9,10 @@
   traits:
     - "Cleric"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-rapid-response
+        trigger: AllyDropped
+        follows: true
+        rangeFeet: 35

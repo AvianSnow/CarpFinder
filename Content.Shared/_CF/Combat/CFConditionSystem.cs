@@ -101,6 +101,27 @@ public sealed partial class CFConditionSystem : EntitySystem
                 dirty = true;
             }
 
+            if (cond.ValueUntil.Count > 0)
+            {
+                List<CFConditionKind>? over = null;
+                foreach (var (kind, until) in cond.ValueUntil)
+                {
+                    if (now >= until)
+                        (over ??= new List<CFConditionKind>()).Add(kind);
+                }
+
+                if (over != null)
+                {
+                    foreach (var kind in over)
+                    {
+                        cond.ValueUntil.Remove(kind);
+                        cond.Values.Remove(kind);
+                    }
+
+                    dirty = true;
+                }
+            }
+
             if (cond.Concealed && now >= cond.ConcealedUntil)
             {
                 cond.Concealed = false;
@@ -380,6 +401,8 @@ public sealed partial class CFConditionSystem : EntitySystem
         var dc = 0;
         if (TryComp(attacker, out CFConditionComponent? blind) && blind.Blinded)
             dc = 11;
+        else if (Value(attacker, CFConditionKind.Dazzled) > 0)
+            dc = 5;
 
         // Keener senses (a Whisper Elf's hearing) make the check easier against a creature close enough.
         var sense = CompOrNull<CFSeekSenseComponent>(attacker);
@@ -717,6 +740,9 @@ public sealed partial class CFConditionSystem : EntitySystem
 
         var mod = CFDefense.SkillModifier(_prototypes, combat, abilities, skill, ability, itemBonus + SkillBonus(user, skill), Frightened(user));
         mod += _armor.CheckPenalty(user, skill, ability, attackTrait) + TakeAid(user);
+        if (ability == CFAbility.Strength)
+            mod -= Value(user, CFConditionKind.Enfeebled);
+
         if (ability == CFAbility.Dexterity)
             mod -= Clumsy(user);
 
@@ -760,6 +786,9 @@ public sealed partial class CFConditionSystem : EntitySystem
             mod -= Frightened(user);
 
         mod += _armor.CheckPenalty(user, skill, ability, attackTrait) + TakeAid(user);
+        if (ability == CFAbility.Strength)
+            mod -= Value(user, CFConditionKind.Enfeebled);
+
         if (ability == CFAbility.Dexterity)
             mod -= Clumsy(user);
 
@@ -823,13 +852,14 @@ public sealed partial class CFConditionSystem : EntitySystem
     public int ArmorClassModifier(EntityUid uid)
     {
         // Rage has no AC penalty: that was the legacy rule, and Player Core 2 dropped it.
-        return _bonuses.Total(uid, CFBonusStat.ArmorClass) + _shields.RaisedBonus(uid) - Frightened(uid) - Clumsy(uid);
+        return _bonuses.Total(uid, CFBonusStat.ArmorClass) + _shields.RaisedBonus(uid) - Frightened(uid)
+               - Math.Max(Clumsy(uid), Value(uid, CFConditionKind.Fatigued) > 0 ? 1 : 0);
     }
 
     /// <summary>Bonuses to one skill: those to all skills, and those to this skill alone.</summary>
     public int SkillBonus(EntityUid uid, string skill)
     {
-        return _bonuses.Total(uid, CFBonusStat.SkillChecks, skill: skill);
+        return _bonuses.Total(uid, CFBonusStat.SkillChecks, skill: skill) - (Value(uid, CFConditionKind.Fascinated) > 0 ? 2 : 0);
     }
 
     /// <summary>Stupefied value: a penalty to Will saves and Perception.</summary>
@@ -963,7 +993,41 @@ public sealed partial class CFConditionSystem : EntitySystem
             case CFConditionKind.Sickened:
                 ApplySickened(target, value, seconds);
                 break;
+            case CFConditionKind.Stunned:
+                // Stunned is lost actions, taken at once.
+                for (var i = 0; i < Math.Max(1, value); i++)
+                {
+                    _actions.TrySpendActions(target, 1, stealthy: true);
+                }
+
+                break;
+            case CFConditionKind.Enfeebled:
+            case CFConditionKind.Drained:
+            case CFConditionKind.Doomed:
+            case CFConditionKind.Dazzled:
+            case CFConditionKind.Fatigued:
+            case CFConditionKind.Deafened:
+            case CFConditionKind.Fascinated:
+                ApplyValue(target, kind, value, seconds);
+                break;
         }
+    }
+
+    /// <summary>The value of one of the conditions kept in <see cref="CFConditionComponent.Values"/>, or 0 without it.</summary>
+    public int Value(EntityUid uid, CFConditionKind kind)
+    {
+        return TryComp(uid, out CFConditionComponent? cond) && cond.Values.TryGetValue(kind, out var value) ? value : 0;
+    }
+
+    private void ApplyValue(EntityUid target, CFConditionKind kind, int value, float seconds)
+    {
+        var cond = EnsureComp<CFConditionComponent>(target);
+        cond.Values[kind] = Math.Max(Math.Max(1, value), cond.Values.GetValueOrDefault(kind));
+        var until = _timing.CurTime + TimeSpan.FromSeconds(Math.Max(1f, seconds));
+        if (!cond.ValueUntil.TryGetValue(kind, out var old) || until > old)
+            cond.ValueUntil[kind] = until;
+
+        Dirty(target, cond);
     }
 
     /// <summary>
@@ -1017,6 +1081,16 @@ public sealed partial class CFConditionSystem : EntitySystem
                 cond.ClumsyValue = 0;
                 cond.ClumsyUntil = TimeSpan.Zero;
                 break;
+            case CFConditionKind.Enfeebled:
+            case CFConditionKind.Drained:
+            case CFConditionKind.Doomed:
+            case CFConditionKind.Dazzled:
+            case CFConditionKind.Fatigued:
+            case CFConditionKind.Deafened:
+            case CFConditionKind.Fascinated:
+                cond.Values.Remove(kind);
+                cond.ValueUntil.Remove(kind);
+                break;
             case CFConditionKind.Stupefied:
                 cond.StupefiedValue = 0;
                 cond.StupefiedUntil = TimeSpan.Zero;
@@ -1054,10 +1128,17 @@ public sealed partial class CFConditionSystem : EntitySystem
             _ => _bonuses.Total(uid, CFBonusStat.Saves, CFBonusStat.Fortitude, traits),
         };
 
+        // Fatigued lowers every save, and deafened and fascinated lower Perception. The worst of them counts, once.
+        var extra = defense == CFDefenseType.Perception
+            ? Math.Max(Value(uid, CFConditionKind.Deafened) > 0 ? 2 : 0, Value(uid, CFConditionKind.Fascinated) > 0 ? 2 : 0)
+            : Value(uid, CFConditionKind.Fatigued) > 0 ? 1 : 0;
+
         return defense switch
         {
-            CFDefenseType.Reflex => status - Clumsy(uid),
-            CFDefenseType.Will or CFDefenseType.Perception => status - Stupefied(uid),
+            CFDefenseType.Reflex => status - Math.Max(Clumsy(uid), extra),
+            CFDefenseType.Will => status - Math.Max(Stupefied(uid), extra),
+            CFDefenseType.Perception => status - Math.Max(Stupefied(uid), extra),
+            CFDefenseType.Fortitude => status - Math.Max(Value(uid, CFConditionKind.Drained), extra),
             _ => status,
         };
     }

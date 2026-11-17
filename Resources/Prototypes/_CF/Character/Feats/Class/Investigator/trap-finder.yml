@@ -15,3 +15,13 @@
       type: Circumstance
       value: 1
       trait: Trap
+    - !type:CFGrantBonus
+      stat: Perception
+      type: Circumstance
+      value: 1
+      trait: Trap
+    - !type:CFGrantBonus
+      stat: ArmorClass
+      type: Circumstance
+      value: 1
+      trait: Trap

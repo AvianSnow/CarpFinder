@@ -44,7 +44,10 @@
           option: SneakAttack
     - level: 1
       name: "Surprise Attack"
-      description: "Being off-guard to you before a creature has acted: TBA"
+      description: "When you start a fight, with the first attack after 30 seconds without one, a creature that has not been fighting is off-guard to you for 6 seconds. The bonus to initiative from Deception or Stealth has nothing to add to."
+      grants:
+        - !type:CFGrantOption
+          option: SurpriseAttack
     - level: 3
       name: "Deny Advantage"
       description: "You are not off-guard to flanking creatures of your level or lower. The same for hidden creatures: TBA"

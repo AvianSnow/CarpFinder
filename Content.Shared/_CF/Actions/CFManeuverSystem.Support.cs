@@ -117,14 +117,24 @@ public sealed partial class CFManeuverSystem
     /// One action and a secret check against the DC for the creature's level. Each character gets one try per
     /// creature. A critical failure tells it something false, and it looks just like the truth.
     /// </summary>
-    public CFDegree? TryRecall(EntityUid user, EntityUid target)
+    /// <param name="free">The check is part of another action, such as Hunt Prey with Monster Hunter, and costs nothing more.</param>
+    public CFDegree? TryRecall(EntityUid user, EntityUid target, bool free = false)
     {
-        if (!_net.IsServer || !_conditions.CanRecall(user, target) || !_actions.TrySpendActions(user, 1))
+        if (!_net.IsServer || !_conditions.CanRecall(user, target) || !free && !_actions.TrySpendActions(user, 1))
             return null;
 
         _conditions.NoteRecall(user, target);
         var level = CompOrNull<CFCombatantComponent>(target)?.Level ?? 0;
-        var degree = RollRecall(user, CFCraftingRules.LevelDc(level));
+        var style = CompOrNull<CFCombatOptionsComponent>(user);
+
+        // The Outwit edge: +2 circumstance to Recall Knowledge about the hunted prey.
+        var bonus = style is { PreyOutwit: true } && style.Prey == target ? 2 : 0;
+        var degree = RollRecall(user, CFCraftingRules.LevelDc(level) - bonus);
+
+        // The Mastermind racket: an identified creature is off-guard to the Rogue for a while.
+        if (style is { MastermindRecall: true } && degree.IsSuccess())
+            _conditions.SetOffGuardTo(target, user, degree == CFDegree.CriticalSuccess ? 60f : 6f);
+
         var text = RecallText(target, level, degree);
         _examine.SendExamineTooltip(user, target, FormattedMessage.FromMarkupOrThrow(text), getVerbs: false, centerAtCursor: false);
         return degree;
