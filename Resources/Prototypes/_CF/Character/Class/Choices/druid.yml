@@ -37,4 +37,7 @@
   description: cf-class-choice-order-untamed-desc
   trainedSkills:
   - Intimidation
+  grants:
+  - !type:CFGrantFeat
+    feat: CFUntamedForm
 

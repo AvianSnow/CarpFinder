@@ -12,3 +12,6 @@
     - "untamed order"
   requiresChoice:
     - OrderUntamed
+  grants:
+    - !type:CFGrantFocusSpell
+      spell: UntamedForm

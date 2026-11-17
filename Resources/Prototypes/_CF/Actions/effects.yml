@@ -256,6 +256,15 @@
       damageType: Fire
       diceFromLevel: true
 
+# Given by a battle form while it lasts. See CFBattleFormSystem.
+- type: entity
+  parent: CFActivityInstant
+  id: CFActDismissForm
+  name: Dismiss Form
+  description: Return to your own shape.
+  components:
+  - type: CFDismissFormAction
+
 - type: entity
   parent: CFActivityInstant
   id: CFActEmblazonArmament

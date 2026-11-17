@@ -45,7 +45,7 @@ cf-class-choice-order-leaf-desc = You are trained in Diplomacy. The Leshy Famili
 cf-class-choice-order-storm = Storm
 cf-class-choice-order-storm-desc = You are trained in Acrobatics and can cast tempest surge as a focus spell. The Storm Born feat: TBA
 cf-class-choice-order-untamed = Untamed
-cf-class-choice-order-untamed-desc = You are trained in Intimidation. The Untamed Form feat and its order spell: TBA
+cf-class-choice-order-untamed-desc = You are trained in Intimidation, and have the Untamed Form feat and its order spell.
 
 cf-class-choice-school = Arcane School
 cf-class-choice-school-ars-grammatica = School of Ars Grammatica

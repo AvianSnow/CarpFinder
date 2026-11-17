@@ -418,6 +418,13 @@ public sealed partial class CFBonusSystem : EntitySystem
         });
     }
 
+    /// <summary>Ends a weakness that has an end time, such as a battle form's, before its time is up.</summary>
+    public void EndTimedWeakness(EntityUid uid, ProtoId<CFDamageTypePrototype> type)
+    {
+        if (TryComp(uid, out CFResistancesComponent? comp))
+            comp.Entries.RemoveAll(entry => entry.Weakness && entry.DamageType == type && entry.Expires != TimeSpan.Zero);
+    }
+
     /// <summary>A resistance from a character option. <paramref name="halfLevel"/> grows with the creature.</summary>
     public void AddPermanentResistance(EntityUid uid, ProtoId<CFDamageTypePrototype> type, int amount, bool halfLevel)
     {

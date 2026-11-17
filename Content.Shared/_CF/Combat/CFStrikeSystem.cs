@@ -465,7 +465,11 @@ public sealed partial class CFStrikeSystem : EntitySystem
 
         // A battle form's attacks use its own modifier, unless the creature's is higher.
         if (weapon.Item == null && TryComp(user, out CFBattleFormComponent? form))
-            bonus = Math.Max(bonus, form.AttackModifier);
+        {
+            // Untamed Form's bonus to the creature's own modifier is a status bonus, so another one takes its place.
+            var own = bonus + Math.Max(0, form.OwnAttackBonus - Math.Max(0, _bonuses.TotalOfType(user, CFBonusStat.AttackRoll, CFBonusType.Status)));
+            bonus = Math.Max(own, form.AttackModifier);
+        }
         bonus -= _conditions.Frightened(user);
         bonus += _conditions.ProneAttackPenalty(user);
         if (weapon.Ranged)

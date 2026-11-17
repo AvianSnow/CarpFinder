@@ -26,6 +26,10 @@ public sealed partial class CFSpellshapeComponent : Component
     /// <summary>Makes a burst, cone or line with no duration bigger (Widen Spell).</summary>
     [DataField]
     public bool Widens;
+
+    /// <summary>The next Untamed Form is 2 ranks lower and lasts an hour (Form Control). <c>CFBattleFormSystem</c> reads it.</summary>
+    [DataField]
+    public bool FormControl;
 }
 
 /// <summary>On a creature that has used a spellshape and not yet cast the spell.</summary>

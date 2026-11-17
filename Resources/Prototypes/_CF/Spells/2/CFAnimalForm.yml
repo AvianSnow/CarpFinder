@@ -26,10 +26,12 @@
     - { value: 6, name: cf-battle-form-deer, immediate: true }
   # Player Core's Animal Form at rank 2, one attack per animal.
   - type: CFBattleFormSpell
+    tiers:
+    - { rank: 3, baseArmorClass: 17, attackModifier: 14, damageBonus: 5, temporaryHp: 10 }
     forms:
-    - { mode: 1, name: cf-battle-form-ape, dice: 2, die: 6, damageType: Bludgeoning, speedFeet: 25 }
-    - { mode: 2, name: cf-battle-form-bear, dice: 2, die: 8, damageType: Piercing, speedFeet: 30 }
-    - { mode: 3, name: cf-battle-form-bull, dice: 2, die: 8, damageType: Piercing, speedFeet: 30 }
-    - { mode: 4, name: cf-battle-form-canine, dice: 2, die: 8, damageType: Piercing, speedFeet: 40 }
-    - { mode: 5, name: cf-battle-form-cat, dice: 2, die: 6, damageType: Piercing, speedFeet: 40 }
-    - { mode: 6, name: cf-battle-form-deer, dice: 2, die: 6, damageType: Piercing, speedFeet: 50 }
+    - { mode: 1, name: cf-battle-form-ape, dice: 2, die: 6, damageType: Bludgeoning, speedFeet: 25, sprite: { sprite: Mobs/Animals/gorilla.rsi, state: crawling } }
+    - { mode: 2, name: cf-battle-form-bear, dice: 2, die: 8, damageType: Piercing, speedFeet: 30, sprite: { sprite: Mobs/Animals/bear.rsi, state: bear } }
+    - { mode: 3, name: cf-battle-form-bull, dice: 2, die: 8, damageType: Piercing, speedFeet: 30, sprite: { sprite: Mobs/Animals/Farm/cow.rsi, state: alive } }
+    - { mode: 4, name: cf-battle-form-canine, dice: 2, die: 8, damageType: Piercing, speedFeet: 40, sprite: { sprite: Mobs/Pets/corgi.rsi, state: corgi } }
+    - { mode: 5, name: cf-battle-form-cat, dice: 2, die: 6, damageType: Piercing, speedFeet: 40, sprite: { sprite: Mobs/Pets/cat.rsi, state: cat } }
+    - { mode: 6, name: cf-battle-form-deer, dice: 2, die: 6, damageType: Piercing, speedFeet: 50, sprite: { sprite: Mobs/Animals/reindeer_buck.rsi, state: reindeer_buck } }

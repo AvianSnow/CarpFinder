@@ -6,6 +6,7 @@ using Content.Shared.CF.Actions;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Combat;
+using Content.Shared.CF.Spells;
 using Content.Shared.CF.Detection;
 using Content.Shared.CF.Effects;
 using Content.Shared.CF.Items;
@@ -210,6 +211,8 @@ public sealed partial class CFHudUiController : UIController
             Add("spell-shield", true);
         if (options is { Raging: true })
             Add("raging", true);
+        if (EntityManager.TryGetComponent(player, out CFBattleFormComponent? form))
+            statuses.Add(new CFHudStatus(BattleFormLabel(form), true));
         if (options is { Panache: true })
             Add("panache", true);
         if (EntityManager.TryGetComponent(player, out CFStealthComponent? stealth) && stealth.Active)
@@ -234,6 +237,13 @@ public sealed partial class CFHudUiController : UIController
         }
 
         return statuses;
+    }
+
+    /// <summary>The spell and the shape, as "Animal Form: Cat". Every spell that changes the caster's shape shows this.</summary>
+    public static string BattleFormLabel(CFBattleFormComponent form)
+    {
+        var shape = Loc.GetString(form.Name);
+        return string.IsNullOrEmpty(form.SpellName) ? shape : $"{form.SpellName}: {shape}";
     }
 
     /// <summary>A spell's bonus or penalty. Lasting ones are on the sheet, and sickened already has its own entry.</summary>

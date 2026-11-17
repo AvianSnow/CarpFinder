@@ -63,6 +63,11 @@ public sealed partial class CFSpellshapeSystem : EntitySystem
         return Current(user) is { Amp: true };
     }
 
+    public bool IsFormControl(EntityUid user)
+    {
+        return Current(user) is { FormControl: true };
+    }
+
     public bool IsSubtle(EntityUid user)
     {
         return Current(user) is { Subtle: true };

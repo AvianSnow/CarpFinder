@@ -17,6 +17,15 @@
 
 - type: entity
   parent: CFActSpellshapeBase
+  id: CFActFormControl
+  name: Form Control
+  description: Your next Untamed Form is 2 ranks lower, at least rank 1, and lasts an hour. Lost if you spend an action on anything else first.
+  components:
+  - type: CFSpellshape
+    formControl: true
+
+- type: entity
+  parent: CFActSpellshapeBase
   id: CFActWidenSpell
   name: Widen Spell
   description: Your next burst, cone or line spell with no duration gets bigger. Lost if you spend an action on anything else first.
