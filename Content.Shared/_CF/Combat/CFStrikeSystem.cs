@@ -76,6 +76,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
     [Dependency] private SharedAudioSystem _audio = default!;
     [Dependency] private ThrownItemSystem _thrownItems = default!;
     [Dependency] private CFEmblazonSystem _emblazon = default!;
+    [Dependency] private CFCriticalSpecializationSystem _criticalSpecialization = default!;
 
     /// <summary>Unconscious / dying creatures are off-guard (−4 AC status, simplified).</summary>
     private const int DownedAcPenalty = 4;
@@ -935,6 +936,9 @@ public sealed partial class CFStrikeSystem : EntitySystem
 
         if (criticalHit && !isObject)
         {
+            if (!alreadyDown)
+                _criticalSpecialization.TryApply(user, target, rolled, melee, d20 + attackBonus);
+
             var landed = new CFLandedCriticalEvent(target);
             RaiseLocalEvent(user, ref landed);
         }

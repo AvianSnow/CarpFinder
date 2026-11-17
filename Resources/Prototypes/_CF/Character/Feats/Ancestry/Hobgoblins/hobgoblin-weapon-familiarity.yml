@@ -10,6 +10,7 @@
     - "Hobgoblin"
   grants:
     - !type:CFGrantWeaponFamiliarity
+      criticalSpecializationLevel: 5
       traits:
       - Hobgoblin
       weapons:

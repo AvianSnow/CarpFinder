@@ -38,6 +38,10 @@
       rank: Trained
     - !type:CFGrantOption
       option: AnyWeaponSneak
+    - !type:CFGrantCriticalSpecialization
+      specialization:
+        sneakAttackWeapon: true
+        when: TargetOffGuard
 
 - type: cfClassChoice
   id: Scoundrel

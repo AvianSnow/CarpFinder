@@ -234,9 +234,34 @@ public sealed partial class CFGrantWeaponFamiliarity : CFGrant
     [DataField]
     public bool Favored;
 
+    /// <summary>From this level, a critical hit with one of these weapons gets its critical specialization. 0 means never.</summary>
+    [DataField]
+    public int CriticalSpecializationLevel;
+
     public override void Apply(IEntityManager entities, CFGrantArgs args)
     {
         entities.System<CFCharacterFeatureSystem>().AddFamiliarity(args.Mob, Weapons, Traits, Favored);
+        if (CriticalSpecializationLevel <= 0)
+            return;
+
+        entities.System<CFCriticalSpecializationSystem>().Add(args.Mob, new CFCriticalSpecialization
+        {
+            Weapons = new List<EntProtoId>(Weapons),
+            WeaponTraits = new List<ProtoId<CFTraitPrototype>>(Traits),
+            MinLevel = CriticalSpecializationLevel,
+        });
+    }
+}
+
+/// <summary>Critical specialization with some weapons, or under some condition. See <see cref="CFCriticalSpecialization"/>.</summary>
+public sealed partial class CFGrantCriticalSpecialization : CFGrant
+{
+    [DataField(required: true)]
+    public CFCriticalSpecialization Specialization = default!;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        entities.System<CFCriticalSpecializationSystem>().Add(args.Mob, Specialization);
     }
 }
 

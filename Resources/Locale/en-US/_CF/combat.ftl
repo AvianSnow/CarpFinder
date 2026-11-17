@@ -251,3 +251,23 @@ cf-rune-sertum = Sertum, Rune of Preparedness
 cf-rune-thullax = Thullax, Rune of Corrosion
 cf-rune-tilus = Tilus, Rune of Vocabulary
 cf-rune-zohk = Zohk, Rune of Homecoming
+
+# Critical specialization. The popup over the creature that was critically hit.
+cf-critical-specialization = { $group }!
+cf-weapon-group-axe = Axe critical
+cf-weapon-group-bomb = Bomb critical
+cf-weapon-group-bow = Bow critical
+cf-weapon-group-brawling = Brawling critical
+cf-weapon-group-club = Club critical
+cf-weapon-group-crossbow = Crossbow critical
+cf-weapon-group-dart = Dart critical
+cf-weapon-group-firearm = Firearm critical
+cf-weapon-group-flail = Flail critical
+cf-weapon-group-hammer = Hammer critical
+cf-weapon-group-knife = Knife critical
+cf-weapon-group-pick = Pick critical
+cf-weapon-group-polearm = Polearm critical
+cf-weapon-group-shield = Shield critical
+cf-weapon-group-sling = Sling critical
+cf-weapon-group-spear = Spear critical
+cf-weapon-group-sword = Sword critical

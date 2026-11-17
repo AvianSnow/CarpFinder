@@ -11,6 +11,10 @@
   prerequisites:
     - "Arcane Cascade"
     - "twisting tree hybrid study"
-  pendingAction: true
+  grants:
+    - !type:CFGrantCriticalSpecialization
+      specialization:
+        weapons: [ CFStaff ]
+        as: Club
   requiresChoice:
     - StudyTwistingTree

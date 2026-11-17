@@ -53,8 +53,12 @@
       description: "Your unarmed attacks count as magical. Nothing resists non-magical attacks yet: TBA"
     - level: 5
       name: "Expert Strikes"
-      description: "Expert with unarmed attacks and simple weapons. Critical specialization: TBA"
+      description: "Expert with unarmed attacks and simple weapons. A critical hit with an unarmed attack gets the brawling critical specialization: the target is slowed unless it saves."
       grants:
+        - !type:CFGrantCriticalSpecialization
+          specialization:
+            unarmedOnly: true
+            groups: [ Brawling ]
         - !type:CFGrantProficiency
           proficiencies:
             - Unarmed

@@ -91,7 +91,8 @@ There are no turns. `CFActionPoolComponent` stands in for them.
 3. It builds AC: base, off-guard, frightened, clumsy, bonuses, raised shield.
 4. It rolls with `CFDegrees.DegreeOfSuccess`, then `AdjustDefense` gives reactions a chance (Reactive Shield, Nimble Dodge).
 5. On a hit it rolls damage, applies resistances, Shield Block, and hardness, and writes `CFCombatant.CurrentHp`.
-6. `CFDyingSystem` handles 0 HP. A creature with `diesAtZeroHp` dies at once and is worth XP; everyone else goes dying. The SS14 damage bar is rewritten from CF HP, never summed (see `ss14rules.md`).
+6. A critical hit by a character who has critical specialization with that weapon adds the weapon group's effect (`CFCriticalSpecializationSystem`).
+7. `CFDyingSystem` handles 0 HP. A creature with `diesAtZeroHp` dies at once and is worth XP; everyone else goes dying. The SS14 damage bar is rewritten from CF HP, never summed (see `ss14rules.md`).
 
 Stock mobs and objects get combat stats on first contact from `CFCombatBridgeSystem`: mobs act as Commoners, objects get a `cfMaterial`.
 

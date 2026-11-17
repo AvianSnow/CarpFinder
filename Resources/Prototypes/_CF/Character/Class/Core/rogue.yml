@@ -53,8 +53,12 @@
           option: DenyAdvantage
     - level: 5
       name: "Weapon Tricks"
-      description: "Expert with simple weapons, martial weapons and unarmed attacks. Critical specialization against off-guard targets: TBA"
+      description: "Expert with simple weapons, martial weapons and unarmed attacks. A critical hit on an off-guard creature with an agile or finesse attack gets its critical specialization."
       grants:
+        - !type:CFGrantCriticalSpecialization
+          specialization:
+            agileOrFinesse: true
+            when: TargetOffGuard
         - !type:CFGrantProficiency
           proficiencies:
             - SimpleWeapons

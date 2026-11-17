@@ -59,8 +59,11 @@
           rank: Expert
     - level: 5
       name: "Gunslinger Weapon Mastery"
-      description: "Master with crossbows and firearms, and expert with simple weapons, martial weapons and unarmed attacks. Critical specialization: TBA"
+      description: "Master with crossbows and firearms, and expert with simple weapons, martial weapons and unarmed attacks. A critical hit with a firearm or crossbow gets its critical specialization."
       grants:
+        - !type:CFGrantCriticalSpecialization
+          specialization:
+            groups: [ Firearm, Crossbow ]
         - !type:CFGrantProficiency
           proficiencies:
             - Crossbow

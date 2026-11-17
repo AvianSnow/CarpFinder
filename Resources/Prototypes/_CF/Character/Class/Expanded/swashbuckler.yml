@@ -86,8 +86,11 @@
           value: 10
     - level: 5
       name: "Weapon Expertise"
-      description: "Expert with simple weapons, martial weapons and unarmed attacks. Critical specialization: TBA"
+      description: "Expert with simple weapons, martial weapons and unarmed attacks. A critical hit with a weapon you are an expert with gets its critical specialization."
       grants:
+        - !type:CFGrantCriticalSpecialization
+          specialization:
+            minRank: Expert
         - !type:CFGrantProficiency
           proficiencies:
             - SimpleWeapons

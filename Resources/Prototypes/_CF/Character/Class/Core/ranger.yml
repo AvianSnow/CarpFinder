@@ -51,8 +51,11 @@
           rank: Expert
     - level: 5
       name: "Ranger Weapon Expertise"
-      description: "Expert with simple weapons, martial weapons and unarmed attacks. Critical specialization against your prey: TBA"
+      description: "Expert with simple weapons, martial weapons and unarmed attacks. A critical hit on your hunted prey gets its critical specialization."
       grants:
+        - !type:CFGrantCriticalSpecialization
+          specialization:
+            when: TargetIsPrey
         - !type:CFGrantProficiency
           proficiencies:
             - SimpleWeapons
