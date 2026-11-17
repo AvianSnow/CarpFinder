@@ -130,6 +130,10 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField]
     public int MarkedDamage;
 
+    /// <summary>One die of this size is also added to Strikes against <see cref="MarkedTarget"/>.</summary>
+    [DataField]
+    public int MarkedDamageDie;
+
     [DataField]
     public TimeSpan MarkedUntil;
 

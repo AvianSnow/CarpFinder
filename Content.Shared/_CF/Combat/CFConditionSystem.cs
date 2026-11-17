@@ -222,6 +222,9 @@ public sealed partial class CFConditionSystem : EntitySystem
 
     public void ApplyGrabbed(EntityUid target, EntityUid grabber)
     {
+        if (_reactions.TrySlipGrab(target))
+            return;
+
         var cond = Ensure(target);
         cond.Grabbed = true;
         cond.Grabber = grabber;
@@ -847,6 +850,10 @@ public sealed partial class CFConditionSystem : EntitySystem
 
     private void ApplySickened(EntityUid target, int value, float seconds)
     {
+        value = _reactions.AnswerSickened(target, value);
+        if (value <= 0)
+            return;
+
         var cond = EnsureComp<CFConditionComponent>(target);
         cond.SickenedValue = Math.Max(cond.SickenedValue, value);
         cond.SickenedUntil = _timing.CurTime + TimeSpan.FromSeconds(seconds);

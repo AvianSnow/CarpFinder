@@ -236,6 +236,11 @@ public sealed partial class CFManeuverSystem : EntitySystem
         }
 
         _conditions.ApplyGrabbed(target, user);
+
+        // A reaction such as Shed Tail can get the target out as the grab is made.
+        if (CompOrNull<CFConditionComponent>(target)?.Grabbed != true)
+            return false;
+
         _conditions.GainManeuverPanache(user);
         if (CompOrNull<CFCombatOptionsComponent>(user)?.CrushingGrab == true
             && TryComp(user, out CFAbilityScoreComponent? abilities))

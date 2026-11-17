@@ -11,4 +11,9 @@
   prerequisites:
     - "Iruxi Armaments (Tail)"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-shed-tail
+        trigger: Grabbed
+        perDay: 1

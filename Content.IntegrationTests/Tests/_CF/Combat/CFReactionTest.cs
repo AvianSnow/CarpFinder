@@ -9,6 +9,7 @@ using Content.Shared.CF.Character;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Effects;
+using Content.Shared.CF.Traits;
 using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Mobs.Systems;
 using Robust.Shared.GameObjects;
@@ -273,6 +274,171 @@ public sealed class CFReactionTest : GameTest
             Assert.That(mental, Is.True);
             Assert.That(afterMental, Is.EqualTo(1), "It costs the slot the spell would have.");
             Assert.That(dry, Is.False, "No slot left to spend.");
+        });
+    }
+
+    [Test]
+    public async Task AllysShelterBorrowsABetterSave()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        CFDegree alone = CFDegree.Success, sheltered = CFDegree.Failure, again = CFDegree.Success;
+        await Server.WaitPost(() =>
+        {
+            var kobold = Hero("CFAllysShelter");
+            var total = 0;
+
+            // A natural 10 with no modifier fails against DC 12. The ally's own Will modifier is above 2, which is enough.
+            alone = Reactions.AnswerSave(kobold, CFDefenseType.Will, 10, 0, 12, ref total, CFDegree.Failure);
+
+            Hero();
+            sheltered = Reactions.AnswerSave(kobold, CFDefenseType.Will, 10, 0, 12, ref total, CFDegree.Failure);
+
+            Options(kobold).ReactionSpent = 0;
+            again = Reactions.AnswerSave(kobold, CFDefenseType.Will, 10, 0, 12, ref total, CFDegree.Failure);
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(alone, Is.EqualTo(CFDegree.Failure), "No ally beside it.");
+            Assert.That(sheltered.IsSuccess(), Is.True, "The ally's Will modifier is better, and enough to pass.");
+            Assert.That(again, Is.EqualTo(CFDegree.Failure), "Once a day.");
+        });
+    }
+
+    [Test]
+    public async Task HuntersDefenseUsesNatureAgainstAnAnimalOnly()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        (CFDegree Degree, int Ac) person = default, animal = default, again = default;
+        await Server.WaitPost(() =>
+        {
+            var tripkee = Hero("CFHuntersDefense");
+            SEntMan.GetComponent<CFAbilityScoreComponent>(tripkee).AbilityModifiers[CFAbility.Wisdom] = 30;
+
+            person = Attack(tripkee, SpawnHere("CFReactionTestFoe"), 15);
+
+            var beast = SpawnHere("CFReactionTestFoe");
+            SEntMan.EnsureComponent<CFTraitComponent>(beast).Traits.Add("Animal");
+            animal = Attack(tripkee, beast, 15);
+
+            Options(tripkee).ReactionSpent = 0;
+            again = Attack(tripkee, beast, 15);
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(person.Degree.IsSuccess(), Is.True, "Not an animal, so the hit stands.");
+            Assert.That(animal.Degree.IsSuccess(), Is.False, "The attack met the Nature DC and missed.");
+            Assert.That(animal.Ac, Is.GreaterThan(ArmorClass));
+            Assert.That(again.Degree.IsSuccess(), Is.True, "Once an hour.");
+        });
+    }
+
+    [Test]
+    public async Task NobleBloomKeepsAnAllyUpAndWoundsBoth()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        bool saved = false, again = true;
+        int hp = 0, allyWounded = 0, ownWounded = 0;
+        await Server.WaitPost(() =>
+        {
+            var leshy = Hero("CFNobleBloom");
+            var ally = Hero();
+            var combat = SEntMan.GetComponent<CFCombatantComponent>(ally);
+            combat.CurrentHp = 0;
+            saved = Reactions.TrySurviveDrop(ally, combat);
+            hp = combat.CurrentHp;
+            allyWounded = combat.Wounded;
+            ownWounded = SEntMan.GetComponent<CFCombatantComponent>(leshy).Wounded;
+
+            Options(leshy).ReactionSpent = 0;
+            combat.CurrentHp = 0;
+            again = Reactions.TrySurviveDrop(ally, combat);
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(saved, Is.True);
+            Assert.That(hp, Is.EqualTo(1));
+            Assert.That(allyWounded, Is.EqualTo(1));
+            Assert.That(ownWounded, Is.EqualTo(1));
+            Assert.That(again, Is.False, "Once a day.");
+        });
+    }
+
+    [Test]
+    public async Task ShedTailSlipsAGrabAndVomitStomachEasesSickness()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        bool firstGrab = true, secondGrab = false, offGuard = false;
+        int sickened = -1, sickenedAgain = -1;
+        await Server.WaitPost(() =>
+        {
+            var conditions = SEntMan.System<CFConditionSystem>();
+            var foe = SpawnHere("CFReactionTestFoe");
+
+            var lizard = Hero("CFShedTail");
+            conditions.ApplyGrabbed(lizard, foe);
+            firstGrab = SEntMan.TryGetComponent(lizard, out CFConditionComponent cond) && cond.Grabbed;
+            Options(lizard).ReactionSpent = 0;
+            conditions.ApplyGrabbed(lizard, foe);
+            secondGrab = SEntMan.GetComponent<CFConditionComponent>(lizard).Grabbed;
+
+            var tripkee = Hero("CFVomitStomach");
+            conditions.ApplyCondition(tripkee, CFConditionKind.Sickened, 3, 60f, foe, 0);
+            sickened = SEntMan.GetComponent<CFConditionComponent>(tripkee).SickenedValue;
+            offGuard = conditions.IsOffGuardTo(tripkee, foe);
+
+            var other = Hero("CFVomitStomach");
+            conditions.ApplyCondition(other, CFConditionKind.Sickened, 2, 60f, foe, 0);
+            sickenedAgain = SEntMan.TryGetComponent(other, out CFConditionComponent none) ? none.SickenedValue : 0;
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(firstGrab, Is.False, "The tail comes off and the grab does not hold.");
+            Assert.That(secondGrab, Is.True, "Once a day.");
+            Assert.That(sickened, Is.EqualTo(1), "Sickened 3 less 2.");
+            Assert.That(offGuard, Is.True);
+            Assert.That(sickenedAgain, Is.Zero, "Sickened 2 is gone altogether.");
+        });
+    }
+
+    [Test]
+    public async Task StrixVengeanceMarksWhoeverCriticallyHitsAStrix()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        int ownDie = 0, forAlly = 0, forStranger = -1;
+        var waits = false;
+        await Server.WaitPost(() =>
+        {
+            var foe = SpawnHere("CFReactionTestFoe");
+
+            var strix = Hero("CFStrixVengeance");
+            Reactions.AnswerCriticalHit(strix, foe, 20, "Slashing");
+            ownDie = Options(strix).MarkedTarget == foe ? Options(strix).MarkedDamageDie : 0;
+            Options(strix).ReactionSpent = 0;
+            Options(strix).MarkedTarget = null;
+            Reactions.AnswerCriticalHit(strix, foe, 20, "Slashing");
+            waits = Options(strix).MarkedTarget == null;
+
+            var watcher = Hero("CFStrixVengeance");
+            var stranger = Hero();
+            Reactions.AnswerCriticalHit(stranger, foe, 20, "Slashing");
+            forStranger = Options(watcher).MarkedTarget == foe ? 1 : 0;
+
+            var kin = Hero();
+            SEntMan.EnsureComponent<CFTraitComponent>(kin).Traits.Add("Strix");
+            Reactions.AnswerCriticalHit(kin, foe, 20, "Slashing");
+            forAlly = Options(watcher).MarkedTarget == foe ? Options(watcher).MarkedDamageDie : 0;
+        });
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(ownDie, Is.EqualTo(6), "1d6 more against whoever critically hit it.");
+            Assert.That(waits, Is.True, "Once per 10 minutes.");
+            Assert.That(forStranger, Is.Zero, "Only for another strix.");
+            Assert.That(forAlly, Is.EqualTo(6));
         });
     }
 

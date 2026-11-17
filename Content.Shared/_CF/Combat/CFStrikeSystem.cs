@@ -791,7 +791,11 @@ public sealed partial class CFStrikeSystem : EntitySystem
         }
 
         if (style != null && style.MarkedTarget == target && _timing.CurTime < style.MarkedUntil)
+        {
             damageMod += style.MarkedDamage;
+            if (style.MarkedDamageDie > 0)
+                damageMod += _random.Next(1, style.MarkedDamageDie + 1);
+        }
 
         if (style != null && style.Exploited == target)
             damageMod += 2;

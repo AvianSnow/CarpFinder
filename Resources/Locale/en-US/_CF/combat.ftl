@@ -88,6 +88,12 @@ cf-reaction-name-reactive-strike = Reactive Strike
 cf-emblazon-cannot = You need a deity, and a weapon or shield in your active hand.
 cf-emblazon-done = You draw your deity's symbol on {THE($item)}.
 cf-emblazon-examine = It bears the symbol of [color=gold]{$deity}[/color].
+cf-reaction-allys-shelter = Ally's Shelter
+cf-reaction-hunters-defense = Hunter's Defense
+cf-reaction-noble-bloom = Noble Bloom
+cf-reaction-shed-tail = Shed Tail
+cf-reaction-strix-vengeance = Strix Vengeance
+cf-reaction-vomit-stomach = Vomit Stomach
 cf-reaction-counterspell = Counterspell
 cf-reaction-counter-thought = Counter Thought
 cf-reaction-countered = The spell is countered!

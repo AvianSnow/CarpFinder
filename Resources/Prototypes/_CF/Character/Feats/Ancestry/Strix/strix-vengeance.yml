@@ -11,4 +11,11 @@
     - "Mental"
     - "Strix"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-strix-vengeance
+        trigger: CriticallyHit
+        allyTrait: Strix
+        markDamageDie: 6
+        cooldownSeconds: 600

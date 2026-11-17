@@ -11,4 +11,12 @@
   prerequisites:
     - "trained in Nature"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-hunters-defense
+        trigger: AttackWouldHit
+        acFromSkill: Nature
+        attackerTraits: [ Animal, Beast, Elemental, Fey, Fungus, Plant ]
+        needsToSeeAttacker: true
+        cooldownSeconds: 3600

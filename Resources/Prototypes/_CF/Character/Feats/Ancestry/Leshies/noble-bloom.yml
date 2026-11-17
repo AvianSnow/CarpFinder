@@ -13,4 +13,10 @@
     - "Mental"
     - "Visual"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-noble-bloom
+        trigger: AllyWouldDrop
+        rangeFeet: 30
+        perDay: 1

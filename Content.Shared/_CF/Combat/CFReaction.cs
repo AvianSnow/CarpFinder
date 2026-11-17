@@ -1,5 +1,6 @@
 using Content.Shared.CF.Effects;
 using Content.Shared.CF.Items;
+using Content.Shared.CF.Character;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Preferences;
 using Content.Shared.CF.Traits;
@@ -53,6 +54,15 @@ public enum CFReactionTrigger : byte
 
     /// <summary>A skill check this creature rolled has come up short of a better result.</summary>
     SkillCheckWouldFail,
+
+    /// <summary>An ally within <see cref="CFReaction.RangeFeet"/> would drop to 0 Hit Points and would not die outright.</summary>
+    AllyWouldDrop,
+
+    /// <summary>This creature is being grabbed. The grab does not take hold.</summary>
+    Grabbed,
+
+    /// <summary>This creature is becoming sickened.</summary>
+    Sickened,
 }
 
 /// <summary>
@@ -72,6 +82,10 @@ public sealed partial class CFReaction
     /// <summary>How many times it can be used between long rests. 0 means no limit.</summary>
     [DataField]
     public int PerDay;
+
+    /// <summary>How long before it can be used again, as "once per 10 minutes". 0 means no wait.</summary>
+    [DataField]
+    public float CooldownSeconds;
 
     [DataField]
     public bool RangedOnly;
@@ -99,6 +113,39 @@ public sealed partial class CFReaction
     /// <summary>A circumstance bonus to the triggering save.</summary>
     [DataField]
     public int SaveBonus;
+
+    /// <summary>
+    /// With <see cref="CFReactionTrigger.SaveWouldFail"/>: the save uses the modifier of an ally within this many feet, when
+    /// that is better than the creature's own (Ally's Shelter). 0 means off.
+    /// </summary>
+    [DataField]
+    public int AllyModifierFeet;
+
+    /// <summary>
+    /// With <see cref="CFReactionTrigger.AttackWouldHit"/>: the attack is rolled against this skill's DC and not against AC
+    /// (Hunter's Defense).
+    /// </summary>
+    [DataField]
+    public ProtoId<CFAbilitySkillPrototype>? AcFromSkill;
+
+    /// <summary>Only against an attacker with one of these traits. Empty means any.</summary>
+    [DataField]
+    public List<ProtoId<CFTraitPrototype>> AttackerTraits = new();
+
+    /// <summary>
+    /// With <see cref="CFReactionTrigger.CriticallyHit"/>: also answers a critical hit on an ally this creature can see who
+    /// has this trait (Strix Vengeance).
+    /// </summary>
+    [DataField]
+    public ProtoId<CFTraitPrototype>? AllyTrait;
+
+    /// <summary>With <see cref="CFReactionTrigger.Sickened"/>, how much comes off the sickened value.</summary>
+    [DataField]
+    public int SickenedLess;
+
+    /// <summary>The creature is off-guard for 6 seconds after using it.</summary>
+    [DataField]
+    public bool LeavesOffGuard;
 
     /// <summary>Gains panache if the attack missed or the save succeeded.</summary>
     [DataField]
@@ -202,6 +249,10 @@ public sealed partial class CFReaction
     [DataField]
     public int MarkDamage;
 
+    /// <summary>For 6 seconds, this creature's Strikes against the enemy deal one die of this size more.</summary>
+    [DataField]
+    public int MarkDamageDie;
+
     /// <summary>The ally rolls to Escape from a grab, for free.</summary>
     [DataField]
     public bool FreesAlly;
@@ -249,6 +300,10 @@ public sealed partial class CFKnownReaction
 
     [DataField]
     public int UsedToday;
+
+    /// <summary>When <see cref="CFReaction.CooldownSeconds"/> lets it be used again.</summary>
+    [DataField]
+    public TimeSpan ReadyAt;
 
     /// <summary>Where it came from, such as <c>feat:CFNimbleDodge</c>. Its place in <see cref="CFReactionOrderComponent"/>.</summary>
     [DataField]

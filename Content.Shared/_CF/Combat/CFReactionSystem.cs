@@ -37,6 +37,9 @@ public sealed partial class CFReactionSystem : EntitySystem
     /// <summary>Far enough to find any champion whose 15 foot aura could hold the victim. The aura itself has the last word.</summary>
     private const float AllySearchRange = 5f;
 
+    /// <summary>How far to look for an ally who might keep a creature from dropping. Each reaction's own range has the last word.</summary>
+    private const float DropSearchRange = 7f;
+
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private CFActionPoolSystem _actions = default!;
     [Dependency] private INetManager _net = default!;
@@ -385,11 +388,21 @@ public sealed partial class CFReactionSystem : EntitySystem
             }
 
             if (candidate.Reaction.Trigger != CFReactionTrigger.AttackWouldHit
-                || !MeetsAttackNeeds(target, attacker, ranged, candidate.Reaction)
-                || !TryImprove(target, target, candidate, d20, attackBonus, ref armorClass, ref degree))
+                || !MeetsAttackNeeds(target, attacker, ranged, candidate.Reaction))
             {
                 continue;
             }
+
+            if (candidate.Reaction.AcFromSkill is { } skill)
+            {
+                if (!TrySkillForAc(target, candidate, skill, d20, attackBonus, ref armorClass, ref degree))
+                    continue;
+
+                return degree;
+            }
+
+            if (!TryImprove(target, target, candidate, d20, attackBonus, ref armorClass, ref degree))
+                continue;
 
             return degree;
         }
@@ -462,6 +475,37 @@ public sealed partial class CFReactionSystem : EntitySystem
         return true;
     }
 
+    /// <summary>
+    /// Fires <paramref name="known"/> if rolling the attack against one of the target's skill DCs, and not its AC, makes
+    /// the result worse for the attacker.
+    /// </summary>
+    private bool TrySkillForAc(
+        EntityUid target,
+        CFKnownReaction known,
+        ProtoId<CFAbilitySkillPrototype> skill,
+        int d20,
+        int attackBonus,
+        ref int armorClass,
+        ref CFDegree degree)
+    {
+        if (!CanFire(target, known)
+            || !_prototypes.TryIndex(skill, out var proto)
+            || !TryComp(target, out CFCombatantComponent? combat)
+            || !TryComp(target, out CFAbilityScoreComponent? abilities))
+        {
+            return false;
+        }
+
+        var dc = 10 + CFDefense.SkillModifier(_prototypes, combat, abilities, skill.Id, proto.Ability, _conditions.SkillBonus(target, skill.Id));
+        var result = CFDegrees.DegreeOfSuccess(d20, attackBonus, dc);
+        if (dc <= armorClass || result >= degree || !TrySpend(target, known))
+            return false;
+
+        armorClass = dc;
+        degree = result;
+        return true;
+    }
+
     private bool WithinFeet(EntityUid a, EntityUid b, int feet)
     {
         return (_transform.GetWorldPosition(a) - _transform.GetWorldPosition(b)).Length() <= feet / CFMelee.FeetPerTile;
@@ -473,22 +517,53 @@ public sealed partial class CFReactionSystem : EntitySystem
     /// </summary>
     public int AnswerCriticalHit(EntityUid target, EntityUid attacker, int amount, string damageType)
     {
-        if (amount <= 0 || !_net.IsServer || !TryComp(target, out CFReactionsComponent? reactions))
+        if (amount <= 0 || !_net.IsServer)
             return amount;
 
-        foreach (var known in Ordered(target, reactions))
+        if (TryComp(target, out CFReactionsComponent? reactions))
         {
-            if (known.Reaction.Trigger != CFReactionTrigger.CriticallyHit
-                || !CoversType(known.Reaction, damageType)
-                || !TrySpend(target, known))
+            foreach (var known in Ordered(target, reactions))
             {
-                continue;
-            }
+                if (known.Reaction.Trigger != CFReactionTrigger.CriticallyHit
+                    || !CoversType(known.Reaction, damageType)
+                    || !TrySpend(target, known))
+                {
+                    continue;
+                }
 
-            return Protect(target, target, attacker, known.Reaction, amount);
+                return Protect(target, target, attacker, known.Reaction, amount);
+            }
         }
 
+        AnswerAllyCriticallyHit(target, attacker);
         return amount;
+    }
+
+    /// <summary>Someone who answers a critical hit on an ally of a certain kind, as Strix Vengeance does for another strix.</summary>
+    private void AnswerAllyCriticallyHit(EntityUid target, EntityUid attacker)
+    {
+        if (!TryComp(target, out CFTraitComponent? traits))
+            return;
+
+        foreach (var (uid, reactions) in _lookup.GetEntitiesInRange<CFReactionsComponent>(Transform(target).Coordinates, AllySearchRange))
+        {
+            if (uid == target || uid == attacker || _factions.CanHarm(uid, target) || _stealth.IsUnseenBy(target, uid))
+                continue;
+
+            foreach (var known in Ordered(uid, reactions))
+            {
+                if (known.Reaction.Trigger != CFReactionTrigger.CriticallyHit
+                    || known.Reaction.AllyTrait is not { } trait
+                    || !traits.Traits.Contains(trait)
+                    || !TrySpend(uid, known))
+                {
+                    continue;
+                }
+
+                Protect(uid, target, attacker, known.Reaction, 0);
+                break;
+            }
+        }
     }
 
     /// <summary>
@@ -703,10 +778,11 @@ public sealed partial class CFReactionSystem : EntitySystem
             }
         }
 
-        if (reaction.MarkDamage > 0 && TryComp(owner, out CFCombatOptionsComponent? options))
+        if ((reaction.MarkDamage > 0 || reaction.MarkDamageDie > 0) && TryComp(owner, out CFCombatOptionsComponent? options))
         {
             options.MarkedTarget = attacker;
             options.MarkedDamage = reaction.MarkDamage;
+            options.MarkedDamageDie = reaction.MarkDamageDie;
             options.MarkedUntil = _timing.CurTime + MarkLasts;
         }
 
@@ -803,6 +879,13 @@ public sealed partial class CFReactionSystem : EntitySystem
             }
 
             var gain = reaction.SaveBonus - existing;
+            if (reaction.AllyModifierFeet > 0)
+            {
+                // No ally in reach comes back as the lowest number there is, which must not be subtracted from.
+                var best = BestAllyModifier(uid, defense, reaction.AllyModifierFeet, traits);
+                gain = best == int.MinValue ? 0 : best - modifier;
+            }
+
             if (gain <= 0)
                 continue;
 
@@ -818,6 +901,19 @@ public sealed partial class CFReactionSystem : EntitySystem
         }
 
         return degree;
+    }
+
+    /// <summary>The best modifier for this save among the creature's allies within <paramref name="feet"/>.</summary>
+    private int BestAllyModifier(EntityUid uid, CFDefenseType defense, int feet, HashSet<ProtoId<CFTraitPrototype>>? traits)
+    {
+        var best = int.MinValue;
+        foreach (var (ally, _) in _lookup.GetEntitiesInRange<CFCombatantComponent>(Transform(uid).Coordinates, feet / CFMelee.FeetPerTile + 0.5f))
+        {
+            if (ally != uid && _mobState.IsAlive(ally) && !_factions.CanHarm(uid, ally))
+                best = Math.Max(best, _conditions.DefenseModifier(ally, defense, traits));
+        }
+
+        return best;
     }
 
     /// <summary>
@@ -921,22 +1017,86 @@ public sealed partial class CFReactionSystem : EntitySystem
     /// <summary>True if a reaction kept the creature up at 1 Hit Point, a step further from death.</summary>
     public bool TrySurviveDrop(EntityUid uid, CFCombatantComponent combat)
     {
-        if (!TryComp(uid, out CFReactionsComponent? reactions))
+        if (TryComp(uid, out CFReactionsComponent? reactions))
+        {
+            foreach (var known in Ordered(uid, reactions))
+            {
+                if (known.Reaction.Trigger != CFReactionTrigger.WouldDrop || !CanFire(uid, known) || !TrySpend(uid, known))
+                    continue;
+
+                combat.CurrentHp = 1;
+                combat.Wounded++;
+                Dirty(uid, combat);
+                _dying.SyncHealthBar(uid, combat);
+                return true;
+            }
+        }
+
+        return TryAllySavesFromDrop(uid, combat);
+    }
+
+    /// <summary>An ally close by keeps the creature up at 1 Hit Point, and both become more wounded (Noble Bloom).</summary>
+    private bool TryAllySavesFromDrop(EntityUid uid, CFCombatantComponent combat)
+    {
+        foreach (var (ally, reactions) in _lookup.GetEntitiesInRange<CFReactionsComponent>(Transform(uid).Coordinates, DropSearchRange))
+        {
+            if (ally == uid || _factions.CanHarm(ally, uid))
+                continue;
+
+            foreach (var known in Ordered(ally, reactions))
+            {
+                if (known.Reaction.Trigger != CFReactionTrigger.AllyWouldDrop
+                    || !WithinFeet(ally, uid, known.Reaction.RangeFeet)
+                    || !TrySpend(ally, known))
+                {
+                    continue;
+                }
+
+                combat.CurrentHp = 1;
+                combat.Wounded++;
+                Dirty(uid, combat);
+                _dying.SyncHealthBar(uid, combat);
+                if (TryComp(ally, out CFCombatantComponent? own))
+                {
+                    own.Wounded++;
+                    Dirty(ally, own);
+                }
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /// <summary>True if a reaction got the creature out of a grab as it was made, as Shed Tail does.</summary>
+    public bool TrySlipGrab(EntityUid uid)
+    {
+        if (!_net.IsServer || !TryComp(uid, out CFReactionsComponent? reactions))
             return false;
 
         foreach (var known in Ordered(uid, reactions))
         {
-            if (known.Reaction.Trigger != CFReactionTrigger.WouldDrop || !CanFire(uid, known) || !TrySpend(uid, known))
-                continue;
-
-            combat.CurrentHp = 1;
-            combat.Wounded++;
-            Dirty(uid, combat);
-            _dying.SyncHealthBar(uid, combat);
-            return true;
+            if (known.Reaction.Trigger == CFReactionTrigger.Grabbed && TrySpend(uid, known))
+                return true;
         }
 
         return false;
+    }
+
+    /// <summary>The sickened value a creature really gets, after a reaction such as Vomit Stomach.</summary>
+    public int AnswerSickened(EntityUid uid, int value)
+    {
+        if (value <= 0 || !_net.IsServer || !TryComp(uid, out CFReactionsComponent? reactions))
+            return value;
+
+        foreach (var known in Ordered(uid, reactions))
+        {
+            if (known.Reaction.Trigger == CFReactionTrigger.Sickened && known.Reaction.SickenedLess > 0 && TrySpend(uid, known))
+                return Math.Max(0, value - known.Reaction.SickenedLess);
+        }
+
+        return value;
     }
 
     [SubscribeLocalEvent]
@@ -974,6 +1134,12 @@ public sealed partial class CFReactionSystem : EntitySystem
         if (reaction.NeedsToSeeAttacker && _stealth.IsUnseenBy(attacker, target))
             return false;
 
+        if (reaction.AttackerTraits.Count > 0
+            && (!TryComp(attacker, out CFTraitComponent? traits) || !traits.HasAny(reaction.AttackerTraits)))
+        {
+            return false;
+        }
+
         if (reaction.NotEncumbered && _encumbrance.IsEncumbered(target))
             return false;
 
@@ -987,6 +1153,7 @@ public sealed partial class CFReactionSystem : EntitySystem
     private bool CanFire(EntityUid uid, CFKnownReaction known)
     {
         return (known.Reaction.PerDay <= 0 || known.UsedToday < known.Reaction.PerDay)
+               && _timing.CurTime >= known.ReadyAt
                && (known.Reaction.Implement is not { } kind || _implements.IsHolding(uid, kind))
                && _mobState.IsAlive(uid)
                && TryComp(uid, out CFCombatOptionsComponent? options)
@@ -1005,6 +1172,12 @@ public sealed partial class CFReactionSystem : EntitySystem
         }
 
         known.UsedToday++;
+        if (known.Reaction.CooldownSeconds > 0f)
+            known.ReadyAt = _timing.CurTime + TimeSpan.FromSeconds(known.Reaction.CooldownSeconds);
+
+        if (known.Reaction.LeavesOffGuard)
+            _conditions.ApplyCondition(uid, CFConditionKind.OffGuard, 0, (float) MarkLasts.TotalSeconds, uid, 0);
+
         if (_net.IsServer)
             _popup.PopupEntity(Loc.GetString(known.Reaction.Name), uid);
 

@@ -9,4 +9,11 @@
   traits:
     - "Tripkee"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-vomit-stomach
+        trigger: Sickened
+        sickenedLess: 2
+        leavesOffGuard: true
+        perDay: 1
