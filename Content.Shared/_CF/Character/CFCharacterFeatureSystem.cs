@@ -629,6 +629,9 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
             case CFCombatOption.EmotionalPush:
                 options.EmotionalPush = true;
                 break;
+            case CFCombatOption.ThoughtformSummoning:
+                options.ThoughtformSummoning = true;
+                break;
             case CFCombatOption.GuardianArmor:
                 options.GuardianArmor = true;
                 break;

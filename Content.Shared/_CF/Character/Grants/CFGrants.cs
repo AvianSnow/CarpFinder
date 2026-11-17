@@ -300,6 +300,26 @@ public sealed partial class CFGrantBespell : CFGrant
     }
 }
 
+/// <summary>
+/// A spell a prepared caster can cast in place of any spell it has prepared, at that spell's rank, as Call of the Wild
+/// does with Summon Animal. The rules take 10 minutes to make the swap: here it happens as the spell is cast.
+/// </summary>
+public sealed partial class CFGrantSwapSpell : CFGrant
+{
+    [DataField(required: true)]
+    public ProtoId<CFSpellPrototype> Spell;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        entities.System<CFCharacterFeatureSystem>().GrantSpell(args.Mob, Spell);
+        var book = entities.EnsureComponent<CFSpellbookComponent>(args.Mob);
+        if (!book.SwapSpells.Contains(Spell))
+            book.SwapSpells.Add(Spell);
+
+        entities.Dirty(args.Mob, book);
+    }
+}
+
 /// <summary>A sense beyond normal sight.</summary>
 public sealed partial class CFGrantSense : CFGrant
 {

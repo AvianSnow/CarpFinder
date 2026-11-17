@@ -1,0 +1,39 @@
+# Creatures a summoning spell calls. Each is the real monster, with its printed numbers, made into a companion:
+# it takes its caster's side (CFCompanionSystem.Bind), fights their enemies by itself, goes first for whatever they
+# point at, and vanishes in a puff of smoke when it dies or its minute is up (CFSummoned). It leaves no body, so it
+# gives no parts and no loot. List the monster first, so its stat block wins, and CFSummonedCreature second.
+
+- type: entity
+  abstract: true
+  parent: CFCompanionBase
+  id: CFSummonedCreature
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: CFSummoned
+
+- type: entity
+  parent: [ CFMobGiantRat, CFSummonedCreature ]
+  id: CFSummonedGiantRat
+  suffix: Summoned
+  components:
+  - type: NpcFactionMember
+    factions:
+    - Passive
+
+- type: entity
+  parent: [ CFMobWolf, CFSummonedCreature ]
+  id: CFSummonedWolf
+  suffix: Summoned
+  components:
+  - type: NpcFactionMember
+    factions:
+    - Passive
+
+- type: entity
+  parent: [ CFMobBoar, CFSummonedCreature ]
+  id: CFSummonedBoar
+  suffix: Summoned
+  components:
+  - type: NpcFactionMember
+    factions:
+    - Passive

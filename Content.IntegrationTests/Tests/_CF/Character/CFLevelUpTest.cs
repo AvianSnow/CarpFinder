@@ -227,10 +227,16 @@ public sealed class CFLevelUpTest : GameTest
             var slots = CFLevelUp.NewSpellSlots(Protos, sent, 2);
             Assert.That(slots, Is.Not.Empty, "A sorcerer gains a slot at level 2.");
             var picked = new List<string>();
+            var tradition = CFSpellSlots.TraditionOf(Protos, sent);
             foreach (var slot in slots)
             {
+                // A spell of the character's own tradition: the catalog's order is not fixed, and it also holds focus spells.
                 var spell = Protos.EnumeratePrototypes<CFSpellPrototype>()
-                    .First(spell => spell.Rank == slot.Rank && Protos.HasIndex<EntityPrototype>("CF" + spell.ID) && !picked.Contains(spell.ID));
+                    .First(spell => spell.Rank == slot.Rank
+                                    && tradition != null
+                                    && spell.HasTradition(tradition.Value)
+                                    && Protos.HasIndex<EntityPrototype>("CF" + spell.ID)
+                                    && !picked.Contains(spell.ID));
                 picked.Add(spell.ID);
                 sent.Spells.Add(new CFSpellPick { Rank = slot.Rank, Index = slot.Index, Spell = spell.ID });
             }

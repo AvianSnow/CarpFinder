@@ -323,6 +323,19 @@
   heightened: Damage increases by 1d4 per rank.
 
 - type: cfSpell
+  id: SummonAnimal
+  name: Summon Animal
+  rank: 1
+  traditions: [Arcane, Primal]
+  traits: [Concentrate, Manipulate, Summon]
+  actionCost: Three
+  components: Material, somatic, verbal
+  range: 30 feet
+  duration: 1 minute
+  summary: You call an animal to fight for you. It fights your enemies by itself and goes first for whatever you point at.
+  heightened: Rank 1 calls a giant rat, rank 2 a wolf, rank 3 a boar.
+
+- type: cfSpell
   id: Fear
   name: Fear
   rank: 1

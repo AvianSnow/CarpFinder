@@ -154,6 +154,41 @@ public sealed partial class CFSpawnEffect : CFEffect
     }
 }
 
+/// <summary>
+/// Calls a creature to fight for the user, at the aimed spot or beside the user, for a while. The spell's rank picks
+/// which: the last entry of <see cref="Creatures"/> it reaches. The creature is bound to the user as a companion, so it
+/// fights the user's enemies and can be pointed at a target. A caster keeps one summoned creature at a time.
+/// </summary>
+public sealed partial class CFSummonEffect : CFEffect
+{
+    [DataField(required: true)]
+    public List<Content.Shared.CF.Companions.CFSummonOption> Creatures = new();
+
+    [DataField]
+    public float DurationSeconds = 60f;
+
+    public override void Apply(IEntityManager entities, CFEffectArgs args)
+    {
+        EntProtoId? pick = null;
+        var reached = int.MinValue;
+        foreach (var option in Creatures)
+        {
+            if (option.Rank > args.Rank || option.Rank < reached)
+                continue;
+
+            reached = option.Rank;
+            pick = option.Prototype;
+        }
+
+        if (pick is not { } prototype)
+            return;
+
+        var where = args.Position ?? entities.GetComponent<TransformComponent>(args.User).Coordinates;
+        var request = new Content.Shared.CF.Companions.CFSummonRequestEvent(args.User, prototype, where, DurationSeconds);
+        entities.EventBus.RaiseEvent(EventSource.Local, ref request);
+    }
+}
+
 public sealed partial class CFSoundEffect : CFEffect
 {
     [DataField(required: true)]

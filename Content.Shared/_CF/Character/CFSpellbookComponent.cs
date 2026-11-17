@@ -55,6 +55,13 @@ public sealed partial class CFSpellbookComponent : Component
     [DataField, AutoNetworkedField]
     public List<int> PreparableSlots = new();
 
+    /// <summary>
+    /// Spells a prepared caster can cast in place of any spell it has prepared, at that spell's rank: Summon Animal with
+    /// Call of the Wild. The cast spends the prepared spell.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public List<ProtoId<CFSpellPrototype>> SwapSpells = new();
+
     /// <summary>Spells that may use a spare slot, one <see cref="Slots"/> has and nothing is prepared in. Divine Font's Heal and Harm.</summary>
     [DataField, AutoNetworkedField]
     public List<ProtoId<CFSpellPrototype>> SpareSlotSpells = new();

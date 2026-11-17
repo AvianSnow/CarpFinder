@@ -20,11 +20,11 @@ Measured on 17 November 2026, after 1.1 to 1.19 and the out of date notes. `pyth
 | ----------------------- | ----- | ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | Heritages               | 149   | 113 have an effect                                                        | 93 in `heritages.ftl`: 36 heritages do nothing, the rest are missing a part                                                   |
 | Ancestry feats          | 255   | 137, and 1 in part                                                        | 179 in `feats-ancestry.ftl`: every one of the 117 feats that do nothing says so, and what it would do                        |
-| Class feats             | 585   | 200, and 2 in part (11 of them only give a familiar's body, see 3.8)      | 441 in `feats-class.ftl`                                                                                                      |
+| Class feats             | 585   | 203, and 2 in part (11 of them only give a familiar's body, see 3.8)      | 440 in `feats-class.ftl`                                                                                                      |
 | Class features          | 181   | No placeholders                                                           | 51 in the class files                                                                                                         |
 | Subclass options        |       | Every class has its options                                               | 309 in `class-choices.ftl`. Runes repeat 6 times, ikons and tactics 3 times, implements twice, so about 150 different options |
 | General and skill feats | 131   | 12 in `general_feats.py`'s `WORKING`, and the scan agrees                 | Marked `(TBA)` in the builder. See "General and skill feats"                                                                  |
-| Spells                  | 62    | All 62 have an action                                                     | None in `spells.ftl`                                                                                                          |
+| Spells                  | 63    | All 63 have an action                                                     | None in `spells.ftl`                                                                                                          |
 | Focus spells            | 34    | The pipeline works                                                        | 11 in `Spells/Focus/focus.yml`                                                                                                |
 | Deities                 | 7     | Skill, favored weapon, font                                               | 7: domains                                                                                                                    |
 
@@ -136,7 +136,7 @@ These said something was not built that this roadmap said was built. All were ch
 
 ### 3. Class feats: features several classes share
 
-Worked through in one run on 17 November 2026. Done or partly done: 3.1 to 3.7, 3.11 to 3.13, 3.16, 3.17, 3.21. Not started, because each is a system of its own that has to be seen in play: 3.8 familiars, 3.9 mounts, 3.10 summoning, 3.14 difficult terrain, 3.15 daily choices, 3.18 scrolls and wands, 3.19 stealing, 3.20 disguises, 3.22 water (waits for swimming, 1.3), 3.23 (each needs a decision).
+Worked through in one run on 17 November 2026. Done or partly done: 3.1 to 3.7, 3.11 to 3.13, 3.16, 3.17, 3.21. 3.10 summoning followed the same day. Not started, because each is a system of its own that has to be seen in play: 3.8 familiars, 3.9 mounts, 3.14 difficult terrain, 3.15 daily choices, 3.18 scrolls and wands, 3.19 stealing, 3.20 disguises, 3.22 water (waits for swimming, 1.3), 3.23 (each needs a decision).
 
 463 of 585 do nothing. These are the shapes that come up in more than one class. Feats only one class has are under that class in 4.
 
@@ -170,7 +170,11 @@ Worked through in one run on 17 November 2026. Done or partly done: 3.1 to 3.7, 
     - A pet only spawns with the character. One gained from a level taken in play arrives at the next spawn, and one from a feat given by another option (`CFSkills.ExtraFeats`) is not seen at all.
     - The Pet tab has no tab for a construct, so it is always the first one.
 - [ ] **3.9 Animal companions through feats, and mounts.** Animal Companion (Ranger says `TBA`; check the Druid's), Mature Animal Companion, Companion's Cry, Commander's Companion, the Animal order. Mounts and the Ride feat: Faithful Steed, Acclimated Mount, Galloping Launch, Steed Form, Rough Rider. "Companions have no inventory" (Step 4) is in the way of barding.
-- [ ] **3.10 Summoning.** No spell summons a creature. `CFSummoned` and `CFCompanionSystem.Bind` are ready, and `CFSpawnEffect` needs a way to bind what it spawns to the caster. Then Summon Animal and the like, Call of the Wild, Elemental Summons, Rites of Convocation, Thoughtform Summoning, Primal Evolution.
+- [ ] **3.10 Summoning.** Built on 17 November 2026 (`CFSummonTest`). `!type:CFSummonEffect` calls a creature for a while: it raises `CFSummonRequestEvent`, and the server's `CFSummonedSystem` spawns it, binds it to the caster as a companion and sends it back when `CFSummoned.Until` passes. A summoned creature is its real monster, listed first as a parent, with `CFSummonedCreature` second (`Entities/Mobs/summons.yml`).
+    - [x] Summon Animal (`Spells/1/CFSummonAnimal.yml`, arcane and primal): a giant rat at rank 1, a wolf at rank 2, a boar at rank 3, for a minute. It fights the caster's enemies by itself and goes first for what the caster points at.
+    - [x] Call of the Wild and Rites of Convocation: `!type:CFGrantSwapSpell`, kept in `CFSpellbook.SwapSpells`. Summon Animal is cast in place of any prepared spell, at that spell's rank, and spends it (the last one prepared at that rank). The rules take 10 minutes for the swap. Thoughtform Summoning: the summoned creature resists physical damage and is weak to force and mental.
+    - Our changes from the rules: the spell is not Sustained, so the creature simply stays its minute and acts on its own. A caster keeps one summoned creature: casting again sends the last one back. The caster does not choose the animal: the rank does.
+    - [ ] Still to do: the other summon spells (Plant or Fungus, Elemental, Construct, Fey, Undead and the rest), a choice of creature at each rank, Elemental Summons, Primal Evolution (a slot tied to one spell). A summoned creature still has its monster's ghost role, so a ghost can take it.
 - [ ] **3.11 Recall Knowledge inside another action, and what it tells.** `CFManeuverSystem.TryRecall` takes `free: true`, and `!type:CFRecallEffect` runs one from an effect list.
     - [x] Done on 17 November 2026: Combat Assessment (Commander, Fighter), Monster Hunter (with Hunt Prey), Known Weaknesses (with Devise a Stratagem), the Mastermind racket (an identified creature is off-guard to the Rogue for 6 seconds, a minute on a critical success), the Outwit edge's +2 to Recall Knowledge.
     - [ ] Still to do: the bonuses those feats give on a critical success, Combat Reading, Monster Warden, Observational Analysis, Strategic Assessment, Whispers of Weakness, Predictable, Breached Defenses, Esoteric Warden. Recall Knowledge still tells only level, weakest save and AC, so feats that reveal weaknesses or resistances have nothing to show. Lore skills that do not exist: Warfare, Undead, Esoteric (Diverse Lore), Bardic, Underworld.
@@ -236,7 +240,7 @@ All 62 spells in the catalog have an action and an effect. What is left is spell
 - [ ] **5.1 Compare each spell with its text.** The scan only finds a spell with no effect at all. `feature_scan.py` still lists Animal Form and Prestidigitation as having none, because both run on their own systems: teach it about them.
 - [ ] **5.2 Three-action Heal and Harm**, the 30-foot emanations. The Cleric's shaping feats wait on them.
 - [ ] **5.3 Bless and Bane as auras** that follow the caster for a minute. They are one pulse today.
-- [ ] **5.4 Summon spells** (3.10).
+- [ ] **5.4 Summon spells** (3.10). Summon Animal is in. The others are not.
 - [ ] **5.5 Spells other options name and the game lacks.**
     - Animist apparitions: Mending, Knock, Ghostly Weapon, Protector Tree, Gentle Breeze, Safe Passage, Deja Vu, Curse of Lost Time, Telekinetic Hand, Ill Omen, Veil of Privacy, Message, Blistering Invective, Hypercognition, Caustic Blast, Grim Tendrils, Acid Grip, Aqueous Orb, Create Food, Enthrall, Dizzying Colors, Hypnotize, Slashing Gust, Tailwind, Propulsive Breeze, Wall of Wind, Puff of Poison, Stupefy, Gouging Claw, Runic Body, Vomit Swarm, Wall of Thorns, Interposing Earth, Exploding Earth, Rousing Splash, Mist, Crashing Wave. Lurker, Shepherd, Speaker and Stalker teach nothing yet.
     - Sorcerer: caustic blast, illusory disguise. Bard: phantasmal minion. Druid: heal animal. Heritages and ancestry feats: ghost sound, spout.
@@ -368,7 +372,6 @@ What was left open when each of these was built. The finished parts are in `road
 
 ### Monsters, summons and companions
 
-- [ ] No spell summons a creature yet (Summon Animal and the like). A new one gives what it calls `CFSummoned`, and `CFSpawnEffect` would need a way to bind it to the caster.
 - [ ] A companion with a player in it gets nothing from pointing but the popup.
 
 ### Money

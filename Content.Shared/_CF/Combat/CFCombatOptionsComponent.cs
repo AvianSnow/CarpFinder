@@ -110,6 +110,10 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField]
     public bool KnownWeaknesses;
 
+    /// <summary>What this creature summons is a thing of thought: it resists physical damage and is weak to force and mental (Thoughtform Summoning).</summary>
+    [DataField]
+    public bool ThoughtformSummoning;
+
     /// <summary>An enemy that fails its save against this creature's emotion spell is off-guard to it for 6 seconds (Emotional Push).</summary>
     [DataField]
     public bool EmotionalPush;
@@ -559,6 +563,7 @@ public enum CFCombatOption : byte
     MonsterHunter,
     KnownWeaknesses,
     EmotionalPush,
+    ThoughtformSummoning,
 }
 
 public enum CFPointMark : byte

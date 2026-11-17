@@ -61,10 +61,55 @@ public static class CFPreparedSpells
         if (Charges(book, spell).Ready > 0)
             return true;
 
+        if (book.SwapSpells.Contains(spell))
+            return HighestReady(book, rank) > 0;
+
         if (book.SpareSlotSpells.Contains(spell))
             return HighestSpare(book, rank) > 0;
 
         return !book.Repertoire.Contains(spell);
+    }
+
+    /// <summary>The highest rank, from <paramref name="baseRank"/> up, with any prepared spell still ready. Zero if none.</summary>
+    private static int HighestReady(CFSpellbookComponent book, int baseRank)
+    {
+        var best = 0;
+        foreach (var slot in book.PreparedSlots)
+        {
+            if (!slot.Spent && slot.Rank >= Math.Max(1, baseRank) && slot.Rank > best)
+                best = slot.Rank;
+        }
+
+        return best;
+    }
+
+    private static bool ReadyAt(CFSpellbookComponent book, int rank)
+    {
+        foreach (var slot in book.PreparedSlots)
+        {
+            if (!slot.Spent && slot.Rank == rank)
+                return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>Spends the last ready prepared spell of this rank, so a swap takes from the end of the list.</summary>
+    private static bool SpendLastAt(CFSpellbookComponent book, int rank)
+    {
+        for (var i = book.PreparedSlots.Count - 1; i >= 0; i--)
+        {
+            var slot = book.PreparedSlots[i];
+            if (slot.Rank != rank || slot.Spent)
+                continue;
+
+            slot.Spent = true;
+            book.PreparedSlots[i] = slot;
+            AddExpended(book, rank);
+            return true;
+        }
+
+        return false;
     }
 
     /// <summary>The highest rank, from <paramref name="baseRank"/> up, with a spare slot left. Zero if none.</summary>
@@ -118,6 +163,14 @@ public static class CFPreparedSpells
             return slot.Rank;
         }
 
+        // A swap spell takes the place of another prepared spell: the rank asked for if one is ready there, or the highest.
+        if (book.SwapSpells.Contains(spell))
+        {
+            var swap = wanted >= Math.Max(1, rank) && ReadyAt(book, wanted) ? wanted : HighestReady(book, rank);
+            if (swap > 0 && SpendLastAt(book, swap))
+                return swap;
+        }
+
         if (!book.SpareSlotSpells.Contains(spell))
             return rank;
 
@@ -164,6 +217,15 @@ public static class CFPreparedSpells
                 {
                     if (SpareLeft(book, rank) > 0 && !ranks.Contains(rank))
                         ranks.Add(rank);
+                }
+            }
+
+            if (book.SwapSpells.Contains(spell))
+            {
+                foreach (var slot in book.PreparedSlots)
+                {
+                    if (!slot.Spent && slot.Rank >= Math.Max(1, baseRank) && !ranks.Contains(slot.Rank))
+                        ranks.Add(slot.Rank);
                 }
             }
 

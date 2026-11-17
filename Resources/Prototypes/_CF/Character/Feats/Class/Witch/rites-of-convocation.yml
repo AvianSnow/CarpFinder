@@ -8,3 +8,6 @@
   level: 4
   traits:
     - "Witch"
+  grants:
+    - !type:CFGrantSwapSpell
+      spell: SummonAnimal
