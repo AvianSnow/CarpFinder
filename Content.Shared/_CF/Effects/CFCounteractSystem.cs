@@ -1,3 +1,4 @@
+using Content.Shared.CF.Companions;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Factions;
@@ -23,6 +24,9 @@ public sealed class CFLingeringSpell
     /// <summary>What its bonuses are filed under in <see cref="CFBonusSystem"/>.</summary>
     public string Key = "";
     public string Name = "";
+
+    /// <summary>The spell's id, so ending this also ends the spell if its caster is sustaining it.</summary>
+    public string Spell = "";
     public EntityUid Caster;
     public int Rank;
     public int Dc;
@@ -46,6 +50,7 @@ public sealed partial class CFCounteractSystem : EntitySystem
     [Dependency] private CFConditionSystem _conditions = default!;
     [Dependency] private CFFactionSystem _factions = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private CFSpellSystem _spells = default!;
 
     /// <summary>
     /// Remembers that a spell has put something lasting on <paramref name="target"/>. Returns the key its bonuses go under,
@@ -68,6 +73,7 @@ public sealed partial class CFCounteractSystem : EntitySystem
             {
                 Key = key,
                 Name = _prototypes.TryIndex(spell.Spell, out var proto) ? proto.Name : spell.Spell.Id,
+                Spell = spell.Spell.Id,
                 Caster = args.User,
             };
             comp.Spells.Add(entry);
@@ -104,6 +110,61 @@ public sealed partial class CFCounteractSystem : EntitySystem
     /// </summary>
     public bool TryDispel(EntityUid dispeller, EntityUid target, int counteractRank, int modifier, int? d20 = null)
     {
+        if (TryDispelLingering(dispeller, target, counteractRank, modifier, d20))
+            return true;
+
+        return TryDispelSustained(target, counteractRank, modifier, d20) || TryDispelSummoned(target, counteractRank, modifier, d20);
+    }
+
+    /// <summary>
+    /// A sustained spell the target is keeping going. It is the only way to end one early: the highest rank is aimed at.
+    /// </summary>
+    private bool TryDispelSustained(EntityUid target, int counteractRank, int modifier, int? d20)
+    {
+        if (!TryComp(target, out CFSustainedCastsComponent? casts) || casts.Casts.Count == 0)
+            return false;
+
+        var aim = casts.Casts[0];
+        foreach (var cast in casts.Casts)
+        {
+            if (cast.Rank > aim.Rank)
+                aim = cast;
+        }
+
+        var degree = CFDegrees.DegreeOfSuccess(d20 ?? _random.Next(1, 21), modifier, aim.Dc);
+        if (!Counteracts(degree, counteractRank, aim.Rank))
+        {
+            _popup.PopupEntity(Loc.GetString("cf-spell-dispel-failed", ("spell", aim.Name)), target);
+            return true;
+        }
+
+        _spells.EndSustained(target, aim);
+        _popup.PopupEntity(Loc.GetString("cf-spell-dispelled", ("spell", aim.Name)), target);
+        return true;
+    }
+
+    /// <summary>A creature a summoning spell called is itself the spell: a dispel sends it back.</summary>
+    private bool TryDispelSummoned(EntityUid target, int counteractRank, int modifier, int? d20)
+    {
+        if (!TryComp(target, out CFSummonedComponent? summoned) || !summoned.FromSpell)
+            return false;
+
+        var name = MetaData(target).EntityName;
+        var degree = CFDegrees.DegreeOfSuccess(d20 ?? _random.Next(1, 21), modifier, summoned.Dc);
+        if (!Counteracts(degree, counteractRank, Math.Max(1, summoned.Rank)))
+        {
+            _popup.PopupEntity(Loc.GetString("cf-spell-dispel-failed", ("spell", name)), target);
+            return true;
+        }
+
+        _popup.PopupEntity(Loc.GetString("cf-spell-dispelled", ("spell", name)), target);
+        var request = new CFUnsummonRequestEvent(target);
+        RaiseLocalEvent(ref request);
+        return true;
+    }
+
+    private bool TryDispelLingering(EntityUid dispeller, EntityUid target, int counteractRank, int modifier, int? d20)
+    {
         if (!TryComp(target, out CFLingeringSpellsComponent? comp))
             return false;
 
@@ -125,6 +186,13 @@ public sealed partial class CFCounteractSystem : EntitySystem
         {
             _popup.PopupEntity(Loc.GetString("cf-spell-dispel-failed", ("spell", aim.Name)), target);
             return true;
+        }
+
+        // What a sustained spell left on the target goes, and so does the spell itself, or it would only come back.
+        if (TryComp(aim.Caster, out CFSustainedCastsComponent? running)
+            && running.Casts.Find(cast => cast.Spell.Id == aim.Spell) is { } sustained)
+        {
+            _spells.EndSustained(aim.Caster, sustained);
         }
 
         End(target, comp, aim);

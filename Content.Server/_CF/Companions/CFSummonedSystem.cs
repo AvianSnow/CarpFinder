@@ -29,23 +29,24 @@ public sealed partial class CFSummonedSystem : EntitySystem
         }
     }
 
+    [SubscribeLocalEvent]
+    private void OnUnsummonRequest(ref CFUnsummonRequestEvent args)
+    {
+        Unsummon(args.Summoned);
+    }
+
     /// <summary>
-    /// A summoning spell: the creature appears, takes its caster's side and stays for a while. The caster's last such
-    /// creature goes back first, which stands in for having to Sustain the spell.
+    /// A summoning spell: the creature appears, takes its caster's side and stays for its time with no input from the
+    /// caster. Only a dispel sends it back sooner, so a caster can have several out, one per cast.
     /// </summary>
     [SubscribeLocalEvent]
     private void OnSummonRequest(ref CFSummonRequestEvent args)
     {
-        var old = EntityQueryEnumerator<CFSummonedComponent, CFCompanionComponent>();
-        while (old.MoveNext(out var uid, out var was, out var companion))
-        {
-            if (was.FromSpell && companion.Summoner == args.Summoner)
-                Unsummon(uid);
-        }
-
         var creature = SpawnAtPosition(args.Prototype, args.Where);
         var summoned = EnsureComp<CFSummonedComponent>(creature);
         summoned.FromSpell = true;
+        summoned.Rank = args.Rank;
+        summoned.Dc = args.Dc;
         summoned.Until = args.Seconds > 0f ? _timing.CurTime + TimeSpan.FromSeconds(args.Seconds) : TimeSpan.Zero;
         _companions.Bind(args.Summoner, creature);
         args.Summoned = creature;

@@ -2,7 +2,7 @@
   parent: CFSpellArea
   id: CFSummonAnimal
   name: Summon Animal
-  description: Call an animal to a spot within 30 feet to fight for you for a minute. A giant rat, or a wolf from a rank 2 slot, or a boar from rank 3. Point at an enemy to send it there first. Your last summoned creature goes back when you cast again.
+  description: Call an animal to a spot within 30 feet to fight for you for a minute. A giant rat, or a wolf from a rank 2 slot, or a boar from rank 3. Point at an enemy to send it there first. Only Dispel Magic sends it back sooner.
   components:
   - type: Sprite
     sprite: Objects/Magic/magicactions.rsi

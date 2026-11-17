@@ -400,7 +400,7 @@
   traits: [Concentrate, Manipulate, Mental]
   actionCost: Two
   components: Somatic, verbal
-  area: 5-foot emanation
+  area: 15-foot emanation
   duration: 1 minute
   summary: You and allies in the aura gain a +1 status bonus to attack rolls. The aura can be sustained and grows when you spend extra actions.
 
@@ -412,7 +412,7 @@
   traits: [Concentrate, Manipulate, Mental]
   actionCost: Two
   components: Somatic, verbal
-  area: 5-foot emanation
+  area: 10-foot emanation
   duration: 1 minute
   defense: Will
   summary: Enemies in the aura take a -1 status penalty to attack rolls when they fail a Will save on entering.
@@ -448,10 +448,10 @@
   actionCost: Two
   components: Somatic, verbal
   range: 30 feet
-  targets: 1 creature
+  area: 5-foot burst
   defense: Will
   duration: Varies
-  summary: The target becomes unconscious. It can attempt a new save when it takes damage or when another creature uses an action to wake it.
+  summary: Each creature in the area becomes unconscious. It can attempt a new save when it takes damage or when another creature uses an action to wake it.
   criticalSuccess: The creature is unaffected.
   success: The creature is unaffected.
   failure: Unconscious for 1 minute, or until it wakes.
@@ -727,7 +727,7 @@
   targets: 1 creature
   defense: Will
   duration: Sustained
-  summary: The target falls prone and cannot act while it is overcome with laughter. It attempts a new save each time you sustain the spell.
+  summary: The target falls prone and cannot act while it is overcome with laughter. It attempts a new save every 6 seconds for a minute.
   criticalSuccess: The creature is unaffected.
   success: The creature is unaffected.
   failure: The creature falls prone and loses actions while laughing.
@@ -766,10 +766,10 @@
   actionCost: Two
   components: Somatic, verbal
   range: 30 feet
-  area: 5-foot burst
+  area: one 5-foot square
   defense: Reflex
   duration: Sustained up to 1 minute
-  summary: A 5-foot burst of fire deals 3d6 fire damage. You can move it when you sustain the spell.
+  summary: A flame in one 5-foot square deals 3d6 fire damage. It burns again every 6 seconds for a minute, and casting it again moves it.
   criticalSuccess: No damage.
   success: Half damage.
   failure: Full damage.

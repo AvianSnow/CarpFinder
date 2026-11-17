@@ -2,7 +2,7 @@
   parent: CFSpellArea
   id: CFFloatingFlame
   name: Floating Flame
-  description: A 5-foot burst of fire within 30 feet. Reflex save, 3d6 fire.
+  description: A flame in one 5-foot square within 30 feet. Reflex save, 3d6 fire. It burns again every 6 seconds for a minute, and only Dispel Magic ends it sooner. Cast it again while it burns to move it to a new spot, at no slot.
   components:
   - type: Sprite
     sprite: Objects/Magic/magicactions.rsi
@@ -14,13 +14,16 @@
   - type: CFSpell
     spell: FloatingFlame
     rank: 2
+    sustained: true
+    movesWhenRecast: true
   - type: CFTargeting
     rangeFeet: 30
   - type: CFAreaFill
     tile: CFFillFlame
     spreadSeconds: 0.1
   - type: CFAreaEffect
-    shape: Burst
+    # One 5-foot square, which is one tile. Not a 5-foot burst, which would be four.
+    shape: Square
     sizeFeet: 5
   - type: CFCheck
     defense: Reflex

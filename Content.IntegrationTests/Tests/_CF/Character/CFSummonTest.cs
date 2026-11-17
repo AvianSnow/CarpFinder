@@ -101,23 +101,39 @@ public sealed class CFSummonTest : GameTest
             summonedTrait = SEntMan.GetComponent<CFTraitComponent>(first).Traits.Contains("Summoned");
         });
 
-        await Server.WaitPost(() => Cast(caster, 2));
-        await Pair.RunTicksSync(5);
-
-        string atTwo = null;
-        var firstGone = false;
+        // A second cast calls a second creature: nothing but a dispel sends the first back early.
         EntityUid second = default;
+        string atTwo = null;
+        var firstStays = false;
         await Server.WaitPost(() =>
         {
-            firstGone = SEntMan.Deleted(first);
-            second = SummonOf(caster)!.Value;
+            Cast(caster, 2);
+            var query = SEntMan.AllEntityQueryEnumerator<CFSummonedComponent, CFCompanionComponent>();
+            while (query.MoveNext(out var uid, out _, out var companion))
+            {
+                if (companion.Summoner == caster && uid != first)
+                    second = uid;
+            }
+
             atTwo = Id(second);
+        });
+        await Pair.RunTicksSync(5);
+
+        var dispelled = false;
+        await Server.WaitPost(() =>
+        {
+            firstStays = !SEntMan.Deleted(first);
+            dispelled = SEntMan.System<CFCounteractSystem>().TryDispel(caster, first, 3, 50, d20: 20);
             SEntMan.GetComponent<CFSummonedComponent>(second).Until = SGameTiming.CurTime;
         });
         await Pair.RunTicksSync(5);
 
-        var expired = false;
-        await Server.WaitPost(() => expired = SEntMan.Deleted(second));
+        bool expired = false, firstGone = false;
+        await Server.WaitPost(() =>
+        {
+            expired = SEntMan.Deleted(second);
+            firstGone = SEntMan.Deleted(first);
+        });
 
         Assert.Multiple(() =>
         {
@@ -127,7 +143,9 @@ public sealed class CFSummonTest : GameTest
             Assert.That(harmsFoe, Is.True, "And against the caster's enemies.");
             Assert.That(summonedTrait, Is.True);
             Assert.That(atTwo, Is.EqualTo("CFSummonedWolf"), "Rank 2 calls the level 1 animal.");
-            Assert.That(firstGone, Is.True, "The first goes back when the spell is cast again.");
+            Assert.That(firstStays, Is.True, "The first stays when the spell is cast again.");
+            Assert.That(dispelled, Is.True);
+            Assert.That(firstGone, Is.True, "Dispel Magic sends it back.");
             Assert.That(expired, Is.True, "It goes back when its time is up.");
         });
     }
@@ -197,6 +215,51 @@ public sealed class CFSummonTest : GameTest
             Assert.That(rank, Is.EqualTo(2), "It is cast at the rank of the spell it replaces.");
             Assert.That(fearLeft, Is.Zero, "The prepared spell is spent.");
             Assert.That(after, Is.False, "With nothing left prepared, it cannot be cast.");
+        });
+    }
+
+    /// <summary>Floating Flame is sustained, and casting it again while it burns moves it and costs no second cast.</summary>
+    [Test]
+    public async Task FloatingFlameCanBeMovedWhileItBurns()
+    {
+        _map = await CFDevMap.Load(Pair, new Box2i(-1, -1, 7, 2), avoidStructures: true);
+        EntityUid caster = default, far = default;
+        var casts = 0;
+        var moved = false;
+        await Server.WaitPost(() =>
+        {
+            caster = SEntMan.SpawnEntity("CFSummonTestCaster", _map.Local(0, 0));
+            far = SEntMan.SpawnEntity("CFSummonTestFoe", _map.Local(5, 0));
+            var flame = SEntMan.SpawnEntity("CFFloatingFlame", MapCoordinates.Nullspace);
+
+            SEntMan.EventBus.RaiseLocalEvent(flame, new CFSpellCastAreaEvent { Performer = caster, Target = _map.Local(1, 0) });
+            SEntMan.EventBus.RaiseLocalEvent(flame, new CFSpellCastAreaEvent { Performer = caster, Target = _map.Local(5, 0) });
+
+            var running = SEntMan.GetComponent<CFSustainedCastsComponent>(caster).Casts;
+            casts = running.Count;
+            var xform = SEntMan.System<SharedTransformSystem>();
+            moved = running.Count == 1
+                    && running[0].Aim is { } aim
+                    && (aim.Position - xform.ToMapCoordinates(_map.Local(5, 0)).Position).Length() < 0.1f;
+        });
+
+        // Four pulses at the new spot. The creature there starts out of the first burst's reach.
+        await Pair.RunSeconds(25f);
+        var hp = 0;
+        await Server.WaitPost(() =>
+        {
+            hp = SEntMan.GetComponent<CFCombatantComponent>(far).CurrentHp;
+
+            // The server is shared with other tests, and the flame would burn on into them.
+            SEntMan.RemoveComponent<CFSustainedCastsComponent>(caster);
+        });
+        await Pair.RunSeconds(2f);
+
+        Assert.Multiple(() =>
+        {
+            Assert.That(casts, Is.EqualTo(1), "The second cast moved the flame. It did not start another.");
+            Assert.That(moved, Is.True);
+            Assert.That(hp, Is.LessThan(50), "It burns where it was moved to.");
         });
     }
 }

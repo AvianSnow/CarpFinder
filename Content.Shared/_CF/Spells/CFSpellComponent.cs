@@ -21,9 +21,19 @@ public sealed partial class CFSpellComponent : Component
     [DataField, AutoNetworkedField]
     public bool Focus;
 
-    /// <summary>Using the action again keeps the spell going, without a Focus Point. See <see cref="CFSustain"/>.</summary>
+    /// <summary>
+    /// A sustained spell: once cast it runs its effects again every 6 seconds for a minute, with no input and at no cost,
+    /// and only a dispel ends it sooner. See <see cref="CFSustain"/>.
+    /// </summary>
     [DataField, AutoNetworkedField]
     public bool Sustained;
+
+    /// <summary>
+    /// With <see cref="Sustained"/>: casting it again while it runs moves it to the new spot, for the action's cost and no
+    /// slot, as Floating Flame is moved. It burns there from its next pulse on, and its minute does not start over.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public bool MovesWhenRecast;
 
     /// <summary>A Magus's conflux spell. Casting one recharges Spellstrike.</summary>
     [DataField]

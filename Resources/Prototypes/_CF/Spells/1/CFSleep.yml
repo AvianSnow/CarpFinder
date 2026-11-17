@@ -1,8 +1,8 @@
 ﻿- type: entity
-  parent: CFSpellTarget
+  parent: CFSpellArea
   id: CFSleep
   name: Sleep
-  description: On a failed Will save the target falls unconscious.
+  description: Each creature in a 5-foot burst within 30 feet falls unconscious on a failed Will save.
   components:
   - type: Sprite
     sprite: Objects/Magic/magicactions.rsi
@@ -16,6 +16,9 @@
     rank: 1
   - type: CFTargeting
     rangeFeet: 30
+  - type: CFAreaEffect
+    shape: Burst
+    sizeFeet: 5
   - type: CFCheck
     defense: Will
     basicSave: false

@@ -359,7 +359,7 @@
   parent: CFSpellArea
   id: CFTelekineticRend
   name: Telekinetic Rend
-  description: Creatures in the area take 1d6 bludgeoning, basic Fortitude. Amped, they also take 1d6 slashing.
+  description: Creatures in a 5-foot burst take 1d6 bludgeoning, basic Fortitude. Amped, they also take 1d6 slashing. The second burst is TBA.
   components:
   - type: CFRadialSlot
     group: Spell
@@ -380,8 +380,9 @@
     tile: CFFillMotes
     tint: true
   - type: CFAreaEffect
+    # The rules give two 5-foot bursts that do not overlap. One aim can only place one of them.
     shape: Burst
-    sizeFeet: 10
+    sizeFeet: 5
   - type: CFHeighten
     baseRank: 1
     interval: 2
@@ -470,9 +471,9 @@
   traits: [Cantrip, Concentrate, Manipulate]
   actionCost: Two
   range: 60 feet
-  targets: a 10-foot burst
+  targets: a 5-foot burst
   defense: basic Fortitude
-  summary: Creatures take 1d6 bludgeoning. Amped, they also take 1d6 slashing.
+  summary: Creatures take 1d6 bludgeoning. Amped, they also take 1d6 slashing. The rules give two such bursts. The second is TBA.
   heightened: Damage increases by 1d6 per 2 ranks.
 
 - type: cfSpell
@@ -919,13 +920,13 @@
   targets: 1 creature
   summary: Your nearest thrall charges a creature, hitting harder.
 
-# Vessel spells: an Animist's primary apparition. Using the action again sustains one, with no Focus Point.
+# Vessel spells: an Animist's primary apparition. Each is sustained: it runs again by itself every 6 seconds for a minute.
 
 - type: entity
   parent: CFSpellArea
   id: CFGardenOfHealing
   name: Garden of Healing
-  description: "Heal 1d4 to everyone within 10 feet. Sustain it to pulse again. Costs a Focus Point."
+  description: "Heal 1d4 to everyone within 10 feet. It pulses again by itself every 6 seconds for a minute. Costs a Focus Point."
   components:
   - type: CFRadialSlot
     group: Spell
@@ -957,7 +958,7 @@
   parent: CFSpellArea
   id: CFEarthsBile
   name: Earth's Bile
-  description: "A 10-foot burst of 1d4 fire and 1d4 bludgeoning, basic Reflex. Sustain it to erupt again. Costs a Focus Point."
+  description: "A 10-foot burst of 1d4 fire and 1d4 bludgeoning, basic Reflex. It erupts again in the same place every 6 seconds for a minute. Costs a Focus Point."
   components:
   - type: CFRadialSlot
     group: Spell
@@ -1002,7 +1003,7 @@
   parent: CFSpellInstant
   id: CFEmbodimentOfBattle
   name: Embodiment of Battle
-  description: "+1 status to attack and damage while sustained. Costs a Focus Point."
+  description: "+1 status to attack and damage for a minute. Costs a Focus Point."
   components:
   - type: CFRadialSlot
     group: Spell
@@ -1029,7 +1030,7 @@
   parent: CFSpellInstant
   id: CFRiverCarvingMountains
   name: River Carving Mountains
-  description: "+10 feet Speed while sustained. Costs a Focus Point."
+  description: "+10 feet Speed for a minute. Costs a Focus Point."
   components:
   - type: CFRadialSlot
     group: Spell
@@ -1051,7 +1052,7 @@
   parent: CFSpellInstant
   id: CFStoreTime
   name: Store Time
-  description: "You get your reaction back, each time you cast or Sustain this. Costs a Focus Point."
+  description: "You get your reaction back, and again every 6 seconds for a minute. Costs a Focus Point."
   components:
   - type: CFRadialSlot
     group: Spell
@@ -1134,7 +1135,7 @@
   parent: CFSpellInstant
   id: CFTrickstersMirrors
   name: Trickster's Mirrors
-  description: "You are concealed while sustained. Costs a Focus Point."
+  description: "You are concealed for a minute. Costs a Focus Point."
   components:
   - type: CFRadialSlot
     group: Spell
@@ -1154,7 +1155,7 @@
   parent: CFSpellInstant
   id: CFDevouringDarkForm
   name: Devouring Dark Form
-  description: "Your unarmed attack is a tentacle, 1d8 bludgeoning, while sustained. Costs a Focus Point."
+  description: "Your unarmed attack is a tentacle, 1d8 bludgeoning, for a minute. Costs a Focus Point."
   components:
   - type: CFRadialSlot
     group: Spell
@@ -1175,7 +1176,7 @@
   parent: CFSpellInstant
   id: CFCrownOfProphets
   name: Crown of Prophets
-  description: "Your unarmed attack is a bite, 1d6 piercing, agile and finesse, while sustained. Costs a Focus Point."
+  description: "Your unarmed attack is a bite, 1d6 piercing, agile and finesse, for a minute. Costs a Focus Point."
   components:
   - type: CFRadialSlot
     group: Spell
@@ -1198,7 +1199,7 @@
   parent: CFSpellInstant
   id: CFGiftOfTheAnemos
   name: Gift of the Anemos
-  description: "+10 feet Speed for 3 seconds, each time you cast or Sustain this. Costs a Focus Point."
+  description: "+10 feet Speed for 3 seconds, and again every 6 seconds for a minute. Costs a Focus Point."
   components:
   - type: CFRadialSlot
     group: Spell
@@ -1220,7 +1221,7 @@
   parent: CFSpellInstant
   id: CFWishMarket
   name: Wish Market
-  description: "+1 status to Perception while sustained. Costs a Focus Point."
+  description: "+1 status to Perception for a minute. Costs a Focus Point."
   components:
   - type: CFRadialSlot
     group: Spell
@@ -1246,7 +1247,7 @@
   actionCost: One
   range: 10-foot emanation
   targets: none
-  summary: "Heal 1d4 within 10 feet, and again each time you Sustain it."
+  summary: "Heal 1d4 within 10 feet, and again every 6 seconds for a minute."
 
 - type: cfSpell
   id: EarthsBile
@@ -1266,7 +1267,7 @@
   actionCost: One
   range: self
   targets: none
-  summary: "+1 status to attack and damage while sustained. Martial training, Reactive Strike and the penalty to spells: TBA."
+  summary: "+1 status to attack and damage for a minute. Martial training, Reactive Strike and the penalty to spells: TBA."
 
 - type: cfSpell
   id: RiverCarvingMountains
@@ -1276,7 +1277,7 @@
   actionCost: One
   range: self
   targets: none
-  summary: "+10 feet Speed while sustained. Cover against ranged attacks and difficult terrain: TBA."
+  summary: "+10 feet Speed for a minute. Cover against ranged attacks and difficult terrain: TBA."
 
 - type: cfSpell
   id: StoreTime
@@ -1286,7 +1287,7 @@
   actionCost: One
   range: self
   targets: none
-  summary: "You get your reaction back each time you cast or Sustain this."
+  summary: "You get your reaction back and again every 6 seconds for a minute."
 
 - type: cfSpell
   id: DiscomfitingWhisper
@@ -1316,7 +1317,7 @@
   actionCost: One
   range: self
   targets: none
-  summary: "You are concealed while sustained. The mirrors themselves, and glass shards: TBA."
+  summary: "You are concealed for a minute. The mirrors themselves, and glass shards: TBA."
 
 - type: cfSpell
   id: DevouringDarkForm
@@ -1356,7 +1357,7 @@
   actionCost: One
   range: self
   targets: none
-  summary: "+1 status to Perception while sustained. The second bonus, free Seek, Recall Knowledge and the price: TBA."
+  summary: "+1 status to Perception for a minute. The second bonus, free Seek, Recall Knowledge and the price: TBA."
 
 # Link spells: a Summoner's focus spells and cantrips, which work on their eidolon.
 

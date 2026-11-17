@@ -1,3 +1,6 @@
+using Robust.Shared.Prototypes;
+using Robust.Shared.Map;
+using Content.Shared.CF.Preferences;
 using Content.Shared.CF.Actions;
 using Content.Shared.Actions;
 using Content.Shared.Actions.Events;
@@ -30,6 +33,8 @@ public sealed partial class CFSpellSystem : EntitySystem
     [Dependency] private CFSpellshapeSystem _spellshapes = default!;
     [Dependency] private CFVfxSystem _vfx = default!;
     [Dependency] private CFReactionSystem _reactions = default!;
+    [Dependency] private Robust.Shared.Prototypes.IPrototypeManager _prototypes = default!;
+    [Dependency] private Content.Shared.Mobs.Systems.MobStateSystem _mobState = default!;
 
     [SubscribeLocalEvent]
     private void OnInstant(Entity<CFSpellComponent> spell, ref CFSpellCastInstantEvent args)
@@ -49,6 +54,7 @@ public sealed partial class CFSpellSystem : EntitySystem
         else
             _effects.ResolveTarget(spell, args.Performer, args.Performer);
 
+        KeepGoing(args.Performer, spell, null);
         FinishCast(args.Performer);
     }
 
@@ -79,6 +85,7 @@ public sealed partial class CFSpellSystem : EntitySystem
 
         _psi.NoteCast(args.Performer, spell);
         _effects.DeliverToTarget(spell, args.Performer, args.Target);
+        KeepGoing(args.Performer, spell, null, args.Target);
         FinishCast(args.Performer);
     }
 
@@ -100,12 +107,140 @@ public sealed partial class CFSpellSystem : EntitySystem
             return;
         }
 
+        if (TryMoveSustained(args.Performer, spell, aim))
+            return;
+
         if (!TrySpendCast(args.Performer, spell))
             return;
 
         _psi.NoteCast(args.Performer, spell);
         _effects.ResolveArea(spell, args.Performer, aim);
+        KeepGoing(args.Performer, spell, aim);
         FinishCast(args.Performer);
+    }
+
+    /// <summary>
+    /// Casting a running spell again that can be moved: it goes to the new spot and nothing is paid. The damage there comes
+    /// with its next pulse, so moving it over and over does not burn anything more often.
+    /// </summary>
+    private bool TryMoveSustained(EntityUid caster, Entity<CFSpellComponent> spell, MapCoordinates aim)
+    {
+        if (!spell.Comp.Sustained
+            || !spell.Comp.MovesWhenRecast
+            || !TryComp(caster, out CFSustainedCastsComponent? casts)
+            || casts.Casts.Find(cast => cast.Spell == spell.Comp.Spell) is not { } running)
+        {
+            return false;
+        }
+
+        running.Aim = aim;
+        _popup.PopupEntity(Loc.GetString("cf-spell-sustain-moved", ("spell", running.Name)), caster, caster);
+        return true;
+    }
+
+    /// <summary>The creature has this sustained spell running. The spellbook's copy is what a client sees.</summary>
+    public bool IsSustaining(EntityUid caster, ProtoId<CFSpellPrototype> spell)
+    {
+        if (TryComp(caster, out CFSpellbookComponent? book))
+            return CFSustain.State(book, spell, _timing.CurTime) == CFSustainState.Running;
+
+        return TryComp(caster, out CFSustainedCastsComponent? casts) && casts.Casts.Exists(cast => cast.Spell == spell);
+    }
+
+    /// <summary>A sustained spell has been cast: from now on it runs again by itself. See <see cref="CFSustain"/>.</summary>
+    private void KeepGoing(EntityUid caster, Entity<CFSpellComponent> spell, MapCoordinates? aim, EntityUid? target = null)
+    {
+        if (!spell.Comp.Sustained)
+            return;
+
+        var now = _timing.CurTime;
+        if (TryComp(caster, out CFSpellbookComponent? book))
+        {
+            CFSustain.Start(book, spell.Comp.Spell, now);
+            Dirty(caster, book);
+        }
+
+        var level = CompOrNull<CFCombatantComponent>(caster)?.Level ?? 1;
+        var casts = EnsureComp<CFSustainedCastsComponent>(caster);
+        casts.Casts.RemoveAll(old => old.Spell == spell.Comp.Spell);
+        casts.Casts.Add(new CFSustainedCast
+        {
+            Action = spell,
+            Spell = spell.Comp.Spell,
+            Name = MetaData(spell).EntityName,
+            Aim = aim,
+            Target = target,
+            Next = now + CFSustain.Pulse,
+            Ends = now + CFSustain.Longest,
+            Rank = spell.Comp.Focus || spell.Comp.Rank == 0 ? CFCasting.CantripRank(level) : Math.Max(1, spell.Comp.ResolvedRank),
+            Dc = CFCasting.Spellcasting(_prototypes, CompOrNull<CFCombatantComponent>(caster), CompOrNull<CFAbilityScoreComponent>(caster)).Dc,
+        });
+    }
+
+    public override void Update(float frameTime)
+    {
+        base.Update(frameTime);
+        if (!_net.IsServer)
+            return;
+
+        var now = _timing.CurTime;
+        var query = EntityQueryEnumerator<CFSustainedCastsComponent>();
+        while (query.MoveNext(out var caster, out var casts))
+        {
+            for (var i = casts.Casts.Count - 1; i >= 0; i--)
+            {
+                var cast = casts.Casts[i];
+                if (now >= cast.Ends || TerminatingOrDeleted(cast.Action) || !_mobState.IsAlive(caster))
+                {
+                    casts.Casts.RemoveAt(i);
+                    continue;
+                }
+
+                if (now < cast.Next)
+                    continue;
+
+                cast.Next = now + CFSustain.Pulse;
+                Pulse(caster, cast);
+            }
+
+            if (casts.Casts.Count == 0)
+                RemCompDeferred<CFSustainedCastsComponent>(caster);
+        }
+    }
+
+    /// <summary>Runs a sustained spell's effects again, for nothing: on the caster, around the caster, or where it was aimed.</summary>
+    private void Pulse(EntityUid caster, CFSustainedCast cast)
+    {
+        if (cast.Target is { } target)
+        {
+            // A spell on one creature tries it again, for as long as that creature is about.
+            if (!TerminatingOrDeleted(target) && _mobState.IsAlive(target))
+                _effects.ResolveTarget(cast.Action, caster, target);
+
+            return;
+        }
+
+        if (!TryComp(cast.Action, out CFAreaEffectComponent? area))
+        {
+            _effects.ResolveTarget(cast.Action, caster, caster);
+            return;
+        }
+
+        var here = _transform.GetMapCoordinates(caster);
+        _effects.ResolveArea(cast.Action, caster, cast.Aim is { } aim && area.Shape != CFAreaShape.Emanation ? aim : here);
+    }
+
+    /// <summary>Ends a sustained spell before its time, as a successful dispel does.</summary>
+    public void EndSustained(EntityUid caster, CFSustainedCast cast)
+    {
+        if (TryComp(caster, out CFSustainedCastsComponent? casts))
+            casts.Casts.Remove(cast);
+
+        if (TryComp(caster, out CFSpellbookComponent? book))
+        {
+            CFSustain.End(book, cast.Spell);
+            Dirty(caster, book);
+        }
     }
 
     /// <summary>A volley stays aimed until every bolt has been clicked, so the action delay is lifted.</summary>
@@ -278,6 +413,13 @@ public sealed partial class CFSpellSystem : EntitySystem
             return false;
         }
 
+        // A sustained spell that is still running keeps itself going. Casting it again waits until it has ended.
+        if (spell.Sustained && !spell.MovesWhenRecast && IsSustaining(caster, spell.Spell))
+        {
+            _popup.PopupEntity(Loc.GetString("cf-spell-sustain-wait"), caster, caster);
+            return false;
+        }
+
         if (spell.Focus)
         {
             if (!TryComp<CFSpellbookComponent>(caster, out var pool))
@@ -286,28 +428,12 @@ public sealed partial class CFSpellSystem : EntitySystem
                 return false;
             }
 
-            if (spell.Sustained)
-            {
-                switch (CFSustain.State(pool, spell.Spell, _timing.CurTime))
-                {
-                    case CFSustainState.TooSoon:
-                        _popup.PopupEntity(Loc.GetString("cf-spell-sustain-wait"), caster, caster);
-                        return false;
-                    case CFSustainState.Ready:
-                        CFSustain.Renew(pool, spell.Spell, _timing.CurTime);
-                        Dirty(caster, pool);
-                        return true;
-                }
-            }
 
             if (CFFocusSystem.Remaining(pool) <= 0)
             {
                 _popup.PopupEntity(Loc.GetString("cf-spell-no-focus"), caster, caster);
                 return false;
             }
-
-            if (spell.Sustained)
-                CFSustain.Start(pool, spell.Spell, _timing.CurTime);
 
             pool.FocusSpent++;
             if (spell.Conflux)
@@ -368,17 +494,15 @@ public sealed partial class CFSpellSystem : EntitySystem
         if (HasComp<CFBattleFormComponent>(caster))
             return false;
 
+        // A running spell that can be moved stays usable, to move it.
+        if (spell.Sustained && IsSustaining(caster, spell.Spell))
+            return spell.MovesWhenRecast;
+
         if (spell.Focus)
         {
             if (!TryComp<CFSpellbookComponent>(caster, out var pool))
                 return false;
 
-            if (spell.Sustained)
-            {
-                var state = CFSustain.State(pool, spell.Spell, _timing.CurTime);
-                if (state != CFSustainState.None)
-                    return state == CFSustainState.Ready;
-            }
 
             return CFFocusSystem.Remaining(pool) > 0;
         }

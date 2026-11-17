@@ -157,7 +157,8 @@ public sealed partial class CFSpawnEffect : CFEffect
 /// <summary>
 /// Calls a creature to fight for the user, at the aimed spot or beside the user, for a while. The spell's rank picks
 /// which: the last entry of <see cref="Creatures"/> it reaches. The creature is bound to the user as a companion, so it
-/// fights the user's enemies and can be pointed at a target. A caster keeps one summoned creature at a time.
+/// fights the user's enemies and can be pointed at a target. It stays its time with no input, as every sustained spell
+/// here does, and only a dispel sends it back sooner.
 /// </summary>
 public sealed partial class CFSummonEffect : CFEffect
 {
@@ -184,7 +185,7 @@ public sealed partial class CFSummonEffect : CFEffect
             return;
 
         var where = args.Position ?? entities.GetComponent<TransformComponent>(args.User).Coordinates;
-        var request = new Content.Shared.CF.Companions.CFSummonRequestEvent(args.User, prototype, where, DurationSeconds);
+        var request = new Content.Shared.CF.Companions.CFSummonRequestEvent(args.User, prototype, where, DurationSeconds, args.Rank, args.Dc);
         entities.EventBus.RaiseEvent(EventSource.Local, ref request);
     }
 }

@@ -139,34 +139,27 @@ public enum CFSustainState : byte
     /// <summary>Not running, so casting starts it and pays for it.</summary>
     None,
 
-    /// <summary>Already cast or sustained this round.</summary>
-    TooSoon,
-
-    /// <summary>Casting again sustains it, with no Focus Point.</summary>
-    Ready,
+    /// <summary>Running. It keeps itself going, so casting it again does nothing.</summary>
+    Running,
 }
 
 /// <summary>
-/// A sustained spell. Using its action again sustains it, for the action's cost and no Focus Point. That can happen once per round (6 seconds)
-/// and has to happen by the end of the next one (12 seconds), for up to a minute.
+/// A sustained spell. It keeps itself going with no input: <see cref="CFSpellSystem"/> runs its effects again every
+/// <see cref="Pulse"/> for <see cref="Longest"/>. Only Dispel Magic ends one sooner. This is CarpFinder's rule: the rules
+/// have the caster spend an action each round.
 /// </summary>
 public static class CFSustain
 {
-    public static readonly TimeSpan SameRound = TimeSpan.FromSeconds(6);
-    public static readonly TimeSpan Lapses = TimeSpan.FromSeconds(12);
+    public static readonly TimeSpan Pulse = TimeSpan.FromSeconds(6);
     public static readonly TimeSpan Longest = TimeSpan.FromSeconds(60);
 
     public static CFSustainState State(CFSpellbookComponent book, ProtoId<CFSpellPrototype> spell, TimeSpan now)
     {
         var index = book.Sustaining.FindIndex(entry => entry.Spell == spell);
-        if (index < 0)
+        if (index < 0 || now - book.Sustaining[index].Started >= Longest)
             return CFSustainState.None;
 
-        var entry = book.Sustaining[index];
-        if (now - entry.Last > Lapses || now - entry.Started >= Longest)
-            return CFSustainState.None;
-
-        return now - entry.Last < SameRound ? CFSustainState.TooSoon : CFSustainState.Ready;
+        return CFSustainState.Running;
     }
 
     /// <summary>Starts the spell, replacing a run of it that has finished.</summary>
@@ -176,12 +169,38 @@ public static class CFSustain
         book.Sustaining.Add(new CFSustainedSpell(spell, now, now));
     }
 
-    public static void Renew(CFSpellbookComponent book, ProtoId<CFSpellPrototype> spell, TimeSpan now)
+    /// <summary>Ends the spell, as a dispel does.</summary>
+    public static void End(CFSpellbookComponent book, ProtoId<CFSpellPrototype> spell)
     {
-        var index = book.Sustaining.FindIndex(entry => entry.Spell == spell);
-        if (index >= 0)
-            book.Sustaining[index] = new CFSustainedSpell(spell, book.Sustaining[index].Started, now);
+        book.Sustaining.RemoveAll(entry => entry.Spell == spell);
     }
+}
+
+/// <summary>One sustained spell a creature has running: what to run again, where, and what a dispel has to beat.</summary>
+public sealed class CFSustainedCast
+{
+    public EntityUid Action;
+    public ProtoId<CFSpellPrototype> Spell;
+    public string Name = "";
+
+    /// <summary>Where it was aimed. Null for a spell on the caster, and unused by an emanation, which follows the caster.</summary>
+    public Robust.Shared.Map.MapCoordinates? Aim;
+
+    /// <summary>The one creature it was cast on, if it is that kind of spell.</summary>
+    public EntityUid? Target;
+
+    public TimeSpan Next;
+    public TimeSpan Ends;
+    public int Rank;
+    public int Dc;
+}
+
+/// <summary>The sustained spells a creature has running. See <see cref="CFSustain"/>.</summary>
+[RegisterComponent]
+public sealed partial class CFSustainedCastsComponent : Component
+{
+    [ViewVariables]
+    public List<CFSustainedCast> Casts = new();
 }
 
 /// <summary>Attuning to apparitions, changing the primary one, and the bodies vessel spells lend.</summary>

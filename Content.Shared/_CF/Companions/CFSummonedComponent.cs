@@ -14,9 +14,16 @@ public sealed partial class CFSummonedComponent : Component
     [DataField(customTypeSerializer: typeof(Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.TimeOffsetSerializer))]
     public TimeSpan Until;
 
-    /// <summary>Called by a summoning spell. A caster keeps one such creature: the next spell sends this one back.</summary>
+    /// <summary>Called by a summoning spell, so Dispel Magic can send it back.</summary>
     [DataField]
     public bool FromSpell;
+
+    /// <summary>The rank and DC of the spell that called it, which a dispel has to beat.</summary>
+    [DataField]
+    public int Rank;
+
+    [DataField]
+    public int Dc;
 
     /// <summary>What it leaves behind as it goes.</summary>
     [DataField]
@@ -40,7 +47,17 @@ public sealed partial class CFSummonOption
 /// on the server, so it goes by event. <see cref="Summoned"/> is filled in when it has been done.
 /// </summary>
 [ByRefEvent]
-public record struct CFSummonRequestEvent(EntityUid Summoner, EntProtoId Prototype, Robust.Shared.Map.EntityCoordinates Where, float Seconds)
+public record struct CFSummonRequestEvent(
+    EntityUid Summoner,
+    EntProtoId Prototype,
+    Robust.Shared.Map.EntityCoordinates Where,
+    float Seconds,
+    int Rank,
+    int Dc)
 {
     public EntityUid? Summoned;
 }
+
+/// <summary>Asks the server to send a summoned creature back, as a dispel does from Shared code.</summary>
+[ByRefEvent]
+public readonly record struct CFUnsummonRequestEvent(EntityUid Summoned);

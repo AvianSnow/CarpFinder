@@ -158,38 +158,53 @@ public sealed class CFApparitionTest : GameTest
         });
     }
 
+    /// <summary>A sustained spell keeps itself going: no second cast, no second Focus Point, and only a dispel ends it early.</summary>
     [Test]
-    public async Task SustainingCostsNoFocusAndCanLapse()
+    public async Task ASustainedSpellRunsItselfUntilItIsDispelled()
     {
         _map = await CFDevMap.Load(Pair, Footprint);
-        await Server.WaitAssertion(() =>
+        EntityUid hero = default;
+        EntityUid action = default;
+        bool running = false, again = true;
+        var spent = -1;
+        await Server.WaitPost(() =>
         {
-            var hero = Animist("PrimaryWitness");
-            var book = Book(hero);
-            Assert.That(book.FocusPoints, Is.EqualTo(1));
-            var action = Action(hero, "CFEmbodimentOfBattle");
-            Assert.That(action, Is.Not.Null);
+            hero = Animist("PrimaryWitness");
+            action = Action(hero, "CFEmbodimentOfBattle")!.Value;
+            Cast(hero, action);
+            var spells = SEntMan.System<CFSpellSystem>();
+            running = spells.IsSustaining(hero, "EmbodimentOfBattle");
 
-            Cast(hero, action!.Value);
-            Assert.That(book.FocusSpent, Is.EqualTo(1));
-            var spell = book.Sustaining[0].Spell;
+            // Using it again while it runs does nothing and costs nothing.
+            Cast(hero, action);
+            spent = Book(hero).FocusSpent;
+            again = spells.HasSlot(hero, SEntMan.GetComponent<CFSpellComponent>(action));
+        });
 
-            // The same round: refused, and nothing is paid.
-            Assert.That(CFSustain.State(book, spell, Now), Is.EqualTo(CFSustainState.TooSoon));
+        // Its bonus lasts 12 seconds a time, so 20 seconds on it is only still there if the spell ran again by itself.
+        await Pair.RunSeconds(20f);
+        int kept = 0;
+        bool dispelled = false, stillRunning = true;
+        await Server.WaitPost(() =>
+        {
+            kept = SEntMan.System<CFBonusSystem>().Total(hero, CFBonusStat.AttackRoll);
+            dispelled = SEntMan.System<CFCounteractSystem>().TryDispel(Spawn("CFApparitionFoe", 1), hero, 3, 50, d20: 20);
+            stillRunning = SEntMan.System<CFSpellSystem>().IsSustaining(hero, "EmbodimentOfBattle");
+        });
 
-            book.Sustaining[0] = new CFSustainedSpell(spell, Now, Now - TimeSpan.FromSeconds(7));
-            Cast(hero, action.Value);
-            Assert.That(book.FocusSpent, Is.EqualTo(1));
-            Assert.That(CFSustain.State(book, spell, Now), Is.EqualTo(CFSustainState.TooSoon));
+        await Pair.RunSeconds(20f);
+        var after = -1;
+        await Server.WaitPost(() => after = SEntMan.System<CFBonusSystem>().Total(hero, CFBonusStat.AttackRoll));
 
-            // Left too long, it has ended, and there is no Focus Point to start it again.
-            book.Sustaining[0] = new CFSustainedSpell(spell, Now, Now - TimeSpan.FromSeconds(13));
-            Assert.That(CFSustain.State(book, spell, Now), Is.EqualTo(CFSustainState.None));
-            Assert.That(SEntMan.System<CFSpellSystem>().HasSlot(hero, SEntMan.GetComponent<CFSpellComponent>(action.Value)), Is.False);
-
-            // A minute is the longest it can go.
-            book.Sustaining[0] = new CFSustainedSpell(spell, Now - TimeSpan.FromSeconds(61), Now - TimeSpan.FromSeconds(7));
-            Assert.That(CFSustain.State(book, spell, Now), Is.EqualTo(CFSustainState.None));
+        Assert.Multiple(() =>
+        {
+            Assert.That(running, Is.True);
+            Assert.That(spent, Is.EqualTo(1), "One Focus Point for the whole minute.");
+            Assert.That(again, Is.False, "It cannot be cast again while it runs.");
+            Assert.That(kept, Is.EqualTo(1), "It kept itself going.");
+            Assert.That(dispelled, Is.True);
+            Assert.That(stillRunning, Is.False, "Dispel Magic ends it.");
+            Assert.That(after, Is.Zero, "And it does not come back.");
         });
     }
 
