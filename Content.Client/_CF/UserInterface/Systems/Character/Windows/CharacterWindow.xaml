@@ -29,5 +29,6 @@
         </ScrollContainer>
         <cf:CFShopView Name="ShopTab" Access="Public"/>
         <cf:CFLevelUpTab Name="LevelUpTab" Access="Public"/>
+        <cf:CFDailyChoicesTab Name="DailyTab" Access="Public"/>
     </TabContainer>
 </windows:CharacterWindow>

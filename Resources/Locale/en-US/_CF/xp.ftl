@@ -40,3 +40,11 @@ cf-levelup-bonus-skill-increase = Extra skill increase
 cf-levelup-boosts = Ability boosts
 cf-levelup-boosts-pick = Ability boosts (pick { $count })
 cf-levelup-language = Language
+
+# The character sheet's Daily tab.
+cf-sheet-daily-tab = Daily
+cf-daily-heading = Choices you can change each day. A new one takes over at your next long rest.
+cf-daily-none = You have nothing to choose each day.
+cf-daily-today = Today: { $value }
+cf-daily-nothing = nothing
+cf-daily-next = After your next long rest:

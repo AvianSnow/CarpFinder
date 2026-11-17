@@ -83,6 +83,10 @@ public sealed partial class CFExperienceComponent : Component
     [DataField, AutoNetworkedField]
     public List<CFOptionPick> OptionPicks = new();
 
+    /// <summary>What the daily picks become at the next long rest. See <see cref="CFOptionChoice.Daily"/>.</summary>
+    [DataField, AutoNetworkedField]
+    public List<CFOptionPick> DailyPlan = new();
+
     /// <summary>Subclass picks, checked at spawn. Their later features run on level up.</summary>
     [DataField, AutoNetworkedField]
     public List<string> ClassChoices = new();

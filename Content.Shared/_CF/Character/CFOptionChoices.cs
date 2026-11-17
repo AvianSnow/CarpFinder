@@ -55,6 +55,41 @@ public static class CFOptionChoices
         return result;
     }
 
+    /// <summary>The picks that can be changed each day, for what the build has by <paramref name="level"/>.</summary>
+    public static List<CFOptionSlot> DailySlots(IPrototypeManager prototypes, CFCharacterBuildData build, string? ancestryId, int level)
+    {
+        var slots = Slots(prototypes, build, ancestryId, level);
+        slots.RemoveAll(slot => !slot.Choice.Daily);
+        return slots;
+    }
+
+    /// <summary>
+    /// A plan for the next long rest: every pick has to be for a daily slot the build has, and one of that slot's answers.
+    /// It comes from a client, so the server checks it with this.
+    /// </summary>
+    public static bool IsValidDailyPlan(
+        IPrototypeManager prototypes,
+        CFCharacterBuildData build,
+        string? ancestryId,
+        int level,
+        IReadOnlyList<CFOptionPick> plan)
+    {
+        var slots = DailySlots(prototypes, build, ancestryId, level);
+        var seen = new HashSet<(string, int)>();
+        foreach (var pick in plan)
+        {
+            var slot = slots.Find(s => s.Source == pick.Source && s.Slot == pick.Slot);
+            if (slot.Choice == null
+                || !seen.Add((pick.Source, pick.Slot))
+                || !Allowed(prototypes, slot.Choice, build, ancestryId).Contains(pick.Value))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     /// <summary>What a class feature's picks are stored under.</summary>
     public static string FeatureSource(CFClassPrototype cls, CFClassFeature feature)
     {
@@ -97,7 +132,7 @@ public static class CFOptionChoices
                 var id = SignaturePrefix + pick.Spell.Id;
                 if (pick.HasSpell
                     && prototypes.TryIndex(pick.Spell, out var spell)
-                    && spell.Rank == choice.SpellRank
+                    && (choice.SpellRank == 0 ? spell.Rank > 0 : spell.Rank == choice.SpellRank)
                     && !known.Contains(id))
                 {
                     known.Add(id);
@@ -208,4 +243,11 @@ public static class CFOptionChoices
             }
         }
     }
+}
+
+/// <summary>Sent by the character sheet's Daily tab: what each daily pick should become at the next long rest. The server checks it.</summary>
+[Serializable, Robust.Shared.Serialization.NetSerializable]
+public sealed class CFPlanDailyChoicesEvent : EntityEventArgs
+{
+    public List<CFOptionPick> Picks = new();
 }

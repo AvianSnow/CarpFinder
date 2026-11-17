@@ -14,3 +14,7 @@
   requiresChoice:
     - BloodlineImperial
     - BloodlineDraconicArcane
+  choices:
+    - kind: Skill
+    - kind: SignatureSpell
+      daily: true

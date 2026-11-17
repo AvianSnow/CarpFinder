@@ -33,6 +33,7 @@ public sealed partial class CFLongRestSystem : EntitySystem
     [Dependency] private CFDyingSystem _dying = default!;
     [Dependency] private CFReactionSystem _reactions = default!;
     [Dependency] private CFDailyUseSystem _daily = default!;
+    [Dependency] private CFDailyChoiceSystem _dailyChoices = default!;
     [Dependency] private MobStateSystem _mobState = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
 
@@ -106,6 +107,7 @@ public sealed partial class CFLongRestSystem : EntitySystem
         _dying.RestoreFully(mob);
         _reactions.RestoreDaily(mob);
         _daily.Restore(mob);
+        _dailyChoices.Apply(mob);
 
         if (TryComp(mob, out CFSpellbookComponent? book))
         {

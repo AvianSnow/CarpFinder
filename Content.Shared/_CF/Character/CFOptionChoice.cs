@@ -41,6 +41,13 @@ public sealed partial class CFOptionChoice
     [DataField]
     public int Count = 1;
 
+    /// <summary>
+    /// The pick can be changed every day: the player plans a new one on the character sheet's Daily tab, and the next long
+    /// rest swaps it in. Only a skill, a cantrip and a signature spell can be daily, because those can be taken back.
+    /// </summary>
+    [DataField]
+    public bool Daily;
+
     /// <summary>A cantrip must be on one of these spell lists. Empty means any.</summary>
     [DataField]
     public List<CFSpellTradition> Traditions = new();

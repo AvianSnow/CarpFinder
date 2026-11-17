@@ -145,6 +145,7 @@ An area with `CFAreaFill` or `CFBreathGas` is drawn on its tiles. `ResolveArea` 
 | Radial wheel, HUD deck or hotbar | Activities, stances, spellshapes, Strike actions and spells | `CFActivitySystem`, `CFStanceSystem`, `CFSpellshapeSystem`, `CFStrikeActionSystem`, `CFSpellSystem` |
 | 1 to 0, and Shift with them, while the deck shows Basic, Class or Spells | Use that tab's first or second row | `CFHudDeck.TryKeyed` |
 | HUD deck, Common tab | Shove or Disarm, Grapple, Tumble Through, Demoralize, Feint, Aid, Recall Knowledge, Hide, Seek, Leap | `CFBasicActionComponent`, `CFManeuverSystem.TryUse` |
+| Sheet, Daily tab | Plan what a pick that changes each day becomes at the next long rest | `CFDailyChoicesTab`, `CFDailyChoiceSystem` |
 | Sheet, Spell Preparation | Plan what a prepared caster prepares at the next long rest | `CFSpellPreparationSystem` |
 | Reactions | Not on the wheel. They fire by themselves, and only when that would change the outcome. With several that could, the first in the character's order wins. The character window's Reactions tab reorders them | `CFReactionSystem`, `CFReactionOrderComponent`, `CFReactionsTab` |
 

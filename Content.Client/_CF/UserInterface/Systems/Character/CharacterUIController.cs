@@ -1,3 +1,4 @@
+using Content.Client.CF.Character;
 using Content.Shared.CF.Shop;
 using System.Linq;
 using Content.Client.CharacterInfo;
@@ -114,6 +115,7 @@ public sealed partial class CharacterUIController : UIController, IOnStateEntere
         {
             _window.SheetTab.UpdateXp(entity);
             _window.LevelUpTab.Update(entity);
+            _window.DailyTab.Update(entity);
         }
     }
 
@@ -149,6 +151,8 @@ public sealed partial class CharacterUIController : UIController, IOnStateEntere
         _window.SpellsTab.Update(entity);
         _window.ReactionsTab.Update(entity);
         _window.LevelUpTab.Update(entity);
+        _window.DailyTab.Update(entity);
+        _window.SetDailyVisible(CFDailyChoicesTab.SlotsOf(EntityManager, _prototypeManager, entity).Count > 0);
 
         _window.SpriteView.SetEntity(entity);
 

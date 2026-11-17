@@ -20,7 +20,7 @@ Measured on 17 November 2026, after 1.1 to 1.19 and the out of date notes. `pyth
 | ----------------------- | ----- | ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | Heritages               | 149   | 113 have an effect                                                        | 93 in `heritages.ftl`: 36 heritages do nothing, the rest are missing a part                                                   |
 | Ancestry feats          | 255   | 137, and 1 in part                                                        | 179 in `feats-ancestry.ftl`: every one of the 117 feats that do nothing says so, and what it would do                        |
-| Class feats             | 585   | 203, and 2 in part (11 of them only give a familiar's body, see 3.8)      | 440 in `feats-class.ftl`                                                                                                      |
+| Class feats             | 585   | 205, and 2 in part (11 of them only give a familiar's body, see 3.8)      | 440 in `feats-class.ftl`                                                                                                      |
 | Class features          | 181   | No placeholders                                                           | 51 in the class files                                                                                                         |
 | Subclass options        |       | Every class has its options                                               | 309 in `class-choices.ftl`. Runes repeat 6 times, ikons and tactics 3 times, implements twice, so about 150 different options |
 | General and skill feats | 131   | 12 in `general_feats.py`'s `WORKING`, and the scan agrees                 | Marked `(TBA)` in the builder. See "General and skill feats"                                                                  |
@@ -91,7 +91,7 @@ These said something was not built that this roadmap said was built. All were ch
     - [x] Dragonscaled Kobold: +1 circumstance to saves against Sleep and against Dragon (the breath comes from the dragon, so its traits count). Paralysis has no trait.
     - [x] Fungus Leshy swaps Plant for Fungus with `CFGrantTrait` (`add`, `remove`). Sylph has low-light vision, as the remaster gives it.
     - Jinxed Tengu: curse and misfortune traits. Doomed does not exist (3.13).
-    - Fey-Touched Gnome and Wellspring Gnome: swapping the cantrip each day (3.15), and the tradition of later gnome spells.
+    - Fey-Touched Gnome swaps its cantrip at a long rest (3.15). Still open for it and Wellspring Gnome: the tradition of later gnome spells.
     - Gourd Leshy (storage), Snaptongue Tripkee (touch spells at reach), Draxie (telepathy), Melixie (speaking to insects), Shapewrought Fleshwarp, Pixie's size.
 
 ### 2. Ancestry feats
@@ -136,7 +136,7 @@ These said something was not built that this roadmap said was built. All were ch
 
 ### 3. Class feats: features several classes share
 
-Worked through in one run on 17 November 2026. Done or partly done: 3.1 to 3.7, 3.11 to 3.13, 3.16, 3.17, 3.21. 3.10 summoning and the familiars' bodies (3.8) followed the same day. Not started, because each is a system of its own that has to be seen in play: 3.9 mounts, 3.14 difficult terrain, 3.15 daily choices, 3.18 scrolls and wands, 3.19 stealing, 3.20 disguises, 3.22 water (waits for swimming, 1.3), 3.23 (each needs a decision).
+Worked through in one run on 17 November 2026. Done or partly done: 3.1 to 3.7, 3.11 to 3.13, 3.16, 3.17, 3.21. 3.10 summoning and the familiars' bodies (3.8) followed the same day. 3.15 daily choices came after them. Not started, because each is a system of its own that has to be seen in play: 3.9 mounts, 3.14 difficult terrain, 3.18 scrolls and wands, 3.19 stealing, 3.20 disguises, 3.22 water (waits for swimming, 1.3), 3.23 (each needs a decision).
 
 463 of 585 do nothing. These are the shapes that come up in more than one class. Feats only one class has are under that class in 4.
 
@@ -185,7 +185,10 @@ Worked through in one run on 17 November 2026. Done or partly done: 3.1 to 3.7, 
     - [x] Options that use them: Second Wind and Furious Finish (fatigued), Stunning Blows, Tiger Stance's bleed on a critical hit (`criticalBleedDie` on a stance attack), Scalpel's Point.
     - [ ] Still to do: Cruelty (Touch of the Void has no two-action version), the Psychic's stunning cantrips, the Pluuna rune and Blast Resistance and the Mournful epithet (dazzled), the Spirit fascination (drained), Jinxed Tengu (doomed), Fascinating Performance (Perform is not an action), Bloodletting Claws (an eidolon's critical hit), Clotting Elixirs. Deafened does not make a creature immune to auditory effects, and fascinated does not end when the creature is attacked.
 - [ ] **3.14 Difficult terrain** (1.11). Favored Terrain, Hampering Stance and Not So Fast, Dragon Stance, Unimpeded Step, Forest Passage, the Lyskel rune, the Flesh fascination, Snowdrift Spell. A lingering `CFAreaFill` could carry it.
-- [ ] **3.15 Choices made each day.** A pick at each long rest, on the sheet beside Spell Preparation. Flexible Studies, Oath of the Defender, Oath of the Slayer, Arcane Evolution, Favored Prey, Favored Terrain, Gadget Specialist, Munitions Crafter, Talisman Esoterica, familiar abilities, the Animist's primary apparition, Fey-Touched Gnome.
+- [ ] **3.15 Choices made each day.** Built on 17 November 2026 (`CFDailyChoiceTest`). A `choices` entry with `daily: true` can be changed each day. The character window has a Daily tab, shown only to a character with such a pick: each row is what it is today and what it becomes after the next long rest. The plan is `CFExperienceComponent.DailyPlan`, checked by `CFOptionChoices.IsValidDailyPlan`, and `CFDailyChoiceSystem.Apply` swaps it in from `CFLongRestSystem`: the old skill, cantrip or signature spell is taken back and the new one given.
+    - [x] Flexible Studies (a skill), Arcane Evolution (a skill, fixed, and a signature spell each day), Fey-Touched Gnome (the primal cantrip).
+    - Left out: Flexible Studies' second skill at expert, Arcane Evolution's other choice of a spell added to the repertoire, and Fey-Touched Gnome's 10 minute swap once a day.
+    - [ ] Still to do, each needs its own effect first: Oath of the Defender, Oath of the Slayer, Favored Prey, Favored Terrain (3.14), Gadget Specialist, Munitions Crafter, Talisman Esoterica (3.18), familiar abilities (3.8), the Animist's primary apparition. A daily pick can only take back a skill, a cantrip or a signature spell: a new kind needs a line in `CFDailyChoiceSystem.TakeBack`.
 - [x] **3.16 Extra damage on a Strike after casting a spell.** Done on 17 November 2026 with `!type:CFGrantBespell` (`die`, `damageType`, `cantrips`): Bespell Strikes (Oracle, Sorcerer, Wizard), Psi Strikes, Apparition's Enhancement. It is automatic, and the next Strike that hits within 6 seconds gets the die, where the rules say every Strike until the end of the turn. Not done: taking the spell's own damage type, the tradition trait on the Strike, and Psi Strikes lasting while the psyche is unleashed.
 - [ ] **3.17 Spellshapes left.**
     - [x] Done on 17 November 2026: Energy Ablation (`energyAblation`: resistance to the spell's own energy, where the caster should choose), Spiritual Expansion Spell (it widens), Grasping Spirits Spell (30 feet more range, without the pull). Cryptic Spell already worked.

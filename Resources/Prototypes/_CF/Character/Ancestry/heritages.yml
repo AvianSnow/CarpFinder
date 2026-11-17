@@ -131,6 +131,7 @@
   ancestries: [Gnome]
   choices:
     - kind: Cantrip
+      daily: true
       traditions:
         - Primal
 

@@ -9,6 +9,7 @@ namespace Content.Client.UserInterface.Systems.Character.Windows;
 public sealed partial class CharacterWindow : DefaultWindow
 {
     private const int ShopTabIndex = 4;
+    private const int DailyTabIndex = 6;
 
     public CharacterWindow()
     {
@@ -19,8 +20,19 @@ public sealed partial class CharacterWindow : DefaultWindow
         Tabs.SetTabTitle(3, Loc.GetString("cf-sheet-info-tab"));
         Tabs.SetTabTitle(4, Loc.GetString("cf-shop-tab"));
         Tabs.SetTabTitle(5, Loc.GetString("cf-sheet-levelup-tab"));
+        Tabs.SetTabTitle(DailyTabIndex, Loc.GetString("cf-sheet-daily-tab"));
+        Tabs.SetTabVisible(DailyTabIndex, false);
         ShopTab.OnAccept += Close;
         ShopTab.OnCancel += Close;
+    }
+
+    /// <summary>The Daily tab is only for a character with something to choose each day. Leaves the tab if it is being hidden.</summary>
+    public void SetDailyVisible(bool visible)
+    {
+        if (!visible && Tabs.CurrentTab == DailyTabIndex)
+            Tabs.CurrentTab = 0;
+
+        Tabs.SetTabVisible(DailyTabIndex, visible);
     }
 
     /// <summary>The shop is for merchants. Leaves the tab if it is the one being hidden.</summary>
