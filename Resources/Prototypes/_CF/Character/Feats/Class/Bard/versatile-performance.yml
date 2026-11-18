@@ -12,3 +12,6 @@
     - "polymath muse"
   requiresChoice:
     - MusePolymath
+  grants:
+    - !type:CFGrantOption
+      option: VersatilePerformance

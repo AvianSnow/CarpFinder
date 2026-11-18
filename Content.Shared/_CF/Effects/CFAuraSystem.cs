@@ -79,38 +79,77 @@ public sealed partial class CFAuraSystem : EntitySystem
         return true;
     }
 
-    /// <summary>
-    /// Starts Courageous Anthem, or keeps it going, for <paramref name="lasts"/> from now. It never shortens what is left.
-    /// The first time, the creature gets the anthem's effects: +1 status to attack and damage rolls and to saves against
-    /// fear, for itself and allies in a 60-foot emanation.
-    /// </summary>
+    /// <summary>The composition Courageous Anthem is.</summary>
+    public const string AnthemId = "Anthem";
+
+    /// <summary>Starts Courageous Anthem, or keeps it going, for <paramref name="lasts"/> from now.</summary>
     public void Anthem(EntityUid uid, TimeSpan lasts)
     {
-        var aura = EnsureComp<CFAuraComponent>(uid);
-        if (!HasAnthem(aura))
-            aura.Effects.AddRange(AnthemEffects());
-
-        var now = _timing.CurTime;
-        var running = now < aura.AnthemUntil;
-        if (now + lasts > aura.AnthemUntil)
-            aura.AnthemUntil = now + lasts;
-
-        // A running anthem only needs its end pushed on: the usual checks keep who is inside up to date.
-        if (!running)
-            Refresh(uid, aura);
+        Compose(uid, AnthemId, AnthemEffects(), lasts);
     }
 
     /// <summary>True while Courageous Anthem is running on this creature.</summary>
     public bool AnthemActive(EntityUid uid)
     {
-        return TryComp(uid, out CFAuraComponent? aura) && _timing.CurTime < aura.AnthemUntil;
+        return CompositionActive(uid, AnthemId);
     }
 
-    private static bool HasAnthem(CFAuraComponent aura)
+    /// <summary>
+    /// Starts a composition, or keeps it going, for <paramref name="lasts"/> from now. It never shortens what is left of
+    /// the same one. Another composition the creature was performing ends, as only one runs at a time. The composition's
+    /// effects are added to the aura the first time, and only work while it runs.
+    /// </summary>
+    public void Compose(EntityUid uid, string id, IEnumerable<CFAuraEffect> effects, TimeSpan lasts)
+    {
+        var aura = EnsureComp<CFAuraComponent>(uid);
+        if (!HasComposition(aura, id))
+        {
+            foreach (var effect in effects)
+            {
+                effect.Needs = CFAuraNeeds.Composition;
+                effect.Composition = id;
+                aura.Effects.Add(effect);
+            }
+        }
+
+        var now = _timing.CurTime;
+        var running = aura.Composition == id && now < aura.CompositionUntil;
+        if (!running)
+        {
+            aura.Composition = id;
+            aura.CompositionUntil = now + lasts;
+        }
+        else if (now + lasts > aura.CompositionUntil)
+        {
+            aura.CompositionUntil = now + lasts;
+        }
+
+        Dirty(uid, aura);
+
+        // A running composition only needs its end pushed on: the usual checks keep who is inside up to date.
+        if (!running)
+            Refresh(uid, aura);
+    }
+
+    /// <summary>True while this composition, or with no id any composition, is running on the creature.</summary>
+    public bool CompositionActive(EntityUid uid, string? id = null)
+    {
+        return TryComp(uid, out CFAuraComponent? aura)
+               && _timing.CurTime < aura.CompositionUntil
+               && (id == null || aura.Composition == id);
+    }
+
+    /// <summary>The composition the creature last performed, which an instrument keeps going. Anthem if it has none.</summary>
+    public string LastComposition(EntityUid uid)
+    {
+        return TryComp(uid, out CFAuraComponent? aura) && !string.IsNullOrEmpty(aura.Composition) ? aura.Composition : AnthemId;
+    }
+
+    private static bool HasComposition(CFAuraComponent aura, string id)
     {
         foreach (var effect in aura.Effects)
         {
-            if (effect.Needs == CFAuraNeeds.Anthem)
+            if (effect.Needs == CFAuraNeeds.Composition && effect.Composition == id)
                 return true;
         }
 
@@ -132,7 +171,6 @@ public sealed partial class CFAuraSystem : EntitySystem
         return new CFAuraEffect
         {
             Affects = CFAuraAffects.Allies,
-            Needs = CFAuraNeeds.Anthem,
             SizeFeet = AnthemFeet,
             IncludeSelf = true,
             Stat = stat,
@@ -294,7 +332,7 @@ public sealed partial class CFAuraSystem : EntitySystem
             CFAuraNeeds.HoldingLantern => _implements.IsHolding(uid, CFImplementKind.Lantern),
             CFAuraNeeds.HasBanner => _tactics.HasBanner(uid),
             CFAuraNeeds.Immanence => _ikons.IsEmpowered(uid, effect.Ikon),
-            CFAuraNeeds.Anthem => _timing.CurTime < aura.AnthemUntil,
+            CFAuraNeeds.Composition => aura.Composition == effect.Composition && _timing.CurTime < aura.CompositionUntil,
             CFAuraNeeds.Stance => CompOrNull<CFActiveStanceComponent>(uid)?.Stance?.Id == effect.Stance,
             _ => true,
         };
@@ -335,7 +373,7 @@ public sealed partial class CFAuraSystem : EntitySystem
     private void Enter(EntityUid owner, CFAuraEffect effect, int index, EntityUid target)
     {
         if (effect.Stat is { } stat)
-            _bonuses.AddPermanentBonus(target, stat, effect.Type, effect.Value, effect.Trait, source: Source(owner, index));
+            _bonuses.AddPermanentBonus(target, stat, effect.Type, effect.Value, effect.Trait, effect.Skill, source: Source(owner, index));
 
         if (effect.RetaliateDie > 0 && effect.RetaliateType is { } type)
         {

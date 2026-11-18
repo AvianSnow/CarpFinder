@@ -8,3 +8,6 @@
   level: 4
   traits:
     - "Bard"
+  grants:
+    - !type:CFGrantAction
+      action: CFActTripleTime

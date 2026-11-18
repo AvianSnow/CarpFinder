@@ -547,6 +547,9 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
             case CFCombatOption.DirectedChannel:
                 options.DirectedChannel = true;
                 break;
+            case CFCombatOption.VersatilePerformance:
+                options.VersatilePerformance = true;
+                break;
             case CFCombatOption.ViciousSwing:
                 options.ViciousSwing = true;
                 break;

@@ -344,14 +344,15 @@ public sealed class CFEconomyTest : GameTest
         await Client.WaitAssertion(() =>
         {
             var window = new CharacterWindow();
-            window.Tabs.CurrentTab = 3;
+            var shop = window.ShopTab.GetPositionInParent();
+            window.Tabs.CurrentTab = shop;
 
             window.SetShopVisible(false);
-            Assert.That(window.Tabs.GetTabVisible(3), Is.False);
+            Assert.That(window.Tabs.GetTabVisible(shop), Is.False);
             Assert.That(window.Tabs.CurrentTab, Is.Zero, "It does not stay on a hidden tab.");
 
             window.SetShopVisible(true);
-            Assert.That(window.Tabs.GetTabVisible(3));
+            Assert.That(window.Tabs.GetTabVisible(shop));
         });
     }
 

@@ -35,6 +35,10 @@ public sealed partial class CFSpellComponent : Component
     [DataField, AutoNetworkedField]
     public bool MovesWhenRecast;
 
+    /// <summary>With <see cref="Sustained"/>: how long it runs, in seconds, when that is less than a minute (Hymn of Healing's 4 rounds). 0 is a minute.</summary>
+    [DataField]
+    public float SustainSeconds;
+
     /// <summary>A Magus's conflux spell. Casting one recharges Spellstrike.</summary>
     [DataField]
     public bool Conflux;

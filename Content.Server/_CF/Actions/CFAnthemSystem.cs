@@ -8,8 +8,9 @@ using Robust.Shared.Timing;
 namespace Content.Server.CF.Actions;
 
 /// <summary>
-/// A Bard playing a held instrument performs Courageous Anthem for as long as the music lasts. Starting costs 1 action;
-/// keeping it going is free. Instruments are server-only, so this cannot sit with the other activities.
+/// A Bard playing a held instrument performs a composition for as long as the music lasts: the one last performed, or
+/// Courageous Anthem. Starting costs 1 action; keeping it going is free. Instruments are server-only, so this cannot sit
+/// with the other activities.
 /// </summary>
 public sealed partial class CFAnthemSystem : EntitySystem
 {
@@ -48,9 +49,10 @@ public sealed partial class CFAnthemSystem : EntitySystem
         if (!TryComp(player, out CFCombatOptionsComponent? options) || !options.Anthem)
             return false;
 
-        if (_auras.AnthemActive(player))
+        var composition = _auras.LastComposition(player);
+        if (_auras.CompositionActive(player, composition))
         {
-            _auras.Anthem(player, KeepUp);
+            _auras.Compose(player, composition, Array.Empty<CFAuraEffect>(), KeepUp);
             return false;
         }
 
@@ -64,7 +66,11 @@ public sealed partial class CFAnthemSystem : EntitySystem
             return false;
         }
 
-        _activities.Anthem(player, KeepUp);
+        if (composition == CFAuraSystem.AnthemId)
+            _activities.Anthem(player, KeepUp);
+        else
+            _auras.Compose(player, composition, Array.Empty<CFAuraEffect>(), KeepUp);
+
         return true;
     }
 }

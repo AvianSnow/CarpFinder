@@ -25,8 +25,11 @@ public enum CFAuraNeeds : byte
     /// <summary>The ikon named by <see cref="CFAuraEffect.Ikon"/> holds the owner's divine spark.</summary>
     Immanence,
 
-    /// <summary>The owner is performing Courageous Anthem: <see cref="CFAuraComponent.AnthemUntil"/> has not passed.</summary>
-    Anthem,
+    /// <summary>
+    /// The owner is performing the composition named by <see cref="CFAuraEffect.Composition"/>, and
+    /// <see cref="CFAuraComponent.CompositionUntil"/> has not passed. Courageous Anthem is the composition "Anthem".
+    /// </summary>
+    Composition,
 
     /// <summary>The owner is in the stance named by <see cref="CFAuraEffect.Stance"/>.</summary>
     Stance,
@@ -41,6 +44,14 @@ public sealed partial class CFAuraEffect
 
     [DataField]
     public CFAuraNeeds Needs;
+
+    /// <summary>For <see cref="CFAuraNeeds.Composition"/>: which composition.</summary>
+    [DataField]
+    public string Composition = string.Empty;
+
+    /// <summary>With <see cref="CFBonusStat.SkillChecks"/>, the bonus only counts for this skill (Song of Strength's Athletics).</summary>
+    [DataField]
+    public string? Skill;
 
     /// <summary>For <see cref="CFAuraNeeds.Immanence"/>.</summary>
     [DataField]
@@ -126,9 +137,16 @@ public sealed partial class CFAuraComponent : Component
     [DataField]
     public TimeSpan SpiritShieldsUntil;
 
-    /// <summary>Courageous Anthem lasts until this time. Playing an instrument keeps pushing it on.</summary>
+    /// <summary>
+    /// The composition the creature is performing, or last performed. A Bard has one going at a time: starting another
+    /// ends it. Playing an instrument keeps this one going.
+    /// </summary>
     [DataField]
-    public TimeSpan AnthemUntil;
+    public string Composition = string.Empty;
+
+    /// <summary>The composition lasts until this time. Playing an instrument keeps pushing it on.</summary>
+    [DataField]
+    public TimeSpan CompositionUntil;
 }
 
 /// <summary>On a creature inside an aura that hurts whoever attacks it.</summary>

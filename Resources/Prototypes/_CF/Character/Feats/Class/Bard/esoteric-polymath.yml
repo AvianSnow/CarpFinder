@@ -12,3 +12,6 @@
     - "polymath muse"
   requiresChoice:
     - MusePolymath
+  choices:
+    - kind: SignatureSpell
+      daily: true

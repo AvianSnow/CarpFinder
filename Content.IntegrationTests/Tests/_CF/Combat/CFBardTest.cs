@@ -70,8 +70,8 @@ public sealed class CFBardTest : GameTest
             SEntMan.System<CFActivitySystem>().Anthem(bard);
             during = Bonuses.Total(ally, CFBonusStat.AttackRoll);
             shown = Bonuses.TimedTotal(ally, CFBonusStat.AttackRoll);
-            left = SEntMan.GetComponent<CFAuraComponent>(bard).AnthemUntil - Server.ResolveDependency<IGameTiming>().CurTime;
-            SEntMan.GetComponent<CFAuraComponent>(bard).AnthemUntil = TimeSpan.Zero;
+            left = SEntMan.GetComponent<CFAuraComponent>(bard).CompositionUntil - Server.ResolveDependency<IGameTiming>().CurTime;
+            SEntMan.GetComponent<CFAuraComponent>(bard).CompositionUntil = TimeSpan.Zero;
         });
         await Pair.RunSeconds(0.5f);
         await Server.WaitPost(() => after = Bonuses.Total(ally, CFBonusStat.AttackRoll));
@@ -94,10 +94,10 @@ public sealed class CFBardTest : GameTest
             var bard = Hero();
             var activities = SEntMan.System<CFActivitySystem>();
             activities.Anthem(bard);
-            var until = SEntMan.GetComponent<CFAuraComponent>(bard).AnthemUntil;
+            var until = SEntMan.GetComponent<CFAuraComponent>(bard).CompositionUntil;
             activities.Anthem(bard, TimeSpan.FromSeconds(2));
 
-            Assert.That(SEntMan.GetComponent<CFAuraComponent>(bard).AnthemUntil, Is.EqualTo(until));
+            Assert.That(SEntMan.GetComponent<CFAuraComponent>(bard).CompositionUntil, Is.EqualTo(until));
             Assert.That(Bonuses.Total(bard, CFBonusStat.AttackRoll), Is.EqualTo(1));
             Assert.That(Bonuses.Total(bard, CFBonusStat.Damage), Is.EqualTo(1));
         });

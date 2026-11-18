@@ -12,3 +12,6 @@
     - "warrior muse"
   requiresChoice:
     - MuseWarrior
+  grants:
+    - !type:CFGrantAction
+      action: CFActSongOfStrength

@@ -171,7 +171,7 @@ public sealed partial class CFSpellSystem : EntitySystem
             Aim = aim,
             Target = target,
             Next = now + CFSustain.Pulse,
-            Ends = now + CFSustain.Longest,
+            Ends = now + (spell.Comp.SustainSeconds > 0f ? TimeSpan.FromSeconds(spell.Comp.SustainSeconds) : CFSustain.Longest),
             Rank = spell.Comp.Focus || spell.Comp.Rank == 0 ? CFCasting.CantripRank(level) : Math.Max(1, spell.Comp.ResolvedRank),
             Dc = CFCasting.Spellcasting(_prototypes, CompOrNull<CFCombatantComponent>(caster), CompOrNull<CFAbilityScoreComponent>(caster)).Dc,
         });

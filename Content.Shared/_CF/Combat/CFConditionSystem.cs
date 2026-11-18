@@ -672,6 +672,19 @@ public sealed partial class CFConditionSystem : EntitySystem
             CFAbility.Charisma,
             Math.Max(circumstance, OutwitBonus(user, target)) + SkillBonus(user, "Intimidation"),
             Frightened(user));
+
+        // Versatile Performance: a performance frightens as well as a threat.
+        if (CompOrNull<CFCombatOptionsComponent>(user)?.VersatilePerformance == true)
+        {
+            skill = Math.Max(skill, CFDefense.SkillModifier(
+                _prototypes,
+                combat,
+                abilities,
+                "Performance",
+                CFAbility.Charisma,
+                Math.Max(circumstance, OutwitBonus(user, target)) + SkillBonus(user, "Performance"),
+                Frightened(user)));
+        }
         dc = 10 + CFDefense.SaveModifier(
             _prototypes,
             CompOrNull<CFCombatantComponent>(target),

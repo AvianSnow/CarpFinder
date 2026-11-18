@@ -6,6 +6,8 @@
   name: cf-class-choice-muse-enigma
   description: cf-class-choice-muse-enigma-desc
   grants:
+  - !type:CFGrantFeat
+    feat: CFBardicLore
   - !type:CFGrantSpell
     spell: SureStrike
 
@@ -16,6 +18,8 @@
   name: cf-class-choice-muse-maestro
   description: cf-class-choice-muse-maestro-desc
   grants:
+  - !type:CFGrantFeat
+    feat: CFLingeringComposition
   - !type:CFGrantSpell
     spell: Soothe
 
@@ -25,6 +29,9 @@
   slot: cf-class-choice-muse
   name: cf-class-choice-muse-polymath
   description: cf-class-choice-muse-polymath-desc
+  grants:
+  - !type:CFGrantFeat
+    feat: CFVersatilePerformance
 
 - type: cfClassChoice
   id: MuseWarrior
@@ -33,6 +40,8 @@
   name: cf-class-choice-muse-warrior
   description: cf-class-choice-muse-warrior-desc
   grants:
+  - !type:CFGrantFeat
+    feat: CFMartialPerformance
   - !type:CFGrantSpell
     spell: Fear
 

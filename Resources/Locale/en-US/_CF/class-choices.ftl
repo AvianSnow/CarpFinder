@@ -23,13 +23,13 @@ cf-class-feature-signature-spells = Signature Spells
 
 cf-class-choice-muse = Muse
 cf-class-choice-muse-enigma = Enigma
-cf-class-choice-muse-enigma-desc = You learn sure strike as a spell. The Bardic Lore feat: TBA
+cf-class-choice-muse-enigma-desc = You learn sure strike as a spell and gain the Bardic Lore feat.
 cf-class-choice-muse-maestro = Maestro
-cf-class-choice-muse-maestro-desc = You learn soothe as a spell. The Lingering Composition feat: TBA
+cf-class-choice-muse-maestro-desc = You learn soothe as a spell and gain the Lingering Composition feat.
 cf-class-choice-muse-polymath = Polymath
-cf-class-choice-muse-polymath-desc = The Versatile Performance feat and the phantasmal minion spell: TBA
+cf-class-choice-muse-polymath-desc = You gain the Versatile Performance feat. The phantasmal minion spell: TBA
 cf-class-choice-muse-warrior = Warrior
-cf-class-choice-muse-warrior-desc = You learn fear as a spell. The Martial Performance feat: TBA
+cf-class-choice-muse-warrior-desc = You learn fear as a spell and gain the Martial Performance feat.
 
 cf-class-choice-doctrine = Doctrine
 cf-class-choice-doctrine-cloistered = Cloistered Cleric

@@ -177,8 +177,9 @@ public sealed partial class CFArmorSystem : EntitySystem
     [SubscribeLocalEvent]
     private void OnRefreshSpeed(Entity<CFCombatantComponent> ent, ref RefreshMovementSpeedModifiersEvent args)
     {
+        // A bonus speeds the creature up as a penalty slows it (Rabid Sprint, Triple Time).
         var penalty = SpeedPenalty(ent) + _bonuses.Total(ent, CFBonusStat.Speed);
-        if (penalty >= 0)
+        if (penalty == 0)
             return;
 
         var speed = Math.Max(MinimumSpeedFeet, ent.Comp.SpeedFeet);

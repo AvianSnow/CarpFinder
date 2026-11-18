@@ -292,3 +292,5 @@ cf-weapon-group-shield = Shield critical
 cf-weapon-group-sling = Sling critical
 cf-weapon-group-spear = Spear critical
 cf-weapon-group-sword = Sword critical
+cf-composition-start = {$name} begins.
+cf-reaction-loremasters-etude = Loremaster's Etude

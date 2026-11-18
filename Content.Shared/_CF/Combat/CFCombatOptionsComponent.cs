@@ -392,6 +392,10 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public bool DirectedChannel;
 
+    /// <summary>Demoralize uses Performance when it is better than Intimidation (Versatile Performance).</summary>
+    [DataField, AutoNetworkedField]
+    public bool VersatilePerformance;
+
     /// <summary>The tick Sap Life last healed on, so one cast heals once.</summary>
     public uint SapLifeTick;
 
@@ -615,6 +619,7 @@ public enum CFCombatOption : byte
     PanicTheDead,
     SapLife,
     DirectedChannel,
+    VersatilePerformance,
 }
 
 public enum CFPointMark : byte

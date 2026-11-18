@@ -1465,3 +1465,50 @@
   range: 100 feet
   targets: your eidolon
   summary: "+20 feet status to your eidolon's Speed for a minute. The other evolutions: TBA."
+
+# Hymn of Healing (Player Core, Bard): sustained for 4 rounds, 24 seconds.
+- type: entity
+  parent: CFSpellTarget
+  id: CFHymnOfHealing
+  name: Hymn of Healing
+  description: You or an ally within 30 feet regains 2 Hit Points and gains 2 temporary Hit Points every 6 seconds for 24 seconds, 2 more of each per rank. Costs a Focus Point.
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 2
+  - type: CFSpell
+    spell: HymnOfHealing
+    rank: 0
+    focus: true
+    sustained: true
+    sustainSeconds: 24
+  - type: CFTargeting
+    rangeFeet: 30
+    filter: Allies
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFHealEffect
+      flat: 2
+      heightenFlat: 2
+    - !type:CFTemporaryHpEffect
+      amount: 2
+      heightenAmount: 2
+      durationSeconds: 6
+  - type: EntityTargetAction
+    canTargetSelf: true
+
+- type: cfSpell
+  id: HymnOfHealing
+  name: Hymn of Healing
+  rank: 1
+  traits: [Composition, Concentrate, Healing, Vitality]
+  actionCost: Two
+  range: 30 feet
+  targets: you or 1 ally
+  duration: sustained up to 4 rounds
+  summary: "Fast healing 2 and 2 temporary Hit Points each round."
+  heightened: "Both increase by 2 per rank."

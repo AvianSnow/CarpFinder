@@ -15,6 +15,10 @@ public sealed partial class CFTemporaryHpEffect : CFEffect
     [DataField]
     public float DurationSeconds = 60f;
 
+    /// <summary>Added to <see cref="Amount"/> for each rank the spell is heightened.</summary>
+    [DataField]
+    public int HeightenAmount;
+
     /// <summary>The user gets them, and the amount also counts the target's level once (Absorb Strength).</summary>
     [DataField]
     public bool FromTargetLevel;
@@ -23,7 +27,7 @@ public sealed partial class CFTemporaryHpEffect : CFEffect
     {
         var target = args.Target ?? args.User;
         var level = entities.GetComponentOrNull<CFCombatantComponent>(args.User)?.Level ?? 1;
-        var amount = Amount + PerLevel * level;
+        var amount = Amount + HeightenAmount * args.HeightenSteps + PerLevel * level;
         if (FromTargetLevel)
         {
             amount += entities.GetComponentOrNull<CFCombatantComponent>(target)?.Level ?? 0;
