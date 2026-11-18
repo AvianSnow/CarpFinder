@@ -1,11 +1,12 @@
 # CarpFinder: our own pantheon. Placeholder names and lore, to be replaced when the setting is written.
 # Each gives a skill, a favored weapon and a divine font. An empty divineFont means the follower can use both.
-# Domains are not built, so their names are only in the descriptions.
+# Domains are cfDomain prototypes (domains.yml), offered by Domain Initiate, Deity's Domain and the like.
 
 - type: cfDeity
   id: Solhara
   name: cf-deity-solhara
   description: cf-deity-solhara-desc
+  domains: [ Sun, Healing, Repose ]
   divineFont: [ Heal ]
   trainedSkills:
     - Medicine
@@ -18,6 +19,7 @@
   id: Keth
   name: cf-deity-keth
   description: cf-deity-keth-desc
+  domains: [ Truth, Duty, Protection ]
   divineFont: [ Heal ]
   trainedSkills:
     - Society
@@ -30,6 +32,7 @@
   id: Brannoch
   name: cf-deity-brannoch
   description: cf-deity-brannoch-desc
+  domains: [ Creation, Earth, Family ]
   divineFont: [ Heal ]
   trainedSkills:
     - Crafting
@@ -42,6 +45,7 @@
   id: Vaelis
   name: cf-deity-vaelis
   description: cf-deity-vaelis-desc
+  domains: [ Air, Travel, Luck ]
   trainedSkills:
     - Acrobatics
   grants:
@@ -53,6 +57,7 @@
   id: Morvane
   name: cf-deity-morvane
   description: cf-deity-morvane-desc
+  domains: [ Death, Fate, Soul ]
   trainedSkills:
     - Religion
   grants:
@@ -64,6 +69,7 @@
   id: Sivri
   name: cf-deity-sivri
   description: cf-deity-sivri-desc
+  domains: [ Secrecy, Trickery, Darkness ]
   divineFont: [ Harm ]
   trainedSkills:
     - Stealth
@@ -76,6 +82,7 @@
   id: Ombrix
   name: cf-deity-ombrix
   description: cf-deity-ombrix-desc
+  domains: [ Undeath, Tyranny, Might ]
   divineFont: [ Harm ]
   trainedSkills:
     - Intimidation

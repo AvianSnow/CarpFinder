@@ -145,6 +145,9 @@ public static class CFOptionChoices
         if (choice.Kind == CFOptionChoiceKind.WeaponGroup)
             return Enum.GetNames<CFWeaponGroup>().ToList();
 
+        if (choice.Kind == CFOptionChoiceKind.Domain)
+            return Domains(prototypes, choice, build);
+
         if (choice.Kind == CFOptionChoiceKind.Terrain)
             return Enum.GetNames<Content.Shared.CF.Terrain.CFFavoredTerrain>().ToList();
 
@@ -176,6 +179,31 @@ public static class CFOptionChoices
     }
 
     /// <summary>Whether a feat is of the kind and level a <see cref="CFOptionChoiceKind.Feat"/> choice offers. Prerequisites are not checked here.</summary>
+    /// <summary>
+    /// The domains a domain feat can pick: every domain for Splinter Faith itself, the four Splinter Faith picked when the
+    /// build has it, or else the deity's.
+    /// </summary>
+    private static List<string> Domains(IPrototypeManager prototypes, CFOptionChoice choice, CFCharacterBuildData? build)
+    {
+        if (choice.AnyDomain)
+            return prototypes.EnumeratePrototypes<CFDomainPrototype>().Select(domain => domain.ID).ToList();
+
+        if (build == null)
+            return new List<string>();
+
+        var splinter = new List<string>();
+        foreach (var pick in build.OptionPicks)
+        {
+            if (pick.Source.StartsWith("CFSplinterFaith", StringComparison.Ordinal) && prototypes.HasIndex<CFDomainPrototype>(pick.Value))
+                splinter.Add(pick.Value);
+        }
+
+        if (splinter.Count > 0)
+            return splinter;
+
+        return CFClassChoices.SelectedDeity(prototypes, build)?.Domains.Select(domain => domain.Id).ToList() ?? new List<string>();
+    }
+
     public static bool FeatFits(CFOptionChoice choice, CFFeatPrototype feat, string? classId, string? ancestryId)
     {
         return choice.FeatSlot switch

@@ -9,3 +9,7 @@
   traits:
     - "Champion"
     - "Cleric"
+  choices:
+    - kind: Domain
+      count: 4
+      anyDomain: true

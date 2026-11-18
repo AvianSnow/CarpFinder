@@ -1,0 +1,196 @@
+# Domains: what Domain Initiate, Deity's Domain and the like give. Each grants its domain spell (Spells/Focus/domains.yml),
+# or for a spell cast as a reaction, a Focus Point and the reaction. Ids are the Player Core and Divine Mysteries names.
+
+- type: cfDomain
+  id: Sun
+  name: cf-domain-sun
+  description: cf-domain-sun-desc
+  grants:
+      - !type:CFGrantFocusSpell
+        spell: DazzlingFlash
+
+- type: cfDomain
+  id: Healing
+  name: cf-domain-healing
+  description: cf-domain-healing-desc
+  grants:
+      - !type:CFGrantFocusSpell
+        spell: HealersBlessing
+
+- type: cfDomain
+  id: Repose
+  name: cf-domain-repose
+  description: cf-domain-repose-desc
+  grants:
+      - !type:CFGrantFocusPoints
+      - !type:CFGrantReaction
+        reaction:
+          name: cf-reaction-share-burden
+          trigger: AllySaveWouldFail
+          trait: Emotion
+          rangeFeet: 30
+          focusPoints: 1
+
+- type: cfDomain
+  id: Truth
+  name: cf-domain-truth
+  description: cf-domain-truth-desc
+  grants:
+      - !type:CFGrantFocusSpell
+        spell: WordOfTruth
+
+- type: cfDomain
+  id: Duty
+  name: cf-domain-duty
+  description: cf-domain-duty-desc
+  grants:
+      - !type:CFGrantFocusSpell
+        spell: SwearOath
+
+- type: cfDomain
+  id: Protection
+  name: cf-domain-protection
+  description: cf-domain-protection-desc
+  grants:
+      - !type:CFGrantFocusPoints
+      - !type:CFGrantReaction
+        reaction:
+          name: cf-reaction-protectors-sacrifice
+          trigger: InterceptsDamage
+          rangeFeet: 30
+          redirectPerRank: 3
+          focusPoints: 1
+
+- type: cfDomain
+  id: Creation
+  name: cf-domain-creation
+  description: cf-domain-creation-desc
+  grants:
+      - !type:CFGrantFocusSpell
+        spell: CreativeSplash
+
+- type: cfDomain
+  id: Earth
+  name: cf-domain-earth
+  description: cf-domain-earth-desc
+  grants:
+      - !type:CFGrantFocusSpell
+        spell: HurtlingStone
+
+- type: cfDomain
+  id: Family
+  name: cf-domain-family
+  description: cf-domain-family-desc
+  grants:
+      - !type:CFGrantFocusSpell
+        spell: SoothingWords
+
+- type: cfDomain
+  id: Air
+  name: cf-domain-air
+  description: cf-domain-air-desc
+  grants:
+      - !type:CFGrantFocusSpell
+        spell: PushingGust
+
+- type: cfDomain
+  id: Travel
+  name: cf-domain-travel
+  description: cf-domain-travel-desc
+  grants:
+      - !type:CFGrantFocusSpell
+        spell: AgileFeet
+
+- type: cfDomain
+  id: Luck
+  name: cf-domain-luck
+  description: cf-domain-luck-desc
+  grants:
+      - !type:CFGrantFocusSpell
+        spell: BitOfLuck
+
+- type: cfDomain
+  id: Death
+  name: cf-domain-death
+  description: cf-domain-death-desc
+  grants:
+      - !type:CFGrantFocusPoints
+      - !type:CFGrantReaction
+        reaction:
+          name: cf-reaction-deaths-call
+          trigger: CreatureDied
+          rangeFeet: 20
+          tempHpFromDeath: true
+          focusPoints: 1
+
+- type: cfDomain
+  id: Fate
+  name: cf-domain-fate
+  description: cf-domain-fate-desc
+  grants:
+      - !type:CFGrantFocusSpell
+        spell: ReadFate
+
+- type: cfDomain
+  id: Soul
+  name: cf-domain-soul
+  description: cf-domain-soul-desc
+  grants:
+      - !type:CFGrantFocusSpell
+        spell: EjectSoul
+
+- type: cfDomain
+  id: Secrecy
+  name: cf-domain-secrecy
+  description: cf-domain-secrecy-desc
+
+- type: cfDomain
+  id: Trickery
+  name: cf-domain-trickery
+  description: cf-domain-trickery-desc
+  grants:
+      - !type:CFGrantFocusPoints
+      - !type:CFGrantReaction
+        reaction:
+          name: cf-reaction-sudden-shift
+          trigger: MeleeMissed
+          focusPoints: 1
+          onSelf:
+          - !type:CFFreeStepEffect
+            durationSeconds: 2
+          - !type:CFApplyConditionEffect
+            condition: Concealed
+            value: 1
+            durationSeconds: 6
+
+- type: cfDomain
+  id: Darkness
+  name: cf-domain-darkness
+  description: cf-domain-darkness-desc
+  grants:
+      - !type:CFGrantFocusSpell
+        spell: CloakOfShadow
+
+- type: cfDomain
+  id: Undeath
+  name: cf-domain-undeath
+  description: cf-domain-undeath-desc
+  grants:
+      - !type:CFGrantFocusSpell
+        spell: TouchOfUndeath
+
+- type: cfDomain
+  id: Tyranny
+  name: cf-domain-tyranny
+  description: cf-domain-tyranny-desc
+  grants:
+      - !type:CFGrantFocusSpell
+        spell: TouchOfObedience
+
+- type: cfDomain
+  id: Might
+  name: cf-domain-might
+  description: cf-domain-might-desc
+  grants:
+      - !type:CFGrantFocusSpell
+        spell: AthleticRush

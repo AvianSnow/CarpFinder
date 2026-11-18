@@ -929,3 +929,20 @@ public sealed partial class CFGrantFavoredTerrain : CFGrant
         entities.Dirty(args.Mob, walker);
     }
 }
+
+/// <summary>Gives the domain spell of the domain the player picked for this option (Domain Initiate, Deity's Domain).</summary>
+public sealed partial class CFGrantDomainSpell : CFGrant
+{
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        var features = entities.System<CFCharacterFeatureSystem>();
+        if (features.Pick(args.Mob, args.Source) is not { } pick
+            || !IoCManager.Resolve<IPrototypeManager>().TryIndex<CFDomainPrototype>(pick, out var domain))
+        {
+            return;
+        }
+
+        // A source of its own: the option's own source has already run, and Apply runs each source once.
+        features.Apply(args.Mob, domain.Grants, $"{args.Source}:domain:{domain.ID}");
+    }
+}

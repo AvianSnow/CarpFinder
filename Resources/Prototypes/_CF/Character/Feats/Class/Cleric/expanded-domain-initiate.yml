@@ -12,3 +12,7 @@
     - "Domain Initiate"
   requiresFeats:
     - CFDomainInitiate
+  choices:
+    - kind: Domain
+  grants:
+    - !type:CFGrantDomainSpell

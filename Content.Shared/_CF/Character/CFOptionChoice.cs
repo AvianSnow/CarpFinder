@@ -28,6 +28,12 @@ public enum CFOptionChoiceKind : byte
 
     /// <summary>A favored terrain (<c>CFFavoredTerrain</c>), read by <c>CFGrantFavoredTerrain</c>.</summary>
     Terrain,
+
+    /// <summary>
+    /// One of the deity's domains (<c>cfDomain</c>), read by <c>CFGrantDomainSpell</c>. Splinter Faith's picks replace the
+    /// deity's, and <see cref="CFOptionChoice.AnyDomain"/> offers them all.
+    /// </summary>
+    Domain,
 }
 
 /// <summary>
@@ -74,6 +80,10 @@ public sealed partial class CFOptionChoice
     /// <summary>The highest feat level a <see cref="CFOptionChoiceKind.Feat"/> choice offers.</summary>
     [DataField]
     public int FeatLevel = 1;
+
+    /// <summary>A <see cref="CFOptionChoiceKind.Domain"/> choice offers every domain, not only the deity's (Splinter Faith).</summary>
+    [DataField]
+    public bool AnyDomain;
 
     /// <summary>What a <see cref="CFOptionChoiceKind.DamageType"/> choice can be answered with.</summary>
     [DataField]

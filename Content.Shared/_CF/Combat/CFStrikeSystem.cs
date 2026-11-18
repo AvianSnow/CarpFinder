@@ -1000,6 +1000,9 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (degree == CFDegree.CriticalFailure && !isObject)
             _reactions.AnswerCriticalMiss(target, user);
 
+        if (!degree.IsSuccess() && melee && !isObject)
+            _reactions.AnswerMiss(target, user);
+
         if (!isObject)
             _auras.NoteAttacked(target, user);
 

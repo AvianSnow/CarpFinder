@@ -10,6 +10,7 @@ using Content.Shared.CF.Factions;
 using Content.Shared.CF.Items;
 using Content.Shared.CF.Spells;
 using Content.Shared.Hands.EntitySystems;
+using Content.Shared.Mobs;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Movement.Components;
 using Content.Shared.Movement.Pulling.Components;
@@ -35,7 +36,7 @@ public sealed partial class CFReactionSystem : EntitySystem
     private static readonly TimeSpan MarkLasts = TimeSpan.FromSeconds(6);
 
     /// <summary>Far enough to find any champion whose 15 foot aura could hold the victim. The aura itself has the last word.</summary>
-    private const float AllySearchRange = 5f;
+    private const float AllySearchRange = 7f;
 
     /// <summary>How far to look for an ally who might keep a creature from dropping. Each reaction's own range has the last word.</summary>
     private const float DropSearchRange = 7f;
@@ -69,6 +70,7 @@ public sealed partial class CFReactionSystem : EntitySystem
     [Dependency] private SharedPhysicsSystem _physics = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private Content.Shared.CF.Terrain.CFTerrainSystem _terrain = default!;
+    [Dependency] private CFTemporaryHpSystem _tempHp = default!;
 
     public override void Update(float frameTime)
     {
@@ -778,8 +780,13 @@ public sealed partial class CFReactionSystem : EntitySystem
                     if (!CanIntercept(uid, target, attacker, known.Reaction, damageType) || !TrySpend(uid, known))
                         continue;
 
-                    _effects.DealDamage(attacker, uid, amount, damageType, critical: false);
-                    return 0;
+                    // Protector's Sacrifice takes only part of it.
+                    var taken = amount;
+                    if (known.Reaction.RedirectPerRank > 0)
+                        taken = Math.Min(amount, known.Reaction.RedirectPerRank * CFCasting.CantripRank(CompOrNull<CFCombatantComponent>(uid)?.Level ?? 1));
+
+                    _effects.DealDamage(attacker, uid, taken, damageType, critical: false);
+                    return amount - taken;
                 }
 
                 if (known.Reaction.Trigger != CFReactionTrigger.AllyWouldBeDamaged
@@ -918,11 +925,12 @@ public sealed partial class CFReactionSystem : EntitySystem
         CFDegree degree,
         HashSet<ProtoId<CFTraitPrototype>>? traits = null)
     {
-        if (defense is not (CFDefenseType.Fortitude or CFDefenseType.Reflex or CFDefenseType.Will)
-            || !TryComp(uid, out CFReactionsComponent? reactions))
-        {
+        if (defense is not (CFDefenseType.Fortitude or CFDefenseType.Reflex or CFDefenseType.Will))
             return degree;
-        }
+
+        // An ally's reaction can still help a creature that has none of its own.
+        if (!TryComp(uid, out CFReactionsComponent? reactions))
+            return AnswerAllySave(uid, degree, traits);
 
         var existing = Math.Max(0, _bonuses.TotalOfType(uid, CFBonusStat.Saves, CFBonusType.Circumstance));
         foreach (var known in Ordered(uid, reactions))
@@ -972,7 +980,92 @@ public sealed partial class CFReactionSystem : EntitySystem
             return result;
         }
 
+        return AnswerAllySave(uid, degree, traits);
+    }
+
+    /// <summary>An ally close by may shoulder part of a failing save (Share Burden): the result is one degree better.</summary>
+    private CFDegree AnswerAllySave(EntityUid uid, CFDegree degree, HashSet<ProtoId<CFTraitPrototype>>? traits)
+    {
+        if (degree == CFDegree.CriticalSuccess || !_net.IsServer)
+            return degree;
+
+        foreach (var (ally, reactions) in _lookup.GetEntitiesInRange<CFReactionsComponent>(Transform(uid).Coordinates, AllySearchRange))
+        {
+            if (ally == uid || _factions.CanHarm(ally, uid))
+                continue;
+
+            foreach (var known in Ordered(ally, reactions))
+            {
+                var reaction = known.Reaction;
+                if (reaction.Trigger != CFReactionTrigger.AllySaveWouldFail
+                    || reaction.Trait is { } trait && traits?.Contains(trait) != true
+                    || (_transform.GetWorldPosition(ally) - _transform.GetWorldPosition(uid)).Length() > reaction.RangeFeet / CFMelee.FeetPerTile
+                    || !TrySpend(ally, known))
+                {
+                    continue;
+                }
+
+                return degree + 1;
+            }
+        }
+
         return degree;
+    }
+
+    /// <summary>An enemy's melee attack has missed <paramref name="target"/>, which may answer it (Sudden Shift).</summary>
+    public void AnswerMiss(EntityUid target, EntityUid attacker)
+    {
+        if (!_net.IsServer
+            || !TryComp(target, out CFReactionsComponent? reactions)
+            || !_mobState.IsAlive(target)
+            || !_factions.CanHarm(target, attacker))
+        {
+            return;
+        }
+
+        foreach (var known in Ordered(target, reactions))
+        {
+            if (known.Reaction.Trigger == CFReactionTrigger.MeleeMissed && TrySpend(target, known))
+                return;
+        }
+    }
+
+    /// <summary>A creature has died. Anyone close by with a reaction to death, such as Death's Call, answers it.</summary>
+    [SubscribeLocalEvent]
+    private void OnMobState(MobStateChangedEvent args)
+    {
+        if (!_net.IsServer || args.NewMobState != MobState.Dead)
+            return;
+
+        var dead = args.Target;
+        foreach (var (uid, reactions) in _lookup.GetEntitiesInRange<CFReactionsComponent>(Transform(dead).Coordinates, DropSearchRange))
+        {
+            if (uid == dead)
+                continue;
+
+            foreach (var known in Ordered(uid, reactions))
+            {
+                var reaction = known.Reaction;
+                if (reaction.Trigger != CFReactionTrigger.CreatureDied
+                    || (_transform.GetWorldPosition(uid) - _transform.GetWorldPosition(dead)).Length() > reaction.RangeFeet / CFMelee.FeetPerTile
+                    || !TrySpend(uid, known))
+                {
+                    continue;
+                }
+
+                if (reaction.TempHpFromDeath)
+                {
+                    var stats = CFCasting.Spellcasting(_prototypes, CompOrNull<CFCombatantComponent>(uid), CompOrNull<CFAbilityScoreComponent>(uid));
+                    var amount = Math.Max(0, (CompOrNull<CFCombatantComponent>(dead)?.Level ?? 0) + stats.AbilityModifier);
+                    if (CompOrNull<CFTraitComponent>(dead)?.HasTrait("Undead") == true)
+                        amount *= 2;
+
+                    _tempHp.Grant(uid, Math.Max(1, amount), 60f, "deaths-call");
+                }
+
+                break;
+            }
+        }
     }
 
     /// <summary>The best modifier for this save among the creature's allies within <paramref name="feet"/>.</summary>
@@ -1230,7 +1323,9 @@ public sealed partial class CFReactionSystem : EntitySystem
                && (known.Reaction.Implement is not { } kind || _implements.IsHolding(uid, kind))
                && _mobState.IsAlive(uid)
                && TryComp(uid, out CFCombatOptionsComponent? options)
-               && (known.Reaction.Free || options.ReactionSpent == 0);
+               && (known.Reaction.Free || options.ReactionSpent == 0)
+               && (known.Reaction.FocusPoints <= 0
+                   || TryComp(uid, out CFSpellbookComponent? book) && CFFocusSystem.Remaining(book) >= known.Reaction.FocusPoints);
     }
 
     private bool TrySpend(EntityUid uid, CFKnownReaction known)
@@ -1242,6 +1337,25 @@ public sealed partial class CFReactionSystem : EntitySystem
         {
             options.ReactionSpent = CFReactions.Granted;
             Dirty(uid, options);
+        }
+
+        if (known.Reaction.FocusPoints > 0 && TryComp(uid, out CFSpellbookComponent? book))
+        {
+            book.FocusSpent += known.Reaction.FocusPoints;
+            Dirty(uid, book);
+        }
+
+        if (known.Reaction.OnSelf.Count > 0)
+        {
+            _effects.Run(known.Reaction.OnSelf, new CFEffectArgs
+            {
+                User = uid,
+                Source = uid,
+                Target = uid,
+                Position = Transform(uid).Coordinates,
+                Degree = CFDegree.Success,
+                Defense = CFDefenseType.None,
+            });
         }
 
         known.UsedToday++;

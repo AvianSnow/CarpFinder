@@ -89,6 +89,7 @@ cf-character-builder-option-save = Become expert in
 cf-character-builder-option-feat = Feat
 cf-character-builder-option-damage-type = Energy type
 cf-character-builder-option-terrain = Favored terrain
+cf-character-builder-option-domain = Domain
 cf-character-builder-option-help = Choose what this option gives you.
 cf-character-builder-deity-selected = Deity: { $name }
 cf-character-builder-deity-tba = Deity: TBA

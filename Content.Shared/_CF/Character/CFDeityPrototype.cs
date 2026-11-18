@@ -28,6 +28,10 @@ public sealed partial class CFDeityPrototype : IPrototype
     [DataField]
     public List<ProtoId<CFSpellPrototype>> DivineFont = new();
 
+    /// <summary>The domains a follower's domain feats choose from. Splinter Faith replaces them.</summary>
+    [DataField]
+    public List<ProtoId<CFDomainPrototype>> Domains = new();
+
     /// <summary>What following this deity gives, such as familiarity with its favored weapon.</summary>
     [DataField]
     public List<CFGrant> Grants = new();

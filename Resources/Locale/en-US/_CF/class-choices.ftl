@@ -33,7 +33,7 @@ cf-class-choice-muse-warrior-desc = You learn fear as a spell. The Martial Perfo
 
 cf-class-choice-doctrine = Doctrine
 cf-class-choice-doctrine-cloistered = Cloistered Cleric
-cf-class-choice-doctrine-cloistered-desc = At level 3 you become an expert in Fortitude saves. The Domain Initiate feat at level 1: TBA
+cf-class-choice-doctrine-cloistered-desc = You gain the Domain Initiate feat at level 1, and at level 3 you become an expert in Fortitude saves.
 cf-class-choice-doctrine-warpriest = Warpriest
 cf-class-choice-doctrine-warpriest-desc = Trained in light and medium armor, expert in Fortitude saves, and Shield Block. At level 3 you are trained in martial weapons. You have Deadly Simplicity, which makes your deity's favored weapon hit harder when it is a simple weapon.
 

@@ -346,6 +346,22 @@ public sealed partial class CFBonusSystem : EntitySystem
             comp.FortuneUntil = until;
     }
 
+    public void GrantSaveFortune(EntityUid uid, float seconds)
+    {
+        var comp = EnsureComp<CFBonusesComponent>(uid);
+        comp.SaveFortuneUntil = _timing.CurTime + TimeSpan.FromSeconds(Math.Max(1f, seconds));
+    }
+
+    /// <summary>True once per grant: the save being rolled now is rolled twice.</summary>
+    public bool TryConsumeSaveFortune(EntityUid uid)
+    {
+        if (!TryComp(uid, out CFBonusesComponent? comp) || comp.SaveFortuneUntil <= _timing.CurTime)
+            return false;
+
+        comp.SaveFortuneUntil = TimeSpan.Zero;
+        return true;
+    }
+
     /// <summary>True once per grant: the attack being rolled now is rolled twice.</summary>
     public bool TryConsumeFortune(EntityUid uid)
     {

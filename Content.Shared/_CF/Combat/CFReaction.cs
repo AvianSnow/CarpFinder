@@ -66,6 +66,18 @@ public enum CFReactionTrigger : byte
 
     /// <summary>An ally within <see cref="CFReaction.RangeFeet"/> has dropped to 0 Hit Points.</summary>
     AllyDropped,
+
+    /// <summary>An enemy's melee attack has missed this creature (Sudden Shift).</summary>
+    MeleeMissed,
+
+    /// <summary>A creature within <see cref="CFReaction.RangeFeet"/> has died, or an undead one has been destroyed (Death's Call).</summary>
+    CreatureDied,
+
+    /// <summary>
+    /// An ally within <see cref="CFReaction.RangeFeet"/> has failed to get the best result on a save, against an effect with
+    /// <see cref="CFReaction.Trait"/> when it is set. The ally's result is one degree better (Share Burden).
+    /// </summary>
+    AllySaveWouldFail,
 }
 
 /// <summary>
@@ -290,6 +302,28 @@ public sealed partial class CFReaction
     /// <summary>Runs on the enemy that set this off.</summary>
     [DataField]
     public List<CFEffect> OnEnemy = new();
+
+    /// <summary>Runs on this creature when the reaction fires (Sudden Shift's Step and concealment).</summary>
+    [DataField]
+    public List<CFEffect> OnSelf = new();
+
+    /// <summary>Focus Points the reaction costs: a focus spell cast as a reaction.</summary>
+    [DataField]
+    public int FocusPoints;
+
+    /// <summary>
+    /// With <see cref="CFReactionTrigger.InterceptsDamage"/>: only this much damage per spell rank is taken in the ally's
+    /// place, and the ally takes the rest (Protector's Sacrifice). 0 takes all of it.
+    /// </summary>
+    [DataField]
+    public int RedirectPerRank;
+
+    /// <summary>
+    /// With <see cref="CFReactionTrigger.CreatureDied"/>: temporary Hit Points for a minute equal to the dead creature's level
+    /// plus this creature's spellcasting modifier, doubled for an undead one (Death's Call).
+    /// </summary>
+    [DataField]
+    public bool TempHpFromDeath;
 }
 
 /// <summary>The reactions a creature has been granted, and how many daily uses it has spent.</summary>

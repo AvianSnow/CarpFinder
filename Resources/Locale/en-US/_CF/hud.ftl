@@ -37,6 +37,7 @@ cf-hud-status-dazzled = Dazzled
 cf-hud-status-fatigued = Fatigued
 cf-hud-status-deafened = Deafened
 cf-hud-status-fascinated = Fascinated
+cf-hud-status-healinghalved = Healing halved
 cf-hud-status-grabbed = Grabbed
 cf-hud-status-immobilized = Immobilized
 cf-hud-status-blinded = Blinded

@@ -45,6 +45,11 @@ public sealed partial class CFHealEffect : CFEffect
                    + PerLevel * (entities.GetComponentOrNull<CFCombatantComponent>(args.User)?.Level ?? 1)
                    + system.PotencyBonus(args);
         var amount = system.Roll(dice, system.SpellDie(args, Die), flat);
+
+        // Healer's Blessing: a little more from a healing spell.
+        if (entities.HasComponent<Content.Shared.CF.Spells.CFSpellComponent>(args.Source))
+            amount += Math.Max(0, entities.System<CFBonusSystem>().Total(target, CFBonusStat.SpellHealing));
+
         system.Heal(args.User, target, amount);
     }
 }

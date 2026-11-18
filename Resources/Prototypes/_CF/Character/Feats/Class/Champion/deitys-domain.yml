@@ -8,3 +8,7 @@
   level: 1
   traits:
     - "Champion"
+  choices:
+    - kind: Domain
+  grants:
+    - !type:CFGrantDomainSpell

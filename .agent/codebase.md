@@ -256,7 +256,7 @@ The character editor and character window are swapped with csproj `Compile Remov
 
 ## Prototype kinds
 
-`adventureSite`, `cookingRecipe`, `craftingRecipe`, `cfAbility`, `cfAbilitySkill`, `cfAncestry`, `cfBackground`, `cfClass`, `cfClassChoice`, `cfDamageType`, `cfDeity`, `cfFaction`, `cfFeat`, `cfGoapAction`, `cfGoapGoal`, `cfGoapProfile`, `encounter`, `goapTactics`, `cfHeritage`, `cfIkon`, `cfJobGroup`, `cfRune`, `language`, `cfMaterial`, `cfPet`, `cfPetGear`, `cfPropertyRune`, `cfSpell`, `cfTrait`.
+`adventureSite`, `cookingRecipe`, `craftingRecipe`, `cfAbility`, `cfAbilitySkill`, `cfAncestry`, `cfBackground`, `cfClass`, `cfClassChoice`, `cfDamageType`, `cfDeity`, `cfDomain`, `cfFaction`, `cfFeat`, `cfGoapAction`, `cfGoapGoal`, `cfGoapProfile`, `encounter`, `goapTactics`, `cfHeritage`, `cfIkon`, `cfJobGroup`, `cfRune`, `language`, `cfMaterial`, `cfPet`, `cfPetGear`, `cfPropertyRune`, `cfSpell`, `cfTrait`.
 
 Radial actions are entities in `Resources/Prototypes/_CF/Actions/activities.yml`, and each spell is an action entity in `Resources/Prototypes/_CF/Spells/{0,1,2,3}/`. Feats with `pendingAction: true` have data but no behaviour yet.
 

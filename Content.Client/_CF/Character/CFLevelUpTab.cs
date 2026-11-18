@@ -462,6 +462,9 @@ public sealed partial class CFLevelUpTab : BoxContainer
         if (_prototypes.TryIndex<CFDamageTypePrototype>(value, out var damageType))
             return Loc.GetString(damageType.Name);
 
+        if (_prototypes.TryIndex<CFDomainPrototype>(value, out var domain))
+            return Loc.GetString(domain.Name);
+
         if (Enum.TryParse<Content.Shared.CF.Terrain.CFFavoredTerrain>(value, out var terrain))
             return Loc.GetString($"cf-terrain-favored-{terrain.ToString().ToLowerInvariant()}");
 

@@ -159,6 +159,10 @@ public sealed partial class CFEffectSystem
         if (amount <= 0 || HasComp<CFVoidHealingComponent>(target) || CompOrNull<CFTraitComponent>(target)?.HasTrait("Construct") == true || !_bridge.TryEnsureCombatTarget(target, out _, out _, out _))
             return;
 
+        // Touch of Undeath: vitality heals only half.
+        if (_conditions.Value(target, CFConditionKind.HealingHalved) > 0)
+            amount = Math.Max(1, amount / 2);
+
         _dying.RestoreHitPoints(target, amount, user);
         ShowNumber(target, CFDegree.Success, amount, "Vitality");
 

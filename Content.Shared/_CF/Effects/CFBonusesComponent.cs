@@ -24,6 +24,10 @@ public sealed partial class CFBonusesComponent : Component
     [DataField]
     public TimeSpan FortuneUntil;
 
+    /// <summary>Until this time the next saving throw is rolled twice, and the better result kept (Bit of Luck).</summary>
+    [DataField]
+    public TimeSpan SaveFortuneUntil;
+
     /// <summary>Non-zero while quickened or slowed has replaced the action cap.</summary>
     [DataField]
     public int ActionCap;
@@ -121,6 +125,9 @@ public enum CFBonusStat : byte
 
     /// <summary>The DC against someone Shoving, Tripping, Disarming, Grappling or Repositioning this creature.</summary>
     ManeuverDc,
+
+    /// <summary>Extra Hit Points each time a spell heals this creature (Healer's Blessing).</summary>
+    SpellHealing,
 }
 
 /// <summary>Bonuses of the same type do not stack: the highest bonus and the worst penalty of each type apply.</summary>

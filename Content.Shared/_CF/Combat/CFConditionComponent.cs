@@ -198,6 +198,9 @@ public enum CFConditionKind : byte
     /// <summary>Everything is concealed to the creature: a DC 5 flat check to target anything.</summary>
     Dazzled,
 
+    /// <summary>Vitality heals the creature only half as much (Touch of Undeath).</summary>
+    HealingHalved,
+
     /// <summary>-1 to AC and saves.</summary>
     Fatigued,
 

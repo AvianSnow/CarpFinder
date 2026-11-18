@@ -5,6 +5,9 @@
   slot: cf-class-choice-doctrine
   name: cf-class-choice-doctrine-cloistered
   description: cf-class-choice-doctrine-cloistered-desc
+  grants:
+  - !type:CFGrantFeat
+    feat: CFDomainInitiate
   features:
   - level: 3
     name: Second Doctrine
