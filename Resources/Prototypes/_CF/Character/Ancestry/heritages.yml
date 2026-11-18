@@ -266,6 +266,9 @@
   name: cf-heritage-wildwood-halfling
   description: cf-heritage-wildwood-halfling-desc
   ancestries: [Halfling]
+  grants:
+    - !type:CFGrantIgnoreTerrain
+      causes: [ Plants ]
 
 - type: cfHeritage
   id: SkilledHuman
@@ -465,6 +468,9 @@
   name: cf-heritage-jungle-catfolk
   description: cf-heritage-jungle-catfolk-desc
   ancestries: [Catfolk]
+  grants:
+    - !type:CFGrantIgnoreTerrain
+      causes: [ Plants ]
 
 - type: cfHeritage
   id: LiminalCatfolk
@@ -862,6 +868,8 @@
   grants:
     - !type:CFGrantFeat
       feat: CFQuickSqueeze
+    - !type:CFGrantIgnoreTerrain
+      causes: [ Tight ]
 
 - type: cfHeritage
   id: DogtoothTengu

@@ -63,6 +63,18 @@ public sealed partial class CFFreeStepEffect : CFEffect
     }
 }
 
+/// <summary>The user ignores every difficult terrain for a while (Light Paws).</summary>
+public sealed partial class CFIgnoreTerrainEffect : CFEffect
+{
+    [DataField]
+    public float DurationSeconds = 6f;
+
+    public override void Apply(IEntityManager entities, CFEffectArgs args)
+    {
+        entities.System<Content.Shared.CF.Terrain.CFTerrainSystem>().IgnoreAllFor(args.User, DurationSeconds);
+    }
+}
+
 /// <summary>The user jumps the way it faces, this many feet.</summary>
 public sealed partial class CFLeapEffect : CFEffect
 {

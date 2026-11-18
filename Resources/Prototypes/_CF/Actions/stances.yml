@@ -68,10 +68,11 @@
   parent: CFActStanceBase
   id: CFActDragonStance
   name: Dragon Stance
-  description: While unarmored, your fists become 1d10 bludgeoning dragon tail attacks.
+  description: While unarmored, your fists become 1d10 bludgeoning dragon tail attacks, and you cross the first 5 feet of difficult terrain at full Speed.
   components:
   - type: CFStance
     requiresUnarmored: true
+    freeTerrainFeet: 5
     attack:
       die: 10
       damageType: Bludgeoning
@@ -222,3 +223,12 @@
     - stat: MeleeDamage
       type: Untyped
       value: 1
+
+# Battlecry!, page 42. The aura is the feat's CFGrantAura, which only works while this stance is the one in use.
+- type: entity
+  parent: CFActStanceBase
+  id: CFActHamperingStance
+  name: Hampering Stance
+  description: The ground within 5 feet of you is difficult terrain for your enemies while you stay in this stance.
+  components:
+  - type: CFStance

@@ -4,6 +4,7 @@ using Content.Shared.CF.Actions;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Effects;
 using Content.Shared.Popups;
+using Robust.Shared.Map.Components;
 using Robust.Shared.Network;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Timing;
@@ -23,6 +24,7 @@ public sealed partial class CFSpellshapeSystem : EntitySystem
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private CFCharacterFeatureSystem _features = default!;
     [Dependency] private CFBonusSystem _bonuses = default!;
+    [Dependency] private SharedMapSystem _map = default!;
 
     public override void Update(float frameTime)
     {
@@ -71,6 +73,14 @@ public sealed partial class CFSpellshapeSystem : EntitySystem
     /// <summary>A spell is being cast. A spellshape that answers the spell itself, such as Energy Ablation, does so here.</summary>
     public void NoteCast(EntityUid user, CFSpellComponent spell)
     {
+        if (Current(user) is { Snowdrift: true }
+            && _prototypes.TryIndex(spell.Spell, out var cast)
+            && !cast.Traits.Contains("Fire")
+            && (cast.Traits.Contains("Air") || cast.Traits.Contains("Water") || cast.Traits.Contains("Cold")))
+        {
+            EnsureComp<CFSnowdriftPendingComponent>(user).Until = _timing.CurTime + SnowdriftWaits;
+        }
+
         if (Current(user) is not { EnergyAblation: true } || !_prototypes.TryIndex(spell.Spell, out var proto))
             return;
 
@@ -84,6 +94,43 @@ public sealed partial class CFSpellshapeSystem : EntitySystem
                 : spell.ResolvedRank);
             _bonuses.AddResistance(user, energy, rank, weakness: false, 6f);
             return;
+        }
+    }
+
+    /// <summary>How long after the cast a spell with Snowdrift Spell can still leave its snow, for a bolt still flying.</summary>
+    private static readonly TimeSpan SnowdriftWaits = TimeSpan.FromSeconds(10);
+
+    private static readonly EntProtoId SnowPrototype = "CFFillSnowdrift";
+
+    /// <summary>
+    /// A spell has affected <paramref name="target"/>. If it was cast with Snowdrift Spell, the tile under the creature and
+    /// the eight around it fill with snow.
+    /// </summary>
+    public void NoteAffected(EntityUid user, EntityUid source, EntityUid target)
+    {
+        if (!_net.IsServer
+            || !HasComp<CFSpellComponent>(source)
+            || !TryComp(user, out CFSnowdriftPendingComponent? pending))
+        {
+            return;
+        }
+
+        RemComp(user, pending);
+        var xform = Transform(target);
+        if (_timing.CurTime > pending.Until || xform.GridUid is not { } gridUid || !TryComp(gridUid, out MapGridComponent? grid))
+            return;
+
+        var centre = _map.TileIndicesFor(gridUid, grid, xform.Coordinates);
+        for (var x = -1; x <= 1; x++)
+        {
+            for (var y = -1; y <= 1; y++)
+            {
+                var tile = centre + new Vector2i(x, y);
+                if (!_map.TryGetTileRef(gridUid, grid, tile, out var tileRef) || tileRef.Tile.IsEmpty)
+                    continue;
+
+                SpawnAtPosition(SnowPrototype, _map.GridTileToLocal(gridUid, grid, tile));
+            }
         }
     }
 

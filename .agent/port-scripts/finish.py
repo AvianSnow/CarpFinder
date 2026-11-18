@@ -114,6 +114,12 @@ open(f,'w').write(''.join(out))
 for f in ('Fence/big_fence','Fence/fence','Fence/window','Flora/snowdrift','Flora/web'):
     sub(f'Entities/Structures/Ported/{f}.yml','CFwall','CFWall')
 
+# Bushes and snowdrifts are difficult terrain (CFTerrainSystem), not stock's contact slowdown.
+for f,cause in (('Flora/grasshighbush','Plants'),('Flora/snowdrift','Snow')):
+    sub(f'Entities/Structures/Ported/{f}.yml',
+        '  - type: SpeedModifierContacts\n    walkSpeedModifier: 0.5\n    sprintSpeedModifier: 0.5\n',
+        f'  - type: CFDifficultTerrain\n    cause: {cause}\n')
+
 # Rejected systems: essences, religion and alchemy books, demiplane loot, crystal lamps.
 sub('Entities/Structures/Ported/Flora/Crystal/elemental.yml',r'^ *- !type:SpawnEntitiesBehavior\n *spawn:\n *CFEssence\w+:\n *min: \d+\n *max: \d+\n','',regex=True)
 sub('Entities/Structures/Ported/Furniture/bookshelf.yml',r'^ *- id: CF(GuidebookAlchemy|BookPantheonGodsSileita|BookPantheonGodsSileitaImitators)\n','',regex=True)

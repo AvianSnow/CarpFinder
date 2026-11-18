@@ -6,6 +6,7 @@ using Content.Shared.CF.Effects.Areas;
 using Content.Shared.CF.Items;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
+using Content.Shared.CF.Terrain;
 using Content.Shared.CF.Traits;
 using Robust.Shared.Map;
 using Robust.Shared.Prototypes;
@@ -44,6 +45,8 @@ public sealed partial class CFAuraSystem : EntitySystem
     [Dependency] private CFImplementSystem _implements = default!;
     [Dependency] private CFTacticSystem _tactics = default!;
     [Dependency] private CFIkonSystem _ikons = default!;
+    [Dependency] private CFStanceSystem _stances = default!;
+    [Dependency] private CFTerrainSystem _terrain = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
 
     private readonly HashSet<Entity<MobStateComponent>> _nearby = new();
@@ -292,6 +295,7 @@ public sealed partial class CFAuraSystem : EntitySystem
             CFAuraNeeds.HasBanner => _tactics.HasBanner(uid),
             CFAuraNeeds.Immanence => _ikons.IsEmpowered(uid, effect.Ikon),
             CFAuraNeeds.Anthem => _timing.CurTime < aura.AnthemUntil,
+            CFAuraNeeds.Stance => CompOrNull<CFActiveStanceComponent>(uid)?.Stance?.Id == effect.Stance,
             _ => true,
         };
     }
@@ -340,6 +344,9 @@ public sealed partial class CFAuraSystem : EntitySystem
             retaliation.Die = effect.RetaliateDie;
             retaliation.DamageType = type;
         }
+
+        if (effect.DifficultTerrain)
+            _terrain.SetHampered(target, owner, true);
     }
 
     private void Leave(EntityUid owner, CFAuraEffect effect, int index, EntityUid target)
@@ -352,6 +359,9 @@ public sealed partial class CFAuraSystem : EntitySystem
 
         if (effect.RetaliateDie > 0 && CompOrNull<CFAuraRetaliationComponent>(target)?.AuraOwner == owner)
             RemComp<CFAuraRetaliationComponent>(target);
+
+        if (effect.DifficultTerrain)
+            _terrain.SetHampered(target, owner, false);
     }
 
     /// <summary>Every bonus an aura gives has a source starting with this.</summary>

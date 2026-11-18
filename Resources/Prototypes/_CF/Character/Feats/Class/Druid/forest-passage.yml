@@ -12,3 +12,6 @@
     - "leaf order"
   requiresChoice:
     - OrderLeaf
+  grants:
+    - !type:CFGrantIgnoreTerrain
+      causes: [ Plants ]

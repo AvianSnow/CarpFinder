@@ -34,9 +34,24 @@ public sealed partial class CFSpellshapeComponent : Component
     [DataField]
     public bool EnergyAblation;
 
+    /// <summary>
+    /// If the next spell has the air, water or cold trait and not fire, the ground under and around the first creature it
+    /// affects fills with snow, difficult terrain for 6 seconds (Snowdrift Spell).
+    /// </summary>
+    [DataField]
+    public bool Snowdrift;
+
     /// <summary>The next Untamed Form is 2 ranks lower and lasts an hour (Form Control). <c>CFBattleFormSystem</c> reads it.</summary>
     [DataField]
     public bool FormControl;
+}
+
+/// <summary>The creature's last spell was cast with Snowdrift Spell and has not yet affected a creature.</summary>
+[RegisterComponent]
+public sealed partial class CFSnowdriftPendingComponent : Component
+{
+    [DataField]
+    public TimeSpan Until;
 }
 
 /// <summary>On a creature that has used a spellshape and not yet cast the spell.</summary>

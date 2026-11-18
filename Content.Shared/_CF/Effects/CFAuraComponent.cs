@@ -27,6 +27,9 @@ public enum CFAuraNeeds : byte
 
     /// <summary>The owner is performing Courageous Anthem: <see cref="CFAuraComponent.AnthemUntil"/> has not passed.</summary>
     Anthem,
+
+    /// <summary>The owner is in the stance named by <see cref="CFAuraEffect.Stance"/>.</summary>
+    Stance,
 }
 
 /// <summary>One thing an aura does to the creatures inside it. See <see cref="CFAuraSystem"/>.</summary>
@@ -42,6 +45,14 @@ public sealed partial class CFAuraEffect
     /// <summary>For <see cref="CFAuraNeeds.Immanence"/>.</summary>
     [DataField]
     public string Ikon = string.Empty;
+
+    /// <summary>For <see cref="CFAuraNeeds.Stance"/>: the stance action's prototype id.</summary>
+    [DataField]
+    public string Stance = string.Empty;
+
+    /// <summary>The ground inside is difficult terrain for those it affects (Hampering Stance).</summary>
+    [DataField]
+    public bool DifficultTerrain;
 
     /// <summary>This effect's own emanation, in feet. 0 uses the aura's <see cref="CFAuraComponent.SizeFeet"/>.</summary>
     [DataField]

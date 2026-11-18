@@ -56,6 +56,7 @@ Everything below is under `Content.Shared/_CF/`.
 | `Shop/` | Coins, prices, the wallet, the merchant's counter and the guild pallets. Selling and coin logic are server-side. | `CFCoins`, `CFWalletSystem`, `CFMerchantSystem`, `CFCoinSystem` |
 | `Spells/` | Paying for a cast, prepared charges, spellshapes, Prestidigitation | `CFSpellSystem`, `CFPreparedSpells`, `CFSpellshapeSystem` |
 | `Traits/` | `cfTrait` prototypes and `CFTrait` | `CFTraitPrototype` |
+| `Terrain/` | Difficult terrain: what makes a tile slow, and who ignores which cause. A Step cannot be taken in it | `CFTerrainSystem`, `CFDifficultTerrainComponent` |
 | `Roof/` | Roofs that hide while you stand under them. The hiding is client-side. | `CFRoofComponent` |
 | `Wallmount/` | Wall-only placement | `CFWallmount`, `CFWallRequired` |
 | `Temperature/`, `TileEditTool/`, `Wallpaper/`, `Time/`, `StatusIcon/` | Ported CP14 systems, the world clock, status icons | |
@@ -241,6 +242,7 @@ All edits carry `// CarpFinder` markers, so `grep -rn CarpFinder Content.Client 
 | Fire | `Content.Client/Atmos/EntitySystems/FireVisualizerSystem.cs` | Do not spawn the light during `ComponentInit`: it crashed a Debug client that first saw something already burning |
 | Icons | `SharedStatusIconSystem.cs` | Partial for the flanked icon |
 | Ghosts | `Resources/Prototypes/Entities/Mobs/Player/observer.yml` | Z-level Move up and Move down actions (`CFZLevelGhostMover`), and a `CFZPhysics` that never falls |
+| Difficult terrain | `Content.Shared/Maps/ContentTileDefinition.cs` | `cfDifficultTerrain` and `cfGreaterDifficultTerrain` on a tile, read by `CFTerrainSystem` |
 | Z-levels | `Content.Client/Viewport/ScalingViewport.cs`, `Content.Client/Parallax/ParallaxOverlay.cs`, `Content.Shared/Maps/ContentTileDefinition.cs`, `Content.Shared/Throwing/ThrownItemSystem.cs`, `Content.Shared/Light/Components/LightCycleComponent.cs`, `Content.Shared/Movement/Systems/SharedMoverController.Input.cs`, `Content.Shared/Weather/SharedWeatherSystem.cs`, `Content.Client/Light/EntitySystems/GridStencilSystem.cs`, `Content.Client/Overlays/StencilOverlay.Weather.cs`, `Tiles/space.yml`, `Tiles/plating.yml`, `Entities/Mobs/base.yml`, `Entities/Objects/base_item.yml`, `Entities/Structures/base_structure.yml`, `Entities/Structures/Furniture/chairs.yml` | What the CrystallEdge integration guide asks for: the viewport draws every level in view, the sky only under the lowest, tiles can be `transparent`, a thrown item does not land in mid-air, levels share one time of day, the camera does not snap when changing level, weather stops under a floor on the level above and over empty tiles under one, open sky and lattice are transparent, and every mob, item, loose structure and seat has `CFZPhysics`. See `zlevels.md` |
 | Prone | `Content.Shared/Stunnable/SharedStunSystem.Knockdown.cs` | Do not force a creature up while it is being deleted. "No room to stand" ignores sensors |
 | Pointing | `Content.Shared/Pointing/SharedPointingSystem.cs` | An event for pointing at the ground, for Seek |

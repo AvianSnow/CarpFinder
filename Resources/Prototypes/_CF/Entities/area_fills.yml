@@ -98,3 +98,20 @@
     layers:
     - state: particles_up
       shader: unshaded
+
+# Snowdrift Spell: ankle-deep snow, difficult terrain until the caster's next turn.
+- type: entity
+  parent: CFFillBase
+  id: CFFillSnowdrift
+  name: snow
+  components:
+  - type: TimedDespawn
+    lifetime: 6
+  - type: Sprite
+    drawdepth: FloorObjects
+    sprite: _CP14/Structures/Flora/snowdrift.rsi
+    layers:
+    - state: full
+  - type: CFDifficultTerrain
+    cause: Snow
+    magical: true

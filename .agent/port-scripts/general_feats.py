@@ -24,6 +24,7 @@ WORKING = {
     'Armor Proficiency': ['  grants:', '  - !type:CFGrantArmorProficiency'],
     'Canny Acumen': ['  choices:', '  - kind: SaveOrPerception'],
     'Diehard': ['  grants:', '  - !type:CFGrantOption', '    option: Diehard'],
+    'Feather Step': ['  grants:', '  - !type:CFGrantIgnoreTerrain', '    featherStep: true'],
     'Fleet': ['  speedBonus: 5'],
     'Hefty Hauler': ['  grants:', '  - !type:CFGrantOption', '    option: HeftyHauler'],
     'Shield Block': ['  grants:', '  - !type:CFGrantOption', '    option: ShieldBlock'],

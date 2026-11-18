@@ -525,7 +525,9 @@
   - "Dexterity +2"
   requiresAbility:
     Dexterity: 2
-  pendingAction: true
+  grants:
+  - !type:CFGrantIgnoreTerrain
+    featherStep: true
 
 - type: cfFeat
   id: CFFleet

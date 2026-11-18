@@ -68,6 +68,7 @@ public sealed partial class CFReactionSystem : EntitySystem
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private SharedPhysicsSystem _physics = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
+    [Dependency] private Content.Shared.CF.Terrain.CFTerrainSystem _terrain = default!;
 
     public override void Update(float frameTime)
     {
@@ -166,6 +167,10 @@ public sealed partial class CFReactionSystem : EntitySystem
         var now = _timing.CurTime;
         if (pool != null && now < pool.StepCoveredUntil)
             return true;
+
+        // A Step cannot go into difficult terrain, so walking out of reach there is a Stride and provokes.
+        if (!_terrain.CanStep(mover))
+            return false;
 
         if (!_actions.TrySpendActions(mover, 1, stealthy: true))
             return false;

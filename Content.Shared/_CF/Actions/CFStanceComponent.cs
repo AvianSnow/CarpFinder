@@ -51,6 +51,13 @@ public sealed partial class CFStanceComponent : Component
     /// <summary>Ignore volley and add 2 damage inside the first range increment (Point-Blank Stance).</summary>
     [DataField]
     public bool PointBlank;
+
+    /// <summary>
+    /// This much of each stretch of difficult terrain is crossed at full Speed (Dragon Stance's first square).
+    /// <c>CFTerrainSystem</c> reads it.
+    /// </summary>
+    [DataField]
+    public int FreeTerrainFeet;
 }
 
 [DataDefinition]

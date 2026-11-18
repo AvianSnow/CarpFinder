@@ -269,6 +269,9 @@ public sealed partial class HumanoidProfileEditor
         if (_prototypeManager.TryIndex<CFDamageTypePrototype>(value, out var damageType))
             return Loc.GetString(damageType.Name);
 
+        if (Enum.TryParse<Content.Shared.CF.Terrain.CFFavoredTerrain>(value, out var terrain))
+            return Loc.GetString($"cf-terrain-favored-{terrain.ToString().ToLowerInvariant()}");
+
         return SkillLabelMap().GetValueOrDefault(value, value);
     }
 
@@ -320,6 +323,7 @@ public sealed partial class HumanoidProfileEditor
                     CFOptionChoiceKind.SaveOrPerception => "cf-character-builder-option-save",
                     CFOptionChoiceKind.Feat => "cf-character-builder-option-feat",
                     CFOptionChoiceKind.DamageType => "cf-character-builder-option-damage-type",
+                    CFOptionChoiceKind.Terrain => "cf-character-builder-option-terrain",
                     _ => "cf-character-builder-option-skill",
                 }),
                 Allowed = allowed,

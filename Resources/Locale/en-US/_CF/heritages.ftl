@@ -55,7 +55,7 @@ cf-heritage-nomadic-halfling-desc = Two extra languages, chosen here. One more f
 cf-heritage-twilight-halfling = Twilight Halfling
 cf-heritage-twilight-halfling-desc = You have low-light vision.
 cf-heritage-wildwood-halfling = Wildwood Halfling
-cf-heritage-wildwood-halfling-desc = Plants and fungi do not count as difficult terrain for you. TBA
+cf-heritage-wildwood-halfling-desc = Bushes, vines, undergrowth and other plants and fungi are not difficult terrain for you, and thick undergrowth is only difficult terrain.
 
 cf-heritage-skilled-human = Skilled Human
 cf-heritage-skilled-human-desc = You become trained in one skill of your choice. Becoming an expert in it at level 5: TBA
@@ -99,7 +99,7 @@ cf-heritage-clawed-catfolk-desc = Your claws are an agile finesse unarmed attack
 cf-heritage-hunting-catfolk = Hunting Catfolk
 cf-heritage-hunting-catfolk-desc = Imprecise scent out to 30 feet. The bonus to Track what you have smelled: TBA
 cf-heritage-jungle-catfolk = Jungle Catfolk
-cf-heritage-jungle-catfolk-desc = Undergrowth is easier to move through, and thick undergrowth is only difficult terrain. TBA
+cf-heritage-jungle-catfolk-desc = Undergrowth is not difficult terrain for you, and thick undergrowth is only difficult terrain.
 cf-heritage-liminal-catfolk = Liminal Catfolk
 cf-heritage-liminal-catfolk-desc = You can cast detect magic at will. The bonus to recall knowledge of creatures from other planes: TBA
 cf-heritage-nine-lives-catfolk = Nine Lives Catfolk
@@ -180,7 +180,7 @@ cf-heritage-shadow-rat-desc = You are trained in Intimidation. Coercing and demo
 cf-heritage-snow-rat = Snow Rat
 cf-heritage-snow-rat-desc = Cold resistance equal to half your level (at least 1), and environmental cold is one step less severe.
 cf-heritage-tunnel-rat = Tunnel Rat
-cf-heritage-tunnel-rat-desc = You gain the Quick Squeeze feat (TBA). Tight spaces that are not a squeeze not being difficult terrain: TBA
+cf-heritage-tunnel-rat-desc = You gain the Quick Squeeze feat (TBA). Tight spaces that are not tight enough to need a squeeze are not difficult terrain for you.
 
 cf-heritage-dogtooth-tengu = Dogtooth Tengu
 cf-heritage-dogtooth-tengu-desc = Your beak unarmed attack gains the deadly d8 trait.

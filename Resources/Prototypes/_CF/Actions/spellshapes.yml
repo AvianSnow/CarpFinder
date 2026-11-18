@@ -100,3 +100,13 @@
     useDelay: 600
   - type: CFSpellshape
     extraRangeFeet: 30
+
+# Player Core, page 131.
+- type: entity
+  parent: CFActSpellshapeBase
+  id: CFActSnowdriftSpell
+  name: Snowdrift Spell
+  description: If your next spell has the air, water or cold trait and not fire, the ground under and around the first creature it affects fills with snow, difficult terrain for 6 seconds. Lost if you spend an action on anything else first.
+  components:
+  - type: CFSpellshape
+    snowdrift: true

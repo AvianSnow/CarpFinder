@@ -8,6 +8,7 @@ using Content.Shared.CF.DamageTypes;
 using Content.Shared.CF.Detection;
 using Content.Shared.CF.Outdoors;
 using Content.Shared.CF.Effects;
+using Content.Shared.CF.Terrain;
 using Content.Shared.CF.Traits;
 using Content.Shared.CF.ZLevels;
 using Content.Shared.Inventory;
@@ -884,5 +885,47 @@ public sealed partial class CFGrantChosenAction : CFGrant
         var features = entities.System<CFCharacterFeatureSystem>();
         if (features.Pick(args.Mob, args.Source) is { } pick && Actions.TryGetValue(pick, out var action))
             features.GrantAction(args.Mob, action);
+    }
+}
+
+/// <summary>
+/// Difficult terrain of these causes is ignored, and greater difficult terrain of them is only difficult (Wildwood
+/// Halfling, Rock Runner). <see cref="NonMagicalOnly"/> leaves terrain made by magic alone. See <see cref="CFTerrainSystem"/>.
+/// </summary>
+public sealed partial class CFGrantIgnoreTerrain : CFGrant
+{
+    [DataField]
+    public List<CFTerrainCause> Causes = new();
+
+    [DataField]
+    public bool NonMagicalOnly;
+
+    /// <summary>The creature can Step while in difficult terrain (Feather Step).</summary>
+    [DataField]
+    public bool FeatherStep;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        var walker = entities.System<CFTerrainSystem>().Walker(args.Mob);
+        (NonMagicalOnly ? walker.IgnoresNonMagical : walker.Ignores).UnionWith(Causes);
+        walker.FeatherStep |= FeatherStep;
+        entities.Dirty(args.Mob, walker);
+    }
+}
+
+/// <summary>Ignores the non-magical difficult terrain of the favored terrain the player picked (Favored Terrain).</summary>
+public sealed partial class CFGrantFavoredTerrain : CFGrant
+{
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        if (entities.System<CFCharacterFeatureSystem>().Pick(args.Mob, args.Source) is not { } pick
+            || !Enum.TryParse<CFFavoredTerrain>(pick, out var terrain))
+        {
+            return;
+        }
+
+        var walker = entities.System<CFTerrainSystem>().Walker(args.Mob);
+        walker.IgnoresNonMagical.UnionWith(CFFavoredTerrains.Causes(terrain));
+        entities.Dirty(args.Mob, walker);
     }
 }

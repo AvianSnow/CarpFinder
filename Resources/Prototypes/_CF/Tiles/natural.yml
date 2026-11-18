@@ -225,6 +225,8 @@
 
 - type: tile
   id: CFFloorSnowDeepDeep
+  cfDifficultTerrain: Snow
+  cfGreaterDifficultTerrain: true
   editorHidden: false
   name: cf-tiles-snow-deep-deep
   sprite: /Textures/_CP14/Tiles/SnowDeepDeep/snow.png
@@ -257,6 +259,7 @@
 
 - type: tile
   id: CFFloorSnowDeep
+  cfDifficultTerrain: Snow
   editorHidden: false
   name: cf-tiles-snow-deep
   sprite: /Textures/_CP14/Tiles/SnowDeep/snow.png

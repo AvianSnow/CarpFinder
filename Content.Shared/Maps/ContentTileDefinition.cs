@@ -147,6 +147,14 @@ public sealed partial class ContentTileDefinition : IPrototype, IInheritingProto
     /// The texture is as high as the lip is thick, and every 32 pixels of width is a variant.
     /// </summary>
     [DataField] public ResPath VolumeSprite { get; private set; } = new("/Textures/_CE/Tiles/Volume/default.png");
+
+    /// <summary>
+    /// CarpFinder: the tile is difficult terrain of this cause, read by CFTerrainSystem. Null is easy ground.
+    /// </summary>
+    [DataField("cfDifficultTerrain")] public Content.Shared.CF.Terrain.CFTerrainCause? CFDifficultTerrain;
+
+    /// <summary>CarpFinder: the tile's difficult terrain is greater difficult terrain.</summary>
+    [DataField("cfGreaterDifficultTerrain")] public bool CFGreaterDifficultTerrain;
     // CarpFinder end
 
     [DataField] public bool EditorHidden { get; private set; } = false;

@@ -295,6 +295,10 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
             if (Enum.IsDefined(typeof(CFAbility), pick.Value))
                 continue;
 
+            // Read by CFGrantFavoredTerrain.
+            if (Enum.IsDefined(typeof(Content.Shared.CF.Terrain.CFFavoredTerrain), pick.Value))
+                continue;
+
             // Read by the grant that asked for it, such as CFGrantChosenResistance.
             if (_prototypes.HasIndex<CFDamageTypePrototype>(pick.Value))
                 continue;

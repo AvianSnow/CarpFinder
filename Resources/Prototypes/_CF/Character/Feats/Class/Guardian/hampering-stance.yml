@@ -11,4 +11,13 @@
     - "Guardian"
     - "Stance"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActHamperingStance
+    - !type:CFGrantAura
+      effects:
+        - affects: Enemies
+          needs: Stance
+          stance: CFActHamperingStance
+          sizeFeet: 5
+          difficultTerrain: true

@@ -28,9 +28,8 @@
   - type: FloorOccluder
   - type: Transform
     anchored: true
-  - type: SpeedModifierContacts
-    walkSpeedModifier: 0.5
-    sprintSpeedModifier: 0.5
+  - type: CFDifficultTerrain
+    cause: Snow
   - type: Physics
     bodyType: Static
   - type: Fixtures

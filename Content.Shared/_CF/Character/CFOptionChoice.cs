@@ -25,6 +25,9 @@ public enum CFOptionChoiceKind : byte
 
     /// <summary>One of <see cref="CFOptionChoice.DamageTypes"/>, read by a grant such as <c>CFGrantChosenResistance</c>.</summary>
     DamageType,
+
+    /// <summary>A favored terrain (<c>CFFavoredTerrain</c>), read by <c>CFGrantFavoredTerrain</c>.</summary>
+    Terrain,
 }
 
 /// <summary>

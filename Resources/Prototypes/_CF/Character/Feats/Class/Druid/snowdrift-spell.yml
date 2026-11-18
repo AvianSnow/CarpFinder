@@ -14,6 +14,8 @@
   prerequisites:
     - "storm order"
   action: Action
-  pendingAction: true
   requiresChoice:
     - OrderStorm
+  grants:
+    - !type:CFGrantAction
+      action: CFActSnowdriftSpell

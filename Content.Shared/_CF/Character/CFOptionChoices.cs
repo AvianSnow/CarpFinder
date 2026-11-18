@@ -145,6 +145,9 @@ public static class CFOptionChoices
         if (choice.Kind == CFOptionChoiceKind.WeaponGroup)
             return Enum.GetNames<CFWeaponGroup>().ToList();
 
+        if (choice.Kind == CFOptionChoiceKind.Terrain)
+            return Enum.GetNames<Content.Shared.CF.Terrain.CFFavoredTerrain>().ToList();
+
         if (choice.Kind == CFOptionChoiceKind.DamageType)
             return choice.DamageTypes.Select(type => type.Id).ToList();
 

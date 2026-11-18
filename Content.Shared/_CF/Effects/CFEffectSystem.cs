@@ -493,6 +493,7 @@ public sealed partial class CFEffectSystem : EntitySystem
         }
 
         RunDegreeEffects(source, args, landed);
+        _spellshapes.NoteAffected(user, source, target);
         if (amp != null)
         {
             Run(amp.AmpEffects, args);

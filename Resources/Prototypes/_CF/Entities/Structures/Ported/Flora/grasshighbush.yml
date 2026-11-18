@@ -73,9 +73,8 @@
           CFFloraMaterial1:
             min: 0
             max: 2
-  - type: SpeedModifierContacts
-    walkSpeedModifier: 0.5
-    sprintSpeedModifier: 0.5
+  - type: CFDifficultTerrain
+    cause: Plants
   - type: EmitSoundOnTrigger
     sound:
       params:
