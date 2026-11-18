@@ -7,6 +7,8 @@
   description: A regular bell with a handle to attract attention.
   categories: [ ForkFiltered ]
   components:
+  - type: CFItemPrice
+    copper: 200 # KCTG: Hand Bell
   - type: Sprite
     sprite: _CP14/Objects/Misc/bell.rsi
     state: icon

@@ -321,4 +321,7 @@ sub(W+'/Objects/Tools/Entities_Objects_Tools_bucket.yml','  parent: BaseItem\n  
 # Food prices live in their own table, so a re-port keeps them.
 import food_prices
 miss += food_prices.apply()
+# So do the prices of materials and trade goods, from Kris's Compendium of Trade Goods.
+import trade_prices
+miss += trade_prices.apply()
 print('MISSED',miss)

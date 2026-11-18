@@ -5,6 +5,9 @@
   description: A piece of pale, heavy copper.
   categories: [ ForkFiltered ]
   components:
+  - type: CFItemPrice
+    copper: 20 # KCTG: Copper Ore
+    fullResale: true
   - type: Item
     size: Normal
   - type: Sprite
@@ -31,6 +34,9 @@
   parent: CFOreCopper1
   suffix: 5
   components:
+  - type: CFItemPrice
+    copper: 100 # KCTG: Copper Ore, 5 at 2 sp
+    fullResale: true
   - type: Stack
     count: 5
 
@@ -39,6 +45,9 @@
   parent: CFOreCopper1
   suffix: 10
   components:
+  - type: CFItemPrice
+    copper: 200 # KCTG: Copper Ore, 10 at 2 sp
+    fullResale: true
   - type: Stack
     count: 10
 
@@ -51,6 +60,9 @@
   description: A piece of cold, heavy iron.
   categories: [ ForkFiltered ]
   components:
+  - type: CFItemPrice
+    copper: 60 # KCTG: Iron Ore
+    fullResale: true
   - type: Item
     size: Normal
   - type: Sprite
@@ -77,6 +89,9 @@
   parent: CFOreIron1
   suffix: 5
   components:
+  - type: CFItemPrice
+    copper: 300 # KCTG: Iron Ore, 5 at 6 sp
+    fullResale: true
   - type: Stack
     count: 5
 
@@ -85,6 +100,9 @@
   parent: CFOreIron1
   suffix: 10
   components:
+  - type: CFItemPrice
+    copper: 600 # KCTG: Iron Ore, 10 at 6 sp
+    fullResale: true
   - type: Stack
     count: 10
 
@@ -97,6 +115,9 @@
   description: A piece of soft, pure gold.
   categories: [ ForkFiltered, DoNotMap ]
   components:
+  - type: CFItemPrice
+    copper: 3000 # KCTG: Gold Ore
+    fullResale: true
   - type: Item
     size: Normal
   - type: Sprite
@@ -124,6 +145,9 @@
   categories: [ DoNotMap ]
   suffix: 5
   components:
+  - type: CFItemPrice
+    copper: 15000 # KCTG: Gold Ore, 5 at 30 gp
+    fullResale: true
   - type: Stack
     count: 5
 
@@ -133,6 +157,9 @@
   categories: [ DoNotMap ]
   suffix: 10
   components:
+  - type: CFItemPrice
+    copper: 30000 # KCTG: Gold Ore, 10 at 30 gp
+    fullResale: true
   - type: Stack
     count: 10
 
@@ -191,6 +218,9 @@
   description: This is coal! It burns very well!
   categories: [ ForkFiltered ]
   components:
+  - type: CFItemPrice
+    copper: 5 # KCTG: Charcoal
+    fullResale: true
   - type: Item
     size: Normal
   - type: Sprite
@@ -230,6 +260,9 @@
   parent: CFOreCoal1
   suffix: 5
   components:
+  - type: CFItemPrice
+    copper: 25 # KCTG: Charcoal, 5 at 5 cp
+    fullResale: true
   - type: Stack
     count: 5
 
@@ -238,5 +271,8 @@
   parent: CFOreCoal1
   suffix: 10
   components:
+  - type: CFItemPrice
+    copper: 50 # KCTG: Charcoal, 10 at 5 cp
+    fullResale: true
   - type: Stack
     count: 10

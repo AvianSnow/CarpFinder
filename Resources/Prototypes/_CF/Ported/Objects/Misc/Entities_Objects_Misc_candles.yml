@@ -42,6 +42,8 @@
   name: candle
   description: A thin wick threaded through fat.
   components:
+  - type: CFItemPrice
+    copper: 1 # KCTG: Fat Candles
   - type: Sprite
     noRot: true
     drawdepth: Mobs

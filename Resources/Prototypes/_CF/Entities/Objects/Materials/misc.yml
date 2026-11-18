@@ -6,6 +6,9 @@
   suffix: 1
   categories: [ ForkFiltered ]
   components:
+  - type: CFItemPrice
+    copper: 1 # KCTG: Soot
+    fullResale: true
   - type: Item
     size: Tiny
   # A tribe's farmers work it into poor soil (CFGOAPStep.FeedSoil).
@@ -49,6 +52,9 @@
   parent: CFAsh1
   suffix: 3
   components:
+  - type: CFItemPrice
+    copper: 3 # KCTG: Soot, 3 at 1 cp
+    fullResale: true
   - type: Stack
     count: 3
 
@@ -85,6 +91,9 @@
   description: Treated quartz glass, transmits light well, and is nice to look at!
   categories: [ ForkFiltered ]
   components:
+  - type: CFItemPrice
+    copper: 50 # KCTG: Glass
+    fullResale: true
   - type: Item
     size: Normal
   - type: Sprite
@@ -111,6 +120,9 @@
   parent: CFGlassSheet1
   suffix: 5
   components:
+  - type: CFItemPrice
+    copper: 250 # KCTG: Glass, 5 at 5 sp
+    fullResale: true
   - type: Stack
     count: 5
 
@@ -119,6 +131,9 @@
   parent: CFGlassSheet1
   suffix: 10
   components:
+  - type: CFItemPrice
+    copper: 500 # KCTG: Glass, 10 at 5 sp
+    fullResale: true
   - type: Stack
     count: 10
 
@@ -130,6 +145,9 @@
   description: A yellowed bone that once belonged to a living creature.
   categories: [ ForkFiltered ]
   components:
+  - type: CFItemPrice
+    copper: 1 # KCTG: Chicken Bones
+    fullResale: true
   - type: Item
     size: Normal
   - type: Sprite
@@ -156,6 +174,9 @@
   parent: CFBone1
   suffix: 5
   components:
+  - type: CFItemPrice
+    copper: 5 # KCTG: Chicken Bones, 5 at 1 cp
+    fullResale: true
   - type: Stack
     count: 5
 
@@ -164,5 +185,8 @@
   parent: CFBone1
   suffix: 10
   components:
+  - type: CFItemPrice
+    copper: 10 # KCTG: Chicken Bones, 10 at 1 cp
+    fullResale: true
   - type: Stack
     count: 10

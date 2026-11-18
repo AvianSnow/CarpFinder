@@ -35,6 +35,8 @@
   parent: CFBowlBase
   name: wooden bowl
   components:
+  - type: CFItemPrice
+    copper: 2 # KCTG: Wooden Bowl
   - type: Sprite
     layers:
     - state: wooden

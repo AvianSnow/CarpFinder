@@ -20,6 +20,8 @@
   name: d20
   description: What are the odds of me drinking wine and choking and dropping the candle on the dwarf's head?
   components:
+  - type: CFItemPrice
+    copper: 10 # KCTG: Bone Dice
   - type: Dice
     sides: 20
     currentValue: 20
@@ -32,6 +34,8 @@
   name: d6
   description: A bone cube for board games.
   components:
+  - type: CFItemPrice
+    copper: 10 # KCTG: Bone Dice
   - type: Dice
     sides: 6
     currentValue: 6

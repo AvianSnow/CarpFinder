@@ -32,6 +32,9 @@
   description: A plant raw fiber used to make cotton fabric.
   categories: [ ForkFiltered ]
   components:
+  - type: CFItemPrice
+    copper: 50 # KCTG: Cotton
+    fullResale: true
   - type: Item
     size: Tiny
   - type: Sprite

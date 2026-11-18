@@ -50,6 +50,9 @@
   description: A block of cold stone.
   categories: [ ForkFiltered ]
   components:
+  - type: CFItemPrice
+    copper: 10 # KCTG: Cobblestones
+    fullResale: true
   - type: Item
     size: Normal
   - type: Sprite
@@ -85,6 +88,9 @@
   parent: CFStoneBlock1
   suffix: 10
   components:
+  - type: CFItemPrice
+    copper: 100 # KCTG: Cobblestones, 10 at 1 sp
+    fullResale: true
   - type: Stack
     count: 10
 
@@ -95,6 +101,9 @@
   description: A block of white marble.
   categories: [ ForkFiltered ]
   components:
+  - type: CFItemPrice
+    copper: 100 # KCTG: Marble
+    fullResale: true
   - type: Item
     size: Normal
   - type: Sprite
@@ -122,5 +131,8 @@
   parent: CFMarbleBlock1
   suffix: 10
   components:
+  - type: CFItemPrice
+    copper: 1000 # KCTG: Marble, 10 at 1 gp
+    fullResale: true
   - type: Stack
     count: 10

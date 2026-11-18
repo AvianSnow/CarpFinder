@@ -5,6 +5,9 @@
   description: Thin thread. Material for mending clothes, or sewing new ones.
   categories: [ ForkFiltered ]
   components:
+  - type: CFItemPrice
+    copper: 15 # KCTG: Waxed Thread
+    fullResale: true
   - type: Item
     size: Tiny
   - type: Sprite
@@ -49,6 +52,9 @@
   suffix: 1
   description: White cloth roll
   components:
+  - type: CFItemPrice
+    copper: 50 # KCTG: Gingham
+    fullResale: true
   - type: Item
     size: Normal
   - type: Sprite
@@ -87,6 +93,9 @@
   parent: CFCloth1
   suffix: 10
   components:
+  - type: CFItemPrice
+    copper: 500 # KCTG: Gingham, 10 at 5 sp
+    fullResale: true
   - type: Stack
     count: 10
 

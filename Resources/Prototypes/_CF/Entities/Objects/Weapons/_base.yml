@@ -703,6 +703,8 @@
   name: shovel
   description: A shovel.
   components:
+  - type: CFItemPrice
+    copper: 200 # KCTG: Shovel
   - type: Sprite
     sprite: _CP14/Objects/Weapons/Melee/Shovel/iron.rsi
     state: icon

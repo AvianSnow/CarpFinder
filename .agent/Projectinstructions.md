@@ -246,6 +246,7 @@ Class examples: `CFMySystem`, `CFMyServerSystem`, `CFMyClientSystem`, `CFExample
 **Prefer not editing upstream (non-`_CF`) files.** When a change in upstream code is unavoidable, wrap it:
 
 ```csharp
+| The price of a raw material or trade good | The table in `.agent/port-scripts/trade_prices.py`, then run it. Prices are from Kris's Compendium of Trade Goods, used with Kris's permission (credit him, never use its art): look the good up in `.agent/kctg-trade-goods.txt` first. A stack prototype's price is for the whole stack it spawns, and the script multiplies the bigger stacks |
 // CarpFinder: reason for the edit
 ... changed multiline ...
 ... code ...

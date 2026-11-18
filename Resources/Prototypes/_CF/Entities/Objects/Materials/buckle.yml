@@ -14,6 +14,9 @@
   name: iron buckle
   description: A sturdy metal buckle for fastening straps and belts.
   components:
+  - type: CFItemPrice
+    copper: 2 # KCTG: Buckle
+    fullResale: true
   - type: Sprite
     sprite: _CP14/Objects/Ingredients/buckle.rsi
     state: icon
