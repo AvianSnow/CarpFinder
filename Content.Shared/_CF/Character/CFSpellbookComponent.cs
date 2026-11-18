@@ -27,6 +27,12 @@ public sealed partial class CFSpellbookComponent : Component
     [DataField, AutoNetworkedField]
     public int FocusSpent;
 
+    /// <summary>
+    /// Drain Bonded Item: until this time, one prepared spell already cast today can be cast again without a charge.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public TimeSpan DrainUntil;
+
     /// <summary>A prepared caster spends a charge of the exact spell. Anyone else spends a slot of the rank.</summary>
     [DataField, AutoNetworkedField]
     public bool Prepared;

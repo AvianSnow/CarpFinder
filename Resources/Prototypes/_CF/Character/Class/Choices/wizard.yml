@@ -5,6 +5,9 @@
   slot: cf-class-choice-school
   name: cf-class-choice-school-ars-grammatica
   description: cf-class-choice-school-ars-grammatica-desc
+  grants:
+  - !type:CFGrantFocusSpell
+    spell: ProtectiveWards
 
 - type: cfClassChoice
   id: SchoolBattleMagic
@@ -22,6 +25,9 @@
   slot: cf-class-choice-school
   name: cf-class-choice-school-boundary
   description: cf-class-choice-school-boundary-desc
+  grants:
+  - !type:CFGrantFocusSpell
+    spell: FortifySummoning
 
 - type: cfClassChoice
   id: SchoolCivicWizardry
@@ -29,6 +35,9 @@
   slot: cf-class-choice-school
   name: cf-class-choice-school-civic-wizardry
   description: cf-class-choice-school-civic-wizardry-desc
+  grants:
+  - !type:CFGrantFocusSpell
+    spell: Earthworks
 
 - type: cfClassChoice
   id: SchoolMentalism
@@ -36,6 +45,9 @@
   slot: cf-class-choice-school
   name: cf-class-choice-school-mentalism
   description: cf-class-choice-school-mentalism-desc
+  grants:
+  - !type:CFGrantFocusSpell
+    spell: CharmingPush
 
 - type: cfClassChoice
   id: SchoolProteanForm
@@ -43,6 +55,9 @@
   slot: cf-class-choice-school
   name: cf-class-choice-school-protean-form
   description: cf-class-choice-school-protean-form-desc
+  grants:
+  - !type:CFGrantFocusSpell
+    spell: ScrambleBody
 
 - type: cfClassChoice
   id: SchoolUnifiedTheory
@@ -50,4 +65,54 @@
   slot: cf-class-choice-school
   name: cf-class-choice-school-unified-theory
   description: cf-class-choice-school-unified-theory-desc
+  grants:
+  - !type:CFGrantFocusSpell
+    spell: HandOfTheApprentice
+  choices:
+  - kind: Feat
+    featSlot: ClassFeat
+    featLevel: 1
 
+# Arcane theses, Player Core.
+- type: cfClassChoice
+  id: ThesisExperimentalSpellshaping
+  class: Wizard
+  slot: cf-class-choice-thesis
+  name: cf-class-choice-thesis-experimental
+  description: cf-class-choice-thesis-experimental-desc
+  choices:
+  - kind: Feat
+    featSlot: ClassFeat
+    featLevel: 1
+    featTrait: Spellshape
+
+- type: cfClassChoice
+  id: ThesisFamiliarAttunement
+  class: Wizard
+  slot: cf-class-choice-thesis
+  name: cf-class-choice-thesis-familiar
+  description: cf-class-choice-thesis-familiar-desc
+  grants:
+  - !type:CFGrantFeat
+    feat: CFFamiliarWizard
+
+- type: cfClassChoice
+  id: ThesisSpellBlending
+  class: Wizard
+  slot: cf-class-choice-thesis
+  name: cf-class-choice-thesis-blending
+  description: cf-class-choice-thesis-blending-desc
+
+- type: cfClassChoice
+  id: ThesisSpellSubstitution
+  class: Wizard
+  slot: cf-class-choice-thesis
+  name: cf-class-choice-thesis-substitution
+  description: cf-class-choice-thesis-substitution-desc
+
+- type: cfClassChoice
+  id: ThesisStaffNexus
+  class: Wizard
+  slot: cf-class-choice-thesis
+  name: cf-class-choice-thesis-staff
+  description: cf-class-choice-thesis-staff-desc

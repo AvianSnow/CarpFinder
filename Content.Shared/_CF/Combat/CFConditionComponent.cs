@@ -97,6 +97,9 @@ public sealed partial class CFConditionComponent : Component
     /// <summary>Of <see cref="OverextendedUntil"/>, the penalties that end with the next attack roll.</summary>
     public HashSet<EntityUid> OverextendedOnce = new();
 
+    /// <summary>Of <see cref="OverextendedUntil"/>, a penalty other than 2 (Charming Push's 1).</summary>
+    public Dictionary<EntityUid, int> OverextendedPenalty = new();
+
     public Dictionary<EntityUid, TimeSpan> DemoralizedUntil = new();
 
     public TimeSpan ImmobilizedUntil;

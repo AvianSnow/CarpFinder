@@ -193,6 +193,9 @@ public sealed class CFSustainedCast
     public TimeSpan Ends;
     public int Rank;
     public int Dc;
+
+    /// <summary>How many times it has run again since it was cast.</summary>
+    public int Pulses;
 }
 
 /// <summary>The sustained spells a creature has running. See <see cref="CFSustain"/>.</summary>

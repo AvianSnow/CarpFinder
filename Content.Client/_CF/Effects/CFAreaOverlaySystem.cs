@@ -61,7 +61,7 @@ public sealed partial class CFAreaOverlaySystem : EntitySystem
 
         var tiles = CFAreaGrid.Collect(
             area.Shape,
-            area.SizeFeet + _spellshapes.ExtraAreaFeet(action, player.Value, area),
+            _spellshapes.AreaFeet(action, player.Value, area),
             _maps.WorldToLocal(grid, gridComp, casterMap.Position),
             _maps.WorldToLocal(grid, gridComp, mouse.Position),
             gridComp.TileSize,

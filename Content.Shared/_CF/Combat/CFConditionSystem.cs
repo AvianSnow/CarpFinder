@@ -396,7 +396,10 @@ public sealed partial class CFConditionSystem : EntitySystem
         }
 
         if (TryComp(attacker, out CFConditionComponent? attackerCond) && attackerCond.OverextendedOnce.Remove(target))
+        {
             attackerCond.OverextendedUntil.Remove(target);
+            attackerCond.OverextendedPenalty.Remove(target);
+        }
     }
 
     /// <summary>
@@ -410,7 +413,7 @@ public sealed partial class CFConditionSystem : EntitySystem
             && cond.OverextendedUntil.TryGetValue(target, out var until)
             && _timing.CurTime < until)
         {
-            penalty = -2;
+            penalty = Math.Min(penalty, -cond.OverextendedPenalty.GetValueOrDefault(target, 2));
         }
 
         if (penalty == 0)
@@ -839,10 +842,16 @@ public sealed partial class CFConditionSystem : EntitySystem
     }
 
     /// <summary>The attacker takes -2 circumstance to attack rolls against <paramref name="against"/>, once or for 6 seconds.</summary>
-    public void Overextend(EntityUid attacker, EntityUid against, bool once)
+    /// <param name="penalty">How much, as a positive number. 2 for Overextending Feint, 1 for Charming Push.</param>
+    public void Overextend(EntityUid attacker, EntityUid against, bool once, int penalty = 2)
     {
         var cond = Ensure(attacker);
         cond.OverextendedUntil[against] = _timing.CurTime + TimeSpan.FromSeconds(TurnSeconds);
+        if (penalty == 2)
+            cond.OverextendedPenalty.Remove(against);
+        else
+            cond.OverextendedPenalty[against] = penalty;
+
         if (once)
             cond.OverextendedOnce.Add(against);
         else

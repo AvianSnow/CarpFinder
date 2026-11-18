@@ -257,7 +257,7 @@ public sealed partial class CFEffectSystem : EntitySystem
         var targets = CollectArea(
             user,
             area.Shape,
-            area.SizeFeet + _spellshapes.ExtraAreaFeet(source, user, area),
+            _spellshapes.AreaFeet(source, user, area),
             origin,
             aim,
             area.StartsAtPoint(),
@@ -374,7 +374,7 @@ public sealed partial class CFEffectSystem : EntitySystem
         grid = (gridUid, gridComp);
         tiles = CFAreaGrid.Collect(
             area.Shape,
-            area.SizeFeet + _spellshapes.ExtraAreaFeet(source, user, area),
+            _spellshapes.AreaFeet(source, user, area),
             _maps.WorldToLocal(gridUid, gridComp, origin.Position),
             _maps.WorldToLocal(gridUid, gridComp, aim.Position),
             gridComp.TileSize,

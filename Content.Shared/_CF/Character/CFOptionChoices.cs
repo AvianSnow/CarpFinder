@@ -206,6 +206,9 @@ public static class CFOptionChoices
 
     public static bool FeatFits(CFOptionChoice choice, CFFeatPrototype feat, string? classId, string? ancestryId)
     {
+        if (choice.FeatTrait is { } trait && !feat.Traits.Contains(trait))
+            return false;
+
         return choice.FeatSlot switch
         {
             CFLevelSlot.ClassFeat => feat.FitsClass(classId, choice.FeatLevel),

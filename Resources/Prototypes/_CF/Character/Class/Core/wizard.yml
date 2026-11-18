@@ -43,13 +43,16 @@
   features:
     - level: 1
       name: "Arcane Bond"
-      description: "Drawing on your bonded item once a day: TBA"
+      description: "Once a day, Drain Bonded Item: for 6 seconds, a prepared spell you already cast today can be cast again without a slot. The bonded item itself: TBA"
+      grants:
+        - !type:CFGrantAction
+          action: CFActDrainBondedItem
     - level: 1
       name: "Arcane School"
       description: "Choose yours with the Arcane School button."
     - level: 1
       name: "Arcane Thesis"
-      description: "Your thesis: TBA"
+      description: "Choose yours with the Arcane Thesis button."
     - level: 1
       name: "Wizard Spellcasting"
       description: "Level 1 cantrips and spell slots are on the spell sheet."

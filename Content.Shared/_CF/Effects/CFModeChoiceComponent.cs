@@ -83,6 +83,10 @@ public sealed partial class CFModeOption
     [DataField]
     public int AreaFeet;
 
+    /// <summary>The size of the source's own <c>CFAreaEffect</c> in this mode, in feet. 0 keeps it (Earthworks' 5, 10 or 15 foot burst).</summary>
+    [DataField]
+    public int SizeFeet;
+
     /// <summary>Who the area affects.</summary>
     [DataField]
     public CFTargetFilter AreaFilter = CFTargetFilter.All;

@@ -49,6 +49,28 @@ public sealed partial class CFSpellshapeSystem : EntitySystem
         return HasComp<CFSpellComponent>(source) ? Current(user)?.ExtraRangeFeet ?? 0 : 0;
     }
 
+    /// <summary>
+    /// How big the source's area is now, in feet: its own size, or its chosen mode's, plus what a sustained run has grown
+    /// it by, plus Widen Spell. Everything that draws or resolves an area asks here, so they agree.
+    /// </summary>
+    public int AreaFeet(EntityUid source, EntityUid user, CFAreaEffectComponent area)
+    {
+        var feet = TryComp(source, out CFModeChoiceComponent? mode) && mode.ChosenOption() is { SizeFeet: > 0 } chosen
+            ? chosen.SizeFeet
+            : area.SizeFeet;
+
+        if (area.GrowsFeet > 0 && TryComp(user, out CFSustainedCastsComponent? casts))
+        {
+            foreach (var cast in casts.Casts)
+            {
+                if (cast.Action == source)
+                    feet = Math.Min(area.MaxFeet > 0 ? area.MaxFeet : int.MaxValue, feet + area.GrowsFeet * cast.Pulses);
+            }
+        }
+
+        return feet + ExtraAreaFeet(source, user, area);
+    }
+
     /// <summary>How many feet a spell's area grows. Only bursts of at least 10 feet, cones and lines qualify.</summary>
     public int ExtraAreaFeet(EntityUid source, EntityUid user, CFAreaEffectComponent area)
     {

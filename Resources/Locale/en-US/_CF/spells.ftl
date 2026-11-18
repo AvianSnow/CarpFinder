@@ -98,3 +98,9 @@ cf-mode-resist-cold = Cold
 cf-mode-resist-electricity = Electricity
 cf-mode-resist-fire = Fire
 cf-mode-resist-sonic = Sonic
+
+# Earthworks: how many actions, and so how big a burst.
+cf-mode-earthworks-1 = 1 action: 5-foot burst
+cf-mode-earthworks-2 = 2 actions: 10-foot burst
+cf-mode-earthworks-3 = 3 actions: 15-foot burst
+cf-drain-bonded-item = Your bonded item gives up its power.

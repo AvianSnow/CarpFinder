@@ -419,3 +419,19 @@
   components:
   - type: CFEffectAction
     needsTwoHanded: Ranged
+
+# Arcane Bond (Player Core, Wizard): once a day, a spent prepared spell comes back for one cast.
+- type: entity
+  parent: CFActivityInstant
+  id: CFActDrainBondedItem
+  name: Drain Bonded Item
+  description: Free, once a day. For 6 seconds, one prepared spell you already cast today can be cast again without a slot.
+  components:
+  - type: CFRadialSlot
+    group: Free
+    tab: Focus
+  - type: CFDailyUses
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDrainBondedItemEffect

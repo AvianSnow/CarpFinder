@@ -200,6 +200,7 @@ public sealed partial class CFSpellSystem : EntitySystem
                     continue;
 
                 cast.Next = now + CFSustain.Pulse;
+                cast.Pulses++;
                 Pulse(caster, cast);
             }
 
@@ -513,6 +514,15 @@ public sealed partial class CFSpellSystem : EntitySystem
 
         if (book.Prepared)
         {
+            // Drain Bonded Item: a spell already cast today comes back once, at the rank it was cast at.
+            if (!CFPreparedSpells.CanCast(book, spell.Spell, spell.Rank) && DrainedRank(book, spell.Spell) is { } drained)
+            {
+                book.DrainUntil = TimeSpan.Zero;
+                spell.CastRank = drained;
+                Dirty(caster, book);
+                return true;
+            }
+
             spell.CastRank = CFPreparedSpells.Spend(book, spell.Spell, spell.Rank, wanted);
             Dirty(caster, book);
             return true;
@@ -559,9 +569,39 @@ public sealed partial class CFSpellSystem : EntitySystem
             return true;
 
         if (book.Prepared)
-            return CFPreparedSpells.CanCast(book, spell.Spell, spell.Rank);
+            return CFPreparedSpells.CanCast(book, spell.Spell, spell.Rank) || DrainedRank(book, spell.Spell) != null;
 
         return CFPreparedSpells.SpontaneousRank(book, spell.Spell, spell.Rank) > 0;
+    }
+
+    /// <summary>
+    /// While Drain Bonded Item is working, the highest rank a spent charge of this spell had, which can be cast again.
+    /// Null when there is none, or the drain is not working.
+    /// </summary>
+    private int? DrainedRank(CFSpellbookComponent book, ProtoId<CFSpellPrototype> spell)
+    {
+        if (_timing.CurTime >= book.DrainUntil)
+            return null;
+
+        int? rank = null;
+        foreach (var slot in book.PreparedSlots)
+        {
+            if (slot.Spell == spell && slot.Spent && (rank == null || slot.Rank > rank))
+                rank = slot.Rank;
+        }
+
+        return rank;
+    }
+
+    /// <summary>Drain Bonded Item: for 6 seconds, a prepared spell already cast today can be cast once more without a charge.</summary>
+    public void DrainBondedItem(EntityUid caster)
+    {
+        if (!TryComp(caster, out CFSpellbookComponent? book))
+            return;
+
+        book.DrainUntil = _timing.CurTime + TimeSpan.FromSeconds(6);
+        Dirty(caster, book);
+        _popup.PopupEntity(Loc.GetString("cf-drain-bonded-item"), caster, caster);
     }
 
     /// <summary>Burns one slot of a rank without casting a spell, for an ability such as Spellstrike. False if none is left.</summary>

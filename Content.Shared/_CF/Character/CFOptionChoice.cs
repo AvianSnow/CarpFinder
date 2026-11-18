@@ -81,6 +81,10 @@ public sealed partial class CFOptionChoice
     [DataField]
     public int FeatLevel = 1;
 
+    /// <summary>A <see cref="CFOptionChoiceKind.Feat"/> choice only offers feats with this trait (Experimental Spellshaping's spellshape feat).</summary>
+    [DataField]
+    public string? FeatTrait;
+
     /// <summary>A <see cref="CFOptionChoiceKind.Domain"/> choice offers every domain, not only the deity's (Splinter Faith).</summary>
     [DataField]
     public bool AnyDomain;

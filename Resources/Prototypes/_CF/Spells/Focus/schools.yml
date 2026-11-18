@@ -1,0 +1,282 @@
+# Wizard school spells (Player Core): each school's initial spell. The school's cfClassChoice grants it.
+# Battle Magic's force bolt is in focus.yml.
+
+- type: entity
+  parent: CFSpellInstant
+  id: CFProtectiveWards
+  name: Protective Wards
+  description: "Glyphs ring you: you and allies within 5 feet gain +1 status to AC. It keeps itself going for a minute, and grows 5 feet every 6 seconds, up to 30 feet. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: ProtectiveWards
+    rank: 0
+    focus: true
+    sustained: true
+  - type: CFAreaEffect
+    shape: Emanation
+    sizeFeet: 5
+    includeSelf: true
+    filter: Allies
+    growsFeet: 5
+    maxFeet: 30
+  - type: CFAreaFill
+    tile: CFFillMotes
+    tint: true
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: ArmorClass
+      value: 1
+      durationSeconds: 7
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFFortifySummoning
+  name: Fortify Summoning
+  description: "A creature you summoned gains +1 status to attack rolls, AC, saves, Perception and skill checks for a minute. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: FortifySummoning
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+    filter: Allies
+  - type: EntityTargetAction
+    whitelist:
+      components:
+      - CFSummoned
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: AttackRoll
+      value: 1
+      durationSeconds: 60
+    - !type:CFBonusEffect
+      stat: ArmorClass
+      value: 1
+      durationSeconds: 60
+    - !type:CFBonusEffect
+      stat: Saves
+      value: 1
+      durationSeconds: 60
+    - !type:CFBonusEffect
+      stat: Perception
+      value: 1
+      durationSeconds: 60
+    - !type:CFBonusEffect
+      stat: SkillChecks
+      value: 1
+      durationSeconds: 60
+
+- type: entity
+  parent: CFSpellArea
+  id: CFEarthworks
+  name: Earthworks
+  description: "Pick 1, 2 or 3 actions: barriers rise in a 5, 10 or 15-foot burst within 60 feet, difficult terrain for a minute. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: Earthworks
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 60
+  - type: CFModeChoice
+    modes:
+    - { value: 1, name: cf-mode-earthworks-1, actions: 1, sizeFeet: 5 }
+    - { value: 2, name: cf-mode-earthworks-2, actions: 2, sizeFeet: 10 }
+    - { value: 3, name: cf-mode-earthworks-3, actions: 3, sizeFeet: 15 }
+  - type: CFAreaEffect
+    shape: Burst
+    sizeFeet: 5
+    filter: All
+  - type: CFAreaFill
+    tile: CFFillEarthworks
+    spreadSeconds: 0.2
+    lingerSeconds: 60
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFCharmingPush
+  name: Charming Push
+  description: "Will save. Success: -1 circumstance to its attack rolls against you for 6 seconds. Failure: it cannot attack you for 6 seconds. Critical failure: also stunned 1. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: CharmingPush
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+  - type: CFCheck
+    defense: Will
+    basicSave: false
+  - type: CFDegreeEffects
+    success:
+    - !type:CFOverextendEffect
+      penalty: 1
+    failure:
+    - !type:CFApplyConditionEffect
+      condition: Charmed
+      value: 1
+      durationSeconds: 6
+    criticalFailure:
+    - !type:CFApplyConditionEffect
+      condition: Charmed
+      value: 1
+      durationSeconds: 6
+    - !type:CFApplyConditionEffect
+      condition: Stunned
+      value: 1
+      durationSeconds: 6
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFScrambleBody
+  name: Scramble Body
+  description: "Fortitude save. Failure: sickened 1. Critical failure: sickened 2 and slowed 1 for a minute. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 2
+  - type: CFSpell
+    spell: ScrambleBody
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+  - type: CFCheck
+    defense: Fortitude
+    basicSave: false
+  - type: CFDegreeEffects
+    failure:
+    - !type:CFApplyConditionEffect
+      condition: Sickened
+      value: 1
+      durationSeconds: 60
+    criticalFailure:
+    - !type:CFApplyConditionEffect
+      condition: Sickened
+      value: 2
+      durationSeconds: 60
+    - !type:CFActionCapEffect
+      cap: 2
+      durationSeconds: 60
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFHandOfTheApprentice
+  name: Hand of the Apprentice
+  description: "Your held melee weapon flies at a creature within 500 feet and back: a spell attack for the weapon's damage, with your spellcasting modifier in place of Strength. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: HandOfTheApprentice
+    rank: 0
+    focus: true
+  - type: CFNeedsMeleeWeapon
+  - type: CFTargeting
+    rangeFeet: 500
+  - type: CFCheck
+    defense: ArmorClass
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFHurledWeaponEffect
+
+- type: cfSpell
+  id: ProtectiveWards
+  name: Protective Wards
+  rank: 1
+  traits: [Aura, Manipulate]
+  actionCost: One
+  range: self
+  targets: 5-foot emanation, growing to 30 feet
+  summary: "+1 status to AC for you and allies in the emanation, which grows each round."
+
+- type: cfSpell
+  id: FortifySummoning
+  name: Fortify Summoning
+  rank: 1
+  traits: [Concentrate]
+  actionCost: One
+  range: 30 feet
+  targets: 1 creature you summoned
+  summary: "+1 status to all checks and AC for the rest of its summoning. Its DCs: TBA"
+
+- type: cfSpell
+  id: Earthworks
+  name: Earthworks
+  rank: 1
+  traits: [Concentrate, Earth, Manipulate]
+  actionCost: Variable
+  range: 60 feet
+  targets: 5, 10 or 15-foot burst
+  summary: "Difficult terrain in the burst for a minute. Clearing a square by hand: TBA"
+
+- type: cfSpell
+  id: CharmingPush
+  name: Charming Push
+  rank: 1
+  traits: [Concentrate, Incapacitation, Mental]
+  actionCost: One
+  range: 30 feet
+  targets: 1 creature
+  defense: Will
+  summary: "The target is pushed away from attacking you. The -1 to its damage rolls on a success: TBA"
+
+- type: cfSpell
+  id: ScrambleBody
+  name: Scramble Body
+  rank: 1
+  traits: [Concentrate, Manipulate]
+  actionCost: Two
+  range: 30 feet
+  targets: 1 living creature
+  defense: Fortitude
+  summary: "Sickened, and slowed on a critical failure. Slowed lasts a minute here, where the rules end it with sickened."
+
+- type: cfSpell
+  id: HandOfTheApprentice
+  name: Hand of the Apprentice
+  rank: 1
+  traits: [Attack, Manipulate]
+  actionCost: One
+  range: 500 feet
+  targets: 1 creature
+  defense: AC
+  summary: "The weapon's damage on a hit, double on a critical hit. Its critical specialization: TBA"
+
+# Earthworks' barriers on each tile of the burst. Difficult terrain while they last.
+- type: entity
+  parent: CFFillBase
+  id: CFFillEarthworks
+  name: earthen barriers
+  components:
+  - type: Sprite
+    drawdepth: FloorObjects
+    sprite: _CP14/Structures/Flora/snowdrift.rsi
+    layers:
+    - state: full
+      color: "#8a6a48"
+  - type: CFDifficultTerrain
+    cause: Stone
+    magical: true
