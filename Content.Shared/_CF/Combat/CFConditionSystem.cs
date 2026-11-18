@@ -59,6 +59,8 @@ public sealed partial class CFConditionSystem : EntitySystem
     [Dependency] private CFShieldSystem _shields = default!;
     [Dependency] private CFEncumbranceSystem _encumbrance = default!;
     [Dependency] private CFStealthSystem _stealth = default!;
+    [Dependency] private Content.Shared.Hands.EntitySystems.SharedHandsSystem _hands = default!;
+    [Dependency] private CFWeaponSystem _weapons = default!;
 
     private const float TurnSeconds = 6f;
 
@@ -176,6 +178,8 @@ public sealed partial class CFConditionSystem : EntitySystem
             }
 
             DropExpired(cond.OffGuardUntil, cond.OffGuardTo, now);
+            DropExpired(cond.FeintedUntil, cond.FeintedOnce, now);
+            DropExpired(cond.OverextendedUntil, cond.OverextendedOnce, now);
             DropExpired(cond.DemoralizedUntil, null, now);
 
             if (dirty)
@@ -364,12 +368,63 @@ public sealed partial class CFConditionSystem : EntitySystem
         Dirty(target, cond);
     }
 
-    public bool IsOffGuardTo(EntityUid target, EntityUid attacker)
+    /// <param name="melee">A Feint only leaves the target off-guard against melee attacks.</param>
+    public bool IsOffGuardTo(EntityUid target, EntityUid attacker, bool melee = true)
     {
         if (!TryComp(target, out CFConditionComponent? cond))
             return false;
 
-        return cond.Grabbed || cond.OffGuardAll || cond.Blinded || cond.OffGuardTo.Contains(attacker);
+        if (cond.Grabbed || cond.OffGuardAll || cond.Blinded || cond.OffGuardTo.Contains(attacker))
+            return true;
+
+        var now = _timing.CurTime;
+        return melee
+               && (now < cond.FeintedAllUntil
+                   || cond.FeintedUntil.TryGetValue(attacker, out var until) && now < until);
+    }
+
+    /// <summary>
+    /// <paramref name="attacker"/> has just made an attack roll against <paramref name="target"/>. A Feint good for one
+    /// melee attack is used up, and so is an Overextending Feint's penalty to one attack.
+    /// </summary>
+    public void NoteAttackRoll(EntityUid attacker, EntityUid target, bool melee)
+    {
+        if (melee && TryComp(target, out CFConditionComponent? targetCond) && targetCond.FeintedOnce.Remove(attacker))
+        {
+            targetCond.FeintedUntil.Remove(attacker);
+            _bonuses.RemoveBonusesFrom(target, FeintSource(attacker));
+        }
+
+        if (TryComp(attacker, out CFConditionComponent? attackerCond) && attackerCond.OverextendedOnce.Remove(target))
+            attackerCond.OverextendedUntil.Remove(target);
+    }
+
+    /// <summary>
+    /// The circumstance penalty to an attack roll by <paramref name="attacker"/> against <paramref name="target"/>: prone,
+    /// or an Overextending Feint. They do not stack with each other or with another circumstance penalty.
+    /// </summary>
+    public int CircumstanceAttackPenalty(EntityUid attacker, EntityUid target)
+    {
+        var penalty = IsProne(attacker) ? -2 : 0;
+        if (TryComp(attacker, out CFConditionComponent? cond)
+            && cond.OverextendedUntil.TryGetValue(target, out var until)
+            && _timing.CurTime < until)
+        {
+            penalty = -2;
+        }
+
+        if (penalty == 0)
+            return 0;
+
+        var other = TryComp(attacker, out CFBonusesComponent? bonuses)
+            ? bonuses.Bonuses.Where(b => b.Stat == CFBonusStat.AttackRoll && b.Type == CFBonusType.Circumstance).Select(b => b.Value).DefaultIfEmpty(0).Min()
+            : 0;
+        return Math.Min(0, penalty - other);
+    }
+
+    private static string FeintSource(EntityUid feinter)
+    {
+        return $"feint:{feinter}";
     }
 
     public bool IsCalmed(EntityUid uid)
@@ -393,7 +448,8 @@ public sealed partial class CFConditionSystem : EntitySystem
     /// A concealed or hidden creature, or a blinded attacker, forces one flat check.
     /// Failure means the effect misses. Attacking yourself skips it.
     /// </summary>
-    public bool PassFlatCheck(EntityUid attacker, EntityUid target)
+    /// <param name="ignoreConcealed">The concealed condition does not count (Hunter's Aim). Being hidden still does.</param>
+    public bool PassFlatCheck(EntityUid attacker, EntityUid target, bool ignoreConcealed = false)
     {
         if (attacker == target)
             return true;
@@ -409,7 +465,7 @@ public sealed partial class CFConditionSystem : EntitySystem
         if (sense != null && !_transform.InRange((attacker, null), (target, null), sense.RangeFeet / CFMelee.FeetPerTile))
             sense = null;
 
-        if (TryComp(target, out CFConditionComponent? cond) && cond.Concealed)
+        if (!ignoreConcealed && TryComp(target, out CFConditionComponent? cond) && cond.Concealed)
             dc = Math.Max(dc, sense is { ConcealedFlatDc: > 0 } ? Math.Min(cond.FlatCheckDc, sense.ConcealedFlatDc) : cond.FlatCheckDc);
 
         if (_stealth.IsUnseenBy(target, attacker))
@@ -588,6 +644,14 @@ public sealed partial class CFConditionSystem : EntitySystem
     }
 
     /// <summary>What Demoralize would roll against. Nothing is rolled or changed.</summary>
+    /// <summary>
+    /// The Outwit edge: +2 circumstance to Deception, Intimidation and Stealth checks against the ranger's prey.
+    /// </summary>
+    public int OutwitBonus(EntityUid user, EntityUid target)
+    {
+        return TryComp(user, out CFCombatOptionsComponent? style) && style.PreyOutwit && style.Prey == target ? 2 : 0;
+    }
+
     public bool TryGetDemoralizeCheck(EntityUid user, EntityUid target, out int skill, out int dc, int circumstance = 0)
     {
         skill = 0;
@@ -603,7 +667,7 @@ public sealed partial class CFConditionSystem : EntitySystem
             abilities,
             "Intimidation",
             CFAbility.Charisma,
-            circumstance + SkillBonus(user, "Intimidation"),
+            Math.Max(circumstance, OutwitBonus(user, target)) + SkillBonus(user, "Intimidation"),
             Frightened(user));
         dc = 10 + CFDefense.SaveModifier(
             _prototypes,
@@ -629,7 +693,7 @@ public sealed partial class CFConditionSystem : EntitySystem
             abilities,
             "Deception",
             CFAbility.Charisma,
-            SkillBonus(user, "Deception"),
+            OutwitBonus(user, target) + SkillBonus(user, "Deception"),
             Frightened(user));
         dc = 10 + CFDefense.PerceptionModifier(
             _prototypes,
@@ -691,7 +755,11 @@ public sealed partial class CFConditionSystem : EntitySystem
             GainPanache(user);
     }
 
-    public bool TryFeint(EntityUid user, EntityUid target)
+    /// <param name="overextending">
+    /// An Overextending Feint: instead of off-guard, the target takes -2 circumstance to its next attack roll against the
+    /// user, or to all of them for 6 seconds on a critical success.
+    /// </param>
+    public bool TryFeint(EntityUid user, EntityUid target, bool overextending = false)
     {
         if (!TryGetFeintCheck(user, target, out var skill, out var dc))
             return false;
@@ -706,14 +774,79 @@ public sealed partial class CFConditionSystem : EntitySystem
             return false;
         }
 
-        if (degree == CFDegree.CriticalSuccess)
-            SetOffGuardAll(target, TurnSeconds);
+        var critical = degree == CFDegree.CriticalSuccess;
+        if (overextending)
+            Overextend(target, user, once: !critical);
         else
-            SetOffGuardTo(target, user, TurnSeconds);
+            ApplyFeint(user, target, critical);
 
         GainPanache(user);
         _popup.PopupEntity(Loc.GetString("cf-act-feint"), target);
         return true;
+    }
+
+    /// <summary>
+    /// A Feint landed. A success leaves the target off-guard to the user's next melee attack within 6 seconds, and a
+    /// critical success to all of them for 6 seconds. A Scoundrel gets more: 6 seconds on a success, every creature's melee
+    /// attacks on a critical success, and a free Step after it with an agile or finesse weapon.
+    /// </summary>
+    public void ApplyFeint(EntityUid user, EntityUid target, bool critical)
+    {
+        var options = CompOrNull<CFCombatOptionsComponent>(user);
+        var scoundrel = options?.ScoundrelFeint == true;
+        var cond = Ensure(target);
+        var until = _timing.CurTime + TimeSpan.FromSeconds(TurnSeconds);
+        if (scoundrel && critical)
+        {
+            if (until > cond.FeintedAllUntil)
+                cond.FeintedAllUntil = until;
+        }
+
+        cond.FeintedUntil[user] = until;
+        if (critical || scoundrel)
+            cond.FeintedOnce.Remove(user);
+        else
+            cond.FeintedOnce.Add(user);
+
+        if (options?.DistractingFeint == true)
+        {
+            var source = FeintSource(user);
+            _bonuses.RemoveBonusesFrom(target, source);
+            _bonuses.AddBonus(target, CFBonusStat.Perception, CFBonusType.Circumstance, -2, TurnSeconds, source: source);
+            _bonuses.AddBonus(target, CFBonusStat.Reflex, CFBonusType.Circumstance, -2, TurnSeconds, source: source);
+        }
+
+        if (scoundrel && HoldsAgileOrFinesse(user))
+            _reactions.CoverSteps(user, StepAfterFeintSeconds);
+    }
+
+    /// <summary>How long the Scoundrel's free Step after a Feint lasts.</summary>
+    private const float StepAfterFeintSeconds = 2f;
+
+    private bool HoldsAgileOrFinesse(EntityUid user)
+    {
+        foreach (var held in _hands.EnumerateHeld(user))
+        {
+            if (!HasComp<CFMeleeWeaponComponent>(held))
+                continue;
+
+            var traits = _weapons.Traits(held);
+            if (traits.Agile || traits.Finesse)
+                return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>The attacker takes -2 circumstance to attack rolls against <paramref name="against"/>, once or for 6 seconds.</summary>
+    public void Overextend(EntityUid attacker, EntityUid against, bool once)
+    {
+        var cond = Ensure(attacker);
+        cond.OverextendedUntil[against] = _timing.CurTime + TimeSpan.FromSeconds(TurnSeconds);
+        if (once)
+            cond.OverextendedOnce.Add(against);
+        else
+            cond.OverextendedOnce.Remove(against);
     }
 
     public bool TrySkill(EntityUid user, EntityUid target, string skill, CFAbility ability, CFDefenseType defense)

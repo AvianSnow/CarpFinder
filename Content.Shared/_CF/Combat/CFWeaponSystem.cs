@@ -69,7 +69,14 @@ public sealed partial class CFWeaponSystem : EntitySystem
         if (weapon.Item is not { } item || !TryComp(item, out CFWeaponComponent? data))
             return rank;
 
-        rank = CFDefense.Best(combat, data.Group.ToString(), rank);
+        // A weapon group's rank (Fighter Weapon Mastery) is one step lower for advanced weapons: master makes them expert.
+        var group = CFDefense.Best(combat, data.Group.ToString(), CFProficiencyRank.Untrained);
+        if (data.Category == CFWeaponCategory.Advanced && group > CFProficiencyRank.Trained)
+            group -= 2;
+
+        if (group > rank)
+            rank = group;
+
         var counts = data.Category;
         if (MetaData(item).EntityPrototype is { } proto && combat.FamiliarWeapons.Contains(proto.ID))
         {

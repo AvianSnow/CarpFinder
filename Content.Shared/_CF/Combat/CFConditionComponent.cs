@@ -82,6 +82,21 @@ public sealed partial class CFConditionComponent : Component
 
     public HashSet<EntityUid> OffGuardTo = new();
 
+    /// <summary>Creatures that Feinted this one: their melee attacks find it off-guard until the time.</summary>
+    public Dictionary<EntityUid, TimeSpan> FeintedUntil = new();
+
+    /// <summary>Of <see cref="FeintedUntil"/>, the Feints that end with that creature's next melee attack.</summary>
+    public HashSet<EntityUid> FeintedOnce = new();
+
+    /// <summary>Off-guard to every melee attack until this time (a Scoundrel's critical Feint).</summary>
+    public TimeSpan FeintedAllUntil;
+
+    /// <summary>This creature takes -2 circumstance to attack rolls against these creatures until the time (Overextending Feint).</summary>
+    public Dictionary<EntityUid, TimeSpan> OverextendedUntil = new();
+
+    /// <summary>Of <see cref="OverextendedUntil"/>, the penalties that end with the next attack roll.</summary>
+    public HashSet<EntityUid> OverextendedOnce = new();
+
     public Dictionary<EntityUid, TimeSpan> DemoralizedUntil = new();
 
     public TimeSpan ImmobilizedUntil;

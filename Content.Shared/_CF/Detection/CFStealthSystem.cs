@@ -476,7 +476,7 @@ public sealed partial class CFStealthSystem : EntitySystem
             CFAbility.Dexterity,
             _conditions.PerceptionDc(observer),
             out _,
-            itemBonus: cover);
+            itemBonus: Math.Max(cover, _conditions.OutwitBonus(user, observer)));
     }
 
     private bool IsConcealed(EntityUid uid)

@@ -27,6 +27,9 @@ public enum CFActivityKind : byte
     /// <summary>Feint the target, at whatever range the action allows (Grovel).</summary>
     Feint,
 
+    /// <summary>A Feint whose success makes the target take -2 to attacks against the user instead of leaving it off-guard (Overextending Feint).</summary>
+    OverextendingFeint,
+
     /// <summary>Left-Hand Blood: 1 slashing damage to the user, and the held weapon's next hit within 6 seconds deals 1d4 persistent poison.</summary>
     LeftHandBlood,
 

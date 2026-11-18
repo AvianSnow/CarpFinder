@@ -66,6 +66,10 @@ public sealed partial class CFStrikeActionComponent : Component
     [DataField]
     public int AttackBonus;
 
+    /// <summary>The target's concealed condition does not call for a flat check (Hunter's Aim).</summary>
+    [DataField]
+    public bool IgnoresConcealed;
+
     /// <summary>True when the effects need the Strike to deal damage, and not only to hit.</summary>
     [DataField]
     public bool EffectsNeedDamage = true;

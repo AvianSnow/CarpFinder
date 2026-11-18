@@ -14,21 +14,21 @@ The pipeline all of this runs on is built: grants, stances, flourishes, spellsha
 
 ### Where it stands
 
-Measured on 18 November 2026, after difficult terrain (1.11). `python .agent/port-scripts/feature_scan.py` prints the first three columns, per class and ancestry. The last column is a count of lines with `TBA` in the `.ftl` or YAML.
+Measured on 18 November 2026, after difficult terrain (1.11) and the Fighter, Rogue and Ranger leftovers (4). `python .agent/port-scripts/feature_scan.py` prints the first three columns, per class and ancestry. The last column is a count of lines with `TBA` in the `.ftl` or YAML.
 
 | Option                  | Total | Works                                                                     | Lines with `TBA`                                                                                                              |
 | ----------------------- | ----- | ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | Heritages               | 149   | 115 have an effect                                                        | 91 in `heritages.ftl`: 34 heritages do nothing, the rest are missing a part                                                   |
 | Ancestry feats          | 255   | 140, and 1 in part                                                        | 178 in `feats-ancestry.ftl`: every one of the 114 feats that do nothing says so, and what it would do                        |
-| Class feats             | 585   | 209, and 2 in part (11 of them only give a familiar's body, see 3.8)      | 437 in `feats-class.ftl`                                                                                                      |
+| Class feats             | 585   | 212, and 2 in part (11 of them only give a familiar's body, see 3.8)      | 434 in `feats-class.ftl`                                                                                                      |
 | Class features          | 181   | No placeholders                                                           | 51 in the class files                                                                                                         |
-| Subclass options        |       | Every class has its options                                               | 309 in `class-choices.ftl`. Runes repeat 6 times, ikons and tactics 3 times, implements twice, so about 150 different options |
+| Subclass options        |       | Every class has its options                                               | 307 in `class-choices.ftl`. Runes repeat 6 times, ikons and tactics 3 times, implements twice, so about 150 different options |
 | General and skill feats | 131   | 13 in `general_feats.py`'s `WORKING`, and the scan agrees                 | Marked `(TBA)` in the builder. See "General and skill feats"                                                                  |
 | Spells                  | 63    | All 63 have an action                                                     | None in `spells.ftl`                                                                                                          |
 | Focus spells            | 34    | The pipeline works                                                        | 11 in `Spells/Focus/focus.yml`                                                                                                |
 | Deities                 | 7     | Skill, favored weapon, font                                               | 7: domains                                                                                                                    |
 
-Best per class: Fighter 23 of 31 feats, Monk 18 of 29, Guardian 14 of 23. Worst: Exemplar 0 of 13, Runesmith 1 of 19, Thaumaturge 1 of 14, Alchemist 2 of 21 (the one beyond the first is only a familiar's body), Gunslinger 3 of 19. Sprite has no working ancestry feat.
+Best per class: Fighter 23 of 31 feats, Monk 18 of 29, Rogue 16 of 27. Worst: Exemplar 0 of 13, Runesmith 1 of 19, Thaumaturge 1 of 14, Alchemist 2 of 21 (the one beyond the first is only a familiar's body), Gunslinger 3 of 19. Sprite has no working ancestry feat.
 
 ### How to work through it
 
@@ -140,7 +140,7 @@ These said something was not built that this roadmap said was built. All were ch
 
 Worked through in one run on 17 November 2026. Done or partly done: 3.1 to 3.7, 3.11 to 3.13, 3.16, 3.17, 3.21. 3.10 summoning and the familiars' bodies (3.8) followed the same day. 3.15 daily choices came after them. Not started, because each is a system of its own that has to be seen in play: 3.9 mounts, 3.18 scrolls and wands, 3.19 stealing, 3.20 disguises, 3.22 water (waits for swimming, 1.3), 3.23 (each needs a decision).
 
-374 of 585 do nothing. These are the shapes that come up in more than one class. Feats only one class has are under that class in 4.
+371 of 585 do nothing. These are the shapes that come up in more than one class. Feats only one class has are under that class in 4.
 
 - [ ] **3.1 A Strike that adds a maneuver.** `CFStrikeAction` can now ask for `press` (an attack earlier this turn), `twoHandedWeapon` and `needsFreeHand`, and has `onFailure` beside `onHit` and `onCritical`. Effects: `CFForcedMovementEffect` for a Shove, `CFGrabEffect` for a grab that lets go, `CFTripEffect` for a Trip.
     - [x] Done on 17 November 2026 (`CFStrikeActionTest`): Brutish Shove, Combat Grab, Slam Down, Unsteadying Strike, Aggressive Block (Fighter and Guardian, the `AggressiveBlock` option: it always shoves, where the enemy should choose between that and off-guard). Size is not checked.
@@ -210,9 +210,14 @@ Worked through in one run on 17 November 2026. Done or partly done: 3.1 to 3.7, 
 
 What each class still lacks: class features, subclass options, and the feats only that class has. Shared features are named by their number in 3.
 
-- [ ] **Fighter.** Advanced weapons should stop at expert. Feats: 3.1, 3.2, 3.3, 3.6, 3.7, and Overextending Feint.
-- [ ] **Rogue.** Surprise Attack (3.12). Deny Advantage against hidden creatures. Rackets: Mastermind (off-guard from Recall Knowledge, 3.11), Scoundrel (the stronger Feint and the Step after it). Feats: Distracting Feint, Twin Distraction, Poison Weapon (see Alchemist), Head Stomp's kin, 3.19, 3.20.
-- [ ] **Ranger.** Being hard to track. The Outwit edge's skill bonuses. Warden spells: Initiate Warden, Advanced Warden, Natural Conduit. Hunter's Aim ignoring concealment, Crossbow Ace, Running Reload, Cover-style feats, 3.9, 3.11.
+- [ ] **Fighter.** Feats: 3.1, 3.2, 3.3, 3.6, 3.7.
+    - [x] Done on 18 November 2026 (`CFFeintTest`): a weapon group's rank is one step lower for advanced weapons, so Fighter Weapon Mastery makes them expert (`CFWeaponSystem.Rank`). Overextending Feint was listed here, but it is a Rogue feat (below).
+- [ ] **Rogue.** Poison Weapon (see Alchemist), Head Stomp's kin, 3.19, 3.20.
+    - [x] Done on 18 November 2026 (`CFFeintTest`). Feint was the legacy one, with the Scoundrel's results for everyone, and is now the remaster's: a success leaves the target off-guard to the user's next melee attack within 6 seconds, a critical success to all the user's melee attacks for 6 seconds, and only melee attacks count (`CFConditionComponent.FeintedUntil`, used up in `CFConditionSystem.NoteAttackRoll`). The Scoundrel racket (`ScoundrelFeint`): 6 seconds on a success, every creature's melee attacks on a critical success, and a free Step with an agile or finesse weapon. Distracting Feint (-2 circumstance to Perception and Reflex while feinted), Overextending Feint (its own action, `CFActOverextendingFeint`, where the rules let any Feint use it: -2 circumstance to the target's next attack roll against the Rogue, or all of them for 6 seconds on a critical success, which does not stack with prone), Twin Distraction (both Twin Feint Strikes hit: Will against class DC or stupefied 1 for 6 seconds).
+    - [x] A creature is now off-guard to an attacker hidden from it, a core rule that was missing, so Sneak Attack works from hiding. Deny Advantage stops it for attackers of the Rogue's level or lower, as it already did for flankers. Not tested on its own: `CFStealthSystem` has no simple way to make a creature hidden in a test.
+    - Surprise Attack and Mastermind were already done (3.11, 3.12).
+- [ ] **Ranger.** Being hard to track. Warden spells: Initiate Warden, Advanced Warden, Natural Conduit. Hunter's Aim ignoring lesser cover, Crossbow Ace, Running Reload, Cover-style feats, 3.9, 3.11.
+    - [x] Done on 18 November 2026 (`CFFeintTest`): Outwit's +2 circumstance to Deception, Intimidation and Stealth against the prey (`CFConditionSystem.OutwitBonus`: Feint, Demoralize, and each Stealth roll against the prey as an observer, not stacking with cover). Hunter's Aim ignores the prey's concealment (`ignoresConcealed` on `CFStrikeAction`). There is no cover system, so lesser cover has nothing to ignore.
 - [ ] **Cleric.** Domains: a `cfDomain` prototype with a focus spell, listed on each `cfDeity` (all seven say `TBA`). Then Domain Initiate (the Cloistered doctrine gives it), Expanded Domain Initiate, Deity's Domain, Domain Acumen, Splinter Faith. Versatile Font, Warpriest's Armor later ranks. Heal and Harm shaping: the three-action emanations first (5), then Channel Smite, Directed Channel, Divine Castigation, Communal Healing, Panic the Dead, Sap Life, Divine Infusion, Overwhelming Harm, Invert Harm, Restorative Strike, Sacred Ground. Divine Disharmony. Replace the placeholder pantheon when the setting is written.
 - [ ] **Wizard.** Each school's focus spell and extra curriculum slot (seven schools: only Battle Magic has its spell). Drain Bonded Item. The thesis. Linked Focus, Spellbook Prodigy, Call Wizardly Tools, Spell Protection Array.
 - [ ] **Bard.** Compositions as spells: the anthem is an aura today. Hymn of Healing, Rallying Anthem, Triple Time, Song of Strength, Uplifting Overture, Lingering Composition, Directed Audience, Courageous Advance, In Tune, Zoophonic Composition, Bestial Snarling. Each muse's feat (Bardic Lore, Lingering Composition, Versatile Performance, Martial Performance) through `CFGrantFeat`, and the Polymath's phantasmal minion. Multifarious Muse, Esoteric Polymath, Versatile Signature, Loremaster's Etude.

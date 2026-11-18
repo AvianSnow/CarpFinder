@@ -364,6 +364,18 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public bool ViciousSwing;
 
+    /// <summary>The Scoundrel racket's Feint: off-guard for 6 seconds on a success, to everyone on a critical success, and a free Step with an agile or finesse weapon.</summary>
+    [DataField, AutoNetworkedField]
+    public bool ScoundrelFeint;
+
+    /// <summary>A creature off-guard from this creature's Feint also takes -2 circumstance to Perception and Reflex saves (Distracting Feint).</summary>
+    [DataField, AutoNetworkedField]
+    public bool DistractingFeint;
+
+    /// <summary>When both Twin Feint Strikes deal damage, the target saves against stupefied 1 (Twin Distraction).</summary>
+    [DataField, AutoNetworkedField]
+    public bool TwinDistraction;
+
     /// <summary>What pointing at an enemy does: a Ranger's prey, a Thaumaturge's or Investigator's mark.</summary>
     [DataField, AutoNetworkedField]
     public CFPointMark PointMark;
@@ -564,6 +576,9 @@ public enum CFCombatOption : byte
     KnownWeaknesses,
     EmotionalPush,
     ThoughtformSummoning,
+    ScoundrelFeint,
+    DistractingFeint,
+    TwinDistraction,
 }
 
 public enum CFPointMark : byte

@@ -12,3 +12,6 @@
     - "scoundrel racket"
   requiresChoice:
     - Scoundrel
+  grants:
+    - !type:CFGrantOption
+      option: DistractingFeint

@@ -191,7 +191,7 @@ public sealed partial class CFStrikeActionSystem : EntitySystem
 
             var shotMap = _pool.MapPenalty(user, shot.Agile);
             SpendArrow(user, bow);
-            _strikes.PerformStrike(user, target, shot, bow, melee: false, attackPenalty: action.AttackBonus, resolved: Resolved);
+            _strikes.PerformStrike(user, target, shot, bow, melee: false, attackPenalty: action.AttackBonus, resolved: Resolved, ignoreConcealed: action.IgnoresConcealed);
 
             // A second shot needs a second arrow nocked, at the same target or at someone else.
             var next = action.Twice ? target : FindSecond(user, target, action);

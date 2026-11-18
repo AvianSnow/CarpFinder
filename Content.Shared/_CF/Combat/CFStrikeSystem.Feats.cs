@@ -1,4 +1,7 @@
+using Content.Shared.CF.Character;
 using Content.Shared.CF.Checks;
+using Content.Shared.CF.Traits;
+using Robust.Shared.Prototypes;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Weapons.Melee.Events;
 
@@ -141,10 +144,20 @@ public sealed partial class CFStrikeSystem
         CFStrikeWeaponStats off,
         EntityUid offUid)
     {
-        PerformStrike(user, target, main, mainUid, melee: true);
+        var first = PerformStrike(user, target, main, mainUid, melee: true);
         _conditions.SetOffGuardTo(target, user, TwinFeintOffGuardSeconds);
-        PerformStrike(user, target, off, offUid, melee: true);
+        var second = PerformStrike(user, target, off, offUid, melee: true);
+
+        // Twin Distraction: both hit, so the target saves against the Rogue's class DC or is stupefied 1 for 6 seconds.
+        if (first && second && CompOrNull<CFCombatOptionsComponent>(user)?.TwinDistraction == true && _mobState.IsAlive(target))
+        {
+            var dc = CFCasting.ClassDc(_prototypes, CompOrNull<CFCombatantComponent>(user), CompOrNull<CFAbilityScoreComponent>(user)).Dc;
+            if (!_conditions.RollDefense(target, CFDefenseType.Will, dc, out _, MentalTraits).IsSuccess())
+                _conditions.ApplyCondition(target, CFConditionKind.Stupefied, 1, 6f, user, dc);
+        }
     }
+
+    private static readonly HashSet<ProtoId<CFTraitPrototype>> MentalTraits = new() { "Mental" };
 
     /// <summary>One extra weapon die, two at 10th level and three at 18th. It counts as two attacks.</summary>
     private void ViciousSwing(EntityUid user, EntityUid target, CFStrikeWeaponStats stats, EntityUid weaponUid)

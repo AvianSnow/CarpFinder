@@ -50,7 +50,7 @@
           option: SurpriseAttack
     - level: 3
       name: "Deny Advantage"
-      description: "You are not off-guard to flanking creatures of your level or lower. The same for hidden creatures: TBA"
+      description: "You are not off-guard to flanking or hidden creatures of your level or lower."
       grants:
         - !type:CFGrantOption
           option: DenyAdvantage

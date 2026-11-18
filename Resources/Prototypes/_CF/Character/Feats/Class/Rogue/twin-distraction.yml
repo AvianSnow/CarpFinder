@@ -12,3 +12,6 @@
     - "Twin Feint"
   requiresFeats:
     - CFTwinFeint
+  grants:
+    - !type:CFGrantOption
+      option: TwinDistraction

@@ -185,6 +185,9 @@ public sealed partial class CFActivitySystem : EntitySystem
             case CFActivityKind.Feint:
                 _conditions.TryFeint(args.Performer, args.Target);
                 break;
+            case CFActivityKind.OverextendingFeint:
+                _conditions.TryFeint(args.Performer, args.Target, overextending: true);
+                break;
             case CFActivityKind.Spellstrike:
                 Spellstrike(args.Performer, args.Target);
                 break;

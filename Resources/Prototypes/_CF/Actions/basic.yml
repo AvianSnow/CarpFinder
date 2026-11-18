@@ -84,7 +84,7 @@
   parent: CFActBasicTarget
   id: CFActFeint
   name: Feint
-  description: Mislead an enemy in reach, leaving it off-guard. Needs trained Deception.
+  description: Mislead an enemy in reach. On a success it is off-guard to your next melee attack within 6 seconds, and on a critical success to all your melee attacks for 6 seconds. Needs trained Deception.
   components:
   - type: Sprite
     layers:

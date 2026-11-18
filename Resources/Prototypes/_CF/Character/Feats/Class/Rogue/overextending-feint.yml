@@ -10,3 +10,7 @@
     - "Rogue"
   prerequisites:
     - "trained in Deception"
+  action: Action
+  grants:
+    - !type:CFGrantAction
+      action: CFActOverextendingFeint

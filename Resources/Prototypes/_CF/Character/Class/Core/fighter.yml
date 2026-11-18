@@ -58,7 +58,7 @@
           option: Bravery
     - level: 5
       name: "Fighter Weapon Mastery"
-      description: "Choose a weapon group. You become a master with it. A critical hit with a weapon you are a master with gets its critical specialization. Advanced weapons should only reach expert: TBA"
+      description: "Choose a weapon group. You become a master with it. Advanced weapons in that group become expert. A critical hit with a weapon you are a master with gets its critical specialization."
       grants:
         - !type:CFGrantCriticalSpecialization
           specialization:

@@ -322,7 +322,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
         bool countMap = true,
         int? fixedMap = null,
         bool skipPrecision = false,
-        Action<CFDegree, int>? resolved = null)
+        Action<CFDegree, int>? resolved = null,
+        bool ignoreConcealed = false)
     {
         if (_strikeDepth > 2)
             return false;
@@ -352,7 +353,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
                 finisher,
                 bonusDamage,
                 skipPrecision: skipPrecision,
-                resolved: resolved);
+                resolved: resolved,
+                ignoreConcealed: ignoreConcealed);
         }
         finally
         {
@@ -476,7 +478,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (!weapon.Ranged)
             bonus -= _conditions.Value(user, CFConditionKind.Enfeebled);
 
-        bonus += _conditions.ProneAttackPenalty(user);
+        bonus += _conditions.CircumstanceAttackPenalty(user, target);
         if (weapon.Ranged)
             bonus -= _conditions.Clumsy(user);
 
@@ -515,14 +517,18 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (CompOrNull<CFCombatOptionsComponent>(user)?.DreadStriker == true && _conditions.Frightened(target) > 0)
             return true;
 
-        if (_conditions.IsOffGuardTo(target, user))
+        if (_conditions.IsOffGuardTo(target, user, melee))
+            return true;
+
+        // A creature is off-guard to an attacker hidden from it, unless it has Deny Advantage against one of its level or lower.
+        if (unseen && !DeniesFlanking(user, target))
             return true;
 
         // Flanking only helps an attack made from up close, or by someone the target cannot see.
         return (melee || unseen) && _flanking.IsOffGuardTo(target, user) && !DeniesFlanking(user, target);
     }
 
-    /// <summary>Deny Advantage: flankers of the target's level or lower get nothing from it.</summary>
+    /// <summary>Deny Advantage: flankers and hidden attackers of the target's level or lower get nothing from it.</summary>
     private bool DeniesFlanking(EntityUid user, EntityUid target)
     {
         return CompOrNull<CFCombatOptionsComponent>(target)?.DenyAdvantage == true
@@ -655,7 +661,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
         bool riders = false,
         bool exacting = false,
         bool skipPrecision = false,
-        Action<CFDegree, int>? resolved = null)
+        Action<CFDegree, int>? resolved = null,
+        bool ignoreConcealed = false)
     {
         if (!_factions.CanHarm(user, target))
             return false;
@@ -712,7 +719,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
             Dirty(target, wardCond);
         }
 
-        if (!isObject && !_conditions.PassFlatCheck(user, target))
+        if (!isObject && !_conditions.PassFlatCheck(user, target, ignoreConcealed))
         {
             RaiseNetworkEvent(
                 new CFCombatNumberEvent(GetNetEntity(target), CFDegree.Failure, 0, weapon.DamageType),
@@ -763,6 +770,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
         }
 
         var targetAc = ArmorClassAgainst(user, target, defender, melee, unseen, isObject, alreadyDown);
+        _conditions.NoteAttackRoll(user, target, melee);
 
         var rolled = weapon with { DamageType = ChooseDamageType(target, weapon) };
         // Die size goes up one step at most, however many things would raise it.

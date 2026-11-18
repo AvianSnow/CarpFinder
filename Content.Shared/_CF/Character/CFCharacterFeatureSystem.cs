@@ -522,6 +522,15 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
             case CFCombatOption.TwinFeint:
                 options.TwinFeint = true;
                 break;
+            case CFCombatOption.ScoundrelFeint:
+                options.ScoundrelFeint = true;
+                break;
+            case CFCombatOption.DistractingFeint:
+                options.DistractingFeint = true;
+                break;
+            case CFCombatOption.TwinDistraction:
+                options.TwinDistraction = true;
+                break;
             case CFCombatOption.ViciousSwing:
                 options.ViciousSwing = true;
                 break;

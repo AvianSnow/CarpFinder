@@ -82,7 +82,7 @@
   parent: CFActStrikeBase
   id: CFActHuntersAim
   name: Hunter's Aim
-  description: A ranged Strike at your prey with +2 to the attack roll. Costs 2 actions and an arrow.
+  description: A ranged Strike at your prey with +2 to the attack roll, ignoring its concealment. Costs 2 actions and an arrow.
   components:
   - type: TargetAction
     range: 200
@@ -92,6 +92,7 @@
     ranged: true
     preyOnly: true
     attackBonus: 2
+    ignoresConcealed: true
 
 - type: entity
   parent: CFActStrikeBase

@@ -271,3 +271,19 @@
         type: Status
         value: 10
         durationSeconds: 3
+
+# Overextending Feint (Player Core, page 169): a Feint that leaves the target overreaching instead of off-guard.
+- type: entity
+  parent: CFActivityTarget
+  id: CFActOverextendingFeint
+  name: Overextending Feint
+  description: Feint a creature in reach. On a success it takes -2 circumstance to its next attack roll against you within 6 seconds, or to all of them for 6 seconds on a critical success. It is not off-guard.
+  components:
+  - type: Sprite
+    layers:
+    - texture: Interface/Actions/harmOff.png
+  - type: CFActivity
+    kind: OverextendingFeint
+  - type: CFTrait
+    traits:
+    - Mental

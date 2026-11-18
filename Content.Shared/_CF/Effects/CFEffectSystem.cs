@@ -612,6 +612,8 @@ public sealed partial class CFEffectSystem : EntitySystem
         attackBonus += _bonuses.Total(user, CFBonusStat.AttackRoll);
         attackBonus += _bonuses.AgainstSource(user, CFBonusStat.AttackRoll, target);
         attackBonus -= _conditions.Frightened(user);
+        attackBonus += _conditions.CircumstanceAttackPenalty(user, target);
+        _conditions.NoteAttackRoll(user, target, melee: false);
         if (check.MultipleAttackPenalty)
         {
             attackBonus += _actions.MapPenalty(user, agile: false);
