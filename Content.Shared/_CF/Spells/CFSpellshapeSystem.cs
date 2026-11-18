@@ -134,6 +134,11 @@ public sealed partial class CFSpellshapeSystem : EntitySystem
         }
     }
 
+    public bool IsDivineInfusion(EntityUid user)
+    {
+        return Current(user) is { DivineInfusion: true };
+    }
+
     public bool IsFormControl(EntityUid user)
     {
         return Current(user) is { FormControl: true };

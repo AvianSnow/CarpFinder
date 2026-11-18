@@ -10,3 +10,6 @@
     - "Cleric"
     - "Healing"
     - "Vitality"
+  grants:
+    - !type:CFGrantOption
+      option: CommunalHealing

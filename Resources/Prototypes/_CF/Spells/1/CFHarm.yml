@@ -1,8 +1,8 @@
-﻿- type: entity
+- type: entity
   parent: CFSpellTarget
   id: CFHarm
   name: Harm
-  description: Deals 1d8+8 void damage. A Fortitude save applies.
+  description: "Pick 1, 2 or 3 actions. 1: touch, 1d8 void damage. 2: 30 feet. 3: every creature in a 30-foot emanation. Living creatures take the damage, basic Fortitude. Undead regain the 1d8 instead, 1d8+8 with 2 actions."
   components:
   - type: Sprite
     sprite: Objects/Magic/magicactions.rsi
@@ -11,21 +11,31 @@
   - type: CFRadialSlot
     group: Spell
     spellRank: 1
+    actions: 2
   - type: CFSpell
     spell: Harm
     rank: 1
   - type: CFTargeting
     rangeFeet: 30
+    filter: All
+  # The menu picks how many actions. 4 is Directed Channel's cone, aimed at the creature clicked.
+  - type: CFModeChoice
+    modes:
+    - { value: 1, name: cf-mode-harm-1, tooltip: cf-mode-harm-1-desc, actions: 1, touch: true }
+    - { value: 2, name: cf-mode-harm-2, tooltip: cf-mode-harm-2-desc, actions: 2 }
+    - { value: 3, name: cf-mode-harm-3, tooltip: cf-mode-harm-3-desc, actions: 3, immediate: true, areaShape: Emanation, areaFeet: 30 }
+    - { value: 4, name: cf-mode-harm-cone, tooltip: cf-mode-harm-cone-desc, actions: 3, areaShape: Cone, areaFeet: 60, requires: DirectedChannel }
   - type: CFCheck
     defense: Fortitude
+    harmedBy: Void
   - type: CFDegreeEffects
     effects:
-    - !type:CFDamageEffect
-      dice: 1
-      die: 8
-      flat: 8
-      damageType: Void
-      heightenDice: 1
-      heightenFlat: 8
+    - !type:CFVitalEnergyEffect
+      energy: Void
+      healingFlat: 8
+      heightenHealingFlat: 8
+      healingFlatMode: 2
   - type: CFHeighten
     baseRank: 1
+  - type: EntityTargetAction
+    canTargetSelf: true

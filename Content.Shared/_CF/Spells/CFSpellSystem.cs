@@ -267,8 +267,50 @@ public sealed partial class CFSpellSystem : EntitySystem
         args.Rank = CFCasting.CantripRank(level);
     }
 
+    /// <summary>
+    /// A mode picked from the menu that covers an area around the caster, with no click: Heal and Harm's 3-action
+    /// emanation. Modes that do something else on pick belong to their own systems (Prestidigitation, battle forms).
+    /// </summary>
+    [SubscribeLocalEvent]
+    private void OnModeImmediate(Entity<CFSpellComponent> spell, ref CFModeImmediateCastEvent args)
+    {
+        if (!TryComp(spell, out CFModeChoiceComponent? mode)
+            || mode.ChosenOption() is not { AreaShape: not null } chosen
+            || !CFModeRequirements.Met(EntityManager, args.User, chosen))
+        {
+            return;
+        }
+
+        if (!_net.IsServer || !TrySpendCast(args.User, spell))
+            return;
+
+        _psi.NoteCast(args.User, spell);
+        _effects.ResolveModeArea(spell, args.User, chosen, _transform.GetMapCoordinates(args.User));
+        FinishCast(args.User);
+        args.Success = true;
+    }
+
     private void CastMode(Entity<CFSpellComponent> spell, CFModeChoiceComponent mode, ref CFSpellCastTargetEvent args)
     {
+        if (mode.ChosenOption() is { } chosen && !CFModeRequirements.Met(EntityManager, args.Performer, chosen))
+        {
+            args.Handled = true;
+            return;
+        }
+
+        // A mode with an area aimed by the click: a cone toward the creature (Directed Channel).
+        if (mode.ChosenOption() is { AreaShape: not null } aimed)
+        {
+            args.Handled = true;
+            if (!_net.IsServer || !TrySpendCast(args.Performer, spell))
+                return;
+
+            _psi.NoteCast(args.Performer, spell);
+            _effects.ResolveModeArea(spell, args.Performer, aimed, _transform.GetMapCoordinates(args.Target));
+            FinishCast(args.Performer);
+            return;
+        }
+
         if (!_effects.InRange(spell, args.Performer, args.Target))
         {
             if (_net.IsServer)

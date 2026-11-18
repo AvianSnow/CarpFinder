@@ -385,7 +385,7 @@
   area: 30-foot emanation with 3 actions
   targets: 1 creature with 1 or 2 actions
   defense: Fortitude
-  summary: Void damage that heals undead. One action is a touch for 1d8. Two actions deal 1d8+8 at 30 feet. Three actions hit every living creature in a 30-foot emanation.
+  summary: Void damage that heals undead. One action is a touch for 1d8. Two actions reach 30 feet, and heal undead for 1d8+8. Three actions hit every creature in a 30-foot emanation.
   criticalSuccess: Half damage.
   success: Half damage.
   failure: Full damage.
@@ -549,12 +549,13 @@
   rank: 1
   traditions: [Occult]
   traits: [Concentrate, Emotion, Healing, Manipulate, Mental]
-  actionCost: Variable
+  actionCost: Two
   components: Somatic, verbal
   range: 30 feet
   targets: 1 willing creature
-  summary: One action restores 1d6+4 Hit Points. Two actions restore 1d10+8. Three actions restore 2d10+16. The target also reduces a small amount of frightened.
-  heightened: Healing increases at each rank above 1st.
+  duration: 1 minute
+  summary: The target regains 1d10+4 Hit Points and gains a +2 status bonus to saves against mental effects for the duration.
+  heightened: Healing increases by 1d10+4 per rank.
 
 - type: cfSpell
   id: PhantomPain
@@ -698,8 +699,8 @@
   range: Touch
   targets: 1 creature
   duration: 10 minutes
-  summary: The target gains resistance 5 to one energy type you choose.
-  heightened: The resistance increases by 5 for every 2 ranks above 2nd.
+  summary: The target gains resistance 5 to acid, cold, electricity, fire or sonic, picked from the action wheel.
+  heightened: "The resistance increases by 5 for every 2 ranks above 2nd. More targets at rank 4: TBA"
 
 - type: cfSpell
   id: Enlarge

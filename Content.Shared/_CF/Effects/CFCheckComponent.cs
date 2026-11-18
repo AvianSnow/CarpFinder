@@ -37,6 +37,12 @@ public sealed partial class CFCheckComponent : Component
     [DataField]
     public int AttackModifier;
 
+    /// <summary>
+    /// Only a creature this energy harms rolls the save. One it heals takes no roll (Heal on the living, Harm on the undead).
+    /// </summary>
+    [DataField]
+    public CFVitalEnergy? HarmedBy;
+
     /// <summary>Subtracted from the target's AC on an attack roll (phase bolt cuts circumstance bonuses).</summary>
     [DataField]
     public int TargetAcPenalty;

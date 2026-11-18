@@ -41,6 +41,13 @@ public sealed partial class CFSpellshapeComponent : Component
     [DataField]
     public bool Snowdrift;
 
+    /// <summary>
+    /// If the next spell is Heal or Harm restoring Hit Points to one creature, its melee Strikes deal 1d6 more of that energy
+    /// for 6 seconds, 2d6 from rank 5 (Divine Infusion).
+    /// </summary>
+    [DataField]
+    public bool DivineInfusion;
+
     /// <summary>The next Untamed Form is 2 ranks lower and lasts an hour (Form Control). <c>CFBattleFormSystem</c> reads it.</summary>
     [DataField]
     public bool FormControl;

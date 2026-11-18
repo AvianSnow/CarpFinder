@@ -2,7 +2,7 @@
   parent: CFSpellTarget
   id: CFResistEnergy
   name: Resist Energy
-  description: The target resists 5 fire damage.
+  description: Pick acid, cold, electricity, fire or sonic. The creature you touch resists 5 damage of that type for 10 minutes, 10 from rank 4.
   components:
   - type: Sprite
     sprite: Objects/Magic/magicactions.rsi
@@ -18,12 +18,19 @@
     rangeFeet: 5
     touch: true
     filter: All
+  - type: CFModeChoice
+    modes:
+    - { value: 1, name: cf-mode-resist-acid, damageType: Acid }
+    - { value: 2, name: cf-mode-resist-cold, damageType: Cold }
+    - { value: 3, name: cf-mode-resist-electricity, damageType: Electricity }
+    - { value: 4, name: cf-mode-resist-fire, damageType: Fire }
+    - { value: 5, name: cf-mode-resist-sonic, damageType: Sonic }
   - type: CFDegreeEffects
     landed:
     - !type:CFResistanceEffect
-      damageType: Fire
       amount: 5
       heightenAmount: 5
+      durationSeconds: 600
   - type: CFHeighten
     baseRank: 2
     interval: 2

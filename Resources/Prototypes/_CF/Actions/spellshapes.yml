@@ -110,3 +110,13 @@
   components:
   - type: CFSpellshape
     snowdrift: true
+
+# Player Core, Cleric.
+- type: entity
+  parent: CFActSpellshapeBase
+  id: CFActDivineInfusion
+  name: Divine Infusion
+  description: If your next spell is Heal or Harm restoring Hit Points to one creature, its melee Strikes deal 1d6 more vitality or void damage for 6 seconds, 2d6 from rank 5. Lost if you spend an action on anything else first.
+  components:
+  - type: CFSpellshape
+    divineInfusion: true

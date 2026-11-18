@@ -535,6 +535,18 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
             case CFCombatOption.TwinDistraction:
                 options.TwinDistraction = true;
                 break;
+            case CFCombatOption.CommunalHealing:
+                options.CommunalHealing = true;
+                break;
+            case CFCombatOption.PanicTheDead:
+                options.PanicTheDead = true;
+                break;
+            case CFCombatOption.SapLife:
+                options.SapLife = true;
+                break;
+            case CFCombatOption.DirectedChannel:
+                options.DirectedChannel = true;
+                break;
             case CFCombatOption.ViciousSwing:
                 options.ViciousSwing = true;
                 break;

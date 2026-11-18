@@ -1,4 +1,5 @@
 using Content.Shared.CF.Traits;
+using Content.Shared.CF.Effects.Areas;
 using Content.Shared.CF.Spells;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Combat;
@@ -153,22 +154,64 @@ public sealed partial class CFEffectSystem
         return options.HealingHands && spell.Spell == "Heal" || options.HarmingHands && spell.Spell == "Harm" ? 10 : die;
     }
 
-    public void Heal(EntityUid user, EntityUid target, int amount)
+    /// <param name="voidEnergy">Void healing (Harm), which heals only the undead. Otherwise vitality, which heals only the living.</param>
+    public void Heal(EntityUid user, EntityUid target, int amount, bool voidEnergy = false)
     {
         // Constructs are not alive: what heals the living does nothing for them.
-        if (amount <= 0 || HasComp<CFVoidHealingComponent>(target) || CompOrNull<CFTraitComponent>(target)?.HasTrait("Construct") == true || !_bridge.TryEnsureCombatTarget(target, out _, out _, out _))
+        if (amount <= 0 || !_bridge.TryEnsureCombatTarget(target, out _, out _, out _))
+            return;
+
+        if (voidEnergy ? !HasComp<CFVoidHealingComponent>(target) : HasComp<CFVoidHealingComponent>(target) || CompOrNull<CFTraitComponent>(target)?.HasTrait("Construct") == true)
             return;
 
         // Touch of Undeath: vitality heals only half.
-        if (_conditions.Value(target, CFConditionKind.HealingHalved) > 0)
+        if (!voidEnergy && _conditions.Value(target, CFConditionKind.HealingHalved) > 0)
             amount = Math.Max(1, amount / 2);
 
-        _dying.RestoreHitPoints(target, amount, user);
+        _dying.RestoreHitPoints(target, amount, user, voidEnergy);
         ShowNumber(target, CFDegree.Success, amount, "Vitality");
 
         _vfx.Healing(target);
         if (user != target)
             _vfx.Healing(user);
+    }
+
+    /// <summary>
+    /// Communal Healing: when a heal spell heals one creature, another living creature within 30 feet regains the spell's
+    /// rank in Hit Points. The caster comes first, then the nearest hurt ally.
+    /// </summary>
+    public void CommunalHealing(EntityUid user, EntityUid healed, int rank)
+    {
+        EntityUid? other = null;
+        if (user != healed && IsHurt(user))
+        {
+            other = user;
+        }
+        else
+        {
+            var best = float.MaxValue;
+            var from = _transform.GetWorldPosition(user);
+            foreach (var (uid, _) in _lookup.GetEntitiesInRange<CFCombatantComponent>(Transform(user).Coordinates, 30f / CFAreaGrid.FeetPerTile))
+            {
+                if (uid == healed || !IsHurt(uid) || !PassesFilter(user, uid, CFTargetFilter.Allies, selfAllowed: true) || !CFVitalEnergies.IsLiving(EntityManager, uid))
+                    continue;
+
+                var distance = (_transform.GetWorldPosition(uid) - from).Length();
+                if (distance < best)
+                {
+                    best = distance;
+                    other = uid;
+                }
+            }
+        }
+
+        if (other is { } target)
+            Heal(user, target, rank);
+    }
+
+    private bool IsHurt(EntityUid uid)
+    {
+        return TryComp(uid, out CFCombatantComponent? combat) && combat.CurrentHp < combat.MaxHp;
     }
 
     /// <summary>The floating "miss" number for an attack that missed or a save that took nothing.</summary>

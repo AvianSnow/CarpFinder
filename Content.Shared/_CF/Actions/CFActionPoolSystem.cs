@@ -219,6 +219,10 @@ public sealed partial class CFActionPoolSystem : EntitySystem
         if (slot.Group is CFRadialGroup.Free or CFRadialGroup.Reaction)
             return 0;
 
+        // A spell cast with 1, 2 or 3 actions picks how many from its mode menu (Heal, Harm).
+        if (TryComp(action, out CFModeChoiceComponent? mode) && mode.ChosenOption() is { Actions: > 0 } chosen)
+            return chosen.Actions;
+
         if (slot.Actions > 0)
             return slot.Actions;
 

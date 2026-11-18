@@ -8,4 +8,6 @@
   level: 4
   traits:
     - "Cleric"
-  pendingAction: true
+  grants:
+    - !type:CFGrantOption
+      option: DirectedChannel

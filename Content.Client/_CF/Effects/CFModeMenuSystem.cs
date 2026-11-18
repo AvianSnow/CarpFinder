@@ -34,7 +34,14 @@ public sealed partial class CFModeMenuSystem : EntitySystem
             return true;
         }
 
+        // A mode may cost less than the action does (Heal's 1-action touch), so only the cheapest has to be affordable.
         var cost = _actions.ActionCount(action);
+        foreach (var mode in choice.Modes)
+        {
+            if (mode.Actions > 0 && mode.Actions < cost && CFModeRequirements.Met(EntityManager, user, mode))
+                cost = mode.Actions;
+        }
+
         if (_actions.ReadyCount(user) < cost)
         {
             _popup.PopupEntity(Loc.GetString("cf-action-not-enough"), user, user);
@@ -44,7 +51,8 @@ public sealed partial class CFModeMenuSystem : EntitySystem
         var options = new List<RadialMenuOptionBase>(choice.Modes.Count);
         foreach (var mode in choice.Modes)
         {
-            options.Add(Slice(action.Owner, mode, choice, begin));
+            if (CFModeRequirements.Met(EntityManager, user, mode))
+                options.Add(Slice(action.Owner, mode, choice, begin));
         }
 
         _menu?.Close();

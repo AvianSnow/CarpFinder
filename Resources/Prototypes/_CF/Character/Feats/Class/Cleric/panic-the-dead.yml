@@ -11,3 +11,6 @@
     - "Emotion"
     - "Fear"
     - "Mental"
+  grants:
+    - !type:CFGrantOption
+      option: PanicTheDead

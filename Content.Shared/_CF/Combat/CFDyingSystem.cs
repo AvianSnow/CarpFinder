@@ -212,9 +212,10 @@ public sealed partial class CFDyingSystem : EntitySystem
     /// At 1+ CF HP, clears dying and ensures the mob is Alive (pulls under Critical if needed).
     /// Does nothing to fully dead creatures (use Raise Dead / Resurrect for that).
     /// </summary>
-    public void RestoreHitPoints(EntityUid target, int amount, EntityUid? healer = null)
+    /// <param name="voidHealing">Void energy (Harm), the only healing a creature with void healing takes.</param>
+    public void RestoreHitPoints(EntityUid target, int amount, EntityUid? healer = null, bool voidHealing = false)
     {
-        if (amount <= 0 || HasComp<CFVoidHealingComponent>(target))
+        if (amount <= 0 || HasComp<CFVoidHealingComponent>(target) != voidHealing)
             return;
 
         // Healing / potions cannot revive the dead.

@@ -96,6 +96,17 @@ public sealed partial class CFEffectSystem : EntitySystem
     private float MaxFeet(EntityUid source, EntityUid user, CFTargetingComponent targeting)
     {
         var extra = _spellshapes.ExtraRangeFeet(source, user);
+
+        // The chosen mode can set its own range (Heal's 1-action touch).
+        if (TryComp(source, out CFModeChoiceComponent? mode) && mode.ChosenOption() is { } chosen)
+        {
+            if (chosen.Touch)
+                return extra > 0 ? extra : TouchFeet;
+
+            if (chosen.RangeFeet > 0)
+                return chosen.RangeFeet + extra;
+        }
+
         if (targeting.Touch)
             return extra > 0 ? extra : TouchFeet;
 
@@ -265,6 +276,45 @@ public sealed partial class CFEffectSystem : EntitySystem
             _popup.PopupEntity(Loc.GetString("cf-spell-no-one"), user, user);
 
         return targets.Count;
+    }
+
+    /// <summary>
+    /// The area of the source's chosen mode, centred on the user, or a cone or line aimed at <paramref name="aim"/>. Every
+    /// creature in it is resolved. Returns how many there were. Heal and Harm's 3-action version, and Directed Channel.
+    /// </summary>
+    public int ResolveModeArea(EntityUid source, EntityUid user, CFModeOption mode, MapCoordinates aim)
+    {
+        if (mode.AreaShape is not { } shape)
+            return 0;
+
+        var origin = _transform.GetMapCoordinates(user);
+        var targets = CollectArea(
+            user,
+            shape,
+            mode.AreaFeet,
+            origin,
+            aim,
+            atPoint: false,
+            includeCenter: true,
+            selfAllowed: false,
+            mode.AreaFilter);
+
+        foreach (var target in targets)
+        {
+            ResolveTarget(source, user, target);
+        }
+
+        if (targets.Count == 0)
+            _popup.PopupEntity(Loc.GetString("cf-spell-no-one"), user, user);
+
+        return targets.Count;
+    }
+
+    /// <summary>True when the source is being used in a mode that covers an area, not one creature.</summary>
+    public bool IsAreaUse(EntityUid source)
+    {
+        return HasComp<CFAreaEffectComponent>(source)
+               || TryComp(source, out CFModeChoiceComponent? mode) && mode.ChosenOption() is { AreaShape: not null };
     }
 
     /// <summary>
@@ -473,7 +523,9 @@ public sealed partial class CFEffectSystem : EntitySystem
             args.Degree = _conditions.RollSkill(user, target, skill, ability, check.Defense);
             landed = args.Degree.IsSuccess();
         }
-        else if (check != null && check.Defense != CFDefenseType.None)
+        else if (check != null
+                 && check.Defense != CFDefenseType.None
+                 && (check.HarmedBy is not { } energy || CFVitalEnergies.Harms(EntityManager, target, energy)))
         {
             if (HasComp<CFSpellComponent>(source))
                 _vfx.Targeted(target, source);

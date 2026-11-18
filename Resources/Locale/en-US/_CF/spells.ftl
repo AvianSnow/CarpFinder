@@ -73,3 +73,28 @@ cf-magic-level = You sense magic nearby. The strongest is level { $level }.
 cf-magic-source = Magic
 cf-magic-aura-magical = { CAPITALIZE(THE($target)) } has a magical aura.
 cf-magic-aura-mundane = { CAPITALIZE(THE($target)) } has no magical aura.
+
+# Heal and Harm: how many actions, picked from the action wheel (CFModeChoice on the spell).
+cf-mode-heal-1 = 1 action: touch
+cf-mode-heal-1-desc = Touch a creature: 1d8 Hit Points, or 1d8 vitality damage to undead.
+cf-mode-heal-2 = 2 actions: 30 feet
+cf-mode-heal-2-desc = A creature within 30 feet: 1d8+8 Hit Points, or 1d8 vitality damage to undead.
+cf-mode-heal-3 = 3 actions: emanation
+cf-mode-heal-3-desc = Every creature within 30 feet of you, at once: 1d8 Hit Points to the living, 1d8 vitality damage to undead.
+cf-mode-heal-cone = 3 actions: 60-foot cone
+cf-mode-heal-cone-desc = Directed Channel. Click a creature to aim a 60-foot cone at it: 1d8 Hit Points to the living, 1d8 vitality damage to undead.
+cf-mode-harm-1 = 1 action: touch
+cf-mode-harm-1-desc = Touch a creature: 1d8 void damage, or 1d8 Hit Points to undead.
+cf-mode-harm-2 = 2 actions: 30 feet
+cf-mode-harm-2-desc = A creature within 30 feet: 1d8 void damage, or 1d8+8 Hit Points to undead.
+cf-mode-harm-3 = 3 actions: emanation
+cf-mode-harm-3-desc = Every creature within 30 feet of you, at once: 1d8 void damage to the living, 1d8 Hit Points to undead.
+cf-mode-harm-cone = 3 actions: 60-foot cone
+cf-mode-harm-cone-desc = Directed Channel. Click a creature to aim a 60-foot cone at it: 1d8 void damage to the living, 1d8 Hit Points to undead.
+
+# Resist Energy: the energy, picked from the action wheel.
+cf-mode-resist-acid = Acid
+cf-mode-resist-cold = Cold
+cf-mode-resist-electricity = Electricity
+cf-mode-resist-fire = Fire
+cf-mode-resist-sonic = Sonic

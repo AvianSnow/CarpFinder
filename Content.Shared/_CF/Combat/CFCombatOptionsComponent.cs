@@ -376,6 +376,38 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public bool TwinDistraction;
 
+    /// <summary>A heal spell on one creature also heals another for the spell's rank (Communal Healing).</summary>
+    [DataField, AutoNetworkedField]
+    public bool CommunalHealing;
+
+    /// <summary>An undead that fails its save against this creature's heal spell is frightened 1 (Panic the Dead).</summary>
+    [DataField, AutoNetworkedField]
+    public bool PanicTheDead;
+
+    /// <summary>A harm spell that hurts a living creature heals this creature for the spell's rank (Sap Life).</summary>
+    [DataField, AutoNetworkedField]
+    public bool SapLife;
+
+    /// <summary>Heal and Harm's area can be a 60-foot cone (Directed Channel). The mode menu reads it, so it is networked.</summary>
+    [DataField, AutoNetworkedField]
+    public bool DirectedChannel;
+
+    /// <summary>The tick Sap Life last healed on, so one cast heals once.</summary>
+    public uint SapLifeTick;
+
+    /// <summary>Divine Infusion: melee Strikes deal this many extra dice of <see cref="InfusionType"/> until <see cref="InfusionUntil"/>.</summary>
+    [DataField]
+    public int InfusionDice;
+
+    [DataField]
+    public int InfusionDie;
+
+    [DataField]
+    public string InfusionType = string.Empty;
+
+    [DataField]
+    public TimeSpan InfusionUntil;
+
     /// <summary>What pointing at an enemy does: a Ranger's prey, a Thaumaturge's or Investigator's mark.</summary>
     [DataField, AutoNetworkedField]
     public CFPointMark PointMark;
@@ -579,6 +611,10 @@ public enum CFCombatOption : byte
     ScoundrelFeint,
     DistractingFeint,
     TwinDistraction,
+    CommunalHealing,
+    PanicTheDead,
+    SapLife,
+    DirectedChannel,
 }
 
 public enum CFPointMark : byte

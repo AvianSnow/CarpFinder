@@ -2,7 +2,7 @@
   parent: CFSpellTarget
   id: CFSoothe
   name: Soothe
-  description: Restores 1d10+8 Hit Points.
+  description: Restores 1d10+4 Hit Points, 1d10+4 more per rank, and gives +2 status to saves against mental effects for a minute.
   components:
   - type: Sprite
     sprite: Objects/Magic/magicactions.rsi
@@ -22,6 +22,15 @@
     - !type:CFHealEffect
       dice: 1
       die: 10
-      flat: 8
+      flat: 4
+      heightenDice: 1
+      heightenFlat: 4
+    - !type:CFBonusEffect
+      stat: Saves
+      value: 2
+      trait: Mental
+      durationSeconds: 60
+  - type: CFHeighten
+    baseRank: 1
   - type: EntityTargetAction
     canTargetSelf: true
