@@ -20,7 +20,7 @@ Everything is under `_CF/ZLevels/` on each side.
 | `Climbing/` | A body in the air passes over climbable things |
 | `Flight/` | `CFZFlyer` and `CFControllableFlight`: toggle flight, then go up or down a level |
 | `Ghost/` | `CFZLevelGhostMover`: the Move up and Move down actions, on the observer |
-| `Ladder/` | `CFLadder`: a wall-mounted ladder whose sensor the climber walks into to climb. No entity uses it yet, because its sprite was not ported |
+| `Ladder/` | `CFLadder`: a wall-mounted ladder whose sensor the climber walks into to climb (`CFWoodenLadder`, `Resources/Prototypes/_CF/ZLevels/ladders.yml`). Ours beside it: `CFLadderCheck` and the server's `CFLadderCheckSystem`, the Player Core Climb check |
 | `Pulling/` | A pulled thing follows its puller to the new level |
 | `Roof/` | A tile on a level above roofs the tiles below (`RoofComponent`) and shields them from weather (`CFZLevelRoof`). Server-side |
 | `Throwing/` | A thrown item or a shot projectile is left alone by vertical physics until it lands |
@@ -29,7 +29,6 @@ Everything is under `_CF/ZLevels/` on each side.
 | `Mapping/` (server) | The `cf_znetwork_*` admin commands and the `zMap` prototype, for building a stack in the editor |
 | `Chat/` (server) | Speech is whispered to the level above and below, as "(from above)" |
 | `Audio/`, `NavMap/`, `TileVolume/` (client) | Sounds from other levels are quieter, a nav map control that stacks levels, and a lip drawn under floor edges that border an opening |
-| `Portals/` (server) | Ours: `CFZLevelPortalSystem` |
 
 ## Vertical physics
 
@@ -45,6 +44,7 @@ CrystallEdge deals stock damage from speed squared. Stock damage never reaches C
 
 - A creature with `CFCombatant` that lands hard takes Player Core fall damage: half the distance fallen in bludgeoning, and it lands prone. The distance comes from the landing speed (`CFFallRules.FeetFromImpact`), one level being `CFFallRules.LevelFeet` (10 feet), rounded to 5 feet. One level is about 4.4 speed, 20 feet, 10 damage.
 - `CFSafeFall` from a grant still applies: `FallsSafely` (nothing, as a leshy with a free hand) and `FallFeet` (half the distance). Tests: `CFHeritageTest.SafeFallsAndTheFreeHandTheyMayNeed`, `CFHeritageEffectsTest.KeenerSensesFallsAndClimbs`.
+- A Leap stops where it lands (`CFLeaping`, cleared by `CFActivitySystem.OnLeapEnded`), so a creature that leaps onto an opening falls into it instead of sliding across at the speed of the throw. Test: `CFZLevelTest.ALeapClearsAHoleUnlessItLandsInIt`.
 - Landing on a creature: it makes a Reflex save against DC 15, basic, against half the faller's damage. A critical failure also knocks it prone.
 - CrystallEdge's events still fire, so `CFSoftSurface` and the soft landing effect lower the damage.
 - Items take nothing. Only the dust puff (`CFDustEffect`) is predicted.
@@ -53,8 +53,9 @@ CrystallEdge deals stock damage from speed squared. Stock damage never reaches C
 
 Besides falling:
 
-- **Stairs and holes from the CP14 port.** `CFStairs*AutoLink` and `CFLadder*AutoLink` in `Resources/Prototypes/_CF/ZLevels/portals.yml` have `CFZLevelAutoPortal`, which builds the other end on the next level and links the two as a stock portal. `CFZLevelHole` drops whoever steps on it just under the ceiling of the level below, and vertical physics does the rest. `CFZLevelClimb` on a ladder is clicked to Climb: two free hands, one action, and with a DC an Athletics check (`CFGrantClimb` helps). `CFZLevelPortalSystem` runs all three.
-- **CrystallEdge stairs** are entities with `CFZLevelHighGround` (`heightCurve`, `stick`, `corner`): a ramp a creature walks up. None is defined here yet, because their sprites were not part of the permission. The component works on any anchored entity.
+- **Stairs** are CrystallEdge's ramps (`Resources/Prototypes/_CF/Entities/Structures/Stairs/`, since 19 November 2026): an entity with `CFZLevelHighGround` (`heightCurve`, `stick`, `corner`) that a creature walks up and down, in wood or stone (`stairs.yml`), or as a red, green or blue roof ramp (`roofs.yml`, the slopes of a pitched roof, laid from the matching `CFFloorTileRoof*` tile, which also lays the flat `CFRoof*` roof tiles and is made from stone at a workbench), straight, corner or inner corner, each built from a frame at the construction menu (`Recipes/Construction/stairs.yml`). The dirt cliff (`dirt_cliff.yml`) is the same ramp as a bank of earth for mappers, not built, as in CrystallEdge. The stairs stand on a floor tile of the lower level, climbing towards north with no rotation, and the tile straight above their top on the level above is left empty: at the top of the ramp the creature is above the ceiling and `TryMoveUp` takes it through that opening, and from above the opening is solid ground, because the ramp below holds it (`ComputeGroundHeightInternal` looks one level down). `stick` keeps a walker on the ramp on the way down, so it is not a fall. The top edge is a thin wall, so nobody walks off it at ground level; the sides are open, and a creature that steps onto the opening from the side drops onto the ramp. The step slows to 0.3 of Speed (`SpeedModifierContacts`), as CrystallEdge has it. The component works on any anchored entity. CrystallEdge's `CEAutoTilePlacement`, which laid a plank floor under a placed staircase, is outside the permission and was not ported: build them on a floor tile. Tests: `CFZLevelTest.StairsCarryYouUpToTheLevelAbove`, `StairsCarryYouDownWithoutAFall`.
+- **Ladders** are CrystallEdge's wall ladders (`CFWoodenLadder`, built from the construction menu facing a wall). The ladder hangs on the wall its rotation points at, north with none, and the tile straight above it on the level above is left open. A creature whose body touches the wall side of the ladder's tile takes hold (`CFLadderClimber`): walking into the wall climbs at half speed, standing still hangs, running slides down, and stepping into the opening from above takes hold on the way down. Climbing out, the ladder below keeps holding the climber until it steps off the tile. Ours on top: `CFLadderCheck`, the Player Core Climb. With a `dc`, taking hold from the ground is an Athletics check (`CFGrantClimb`: `bonus`, `successIsCritical`, `climbSpeed` skips it) that costs an action and needs both hands. A failure makes no progress, a critical failure leaves the climber prone, or lets go on the way down, and the verdict holds for `retrySeconds` so a body jittering against the ladder does not roll again. A `dc` of 0, the default, is a trivial climb: free, as the rules allow. `CFLadderSystem.OnStartCollide` asks with `CFLadderGripAttemptEvent` (a marked edit), and the server's `CFLadderCheckSystem` answers. Stock mobs climb as CrystallEdge lets them. Tests: `CFZLevelTest.WalkingIntoALadderTakesHold`, `AHardClimbIsAnAthleticsCheckWithFreeHands`, `CriticalFailureOnTheWayDownLetsGo`.
+- **Holes** are empty tiles, as in CrystallEdge: take the floor out and whatever stands there falls. The CP14 pieces that did these jobs, the teleport stairs (`CFStairs*AutoLink`), the click-to-Climb ladder (`CFLadder*AutoLink`, `CFZLevelClimb`), the hole entity (`CFZLevelHole`), `CFZLevelAutoPortal` and `CFZLevelPortalSystem`, were removed on 19 November 2026 with their `_CP14` sprites.
 - **Look up.** Every player gets `CFZLevelViewer` and the `CFActionToggleLookUp` action: the level above is drawn where its floor is transparent or missing.
 - **Ghosts** have `CFZLevelGhostMover` (`CFActionZLevelUp`, `CFActionZLevelDown`).
 - **Flight** is `CFZFlyer` plus `CFControllableFlight` on a creature. Roadmap 2.7 (flying over open sky) can be built on it.
@@ -72,19 +73,19 @@ Each is marked `CarpFinder` in the code.
 
 ## Licenses
 
-The code is MIT, sublicensed by CrystallEdge, and the header of every ported file says so. eshhhed confirmed on 17 November 2026 that CrystallEdge textures may be used under CC-BY-SA-4.0 as long as each stays in its `_CE` folder with its license file, and that `misc.rsi` is included. TheShuEd in their `meta.json` files is eshhhed. The assets here: the look up and flight icons (`Actions/zlevels.rsi`), the dust puff (`Effects/dust.rsi`, which carries CrystallEdge's own CC-BY-SA-3.0 tag), the lip texture (`Tiles/Volume`, the same) and the two shaders (`Shaders/attributions.yml`, CC-BY-SA-4.0).
+The code is MIT, sublicensed by CrystallEdge, and the header of every ported file says so. eshhhed confirmed on 17 November 2026 that CrystallEdge textures may be used under CC-BY-SA-4.0 as long as each stays in its `_CE` folder with its license file, and that `misc.rsi` is included. TheShuEd in their `meta.json` files is eshhhed. The assets here: the look up, flight and ghost move icons (`Actions/zlevels.rsi`), the stair sprites (`Structures/Architecture/Stairs`), the ladder (`Structures/Furniture/ladder.rsi`, by Max Gab), the dust puff (`Effects/dust.rsi`, which carries CrystallEdge's own CC-BY-SA-3.0 tag), the lip texture (`Tiles/Volume`, the same) and the two shaders (`Shaders/attributions.yml`, CC-BY-SA-4.0).
 
 ## What was left out, and why
 
 - `TryGetEffectiveDistance`: it read CrystallEdge's murk cvar, and murk is not z-level code.
 - The public stamina animation key: nothing here uses it.
-- CrystallEdge's stairs and ladder entities, their sprites and construction graphs.
+- `CEAutoTilePlacement`, and `CEPlaceable`, which lets CrystallEdge mount its ladder from a folded ladder item and hang it over an edge: neither is z-level code. The stone and wooden stairs and the wooden ladder came on 19 November 2026, from the construction menu.
 - The PVS override component: the network entity uses stock `PvsOverrideSystem.AddForceSend`.
 - The fall damage cvars: Player Core's rule replaced them.
 
 ## Known gaps
 
 - The chat relay speaks as an entity with no `CFLanguages`, so a line heard from another level comes through in the common tongue whatever the speaker spoke.
-- GOAP knows nothing of levels: a path never goes up or down stairs (roadmap 6e).
+- GOAP knows nothing of levels: a path never goes up or down stairs (roadmap 6e). Stock pathfinding sees a staircase as a tile with a thin wall at its top and a slowdown on it.
 - `CFChasmEdge` (slip, grace, Grab an Edge) is still on stock `Chasm` entities only. Open sky at the bottom of a stack has no grace: give the map `CFZLevelChasm` for a lethal drop, or leave it off and the creature stands a little below floor height over the void.
 - Not played yet: anything beyond the build and the two fall tests. The two-level test map should be the first thing tried.

@@ -1,0 +1,15 @@
+# A wall ladder from the construction menu. Build it facing a wall on the lower level, and take the floor tile
+# above it out on the level above.
+
+- type: construction
+  id: CFWoodenLadder
+  graph: CFWoodenLadder
+  startNode: start
+  targetNode: CFWoodenLadder
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+    - !type:CFWallRequired

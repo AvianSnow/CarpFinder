@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Numerics;
 using Content.IntegrationTests.Fixtures;
 using Content.Server.CF.ZLevels.Core;
-using Content.Server.CF.ZLevels.Portals;
+using Content.Server.CF.ZLevels.Ladder;
 using Content.Shared.GameTicking;
 using Content.Server.Maps;
 using Content.Shared.Atmos.Components;
@@ -14,11 +14,12 @@ using Content.Shared.CF.Effects;
 using Content.Shared.CF.Preferences;
 using Content.Shared.CF.ZLevels;
 using Content.Shared.CF.ZLevels.Core.Components;
+using Content.Shared.CF.ZLevels.Core.EntitySystems;
 using Content.Shared.CF.ZLevels.Ghost;
+using Content.Shared.CF.ZLevels.Ladder;
 using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Maps;
 using Content.Shared.Stunnable;
-using Content.Shared.Teleportation.Components;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
@@ -29,11 +30,12 @@ namespace Content.IntegrationTests.Tests.CF.ZLevels;
 
 /// <summary>
 /// Stacked maps, falling through open air, stairs, ladders and holes. Levels are small bare maps built here and
-/// joined into one network, as the station's own are at round start.
+/// joined into one network, as the station's own are at round start. Stairs are CrystallEdge's ramps and ladders
+/// its wall ladders: the hero has no player, so the tests put it where a walker would be. A hole is an empty tile.
 /// </summary>
 [TestFixture]
 [TestOf(typeof(CFZLevelsSystem))]
-[TestOf(typeof(CFZLevelPortalSystem))]
+[TestOf(typeof(CFLadderCheckSystem))]
 public sealed class CFZLevelTest : GameTest
 {
     private const int Hp = 500;
@@ -75,7 +77,7 @@ public sealed class CFZLevelTest : GameTest
     private readonly List<(MapId Map, Entity<MapGridComponent> Grid)> _levels = new();
 
     private CFZLevelsSystem Levels => SEntMan.System<CFZLevelsSystem>();
-    private CFZLevelPortalSystem Portals => SEntMan.System<CFZLevelPortalSystem>();
+    private CFLadderCheckSystem Checks => SEntMan.System<CFLadderCheckSystem>();
     private SharedMapSystem Maps => SEntMan.System<SharedMapSystem>();
 
     /// <summary>
@@ -123,6 +125,13 @@ public sealed class CFZLevelTest : GameTest
             return null;
 
         return found.MapId;
+    }
+
+    /// <summary>Takes the floor out of that tile: a hole, or the way out at the top of stairs or a ladder.</summary>
+    private void Open(MapId map, int x, int y)
+    {
+        var (_, grid) = _levels.Find(l => l.Map == map);
+        Maps.SetTile(grid.Owner, grid.Comp, new Vector2i(x, y), Tile.Empty);
     }
 
     private EntityCoordinates At(MapId map, int x, int y)
@@ -192,7 +201,7 @@ public sealed class CFZLevelTest : GameTest
             low = Level();
             var high = Level();
             Combine(low, high);
-            SEntMan.SpawnAtPosition("CFZLevelHole", At(high, 0, 0));
+            Open(high, 0, 0);
             hero = Hero(high, 3, 3);
             SEntMan.System<SharedTransformSystem>().SetCoordinates(hero, At(high, 0, 0));
             SEntMan.System<SharedPhysicsSystem>().WakeBody(hero);
@@ -220,7 +229,7 @@ public sealed class CFZLevelTest : GameTest
             low = Level(half: 40);
             high = Level(half: 40);
             Combine(low, high);
-            SEntMan.SpawnAtPosition("CFZLevelHole", At(high, holeX, 0));
+            Open(high, holeX, 0);
             hero = Hero(high, 0, 0);
             var transform = SEntMan.System<SharedTransformSystem>();
             transform.SetWorldRotation(hero, new Vector2(1f, 0f).ToWorldAngle());
@@ -232,7 +241,8 @@ public sealed class CFZLevelTest : GameTest
 
         await Server.WaitAssertion(() =>
         {
-            Assert.That(MapOf(hero), Is.EqualTo(clears ? high : low));
+            var pos = SEntMan.System<SharedTransformSystem>().GetWorldPosition(hero);
+            Assert.That(MapOf(hero), Is.EqualTo(clears ? high : low), $"It came to rest at {pos}.");
         });
     }
 
@@ -306,67 +316,199 @@ public sealed class CFZLevelTest : GameTest
         });
     }
 
-    [Test]
-    public async Task AutoStairsBuildTheirOtherEndAndCarryYouThrough()
+    /// <summary>
+    /// CrystallEdge's stairs: a stone ramp on the lower level at the tile given, climbing north, with the tile above
+    /// its top left open on the upper level.
+    /// </summary>
+    private EntityUid Stairs(MapId low, MapId high, int x, int y)
     {
-        MapId low = default;
+        Open(high, x, y);
+        return SEntMan.SpawnAtPosition("CFZLevelStairsStone", At(low, x, y));
+    }
+
+    /// <summary>Puts the hero so far north of the middle of that tile on whatever level it is on now.</summary>
+    private void Step(EntityUid hero, int x, int y, float north)
+    {
+        var coords = At(MapOf(hero), x, y).Offset(new Vector2(0, north));
+        SEntMan.System<SharedTransformSystem>().SetCoordinates(hero, coords);
+        SEntMan.System<SharedPhysicsSystem>().WakeBody(hero);
+    }
+
+    [Test]
+    public async Task StairsCarryYouUpToTheLevelAbove()
+    {
+        MapId high = default;
         EntityUid hero = default;
         await Server.WaitPost(() =>
         {
-            low = Level();
-            var high = Level();
+            var low = Level();
+            high = Level();
             Combine(low, high);
+            Stairs(low, high, 0, 0);
 
-            var stairs = SEntMan.SpawnAtPosition("CFStairsDownStoneAutoLink", At(high, 0, 0));
-            Assert.That(SEntMan.GetComponent<LinkedEntityComponent>(stairs).LinkedEntities, Has.Count.EqualTo(1));
-
-            hero = Hero(high, 3, 3);
-            SEntMan.System<SharedTransformSystem>().SetCoordinates(hero, At(high, 0, 0));
-            SEntMan.System<SharedPhysicsSystem>().WakeBody(hero);
+            hero = Hero(low, 0, -2);
+            Step(hero, 0, 0, 0.45f);
         });
 
         await Pair.RunTicksSync(30);
 
         await Server.WaitAssertion(() =>
         {
-            Assert.That(MapOf(hero), Is.EqualTo(low));
+            Assert.That(MapOf(hero), Is.EqualTo(high), "The top of the ramp is the floor of the level above.");
             Assert.That(Health(hero), Is.EqualTo(Hp), "Stairs do not hurt.");
+            Assert.That(SEntMan.HasComponent<KnockedDownComponent>(hero), Is.False);
         });
     }
 
-    private Entity<CFZLevelClimbComponent> Ladder(MapId high, int dc = 0)
+    /// <summary>Every ramp prototype, in every shape, spawns and is high ground.</summary>
+    [TestCase("CFZLevelStairsWooden")]
+    [TestCase("CFZLevelStairsWoodenCorner")]
+    [TestCase("CFZLevelStairsWoodenCornerInner")]
+    [TestCase("CFZLevelStairsStone")]
+    [TestCase("CFZLevelStairsStoneCorner")]
+    [TestCase("CFZLevelStairsStoneCornerInner")]
+    [TestCase("CFZLevelStairsRoofRed")]
+    [TestCase("CFZLevelStairsRoofRedCorner")]
+    [TestCase("CFZLevelStairsRoofRedCornerInner")]
+    [TestCase("CFZLevelStairsRoofGreen")]
+    [TestCase("CFZLevelStairsRoofGreenCorner")]
+    [TestCase("CFZLevelStairsRoofGreenCornerInner")]
+    [TestCase("CFZLevelStairsRoofBlue")]
+    [TestCase("CFZLevelStairsRoofBlueCorner")]
+    [TestCase("CFZLevelStairsRoofBlueCornerInner")]
+    [TestCase("CFZLevelStairsDirtCliff")]
+    [TestCase("CFZLevelStairsDirtCliffCorner")]
+    [TestCase("CFZLevelStairsDirtCliffCornerInner")]
+    public async Task EveryRampIsHighGround(string id)
     {
-        var ladder = SEntMan.SpawnAtPosition("CFLadderDownAutoLink", At(high, 1, 1));
-        var climb = SEntMan.GetComponent<CFZLevelClimbComponent>(ladder);
-        climb.Dc = dc;
-        return (ladder, climb);
+        await Server.WaitAssertion(() =>
+        {
+            var low = Level();
+            var ramp = SEntMan.SpawnAtPosition(id, At(low, 0, 0));
+            Assert.That(SEntMan.HasComponent<CFZLevelHighGroundComponent>(ramp));
+            Assert.That(SEntMan.GetComponent<TransformComponent>(ramp).Anchored);
+        });
     }
 
     [Test]
-    public async Task LaddersClimbAndNeedFreeHands()
+    public async Task StairsCarryYouDownWithoutAFall()
+    {
+        MapId low = default;
+        MapId high = default;
+        EntityUid hero = default;
+        await Server.WaitPost(() =>
+        {
+            low = Level();
+            high = Level();
+            Combine(low, high);
+            Stairs(low, high, 0, 0);
+
+            hero = Hero(high, 0, 2);
+            Step(hero, 0, 0, 0.45f);
+        });
+
+        await Pair.RunTicksSync(15);
+
+        await Server.WaitAssertion(() =>
+        {
+            Assert.That(MapOf(hero), Is.EqualTo(high), "The open tile over the top of the stairs is not a hole.");
+        });
+
+        // Down the ramp, a bit at a time, as a walker would.
+        for (var north = 0.3f; north >= -0.45f; north -= 0.15f)
+        {
+            var at = north;
+            await Server.WaitPost(() => Step(hero, 0, 0, at));
+            await Pair.RunTicksSync(5);
+        }
+
+        await Server.WaitPost(() => Step(hero, 0, -1, 0f));
+        await Pair.RunTicksSync(30);
+
+        await Server.WaitAssertion(() =>
+        {
+            Assert.That(MapOf(hero), Is.EqualTo(low), "The foot of the ramp is the lower level.");
+            Assert.That(Health(hero), Is.EqualTo(Hp), "Walking down is not a fall.");
+            Assert.That(SEntMan.HasComponent<KnockedDownComponent>(hero), Is.False);
+        });
+    }
+
+    /// <summary>
+    /// CrystallEdge's wall ladder on the lower level at that tile, hanging on a wall north of it, with the tile
+    /// above it open. The grip zone is the wall side of its tile.
+    /// </summary>
+    private Entity<CFLadderCheckComponent> Ladder(MapId low, MapId high, int x, int y, int dc = 0)
+    {
+        SEntMan.SpawnAtPosition("CFWallStonebrick", At(low, x, y + 1));
+        var ladder = SEntMan.SpawnAtPosition("CFWoodenLadder", At(low, x, y));
+        Open(high, x, y);
+        var check = SEntMan.GetComponent<CFLadderCheckComponent>(ladder);
+        check.Dc = dc;
+        return (ladder, check);
+    }
+
+    [Test]
+    public async Task WalkingIntoALadderTakesHold()
+    {
+        EntityUid hero = default;
+        await Server.WaitPost(() =>
+        {
+            var low = Level();
+            var high = Level();
+            Combine(low, high);
+            Ladder(low, high, 0, 0);
+
+            hero = Hero(low, 0, -2);
+            Step(hero, 0, 0, 0.2f);
+        });
+
+        await Pair.RunTicksSync(10);
+
+        await Server.WaitAssertion(() =>
+        {
+            Assert.That(SEntMan.HasComponent<CFLadderClimberComponent>(hero), "Touching the wall side of the ladder tile takes hold.");
+        });
+    }
+
+    [Test]
+    public async Task AHardClimbIsAnAthleticsCheckWithFreeHands()
     {
         await Server.WaitAssertion(() =>
         {
             var low = Level();
             var high = Level();
             Combine(low, high);
-            var ladder = Ladder(high);
-            var hero = Hero(high, 1, 0);
+            var ladder = Ladder(low, high, 1, 1, dc: 90);
+            var hero = Hero(low, 1, 0);
+            // Nothing a d20 adds reaches 90 from here, so every roll is a critical failure.
+            SEntMan.GetComponent<CFAbilityScoreComponent>(hero).AbilityModifiers[CFAbility.Strength] = -60;
 
-            var item = SEntMan.SpawnAtPosition("CFHoodedLantern", At(high, 1, 0));
+            var item = SEntMan.SpawnAtPosition("CFHoodedLantern", At(low, 1, 0));
             var hands = SEntMan.System<SharedHandsSystem>();
             Assert.That(hands.TryPickupAnyHand(hero, item, checkActionBlocker: false));
-            Assert.That(Portals.Climb(ladder, hero), Is.False, "Climbing takes two free hands.");
-            Assert.That(MapOf(hero), Is.EqualTo(high));
+            Assert.That(Checks.TryGrip(ladder, hero), Is.False, "Climbing takes two free hands.");
+            Assert.That(SEntMan.HasComponent<KnockedDownComponent>(hero), Is.False, "Full hands are not a roll.");
 
             SEntMan.DeleteEntity(item);
-            Assert.That(Portals.Climb(ladder, hero));
-            Assert.That(MapOf(hero), Is.EqualTo(low));
+            ladder.Comp.Verdicts.Clear();
+            Assert.That(Checks.TryGrip(ladder, hero), Is.False, "A critical failure makes no progress.");
+            Assert.That(SEntMan.HasComponent<KnockedDownComponent>(hero), "From the ground it leaves you prone.");
+            Assert.That(Checks.TryGrip(ladder, hero), Is.False, "The verdict holds for a while.");
+
+            ladder.Comp.Verdicts.Clear();
+            var options = SEntMan.EnsureComponent<CFCombatOptionsComponent>(hero);
+            options.ClimbSpeed = true;
+            Assert.That(Checks.TryGrip(ladder, hero), "A climb Speed needs no check.");
+
+            options.ClimbSpeed = false;
+            ladder.Comp.Verdicts.Clear();
+            ladder.Comp.Dc = 0;
+            Assert.That(Checks.TryGrip(ladder, hero), "A trivial climb asks nothing.");
         });
     }
 
     [Test]
-    public async Task CriticalFailureOnTheWayDownFalls()
+    public async Task CriticalFailureOnTheWayDownLetsGo()
     {
         MapId low = default;
         EntityUid hero = default;
@@ -375,24 +517,22 @@ public sealed class CFZLevelTest : GameTest
             low = Level();
             var high = Level();
             Combine(low, high);
-            var ladder = Ladder(high, dc: 90);
-            hero = Hero(high, 1, 0);
+            var ladder = Ladder(low, high, 1, 1, dc: 90);
+            hero = Hero(low, 1, 1);
             SEntMan.GetComponent<CFAbilityScoreComponent>(hero).AbilityModifiers[CFAbility.Strength] = -60;
 
-            // A natural 20 lifts this to a plain failure, so allow a few tries.
-            for (var i = 0; i < 20 && MapOf(hero) == high; i++)
-            {
-                Assert.That(Portals.Climb(ladder, hero), Is.False);
-            }
-
-            Assert.That(MapOf(hero), Is.EqualTo(low), "A critical failure on the way down is a fall.");
+            // Coming down through the opening: the ladder is reached from near the ceiling.
+            SEntMan.System<CFSharedZLevelsSystem>().SetZPosition(hero, 0.9f);
+            Assert.That(Checks.TryGrip(ladder, hero), Is.False, "A critical failure on the way down is a fall.");
+            Assert.That(SEntMan.HasComponent<KnockedDownComponent>(hero), Is.False, "Nothing to land prone on yet.");
         });
 
         await Pair.RunTicksSync(60);
 
         await Server.WaitAssertion(() =>
         {
-            Assert.That(Health(hero), Is.EqualTo(Hp - OneLevel));
+            Assert.That(MapOf(hero), Is.EqualTo(low));
+            Assert.That(SEntMan.HasComponent<CFLadderClimberComponent>(hero), Is.False, "It never took hold.");
         });
     }
 
@@ -451,26 +591,24 @@ public sealed class CFZLevelTest : GameTest
             var cellar = Maps.GetMapOrInvalid(below!.Value);
             Assert.That(SEntMan.GetComponent<MapAtmosphereComponent>(cellar).Space, Is.False, "Saved maps keep the sky air.");
 
-            var linked = 0;
-            var query = SEntMan.AllEntityQueryEnumerator<LinkedEntityComponent, TransformComponent>();
-            while (query.MoveNext(out var link, out var xform))
+            var ladders = 0;
+            var ramps = 0;
+            var query = SEntMan.AllEntityQueryEnumerator<TransformComponent>();
+            while (query.MoveNext(out var uid, out var xform))
             {
-                if (xform.MapID == ground && link.LinkedEntities.Count > 0)
-                    linked++;
+                if (xform.MapID != below.Value)
+                    continue;
+
+                if (SEntMan.HasComponent<CFLadderComponent>(uid))
+                    ladders++;
+                if (SEntMan.HasComponent<CFZLevelHighGroundComponent>(uid))
+                    ramps++;
             }
 
-            Assert.That(linked, Is.EqualTo(2), "The stairs and the ladder both reach the cellar.");
+            Assert.That(ladders, Is.EqualTo(1), "The ladder hangs in the cellar and climbs to the ground.");
+            Assert.That(ramps, Is.EqualTo(1), "The stairs stand in the cellar and climb to the ground.");
 
             Maps.InitializeMap(ground);
-            var ends = 0;
-            var built = SEntMan.AllEntityQueryEnumerator<LinkedEntityComponent, TransformComponent>();
-            while (built.MoveNext(out var link, out var xform))
-            {
-                if (xform.MapID == below.Value && link.LinkedEntities.Count > 0)
-                    ends++;
-            }
-
-            Assert.That(ends, Is.EqualTo(2), "Starting the round must not build a second set of ends.");
         });
     }
 }

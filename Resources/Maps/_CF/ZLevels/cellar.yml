@@ -5,7 +5,7 @@ meta:
   forkId: ""
   forkVersion: ""
   time: 11/05/2026 11:11:55
-  entityCount: 2
+  entityCount: 5
 maps:
 - 1
 grids:
@@ -91,4 +91,25 @@ entities:
       data:
         chunkSize: 4
     - type: GasTileOverlay
+- proto: CFZLevelStairsStone
+  entities:
+  - uid: 3
+    components:
+    - type: Transform
+      parent: 2
+      pos: 3.5,0.5
+- proto: CFWallStonebrick
+  entities:
+  - uid: 4
+    components:
+    - type: Transform
+      parent: 2
+      pos: -2.5,1.5
+- proto: CFWoodenLadder
+  entities:
+  - uid: 5
+    components:
+    - type: Transform
+      parent: 2
+      pos: -2.5,0.5
 ...

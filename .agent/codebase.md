@@ -276,7 +276,7 @@ Radial actions are entities in `Resources/Prototypes/_CF/Actions/activities.yml`
 | `/Maps/Nonstations/meteor-arena.yml` | The arena all integration tests load, through `CFDevMap` |
 | `CFMobKoboldTrapper` | A GOAP leader that shoots, lays traps and draws a hammer when cornered. Set a spawner's `encounter` to `KoboldAmbush` for it and three warriors |
 | Any monster | Ghosts can take every monster above from the ghost role menu, through `CFMonsterGhostRole` |
-| `CFZLevelTest` | A two-level map (`forcemap CFZLevelTest`): stairs, a ladder and a hole down to a cellar, with the cellar listed in the station's `CFStationZLevels.mapsBelow` |
+| `CFZLevelTest` | A two-level map (`forcemap CFZLevelTest`): a hole (an empty tile) down to a cellar, and CrystallEdge's stone staircase (`CFZLevelStairsStone`) and wall ladder (`CFWoodenLadder`) climbing out of it, with the cellar listed in the station's `CFStationZLevels.mapsBelow` |
 | `CFEncounterSpawner` | Spawns an `encounter` when a player comes within `triggerFeet` (90). Edit it in VV as an aghost: `mobs` takes ids separated by commas, and `amount` is how many (`CFMobWolf` and 2 is two wolves; 0 is one of each typed mob). Left alone it is `SmallGroup`, four kobold warriors |
 | `CFEncounterSpawnerKoboldTribe` | Spawns the `KoboldTribe` encounter at once: five warriors and a trapper that live round the nearest fire, farm, store food and ask strangers for food. `/Maps/_CF/KoboldSocietyTest2.yml` has one. See `society.md` |
 | `CFEncounterSpawnerDragonLair` | The same, set to `DragonLair`: the juvenile horned dragon, which guards the spot it appears on. Dragon Run has one beside `CFBoneDragon` |

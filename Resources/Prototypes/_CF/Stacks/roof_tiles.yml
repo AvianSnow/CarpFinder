@@ -1,0 +1,22 @@
+# CrystallEdge's roof tiles.
+
+- type: stack
+  id: CFFloorTileRoofRed
+  name: cf-tiles-roof-red
+  spawn: CFFloorTileRoofRed
+  icon: { sprite: _CE/Objects/tile.rsi, state: roof_red }
+  maxCount: 30
+
+- type: stack
+  id: CFFloorTileRoofGreen
+  name: cf-tiles-roof-green
+  spawn: CFFloorTileRoofGreen
+  icon: { sprite: _CE/Objects/tile.rsi, state: roof_green }
+  maxCount: 30
+
+- type: stack
+  id: CFFloorTileRoofBlue
+  name: cf-tiles-roof-blue
+  spawn: CFFloorTileRoofBlue
+  icon: { sprite: _CE/Objects/tile.rsi, state: roof_blue }
+  maxCount: 30

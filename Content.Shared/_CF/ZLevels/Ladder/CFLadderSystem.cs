@@ -61,6 +61,13 @@ public sealed partial class CFLadderSystem : EntitySystem
             || !_zPhysicsQuery.HasComp(args.OtherEntity))
             return;
 
+        // CarpFinder: the Player Core Climb check (CFLadderCheckSystem) can refuse the grip
+        var attempt = new CFLadderGripAttemptEvent(args.OtherEntity);
+        RaiseLocalEvent(ent, ref attempt);
+        if (attempt.Cancelled)
+            return;
+        // CarpFinder end
+
         var climber = EnsureComp<CFLadderClimberComponent>(args.OtherEntity);
         if (!climber.Ladders.Add(ent))
             return;

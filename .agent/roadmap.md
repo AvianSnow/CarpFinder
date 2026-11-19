@@ -357,7 +357,7 @@ Gaps in the parts of Step 1 that are built. Take them when the system is next to
 - **Unfinished options are marked in the builder**, not hidden, so a player can see what is coming.
 - **Exploration and downtime options run on the world clock** where that works. Otherwise they keep their flavour text with the word `TBA` on its own, so `TBA` can be searched for later.
 - **Flying is over open sky, space tiles, chasms and holes**, and open sky is a fall into the void with a 2 second grace and Grab an Edge (2.7). Decided on 15 November 2026.
-- **Swimming and climbing are `TBA`.** Swimming will be ported from another fork, because SS14 has water entities. Climb speeds are not built, and `CFZLevelClimb` always rolls.
+- **Swimming and climbing are `TBA`.** Swimming will be ported from another fork, because SS14 has water entities. Climb Speeds (`CFGrantClimb` with `climbSpeed`) skip the check on a CrystallEdge ladder with a `dc` (`CFLadderCheck`); a ladder with none is a trivial climb and free.
 - **Z-levels are CrystallEdge's**, ported on 17 November 2026 with eshhhed's permission, which covers that code alone and asks for the credit "eshhhed". The CP14 stack of portal-linked maps is gone; our stairs, ladders and holes now sit on the CrystallEdge network, and fall damage is Player Core's. What landed and what was left out is in `zlevels.md`.
 - **Deities are our own pantheon**, not Golarion's named gods. Speaking to a god is stock SS14 prayer, which sends the message to the admins, so there is no religion system to build.
 - **Languages matter**, for roleplay: talk a goblin out of a fight in its own tongue. See "Languages" below.
@@ -608,6 +608,8 @@ A kobold tribe that eats, drinks, farms, stores food, shares it, talks, and asks
 - The YAML linter (`dotnet run --project Content.YAMLLinter -c Tools`) reports 190 errors, seen on 17 November 2026 and not looked into. Most are guidebook entries that do not exist, stock ones and those named in `_CF/Guidebook/newplayer.yml`. `_CF/Entities/Effects/scent.yml` sets `icon` and `iconOn` on `Action`, which has no such fields. `CFMapAirTest.RoundMap` names an unknown prototype kind.
 
 - `CFGOAPSocietyTest.AHungryTribeHuntsAPigAndEatsIt` is unreliable. Measured on 17 November 2026, alone: it failed 1 run in 5 on commit `25f19f9ea9` and 6 in 12 with the familiar work on top, which touches nothing a tribe or a pig uses, so the difference may be chance. Which of its steps fails was not caught. Not looked into.
+
+- `ConstructionPrototypeTest.ConstructionComponentValid` (stock) fails: every `CFCraneBarrel*` entity names the node `CFWoodenBarrel`, which the `CFCraneBarrel` graph does not have. Seen on 19 November 2026 while adding the stair ramps, which pass it. Not looked into.
 
 - `MaterialArbitrageTest.NoMaterialArbitrage` (stock) fails inside `ConstructionGraphPrototype.Path`, which means a construction graph has a node it cannot reach. Found on 11 November 2026 and not looked into. It is not from butchering: the harvest change touches no construction.
 
