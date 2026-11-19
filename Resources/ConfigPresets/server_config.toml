@@ -38,8 +38,8 @@ ipintel_enabled = false
 ipintel_contact_email = ""
 # IPIntel score to reject connections.
 ipintel_bad_rating = 0.95
-# CarpFinder: every round is Dragon Run in Greenshift. CFMapPool holds only that map, so rounds loop on it.
-map = "CFDragonRunTest"
+# CarpFinder: every round is Dragon Dungeon in Greenshift. CFMapPool holds only that map, so rounds loop on it.
+map = "CFDragonDungeon"
 map_pool = "CFMapPool"
 defaultpreset = "Greenshift"
 fallbackpreset = "Greenshift"

@@ -5,6 +5,8 @@ using Content.IntegrationTests.Fixtures;
 using Content.Server.CF.ZLevels.Core;
 using Content.Server.CF.ZLevels.Ladder;
 using Content.Shared.GameTicking;
+using Content.Shared.Gravity;
+using Content.Shared.Station.Components;
 using Content.Server.Maps;
 using Content.Shared.Atmos.Components;
 using Content.Shared.CF.Actions;
@@ -607,6 +609,33 @@ public sealed class CFZLevelTest : GameTest
 
             Assert.That(ladders, Is.EqualTo(1), "The ladder hangs in the cellar and climbs to the ground.");
             Assert.That(ramps, Is.EqualTo(1), "The stairs stand in the cellar and climb to the ground.");
+
+            Maps.InitializeMap(ground);
+        });
+    }
+
+    /// <summary>
+    /// The round map is the first stack built in the editor. It is loaded the way a round loads it, so this catches a
+    /// level file that lost its air, or a ground that stock would not make a station of.
+    /// </summary>
+    [Test]
+    public async Task TheRoundMapLoadsItsUpperLevelWithAirAndAStation()
+    {
+        await Server.WaitAssertion(() =>
+        {
+            var map = Server.ProtoMan.Index(new ProtoId<GameMapPrototype>("CFDragonDungeon"));
+            SEntMan.System<GameTicker>().LoadGameMap(map, out var ground);
+
+            var above = Offset(ground, 1);
+            Assert.That(above, Is.Not.Null, "The upper floor loads over the ground.");
+            Assert.That(Offset(ground, -1), Is.Null, "Nothing is below the ground.");
+
+            var upper = Maps.GetMapOrInvalid(above!.Value);
+            Assert.That(SEntMan.TryGetComponent(upper, out MapAtmosphereComponent air) && !air.Space, "The upper floor has air.");
+            Assert.That(SEntMan.TryGetComponent(upper, out GravityComponent gravity) && gravity.Enabled, "The upper floor has gravity.");
+
+            var groundUid = Maps.GetMapOrInvalid(ground);
+            Assert.That(SEntMan.HasComponent<StationMemberComponent>(groundUid), "The ground is the station, so jobs and spawn points work.");
 
             Maps.InitializeMap(ground);
         });

@@ -1,0 +1,30 @@
+# The round map: a two-level dungeon, the first built on CrystallEdge z-levels.
+# The files come from cf_znetwork_save, which writes one map per level as <name><depth>.yml:
+# DragonDungeon0.yml is the ground (depth 0, the station grid) and DragonDungeon1.yml the floor above it.
+# Reopen the whole stack in the editor with: cf_znetwork_gamemap_mapping CFDragonDungeon
+- type: gameMap
+  id: CFDragonDungeon
+  mapName: Dragon Dungeon
+  mapPath: /Maps/_CF/Adventure/DragonDungeon/DragonDungeon0.yml
+  minPlayers: 0
+  stations:
+    DragonDungeon:
+      stationProto: CFStationBasic
+      components:
+        - type: StationNameSetup
+          mapNameTemplate: "Dragon Dungeon"
+        - type: StationJobs
+          availableJobs:
+            CFAlpha: [ 0, 6 ]
+            CFBeta: [ 0, 6 ]
+            CFCharlie: [ 0, 6 ]
+            CFDelta: [ 0, 6 ]
+            CFMerchant: [ 1, 1 ]
+        # The floor above the ground. Levels below would go in mapsBelow, deepest first.
+        - type: CFStationZLevels
+          mapsAbove:
+            - /Maps/_CF/Adventure/DragonDungeon/DragonDungeon1.yml
+        # One wandering mob every 10 minutes, on grass or cave floor, never within 30 tiles of a player.
+        - type: CFWildSpawner
+          table: !type:NestedSelector
+            tableId: CFWildMobsDragonRun

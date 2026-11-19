@@ -60,6 +60,15 @@ Besides falling:
 - **Ghosts** have `CFZLevelGhostMover` (`CFActionZLevelUp`, `CFActionZLevelDown`).
 - **Flight** is `CFZFlyer` plus `CFControllableFlight` on a creature. Roadmap 2.7 (flying over open sky) can be built on it.
 
+## Building a stack in the editor, and making it the round map
+
+- `cf_znetwork_gamemap_mapping <gameMap id>` opens every level of a `gameMap` that has `CFStationZLevels` in the editor. `cf_znetwork_mapping <zMap id>` does the same from a `zMap` prototype, and `cf_znetwork_add_above` / `cf_znetwork_add_below` add a level to an open network.
+- `cf_znetwork_save <network entity, from the aghost VV or entity list> <name>` writes one file per level to `ZNetworkSaves/<name>/<name><depth>.yml` under the user data folder: `<name>0.yml` is the ground, `<name>1.yml` the level above it, `<name>-1.yml` the one below. Give it a bare name: `DragonDungeon`, not `DragonDungeon.yml`, or the files come out as `DragonDungeon.yml0.yml`.
+- Copy the folder under `Resources/Maps/_CF/`, then write a `gameMap` whose `mapPath` is the depth 0 file and whose station has `CFStationZLevels` with `mapsAbove` (depth 1, 2, ... in order) and `mapsBelow` (deepest first). `Resources/Prototypes/_CF/Maps/dragondungeon.yml` is the example.
+- The depth 0 grid needs `BecomesStation` with the station key, or stock builds no station and nobody can join. The save command does not write one.
+- Every level needs its own `MapAtmosphere`, or anyone on it suffocates in seconds with full CF HP. The editor only puts one on the level that was made as a planet. Levels share one time of day through `cf_znetwork_time_set`, but only among maps that have `LightCycle`.
+- A level saved from the editor is paused (`mapPaused: True`) and pre-init, which is what a round wants. `NoSavedPostMapInitTest` fails on one saved from a running round.
+
 ## What was changed in the port
 
 Each is marked `CarpFinder` in the code.
