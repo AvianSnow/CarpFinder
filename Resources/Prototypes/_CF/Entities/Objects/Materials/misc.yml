@@ -19,13 +19,13 @@
     layers:
       - state: ash_1
         map: ["base"]
-  - type: SolutionContainerManager
-    solutions:
-      food:
-        maxVol: 50
-        reagents:
-        - ReagentId: Ash
-          Quantity: 10
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 50
+      reagents:
+      - ReagentId: Ash
+        Quantity: 10
   - type: SolutionSpiker
     sourceSolution: food
     ignoreEmpty: true

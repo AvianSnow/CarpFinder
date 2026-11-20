@@ -23,15 +23,15 @@
     damageContainer: Biological
   - type: Physics
     bodyType: Static
-  - type: SolutionContainerManager
-    solutions:
-      food:
-        maxVol: 650
-        reagents:
-        - ReagentId: PumpkinFlesh
-          Quantity: 500
-        - ReagentId: Vitamin
-          Quantity: 125
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 650
+      reagents:
+      - ReagentId: PumpkinFlesh
+        Quantity: 500
+      - ReagentId: Vitamin
+        Quantity: 125
   - type: Fixtures
     fixtures:
       fix1:

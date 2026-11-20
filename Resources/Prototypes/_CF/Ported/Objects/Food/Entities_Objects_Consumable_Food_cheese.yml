@@ -18,15 +18,15 @@
     sprite: _CP14/Objects/Consumable/Food/cheese.rsi
     layers:
       - state: cheese_wheel
-  - type: SolutionContainerManager
-    solutions:
-      food:
-        maxVol: 30
-        reagents:
-        - ReagentId: Nutriment
-          Quantity: 21
-        - ReagentId: Protein
-          Quantity: 15 # 5 parts * 3 slices * 1 protein
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 30
+      reagents:
+      - ReagentId: Nutriment
+        Quantity: 21
+      - ReagentId: Protein
+        Quantity: 15 # 5 parts * 3 slices * 1 protein
   - type: Tag
     tags:
     - CFCheese
@@ -56,14 +56,14 @@
           cheese_part: ""
           cheese_part2: ""
           cheese_part3: ""
-  - type: SolutionContainerManager
-    solutions:
-      food:
-        reagents:
-        - ReagentId: Nutriment
-          Quantity: 4.2
-        - ReagentId: Protein
-          Quantity: 3 # 3 slices * 1 protein
+  - type: Solution
+    id: food
+    solution:
+      reagents:
+      - ReagentId: Nutriment
+        Quantity: 4.2
+      - ReagentId: Protein
+        Quantity: 3 # 3 slices * 1 protein
   - type: Tag
     tags:
     - CFCheese
@@ -93,15 +93,15 @@
           cheese_slice: ""
           cheese_slice2: ""
           cheese_slice3: ""
-  - type: SolutionContainerManager
-    solutions:
-      food:
-        maxVol: 2 # 1/3 cheese part
-        reagents:
-        - ReagentId: Nutriment
-          Quantity: 1.4
-        - ReagentId: Protein
-          Quantity: 1
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 2 # 1/3 cheese part
+      reagents:
+      - ReagentId: Nutriment
+        Quantity: 1.4
+      - ReagentId: Protein
+        Quantity: 1
   - type: Tag
     tags:
     - CFCheese
@@ -123,15 +123,15 @@
     flavors:
       - cheesy
       - cheesy
-  - type: SolutionContainerManager
-    solutions:
-      food:
-        maxVol: 30
-        reagents:
-        - ReagentId: Nutriment
-          Quantity: 30
-        - ReagentId: Protein
-          Quantity: 22.5 # 15 * 1.5 (50% more)
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 30
+      reagents:
+      - ReagentId: Nutriment
+        Quantity: 30
+      - ReagentId: Protein
+        Quantity: 22.5 # 15 * 1.5 (50% more)
   - type: Tag
     tags:
     - CFCheese
@@ -158,15 +158,15 @@
           blue_cheese_part: ""
           blue_cheese_part2: ""
           blue_cheese_part3: ""
-  - type: SolutionContainerManager
-    solutions:
-      food:
-        maxVol: 6 # 1/5 of wheel
-        reagents:
-        - ReagentId: Nutriment
-          Quantity: 6 # 30/5
-        - ReagentId: Protein
-          Quantity: 4.5 # 22.5/5
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 6 # 1/5 of wheel
+      reagents:
+      - ReagentId: Nutriment
+        Quantity: 6 # 30/5
+      - ReagentId: Protein
+        Quantity: 4.5 # 22.5/5
   - type: Tag
     tags:
     - CFCheese
@@ -193,15 +193,15 @@
           blue_cheese_slice: ""
           blue_cheese_slice2: ""
           blue_cheese_slice3: ""
-  - type: SolutionContainerManager
-    solutions:
-      food:
-        maxVol: 2 # 1/3 of part
-        reagents:
-        - ReagentId: Nutriment
-          Quantity: 2 # 6/3
-        - ReagentId: Protein
-          Quantity: 1.5 # 4.5/3
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 2 # 1/3 of part
+      reagents:
+      - ReagentId: Nutriment
+        Quantity: 2 # 6/3
+      - ReagentId: Protein
+        Quantity: 1.5 # 4.5/3
   - type: Tag
     tags:
     - CFCheese
@@ -223,15 +223,15 @@
     flavors:
       - cheesy
       - savory
-  - type: SolutionContainerManager
-    solutions:
-      food:
-        maxVol: 30
-        reagents:
-        - ReagentId: Nutriment
-          Quantity: 45
-        - ReagentId: Protein
-          Quantity: 30 # 15 * 2 (100% more)
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 30
+      reagents:
+      - ReagentId: Nutriment
+        Quantity: 45
+      - ReagentId: Protein
+        Quantity: 30 # 15 * 2 (100% more)
   - type: Tag
     tags:
     - CFCheese
@@ -258,15 +258,15 @@
           aged_cheese_part: ""
           aged_cheese_part2: ""
           aged_cheese_part3: ""
-  - type: SolutionContainerManager
-    solutions:
-      food:
-        maxVol: 6 # 1/5 of wheel
-        reagents:
-        - ReagentId: Nutriment
-          Quantity: 9 # 45/5
-        - ReagentId: Protein
-          Quantity: 6 # 30/5
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 6 # 1/5 of wheel
+      reagents:
+      - ReagentId: Nutriment
+        Quantity: 9 # 45/5
+      - ReagentId: Protein
+        Quantity: 6 # 30/5
   - type: Tag
     tags:
     - CFCheese
@@ -293,15 +293,15 @@
           aged_cheese_slice: ""
           aged_cheese_slice2: ""
           aged_cheese_slice3: ""
-  - type: SolutionContainerManager
-    solutions:
-      food:
-        maxVol: 2 # 1/3 of part
-        reagents:
-        - ReagentId: Nutriment
-          Quantity: 3 # 9/3
-        - ReagentId: Protein
-          Quantity: 2 # 6/3
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 2 # 1/3 of part
+      reagents:
+      - ReagentId: Nutriment
+        Quantity: 3 # 9/3
+      - ReagentId: Protein
+        Quantity: 2 # 6/3
   - type: Tag
     tags:
     - CFCheese

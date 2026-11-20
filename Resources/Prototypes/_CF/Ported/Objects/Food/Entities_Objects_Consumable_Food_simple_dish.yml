@@ -28,15 +28,15 @@
           base2: ""
           base3: ""
           base4: ""
-  - type: SolutionContainerManager
-    solutions:
-      food:
-        maxVol: 8
-        reagents:
-        - ReagentId: Nutriment
-          Quantity: 4
-        - ReagentId: Vitamin
-          Quantity: 2
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 8
+      reagents:
+      - ReagentId: Nutriment
+        Quantity: 4
+      - ReagentId: Vitamin
+        Quantity: 2
 
 - type: entity
   id: CFFoodChromiumJelly
@@ -58,15 +58,15 @@
     sprite: _CP14/Objects/Consumable/Food/jelly.rsi
     layers:
       - state: chromium_jelly
-  - type: SolutionContainerManager
-    solutions:
-      food:
-        maxVol: 9
-        reagents:
-        - ReagentId: CFChromiumSlime
-          Quantity: 1
-        - ReagentId: Vitamin
-          Quantity: 6
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 9
+      reagents:
+      - ReagentId: CFChromiumSlime
+        Quantity: 1
+      - ReagentId: Vitamin
+        Quantity: 6
   - type: Temperature
 
 - type: entity
@@ -87,13 +87,13 @@
     sprite: _CP14/Objects/Consumable/Food/shell.rsi
     layers:
       - state: shell
-  - type: SolutionContainerManager
-    solutions:
-      food:
-        maxVol: 6
-        reagents:
-        - ReagentId: UncookedAnimalProteins
-          Quantity: 3
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 6
+      reagents:
+      - ReagentId: UncookedAnimalProteins
+        Quantity: 3
   - type: Temperature
   - type: InternalTemperature
   - type: CFTemperatureTransformation
@@ -121,10 +121,10 @@
     sprite: _CP14/Objects/Consumable/Food/shell.rsi
     layers:
       - state: cooked_snail
-  - type: SolutionContainerManager
-    solutions:
-      food:
-        maxVol: 6
-        reagents:
-        - ReagentId: Protein
-          Quantity: 3
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 6
+      reagents:
+      - ReagentId: Protein
+        Quantity: 3

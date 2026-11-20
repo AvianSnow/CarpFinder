@@ -46,6 +46,7 @@
     maxEntities: 4
   - type: CFFireplace
   - type: CFFireHeater
+  - type: CFCookingSurface # CarpFinder: food and cookware used on it are set on top, not put in with the fuel
   - type: ContainerContainer
     containers:
       storagebase: !type:Container
@@ -54,10 +55,6 @@
     maxItemSize: Normal
     grid:
     - 0,0,2,2
-    cP14Ignorelist:
-      components:
-        - IgnitionSource
-        - CFDelayedIgnitionSource
   - type: UserInterface
     interfaces:
       enum.StorageUiKey.Key:

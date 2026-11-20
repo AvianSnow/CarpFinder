@@ -1,6 +1,7 @@
 // Ported from Crystall Punk 14 (CP14SharedCookingSystem), MIT.
 using System.Numerics;
 using Content.Shared.Audio;
+using Content.Shared.Chemistry.Components;
 using Content.Shared.Chemistry.EntitySystems;
 using Content.Shared.Chemistry.Reagent;
 using Content.Shared.DoAfter;
@@ -10,6 +11,7 @@ using Content.Shared.Interaction;
 using Content.Shared.Nutrition.Components;
 using Content.Shared.Nutrition.EntitySystems;
 using Content.Shared.Popups;
+using Content.Shared.Storage;
 using Content.Shared.Tag;
 using Robust.Shared.Containers;
 using Robust.Shared.Network;
@@ -50,6 +52,7 @@ public abstract partial class CFSharedCookerSystem : EntitySystem
         SubscribeLocalEvent<CFFoodHolderComponent, AfterInteractEvent>(OnAfterInteract);
         SubscribeLocalEvent<CFFoodHolderComponent, InteractUsingEvent>(OnInteractUsing);
 
+        SubscribeLocalEvent<CFFoodCookerComponent, StorageInteractUsingAttemptEvent>(OnStorageInteractAttempt);
         SubscribeLocalEvent<CFFoodCookerComponent, ContainerIsInsertingAttemptEvent>(OnInsertAttempt);
         SubscribeLocalEvent<CFFoodCookerComponent, CFHeatedEvent>(OnHeated);
         SubscribeLocalEvent<CFFoodCookerComponent, EntParentChangedMessage>(OnParentChanged);
@@ -106,6 +109,20 @@ public abstract partial class CFSharedCookerSystem : EntitySystem
             return;
 
         args.Handled = TryTransferFood(ent, (other, target));
+    }
+
+    /// <summary>
+    /// A plate, bowl, mug or bucket used on a pot serves from it or pours into it. The pot's store must not take
+    /// the click first, or it refuses them and nothing else gets to run. CP14 kept the same list as its store's
+    /// ignore list.
+    /// </summary>
+    private void OnStorageInteractAttempt(Entity<CFFoodCookerComponent> ent, ref StorageInteractUsingAttemptEvent args)
+    {
+        if (HasComp<CFFoodHolderComponent>(args.Used)
+            || HasComp<SolutionTransferComponent>(args.Used)
+            || HasComp<InjectorComponent>(args.Used)
+            || HasComp<FoodSequenceStartPointComponent>(args.Used))
+            args.Cancelled = true;
     }
 
     private void OnInsertAttempt(Entity<CFFoodCookerComponent> ent, ref ContainerIsInsertingAttemptEvent args)

@@ -114,10 +114,10 @@
       params:
         variation: 0.1
         volume: 0.4
-  - type: SolutionContainerManager
-    solutions:
-      vial:
-        maxVol: 10
+  - type: Solution
+    id: plushie
+    solution:
+      maxVol: 10
   - type: MixableSolution
     solution: plushie
   - type: FitsInDispenser
@@ -144,13 +144,8 @@
   - type: Spillable
     solution: plushie
   - type: Appearance
-  - type: Injector
-    solutionName: plushie
-    ignoreMobs: true
-    activeModeProtoId: CFPourDrawMode
-    allowedModes:
-    - CFPourDrawMode
-    - CFPourInjectMode
+  - type: SolutionTransfer
+    canChangeTransferAmount: true
   - type: PhysicalComposition
     materialComposition:
       CFCloth: 20

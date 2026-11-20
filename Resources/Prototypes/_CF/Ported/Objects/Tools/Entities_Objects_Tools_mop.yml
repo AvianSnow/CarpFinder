@@ -36,10 +36,10 @@
   - type: Spillable
     solution: absorbed
   - type: Absorbent
-  - type: SolutionContainerManager
-    solutions:
-      absorbed:
-        maxVol: 50
+  - type: Solution
+    id: absorbed
+    solution:
+      maxVol: 50
 
 - type: entity
   parent: CFBaseMop

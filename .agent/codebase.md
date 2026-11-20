@@ -45,7 +45,7 @@ Everything below is under `Content.Shared/_CF/`.
 | `Locks/` | Keys, Pick a Lock, Force Open, on top of the stock `Lock` | `CFLockSystem` |
 | `Outdoors/` | The outdoor map component, temperature rules, weather effects. The logic is server-side. | `CFEnvironmentRules`, `CFOutdoorsWorldSystem` |
 | `Farming/` | Plant, seed and harvest data. The logic is server-side. | `CFFarmingSystem` |
-| `Cooking/` | The mortar, mixing flour into water, pots and pans that cook a dish from what is in them, serving it, and barrels that brew. A fire heats what is on it from `Content.Server/_CF/Temperature/CFFireHeaterSystem`. | `CFSharedCookerSystem`, `CFFermenterSystem`, `CFMortarSystem` |
+| `Cooking/` | The mortar, mixing flour into water, pots and pans that cook a dish from what is in them, serving it, and barrels that brew. A fire heats what is on it from `Content.Server/_CF/Temperature/CFFireHeaterSystem`; clicking the fire with food or a pot sets it on top (`CFCookingSurfaceSystem`), and an empty mug on a tap fills (`CFTapSystem`). | `CFSharedCookerSystem`, `CFFermenterSystem`, `CFMortarSystem` |
 | `Adventure/` | Site prototypes, encounter and treasure tables. Generation is server-side. | `CFEncounterRules`, `CFAdventureSiteSystem` |
 | `Languages/` | What a creature speaks and understands, and what it sounds like otherwise. Chat asks per listener, and a speaker always understands itself. The language menu is client-side, after Starlight's. | `CFLanguageSystem`, `CFLanguageRules` |
 | `Magic/` | Light, Detect Magic, Read Aura, and what counts as magical | `CFMagicSenseSystem` |
@@ -249,6 +249,7 @@ All edits carry `// CarpFinder` markers, so `grep -rn CarpFinder Content.Client 
 | Throwing | `Content.Server/Hands/Systems/HandsSystem.cs` | A thrown weapon's reach comes from its range increments, not the hand's 8 tiles |
 | Tiles | `Tiles/lava.yml`, `liquid_plasma.yml`, `chasm.yml`, `water.yml` | The `CFDangerousTile` marker. `chasm.yml` also has `CFChasmEdge`. `water.yml` gets `DrawableSolution` and `Edible`, so open water is drunk from and drawn into a bucket, and a tribe counts it as its water |
 | Chat | `Content.Server/Chat/Systems/ChatSystem.PrivateAPI.cs`, `ChatSystem.Utility.cs` | Each listener hears speech in a language they know, or nonsense |
+| Storage | `Content.Shared/Storage/StorageComponent.cs`, `Storage/EntitySystems/SharedStorageSystem.cs` | `StorageInteractUsingAttemptEvent` carries the user and the item, so a fire can set food on top instead of refusing it as fuel, and a pot can let a plate or a mug through to serve or pour |
 | Saved characters | `Content.Server/Database/DataNodeJsonExtensions.cs` | A JSON null is read as a real null, or a build with an unpicked boost fails to load |
 | Maps | `Maps/Test/dev_map.yml`, `Maps/Nonstations/meteor-arena.yml`, `dm01-entryway.yml` | `MapAtmosphere`, so mobs can breathe |
 

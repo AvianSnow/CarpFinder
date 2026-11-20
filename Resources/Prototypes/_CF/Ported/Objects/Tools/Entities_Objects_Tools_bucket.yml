@@ -43,15 +43,10 @@
     id: bucket
     solution:
       maxVol: 50
-  - type: Injector
-    solutionName: bucket
-    ignoreMobs: true
-    ignoreClosed: false
-    currentTransferAmount: 50
-    activeModeProtoId: CFPourDrawMode
-    allowedModes:
-    - CFPourDrawMode
-    - CFPourInjectMode
+  - type: SolutionTransfer
+    canChangeTransferAmount: true
+    transferAmount: 50
+    maxTransferAmount: 50
   - type: UserInterface
     interfaces:
       enum.TransferAmountUiKey.Key:

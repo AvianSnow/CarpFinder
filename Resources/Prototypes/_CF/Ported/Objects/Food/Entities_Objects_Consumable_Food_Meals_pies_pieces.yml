@@ -11,15 +11,15 @@
   - type: Temperature
   - type: Sprite
     sprite: _CP14/Objects/Consumable/Food/Pies/pieces.rsi
-  - type: SolutionContainerManager
-    solutions:
-      food:
-        maxVol: 10
-        reagents:
-        - ReagentId: Nutriment
-          Quantity: 7
-        - ReagentId: Protein
-          Quantity: 2
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 10
+      reagents:
+      - ReagentId: Nutriment
+        Quantity: 7
+      - ReagentId: Protein
+        Quantity: 2
 
 - type: entity
   id: CFFoodPiePieceTrash
