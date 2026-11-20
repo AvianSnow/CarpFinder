@@ -36,3 +36,6 @@ cf-reagent-name-must = must
 cf-reagent-desc-must = Crushed fruit in water. Left in a barrel, it becomes wine.
 cf-reagent-name-pumpkin-mash = pumpkin mash
 cf-reagent-desc-pumpkin-mash = Pumpkin mashed in water. Left in a barrel, it becomes ale.
+
+cf-reagent-name-spoiled-brew = spoiled brew
+cf-reagent-desc-spoiled-brew = What a potion becomes when the brewing goes badly wrong. Foul, and good for nothing.

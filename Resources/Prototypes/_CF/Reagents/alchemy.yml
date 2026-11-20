@@ -1,0 +1,11 @@
+# What a cauldron holds after a brew goes badly wrong (CFCauldronSystem).
+
+- type: reagent
+  id: CFSpoiledBrew
+  name: cf-reagent-name-spoiled-brew
+  desc: cf-reagent-desc-spoiled-brew
+  group: Toxins
+  flavor: bitter
+  physicalDesc: reagent-physical-desc-cloudy
+  color: "#3a3a2a"
+  pricePerUnit: 0

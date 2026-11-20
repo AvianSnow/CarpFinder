@@ -123,6 +123,9 @@ One directed component + event pair. A second subscriber throws `Duplicate Subsc
 - `MapGridComponent.TryFindGridAt` finds a grid whose chunks cover the point even where the tile there is empty. Check the tile too.
 - A mob with no player has no mover friction: thrown or leaping, it slides at a constant speed for as long as a test runs. Give a test a wide floor, or stop it yourself.
 - `StationJobsComponent.JobList` is access-restricted, and the component cannot go on a bare entity: its init reads `availableJobs`, which is required. In a test, spawn a test prototype with `StationJobs` and `availableJobs`, and use `ServerStationJobsSystem.TrySetJobSlot` and `TryGetJobSlot`.
+- An entity that runs a `DoAfter` on itself (a pot that cooks, a cauldron that brews) needs `- type: DoAfter`, or `TryStartDoAfter` logs an error and nothing happens.
+- A reagent and an entity may share an id (`CFBlueAmanita` is both the flower and its sap): prototype kinds have their own namespaces. CP14 did the same.
+- `CFCharacterFeaturesComponent` is access-restricted. A test gives a feat with `CFCharacterSpawnSystem.ApplyFeat`, never by writing `Applied`.
 - `SharedContainerSystem.GetAllContainers` on an entity with no `ContainerManagerComponent` throws. `TryComp` it first when walking into items.
 - `GetTileMixture` returns null for a tile under a wall, window, grille or closed door. That is not vacuum.
 - A steering safety radius must stay under 0.5 tiles. The middle of a one-tile doorway is 0.5 from each side, so anything larger overrides the way forward and holds the NPC there.

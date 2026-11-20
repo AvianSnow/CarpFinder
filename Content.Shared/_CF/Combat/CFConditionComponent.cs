@@ -53,6 +53,10 @@ public sealed partial class CFConditionComponent : Component
     [DataField, AutoNetworkedField]
     public bool Calmed;
 
+    /// <summary>Darkvision from an elixir or spell, which ends. A creature born with it never has this set.</summary>
+    [DataField, AutoNetworkedField]
+    public bool TimedDarkvision;
+
     [DataField, AutoNetworkedField]
     public bool Blinded;
 
@@ -139,6 +143,8 @@ public sealed partial class CFConditionComponent : Component
     public TimeSpan CharmedUntil;
 
     public TimeSpan CalmedUntil;
+
+    public TimeSpan DarkvisionUntil;
 
     public TimeSpan BlindUntil;
 

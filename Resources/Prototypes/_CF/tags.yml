@@ -210,3 +210,29 @@
 
 - type: Tag
   id: CFFirearmRound
+
+# Alchemy ingredients (Entities/Objects/Alchemy/ingredients.yml) and the cauldron that brews them.
+- type: Tag
+  id: CFBlueAmanita
+
+- type: Tag
+  id: CFAgaricMushroom
+
+- type: Tag
+  id: CFChromiumSlime
+
+- type: Tag
+  id: CFWildSage
+
+- type: Tag
+  id: CFLumiMushroom
+
+- type: Tag
+  id: CFAirLily
+
+- type: Tag
+  id: CFSilverNeedle
+
+- type: Tag
+  id: CFRecipeCauldron
+

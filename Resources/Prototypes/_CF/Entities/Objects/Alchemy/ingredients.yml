@@ -1,0 +1,304 @@
+# Alchemy ingredients: CP14's wild plants, as they were (Objects/Flora/wild.yml), picked from the plants in
+# Entities/Structures/Flora/wild.yml. Each has a price, so that the ingredients of a potion come to about half its
+# Archives of Nethys price (Crafting/recipes_alchemy.yml). Sage is in Farming/fibers.yml, because it is also farmed.
+# Prices are in copper: 100 copper is 1 gp.
+
+- type: entity
+  abstract: true
+  parent: FoodInjectableBase
+  id: CFAlchemyHerbBase
+  categories: [ ForkFiltered ]
+  components:
+  - type: Item
+    size: Tiny
+  - type: BadFood
+  - type: CFItem
+    level: 0
+  - type: CFBulk
+    bulk: 0
+
+- type: entity
+  parent: CFAlchemyHerbBase
+  id: CFBloodFlower
+  name: blood rose
+  description: Scarlet flowers growing where blood has been spilled. Alchemists boil them into anything that burns or bleeds.
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Flora/Wild/red_rose.rsi
+    layers:
+    - state: base1
+      map: ["random"]
+  - type: RandomSprite
+    available:
+    - random:
+        base1: ""
+        base2: ""
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 14
+      reagents:
+      - ReagentId: CFBloodFlowerSap
+        Quantity: 10
+  - type: Extractable
+    juiceSolution:
+      reagents:
+      - ReagentId: CFBloodFlowerSap
+        Quantity: 10
+  - type: Tag
+    tags:
+    - CFAlchemicalHerbals
+    - CFBloodFlower
+  - type: CFItemPrice
+    copper: 60
+
+- type: entity
+  parent: CFAlchemyHerbBase
+  id: CFAgaricMushroom
+  name: fly agaric
+  description: A poisonous mushroom found near water. Not for eating, but an alchemist knows what a little venom is good for.
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Flora/Wild/agaric.rsi
+    layers:
+    - state: base1
+      map: ["random"]
+  - type: RandomSprite
+    available:
+    - random:
+        base1: ""
+        base2: ""
+        base3: ""
+        base4: ""
+        base5: ""
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 4
+      reagents:
+      - ReagentId: CFAgaricMushroom
+        Quantity: 3
+  - type: Extractable
+    juiceSolution:
+      reagents:
+      - ReagentId: CFAgaricMushroom
+        Quantity: 3
+  - type: Tag
+    tags:
+    - CFAlchemicalHerbals
+    - CFAgaricMushroom
+  - type: CFItemPrice
+    copper: 50
+
+- type: entity
+  parent: CFAlchemyHerbBase
+  id: CFChromiumSlime
+  name: chromium slime
+  description: A rare, thick substance found in streams, moving as if it had a mind of its own. It turns whatever it is boiled with inside out.
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Flora/Wild/chromium_slime.rsi
+    layers:
+    - state: base1
+      map: ["random"]
+  - type: RandomSprite
+    available:
+    - random:
+        base1: ""
+        base2: ""
+        base3: ""
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 5
+      reagents:
+      - ReagentId: CFChromiumSlime
+        Quantity: 4
+  - type: Extractable
+    juiceSolution:
+      reagents:
+      - ReagentId: CFChromiumSlime
+        Quantity: 4
+  - type: Tag
+    tags:
+    - CFAlchemicalHerbals
+    - CFChromiumSlime
+  - type: CFItem
+    level: 2
+    rarity: Uncommon
+  - type: CFItemPrice
+    copper: 400
+
+- type: entity
+  parent: CFAlchemyHerbBase
+  id: CFLumiMushroom
+  name: lumishroom
+  description: A faintly luminous mushroom. Alchemists use it to concentrate a brew, and to see in the dark.
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Flora/Wild/lumishroom.rsi
+    layers:
+    - state: base1
+      map: ["random"]
+  - type: RandomSprite
+    available:
+    - random:
+        base1: ""
+        base2: ""
+        base3: ""
+        base4: ""
+        base5: ""
+  - type: PointLight
+    color: "#36c98f"
+    radius: 1.2
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 5
+      reagents:
+      - ReagentId: CFLumiMushroom
+        Quantity: 4
+  - type: Extractable
+    juiceSolution:
+      reagents:
+      - ReagentId: CFLumiMushroom
+        Quantity: 4
+  - type: Tag
+    tags:
+    - CFAlchemicalHerbals
+    - CFLumiMushroom
+  - type: CFItemPrice
+    copper: 80
+
+- type: entity
+  parent: CFAlchemyHerbBase
+  id: CFBlueAmanita
+  name: blue amanita
+  description: A sky blue flower known for its medicinal and magical properties.
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Flora/Wild/blue_amanita.rsi
+    layers:
+    - state: base1
+      map: ["random"]
+  - type: RandomSprite
+    available:
+    - random:
+        base1: ""
+        base2: ""
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 6
+      reagents:
+      - ReagentId: CFBlueAmanita
+        Quantity: 5
+  - type: Extractable
+    juiceSolution:
+      reagents:
+      - ReagentId: CFBlueAmanita
+        Quantity: 5
+  - type: Tag
+    tags:
+    - CFAlchemicalHerbals
+    - CFBlueAmanita
+  - type: CFItemPrice
+    copper: 50
+
+- type: entity
+  parent: CFAlchemyHerbBase
+  id: CFDayflin
+  name: yellow dayflin
+  description: A yellow sun flower that smells of warm milk. It quickens whatever it is brewed into, and makes a yellow dye.
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Flora/Wild/yellow_dayflin.rsi
+    layers:
+    - state: base1
+      map: ["random"]
+  - type: RandomSprite
+    available:
+    - random:
+        base1: ""
+        base2: ""
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 10
+      reagents:
+      - ReagentId: CFYellowDayflinPulp
+        Quantity: 8
+  - type: Extractable
+    juiceSolution:
+      reagents:
+      - ReagentId: CFYellowDayflinPulp
+        Quantity: 8
+  - type: Tag
+    tags:
+    - CFAlchemicalHerbals
+    - CFDayflin
+  - type: CFItemPrice
+    copper: 30
+
+- type: entity
+  parent: CFAlchemyHerbBase
+  id: CFAirLily
+  name: air lily
+  description: A light, delicate flower that grows on open water. It is said to carry the air with it, and its brews carry the drinker.
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Flora/water_lilies.rsi
+    state: lily_icon
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 8
+      reagents:
+      - ReagentId: CFAirLily
+        Quantity: 6
+  - type: Extractable
+    juiceSolution:
+      reagents:
+      - ReagentId: CFAirLily
+        Quantity: 6
+  - type: Tag
+    tags:
+    - CFAlchemicalHerbals
+    - CFAirLily
+  - type: CFItemPrice
+    copper: 50
+
+- type: entity
+  parent: CFAlchemyHerbBase
+  id: CFSilverNeedle
+  name: silver needle
+  description: Bright orange berries of a plant that shrugs off the hardest frost. Widely used in medicine.
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Flora/Wild/silver_needle.rsi
+    layers:
+    - state: base1
+      map: ["random"]
+  - type: RandomSprite
+    available:
+    - random:
+        base1: ""
+        base2: ""
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 5
+      reagents:
+      - ReagentId: CFSilverNeedle
+        Quantity: 4
+  - type: Extractable
+    juiceSolution:
+      reagents:
+      - ReagentId: CFSilverNeedle
+        Quantity: 4
+  - type: Tag
+    tags:
+    - CFAlchemicalHerbals
+    - CFSilverNeedle
+  - type: CFItemPrice
+    copper: 60

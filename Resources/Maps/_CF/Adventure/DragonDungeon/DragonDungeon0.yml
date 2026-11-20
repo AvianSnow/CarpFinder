@@ -5,7 +5,7 @@ meta:
   forkId: ""
   forkVersion: ""
   time: 11/19/2026 19:50:55
-  entityCount: 15589
+  entityCount: 15625
 maps:
 - 1
 grids:
@@ -98802,4 +98802,238 @@ entities:
     - type: Transform
       parent: 1
       pos: -86.5,-55.5
+- proto: CFGatherableAirLily
+  entities:
+  - uid: 15590
+    components:
+    - type: Transform
+      parent: 1
+      pos: -15.5,34.5
+      anchored: True
+  - uid: 15591
+    components:
+    - type: Transform
+      parent: 1
+      pos: -11.5,24.5
+      anchored: True
+  - uid: 15592
+    components:
+    - type: Transform
+      parent: 1
+      pos: -7.5,14.5
+      anchored: True
+- proto: CFGatherableBloodFlower
+  entities:
+  - uid: 15593
+    components:
+    - type: Transform
+      parent: 1
+      pos: -63.5,71.5
+      anchored: True
+  - uid: 15594
+    components:
+    - type: Transform
+      parent: 1
+      pos: -31.5,-17.5
+      anchored: True
+  - uid: 15595
+    components:
+    - type: Transform
+      parent: 1
+      pos: -14.5,31.5
+      anchored: True
+  - uid: 15596
+    components:
+    - type: Transform
+      parent: 1
+      pos: 2.5,-87.5
+      anchored: True
+- proto: CFGatherableBlueAmanita
+  entities:
+  - uid: 15597
+    components:
+    - type: Transform
+      parent: 1
+      pos: -71.5,-74.5
+      anchored: True
+  - uid: 15598
+    components:
+    - type: Transform
+      parent: 1
+      pos: -54.5,-47.5
+      anchored: True
+  - uid: 15599
+    components:
+    - type: Transform
+      parent: 1
+      pos: -37.5,45.5
+      anchored: True
+  - uid: 15600
+    components:
+    - type: Transform
+      parent: 1
+      pos: -23.5,-14.5
+      anchored: True
+- proto: CFGatherableChromiumSlime
+  entities:
+  - uid: 15601
+    components:
+    - type: Transform
+      parent: 1
+      pos: -13.5,27.5
+      anchored: True
+  - uid: 15602
+    components:
+    - type: Transform
+      parent: 1
+      pos: 18.5,-47.5
+      anchored: True
+- proto: CFGatherableDayflin
+  entities:
+  - uid: 15603
+    components:
+    - type: Transform
+      parent: 1
+      pos: -71.5,-54.5
+      anchored: True
+  - uid: 15604
+    components:
+    - type: Transform
+      parent: 1
+      pos: -40.5,-55.5
+      anchored: True
+  - uid: 15605
+    components:
+    - type: Transform
+      parent: 1
+      pos: -39.5,-45.5
+      anchored: True
+  - uid: 15606
+    components:
+    - type: Transform
+      parent: 1
+      pos: -23.5,51.5
+      anchored: True
+  - uid: 15607
+    components:
+    - type: Transform
+      parent: 1
+      pos: -15.5,-39.5
+      anchored: True
+- proto: CFGatherableFlyAgaric
+  entities:
+  - uid: 15608
+    components:
+    - type: Transform
+      parent: 1
+      pos: -35.5,105.5
+      anchored: True
+  - uid: 15609
+    components:
+    - type: Transform
+      parent: 1
+      pos: -33.5,49.5
+      anchored: True
+  - uid: 15610
+    components:
+    - type: Transform
+      parent: 1
+      pos: -15.5,129.5
+      anchored: True
+  - uid: 15611
+    components:
+    - type: Transform
+      parent: 1
+      pos: -11.5,129.5
+      anchored: True
+- proto: CFGatherableLumiMushroom
+  entities:
+  - uid: 15612
+    components:
+    - type: Transform
+      parent: 1
+      pos: -34.5,103.5
+      anchored: True
+  - uid: 15613
+    components:
+    - type: Transform
+      parent: 1
+      pos: -22.5,117.5
+      anchored: True
+  - uid: 15614
+    components:
+    - type: Transform
+      parent: 1
+      pos: -18.5,132.5
+      anchored: True
+  - uid: 15615
+    components:
+    - type: Transform
+      parent: 1
+      pos: -14.5,120.5
+      anchored: True
+  - uid: 15616
+    components:
+    - type: Transform
+      parent: 1
+      pos: -11.5,107.5
+      anchored: True
+- proto: CFGatherableWildSage
+  entities:
+  - uid: 15617
+    components:
+    - type: Transform
+      parent: 1
+      pos: -77.5,81.5
+      anchored: True
+  - uid: 15618
+    components:
+    - type: Transform
+      parent: 1
+      pos: -66.5,64.5
+      anchored: True
+  - uid: 15619
+    components:
+    - type: Transform
+      parent: 1
+      pos: -34.5,16.5
+      anchored: True
+  - uid: 15620
+    components:
+    - type: Transform
+      parent: 1
+      pos: -31.5,-3.5
+      anchored: True
+  - uid: 15621
+    components:
+    - type: Transform
+      parent: 1
+      pos: -21.5,41.5
+      anchored: True
+- proto: CFGatherableSilverNeedle
+  entities:
+  - uid: 15622
+    components:
+    - type: Transform
+      parent: 1
+      pos: -36.5,103.5
+      anchored: True
+  - uid: 15623
+    components:
+    - type: Transform
+      parent: 1
+      pos: -17.5,121.5
+      anchored: True
+  - uid: 15624
+    components:
+    - type: Transform
+      parent: 1
+      pos: -16.5,133.5
+      anchored: True
+  - uid: 15625
+    components:
+    - type: Transform
+      parent: 1
+      pos: -11.5,132.5
+      anchored: True
 ...

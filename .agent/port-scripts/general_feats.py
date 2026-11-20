@@ -19,6 +19,9 @@ ACTIONS = {'Single Action': 'Action', 'Two Actions': 'Action', 'Three Actions': 
 # Feats that do something, and the YAML that says what. Everything else is written as pendingAction.
 WORKING = {
     'Battle Medicine': ['  grants:', '  - !type:CFGrantOption', '    option: BattleMedicine'],
+    # Checked by id in CFWorkbenchSystem.BlockedReason: they gate brewing, and add nothing to the feat.
+    'Alchemical Crafting': [],
+    'Magical Crafting': [],
     'Multilingual': ['  choices:', '  - kind: Language', '    count: 2'],
     'Arcane Sense': ['  grants:', '  - !type:CFGrantSpell', '    spell: DetectMagic'],
     'Armor Proficiency': ['  grants:', '  - !type:CFGrantArmorProficiency'],

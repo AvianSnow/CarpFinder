@@ -23,7 +23,7 @@ Measured on 18 November 2026, after difficult terrain (1.11), the Fighter, Rogue
 | Class feats             | 585   | 229, and 2 in part (11 of them only give a familiar's body, see 3.8)      | 422 in `feats-class.ftl`                                                                                                      |
 | Class features          | 181   | No placeholders                                                           | 51 in the class files                                                                                                         |
 | Subclass options        |       | Every class has its options                                               | 311 in `class-choices.ftl`, up from 306 because the five theses are new options, three of them `TBA`. Runes repeat 6 times, ikons and tactics 3 times, implements twice, so about 150 different options |
-| General and skill feats | 131   | 13 in `general_feats.py`'s `WORKING`, and the scan agrees                 | Marked `(TBA)` in the builder. See "General and skill feats"                                                                  |
+| General and skill feats | 131   | 15 in `general_feats.py`'s `WORKING`, and the scan agrees (Alchemical and Magical Crafting gate brewing since 20 November 2026) | Marked `(TBA)` in the builder. See "General and skill feats"                                                                  |
 | Spells                  | 63    | All 63 have an action                                                     | None in `spells.ftl`                                                                                                          |
 | Focus spells            | 34    | The pipeline works                                                        | 11 in `Spells/Focus/focus.yml`                                                                                                |
 | Deities                 | 7     | Skill, favored weapon, font, three domains each                           | None                                                                                                                          |
@@ -289,7 +289,7 @@ All 62 spells in the catalog have an action and an effect. What is left is spell
 
 `Feats/General/feats.yml` holds 131 feats through level 4 from Player Core, Player Core 2 and GM Core, with the site's one line summaries. `.agent/port-scripts/general_feats.py` rewrites that file from Archives of Nethys, so put fixes in the script. Of 74 feats backgrounds name, 65 match by name. 259 of 324 backgrounds grant one.
 
-- [ ] Effects for the rest. 13 work: Battle Medicine, Multilingual, Arcane Sense, Armor Proficiency, Canny Acumen, Diehard, Feather Step, Fleet, Hefty Hauler, Shield Block, Skill Training, Toughness and Weapon Proficiency. `general_feats.py` keeps them in `WORKING`. Tests: `CFGeneralFeatTest`.
+- [ ] Effects for the rest. 15 work: Battle Medicine, Multilingual, Arcane Sense, Armor Proficiency, Canny Acumen, Diehard, Feather Step, Fleet, Hefty Hauler, Shield Block, Skill Training, Toughness, Weapon Proficiency, and Alchemical Crafting and Magical Crafting, which brewing a potion asks for. `general_feats.py` keeps them in `WORKING`. Tests: `CFGeneralFeatTest`.
 - [ ] First the ones other options hand out (1.1, 2.2): Intimidating Glare, Group Coercion, Ride, Combat Climber, Terrain Stalker, Quick Squeeze, Specialty Crafting, Forager, Steady Balance, Untrained Improvisation, Adopted Ancestry, Assurance, Shameless Request, Quick Disguise, Lengthy Diversion, Snare Crafting, Impressive Performance, Titan Wrestler, Hobnobber, Alchemical Crafting, Cat Fall, Pet, Bon Mot, Dirty Trick, Fascinating Performance, Pickpocket.
 - [ ] Weapon Proficiency only gives martial weapons, not the advanced weapon a character already trained in martial would get. Toughness and Fleet do not show in the builder's preview.
 - [ ] 119 prerequisites are still text only: familiars, class features such as Spellstrike, an innovation, a focus pool, an age.
@@ -368,7 +368,7 @@ What was left open when each of these was built. The finished parts are in `road
 
 ### Spell visuals
 
-- [ ] No bomb exists yet to use `CFFillEffect`. A lingering fill ends if its source is deleted, so a thrown bomb that should leave a zone with a save needs the zone to keep its own check and effects.
+- [ ] The two bombs (`CFBomb`) splash by lookup and draw nothing on the floor. A lingering fill ends if its source is deleted, so a bomb that should leave a zone with a save needs the zone to keep its own check and effects.
 
 - [ ] Heal and Harm's emanation and Directed Channel's cone draw nothing on the floor. A `CFAreaFill` on a mode is not supported yet.
 
@@ -476,8 +476,12 @@ The rule for what comes over, and how, is under Phase 3b in `roadmapold.md`: RPG
     - [ ] Not played yet: the look of a dish in the pot and on a plate (the client layers and displacement maps are untested), cooking and burning sounds, and how long a fire takes in play.
     - [ ] No apple tree, so wine needs stock fruit. Sandwiches (`foodSequenceElement`) are not ported. Bread on a fire never burns. A pot keeps cooking on a furnace as on a bonfire, with no difference between them.
     - [ ] Not ported: monster toxins (creatures row), smoking pipes and chromium jelly, wild plants.
-- [ ] Decide on CP14 alchemy.
-    - CP14 alchemy (magic essences, `Target Effects` reagents, 67 reactions, cauldron brewing): **open question.** PF2e alchemy is the Crafting skill and formulas, not mixing reagents, so this may be a new game system. Left out until decided.
+- [x] Decide on CP14 alchemy. Decided by the user on 20 November 2026: PF2e potions, brewed. CP14's reagent chemistry (magic essences, `Target Effects` reagents, precursor reactions, the solution cleaner, the mana glove) stays out. What landed (`CFAlchemyTest`):
+    - CP14's nine wild plants as they were, as gatherable structures (`Structures/Flora/wild.yml`) and ingredient items (`Objects/Alchemy/ingredients.yml`), each with a price: dayflin 30, sage 40, blue amanita 50, air lily 50, fly agaric 50, blood rose 60, silver needle 60, lumishroom 80, chromium slime 400 copper. The mushroom monsters that sometimes grew in their place were not ported.
+    - Ten remaster consumables with their Archives of Nethys numbers: Elixir of Life (minor), Cheetah's Elixir (lesser), Antidote (lesser), Darkvision Elixir (lesser), Alchemist's Fire (lesser), Bottled Lightning (lesser), Healing Potion (minor), Gecko Potion, Potion of Emergency Escape, Invisibility Potion. Each is a `craftingRecipe` brewed in the `CFCauldron` on a fire, with a formula, and its ingredients cost about half its price. The brewer rolls Crafting against the item's DC: a critical success brews one more, a failure keeps the ingredients for another boil, a critical failure ruins a tenth and spoils the water. Alchemical items need Alchemical Crafting and magic potions Magical Crafting, so those two general feats now do something.
+    - The Dragon Dungeon ground has 36 of the plants, placed on 20 November 2026 by a script over the map file (free grass for the flowers and sage, cave floor for the mushrooms and the silver needle, the bank of the water for the air lilies and chromium slime). They do not grow back, so a round has what it has. A plant spawner that regrows them is not built.
+    - Our changes from the rules: one brew makes one potion (the rules make four at a time), formulas and the check are the Craft activity without its days, Gecko Potion is +1 to Athletics rather than to Climb and Palm an Object alone, Emergency Escape stands in fleeing with calm (no hostile actions) beside its +40 Speed, a bomb's splash is dealt separately from its hit, and a bomb thrown at nobody is lost.
+    - Not done: the rest of CP14's potions (mana, stamina, blood, sleep) have no PF2e match and were dropped; higher-grade versions of each item; vials as a container the potion needs; a bomb used in melee neither breaks nor splashes; the cauldron shows no bubbling; the Alchemist class still has nothing of its own (Quick Alchemy, versatile vials).
 
 ## Step 4: Close the rules gaps
 

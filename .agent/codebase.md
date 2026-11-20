@@ -27,7 +27,7 @@ Everything below is under `Content.Shared/_CF/`.
 |---|---|---|
 | `Actions/` | Action stamina, multiple attack penalty, radial activities, breath weapons, stances, flourishes, Shove, Disarm, Grapple, Escape, marks, standing | `CFActionPoolSystem`, `CFActivitySystem`, `CFStanceSystem`, `CFManeuverSystem` |
 | `Afflictions/` | Staged afflictions such as Alcohol. Poisons and diseases can use the same pieces. | `CFAfflictionSystem` |
-| `Alchemy/` | Drinkable and feedable potions | `CFAlchemicalItemSystem` |
+| `Alchemy/` | Potions, elixirs and bombs: drinking one runs its `CFDrinkEffects`, a thrown bomb breaks on its Strike and splashes (`CFBombSystem`), and the cauldron data. Brewing is server-side in `Content.Server/_CF/Alchemy/CFCauldronSystem`: a cauldron on a fire boils the ingredients of an Alchemy `craftingRecipe` and the brewer rolls Crafting. Ingredients and the wild plants they come from are CP14's. | `CFAlchemicalItemSystem`, `CFBombSystem`, `CFCauldronComponent` |
 | `Character/` | Prototypes for ancestry, class, feat, heritage, background, spell; skill and attribute math; `Grants/`, what an option gives a character | `CFAttributeMath`, `CFSkills`, `CFCharacterFeatureSystem` |
 | `Checks/` | Degrees of success, defenses, casting DCs | `CFDegrees`, `CFDefense`, `CFCasting` |
 | `Combat/` | Strikes, conditions, dying, flanking, armor, shields, weapons, runes | `CFStrikeSystem`, `CFConditionSystem` |
