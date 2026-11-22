@@ -141,6 +141,7 @@
   - type: Edible
     edible: Drink
     solution: plushie
+    destroyOnEmpty: false
   - type: Spillable
     solution: plushie
   - type: Appearance

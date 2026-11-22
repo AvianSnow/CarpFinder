@@ -146,6 +146,7 @@
   - type: Edible
     edible: Drink
     solution: vial
+    destroyOnEmpty: false
   - type: Spillable
     solution: vial
   - type: Appearance

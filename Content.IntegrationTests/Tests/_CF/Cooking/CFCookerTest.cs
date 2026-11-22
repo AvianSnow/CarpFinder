@@ -192,6 +192,38 @@ public sealed class CFCookerTest : GameTest
         });
     }
 
+    [Test]
+    public async Task DrinkingAMugEmptiesItAndKeepsTheMug()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        EntityUid hero = default;
+        EntityUid mug = default;
+        await Server.WaitPost(() =>
+        {
+            mug = SEntMan.SpawnEntity("CFWoodenBeerMug", _map.Local(0, 0));
+            Assert.That(Solutions.TryGetSolution(mug, "mug", out var soln, out _));
+            Assert.That(Solutions.TryAddReagent(soln!.Value, "CFDwarfBeer", 10, out _));
+            hero = Holding(mug);
+            Interaction.UseInHandInteraction(hero, mug, checkCanUse: false, checkCanInteract: false);
+        });
+
+        await Pair.RunTicksSync(Timing.TickRate * 3);
+        await Server.WaitAssertion(() =>
+        {
+            Assert.That(SEntMan.Deleted(mug), Is.False, "A mug is drunk from, not eaten.");
+            Assert.That(Solutions.TryGetSolution(mug, "mug", out _, out var left));
+            Assert.That(left!.Volume.Float(), Is.LessThan(10f), "A sip of the beer is gone.");
+            Interaction.UseInHandInteraction(hero, mug, checkCanUse: false, checkCanInteract: false);
+        });
+
+        await Pair.RunTicksSync(Timing.TickRate * 3);
+        await Server.WaitAssertion(() =>
+        {
+            Assert.That(SEntMan.Deleted(mug), Is.False, "Drinking the last of it keeps the mug too.");
+            Assert.That(Hands.IsHolding(hero, mug), "The empty mug stays in hand.");
+        });
+    }
+
     /// <summary>The obsolete form left the mug, the well and every barrel with no usable solution.</summary>
     [Test]
     public async Task NoCFPrototypeUsesTheObsoleteSolutionForm()

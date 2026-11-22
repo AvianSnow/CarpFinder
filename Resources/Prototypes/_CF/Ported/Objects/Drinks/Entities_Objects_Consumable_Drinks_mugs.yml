@@ -39,8 +39,6 @@
     solution: mug
   - type: SolutionItemStatus
     solution: mug
-  - type: TrashOnSolutionEmpty
-    solution: mug
   - type: UserInterface
     interfaces:
       enum.TransferAmountUiKey.Key:
@@ -50,6 +48,7 @@
   - type: Edible
     edible: Drink
     solution: mug
+    destroyOnEmpty: false # a mug is drunk from, not eaten
   - type: Appearance
   - type: SolutionTransfer
     canChangeTransferAmount: true

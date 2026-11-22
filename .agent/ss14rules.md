@@ -199,7 +199,7 @@ This engine differs from CP14's fork in more places. A ported prototype needs th
 
 - `damageContainer` lives on `Injurable`, not `Damageable`.
 - `IconSmooth` takes `key` and a `states` list (`!type:CornerSpriteSmoothing` with `mask` and `base`), not `base`, `mode` and `additionalKeys`.
-- `Drink` is `Edible` with `edible: Drink`.
+- `Drink` is `Edible` with `edible: Drink`. `Edible.destroyOnEmpty` defaults to true, which is for a can: a mug, bucket, vial or barrel that is drunk from needs `destroyOnEmpty: false`, or the last sip eats the container. `TrashOnSolutionEmpty` marks an empty one as rubbish, which is for cans too.
 - Construction has no `stackGroup` step or `crystallPunkAllowed` field. Use a `material` step.
 - Tile effects are `!type:Flammable` and `!type:Extinguish`.
 - `whitelist` is a mapping with `tags:`, never a bare list.

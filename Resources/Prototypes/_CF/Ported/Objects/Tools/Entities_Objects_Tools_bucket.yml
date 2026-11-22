@@ -12,6 +12,7 @@
   - type: Edible
     edible: Drink
     solution: bucket
+    destroyOnEmpty: false
   - type: Sprite
     sprite: _CP14/Objects/Tools/wooden_bucket.rsi
     layers:
