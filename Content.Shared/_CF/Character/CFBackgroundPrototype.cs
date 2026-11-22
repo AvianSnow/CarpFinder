@@ -10,14 +10,14 @@ public sealed partial class CFBackgroundPrototype : IPrototype
     [IdDataField]
     public string ID { get; private set; } = default!;
 
-    [DataField(required: true)]
-    public LocId Name;
+    [DataField("name")]
+    public string Name { get; private set; } = default!;
 
-    [DataField(required: true)]
-    public LocId Description;
+    [DataField("description")]
+    public string Description { get; private set; } = default!;
 
-    [DataField]
-    public List<ProtoId<CFAbilitySkillPrototype>> SkillBoosts = new();
+    [DataField("skillRanks")]
+    public Dictionary<string, CFSkillRank> SkillRanks { get; private set; } = new();
 
     [DataField]
     public List<ProtoId<CFAbilitySkillPrototype>> TrainedSkills = new();
