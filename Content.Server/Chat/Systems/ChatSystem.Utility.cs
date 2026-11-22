@@ -64,7 +64,7 @@ public sealed partial class ChatSystem
     /// <summary>
     ///     Sends a chat message to the given players in range of the source entity.
     /// </summary>
-    private void SendInVoiceRange(ChatChannel channel, string message, string wrappedMessage, EntityUid source, ChatTransmitRange range, NetUserId? author = null)
+    private void SendInVoiceRange(ChatChannel channel, string message, string wrappedMessage, EntityUid source, ChatTransmitRange range, NetUserId? author = null, CFSpeech? cfSpeech = null)
     {
         foreach (var (session, data) in GetRecipients(source, VoiceRange))
         {
@@ -72,7 +72,8 @@ public sealed partial class ChatSystem
             if (entRange == MessageRangeCheckResult.Disallowed)
                 continue;
             var entHideChat = entRange == MessageRangeCheckResult.HideChat;
-            _chatManager.ChatMessageToOne(channel, message, wrappedMessage, source, entHideChat, session.Channel, author: author);
+            var cfForeign = CFIsForeign(cfSpeech, session.AttachedEntity); // CarpFinder: per listener
+            _chatManager.ChatMessageToOne(channel, cfForeign ? cfSpeech!.Garbled : message, cfForeign ? cfSpeech!.WrappedGarbled : wrappedMessage, source, entHideChat, session.Channel, author: author); // CarpFinder: per listener
         }
 
         _replay.RecordServerMessage(new ChatMessage(channel, message, wrappedMessage, GetNetEntity(source), null, MessageRangeHideChatForReplay(range)));

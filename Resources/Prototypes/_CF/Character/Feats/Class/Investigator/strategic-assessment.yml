@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFStrategicAssessment
-  name: "Strategic Assessment"
-  description: "This feature will be implemented later."
+  name: cf-feat-strategic-assessment
+  description: cf-feat-strategic-assessment-desc
   class: Investigator
   level: 4
   traits:

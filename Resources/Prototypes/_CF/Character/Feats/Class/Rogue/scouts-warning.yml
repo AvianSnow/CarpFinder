@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFScoutsWarningRogue
-  name: "Scout's Warning"
-  description: "Free action. This feature will be implemented later."
+  name: cf-feat-scouts-warning-rogue
+  description: cf-feat-scouts-warning-rogue-desc
   class: Rogue
   level: 4
   traits:

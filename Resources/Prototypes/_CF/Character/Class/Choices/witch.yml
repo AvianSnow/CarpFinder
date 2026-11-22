@@ -1,0 +1,50 @@
+# CarpFinder: Witch patrons, Player Core.
+- type: cfClassChoice
+  id: PatronFaithsFlamekeeper
+  class: Witch
+  slot: cf-class-choice-patron
+  name: cf-class-choice-patron-faiths-flamekeeper
+  description: cf-class-choice-patron-faiths-flamekeeper-desc
+
+- type: cfClassChoice
+  id: PatronInscribedOne
+  class: Witch
+  slot: cf-class-choice-patron
+  name: cf-class-choice-patron-inscribed-one
+  description: cf-class-choice-patron-inscribed-one-desc
+
+- type: cfClassChoice
+  id: PatronResentment
+  class: Witch
+  slot: cf-class-choice-patron
+  name: cf-class-choice-patron-resentment
+  description: cf-class-choice-patron-resentment-desc
+
+- type: cfClassChoice
+  id: PatronSilenceInSnow
+  class: Witch
+  slot: cf-class-choice-patron
+  name: cf-class-choice-patron-silence-in-snow
+  description: cf-class-choice-patron-silence-in-snow-desc
+
+- type: cfClassChoice
+  id: PatronSpinnerOfThreads
+  class: Witch
+  slot: cf-class-choice-patron
+  name: cf-class-choice-patron-spinner-of-threads
+  description: cf-class-choice-patron-spinner-of-threads-desc
+
+- type: cfClassChoice
+  id: PatronStarlessShadow
+  class: Witch
+  slot: cf-class-choice-patron
+  name: cf-class-choice-patron-starless-shadow
+  description: cf-class-choice-patron-starless-shadow-desc
+
+- type: cfClassChoice
+  id: PatronWildingSteward
+  class: Witch
+  slot: cf-class-choice-patron
+  name: cf-class-choice-patron-wilding-steward
+  description: cf-class-choice-patron-wilding-steward-desc
+

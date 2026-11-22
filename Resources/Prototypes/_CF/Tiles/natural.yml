@@ -216,7 +216,7 @@
     West: /Textures/_CP14/Tiles/Sand/double_edge_W.png
   baseTurf: CFFloorBase
   deconstructTools: [ CFDigging ]
-  itemDrop: CFRandomDirtEffect #TODO sand variant
+  itemDrop: CFDirtEffect #TODO sand variant
   isSubfloor: true
   footstepSounds:
     collection: FootstepSnow #TODO
@@ -225,6 +225,8 @@
 
 - type: tile
   id: CFFloorSnowDeepDeep
+  cfDifficultTerrain: Snow
+  cfGreaterDifficultTerrain: true
   editorHidden: false
   name: cf-tiles-snow-deep-deep
   sprite: /Textures/_CP14/Tiles/SnowDeepDeep/snow.png
@@ -257,6 +259,7 @@
 
 - type: tile
   id: CFFloorSnowDeep
+  cfDifficultTerrain: Snow
   editorHidden: false
   name: cf-tiles-snow-deep
   sprite: /Textures/_CP14/Tiles/SnowDeep/snow.png

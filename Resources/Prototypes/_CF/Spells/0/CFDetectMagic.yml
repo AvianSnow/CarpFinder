@@ -18,5 +18,4 @@
     filter: All
   - type: CFDegreeEffects
     landed:
-    - !type:CFPopupEffect
-      text: cf-spell-affected
+    - !type:CFDetectMagicEffect

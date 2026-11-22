@@ -1,0 +1,117 @@
+# What an area leaves on each tile it reaches (CFAreaFill on a spell, breath, bomb or trap, or !type:CFFillEffect in an
+# effect list). CFAreaFillSystem spawns one per tile, nearest first. Each is only seen: the source does the harm. They
+# remove themselves, so a new look is a new entity here and one line on the source.
+
+- type: entity
+  abstract: true
+  id: CFFillBase
+  categories: [ HideSpawnMenu ]
+  save: false
+  components:
+  - type: Tag
+    tags:
+    - HideContextMenu
+  - type: Transform
+    noRot: true
+  - type: Sprite
+    drawdepth: Effects
+    noRot: true
+
+# Fireball, Breathe Fire, Floating Flame: the tile burns for a few seconds. It lights the room but sets nothing alight.
+# Use CFFire instead for fire that burns what walks through it and spreads.
+- type: entity
+  parent: CFFillBase
+  id: CFFillFlame
+  name: flames
+  components:
+  - type: TimedDespawn
+    lifetime: 2.5
+  - type: Sprite
+    sprite: Effects/fire.rsi
+    layers:
+    - state: "3"
+      shader: unshaded
+  - type: PointLight
+    radius: 2.5
+    energy: 3
+    color: "#FF9A3C"
+    castShadows: false
+
+# Lightning Bolt and other electricity.
+- type: entity
+  parent: CFFillBase
+  id: CFFillSparks
+  name: lightning
+  components:
+  - type: TimedDespawn
+    lifetime: 0.6
+  - type: Sprite
+    sprite: Effects/electricity.rsi
+    layers:
+    - state: electrified
+      shader: unshaded
+  - type: PointLight
+    radius: 2
+    energy: 3
+    color: "#BFE0FF"
+    castShadows: false
+
+# Gust of Wind, Gale Blast.
+- type: entity
+  parent: CFFillBase
+  id: CFFillGust
+  name: gust
+  components:
+  - type: TimedDespawn
+    lifetime: 0.4
+  - type: Sprite
+    sprite: _CP14/Effects/dust.rsi
+    layers:
+    - state: dust
+
+# Any other magic: motes in the spell's own colour (tint: true on the fill). White so it tints cleanly.
+- type: entity
+  parent: CFFillBase
+  id: CFFillMotes
+  name: magic
+  components:
+  - type: CFVfx
+  - type: TimedDespawn
+    lifetime: 1.6
+  - type: Sprite
+    sprite: _CP14/Effects/Magic/cast_impact.rsi
+    layers:
+    - state: stars
+      shader: unshaded
+
+# Healing areas: motes that rise, in the spell's colour.
+- type: entity
+  parent: CFFillBase
+  id: CFFillRising
+  name: magic
+  components:
+  - type: CFVfx
+  - type: TimedDespawn
+    lifetime: 1.6
+  - type: Sprite
+    sprite: _CP14/Effects/Magic/cast_impact.rsi
+    layers:
+    - state: particles_up
+      shader: unshaded
+
+# Snowdrift Spell: ankle-deep snow, difficult terrain until the caster's next turn.
+- type: entity
+  parent: CFFillBase
+  id: CFFillSnowdrift
+  name: snow
+  components:
+  - type: TimedDespawn
+    lifetime: 6
+  - type: Sprite
+    drawdepth: FloorObjects
+    sprite: _CP14/Structures/Flora/snowdrift.rsi
+    layers:
+    - state: full
+  - type: CFDifficultTerrain
+    cause: Snow
+    magical: true

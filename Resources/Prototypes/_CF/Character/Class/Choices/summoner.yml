@@ -1,0 +1,330 @@
+# CarpFinder: what a Summoner's eidolon is, its key attribute and how it attacks.
+
+- type: cfClassChoice
+  id: EidolonAberrant
+  class: Summoner
+  slot: cf-class-choice-eidolon
+  name: cf-class-choice-eidolonaberrant
+  description: cf-class-choice-eidolonaberrant-desc
+  tradition: Occult
+  trainedSkills:
+    - Athletics
+    - Occultism
+  grants:
+    - !type:CFGrantEidolon
+      name: aberrant eidolon
+      constitution: 2
+      intelligence: 1
+      wisdom: 1
+      charisma: -1
+
+- type: cfClassChoice
+  id: EidolonAngel
+  class: Summoner
+  slot: cf-class-choice-eidolon
+  name: cf-class-choice-eidolonangel
+  description: cf-class-choice-eidolonangel-desc
+  tradition: Divine
+  trainedSkills:
+    - Diplomacy
+    - Religion
+  grants:
+    - !type:CFGrantEidolon
+      name: angel eidolon
+      constitution: 1
+      intelligence: -1
+      wisdom: 1
+      charisma: 2
+
+- type: cfClassChoice
+  id: EidolonAngerPhantom
+  class: Summoner
+  slot: cf-class-choice-eidolon
+  name: cf-class-choice-eidolonangerphantom
+  description: cf-class-choice-eidolonangerphantom-desc
+  tradition: Occult
+  trainedSkills:
+    - Intimidation
+    - Occultism
+  grants:
+    - !type:CFGrantEidolon
+      name: anger phantom
+      constitution: 3
+      intelligence: 0
+      wisdom: -1
+      charisma: 1
+    - !type:CFGrantAction
+      action: CFActFuriousStrike
+
+- type: cfClassChoice
+  id: EidolonBeast
+  class: Summoner
+  slot: cf-class-choice-eidolon
+  name: cf-class-choice-eidolonbeast
+  description: cf-class-choice-eidolonbeast-desc
+  tradition: Primal
+  trainedSkills:
+    - Intimidation
+    - Nature
+  grants:
+    - !type:CFGrantEidolon
+      name: beast eidolon
+      constitution: 3
+      intelligence: -1
+      wisdom: 1
+      charisma: 0
+
+- type: cfClassChoice
+  id: EidolonConstruct
+  class: Summoner
+  slot: cf-class-choice-eidolon
+  name: cf-class-choice-eidolonconstruct
+  description: cf-class-choice-eidolonconstruct-desc
+  tradition: Arcane
+  trainedSkills:
+    - Arcana
+    - Crafting
+  grants:
+    - !type:CFGrantEidolon
+      name: construct eidolon
+      constitution: 3
+      intelligence: 1
+      wisdom: 0
+      charisma: -1
+
+- type: cfClassChoice
+  id: EidolonDemon
+  class: Summoner
+  slot: cf-class-choice-eidolon
+  name: cf-class-choice-eidolondemon
+  description: cf-class-choice-eidolondemon-desc
+  tradition: Divine
+  trainedSkills:
+    - Intimidation
+    - Religion
+  grants:
+    - !type:CFGrantEidolon
+      name: demon eidolon
+      constitution: 3
+      intelligence: 0
+      wisdom: -1
+      charisma: 1
+
+- type: cfClassChoice
+  id: EidolonDevotionPhantom
+  class: Summoner
+  slot: cf-class-choice-eidolon
+  name: cf-class-choice-eidolondevotionphantom
+  description: cf-class-choice-eidolondevotionphantom-desc
+  tradition: Occult
+  trainedSkills:
+    - Medicine
+    - Occultism
+  grants:
+    - !type:CFGrantEidolon
+      name: devotion phantom
+      constitution: 3
+      intelligence: 0
+      wisdom: 0
+      charisma: 0
+
+- type: cfClassChoice
+  id: EidolonDragon
+  class: Summoner
+  slot: cf-class-choice-eidolon
+  name: cf-class-choice-eidolondragon
+  description: cf-class-choice-eidolondragon-desc
+  tradition: Arcane
+  trainedSkills:
+    - Arcana
+    - Intimidation
+  grants:
+    - !type:CFGrantEidolon
+      name: dragon eidolon
+      constitution: 1
+      intelligence: 1
+      wisdom: 0
+      charisma: 1
+    - !type:CFGrantAction
+      action: CFActDragonBreath
+
+- type: cfClassChoice
+  id: EidolonElemental
+  class: Summoner
+  slot: cf-class-choice-eidolon
+  name: cf-class-choice-eidolonelemental
+  description: cf-class-choice-eidolonelemental-desc
+  tradition: Primal
+  trainedSkills:
+    - Nature
+    - Survival
+  grants:
+    - !type:CFGrantEidolon
+      name: elemental eidolon
+      constitution: 3
+      intelligence: 0
+      wisdom: 1
+      charisma: 0
+
+- type: cfClassChoice
+  id: EidolonFey
+  class: Summoner
+  slot: cf-class-choice-eidolon
+  name: cf-class-choice-eidolonfey
+  description: cf-class-choice-eidolonfey-desc
+  tradition: Primal
+  trainedSkills:
+    - Deception
+    - Nature
+  grants:
+    - !type:CFGrantEidolon
+      name: fey eidolon
+      constitution: 0
+      intelligence: 1
+      wisdom: -1
+      charisma: 3
+
+- type: cfClassChoice
+  id: EidolonOoze
+  class: Summoner
+  slot: cf-class-choice-eidolon
+  name: cf-class-choice-eidolonooze
+  description: cf-class-choice-eidolonooze-desc
+  tradition: Arcane
+  trainedSkills:
+    - Arcana
+    - Athletics
+  grants:
+    - !type:CFGrantEidolon
+      name: ooze eidolon
+      constitution: 3
+      intelligence: -1
+      wisdom: 1
+      charisma: 0
+      speedFeet: 20
+      resistance: Acid
+
+- type: cfClassChoice
+  id: EidolonPlant
+  class: Summoner
+  slot: cf-class-choice-eidolon
+  name: cf-class-choice-eidolonplant
+  description: cf-class-choice-eidolonplant-desc
+  tradition: Primal
+  trainedSkills:
+    - Nature
+    - Survival
+  grants:
+    - !type:CFGrantEidolon
+      name: plant eidolon
+      constitution: 3
+      intelligence: -1
+      wisdom: 1
+      charisma: 0
+    - !type:CFGrantAction
+      action: CFActTendrilStrike
+
+- type: cfClassChoice
+  id: EidolonPsychopomp
+  class: Summoner
+  slot: cf-class-choice-eidolon
+  name: cf-class-choice-eidolonpsychopomp
+  description: cf-class-choice-eidolonpsychopomp-desc
+  tradition: Divine
+  trainedSkills:
+    - Intimidation
+    - Religion
+  grants:
+    - !type:CFGrantEidolon
+      name: psychopomp eidolon
+      constitution: 3
+      intelligence: 0
+      wisdom: 1
+      charisma: -1
+
+- type: cfClassChoice
+  id: EidolonSwarm
+  class: Summoner
+  slot: cf-class-choice-eidolon
+  name: cf-class-choice-eidolonswarm
+  description: cf-class-choice-eidolonswarm-desc
+  tradition: Primal
+  trainedSkills:
+    - Nature
+    - Survival
+  grants:
+    - !type:CFGrantEidolon
+      name: swarm eidolon
+      constitution: 3
+      intelligence: 0
+      wisdom: 0
+      charisma: 0
+
+- type: cfClassChoice
+  id: EidolonUndead
+  class: Summoner
+  slot: cf-class-choice-eidolon
+  name: cf-class-choice-eidolonundead
+  description: cf-class-choice-eidolonundead-desc
+  tradition: Divine
+  trainedSkills:
+    - Intimidation
+    - Religion
+  grants:
+    - !type:CFGrantEidolon
+      name: undead eidolon
+      constitution: 3
+      intelligence: -1
+      wisdom: 1
+      charisma: 0
+      voidHealing: true
+
+- type: cfClassChoice
+  id: EidolonKeyStrength
+  class: Summoner
+  slot: cf-class-choice-eidolon-key
+  name: cf-class-choice-eidolonkeystrength
+  description: cf-class-choice-eidolonkeystrength-desc
+  grants:
+    - !type:CFGrantEidolonBuild
+      dexterityKey: false
+
+- type: cfClassChoice
+  id: EidolonKeyDexterity
+  class: Summoner
+  slot: cf-class-choice-eidolon-key
+  name: cf-class-choice-eidolonkeydexterity
+  description: cf-class-choice-eidolonkeydexterity-desc
+  grants:
+    - !type:CFGrantEidolonBuild
+      dexterityKey: true
+
+- type: cfClassChoice
+  id: EidolonAttackBludgeoning
+  class: Summoner
+  slot: cf-class-choice-eidolon-attack
+  name: cf-class-choice-eidolonattackbludgeoning
+  description: cf-class-choice-eidolonattackbludgeoning-desc
+  grants:
+    - !type:CFGrantEidolonBuild
+      attackType: bludgeoning
+
+- type: cfClassChoice
+  id: EidolonAttackPiercing
+  class: Summoner
+  slot: cf-class-choice-eidolon-attack
+  name: cf-class-choice-eidolonattackpiercing
+  description: cf-class-choice-eidolonattackpiercing-desc
+  grants:
+    - !type:CFGrantEidolonBuild
+      attackType: piercing
+
+- type: cfClassChoice
+  id: EidolonAttackSlashing
+  class: Summoner
+  slot: cf-class-choice-eidolon-attack
+  name: cf-class-choice-eidolonattackslashing
+  description: cf-class-choice-eidolonattackslashing-desc
+  grants:
+    - !type:CFGrantEidolonBuild
+      attackType: slashing

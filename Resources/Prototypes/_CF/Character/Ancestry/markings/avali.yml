@@ -7,7 +7,6 @@
   bodyPart: HeadSide
   groupWhitelist: [CFAvali]
   canBeDisplaced: false
-  followSkinColor: true
   forcedColoring: true
   sprites:
   - sprite: _Starlight/Mobs/Customization/Avali/avali_parts.rsi
@@ -20,7 +19,6 @@
   bodyPart: Tail
   groupWhitelist: [CFAvali]
   canBeDisplaced: false
-  followSkinColor: true
   forcedColoring: true
   sprites:
   - sprite: _Starlight/Mobs/Customization/Avali/avali_parts.rsi

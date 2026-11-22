@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFTheHallowedDead
-  name: "The Hallowed Dead"
-  description: "Requires You aren't unholy."
+  name: cf-feat-the-hallowed-dead
+  description: cf-feat-the-hallowed-dead-desc
   class: Necromancer
   level: 1
   traits:

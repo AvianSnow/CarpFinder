@@ -2,10 +2,12 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFDirectedChannel
-  name: "Directed Channel"
-  description: "Changes an item. This feature will be implemented later."
+  name: cf-feat-directed-channel
+  description: cf-feat-directed-channel-desc
   class: Cleric
   level: 4
   traits:
     - "Cleric"
-  pendingAction: true
+  grants:
+    - !type:CFGrantOption
+      option: DirectedChannel

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFPredictable
-  name: "Predictable!"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-predictable
+  description: cf-feat-predictable-desc
   class: Rogue
   level: 4
   traits:

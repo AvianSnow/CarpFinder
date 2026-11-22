@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Cheliax, Infernal Inheritance
 - type: cfFeat
   id: CFStrixLore
-  name: "Strix Lore"
-  description: "Trained in Acrobatics and Nature."
+  name: cf-feat-strix-lore
+  description: cf-feat-strix-lore-desc
   ancestry: Strix
   level: 1
   traits:

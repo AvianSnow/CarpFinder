@@ -7,7 +7,7 @@ namespace Content.Shared.CF.Companions;
 /// <summary>
 /// A carried item that is not a weapon leaves the ally's bite in place.
 /// </summary>
-public sealed class CFCompanionHandSystem : EntitySystem
+public sealed partial class CFCompanionHandSystem : EntitySystem
 {
     [Dependency] private SharedHandsSystem _hands = default!;
 

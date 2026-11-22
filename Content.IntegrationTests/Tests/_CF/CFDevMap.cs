@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Content.IntegrationTests.Pair;
+using Content.Shared.CF.GOAP;
 using Content.Shared.Mobs.Components;
 using Robust.Shared.EntitySerialization;
 using Robust.Shared.EntitySerialization.Systems;
@@ -8,17 +9,18 @@ using Robust.Shared.GameObjects;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Maths;
+using Robust.Shared.Physics.Components;
 using Robust.Shared.Utility;
 
 namespace Content.IntegrationTests.Tests.CF;
 
 /// <summary>
-/// Loads the CarpFinder dev map (gameMap <c>Dev</c> in <c>Resources/Prototypes/Maps/debug.yml</c>) for tests
-/// and finds open floor on it. CF tests use this instead of building grids by hand.
+/// Loads an arena for tests and finds open floor on it. CF tests use this instead of building grids by hand.
+/// Keep a test's footprint as small as it needs: only a small one is sure of clear floor.
 /// </summary>
 public sealed class CFDevMap
 {
-    public static readonly ResPath Path = new("/Maps/Test/dev_map.yml");
+    public static readonly ResPath Path = new("/Maps/Nonstations/meteor-arena.yml");
 
     public MapId MapId { get; private set; }
 
@@ -30,8 +32,10 @@ public sealed class CFDevMap
     /// <summary>
     /// Loads the map and picks floor where every tile of <paramref name="footprint"/> (relative to the origin,
     /// right and top exclusive) exists on the largest grid and has no creature on it.
+    /// Pass <paramref name="avoidStructures"/> when a creature has to stand up there. It is off by default,
+    /// because the map has no structure-free room for the large area spell footprints.
     /// </summary>
-    public static async Task<CFDevMap> Load(TestPair pair, Box2i footprint)
+    public static async Task<CFDevMap> Load(TestPair pair, Box2i footprint, bool avoidStructures = false)
     {
         var result = new CFDevMap();
         var entities = pair.Server.EntMan;
@@ -53,19 +57,39 @@ public sealed class CFDevMap
                 floor.Add(tile.GridIndices);
             }
 
-            foreach (var candidate in floor.OrderBy(t => t.X).ThenBy(t => t.Y))
+            // Clear floor first, so nothing stands between two test creatures. Only a footprint too big for that
+            // settles for floor with structures on it, and a creature that must stand there says so.
+            foreach (var clear in avoidStructures ? new[] { true } : new[] { true, false })
             {
-                if (!Fits(candidate, floor, footprint))
-                    continue;
+                foreach (var candidate in floor.OrderBy(t => t.X).ThenBy(t => t.Y))
+                {
+                    if (!Fits(candidate, floor, footprint))
+                        continue;
 
-                var area = new Box2(candidate + footprint.BottomLeft, candidate + footprint.TopRight);
-                var mobs = new HashSet<Entity<MobStateComponent>>();
-                lookup.GetLocalEntitiesIntersecting(grid.Owner, area, mobs);
-                if (mobs.Count != 0)
-                    continue;
+                    // Shrunk a little, or a tile only touching the edge counts as being inside it.
+                    var area = new Box2(candidate + footprint.BottomLeft, candidate + footprint.TopRight).Enlarged(-0.1f);
+                    var mobs = new HashSet<Entity<MobStateComponent>>();
+                    lookup.GetLocalEntitiesIntersecting(grid.Owner, area, mobs);
+                    if (mobs.Count != 0)
+                        continue;
 
-                result.Origin = candidate;
-                return;
+                    if (clear)
+                    {
+                        var solids = new HashSet<Entity<PhysicsComponent>>();
+                        lookup.GetLocalEntitiesIntersecting(grid.Owner, area, solids, LookupFlags.Static);
+                        if (solids.Any(s => s.Comp.CanCollide && s.Comp.Hard))
+                            continue;
+
+                        // The arena has lava around it, which would set test creatures alight.
+                        var hazards = new HashSet<Entity<CFDangerousTileComponent>>();
+                        lookup.GetLocalEntitiesIntersecting(grid.Owner, area, hazards, LookupFlags.Static | LookupFlags.Sensors);
+                        if (hazards.Count != 0)
+                            continue;
+                    }
+
+                    result.Origin = candidate;
+                    return;
+                }
             }
 
             Assert.Fail($"{Path} has no open floor of {footprint.Width}x{footprint.Height} tiles.");

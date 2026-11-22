@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFGoblinScuttle
-  name: "Goblin Scuttle"
-  description: "Reaction. TBA - action will be added"
+  name: cf-feat-goblin-scuttle
+  description: cf-feat-goblin-scuttle-desc
   ancestry: Goblin
   level: 1
   traits:

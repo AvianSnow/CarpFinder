@@ -1,5 +1,7 @@
 using System.Numerics;
+using Content.Client.CF.Character;
 using Content.Shared.CF.Character;
+using Content.Shared.CF.Spells;
 using Robust.Client.Graphics;
 using Robust.Client.UserInterface;
 using Robust.Client.UserInterface.Controls;
@@ -7,19 +9,38 @@ using Robust.Client.UserInterface.Controls;
 namespace Content.Client.CF.Hud;
 
 /// <summary>
-/// Spell-slot pips for each rank the class actually has, plus focus points.
-/// A pip is lit while the slot is ready and gray when it was marked expended on the character sheet.
-/// Cantrips are at-will, so they are not drawn here.
+/// The Spells tab's trackers. A spontaneous caster sees boxes and a count for each rank it has slots in, and clicking one
+/// goes to that rank. Anyone with a focus pool sees its gems. Prepared casters read their charges on the spells themselves.
 /// </summary>
 public sealed class CFSpellPips : BoxContainer
 {
-    private string _shown = "";
+    private static readonly Color GemReady = new(150, 110, 230);
+    private static readonly Color GemSpent = new(72, 72, 76);
+
+    private readonly BoxContainer _ranks = new()
+    {
+        Orientation = LayoutOrientation.Horizontal,
+        SeparationOverride = 12,
+        HorizontalExpand = true,
+    };
+
+    private readonly BoxContainer _focus = new()
+    {
+        Orientation = LayoutOrientation.Horizontal,
+        SeparationOverride = 2,
+    };
+
+    private string _shown = string.Empty;
+
+    /// <summary>A rank's boxes were clicked.</summary>
+    public event Action<int>? RankPressed;
 
     public CFSpellPips()
     {
-        Orientation = BoxContainer.LayoutOrientation.Horizontal;
+        Orientation = LayoutOrientation.Horizontal;
         SeparationOverride = 8;
-        Visible = false;
+        AddChild(_ranks);
+        AddChild(_focus);
     }
 
     public void SetBook(CFSpellbookComponent? book)
@@ -29,82 +50,73 @@ public sealed class CFSpellPips : BoxContainer
             return;
 
         _shown = key;
-        RemoveAllChildren();
-        if (book == null || key.Length == 0)
+        _ranks.RemoveAllChildren();
+        _focus.RemoveAllChildren();
+        if (book == null)
         {
             Visible = false;
             return;
         }
 
-        for (var rank = 1; rank < book.Slots.Count; rank++)
+        if (!book.Prepared)
         {
-            var count = book.Slots[rank];
-            if (count <= 0)
-                continue;
-
-            var spent = rank < book.Expended.Count ? book.Expended[rank] : 0;
-            AddChild(Column(rank.ToString(), Loc.GetString("cf-hud-rank", ("rank", rank)), count, spent));
+            for (var rank = 1; rank < book.Slots.Count; rank++)
+            {
+                if (book.Slots[rank] > 0)
+                    _ranks.AddChild(RankBoxes(rank, book.Slots[rank], rank < book.Expended.Count ? book.Expended[rank] : 0));
+            }
         }
 
         if (book.FocusPoints > 0)
-            AddChild(Column("F", Loc.GetString("cf-hud-focus"), book.FocusPoints, book.FocusSpent));
+            AddGems(book);
 
-        Visible = ChildCount > 0;
+        Visible = _ranks.ChildCount > 0 || _focus.ChildCount > 0;
+    }
+
+    private void AddGems(CFSpellbookComponent book)
+    {
+        var tooltip = Loc.GetString("cf-hud-focus-tooltip", ("ready", CFFocusSystem.Remaining(book)), ("max", book.FocusPoints));
+        _focus.AddChild(new Label { Text = Loc.GetString("cf-hud-focus"), ToolTip = tooltip, MouseFilter = MouseFilterMode.Stop, Margin = new Thickness(0, 0, 4, 0) });
+        for (var i = 0; i < book.FocusPoints; i++)
+        {
+            _focus.AddChild(new Label
+            {
+                Text = "◆",
+                FontColorOverride = i < CFFocusSystem.Remaining(book) ? GemReady : GemSpent,
+                ToolTip = tooltip,
+                MouseFilter = MouseFilterMode.Stop,
+            });
+        }
+    }
+
+    private ContainerButton RankBoxes(int rank, int count, int spent)
+    {
+        var ready = Math.Max(0, count - Math.Max(0, spent));
+        var button = new ContainerButton { ToolTip = CFSpellsTab.RankTitle(rank) };
+        var row = new BoxContainer { Orientation = LayoutOrientation.Horizontal, SeparationOverride = 2 };
+        row.AddChild(new Label { Text = Loc.GetString("cf-hud-rank-tracker", ("rank", rank)), Margin = new Thickness(0, 0, 3, 0) });
+        for (var i = 0; i < count; i++)
+        {
+            row.AddChild(new PanelContainer
+            {
+                MinSize = new Vector2(12, 12),
+                VerticalAlignment = VAlignment.Center,
+                PanelOverride = Box(i < ready),
+            });
+        }
+
+        row.AddChild(new Label { Text = $"{ready}/{count}", Margin = new Thickness(3, 0, 0, 0) });
+        button.AddChild(row);
+        button.OnPressed += _ => RankPressed?.Invoke(rank);
+        return button;
     }
 
     private static string Key(CFSpellbookComponent? book)
     {
         if (book == null)
-            return "";
+            return string.Empty;
 
-        var any = book.FocusPoints > 0;
-        for (var rank = 1; rank < book.Slots.Count; rank++)
-        {
-            if (book.Slots[rank] > 0)
-                any = true;
-        }
-
-        if (!any)
-            return "";
-
-        return string.Join(',', book.Slots) + "|" + string.Join(',', book.Expended) + "|" + book.FocusPoints + "|" + book.FocusSpent;
-    }
-
-    private static BoxContainer Column(string label, string tooltip, int count, int spent)
-    {
-        var column = new BoxContainer
-        {
-            Orientation = BoxContainer.LayoutOrientation.Vertical,
-            SeparationOverride = 2,
-            Align = BoxContainer.AlignMode.Center,
-            ToolTip = tooltip,
-        };
-        column.AddChild(new Label
-        {
-            Text = label,
-            HorizontalAlignment = HAlignment.Center,
-            ToolTip = tooltip,
-        });
-
-        var grid = new GridContainer
-        {
-            Columns = 2,
-            HSeparationOverride = 2,
-            VSeparationOverride = 2,
-        };
-        var ready = Math.Max(0, count - Math.Max(0, spent));
-        for (var i = 0; i < count; i++)
-        {
-            grid.AddChild(new PanelContainer
-            {
-                MinSize = new Vector2(16, 16),
-                PanelOverride = Box(i < ready),
-                ToolTip = tooltip,
-            });
-        }
-
-        column.AddChild(grid);
-        return column;
+        return book.Prepared + "|" + string.Join(',', book.Slots) + "|" + string.Join(',', book.Expended) + "|" + book.FocusPoints + "|" + book.FocusSpent;
     }
 
     private static StyleBoxFlat Box(bool ready)

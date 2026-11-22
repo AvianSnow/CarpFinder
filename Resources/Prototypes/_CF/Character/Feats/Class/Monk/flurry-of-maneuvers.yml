@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFFlurryofManeuvers
-  name: "Flurry of Maneuvers"
-  description: "Requires expert in Athletics."
+  name: cf-feat-flurryof-maneuvers
+  description: cf-feat-flurryof-maneuvers-desc
   class: Monk
   level: 4
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFVoidSiphonNecromancer
-  name: "Void Siphon (Necromancer)"
-  description: "Has a resistance. Reaction. This feature will be implemented later."
+  name: cf-feat-void-siphon-necromancer
+  description: cf-feat-void-siphon-necromancer-desc
   class: Necromancer
   level: 4
   traits:

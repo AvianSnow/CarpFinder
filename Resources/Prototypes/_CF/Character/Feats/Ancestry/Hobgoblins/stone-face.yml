@@ -2,9 +2,15 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFStoneFace
-  name: "Stone Face"
-  description: "+1 circumstance bonus to Saving Throw. Not applied in play yet. +2 circumstance bonus to Will Dc. Not applied in play yet."
+  name: cf-feat-stone-face
+  description: cf-feat-stone-face-desc
   ancestry: Hobgoblin
   level: 1
   traits:
     - "Hobgoblin"
+  grants:
+    - !type:CFGrantBonus
+      stat: Saves
+      type: Circumstance
+      value: 1
+      trait: Fear

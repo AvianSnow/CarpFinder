@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFRatMagic
-  name: "Rat Magic"
-  description: "Changes an item. Not applied in play yet."
+  name: cf-feat-rat-magic
+  description: cf-feat-rat-magic-desc
   ancestry: Ratfolk
   level: 5
   traits:

@@ -1,0 +1,13 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  abstract: true
+  id: CFBurnsAsh
+  categories: [ ForkFiltered ]
+  components:
+  - type: Temperature
+  - type: InternalTemperature
+  - type: CFTemperatureTransformation
+    entries:
+    - temperatureRange: 400, 500
+      transformTo: CFAsh1

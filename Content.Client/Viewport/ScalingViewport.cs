@@ -166,7 +166,7 @@ namespace Content.Client.Viewport
 
             DebugTools.AssertNotNull(_viewport);
 
-            _viewport!.Render();
+            RenderZLevels(_viewport!); // CarpFinder: draws the levels below and above into the same viewport
 
             if (_queuedScreenshots.Count != 0)
             {

@@ -1,0 +1,259 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  id: CFCrystalBase
+  abstract: true
+  parent: BaseRock
+  name: quartz
+  description: Natural quartz crystals that can absorb the magical energy of the world around them.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    sprite: _CP14/Structures/Flora/Crystal/crystal.rsi
+    layers:
+      - state: medium1
+        map: ["random"]
+        shader: unshaded
+    offset: 0, 0.25
+    noRot: true
+  - type: InteractionPopup
+    interactSuccessString: popup-cp14crystal-ding
+    messagePerceivedByOthers: popup-cp14crystal-ding
+    interactSuccessSound:
+      collection: CFCrystalDings
+      params:
+        variation: 0.03
+  - type: Damageable
+    damageModifierSet: Glass
+  - type: Injurable
+    damageContainer: Inorganic
+  - type: MeleeSound
+    soundGroups:
+      Brute:
+        collection: GlassSmash
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeCircle
+          radius: 0.30
+        density: 60
+        mask:
+          - MachineMask
+        layer:
+          - MidImpassable
+          - LowImpassable
+          - BulletImpassable
+          - Opaque
+  - type: RandomSprite
+    available:
+    - random:
+        big0: Inherit
+        big1: Inherit
+        big2: Inherit
+        medium0: Inherit
+        medium1: Inherit
+        medium2: Inherit
+        medium3: Inherit
+        medium4: Inherit
+        small0: Inherit
+        small1: Inherit
+        small2: Inherit
+        small3: Inherit
+        small4: Inherit
+        small5: Inherit
+  - type: PointLight
+    netSync: false
+    radius: 2.5
+    energy: 1
+
+# Normal
+
+- type: entity
+  id: CFCrystalQuartz
+  suffix: Normal
+  parent: CFCrystalBase
+  components:
+  - type: Sprite
+    layers:
+      - state: medium1
+        map: ["random"] #Disabling unshaded
+  - type: PointLight
+    enabled: false
+  - type: Destructible
+    thresholds:
+      - trigger:
+            !type:DamageTrigger
+            damage: 15
+        behaviors:
+          - !type:PlaySoundBehavior
+            sound:
+              collection: GlassBreak
+          - !type:SpawnEntitiesBehavior
+            spawn:
+              CFCrystalShardQuartz:
+                min: 1
+                max: 2
+          - !type:DoActsBehavior
+            acts: [ "Destruction" ]
+
+# Basic 6
+
+- type: entity
+  id: CFCrystalQuartzEarth
+  suffix: Earth
+  parent: CFCrystalBase
+  components:
+  - type: Sprite
+    color: "#1cea42"
+  - type: PointLight
+    color: "#1cea42"
+  - type: Destructible
+    thresholds:
+      - trigger:
+            !type:DamageTrigger
+            damage: 15
+        behaviors:
+          - !type:PlaySoundBehavior
+            sound:
+              collection: GlassBreak
+          - !type:SpawnEntitiesBehavior
+            spawn:
+              CFCrystalShardQuartzEarth:
+                min: 1
+                max: 2
+          - !type:DoActsBehavior
+            acts: [ "Destruction" ]
+
+- type: entity
+  id: CFCrystalQuartzFire
+  suffix: Fire
+  parent: CFCrystalBase
+  components:
+  - type: Sprite
+    color: "#d9741c"
+  - type: PointLight
+    color: "#d9741c"
+  - type: Destructible
+    thresholds:
+      - trigger:
+            !type:DamageTrigger
+            damage: 15
+        behaviors:
+          - !type:PlaySoundBehavior
+            sound:
+              collection: GlassBreak
+          - !type:SpawnEntitiesBehavior
+            spawn:
+              CFCrystalShardQuartzFire:
+                min: 1
+                max: 2
+          - !type:DoActsBehavior
+            acts: [ "Destruction" ]
+
+- type: entity
+  id: CFCrystalQuartzWater
+  suffix: Water
+  parent: CFCrystalBase
+  components:
+  - type: Sprite
+    color: "#1c94d9"
+  - type: PointLight
+    color: "#1c94d9"
+  - type: Destructible
+    thresholds:
+      - trigger:
+            !type:DamageTrigger
+            damage: 15
+        behaviors:
+          - !type:PlaySoundBehavior
+            sound:
+              collection: GlassBreak
+          - !type:SpawnEntitiesBehavior
+            spawn:
+              CFCrystalShardQuartzWater:
+                min: 1
+                max: 2
+          - !type:DoActsBehavior
+            acts: [ "Destruction" ]
+
+- type: entity
+  id: CFCrystalQuartzAir
+  suffix: Air
+  parent: CFCrystalBase
+  components:
+  - type: Sprite
+    color: "#fdfe86"
+  - type: PointLight
+    color: "#fdfe86"
+  - type: Destructible
+    thresholds:
+      - trigger:
+            !type:DamageTrigger
+            damage: 15
+        behaviors:
+          - !type:PlaySoundBehavior
+            sound:
+              collection: GlassBreak
+          - !type:SpawnEntitiesBehavior
+            spawn:
+              CFCrystalShardQuartzAir:
+                min: 1
+                max: 2
+          - !type:DoActsBehavior
+            acts: [ "Destruction" ]
+
+- type: entity
+  id: CFCrystalQuartzOrder
+  suffix: Order
+  parent: CFCrystalBase
+  components:
+  - type: Sprite
+    color: "#d9d9d9"
+  - type: PointLight
+    color: "#d9d9d9"
+  - type: Destructible
+    thresholds:
+      - trigger:
+            !type:DamageTrigger
+            damage: 15
+        behaviors:
+          - !type:PlaySoundBehavior
+            sound:
+              collection: GlassBreak
+          - !type:SpawnEntitiesBehavior
+            spawn:
+              CFCrystalShardQuartzOrder:
+                min: 1
+                max: 2
+          - !type:DoActsBehavior
+            acts: [ "Destruction" ]
+
+- type: entity
+  id: CFCrystalQuartzChaos
+  suffix: Chaos
+  parent: CFCrystalBase
+  components:
+  - type: Sprite
+    color: "#4d4d4d"
+  - type: PointLight
+    color: "#4d4d4d"
+  - type: Destructible
+    thresholds:
+      - trigger:
+            !type:DamageTrigger
+            damage: 15
+        behaviors:
+          - !type:PlaySoundBehavior
+            sound:
+              collection: GlassBreak
+          - !type:SpawnEntitiesBehavior
+            spawn:
+              CFCrystalShardQuartzChaos:
+                min: 1
+                max: 2
+          - !type:DoActsBehavior
+            acts: [ "Destruction" ]
+
+# Complex tier 1

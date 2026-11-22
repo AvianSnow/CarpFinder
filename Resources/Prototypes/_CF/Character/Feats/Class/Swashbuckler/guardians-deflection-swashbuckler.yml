@@ -2,11 +2,19 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFGuardiansDeflectionSwashbuckler
-  name: "Guardian's Deflection (Swashbuckler)"
-  description: "Reaction. This feature will be implemented later."
+  name: cf-feat-guardians-deflection-swashbuckler
+  description: cf-feat-guardians-deflection-swashbuckler-desc
   class: Swashbuckler
   level: 4
   traits:
     - "Swashbuckler"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-guardians-deflection
+        trigger: AllyWouldBeHit
+        acBonus: 2
+        rangeFeet: 5
+        needsToSeeAttacker: true
+        needsFreeHand: true

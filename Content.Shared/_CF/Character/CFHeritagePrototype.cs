@@ -1,4 +1,5 @@
 using System.Linq;
+using Content.Shared.CF.Character.Grants;
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared.CF.Character;
@@ -47,6 +48,18 @@ public sealed partial class CFHeritagePrototype : IPrototype
     /// </summary>
     [DataField]
     public bool UpgradeVision;
+
+    /// <summary>Skills this heritage trains. Kept apart from grants so the builder does not offer them as class skill picks.</summary>
+    [DataField]
+    public List<ProtoId<CFAbilitySkillPrototype>> TrainedSkills = new();
+
+    /// <summary>What the player picks when taking this.</summary>
+    [DataField]
+    public List<CFOptionChoice> Choices = new();
+
+    /// <summary>What this gives a character. See <see cref="CFGrant"/>.</summary>
+    [DataField]
+    public List<CFGrant> Grants = new();
 
     public bool Fits(string? ancestryId)
     {

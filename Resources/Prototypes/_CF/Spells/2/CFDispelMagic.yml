@@ -2,7 +2,7 @@
   parent: CFSpellTarget
   id: CFDispelMagic
   name: Dispel Magic
-  description: You attempt to counteract one spell on the target.
+  description: You attempt to counteract one spell on the target. An enemy's spell is chosen first, then the strongest.
   components:
   - type: Sprite
     sprite: Objects/Magic/magicactions.rsi
@@ -19,7 +19,6 @@
     filter: All
   - type: CFDegreeEffects
     landed:
-    - !type:CFPopupEffect
-      text: cf-spell-affected
+    - !type:CFDispelEffect
   - type: EntityTargetAction
     canTargetSelf: true

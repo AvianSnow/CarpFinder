@@ -1,8 +1,12 @@
+using Content.Shared.CF.Companions;
+using Content.Shared.CF.Spells;
+using Content.Shared.CF.Items;
 using System.Numerics;
 using Content.Shared.CF.Actions;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.DamageTypes;
+using Content.Shared.CF.Detection;
 using Content.Shared.CF.Factions;
 using Content.Shared.CF.Preferences;
 using Content.Shared.CF.Effects;
@@ -24,9 +28,11 @@ using Content.Shared.Weapons.Melee.Events;
 using Robust.Shared.Audio;
 using Robust.Shared.Audio.Systems;
 using Robust.Shared.Network;
+using Robust.Shared.Physics.Components;
 using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Random;
+using Robust.Shared.Timing;
 
 namespace Content.Shared.CF.Combat;
 
@@ -54,17 +60,39 @@ public sealed partial class CFStrikeSystem : EntitySystem
     [Dependency] private CFBonusSystem _bonuses = default!;
     [Dependency] private CFWeaponSystem _weapons = default!;
     [Dependency] private CFShieldSystem _shields = default!;
+    [Dependency] private CFStealthSystem _stealth = default!;
     [Dependency] private CFEffectSystem _effects = default!;
+    [Dependency] private CFStanceSystem _stances = default!;
+    [Dependency] private CFReactionSystem _reactions = default!;
+    [Dependency] private CFTemporaryHpSystem _tempHp = default!;
+    [Dependency] private CFAuraSystem _auras = default!;
+    [Dependency] private CFImplementSystem _implements = default!;
+    [Dependency] private CFInventorSystem _inventor = default!;
+    [Dependency] private CFIkonSystem _ikons = default!;
+    [Dependency] private CFRuneSystem _runes = default!;
+    [Dependency] private CFTauntSystem _taunts = default!;
+    [Dependency] private IGameTiming _timing = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private SharedAudioSystem _audio = default!;
+    [Dependency] private ThrownItemSystem _thrownItems = default!;
+    [Dependency] private CFEmblazonSystem _emblazon = default!;
+    [Dependency] private CFFightSystem _fights = default!;
+    [Dependency] private CFCriticalSpecializationSystem _criticalSpecialization = default!;
 
     /// <summary>Unconscious / dying creatures are off-guard (−4 AC status, simplified).</summary>
     private const int DownedAcPenalty = 4;
 
+    /// <summary>Only has to outlast the Strike that gives the attacker away.</summary>
+    private const float UnseenOffGuardSeconds = 1f;
+
+    /// <summary>
+    /// How much longer a thrown weapon stays in the air than stock's timing. Stock ignores air friction,
+    /// so without this a long throw comes down short of a target right under the cursor.
+    /// </summary>
+    private const float ThrownFlightStretch = 1.2f;
+
     /// <summary>Stops a reaction Strike from starting another reaction Strike.</summary>
     private int _strikeDepth;
-
-    private bool _inChampion;
 
     [SubscribeLocalEvent]
     private void OnCfWeaponHit(Entity<CFMeleeWeaponComponent> weapon, ref MeleeHitEvent args)
@@ -84,6 +112,9 @@ public sealed partial class CFStrikeSystem : EntitySystem
             _actions.CountAttack(args.User);
             return;
         }
+
+        if (TryFeatSwing(args, stats, weapon.Owner))
+            return;
 
         BeginMeleeStrikes(args.User, args.HitEntities, combat, abilities, stats, weapon.Owner, melee: true);
     }
@@ -110,7 +141,11 @@ public sealed partial class CFStrikeSystem : EntitySystem
             return;
         }
 
-        BeginMeleeStrikes(args.User, args.HitEntities, combat, abilities, UnarmedStats(args.User), weapon.Owner, melee: true);
+        var fist = UnarmedStats(args.User);
+        if (TryFeatSwing(args, fist, weapon.Owner))
+            return;
+
+        BeginMeleeStrikes(args.User, args.HitEntities, combat, abilities, fist, weapon.Owner, melee: true);
     }
 
     /// <summary>
@@ -159,9 +194,22 @@ public sealed partial class CFStrikeSystem : EntitySystem
             ReactiveStrike(shooter.Value);
     }
 
+    [SubscribeLocalEvent]
+    private void OnThrown(Entity<CFWeaponComponent> weapon, ref ThrownEvent args)
+    {
+        if (_weapons.ThrownIncrement(weapon) <= 0
+            || !TryComp(weapon, out ThrownItemComponent? thrown)
+            || thrown.ThrownTime is not { } start
+            || thrown.LandTime is not { } land)
+            return;
+
+        thrown.LandTime = start + (land - start) * ThrownFlightStretch;
+        Dirty(weapon, thrown);
+    }
+
     /// <summary>
     /// A weapon with the thrown trait that hits a creature makes a ranged Strike with its thrown range increment.
-    /// Thrown Strikes add Strength to damage.
+    /// Thrown Strikes add Strength to damage. The action was paid when it left the hand.
     /// </summary>
     [SubscribeLocalEvent]
     private void OnThrownHit(Entity<CFWeaponComponent> weapon, ref ThrowDoHitEvent args)
@@ -175,12 +223,30 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (!_weapons.TryStats(weapon, out var stats, thrown: true) || stats.RangeIncrementFeet <= 0)
             return;
 
-        if (!HasComp<MobStateComponent>(args.Target))
+        // Only a living enemy stops it. It flies on past an ally or a body.
+        if (!TryComp(args.Target, out MobStateComponent? mob)
+            || _mobState.IsDead(args.Target, mob)
+            || !_factions.CanHarm(thrower, args.Target))
             return;
 
         var map = _actions.MapPenalty(thrower, stats.Agile);
         _actions.CountAttack(thrower);
-        ResolveStrike(thrower, args.Target, combat, abilities, stats, GetDistanceFeet(thrower, args.Target), weapon, melee: false, map);
+        var hit = ResolveStrike(thrower, args.Target, combat, abilities, stats, GetDistanceFeet(thrower, args.Target), weapon, melee: false, map);
+        if (_strikeDepth == 0)
+            ReactiveStrike(thrower);
+
+        // One throw is one Strike, so the flight ends here. A miss skids on past the target.
+        if (TryComp(weapon, out PhysicsComponent? body))
+            _thrownItems.LandComponent(weapon, args.Component, body, playSound: !hit);
+
+        _thrownItems.StopThrow(weapon, args.Component);
+
+        // Stock embeds on any touch, so spears turn that off and stick here, only in what the Strike hit.
+        if (hit && !TerminatingOrDeleted(args.Target))
+        {
+            var stick = new ProjectileHitEvent(new DamageSpecifier(), args.Target, thrower);
+            RaiseLocalEvent(weapon, ref stick);
+        }
     }
 
     private bool TryGetMeleeAttacker(
@@ -223,6 +289,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
         // One swing is one attack, even when the arc touches more than one creature.
         var map = _actions.MapPenalty(user, stats.Agile);
         var counted = false;
+        var exacting = targets.Count == 1;
         foreach (var target in targets)
         {
             // Party members never reach AC, the d20, or damage.
@@ -235,7 +302,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
                 counted = true;
             }
 
-            ResolveStrike(user, target, combat, abilities, stats, distanceFeet: 0f, weaponUid, melee, map);
+            ResolveStrike(user, target, combat, abilities, stats, distanceFeet: 0f, weaponUid, melee, map, riders: true, exacting: exacting);
         }
     }
 
@@ -253,7 +320,10 @@ public sealed partial class CFStrikeSystem : EntitySystem
         bool finisher = false,
         int bonusDamage = 0,
         bool countMap = true,
-        int? fixedMap = null)
+        int? fixedMap = null,
+        bool skipPrecision = false,
+        Action<CFDegree, int>? resolved = null,
+        bool ignoreConcealed = false)
     {
         if (_strikeDepth > 2)
             return false;
@@ -281,7 +351,10 @@ public sealed partial class CFStrikeSystem : EntitySystem
                 attackPenalty,
                 extraDice,
                 finisher,
-                bonusDamage);
+                bonusDamage,
+                skipPrecision: skipPrecision,
+                resolved: resolved,
+                ignoreConcealed: ignoreConcealed);
         }
         finally
         {
@@ -312,12 +385,16 @@ public sealed partial class CFStrikeSystem : EntitySystem
             if (!_conditions.TrySpendReaction(uid, CFReactions.Strike))
                 continue;
 
-            if (!TryMeleeWeapon(uid, out var stats, out var weapon))
-                continue;
-
-            PerformStrike(uid, actor, stats, weapon, melee: true);
+            ReactionStrike(uid, actor);
             return;
         }
+    }
+
+    /// <summary>A melee Strike made as a reaction. It neither takes nor adds to the multiple attack penalty.</summary>
+    public bool ReactionStrike(EntityUid user, EntityUid target, int attackPenalty = 0)
+    {
+        return TryMeleeWeapon(user, out var stats, out var weapon)
+               && PerformStrike(user, target, stats, weapon, melee: true, attackPenalty: attackPenalty, countMap: false, fixedMap: 0);
     }
 
     /// <summary>
@@ -328,12 +405,36 @@ public sealed partial class CFStrikeSystem : EntitySystem
     {
         var proficiency = CFWeaponCategory.Unarmed.Proficiency();
         TryComp(user, out CFCombatOptionsComponent? opt);
+        if (_stances.Current(user)?.Attack is { } stance)
+        {
+            var traits = CFWeaponTraits.From(_prototypes, stance.Traits) with { Unarmed = true };
+
+            // Powerful Fist makes every unarmed attack lethal here, stances included.
+            if (opt is { PowerfulFist: true })
+                traits = traits with { Nonlethal = false };
+
+            return new CFStrikeWeaponStats(stance.Dice, stance.Die, stance.DamageType, proficiency, traits);
+        }
+
+        if (opt is { Raging: true, RageAttackDie: > 0 })
+        {
+            var traits = CFWeaponTraits.Fist with { Agile = false, Finesse = false, Nonlethal = false };
+            return new CFStrikeWeaponStats(1, opt.RageAttackDie, opt.RageAttackType, proficiency, traits);
+        }
+
         if (opt is { NaturalDie: > 0 })
         {
             var die = opt.PowerfulFist ? Math.Max(opt.NaturalDie, 6) : opt.NaturalDie;
             var dice = Math.Max(1, opt.NaturalDice);
             var type = string.IsNullOrEmpty(opt.NaturalType) ? CFMelee.UnarmedDamageType : opt.NaturalType;
-            var traits = new CFWeaponTraits { Agile = opt.NaturalAgile, Finesse = opt.NaturalFinesse, Unarmed = true };
+            var traits = new CFWeaponTraits
+            {
+                Agile = opt.NaturalAgile,
+                Finesse = opt.NaturalFinesse,
+                Unarmed = true,
+                Deadly = opt.NaturalDeadly,
+                Versatile = opt.NaturalVersatile.Length > 0 ? new[] { opt.NaturalVersatile } : Array.Empty<string>(),
+            };
             return new CFStrikeWeaponStats(dice, die, type, proficiency, traits);
         }
 
@@ -350,6 +451,121 @@ public sealed partial class CFStrikeSystem : EntitySystem
             CFMelee.UnarmedDamageType,
             proficiency,
             CFWeaponTraits.Fist);
+    }
+
+    /// <summary>
+    /// The attack bonus before Multiple Attack Penalty and anything spent by rolling, such as Aid.
+    /// </summary>
+    private int StandingAttackBonus(
+        EntityUid user,
+        EntityUid target,
+        CFCombatantComponent combat,
+        CFAbilityScoreComponent abilities,
+        CFStrikeWeaponStats weapon,
+        float distanceFeet,
+        bool ignoreVolley)
+    {
+        var bonus = CFMelee.AttackBonus(abilities, combat, weapon, _weapons.Rank(combat, weapon), distanceFeet, ignoreVolley);
+
+        // A battle form's attacks use its own modifier, unless the creature's is higher.
+        if (weapon.Item == null && TryComp(user, out CFBattleFormComponent? form))
+        {
+            // Untamed Form's bonus to the creature's own modifier is a status bonus, so another one takes its place.
+            var own = bonus + Math.Max(0, form.OwnAttackBonus - Math.Max(0, _bonuses.TotalOfType(user, CFBonusStat.AttackRoll, CFBonusType.Status)));
+            bonus = Math.Max(own, form.AttackModifier);
+        }
+        bonus -= _conditions.Frightened(user);
+        if (!weapon.Ranged)
+            bonus -= _conditions.Value(user, CFConditionKind.Enfeebled);
+
+        bonus += _conditions.CircumstanceAttackPenalty(user, target);
+        if (weapon.Ranged)
+            bonus -= _conditions.Clumsy(user);
+
+        // Item bonuses do not stack: weapon potency or a spell's item bonus, whichever is higher.
+        var otherItem = _bonuses.TotalOfType(user, CFBonusStat.AttackRoll, CFBonusType.Item);
+        return bonus + _bonuses.Total(user, CFBonusStat.AttackRoll) - otherItem + Math.Max(otherItem, weapon.Potency)
+               + _bonuses.AgainstSource(user, CFBonusStat.AttackRoll, target);
+    }
+
+    /// <summary>The AC this attacker has to beat right now.</summary>
+    private int ArmorClassAgainst(
+        EntityUid user,
+        EntityUid target,
+        CFCombatantComponent defender,
+        bool melee,
+        bool unseen,
+        bool isObject,
+        bool alreadyDown)
+    {
+        // Downed creatures already take a larger AC penalty. Off-guard does not stack with itself.
+        var acPenalty = 0;
+        if (alreadyDown)
+            acPenalty = DownedAcPenalty;
+        else if (!isObject && _conditions.IsProne(target))
+            acPenalty = CFFlanking.OffGuardAcPenalty;
+        else if (!isObject && IsOffGuardForStrike(user, target, melee, unseen))
+            acPenalty = CFFlanking.OffGuardAcPenalty;
+
+        return defender.ArmorClass - acPenalty + _conditions.ArmorClassModifier(target) + OutwitBonus(user, target)
+               + _bonuses.AgainstSource(target, CFBonusStat.ArmorClass, user);
+    }
+
+    /// <summary>Whether this target is off-guard to this attacker, for a Strike made this way.</summary>
+    private bool IsOffGuardForStrike(EntityUid user, EntityUid target, bool melee, bool unseen)
+    {
+        if (CompOrNull<CFCombatOptionsComponent>(user)?.DreadStriker == true && _conditions.Frightened(target) > 0)
+            return true;
+
+        if (_conditions.IsOffGuardTo(target, user, melee))
+            return true;
+
+        // A creature is off-guard to an attacker hidden from it, unless it has Deny Advantage against one of its level or lower.
+        if (unseen && !DeniesFlanking(user, target))
+            return true;
+
+        // Flanking only helps an attack made from up close, or by someone the target cannot see.
+        return (melee || unseen) && _flanking.IsOffGuardTo(target, user) && !DeniesFlanking(user, target);
+    }
+
+    /// <summary>Deny Advantage: flankers and hidden attackers of the target's level or lower get nothing from it.</summary>
+    private bool DeniesFlanking(EntityUid user, EntityUid target)
+    {
+        return CompOrNull<CFCombatOptionsComponent>(target)?.DenyAdvantage == true
+               && TryComp(user, out CFCombatantComponent? attacker)
+               && TryComp(target, out CFCombatantComponent? defender)
+               && attacker.Level <= defender.Level;
+    }
+
+    /// <summary>The Outwit edge: +1 circumstance AC against the ranger's prey, if nothing already gives as much.</summary>
+    private int OutwitBonus(EntityUid user, EntityUid target)
+    {
+        if (!TryComp(target, out CFCombatOptionsComponent? style) || !style.PreyOutwit || style.Prey != user)
+            return 0;
+
+        return Math.Max(0, 1 - Math.Max(_shields.RaisedBonus(target), _bonuses.TotalOfType(target, CFBonusStat.ArmorClass, CFBonusType.Circumstance)));
+    }
+
+    /// <summary>
+    /// What a melee Strike at this target would roll with right now. Nothing is rolled, spent or changed, so code with
+    /// no player can weigh a Strike up before making it.
+    /// </summary>
+    public bool TryPreviewMelee(EntityUid user, EntityUid target, out CFStrikePreview preview)
+    {
+        preview = default;
+        if (!TryComp(user, out CFCombatantComponent? combat)
+            || !TryComp(user, out CFAbilityScoreComponent? abilities)
+            || !TryComp(target, out CFCombatantComponent? defender)
+            || !TryMeleeWeapon(user, out var weapon, out _))
+            return false;
+
+        preview = new CFStrikePreview(
+            StandingAttackBonus(user, target, combat, abilities, weapon, 0f, false),
+            _actions.MapPenalty(user, weapon.Agile),
+            ArmorClassAgainst(user, target, defender, melee: true, unseen: false, isObject: false, alreadyDown: false),
+            weapon.DamageDice * (weapon.DamageDie + 1) / 2f
+            + CFMelee.DamageBonus(abilities, weapon, combat, CompOrNull<CFCombatOptionsComponent>(user)?.FinesseDexterity == true));
+        return true;
     }
 
     public bool TryMeleeWeapon(EntityUid user, out CFStrikeWeaponStats stats, out EntityUid weaponUid)
@@ -372,6 +588,19 @@ public sealed partial class CFStrikeSystem : EntitySystem
         stats = UnarmedStats(user);
         weaponUid = user;
         return true;
+    }
+
+    /// <summary>
+    /// Multiple Attack Penalty on the next Strike with what is in hand. A held bow counts here,
+    /// where <see cref="TryMeleeWeapon"/> passes over it for fists.
+    /// </summary>
+    public int NextStrikeMapPenalty(EntityUid user)
+    {
+        if (_hands.TryGetActiveItem(user, out var held) && _weapons.TryStats(held.Value, out var stats))
+            return _actions.MapPenalty(user, stats.Agile);
+
+        TryMeleeWeapon(user, out stats, out _);
+        return _actions.MapPenalty(user, stats.Agile);
     }
 
     /// <summary>
@@ -405,6 +634,16 @@ public sealed partial class CFStrikeSystem : EntitySystem
         };
     }
 
+    /// <summary>The weapon is the favored weapon of the attacker's deity, and a simple weapon whatever it counts as for them.</summary>
+    private bool IsFavoredSimple(CFCombatantComponent attacker, EntityUid weapon)
+    {
+        return attacker.FavoredWeapons.Count > 0
+               && TryComp(weapon, out CFWeaponComponent? data)
+               && data.Category == CFWeaponCategory.Simple
+               && MetaData(weapon).EntityPrototype is { } proto
+               && attacker.FavoredWeapons.Contains(proto.ID);
+    }
+
     private bool ResolveStrike(
         EntityUid user,
         EntityUid target,
@@ -418,10 +657,25 @@ public sealed partial class CFStrikeSystem : EntitySystem
         int attackPenalty = 0,
         int extraDice = 0,
         bool finisher = false,
-        int bonusDamage = 0)
+        int bonusDamage = 0,
+        bool riders = false,
+        bool exacting = false,
+        bool skipPrecision = false,
+        Action<CFDegree, int>? resolved = null,
+        bool ignoreConcealed = false)
     {
         if (!_factions.CanHarm(user, target))
             return false;
+
+        if (weaponUid != user && _stances.Current(user) is { OnlyStanceStrikes: true })
+        {
+            if (_net.IsServer)
+                _popup.PopupEntity(Loc.GetString("cf-stance-only-strikes"), user, user);
+
+            return false;
+        }
+
+        _fights.NoteAttack(user, target);
 
         if (_conditions.IsCalmed(user) || _conditions.IsCharmedAgainst(user, target))
         {
@@ -444,16 +698,17 @@ public sealed partial class CFStrikeSystem : EntitySystem
             return false;
 
         _conditions.NoteAttack(user);
+
+        // A creature that cannot see its attacker is off-guard to this attack. Then everyone sees the attacker.
+        var unseen = !isObject && _stealth.IsUnseenBy(user, target);
+        if (unseen)
+            _conditions.SetOffGuardTo(target, user, UnseenOffGuardSeconds);
+
+        _stealth.Reveal(user);
+
         if (!isObject && TryComp(target, out CFConditionComponent? wardCond) && wardCond.Sanctuary)
         {
-            var will = CFDefense.SaveModifier(
-                _prototypes,
-                attackerCombat,
-                attackerAbilities,
-                CFDefenseType.Will,
-                0,
-                _conditions.Frightened(user));
-            var save = CFDefense.Roll(_random, will, wardCond.SanctuaryDc);
+            var save = _conditions.RollDefense(user, CFDefenseType.Will, wardCond.SanctuaryDc, out _);
             if (save is CFDegree.Failure or CFDegree.CriticalFailure)
             {
                 _popup.PopupEntity(Loc.GetString("cf-cond-sanctuary-held"), user, user);
@@ -464,7 +719,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
             Dirty(target, wardCond);
         }
 
-        if (!isObject && !_conditions.PassFlatCheck(user, target))
+        if (!isObject && !_conditions.PassFlatCheck(user, target, ignoreConcealed))
         {
             RaiseNetworkEvent(
                 new CFCombatNumberEvent(GetNetEntity(target), CFDegree.Failure, 0, weapon.DamageType),
@@ -475,7 +730,15 @@ public sealed partial class CFStrikeSystem : EntitySystem
         var ignoreVolley = false;
         var pointBlank = 0;
         TryComp(user, out CFCombatOptionsComponent? style);
-        if (weapon.Ranged && style is { PointBlank: true })
+        if (style is { PreyFlurry: true } && style.Prey == target)
+            mapPenalty = CFMelee.PreyFlurryPenalty(mapPenalty);
+
+        if (weapon.Ranged && style is { FarShot: true })
+            weapon = weapon with { RangeIncrementFeet = weapon.RangeIncrementFeet * 2 };
+
+        if (weapon.ThrownStrike && style is { StrongArm: true })
+            weapon = weapon with { RangeIncrementFeet = weapon.RangeIncrementFeet + 10 };
+        if (weapon.Ranged && _stances.Current(user) is { PointBlank: true })
         {
             var first = weapon.RangeIncrementFeet > 0 ? weapon.RangeIncrementFeet : 30;
             if (distanceFeet <= first)
@@ -485,21 +748,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
             }
         }
 
-        var weaponTrained = IsWeaponTrained(attackerCombat, weapon.Proficiency);
-        var attackBonus = mapPenalty + attackPenalty + CFMelee.AttackBonus(
-            attackerAbilities,
-            attackerCombat,
-            weapon,
-            weaponTrained,
-            distanceFeet,
-            ignoreVolley);
-        attackBonus -= _conditions.Frightened(user);
-        if (weapon.Ranged)
-            attackBonus -= _conditions.Clumsy(user);
-
-        // Item bonuses do not stack: weapon potency or a spell's item bonus, whichever is higher.
-        var otherItem = _bonuses.TotalOfType(user, CFBonusStat.AttackRoll, CFBonusType.Item);
-        attackBonus += _bonuses.Total(user, CFBonusStat.AttackRoll) - otherItem + Math.Max(otherItem, weapon.Potency);
+        var attackBonus = mapPenalty + attackPenalty + _conditions.TakeAid(user) + (isObject ? 0 : _taunts.NoteAttack(user, target))
+                          + StandingAttackBonus(user, target, attackerCombat, attackerAbilities, weapon, distanceFeet, ignoreVolley);
 
         // Sweep: +1 circumstance when this turn's earlier attack went at a different creature.
         var attacksBefore = AttacksBefore(mapPenalty);
@@ -519,21 +769,19 @@ public sealed partial class CFStrikeSystem : EntitySystem
             return false;
         }
 
-        // Downed creatures already take a larger AC penalty. Off-guard does not stack with itself.
-        var acPenalty = 0;
-        if (alreadyDown)
-            acPenalty = DownedAcPenalty;
-        else if (melee && !isObject && (_flanking.IsOffGuardTo(target, user) || _conditions.IsOffGuardTo(target, user)))
-            acPenalty = CFFlanking.OffGuardAcPenalty;
-
-        var targetAc = defender.ArmorClass - acPenalty - _conditions.Frightened(target) - _conditions.Clumsy(target);
-        targetAc += _bonuses.Total(target, CFBonusStat.ArmorClass);
-        targetAc += _shields.RaisedBonus(target);
-
-        if (TryComp(target, out CFCombatOptionsComponent? defenderStyle) && defenderStyle.Raging)
-            targetAc -= 1;
+        var targetAc = ArmorClassAgainst(user, target, defender, melee, unseen, isObject, alreadyDown);
+        _conditions.NoteAttackRoll(user, target, melee);
 
         var rolled = weapon with { DamageType = ChooseDamageType(target, weapon) };
+        // Die size goes up one step at most, however many things would raise it.
+        if (style is { HumbleStrikes: true } && weapon.Proficiency == CFWeaponCategory.Simple.Proficiency()
+            || style is { DeadlySimplicity: true } && IsFavoredSimple(attackerCombat, weaponUid)
+            || style is { ShieldWarfare: true } && HasComp<CFShieldComponent>(weaponUid))
+        {
+            rolled = rolled with { DamageDie = Math.Min(12, rolled.DamageDie + 2) };
+        }
+
+        extraDice += _runes.NextStrikeDice(user, weapon);
         if (extraDice > 0)
             rolled = rolled with { DamageDice = rolled.DamageDice + extraDice };
 
@@ -542,21 +790,62 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (spellDice > weapon.Striking)
             rolled = rolled with { DamageDice = rolled.DamageDice + spellDice - weapon.Striking, Striking = spellDice };
 
-        var damageMod = CFMelee.DamageBonus(attackerAbilities, rolled) + pointBlank;
+        var damageMod = CFMelee.DamageBonus(attackerAbilities, rolled, attackerCombat, style?.FinesseDexterity == true) + pointBlank;
         damageMod += CFMelee.ForcefulBonus(rolled, attacksBefore);
-        if (melee && style is { Raging: true })
-            damageMod += 2;
-
         if (melee)
-            damageMod += _bonuses.Total(user, CFBonusStat.MeleeDamage);
+            damageMod -= _conditions.Value(user, CFConditionKind.Enfeebled);
+
+        if (style is { Raging: true } && (melee || style.RagingThrower && weapon.ThrownStrike))
+            damageMod += rolled.Agile ? style.RageDamage / 2 : style.RageDamage;
+
+        damageMod += _bonuses.Total(user, CFBonusStat.Damage, melee ? CFBonusStat.MeleeDamage : null);
+
+        // An emblazoned weapon's +1 is a status bonus, so it adds nothing on top of another one.
+        if (_emblazon.Bonus(user, weaponUid) > 0
+            && _bonuses.TotalOfType(user, CFBonusStat.Damage, CFBonusType.Status) < 1
+            && (!melee || _bonuses.TotalOfType(user, CFBonusStat.MeleeDamage, CFBonusType.Status) < 1))
+        {
+            damageMod += 1;
+        }
+
+        if (style != null && style.MarkedTarget == target && _timing.CurTime < style.MarkedUntil)
+        {
+            damageMod += style.MarkedDamage;
+            if (style.MarkedDamageDie > 0)
+                damageMod += _random.Next(1, style.MarkedDamageDie + 1);
+        }
 
         if (style != null && style.Exploited == target)
             damageMod += 2;
 
+        damageMod += _inventor.OverdriveDamage(user);
+
+        // A thrall attacks with its Necromancer's spell attack.
+        if (TryComp(user, out CFThrallComponent? thrall) && TryComp(thrall.Necromancer, out CFCombatantComponent? masterCombat))
+        {
+            attackBonus = CFCasting.Spellcasting(_prototypes, masterCombat, CompOrNull<CFAbilityScoreComponent>(thrall.Necromancer)).AttackBonus;
+            for (var i = 0; i < thrall.ChargeDice; i++)
+            {
+                damageMod += _random.Next(1, 7);
+            }
+        }
+
+        if (style is { ImplementEmpowerment: true } && _implements.Empowers(user))
+            damageMod += 2 * rolled.DamageDice;
+
+        if (rolled.Traits.Kickback)
+        {
+            damageMod += 1;
+            if (attackerAbilities.GetModifier(CFAbility.Strength) < 2)
+                attackBonus -= 2;
+        }
+
         var d20 = _random.Next(1, 21);
+        var usedStratagem = false;
 
         if (style != null && style.StratagemTarget == target && style.StratagemRoll > 0)
         {
+            usedStratagem = true;
             d20 = style.StratagemRoll;
             style.StratagemRoll = 0;
             style.StratagemTarget = null;
@@ -569,9 +858,13 @@ public sealed partial class CFStrikeSystem : EntitySystem
 
         var degree = CFDegrees.DegreeOfSuccess(d20, attackBonus, targetAc);
         if (!isObject)
-            degree = AdjustDefense(target, user, d20, attackBonus, ref targetAc, degree);
+            degree = AdjustDefense(target, user, !melee, d20, attackBonus, ref targetAc, degree);
 
         var damage = 0;
+        // Any check against a thrall succeeds.
+        if (degree is CFDegree.Failure or CFDegree.CriticalFailure && !isObject && HasComp<CFThrallComponent>(target))
+            degree = CFDegree.Success;
+
         var criticalHit = degree == CFDegree.CriticalSuccess;
         var hit = degree is CFDegree.Success or CFDegree.CriticalSuccess;
 
@@ -584,32 +877,59 @@ public sealed partial class CFStrikeSystem : EntitySystem
             }
             else
             {
-                var extra = Precision(user, target, style, melee, isObject, criticalHit) + bonusDamage;
+                var extra = bonusDamage;
+                if (!skipPrecision)
+                    extra += Precision(user, target, style, weapon, melee, unseen, isObject, finisher, usedStratagem);
+
                 if (weapon.Traits.Backstabber && !isObject
                     && (_flanking.IsOffGuardTo(target, user) || _conditions.IsOffGuardTo(target, user)))
                     extra += weapon.Potency >= 3 ? 2 : 1;
 
+                if (style is { PackAttackDie: > 0 } && !isObject && _flanking.AlliesThreatening(target, user) >= 2)
+                    extra += _random.Next(1, style.PackAttackDie + 1);
+
                 damage = CFMelee.RollStrikeDamage(_random, rolled, damageMod, criticalHit, extra);
-                damage = _bonuses.ModifyDamage(target, rolled.DamageType, damage);
-                damage = ApplyShieldBlock(target, damage);
+                damage = rolled.Traits.Concussive
+                    ? Math.Max(_bonuses.ModifyDamage(target, "Piercing", damage), _bonuses.ModifyDamage(target, "Bludgeoning", damage))
+                    : _bonuses.ModifyDamage(target, rolled.DamageType, damage);
+                damage = ApplyShieldBlock(target, user, damage, rolled.DamageType, criticalHit && !isObject);
+                if (criticalHit && !isObject)
+                    damage = _reactions.AnswerCriticalHit(target, user, damage, rolled.DamageType);
+
+                if (!isObject)
+                    damage = _reactions.AnswerDamage(target, user, damage, rolled.DamageType);
 
                 if (isObject && hardness > 0)
                     damage = Math.Max(0, damage - hardness);
+
+                if (!isObject)
+                    damage = _tempHp.Absorb(target, defender, damage);
 
                 if (damage > 0)
                 {
                     defender.CurrentHp = Math.Max(0, defender.CurrentHp - damage);
                     Dirty(target, defender);
                     MirrorToSs14(user, target, defender, damage, rolled.DamageType, isObject);
+                    RaiseDamaged(target, user, damage);
+                    ApplyTailToxin(user, target, style, rolled.DamageType, rolled.Traits.Unarmed, isObject, rolled.Item != null);
+                    ApplySparkFist(user, target, style, rolled, isObject);
+                    ApplyBespell(user, target, style, criticalHit, isObject);
+                    if (melee)
+                        ApplyInfusion(user, target, style, criticalHit, isObject);
                 }
 
                 if (!isObject && defender.CurrentHp <= 0)
                 {
-                    _popup.PopupEntity(Loc.GetString("cf-combat-strike-defeated"), target, user);
-                    _dying.KnockOut(target, defender, criticalHit, user);
-                    if (weapon.Traits.Nonlethal)
-                        _dying.KnockOutNonlethal(target, defender);
-                    YoureNext(user, target);
+                    if (_dying.KnockOut(target, defender, criticalHit, user))
+                    {
+                        _popup.PopupEntity(Loc.GetString("cf-combat-strike-defeated"), target, user);
+                        // Spark Fist makes the fist lethal while it lasts.
+                        var sparking = style != null && weapon.Item == null && _timing.CurTime < style.SparkFistUntil;
+                        if (weapon.Traits.Nonlethal && !sparking)
+                            _dying.KnockOutNonlethal(target, defender);
+
+                        YoureNext(user, target);
+                    }
                 }
                 else if (isObject && defender.CurrentHp <= 0)
                 {
@@ -623,28 +943,79 @@ public sealed partial class CFStrikeSystem : EntitySystem
             damage = 2;
             if (!isObject && !alreadyDown)
             {
+                damage = _tempHp.Absorb(target, defender, damage);
                 defender.CurrentHp = Math.Max(0, defender.CurrentHp - damage);
                 Dirty(target, defender);
                 MirrorToSs14(user, target, defender, damage, "precision", isObject);
-                if (defender.CurrentHp <= 0)
-                {
-                    _dying.KnockOut(target, defender, fromCriticalHit: false, user);
+                RaiseDamaged(target, user, damage);
+                if (defender.CurrentHp <= 0 && _dying.KnockOut(target, defender, fromCriticalHit: false, user))
                     YoureNext(user, target);
-                }
             }
+        }
+
+        if (hit && !alreadyDown && !isObject)
+        {
+            _ikons.NoteHit(user, target, rolled, weaponUid, criticalHit, damage);
+            _runes.NoteHit(user, target, rolled, weaponUid);
         }
 
         if (hit && !alreadyDown)
             ApplyPropertyRunes(user, target, weaponUid, degree);
 
-        if (hit && !isObject && !_inChampion)
-            ChampionReact(user, target);
+        if (criticalHit && !isObject)
+        {
+            if (!alreadyDown)
+                _criticalSpecialization.TryApply(user, target, rolled, melee, d20 + attackBonus);
 
-        PlayStrikeImpact(weaponUid, target, degree, rolled.DamageType, melee);
+            var landed = new CFLandedCriticalEvent(target);
+            RaiseLocalEvent(user, ref landed);
+        }
+
+        if (criticalHit && damage > 0 && !isObject)
+        {
+            // A stance's own attack may bleed, as a tiger's claws do.
+            if (weapon.Item == null && _stances.Current(user)?.Attack is { CriticalBleedDie: > 0 } claws)
+                _bonuses.AddPersistent(target, "Bleed", 1, claws.CriticalBleedDie, 0, user);
+
+            if (usedStratagem && style is { ScalpelsPoint: true } && rolled.DamageType is "Piercing" or "Slashing")
+                _bonuses.AddPersistent(target, "Bleed", 1, 6, 0, user);
+        }
+
+        if (criticalHit && damage > 0 && !isObject && style != null)
+        {
+            if (style.BrutalBeating)
+                _conditions.ApplyFrightened(target, 1);
+
+            if (style.UnbalancingBlow)
+                _conditions.SetOffGuardTo(target, user, 6f);
+        }
+
+        if (riders)
+            ApplyRiders(user, target, style, degree, mapPenalty, weaponUid, isObject, exacting);
+
+        if (finisher && style is { FinishingFollowThrough: true } && !isObject && !alreadyDown && defender.CurrentHp <= 0)
+            _conditions.GainPanache(user);
+
+        if (hit && rolled.Traits.Scatter > 0 && !isObject)
+            Scatter(user, target, rolled);
+
+        if (degree == CFDegree.CriticalFailure && !isObject)
+            _reactions.AnswerCriticalMiss(target, user);
+
+        if (!degree.IsSuccess() && melee && !isObject)
+            _reactions.AnswerMiss(target, user);
+
+        if (!isObject)
+            _auras.NoteAttacked(target, user);
+
+        PlayStrikeImpact(weaponUid, target, degree, rolled.DamageType, melee || weapon.ThrownStrike);
 
         RaiseNetworkEvent(
             new CFCombatNumberEvent(GetNetEntity(target), degree, damage, rolled.DamageType),
             Filter.Pvs(target));
+        var resolvedEvent = new CFStrikeResolvedEvent(user, target, degree, damage, melee);
+        RaiseLocalEvent(weaponUid, ref resolvedEvent);
+        resolved?.Invoke(degree, damage);
         return hit;
     }
 
@@ -655,51 +1026,38 @@ public sealed partial class CFStrikeSystem : EntitySystem
     private CFDegree AdjustDefense(
         EntityUid target,
         EntityUid user,
+        bool ranged,
         int d20,
         int attackBonus,
         ref int targetAc,
         CFDegree degree)
     {
-        _ = user;
-        if (degree is not (CFDegree.Success or CFDegree.CriticalSuccess))
-            return degree;
+        // Reactive Shield is one of the target's reactions, so it takes its turn in their order.
+        return _reactions.AnswerAttack(target, user, ranged, d20, attackBonus, ref targetAc, degree);
+    }
 
-        if (TryComp(target, out CFConditionComponent? cond)
-            && !cond.RaisedShield
-            && _shields.CanRaise(target)
-            && _conditions.TrySpendReaction(target, CFReactions.Raise))
-        {
-            _conditions.RaiseShield(target);
-            targetAc += _shields.RaisedBonus(target);
-            degree = CFDegrees.DegreeOfSuccess(d20, attackBonus, targetAc);
-            if (degree is not (CFDegree.Success or CFDegree.CriticalSuccess))
-                return degree;
-        }
-
-        if (_conditions.TrySpendReaction(target, CFReactions.Nimble))
-        {
-            targetAc += 2;
-            degree = CFDegrees.DegreeOfSuccess(d20, attackBonus, targetAc);
-        }
-
-        return degree;
+    /// <summary>Whether the target is off-guard to this attacker, by flanking or by a condition.</summary>
+    public bool IsOffGuardTo(EntityUid target, EntityUid user)
+    {
+        return _flanking.IsOffGuardTo(target, user) || _conditions.IsOffGuardTo(target, user);
     }
 
     private int Precision(
         EntityUid user,
         EntityUid target,
         CFCombatOptionsComponent? style,
+        CFStrikeWeaponStats weapon,
         bool melee,
+        bool unseen,
         bool isObject,
-        bool critical)
+        bool finisher,
+        bool usedStratagem)
     {
-        _ = critical;
-        if (style == null || isObject || !melee)
+        if (style == null || isObject)
             return 0;
 
         var total = 0;
-        var offGuard = _flanking.IsOffGuardTo(target, user) || _conditions.IsOffGuardTo(target, user);
-        if (style.SneakAttack && offGuard)
+        if (style.SneakAttack && SneakAttackFits(style, weapon) && (IsOffGuardForStrike(user, target, melee, unseen) || _conditions.IsProne(target)))
         {
             var level = TryComp(user, out CFCombatantComponent? combat) ? combat.Level : 1;
             var sneak = Math.Max(1, (level + 3) / 4);
@@ -707,34 +1065,82 @@ public sealed partial class CFStrikeSystem : EntitySystem
                 total += _random.Next(1, 7);
         }
 
-        if (style.Prey == target && !style.PreyHitThisTurn)
+        if (style.PreyPrecision && style.Prey == target && !style.PreyHitThisTurn)
         {
             total += _random.Next(1, 9);
             style.PreyHitThisTurn = true;
             Dirty(user, style);
         }
 
-        if (style.Panache && style.PanacheStyle)
-            total += 2;
+        // Precise Strike. A finisher has already spent the panache by the time it gets here.
+        if (melee && style.PanacheStyle && (weapon.Agile || weapon.Finesse))
+            total += finisher ? _random.Next(1, 7) + _random.Next(1, 7) : 2;
+
+        if (style.SlingerPrecision && !melee && CompOrNull<CFWeaponComponent>(weapon.Item) is { } gun)
+        {
+            if (gun.Group == CFWeaponGroup.Crossbow)
+                total += 2;
+            else if (gun.Group == CFWeaponGroup.Firearm)
+                total += _random.Next(1, 5);
+        }
+
+        if (TryComp(target, out CFGlimpsedComponent? glimpsed)
+            && _timing.CurTime < glimpsed.Until
+            && glimpsed.Caster != user
+            && !_factions.CanHarm(glimpsed.Caster, user))
+        {
+            total += glimpsed.Bonus;
+            RemCompDeferred(target, glimpsed);
+        }
+
+        if (usedStratagem && style.StrategicStrike)
+        {
+            var dice = Math.Max(1, ((CompOrNull<CFCombatantComponent>(user)?.Level ?? 1) + 3) / 4);
+            for (var i = 0; i < dice; i++)
+                total += _random.Next(1, 7);
+        }
 
         return Math.Max(0, total);
     }
 
-    private int ApplyShieldBlock(EntityUid target, int damage)
+    /// <summary>
+    /// Sneak Attack needs an agile or finesse attack, or a ranged weapon. A thrown weapon counts only if agile or finesse. A
+    /// Ruffian can also use a simple weapon up to d8, or a martial or advanced one up to d6.
+    /// </summary>
+    public static bool SneakAttackFits(CFCombatOptionsComponent style, CFStrikeWeaponStats weapon)
+    {
+        if (weapon.Agile || weapon.Finesse || weapon.Ranged && !weapon.ThrownStrike)
+            return true;
+
+        if (!style.AnyWeaponSneak || weapon.Traits.Unarmed)
+            return false;
+
+        return weapon.DamageDie <= (weapon.Proficiency == CFWeaponCategory.Simple.Proficiency() ? 8 : 6);
+    }
+
+    private int ApplyShieldBlock(EntityUid target, EntityUid attacker, int damage, string damageType, bool critical)
     {
         var spellShield = TryComp(target, out CFConditionComponent? cond) && cond.ShieldHardness > 0;
         damage = _conditions.BlockWithSpell(target, damage);
         if (damage <= 0 || spellShield)
             return Math.Max(0, damage);
 
-        if (cond == null || !cond.RaisedShield)
+        if (!_shields.TryGetRaisedShield(target, out var shield))
             return damage;
 
-        if (!_shields.TryGetHeldShield(target, out var shield) || shield.Comp.Broken)
+        // A reaction ranked above Shield Block gets this damage first.
+        if (_reactions.OutranksShieldBlock(target, attacker, damageType, critical))
             return damage;
 
         if (!_conditions.TrySpendReaction(target, CFReactions.Block))
             return damage;
+
+        // Aggressive Block: the blocker's free action pushes an attacker that is close enough to be pushed.
+        if (CompOrNull<CFCombatOptionsComponent>(target)?.AggressiveBlock == true
+            && CFFlanking.InReach(_transform.GetWorldPosition(target), _transform.GetWorldPosition(attacker), CFFlanking.DefaultReachFeet))
+        {
+            _conditions.Push(target, attacker, 5);
+        }
 
         return _shields.Block(target, shield, damage);
     }
@@ -766,36 +1172,94 @@ public sealed partial class CFStrikeSystem : EntitySystem
         }
     }
 
-    private void ChampionReact(EntityUid attacker, EntityUid victim)
+    /// <summary>Splash from a scatter weapon: 1 per damage die to enemies around the target, and the target itself.</summary>
+    private void Scatter(EntityUid user, EntityUid target, CFStrikeWeaponStats weapon)
     {
-        if (_inChampion)
+        var center = _transform.GetMapCoordinates(target);
+        foreach (var uid in _effects.CollectArea(
+                     user,
+                     CFAreaShape.Burst,
+                     weapon.Traits.Scatter,
+                     center,
+                     center,
+                     atPoint: true,
+                     includeCenter: true,
+                     selfAllowed: false,
+                     CFTargetFilter.Enemies))
+        {
+            _effects.DealDamage(user, uid, weapon.DamageDice, weapon.DamageType, critical: false);
+        }
+    }
+
+    /// <summary>Tail Toxin: the next piercing or slashing hit after the action deals persistent poison equal to the level.</summary>
+    /// <summary>Bespell Strikes and the like: the first hit after a spell deals one more die, doubled on a critical hit.</summary>
+    private void ApplyBespell(EntityUid user, EntityUid target, CFCombatOptionsComponent? style, bool critical, bool isObject)
+    {
+        if (style == null || isObject || style.BespellDie <= 0 || _timing.CurTime >= style.BespellUntil)
             return;
 
-        _inChampion = true;
-        var origin = _transform.GetMapCoordinates(victim);
-        foreach (var uid in _lookup.GetEntitiesInRange(origin, 3f))
+        style.BespellUntil = TimeSpan.Zero;
+        var amount = _random.Next(1, style.BespellDie + 1);
+        _effects.DealDamage(user, target, critical ? amount * 2 : amount, style.BespellType, critical: false);
+    }
+
+    /// <summary>Divine Infusion: while it lasts, every melee hit deals its extra dice of vitality or void, doubled on a critical hit.</summary>
+    private void ApplyInfusion(EntityUid user, EntityUid target, CFCombatOptionsComponent? style, bool critical, bool isObject)
+    {
+        if (style == null || isObject || style.InfusionDice <= 0 || _timing.CurTime >= style.InfusionUntil)
+            return;
+
+        var amount = _effects.Roll(style.InfusionDice, style.InfusionDie, 0);
+        _effects.DealDamage(user, target, critical ? amount * 2 : amount, style.InfusionType, critical: false);
+    }
+
+    /// <summary>Spark Fist: a fist hit burns the target and the attacker alike, 1 fire damage per weapon die.</summary>
+    private void ApplySparkFist(EntityUid user, EntityUid target, CFCombatOptionsComponent? style, CFStrikeWeaponStats weapon, bool isObject)
+    {
+        if (style == null || isObject || weapon.Item != null || !weapon.Traits.Unarmed || _timing.CurTime >= style.SparkFistUntil)
+            return;
+
+        var fire = Math.Max(1, weapon.DamageDice);
+        _effects.DealDamage(user, target, fire, "Fire", critical: false);
+        _effects.DealDamage(user, user, fire, "Fire", critical: false);
+    }
+
+    private void ApplyTailToxin(
+        EntityUid user,
+        EntityUid target,
+        CFCombatOptionsComponent? style,
+        string damageType,
+        bool unarmed,
+        bool isObject,
+        bool heldWeapon)
+    {
+        if (style == null || isObject || _timing.CurTime >= style.TailToxinUntil)
+            return;
+
+        if (style.ToxinAnyWeapon)
         {
-            if (uid == victim || uid == attacker || !TryComp(uid, out CFCombatOptionsComponent? opt) || !opt.Champion)
-                continue;
-
-            if (_factions.CanHarm(uid, victim) || !_factions.CanHarm(uid, attacker))
-                continue;
-
-            if (!CFFlanking.InReach(_transform.GetWorldPosition(uid), _transform.GetWorldPosition(attacker), CFFlanking.DefaultReachFeet))
-                continue;
-
-            if (!_conditions.TrySpendReaction(uid, CFReactions.Champion))
-                continue;
-
-            if (!TryMeleeWeapon(uid, out var stats, out var weapon))
-                continue;
-
-            PerformStrike(uid, attacker, stats, weapon, melee: true);
-            _inChampion = false;
+            if (!heldWeapon)
+                return;
+        }
+        else if (style.ToxinUnarmedOnly)
+        {
+            if (!unarmed)
+                return;
+        }
+        else if (!string.Equals(damageType, "Piercing", StringComparison.OrdinalIgnoreCase)
+                 && !string.Equals(damageType, "Slashing", StringComparison.OrdinalIgnoreCase))
+        {
             return;
         }
 
-        _inChampion = false;
+        style.TailToxinUntil = TimeSpan.Zero;
+        Dirty(user, style);
+        var level = CompOrNull<CFCombatantComponent>(user)?.Level ?? 1;
+        if (style.ToxinDice > 0)
+            _bonuses.AddPersistent(target, "Poison", style.ToxinDice, style.ToxinDie, 0, user);
+        else
+            _bonuses.AddPersistent(target, "Poison", 0, 0, Math.Max(1, level), user);
+        _popup.PopupEntity(Loc.GetString("cf-act-tail-toxin-hit"), target);
     }
 
     private void YoureNext(EntityUid user, EntityUid downed)
@@ -841,15 +1305,10 @@ public sealed partial class CFStrikeSystem : EntitySystem
         return CFMelee.TilesToFeet(tiles);
     }
 
-    private bool IsWeaponTrained(CFCombatantComponent attackerCombat, string proficiency)
+    private void RaiseDamaged(EntityUid target, EntityUid source, int amount)
     {
-        if (attackerCombat.ClassId != null
-            && _prototypes.TryIndex(attackerCombat.ClassId, out CFClassPrototype? cls))
-        {
-            return CFAttributeMath.IsWeaponTrained(cls, proficiency);
-        }
-
-        return true;
+        var ev = new CFDamagedEvent(source, amount);
+        RaiseLocalEvent(target, ref ev);
     }
 
     private void MirrorToSs14(

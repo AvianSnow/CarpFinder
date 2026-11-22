@@ -1,8 +1,8 @@
 ﻿- type: entity
-  parent: CFSpellTarget
+  parent: CFSpellObject
   id: CFLight
   name: Light
-  description: The target sheds bright light.
+  description: An orb of light floats with a creature or object. Cast it on your own light to dismiss it.
   components:
   - type: Sprite
     sprite: Objects/Magic/magicactions.rsi
@@ -19,7 +19,8 @@
     filter: All
   - type: CFDegreeEffects
     landed:
-    - !type:CFPopupEffect
-      text: cf-spell-light
+    - !type:CFLightEffect
+  - type: TargetAction
+    range: 24
   - type: EntityTargetAction
     canTargetSelf: true

@@ -2,11 +2,17 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFSquawk
-  name: "Squawk!"
-  description: "Reaction. TBA - action will be added"
+  name: cf-feat-squawk
+  description: cf-feat-squawk-desc
   ancestry: Tengu
   level: 1
   traits:
     - "Tengu"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-feat-squawk
+        trigger: SkillCheckWouldFail
+        criticalFailureIsFailure: true
+        skills: [Deception, Diplomacy, Intimidation]

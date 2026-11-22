@@ -2,12 +2,14 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFTigerStance
-  name: "Tiger Stance"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-tiger-stance
+  description: cf-feat-tiger-stance-desc
   class: Monk
   level: 1
   traits:
     - "Monk"
     - "Stance"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActTigerStance

@@ -1,0 +1,51 @@
+# A Necromancer's thrall: a level -1 mindless undead with 1 Hit Point. CFThrallServerSystem makes and commands them.
+# It thinks with a GOAP brain like any companion: it attacks enemies near its Necromancer by itself, goes for the creature
+# the Necromancer points at or commands it to, and keeps close. It is summoned, so it goes in a puff of smoke.
+
+- type: entity
+  parent: [ MobSkeletonPerson, CFCompanionBase ]
+  id: CFThrall
+  name: thrall
+  description: A mindless dead thing that fights for the Necromancer who raised it. It falls apart after a minute.
+  suffix: Companion
+  components:
+  - type: HTN
+    rootTask:
+      task: CFGOAPCompound
+  - type: NpcFactionMember
+    factions:
+    - Passive
+  - type: InputMover
+  - type: MobMover
+  - type: MovementSpeedModifier
+    baseWalkSpeed: 1.5
+    baseSprintSpeed: 2.7
+  - type: CFThrall
+  - type: CFSummoned
+  - type: CFCombatant
+    level: -1
+    armorClass: 10
+    speedFeet: 15
+    maxHp: 1
+    currentHp: 1
+    diesAtZeroHp: true
+  - type: CFAbilityScore
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 6
+    naturalType: bludgeoning
+    naturalFinesse: false
+    naturalAgile: false
+  - type: CFTrait
+    traits:
+    - Mindless
+    - Undead
+    - Summoned
+  - type: CFResistances
+    entries:
+    - damageType: Bleed
+      amount: 999
+    - damageType: Mental
+      amount: 999
+    - damageType: Poison
+      amount: 999

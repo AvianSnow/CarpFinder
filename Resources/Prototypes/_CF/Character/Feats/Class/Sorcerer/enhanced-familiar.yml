@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFEnhancedFamiliarSorcerer
-  name: "Enhanced Familiar"
-  description: "Requires a familiar."
+  name: cf-feat-enhanced-familiar-sorcerer
+  description: cf-feat-enhanced-familiar-sorcerer-desc
   class: Sorcerer
   level: 2
   traits:

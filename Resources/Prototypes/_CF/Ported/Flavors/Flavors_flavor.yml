@@ -1,0 +1,128 @@
+# Ported from CP14 by the CF converter.
+
+- type: flavor
+  id: CFMetallic
+  flavorType: Base
+  description: cp14-flavor-base-metallic
+
+- type: flavor
+  id: CFInvigorating
+  flavorType: Base
+  description: cp14-flavor-base-invigorating
+
+- type: flavor
+  id: CFBitterly
+  flavorType: Base
+  description: cp14-flavor-base-bitterly
+
+- type: flavor
+  id: CFSweetly
+  flavorType: Base
+  description: cp14-flavor-base-sweetly
+
+- type: flavor
+  id: CFStinging
+  flavorType: Base
+  description: cp14-flavor-base-stinging
+
+- type: flavor
+  id: CFMagic
+  flavorType: Base
+  description: cp14-flavor-base-magic
+
+- type: flavor
+  id: CFSalty
+  flavorType: Base
+  description: cp14-flavor-base-salt
+
+- type: flavor
+  id: CFVerySweet
+  flavorType: Base
+  description: cp14-flavor-base-very-sweet
+
+# Complex
+
+- type: flavor
+  id: CFWater
+  flavorType: Complex
+  description: cp14-flavor-complex-water
+
+- type: flavor
+  id: CFVomit
+  flavorType: Complex
+  description: cp14-flavor-complex-vomit
+
+- type: flavor
+  id: CFQuartz
+  flavorType: Complex
+  description: cp14-flavor-complex-quartz
+
+- type: flavor
+  id: CFbeer
+  flavorType: Complex
+  description: cp14-flavor-complex-beer
+
+- type: flavor
+  id: CFdwarfbeer
+  flavorType: Complex
+  description: cp14-flavor-complex-dwarfbeer
+
+- type: flavor
+  id: CFgerbil
+  flavorType: Complex
+  description: cp14-flavor-complex-gerbil
+
+- type: flavor
+  id: CFbreeze
+  flavorType: Complex
+  description: cp14-flavor-complex-breeze
+
+- type: flavor
+  id: CFblowLaw
+  flavorType: Complex
+  description: cp14-flavor-complex-blowlaw
+
+- type: flavor
+  id: CFwine
+  flavorType: Complex
+  description: cp14-flavor-complex-wine
+
+- type: flavor
+  id: CFzellasianPleasure
+  flavorType: Complex
+  description: cp14-flavor-complex-zellasian-pleasure
+
+- type: flavor
+  id: CFleeks
+  flavorType: Complex
+  description: cp14-flavor-complex-leeks
+
+- type: flavor
+  id: CFdurandate
+  flavorType: Complex
+  description: cp14-flavor-complex-durandate
+
+- type: flavor
+  id: CFale
+  flavorType: Complex
+  description: cp14-flavor-complex-ale
+
+- type: flavor
+  id: CFbloodyTear
+  flavorType: Complex
+  description: cp14-flavor-complex-bloody-tear
+
+- type: flavor
+  id: CFbottomless
+  flavorType: Complex
+  description: cp14-flavor-complex-bottomless
+
+- type: flavor
+  id: CFcucumber
+  flavorType: Complex
+  description: cp14-flavor-complex-cucumber
+
+- type: flavor
+  id: CFHotPotato
+  flavorType: Complex
+  description: cp14-flavor-complex-hot-potato

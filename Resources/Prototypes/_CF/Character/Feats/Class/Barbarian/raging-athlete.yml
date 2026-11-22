@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFRagingAthlete
-  name: "Raging Athlete"
-  description: "Requires expert in Athletics. This feature will be implemented later."
+  name: cf-feat-raging-athlete
+  description: cf-feat-raging-athlete-desc
   class: Barbarian
   level: 4
   traits:

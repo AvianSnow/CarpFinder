@@ -2,9 +2,17 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFUndaunted
-  name: "Undaunted"
-  description: "+1 circumstance bonus to Saving Throw. Not applied in play yet. Improves Saving Throw results. Not applied in play yet."
+  name: cf-feat-undaunted
+  description: cf-feat-undaunted-desc
   ancestry: Leshy
   level: 1
   traits:
     - "Leshy"
+  grants:
+    - !type:CFGrantBonus
+      stat: Saves
+      type: Circumstance
+      value: 1
+      trait: Emotion
+    - !type:CFGrantSaveUpgrade
+      trait: Emotion

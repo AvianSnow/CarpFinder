@@ -16,6 +16,13 @@
     rank: 1
   - type: CFTargeting
     rangeFeet: 30
+  - type: CFAreaFill
+    # Slick puddles for a minute. Everyone on them rolls when it is cast, and after that whoever moves
+    # faster than a walk on them. Mopping a puddle up takes its tile out.
+    reagent: CFGrease
+    unitsPerTile: 30
+    spreadSeconds: 0.2
+    lingerSeconds: 60
   - type: CFAreaEffect
     shape: Square
     sizeFeet: 10

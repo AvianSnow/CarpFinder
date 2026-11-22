@@ -21,7 +21,7 @@
   - Free
   - Free
   languages:
-  - cf-language-common
+  - Common
   traits:
   - cf-trait-human
   - cf-trait-humanoid
@@ -52,8 +52,8 @@
   abilityFlaws:
   - Charisma
   languages:
-  - cf-language-common
-  - cf-language-dwarven
+  - Common
+  - Dwarven
   darkvision: true
   traits:
   - cf-trait-dwarf
@@ -90,8 +90,8 @@
   abilityFlaws:
   - Wisdom
   languages:
-  - cf-language-common
-  - cf-language-goblin
+  - Common
+  - Goblin
   darkvision: true
   traits:
   - cf-trait-goblin
@@ -128,12 +128,15 @@
   abilityFlaws:
   - Constitution
   languages:
-  - cf-language-common
-  - cf-language-elven
+  - Common
+  - Elven
   traits:
   - cf-trait-elf
   - cf-trait-humanoid
   - cf-trait-low-light-vision
+  grants:
+  - !type:CFGrantSense
+    sense: LowLightVision
 
 - type: cfAncestry
   id: Gnome
@@ -157,13 +160,16 @@
   abilityFlaws:
   - Strength
   languages:
-  - cf-language-common
-  - cf-language-fey
-  - cf-language-gnomish
+  - Common
+  - Fey
+  - Gnomish
   traits:
   - cf-trait-gnome
   - cf-trait-humanoid
   - cf-trait-low-light-vision
+  grants:
+  - !type:CFGrantSense
+    sense: LowLightVision
 
 - type: cfAncestry
   id: Halfling
@@ -187,8 +193,8 @@
   abilityFlaws:
   - Strength
   languages:
-  - cf-language-common
-  - cf-language-halfling
+  - Common
+  - Halfling
   traits:
   - cf-trait-halfling
   - cf-trait-humanoid
@@ -224,12 +230,15 @@
   abilityFlaws:
   - Intelligence
   languages:
-  - cf-language-common
-  - cf-language-fey
+  - Common
+  - Fey
   traits:
   - cf-trait-leshy
   - cf-trait-plant
   - cf-trait-low-light-vision
+  grants:
+  - !type:CFGrantSense
+    sense: LowLightVision
 
 - type: cfAncestry
   id: Orc
@@ -251,8 +260,8 @@
   - Free
   darkvision: true
   languages:
-  - cf-language-common
-  - cf-language-orcish
+  - Common
+  - Orcish
   traits:
   - cf-trait-orc
   - cf-trait-humanoid
@@ -292,13 +301,16 @@
   abilityFlaws:
   - Wisdom
   languages:
-  - cf-language-amurrun
-  - cf-language-common
+  - Amurrun
+  - Common
   traits:
   - cf-trait-catfolk
   - cf-trait-humanoid
   - cf-trait-low-light-vision
   - cf-trait-land-on-your-feet
+  grants:
+  - !type:CFGrantSense
+    sense: LowLightVision
 
 - type: cfAncestry
   id: Hobgoblin
@@ -323,8 +335,8 @@
   - Wisdom
   darkvision: true
   languages:
-  - cf-language-common
-  - cf-language-goblin
+  - Common
+  - Goblin
   traits:
   - cf-trait-hobgoblin
   - cf-trait-humanoid
@@ -352,13 +364,19 @@
   abilityFlaws:
   - Wisdom
   languages:
-  - cf-language-common
-  - cf-language-kholo
+  - Common
+  - Kholo
   traits:
   - cf-trait-kholo
   - cf-trait-humanoid
   - cf-trait-low-light-vision
   - cf-trait-bite
+  grants:
+  - !type:CFGrantSense
+    sense: LowLightVision
+  - !type:CFGrantUnarmedAttack
+    die: 6
+    damageType: Piercing
 
 - type: cfAncestry
   id: Kobold
@@ -391,8 +409,8 @@
   - Constitution
   darkvision: true
   languages:
-  - cf-language-common
-  - cf-language-sakvroth
+  - Common
+  - Sakvroth
   traits:
   - cf-trait-kobold
   - cf-trait-humanoid
@@ -424,13 +442,19 @@
   abilityFlaws:
   - Intelligence
   languages:
-  - cf-language-common
-  - cf-language-iruxi
+  - Common
+  - Iruxi
   traits:
   - cf-trait-lizardfolk
   - cf-trait-humanoid
   - cf-trait-claws
   - cf-trait-hold-breath
+  grants:
+  - !type:CFGrantUnarmedAttack
+    die: 4
+    damageType: Slashing
+    finesse: true
+    agile: true
 
 - type: cfAncestry
   id: Ratfolk
@@ -458,13 +482,21 @@
   abilityFlaws:
   - Strength
   languages:
-  - cf-language-common
-  - cf-language-ysoki
+  - Common
+  - Ysoki
   traits:
   - cf-trait-ratfolk
   - cf-trait-humanoid
   - cf-trait-low-light-vision
   - cf-trait-sharp-teeth
+  grants:
+  - !type:CFGrantSense
+    sense: LowLightVision
+  - !type:CFGrantUnarmedAttack
+    die: 4
+    damageType: Piercing
+    finesse: true
+    agile: true
 
 - type: cfAncestry
   id: Tengu
@@ -505,13 +537,20 @@
   - Dexterity
   - Free
   languages:
-  - cf-language-common
-  - cf-language-tengu
+  - Common
+  - Tengu
   traits:
   - cf-trait-tengu
   - cf-trait-humanoid
   - cf-trait-low-light-vision
   - cf-trait-sharp-beak
+  grants:
+  - !type:CFGrantSense
+    sense: LowLightVision
+  - !type:CFGrantUnarmedAttack
+    die: 6
+    damageType: Piercing
+    finesse: true
 
 - type: cfAncestry
   id: Tripkee
@@ -535,13 +574,16 @@
   abilityFlaws:
   - Strength
   languages:
-  - cf-language-common
-  - cf-language-tripkee
+  - Common
+  - Tripkee
   traits:
   - cf-trait-tripkee
   - cf-trait-humanoid
   - cf-trait-low-light-vision
   - cf-trait-natural-climber
+  grants:
+  - !type:CFGrantSense
+    sense: LowLightVision
 
 - type: cfAncestry
   id: Azarketi
@@ -569,8 +611,8 @@
   abilityFlaws:
   - Wisdom
   languages:
-  - cf-language-common
-  - cf-language-alghollthu
+  - Common
+  - Alghollthu
   traits:
   - cf-trait-azarketi
   - cf-trait-humanoid
@@ -578,6 +620,9 @@
   - cf-trait-low-light-vision
   - cf-trait-hydration
   - cf-trait-swim
+  grants:
+  - !type:CFGrantSense
+    sense: LowLightVision
 
 - type: cfAncestry
   id: Android
@@ -605,14 +650,17 @@
   abilityFlaws:
   - Charisma
   languages:
-  - cf-language-common
-  - cf-language-androffan
+  - Common
+  - Androffan
   traits:
   - cf-trait-android
   - cf-trait-humanoid
   - cf-trait-low-light-vision
   - cf-trait-constructed
   - cf-trait-emotionally-unaware
+  grants:
+  - !type:CFGrantSense
+    sense: LowLightVision
 
 - type: cfAncestry
   id: Fetchling
@@ -638,8 +686,8 @@
   - Free
   darkvision: true
   languages:
-  - cf-language-common
-  - cf-language-shadowtongue
+  - Common
+  - Shadowtongue
   traits:
   - cf-trait-fetchling
   - cf-trait-humanoid
@@ -664,13 +712,16 @@
   - Constitution
   - Free
   languages:
-  - cf-language-common
+  - Common
   traits:
   - cf-trait-fleshwarp
   - cf-trait-aberration
   - cf-trait-humanoid
   - cf-trait-low-light-vision
   - cf-trait-unusual-anatomy
+  grants:
+  - !type:CFGrantSense
+    sense: LowLightVision
 
 - type: cfAncestry
   id: Kitsune
@@ -695,12 +746,15 @@
   - Charisma
   - Free
   languages:
-  - cf-language-common
+  - Common
   traits:
   - cf-trait-kitsune
   - cf-trait-humanoid
   - cf-trait-low-light-vision
   - cf-trait-change-shape
+  grants:
+  - !type:CFGrantSense
+    sense: LowLightVision
 
 - type: cfAncestry
   id: Sprite
@@ -724,13 +778,16 @@
   abilityFlaws:
   - Strength
   languages:
-  - cf-language-common
-  - cf-language-fey
+  - Common
+  - Fey
   traits:
   - cf-trait-sprite
   - cf-trait-fey
   - cf-trait-low-light-vision
   - cf-trait-magical-strikes
+  grants:
+  - !type:CFGrantSense
+    sense: LowLightVision
 
 - type: cfAncestry
   id: Strix
@@ -771,10 +828,13 @@
   - Dexterity
   - Free
   languages:
-  - cf-language-common
-  - cf-language-strix
+  - Common
+  - Strix
   traits:
   - cf-trait-strix
   - cf-trait-humanoid
   - cf-trait-low-light-vision
   - cf-trait-wings
+  grants:
+  - !type:CFGrantSense
+    sense: LowLightVision

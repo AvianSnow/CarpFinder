@@ -1,6 +1,7 @@
 using System.Linq;
 using Content.Server.Administration;
 using Content.Server.Administration.Logs;
+using Content.Server.CF.Instruments;
 using Content.Server.Popups;
 using Content.Server.Stunnable;
 using Content.Shared.Administration;
@@ -35,6 +36,7 @@ public sealed partial class InstrumentSystem : SharedInstrumentSystem
     [Dependency] private TransformSystem _transform = default!;
     [Dependency] private ExamineSystemShared _examineSystem = default!;
     [Dependency] private IAdminLogManager _adminLogSystem = default!;
+    [Dependency] private CFInstrumentSystem _cfInstruments = default!; // CarpFinder: music plays on after the window closes
 
     [Dependency] private EntityQuery<InstrumentComponent> _instrumentQuery = default!;
     [Dependency] private EntityQuery<ActiveInstrumentComponent> _activeInstrumentQuery = default!;
@@ -256,6 +258,9 @@ public sealed partial class InstrumentSystem : SharedInstrumentSystem
 
     private void OnBoundUIClosed(EntityUid uid, InstrumentComponent component, BoundUIClosedEvent args)
     {
+        if (_cfInstruments.TryKeepPlaying(uid, component, args.Actor)) // CarpFinder: a held instrument plays on
+            return; // CarpFinder
+
         if (HasComp<ActiveInstrumentComponent>(uid)
             && !_bui.IsUiOpen(uid, args.UiKey))
         {
@@ -268,6 +273,9 @@ public sealed partial class InstrumentSystem : SharedInstrumentSystem
     private void OnBoundUIOpened(EntityUid uid, InstrumentComponent component, BoundUIOpenedEvent args)
     {
         EnsureComp<ActiveInstrumentComponent>(uid);
+        if (_cfInstruments.Reopened(uid, component, args.Actor)) // CarpFinder: reopening does not stop the song
+            return; // CarpFinder
+
         Clean(uid, component);
     }
 
@@ -295,7 +303,7 @@ public sealed partial class InstrumentSystem : SharedInstrumentSystem
         if (TryComp<ActorComponent>(uid, out var actor))
             return actor.PlayerSession.AttachedEntity;
 
-        return null;
+        return _cfInstruments.Player(uid); // CarpFinder: whoever plays on with the window shut
     }
 
     public (NetEntity, string)[] GetBands(EntityUid uid)

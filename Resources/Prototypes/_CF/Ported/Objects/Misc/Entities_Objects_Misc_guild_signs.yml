@@ -1,0 +1,94 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  id: CFGuildSignRed
+  name: red guild sign
+  description: A small sign to indicate a desk related to red quests.
+  parent: 
+  - BaseItem
+  - CFBaseFlammable
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    noRot: true
+    sprite: _CP14/Objects/Misc/guild_signs.rsi
+    state: red
+  - type: Item
+    size: Small
+  - type: Damageable
+    damageModifierSet: CFWood
+  - type: Injurable
+    damageContainer: Inorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTypeTrigger
+        damageType: Heat
+        damage: 6
+      behaviors:
+      - !type:DoActsBehavior
+        acts: ["Destruction"]
+      - !type:PlaySoundBehavior
+        sound:
+          collection: WoodDestroy
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFAsh1:
+            min: 1
+            max: 2
+    - trigger:
+        !type:DamageTrigger
+        damage: 10
+      behaviors:
+      - !type:DoActsBehavior
+        acts: ["Destruction"]
+      - !type:PlaySoundBehavior
+        sound:
+          collection: WoodDestroy
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFWoodenPlanks1:
+            min: 1
+            max: 1
+  - type: PhysicalComposition
+    materialComposition:
+      CFWoodenPlanks: 20
+
+- type: entity
+  id: CFGuildSignYellow
+  name: yellow guild sign
+  description: A small sign to indicate a desk related to yellow quests.
+  parent: 
+  - CFGuildSignRed
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    noRot: true
+    sprite: _CP14/Objects/Misc/guild_signs.rsi
+    state: yellow
+
+- type: entity
+  id: CFGuildSignBlue
+  name: blue guild sign
+  description: A small sign to indicate a desk related to blue quests.
+  parent: 
+  - CFGuildSignRed
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    noRot: true
+    sprite: _CP14/Objects/Misc/guild_signs.rsi
+    state: blue
+
+- type: entity
+  id: CFGuildSignGreen
+  name: green guild sign
+  description: A small sign to indicate a desk related to green quests.
+  parent: 
+  - CFGuildSignRed
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    noRot: true
+    sprite: _CP14/Objects/Misc/guild_signs.rsi
+    state: green

@@ -1,0 +1,44 @@
+# CarpFinder: Investigator methodologies, Player Core 2.
+- type: cfClassChoice
+  id: MethodAlchemicalSciences
+  class: Investigator
+  slot: cf-class-choice-methodology
+  name: cf-class-choice-methodalchemicalsciences
+  description: cf-class-choice-methodalchemicalsciences-desc
+  trainedSkills:
+    - Crafting
+
+- type: cfClassChoice
+  id: MethodEmpiricism
+  class: Investigator
+  slot: cf-class-choice-methodology
+  name: cf-class-choice-methodempiricism
+  description: cf-class-choice-methodempiricism-desc
+  choices:
+    - kind: Skill
+      skills:
+        - Arcana
+        - Crafting
+        - Occultism
+        - Society
+
+- type: cfClassChoice
+  id: MethodForensicMedicine
+  class: Investigator
+  slot: cf-class-choice-methodology
+  name: cf-class-choice-methodforensicmedicine
+  description: cf-class-choice-methodforensicmedicine-desc
+  trainedSkills:
+    - Medicine
+  grants:
+    - !type:CFGrantOption
+      option: BattleMedicine
+
+- type: cfClassChoice
+  id: MethodInterrogation
+  class: Investigator
+  slot: cf-class-choice-methodology
+  name: cf-class-choice-methodinterrogation
+  description: cf-class-choice-methodinterrogation-desc
+  trainedSkills:
+    - Diplomacy

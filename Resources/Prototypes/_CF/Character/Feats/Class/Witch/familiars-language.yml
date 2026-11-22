@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFFamiliarsLanguage
-  name: "Familiar's Language"
-  description: "Requires a familiar. Changes an item. This feature will be implemented later."
+  name: cf-feat-familiars-language
+  description: cf-feat-familiars-language-desc
   class: Witch
   level: 2
   traits:

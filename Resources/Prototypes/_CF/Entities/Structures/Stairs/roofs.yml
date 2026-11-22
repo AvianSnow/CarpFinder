@@ -1,0 +1,207 @@
+# CrystallEdge's roof ramps: the stairs' shapes in red, green and blue roof tile, for the pitched roofs of a
+# house. They climb like the stairs (see stairs.yml), and are built on the same frame from the roof tile of that
+# colour. The sprites are CrystallEdge's (by omsoyk, CC-BY-SA-4.0), in Textures/_CE.
+
+# Red
+
+- type: entity
+  id: CFZLevelStairsRoofRedBase
+  abstract: true
+  name: red roof
+  description: Red roof tiles, laid on a slope.
+  components:
+  - type: Sprite
+    sprite: _CE/Structures/Architecture/Stairs/roof_red.rsi
+  - type: Damageable
+    damageModifierSet: CFRock
+  - type: Injurable
+    damageContainer: StructuralInorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 30
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          path: /Audio/Effects/break_stone.ogg
+          params:
+            volume: -6
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFFloorTileRoofRed:
+            min: 1
+            max: 2
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+
+- type: entity
+  parent:
+  - CFZLevelStairsBase
+  - CFZLevelStairsRoofRedBase
+  id: CFZLevelStairsRoofRed
+  name: red roof
+  components:
+  - type: Construction
+    graph: CFZLevelStairs
+    node: CFZLevelStairsRoofRed
+
+- type: entity
+  parent:
+  - CFZLevelStairsCornerBase
+  - CFZLevelStairsRoofRedBase
+  id: CFZLevelStairsRoofRedCorner
+  name: red roof
+  suffix: Corner
+  components:
+  - type: Construction
+    graph: CFZLevelStairs
+    node: CFZLevelStairsRoofRedCorner
+
+- type: entity
+  parent:
+  - CFZLevelStairsCornerInnerBase
+  - CFZLevelStairsRoofRedBase
+  id: CFZLevelStairsRoofRedCornerInner
+  name: red roof
+  suffix: Inner Corner
+  components:
+  - type: Construction
+    graph: CFZLevelStairs
+    node: CFZLevelStairsRoofRedCornerInner
+
+# Green
+
+- type: entity
+  id: CFZLevelStairsRoofGreenBase
+  abstract: true
+  name: green roof
+  description: Green roof tiles, laid on a slope.
+  components:
+  - type: Sprite
+    sprite: _CE/Structures/Architecture/Stairs/roof_green.rsi
+  - type: Damageable
+    damageModifierSet: CFRock
+  - type: Injurable
+    damageContainer: StructuralInorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 30
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          path: /Audio/Effects/break_stone.ogg
+          params:
+            volume: -6
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFFloorTileRoofGreen:
+            min: 1
+            max: 2
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+
+- type: entity
+  parent:
+  - CFZLevelStairsBase
+  - CFZLevelStairsRoofGreenBase
+  id: CFZLevelStairsRoofGreen
+  name: green roof
+  components:
+  - type: Construction
+    graph: CFZLevelStairs
+    node: CFZLevelStairsRoofGreen
+
+- type: entity
+  parent:
+  - CFZLevelStairsCornerBase
+  - CFZLevelStairsRoofGreenBase
+  id: CFZLevelStairsRoofGreenCorner
+  name: green roof
+  suffix: Corner
+  components:
+  - type: Construction
+    graph: CFZLevelStairs
+    node: CFZLevelStairsRoofGreenCorner
+
+- type: entity
+  parent:
+  - CFZLevelStairsCornerInnerBase
+  - CFZLevelStairsRoofGreenBase
+  id: CFZLevelStairsRoofGreenCornerInner
+  name: green roof
+  suffix: Inner Corner
+  components:
+  - type: Construction
+    graph: CFZLevelStairs
+    node: CFZLevelStairsRoofGreenCornerInner
+
+# Blue
+
+- type: entity
+  id: CFZLevelStairsRoofBlueBase
+  abstract: true
+  name: blue roof
+  description: Blue roof tiles, laid on a slope.
+  components:
+  - type: Sprite
+    sprite: _CE/Structures/Architecture/Stairs/roof_blue.rsi
+  - type: Damageable
+    damageModifierSet: CFRock
+  - type: Injurable
+    damageContainer: StructuralInorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 30
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          path: /Audio/Effects/break_stone.ogg
+          params:
+            volume: -6
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFFloorTileRoofBlue:
+            min: 1
+            max: 2
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+
+- type: entity
+  parent:
+  - CFZLevelStairsBase
+  - CFZLevelStairsRoofBlueBase
+  id: CFZLevelStairsRoofBlue
+  name: blue roof
+  components:
+  - type: Construction
+    graph: CFZLevelStairs
+    node: CFZLevelStairsRoofBlue
+
+- type: entity
+  parent:
+  - CFZLevelStairsCornerBase
+  - CFZLevelStairsRoofBlueBase
+  id: CFZLevelStairsRoofBlueCorner
+  name: blue roof
+  suffix: Corner
+  components:
+  - type: Construction
+    graph: CFZLevelStairs
+    node: CFZLevelStairsRoofBlueCorner
+
+- type: entity
+  parent:
+  - CFZLevelStairsCornerInnerBase
+  - CFZLevelStairsRoofBlueBase
+  id: CFZLevelStairsRoofBlueCornerInner
+  name: blue roof
+  suffix: Inner Corner
+  components:
+  - type: Construction
+    graph: CFZLevelStairs
+    node: CFZLevelStairsRoofBlueCornerInner

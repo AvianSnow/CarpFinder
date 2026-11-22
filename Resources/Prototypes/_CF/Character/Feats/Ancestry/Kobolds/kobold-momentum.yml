@@ -2,11 +2,15 @@
 # source: Carpfinder Lost Omens Draconic Codex
 - type: cfFeat
   id: CFKoboldMomentum
-  name: "Kobold Momentum"
-  description: "Requires Kobold Breath."
+  name: cf-feat-kobold-momentum
+  description: cf-feat-kobold-momentum-desc
   ancestry: Kobold
   level: 5
   traits:
     - "Kobold"
   prerequisites:
     - "Kobold Breath"
+  requiresFeats:
+    - CFKoboldBreath
+  grants:
+    - !type:CFGrantBreathMomentum

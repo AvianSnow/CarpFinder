@@ -2,8 +2,8 @@
 # source: Carpfinder Guns & Gears
 - type: cfFeat
   id: CFCrossbowCrackShot
-  name: "Crossbow Crack Shot"
-  description: "Changes a modifier. This feature will be implemented later."
+  name: cf-feat-crossbow-crack-shot
+  description: cf-feat-crossbow-crack-shot-desc
   class: Gunslinger
   level: 1
   traits:

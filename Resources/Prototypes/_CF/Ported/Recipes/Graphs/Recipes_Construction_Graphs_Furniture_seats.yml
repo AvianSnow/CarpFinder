@@ -1,0 +1,124 @@
+# Ported from CP14 by the CF converter.
+
+- type: constructionGraph
+  id: CFSeat
+  start: start
+  graph:
+    - node: start
+      actions:
+        - !type:DestroyEntity {}
+      edges:
+        - to: CFChairWooden
+          steps:
+            - material: CFWoodenPlanks
+              amount: 2
+              doAfter: 2
+        - to: CFChairWoodenBirch
+          steps:
+          - material: CFBirchWoodenPlanks
+            amount: 2
+            doAfter: 2
+    - node: CFChairWooden
+      entity: CFChairWooden
+      edges:
+      - to: start
+        steps:
+        - tool: Prying
+          doAfter: 2
+        completed:
+        - !type:SpawnPrototype
+          prototype: CFWoodenPlanks1
+          amount: 2
+    - node: CFChairWoodenBirch
+      entity: CFChairWoodenBirch
+      edges:
+      - to: start
+        steps:
+        - tool: Prying
+          doAfter: 2
+        completed:
+        - !type:SpawnPrototype
+          prototype: CFBirchWoodenPlanks1
+          amount: 2
+
+- type: constructionGraph
+  id: CFBenchWood
+  start: start
+  graph:
+    - node: start
+      actions:
+        - !type:DestroyEntity {}
+      edges:
+        - to: CFBenchWood
+          steps:
+            - material: CFWoodenPlanks
+              amount: 3
+              doAfter: 2
+        - to: CFBenchWoodBirch
+          steps:
+          - material: CFBirchWoodenPlanks
+            amount: 3
+            doAfter: 2
+    - node: CFBenchWood
+      entity: CFBenchWood
+      edges:
+      - to: start
+        steps:
+        - tool: Prying
+          doAfter: 2
+        completed:
+        - !type:SpawnPrototype
+          prototype: CFWoodenPlanks1
+          amount: 3
+    - node: CFBenchWoodBirch
+      entity: CFBenchWoodBirch
+      edges:
+      - to: start
+        steps:
+        - tool: Prying
+          doAfter: 2
+        completed:
+        - !type:SpawnPrototype
+          prototype: CFBirchWoodenPlanks1
+          amount: 3
+
+- type: constructionGraph
+  id: CFStool
+  start: start
+  graph:
+    - node: start
+      actions:
+        - !type:DestroyEntity {}
+      edges:
+        - to: CFStoolWooden
+          steps:
+            - material: CFWoodenPlanks
+              amount: 2
+              doAfter: 1
+        - to: CFStoolBirch
+          steps:
+          - material: CFBirchWoodenPlanks
+            amount: 2
+            doAfter: 1
+    - node: CFStoolWooden
+      entity: CFStoolWooden
+      edges:
+      - to: start
+        steps:
+        - tool: Prying
+          doAfter: 2
+        completed:
+        - !type:SpawnPrototype
+          prototype: CFWoodenPlanks1
+          amount: 2
+    - node: CFStoolBirch
+      entity: CFStoolBirch
+      edges:
+      - to: start
+        steps:
+        - tool: Prying
+          doAfter: 2
+        completed:
+        - !type:SpawnPrototype
+          prototype: CFBirchWoodenPlanks1
+          amount: 2

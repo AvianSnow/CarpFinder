@@ -2,8 +2,8 @@
 # source: Carpfinder Battlecry!
 - type: cfFeat
   id: CFAdaptiveStratagem
-  name: "Adaptive Stratagem"
-  description: "Free action. This feature will be implemented later."
+  name: cf-feat-adaptive-stratagem
+  description: cf-feat-adaptive-stratagem-desc
   class: Commander
   level: 2
   traits:

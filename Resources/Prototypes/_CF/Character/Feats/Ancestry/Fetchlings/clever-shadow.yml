@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Cheliax, Infernal Inheritance
 - type: cfFeat
   id: CFCleverShadow
-  name: "Clever Shadow"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-clever-shadow
+  description: cf-feat-clever-shadow-desc
   ancestry: Fetchling
   level: 5
   traits:

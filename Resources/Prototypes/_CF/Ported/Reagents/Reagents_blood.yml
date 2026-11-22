@@ -1,0 +1,133 @@
+# Ported from CP14 by the CF converter.
+
+- type: reagent
+  id: CFBlood
+  group: CFPrecurser
+  name: cp14-reagent-name-blood
+  desc: cp14-reagent-desc-blood
+  flavor: CFMetallic
+  color: "#800000"
+  recognizable: false
+  physicalDesc: cp14-reagent-physical-desc-ferrous
+  footstepSound:
+    collection: FootstepBlood
+    params:
+      volume: 6
+  metabolisms:
+    Digestion:
+      effects:
+      - !type:Satiate
+        satiationType: Hunger
+      - !type:Satiate
+        satiationType: Thirst
+
+- type: reagent
+  id: CFBloodAnimal
+  group: CFPrecurser
+  name: cp14-reagent-name-blood-animal
+  desc: cp14-reagent-desc-blood-animal
+  flavor: CFMetallic
+  color: "#802020"
+  recognizable: false
+  physicalDesc: cp14-reagent-physical-desc-ferrous
+  footstepSound:
+    collection: FootstepBlood
+    params:
+      volume: 6
+  metabolisms:
+    Digestion:
+      effects:
+      - !type:Satiate
+        satiationType: Hunger
+        factor: 1
+      - !type:Satiate
+        satiationType: Thirst
+        factor: 1
+
+- type: reagent
+  id: CFBloodTiefling
+  group: CFPrecurser
+  desc: cp14-reagent-desc-blood-tiefling
+  name: cp14-reagent-name-blood-tiefling
+  flavor: CFMetallic
+  color: "#803300"
+  recognizable: false
+  physicalDesc: cp14-reagent-physical-desc-ferrous
+  footstepSound:
+    collection: FootstepBlood
+    params:
+      volume: 6
+  metabolisms:
+    Digestion:
+      effects:
+      - !type:Satiate
+        satiationType: Hunger
+      - !type:Satiate
+        satiationType: Thirst
+  pricePerUnit: 0.15
+
+- type: reagent
+  id: CFBloodElf
+  group: CFPrecurser
+  desc: cp14-reagent-desc-blood-elf
+  name: cp14-reagent-name-blood-elf
+  flavor: CFMetallic
+  color: "#80003e"
+  recognizable: false
+  physicalDesc: cp14-reagent-physical-desc-ferrous
+  footstepSound:
+    collection: FootstepBlood
+    params:
+      volume: 6
+  metabolisms:
+    Digestion:
+      effects:
+      - !type:Satiate
+        satiationType: Hunger
+      - !type:Satiate
+        satiationType: Thirst
+  pricePerUnit: 0.25
+
+- type: reagent
+  id: CFBloodGoblin
+  group: CFPrecurser
+  desc: cp14-reagent-desc-blood-goblin
+  name: cp14-reagent-name-blood-goblin
+  flavor: CFMetallic
+  color: "#576e35"
+  recognizable: false
+  physicalDesc: cp14-reagent-physical-desc-ferrous
+  footstepSound:
+    collection: FootstepBlood
+    params:
+      volume: 6
+  metabolisms:
+    Digestion:
+      effects:
+      - !type:Satiate
+        satiationType: Hunger
+      - !type:Satiate
+        satiationType: Thirst
+  pricePerUnit: 0.05
+
+- type: reagent
+  id: CFBloodMonster
+  group: CFPrecurser
+  name: cp14-reagent-name-blood-monster
+  desc: cp14-reagent-desc-blood-monster
+  flavor: CFMetallic
+  color: "#800058"
+  recognizable: false
+  physicalDesc: cp14-reagent-physical-desc-ferrous
+  footstepSound:
+    collection: FootstepBlood
+    params:
+      volume: 6
+  metabolisms:
+    Digestion:
+      effects:
+      - !type:Satiate
+        satiationType: Hunger
+      - !type:Satiate
+        satiationType: Thirst
+  pricePerUnit: 0.30

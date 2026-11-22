@@ -1,0 +1,18 @@
+# Load it with: forcemap CFBeginnerBox
+- type: gameMap
+  id: CFBeginnerBox
+  mapName: Beginner Box
+  mapPath: /Maps/beginnerbox.yml
+  minPlayers: 0
+  stations:
+    CFBeginnerBox:
+      stationProto: CFStationBasic
+      components:
+        - type: StationNameSetup
+          mapNameTemplate: "Beginner Box"
+        - type: StationJobs
+          availableJobs:
+            CFAlpha: [ 0, 6 ]
+            CFBeta: [ 0, 6 ]
+            CFCharlie: [ 0, 6 ]
+            CFDelta: [ 0, 6 ]

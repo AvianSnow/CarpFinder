@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Tian Xia Character Guide
 - type: cfFeat
   id: CFDuck
-  name: "Duck!"
-  description: "Improves Reflex results. Not applied in play yet."
+  name: cf-feat-duck
+  description: cf-feat-duck-desc
   ancestry: Kobold
   level: 5
   traits:

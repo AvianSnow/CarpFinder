@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFReptileSpeaker
-  name: "Reptile Speaker"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-reptile-speaker
+  description: cf-feat-reptile-speaker-desc
   ancestry: Lizardfolk
   level: 1
   traits:

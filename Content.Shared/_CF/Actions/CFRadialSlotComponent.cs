@@ -23,6 +23,23 @@ public sealed partial class CFRadialSlotComponent : Component
     /// </summary>
     [DataField, AutoNetworkedField]
     public int Actions;
+
+    /// <summary>Where this goes in the HUD deck, unless it is a spell. Spells sort by their rank.</summary>
+    [DataField, AutoNetworkedField]
+    public CFDeckSection Tab = CFDeckSection.ClassFeatures;
+
+    /// <summary>False keeps it off the radial wheel, for actions that already have a stock input.</summary>
+    [DataField, AutoNetworkedField]
+    public bool Wheel = true;
+}
+
+public enum CFDeckSection : byte
+{
+    Common,
+    ClassFeatures,
+
+    /// <summary>Goes with the focus spells, for Refocus.</summary>
+    Focus,
 }
 
 public enum CFRadialGroup : byte

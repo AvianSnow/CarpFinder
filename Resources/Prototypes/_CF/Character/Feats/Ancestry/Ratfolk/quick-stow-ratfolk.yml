@@ -2,13 +2,15 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFQuickStowRatfolk
-  name: "Quick Stow (Ratfolk)"
-  description: "Requires Cheek Pouches. Free action. TBA - action will be added"
+  name: cf-feat-quick-stow-ratfolk
+  description: cf-feat-quick-stow-ratfolk-desc
   ancestry: Ratfolk
   level: 5
   traits:
     - "Ratfolk"
   prerequisites:
     - "Cheek Pouches"
+  requiresFeats:
+    - CFCheekPouches
   action: Free
   pendingAction: true

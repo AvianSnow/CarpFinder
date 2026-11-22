@@ -2,7 +2,7 @@
   parent: CFSpellInstant
   id: CFKnowTheWay
   name: Know the Way
-  description: You learn which direction is north.
+  description: An arrow appears beside you, pointing north, however the world is turned.
   components:
   - type: Sprite
     sprite: Objects/Magic/magicactions.rsi
@@ -18,5 +18,4 @@
     filter: All
   - type: CFDegreeEffects
     landed:
-    - !type:CFPopupEffect
-      text: cf-spell-affected
+    - !type:CFKnowTheWayEffect

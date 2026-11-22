@@ -1,0 +1,155 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  id: CFWindowWooden
+  parent:
+  - CFWindowBase
+  - CFBaseFlammable
+  name: wooden window
+  description: A wooden wall with a glass window in it.
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Windows/wooden_window.rsi
+  - type: Icon
+    sprite: _CP14/Structures/Windows/wooden_window.rsi
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 50
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: WindowShatter
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFGlassShard:
+            min: 1
+            max: 2
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+      - !type:ChangeConstructionNodeBehavior
+        node: CFWindowWoodenBroken
+  - type: Construction
+    graph: CFWindowWooden
+    node: CFWindowWooden
+
+- type: entity
+  id: CFWindowWoodenBirch
+  parent: CFWindowWooden
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Windows/birch_window.rsi
+  - type: Icon
+    sprite: _CP14/Structures/Windows/birch_window.rsi
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 50
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: WindowShatter
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFGlassShard:
+            min: 1
+            max: 2
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+      - !type:ChangeConstructionNodeBehavior
+        node: CFWindowWoodenBirchBroken
+  - type: Construction
+    graph: CFWindowWooden
+    node: CFWindowWoodenBirch
+
+- type: entity
+  id: CFWindowFrameWooden
+  name: wooden window frame
+  parent:
+  - CFBaseWindowFrame
+  - CFBaseFlammable
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Windows/wooden_window_frame.rsi
+  - type: Icon
+    sprite: _CP14/Structures/Windows/wooden_window_frame.rsi
+  - type: Damageable
+    damageModifierSet: CFWoodStructural
+  - type: Injurable
+    damageContainer: StructuralInorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 50
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFWoodenPlanks1:
+            min: 1
+            max: 2
+      - !type:PlaySoundBehavior
+        sound:
+          collection: WoodDestroy
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: Construction
+    graph: CFWindowWooden
+    node: CFWindowFrameWooden
+
+- type: entity
+  id: CFWindowFrameWoodenBirch
+  parent: CFWindowFrameWooden
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Windows/birch_window_frame.rsi
+  - type: Icon
+    sprite: _CP14/Structures/Windows/birch_window_frame.rsi
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 50
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFBirchWoodenPlanks1:
+            min: 1
+            max: 2
+      - !type:PlaySoundBehavior
+        sound:
+          collection: WoodDestroy
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: Construction
+    graph: CFWindowWooden
+    node: CFWindowFrameWoodenBirch
+
+- type: entity
+  id: CFWindowWoodenBroken
+  name: shattered wooden window
+  parent:
+  - CFBaseWindowFrameBroken
+  - CFWindowFrameWooden
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Windows/wooden_window_broken.rsi
+  - type: Icon
+    sprite: _CP14/Structures/Windows/wooden_window_broken.rsi
+  - type: Construction
+    graph: CFWindowWooden
+    node: CFWindowWoodenBroken
+
+- type: entity
+  id: CFWindowWoodenBirchBroken
+  parent: CFWindowWoodenBroken
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Windows/birch_window_broken.rsi
+  - type: Icon
+    sprite: _CP14/Structures/Windows/birch_window_broken.rsi
+  - type: Construction
+    graph: CFWindowWooden
+    node: CFWindowWoodenBirchBroken

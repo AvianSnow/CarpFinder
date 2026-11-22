@@ -1,6 +1,6 @@
 - type: tile
   editorHidden: false
-  id: CFloorFoundation
+  id: CFFloorFoundation
   name: cf-tiles-foundation
   sprite: /Textures/_CP14/Tiles/foundation.png
   variants: 14
@@ -20,18 +20,18 @@
   - 1.0
   - 1.0
   edgeSpritePriority: 99 #Dont have edges, but block natural ones
-  baseTurf: CFloorBase
+  baseTurf: CFFloorBase
   isSubfloor: true
   footstepSounds:
     collection: FootstepAsteroid
   heatCapacity: 10000
   weather: true
   deconstructTools: [ Prying ]
-  itemDrop: CFloorTileFoundation
+  itemDrop: CFFloorTileFoundation
 
 - type: tile
   editorHidden: false
-  id: CFloorStonebricks
+  id: CFFloorStonebricks
   name: cf-tiles-stonebricks
   sprite: /Textures/_CP14/Tiles/Stonebricks/stonebricks.png
   variants: 9
@@ -55,18 +55,18 @@
     East: /Textures/_CP14/Tiles/Stonebricks/double_edge_E.png
     North: /Textures/_CP14/Tiles/Stonebricks/double_edge_N.png
     West: /Textures/_CP14/Tiles/Stonebricks/double_edge_W.png
-  baseTurf: CFloorFoundation
+  baseTurf: CFFloorFoundation
   isSubfloor: false
   footstepSounds:
     collection: FootstepAsteroid
   heatCapacity: 10000
   weather: true
   deconstructTools: [ Prying ]
-  itemDrop: CFloorTileStonebricks
+  itemDrop: CFFloorTileStonebricks
 
 - type: tile
   editorHidden: false
-  id: CFloorStonebricksSnowed
+  id: CFFloorStonebricksSnowed
   name: cf-tiles-stonebricks
   sprite: /Textures/_CP14/Tiles/Stonebricks/snowstonebricks.png
   variants: 9
@@ -90,18 +90,18 @@
     East: /Textures/_CP14/Tiles/Stonebricks/double_edge_E.png
     North: /Textures/_CP14/Tiles/Stonebricks/double_edge_N.png
     West: /Textures/_CP14/Tiles/Stonebricks/double_edge_W.png
-  baseTurf: CFloorFoundation
+  baseTurf: CFFloorFoundation
   isSubfloor: false
   footstepSounds:
     collection: FootstepAsteroid
   heatCapacity: 10000
   weather: true
   deconstructTools: [ Prying ]
-  itemDrop: CFloorTileStonebricks
+  itemDrop: CFFloorTileStonebricks
 
 - type: tile
   editorHidden: false
-  id: CFloorStonebricksSmallCarved1
+  id: CFFloorStonebricksSmallCarved1
   name: cf-tiles-stonebricks-small-carved1
   sprite: /Textures/_CP14/Tiles/Stonebricks/stonebricks_small_carved_1.png
   variants: 1
@@ -117,18 +117,18 @@
     East: /Textures/_CP14/Tiles/Stonebricks/double_edge_E.png
     North: /Textures/_CP14/Tiles/Stonebricks/double_edge_N.png
     West: /Textures/_CP14/Tiles/Stonebricks/double_edge_W.png
-  baseTurf: CFloorFoundation
+  baseTurf: CFFloorFoundation
   isSubfloor: false
   footstepSounds:
     collection: FootstepAsteroid
   heatCapacity: 10000
   weather: true
   deconstructTools: [ Prying ]
-  itemDrop: CFloorTileStonebricksSmallCarved
+  itemDrop: CFFloorTileStonebricksSmallCarved
 
 - type: tile
   editorHidden: false
-  id: CFloorStonebricksSmallCarved2
+  id: CFFloorStonebricksSmallCarved2
   name: cf-tiles-stonebricks-small-carved2
   sprite: /Textures/_CP14/Tiles/Stonebricks/stonebricks_small_carved_2.png
   variants: 1
@@ -144,18 +144,18 @@
     East: /Textures/_CP14/Tiles/Stonebricks/double_edge_E.png
     North: /Textures/_CP14/Tiles/Stonebricks/double_edge_N.png
     West: /Textures/_CP14/Tiles/Stonebricks/double_edge_W.png
-  baseTurf: CFloorFoundation
+  baseTurf: CFFloorFoundation
   isSubfloor: false
   footstepSounds:
     collection: FootstepAsteroid
   heatCapacity: 10000
   weather: true
   deconstructTools: [ Prying ]
-  itemDrop: CFloorTileStonebricksSmallCarved2
+  itemDrop: CFFloorTileStonebricksSmallCarved2
 
 - type: tile
   editorHidden: false
-  id: CFloorStonebricksSquareCarved
+  id: CFFloorStonebricksSquareCarved
   name: cf-tiles-stonebricks-square-carved
   sprite: /Textures/_CP14/Tiles/Stonebricks/stonebricks_square_carved.png
   variants: 4
@@ -174,18 +174,18 @@
     East: /Textures/_CP14/Tiles/Stonebricks/double_edge_E.png
     North: /Textures/_CP14/Tiles/Stonebricks/double_edge_N.png
     West: /Textures/_CP14/Tiles/Stonebricks/double_edge_W.png
-  baseTurf: CFloorFoundation
+  baseTurf: CFFloorFoundation
   isSubfloor: false
   footstepSounds:
     collection: FootstepAsteroid
   heatCapacity: 10000
   weather: true
   deconstructTools: [ Prying ]
-  itemDrop: CFloorTileStonebricksSquareCarved
+  itemDrop: CFFloorTileStonebricksSquareCarved
 
 - type: tile
   editorHidden: false
-  id: CFloorMarble
+  id: CFFloorMarble
   name: cf-tiles-stonebricks-marble
   sprite: /Textures/_CP14/Tiles/Marble/marble.png
   variants: 6
@@ -199,18 +199,18 @@
   edgeSpritePriority: 102
   edgeSprites:
     South: /Textures/_CP14/Tiles/Marble/double_edge_S.png
-  baseTurf: CFloorFoundation
+  baseTurf: CFFloorFoundation
   isSubfloor: false
   footstepSounds:
     collection: FootstepAsteroid
   heatCapacity: 10000
   weather: true
   deconstructTools: [ Prying ]
-  itemDrop: CFloorTileMarbleBrick
+  itemDrop: CFFloorTileMarbleBrick
 
 - type: tile
   editorHidden: false
-  id: CFloorMarbleSmallbricks
+  id: CFFloorMarbleSmallbricks
   name: cf-tiles-stonebricks-marble
   sprite: /Textures/_CP14/Tiles/Marble/small_bricks.png
   variants: 9
@@ -227,18 +227,18 @@
   edgeSpritePriority: 102
   edgeSprites:
     South: /Textures/_CP14/Tiles/Marble/double_edge_S.png
-  baseTurf: CFloorFoundation
+  baseTurf: CFFloorFoundation
   isSubfloor: false
   footstepSounds:
     collection: FootstepAsteroid
   heatCapacity: 10000
   weather: true
   deconstructTools: [ Prying ]
-  itemDrop: CFloorTileMarbleSmallbricks
+  itemDrop: CFFloorTileMarbleSmallbricks
 
 - type: tile
   editorHidden: false
-  id: CFloorDirtSeedbed
+  id: CFFloorDirtSeedbed
   name: cf-tiles-dirt-seedbed
   sprite: /Textures/_CP14/Tiles/DirtSeedBag/seedbed.png
   variants: 2
@@ -255,9 +255,9 @@
     East: /Textures/_CP14/Tiles/DirtSeedBag/double_edge_E.png
     North: /Textures/_CP14/Tiles/DirtSeedBag/double_edge_N.png
     West: /Textures/_CP14/Tiles/DirtSeedBag/double_edge_W.png
-  baseTurf: CFloorDirt
+  baseTurf: CFFloorDirt
   deconstructTools: [ CFDigging ]
-  itemDrop: CP14DirtEffect
+  itemDrop: CFDirtEffect
   isSubfloor: true
   footstepSounds:
     collection: FootstepAsteroid

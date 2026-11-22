@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFRatfolkLore
-  name: "Ratfolk Lore"
-  description: "Lore: Ratfolk Lore. Trained in Acrobatics and Stealth."
+  name: cf-feat-ratfolk-lore
+  description: cf-feat-ratfolk-lore-desc
   ancestry: Ratfolk
   level: 1
   traits:

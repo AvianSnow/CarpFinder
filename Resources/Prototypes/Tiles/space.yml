@@ -4,6 +4,7 @@
   friction: 0
   isSubfloor: true
   isSpace: true
+  transparent: true # CarpFinder: the level below shows through open sky
   sturdy: false
   thermalConductivity: 0.4
   heatCapacity: 700000

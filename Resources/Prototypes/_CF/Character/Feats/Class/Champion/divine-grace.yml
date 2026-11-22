@@ -2,11 +2,17 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFDivineGrace
-  name: "Divine Grace"
-  description: "+2 circumstance bonus to Saving Throw. Reaction. This feature will be implemented later."
+  name: cf-feat-divine-grace
+  description: cf-feat-divine-grace-desc
   class: Champion
   level: 2
   traits:
     - "Champion"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-feat-divine-grace
+        trigger: SaveWouldFail
+        saveBonus: 2
+        trait: Magical

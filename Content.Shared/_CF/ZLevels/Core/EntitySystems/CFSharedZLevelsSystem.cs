@@ -1,0 +1,56 @@
+// Ported from CrystallEdge's z-level system (https://github.com/crystallpunk-14/crystall-edge),
+// with permission from eshhhed. CrystallEdge sublicenses it under the MIT License.
+// CarpFinder changes: CF names and namespaces, and whatever each file's comments say.
+
+using Content.Shared.CF;
+using System.Diagnostics.CodeAnalysis;
+using Content.Shared.CF.ZLevels.Core.Components;
+using Content.Shared.Actions;
+using Content.Shared.CCVar;
+using Content.Shared.Popups;
+using JetBrains.Annotations;
+using Robust.Shared.Configuration;
+using Robust.Shared.Map;
+using Robust.Shared.Map.Components;
+using Robust.Shared.Network;
+using Robust.Shared.Physics.Components;
+using Robust.Shared.Physics.Systems;
+using Robust.Shared.Timing;
+
+namespace Content.Shared.CF.ZLevels.Core.EntitySystems;
+
+public abstract partial class CFSharedZLevelsSystem : EntitySystem
+{
+    [Dependency] private INetManager _net = null!;
+    [Dependency] private IGameTiming _timing = null!;
+    [Dependency] private IConfigurationManager _config = null!;
+
+    [Dependency] private SharedPhysicsSystem _physicsSystem = null!;
+    [Dependency] private SharedTransformSystem _transform = null!;
+    [Dependency] private SharedActionsSystem _actions = null!;
+    [Dependency] private EntityLookupSystem _lookup = null!;
+    [Dependency] private SharedMapSystem _map = null!;
+    [Dependency] private SharedPopupSystem _popup = null!;
+
+    [Dependency] protected EntityQuery<CFZPhysicsComponent> ZPhysicsQuery = default!;
+
+    [Dependency] private EntityQuery<MapComponent> _mapQuery = default!;
+    [Dependency] private EntityQuery<MapGridComponent> _gridQuery = default!;
+    [Dependency] private EntityQuery<PhysicsComponent> _physicsQuery = default!;
+    [Dependency] private EntityQuery<TransformComponent> _transformQuery = default!;
+
+    [Dependency] private EntityQuery<CFZMapComponent> _zMapQuery = default!;
+    [Dependency] private EntityQuery<CFZMapNetworkComponent> _zNetworkQuery = default!;
+    [Dependency] private EntityQuery<CFZLevelHighGroundComponent> _zHighGroundQuery = default!;
+
+    private bool _clientSimulation;
+    private TimeSpan _fixedTimestep;
+
+    public override void Initialize()
+    {
+        base.Initialize();
+
+        _config.OnValueChanged(CFCVars.ZLevelsPhysicsClientSimulation, i => _clientSimulation = i, true);
+        _config.OnValueChanged(CFCVars.ZLevelsPhysicsTickRate, i => _fixedTimestep = TimeSpan.FromSeconds(1d / i), true);
+    }
+}

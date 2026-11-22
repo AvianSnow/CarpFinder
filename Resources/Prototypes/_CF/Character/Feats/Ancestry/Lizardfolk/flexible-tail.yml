@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFFlexibleTail
-  name: "Flexible Tail"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-flexible-tail
+  description: cf-feat-flexible-tail-desc
   ancestry: Lizardfolk
   level: 5
   traits:

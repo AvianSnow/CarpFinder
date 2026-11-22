@@ -2,8 +2,8 @@
 # source: Carpfinder Battlecry!
 - type: cfFeat
   id: CFDefensiveSwap
-  name: "Defensive Swap"
-  description: "Reaction. This feature will be implemented later."
+  name: cf-feat-defensive-swap
+  description: cf-feat-defensive-swap-desc
   class: Commander
   level: 2
   traits:

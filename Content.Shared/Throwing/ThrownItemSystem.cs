@@ -1,5 +1,6 @@
 using System.Linq;
 using Content.Shared.Administration.Logs;
+using Content.Shared.CF.ZLevels.Core.EntitySystems;
 using Content.Shared.Database;
 using Content.Shared.Gravity;
 using Content.Shared.Physics;
@@ -25,6 +26,7 @@ namespace Content.Shared.Throwing
         [Dependency] private SharedBroadphaseSystem _broadphase = default!;
         [Dependency] private SharedPhysicsSystem _physics = default!;
         [Dependency] private SharedGravitySystem _gravity = default!;
+        [Dependency] private CFSharedZLevelsSystem _zLevels = default!; // CarpFinder
 
         private const string ThrowingFixture = "throw-fixture";
 
@@ -127,6 +129,11 @@ namespace Content.Shared.Throwing
                 _adminLogger.Add(LogType.Landed, LogImpact.Low, $"{ToPrettyString(uid):entity} thrown by {ToPrettyString(thrownItem.Thrower.Value):thrower} landed.");
 
             _broadphase.RegenerateContacts((uid, physics));
+
+            // CarpFinder: nothing lands in mid-air. Vertical physics raises the event when it reaches the floor
+            if (_zLevels.DistanceToGround(uid) > 0.5f)
+                return;
+            // CarpFinder end
             var landEvent = new LandEvent(thrownItem.Thrower, playSound);
             RaiseLocalEvent(uid, ref landEvent);
         }

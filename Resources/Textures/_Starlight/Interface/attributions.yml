@@ -1,0 +1,9 @@
+# From Starlight, used with permission. Their license asks that the project is named as the source.
+- files: ["language.png"]
+  license: "Starlight License (modified MIT)"
+  copyright: "Starlight"
+  source: "https://github.com/ss14Starlight/space-station-14"
+- files: ["Actions/actions_scent.rsi/smell-on.png", "Actions/actions_scent.rsi/smell-off.png"]
+  license: "CC-BY-SA-3.0"
+  copyright: "Made by Sparlight (GitHub) for Space Station 14, taken from Starlight"
+  source: "https://github.com/ss14Starlight/space-station-14"

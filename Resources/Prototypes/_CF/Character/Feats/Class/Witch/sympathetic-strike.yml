@@ -2,13 +2,15 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFSympatheticStrike
-  name: "Sympathetic Strike"
-  description: "Requires Witch's Armaments. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-sympathetic-strike
+  description: cf-feat-sympathetic-strike-desc
   class: Witch
   level: 4
   traits:
     - "Witch"
   prerequisites:
     - "Witch's Armaments"
+  requiresFeats:
+    - CFWitchsArmaments
   action: Action
   pendingAction: true

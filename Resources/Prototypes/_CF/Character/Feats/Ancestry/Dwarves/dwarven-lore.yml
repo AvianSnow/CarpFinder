@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFDwarvenLore
-  name: "Dwarven Lore"
-  description: "Lore: Dwarf Lore. Trained in Crafting and Religion."
+  name: cf-feat-dwarven-lore
+  description: cf-feat-dwarven-lore-desc
   ancestry: Dwarf
   level: 1
   traits:

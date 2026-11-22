@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFSacredGround
-  name: "Sacred Ground"
-  description: "Requires harmful font or healing font. Changes an item. This feature will be implemented later."
+  name: cf-feat-sacred-ground
+  description: cf-feat-sacred-ground-desc
   class: Cleric
   level: 4
   traits:

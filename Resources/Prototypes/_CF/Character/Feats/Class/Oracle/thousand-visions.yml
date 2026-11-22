@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFThousandVisions
-  name: "Thousand Visions"
-  description: "Free action. This feature will be implemented later."
+  name: cf-feat-thousand-visions
+  description: cf-feat-thousand-visions-desc
   class: Oracle
   level: 4
   traits:

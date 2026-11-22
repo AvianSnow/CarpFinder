@@ -2,12 +2,14 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFImpalingFinisher
-  name: "Impaling Finisher"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-impaling-finisher
+  description: cf-feat-impaling-finisher-desc
   class: Swashbuckler
   level: 4
   traits:
     - "Finisher"
     - "Swashbuckler"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActImpalingFinisher

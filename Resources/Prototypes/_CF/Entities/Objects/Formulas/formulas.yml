@@ -1,0 +1,601 @@
+- type: entity
+  abstract: true
+  parent: BaseItem
+  id: CFBaseFormula
+  name: formula
+  description: A schematic on rolled-up parchment. Read it in hand to learn it.
+  components:
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: Objects/Misc/bureaucracy.rsi
+    state: paper_words
+  - type: CFBulk
+    bulk: 0.1
+  - type: CFItemPrice
+    copper: 50 # level 0 formula: 5 sp
+
+# A handbook per trade: reading one teaches every common level 0 recipe of its kind.
+# A recipe above level 0 still needs its own formula.
+- type: entity
+  abstract: true
+  parent: BaseItem
+  id: CFBaseFormulaBook
+  description: A trade's handbook. Read it in hand to learn its recipes.
+  components:
+  - type: Item
+    size: Small
+  - type: Sprite
+    sprite: Objects/Misc/books.rsi
+  - type: CFItem
+    level: 0
+  - type: CFBulk
+    bulk: 0.1
+  - type: CFItemPrice
+    copper: 50 # ours: 5 sp, the price of one level 0 formula
+
+- type: entity
+  parent: CFBaseFormulaBook
+  id: CFFormulaBookTools
+  name: toolmaker's handbook
+  description: Formulas for tools, from a bucket to a set of scissors. Read it in hand to learn them.
+  components:
+  - type: Sprite
+    layers:
+    - state: paper
+    - state: cover_base
+      color: "#6b4a2b"
+    - state: icon_wrench
+    - state: detail_rivets
+  - type: CFFormula
+    categories:
+    - Tools
+
+- type: entity
+  parent: CFBaseFormulaBook
+  id: CFFormulaBookMaterials
+  name: smelter's primer
+  description: Formulas for bars, glass, leather, cloth and string. Read it in hand to learn them.
+  components:
+  - type: Sprite
+    layers:
+    - state: paper
+    - state: cover_base
+      color: "#5a5f66"
+    - state: icon_diamond
+    - state: detail_rivets
+  - type: CFFormula
+    categories:
+    - Materials
+
+- type: entity
+  parent: CFBaseFormulaBook
+  id: CFFormulaBookWeapons
+  name: weaponsmith's handbook
+  description: Formulas for weapons and ammunition. Read it in hand to learn them.
+  components:
+  - type: Sprite
+    layers:
+    - state: paper
+    - state: cover_base
+      color: "#7a1f1f"
+    - state: icon_stunbaton
+    - state: detail_rivets
+  - type: CFFormula
+    categories:
+    - Weapons
+
+- type: entity
+  parent: CFBaseFormulaBook
+  id: CFFormulaBookArmor
+  name: armorer's handbook
+  description: Formulas for shields and armor. Read it in hand to learn them.
+  components:
+  - type: Sprite
+    layers:
+    - state: paper
+    - state: cover_base
+      color: "#2f4f7a"
+    - state: icon_temple
+    - state: detail_rivets
+  - type: CFFormula
+    categories:
+    - Armor
+
+- type: entity
+  parent: CFBaseFormulaBook
+  id: CFFormulaBookClothing
+  name: tailor's pattern book
+  description: Formulas for clothing. Read it in hand to learn them.
+  components:
+  - type: Sprite
+    layers:
+    - state: paper
+    - state: cover_base
+      color: "#7a3f7a"
+    - state: icon_letter_P
+    - state: detail_rivets
+  - type: CFFormula
+    categories:
+    - Clothing
+
+- type: entity
+  parent: CFBaseFormulaBook
+  id: CFFormulaBookBags
+  name: saddler's pattern book
+  description: Formulas for backpacks, satchels and belts. Read it in hand to learn them.
+  components:
+  - type: Sprite
+    layers:
+    - state: paper
+    - state: cover_base
+      color: "#8a5a2b"
+    - state: icon_briefcase
+    - state: detail_rivets
+  - type: CFFormula
+    categories:
+    - Bags
+
+- type: entity
+  parent: CFBaseFormulaBook
+  id: CFFormulaBookBuilding
+  name: builder's manual
+  description: Formulas for floor tiles, carpets and wallpaper. Read it in hand to learn them.
+  components:
+  - type: Sprite
+    layers:
+    - state: paper
+    - state: cover_base
+      color: "#6e6a5c"
+    - state: icon_mount
+    - state: detail_rivets
+  - type: CFFormula
+    categories:
+    - Building
+
+- type: entity
+  parent: CFBaseFormulaBook
+  id: CFFormulaBookFood
+  name: cookbook
+  description: Formulas for tableware, dough and other things made at a cooking table. Read it in hand to learn them.
+  components:
+  - type: Sprite
+    layers:
+    - state: paper
+    - state: cover_base
+      color: "#b0702a"
+    - state: icon_apple
+    - state: detail_rivets
+  - type: CFFormula
+    categories:
+    - Food
+
+- type: entity
+  parent: CFBaseFormulaBook
+  id: CFFormulaBookFarming
+  name: farmer's almanac
+  description: Formulas for seeds and farming gear. Read it in hand to learn them.
+  components:
+  - type: Sprite
+    layers:
+    - state: paper
+    - state: cover_base
+      color: "#3f7a35"
+    - state: icon_cabbage
+    - state: detail_rivets
+  - type: CFFormula
+    categories:
+    - Farming
+
+- type: entity
+  parent: CFBaseFormulaBook
+  id: CFFormulaBookAlchemy
+  name: alchemist's notebook
+  description: Formulas for vials and other alchemist's gear. Read it in hand to learn them.
+  components:
+  - type: Sprite
+    layers:
+    - state: paper
+    - state: cover_base
+      color: "#2a7a72"
+    - state: icon_chemical
+    - state: detail_rivets
+  - type: CFFormula
+    categories:
+    - Alchemy
+
+- type: entity
+  parent: CFBaseFormulaBook
+  id: CFFormulaBookGoods
+  name: toymaker's catalog
+  description: Formulas for toys, instruments, crayons and signs. Read it in hand to learn them.
+  components:
+  - type: Sprite
+    layers:
+    - state: paper
+    - state: cover_base
+      color: "#a03a6a"
+    - state: icon_possum
+    - state: detail_rivets
+  - type: CFFormula
+    categories:
+    - Goods
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaIronBuckle
+  name: formula (iron buckle)
+  components:
+  - type: CFFormula
+    recipes:
+    - IronBuckle
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaRatArmor
+  name: formula (light barding)
+  components:
+  - type: CFFormula
+    recipes:
+    - RatArmor
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaThievesToolkit
+  name: formula (thieves' toolkit)
+  components:
+  - type: CFFormula
+    recipes:
+    - ThievesToolkit
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaCopperBar
+  name: formula (copper bar)
+  components:
+  - type: CFFormula
+    recipes:
+    - CopperBar
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaIronBar
+  name: formula (iron bar)
+  components:
+  - type: CFFormula
+    recipes:
+    - IronBar
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaGoldBar
+  name: formula (gold bar)
+  components:
+  - type: CFFormula
+    recipes:
+    - GoldBar
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaMithrilBar
+  name: formula (mithril bar)
+  components:
+  - type: CFFormula
+    recipes:
+    - MithrilBar
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaGlassFromQuartz
+  name: formula (glass from quartz)
+  components:
+  - type: CFFormula
+    recipes:
+    - GlassFromQuartz
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaGlassFromShards
+  name: formula (glass from shards)
+  components:
+  - type: CFFormula
+    recipes:
+    - GlassFromShards
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaLeatherFromScraps
+  name: formula (leather from scraps)
+  components:
+  - type: CFFormula
+    recipes:
+    - LeatherFromScraps
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaLeatherFromThin
+  name: formula (leather from thin hide)
+  components:
+  - type: CFFormula
+    recipes:
+    - LeatherFromThin
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaCloth
+  name: formula (cloth)
+  components:
+  - type: CFFormula
+    recipes:
+    - Cloth
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaStringFromWeb
+  name: formula (string from web)
+  components:
+  - type: CFFormula
+    recipes:
+    - StringFromWeb
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaStringFromCloth
+  name: formula (string from cloth)
+  components:
+  - type: CFFormula
+    recipes:
+    - StringFromCloth
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaWallpaperBlack
+  name: formula (wallpaper black)
+  components:
+  - type: CFFormula
+    recipes:
+    - WallpaperBlack
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaWallpaperGreen
+  name: formula (wallpaper green)
+  components:
+  - type: CFFormula
+    recipes:
+    - WallpaperGreen
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaWallpaperPurple
+  name: formula (wallpaper purple)
+  components:
+  - type: CFFormula
+    recipes:
+    - WallpaperPurple
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaWallpaperRed
+  name: formula (wallpaper red)
+  components:
+  - type: CFFormula
+    recipes:
+    - WallpaperRed
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaWallpaperYellow
+  name: formula (wallpaper yellow)
+  components:
+  - type: CFFormula
+    recipes:
+    - WallpaperYellow
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaWallpaperWhite
+  name: formula (wallpaper white)
+  components:
+  - type: CFFormula
+    recipes:
+    - WallpaperWhite
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaWallpaperWhite2
+  name: formula (wallpaper white2)
+  components:
+  - type: CFFormula
+    recipes:
+    - WallpaperWhite2
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaClothFromCotton
+  name: formula (cloth from cotton)
+  components:
+  - type: CFFormula
+    recipes:
+    - ClothFromCotton
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaStringFromCotton
+  name: formula (string from cotton)
+  components:
+  - type: CFFormula
+    recipes:
+    - StringFromCotton
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaAttachWeaponPotency1
+  name: formula (attach weapon potency rune (+1))
+  components:
+  - type: CFItemPrice
+    copper: 200
+  - type: CFFormula
+    recipes:
+    - AttachWeaponPotency1
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaAttachStriking
+  name: formula (attach striking rune)
+  components:
+  - type: CFItemPrice
+    copper: 500
+  - type: CFFormula
+    recipes:
+    - AttachStriking
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaAttachArmorPotency1
+  name: formula (attach armor potency rune (+1))
+  components:
+  - type: CFItemPrice
+    copper: 800
+  - type: CFFormula
+    recipes:
+    - AttachArmorPotency1
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaAttachResilient
+  name: formula (attach resilient rune)
+  components:
+  - type: CFItemPrice
+    copper: 2500
+  - type: CFFormula
+    recipes:
+    - AttachResilient
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaAttachFlaming
+  name: formula (attach flaming rune)
+  components:
+  - type: CFItemPrice
+    copper: 2500
+  - type: CFFormula
+    recipes:
+    - AttachFlaming
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaAttachFrost
+  name: formula (attach frost rune)
+  components:
+  - type: CFItemPrice
+    copper: 2500
+  - type: CFFormula
+    recipes:
+    - AttachFrost
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaAttachShock
+  name: formula (attach shock rune)
+  components:
+  - type: CFItemPrice
+    copper: 2500
+  - type: CFFormula
+    recipes:
+    - AttachShock
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaAttachCorrosive
+  name: formula (attach corrosive rune)
+  components:
+  - type: CFItemPrice
+    copper: 2500
+  - type: CFFormula
+    recipes:
+    - AttachCorrosive
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaAttachThundering
+  name: formula (attach thundering rune)
+  components:
+  - type: CFItemPrice
+    copper: 2500
+  - type: CFFormula
+    recipes:
+    - AttachThundering
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaEtchEsvadir
+  name: formula (etch Esvadir)
+  components:
+  - type: CFItemPrice
+    copper: 100
+  - type: CFFormula
+    recipes:
+    - EtchEsvadir
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaEtchHoltrik
+  name: formula (etch Holtrik)
+  components:
+  - type: CFItemPrice
+    copper: 100
+  - type: CFFormula
+    recipes:
+    - EtchHoltrik
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaEtchMarssyl
+  name: formula (etch Marssyl)
+  components:
+  - type: CFItemPrice
+    copper: 100
+  - type: CFFormula
+    recipes:
+    - EtchMarssyl
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaEtchOljinex
+  name: formula (etch Oljinex)
+  components:
+  - type: CFItemPrice
+    copper: 100
+  - type: CFFormula
+    recipes:
+    - EtchOljinex
+
+# CrystallEdge roof tiles (Crafting/recipes.yml). Level 0, so the Building handbook teaches them too.
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFloorTileRoofRed
+  name: formula (red roof tile)
+  components:
+  - type: CFFormula
+    recipes:
+    - FloorTileRoofRed
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFloorTileRoofGreen
+  name: formula (green roof tile)
+  components:
+  - type: CFFormula
+    recipes:
+    - FloorTileRoofGreen
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFloorTileRoofBlue
+  name: formula (blue roof tile)
+  components:
+  - type: CFFormula
+    recipes:
+    - FloorTileRoofBlue

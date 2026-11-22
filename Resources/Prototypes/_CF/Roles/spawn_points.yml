@@ -1,0 +1,85 @@
+# Where each CF job appears at round start. Every job on a map needs one, or the map fails its stock load test.
+
+- type: entity
+  parent: SpawnPointJobBase
+  id: CFSpawnPointAlpha
+  name: Alpha spawn
+  components:
+  - type: SpawnPoint
+    job_id: CFAlpha
+  - type: Sprite
+    layers:
+    - state: green
+    - state: passenger
+
+- type: entity
+  parent: SpawnPointJobBase
+  id: CFSpawnPointBeta
+  name: Beta spawn
+  components:
+  - type: SpawnPoint
+    job_id: CFBeta
+  - type: Sprite
+    layers:
+    - state: green
+    - state: passenger
+
+- type: entity
+  parent: SpawnPointJobBase
+  id: CFSpawnPointCharlie
+  name: Charlie spawn
+  components:
+  - type: SpawnPoint
+    job_id: CFCharlie
+  - type: Sprite
+    layers:
+    - state: green
+    - state: passenger
+
+- type: entity
+  parent: SpawnPointJobBase
+  id: CFSpawnPointDelta
+  name: Delta spawn
+  components:
+  - type: SpawnPoint
+    job_id: CFDelta
+  - type: Sprite
+    layers:
+    - state: green
+    - state: passenger
+
+- type: entity
+  parent: SpawnPointJobBase
+  id: CFSpawnPointMerchant
+  name: Merchant spawn
+  components:
+  - type: SpawnPoint
+    job_id: CFMerchant
+  - type: Sprite
+    layers:
+    - state: green
+    - state: passenger
+
+- type: entity
+  parent: SpawnPointJobBase
+  id: CFSpawnPointArcaneResearcher
+  name: ArcaneResearcher spawn
+  components:
+  - type: SpawnPoint
+    job_id: CFArcaneResearcher
+  - type: Sprite
+    layers:
+    - state: green
+    - state: passenger
+
+- type: entity
+  parent: SpawnPointJobBase
+  id: CFSpawnPointArcaneArtificer
+  name: ArcaneArtificer spawn
+  components:
+  - type: SpawnPoint
+    job_id: CFArcaneArtificer
+  - type: Sprite
+    layers:
+    - state: green
+    - state: passenger

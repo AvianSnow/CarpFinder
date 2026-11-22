@@ -1,0 +1,69 @@
+# CarpFinder: Necromancer choices. Both need thralls.
+- type: cfClassChoice
+  id: FascinationBlood
+  class: Necromancer
+  slot: cf-class-choice-fascination
+  name: cf-class-choice-fascinationblood
+  description: cf-class-choice-fascinationblood-desc
+  grants:
+    - !type:CFGrantFocusSpell
+      spell: BloodInfusion
+    - !type:CFGrantThralls
+      bloodReturns: true
+
+- type: cfClassChoice
+  id: FascinationBone
+  class: Necromancer
+  slot: cf-class-choice-fascination
+  name: cf-class-choice-fascinationbone
+  description: cf-class-choice-fascinationbone-desc
+  grants:
+    - !type:CFGrantFocusSpell
+      spell: BoneSpear
+    - !type:CFGrantThralls
+      extraSpeed: 5
+
+- type: cfClassChoice
+  id: FascinationFlesh
+  class: Necromancer
+  slot: cf-class-choice-fascination
+  name: cf-class-choice-fascinationflesh
+  description: cf-class-choice-fascinationflesh-desc
+  grants:
+    - !type:CFGrantFocusSpell
+      spell: DeadWeight
+
+- type: cfClassChoice
+  id: FascinationSpirit
+  class: Necromancer
+  slot: cf-class-choice-fascination
+  name: cf-class-choice-fascinationspirit
+  description: cf-class-choice-fascinationspirit-desc
+  grants:
+    - !type:CFGrantFocusSpell
+      spell: LifeTap
+    - !type:CFGrantThralls
+      damageType: spirit
+
+- type: cfClassChoice
+  id: MethodPuppeteer
+  class: Necromancer
+  slot: cf-class-choice-fatal-method
+  name: cf-class-choice-methodpuppeteer
+  description: cf-class-choice-methodpuppeteer-desc
+  grants:
+    - !type:CFGrantThralls
+      extra: 1
+
+- type: cfClassChoice
+  id: MethodReaper
+  class: Necromancer
+  slot: cf-class-choice-fatal-method
+  name: cf-class-choice-methodreaper
+  description: cf-class-choice-methodreaper-desc
+  grants:
+    - !type:CFGrantProficiency
+      proficiencies:
+        - MartialWeapons
+        - MediumArmor
+      rank: Trained

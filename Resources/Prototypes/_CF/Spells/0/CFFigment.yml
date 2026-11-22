@@ -1,8 +1,8 @@
 ﻿- type: entity
-  parent: CFSpellInstant
+  parent: CFSpellArea
   id: CFFigment
   name: Figment
-  description: You create a brief illusory image or sound.
+  description: You conjure the image of a random item at a spot you can see. It vanishes if anyone tries to take it, and fades after a minute.
   components:
   - type: Sprite
     sprite: Objects/Magic/magicactions.rsi
@@ -15,8 +15,8 @@
     spell: Figment
     rank: 0
   - type: CFTargeting
-    filter: All
+    delivery: Point
+    rangeFeet: 30
   - type: CFDegreeEffects
     landed:
-    - !type:CFPopupEffect
-      text: cf-spell-affected
+    - !type:CFFigmentEffect

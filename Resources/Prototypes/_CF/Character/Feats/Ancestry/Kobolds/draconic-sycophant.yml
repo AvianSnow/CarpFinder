@@ -2,9 +2,20 @@
 # source: Carpfinder Lost Omens Draconic Codex
 - type: cfFeat
   id: CFDraconicSycophant
-  name: "Draconic Sycophant"
-  description: "+2 circumstance bonus to Perception. Not applied in play yet. +2 circumstance bonus to Saving Throw. Not applied in play yet."
+  name: cf-feat-draconic-sycophant
+  description: cf-feat-draconic-sycophant-desc
   ancestry: Kobold
   level: 1
   traits:
     - "Kobold"
+  grants:
+    - !type:CFGrantBonus
+      stat: Perception
+      type: Circumstance
+      value: 2
+      trait: Dragon
+    - !type:CFGrantBonus
+      stat: Saves
+      type: Circumstance
+      value: 2
+      trait: Dragon

@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens High Seas
 - type: cfFeat
   id: CFWaterweaveTripkee
-  name: "Waterweave Tripkee"
-  description: "Swim Speed 20 feet. Not applied in play yet."
+  name: cf-feat-waterweave-tripkee
+  description: cf-feat-waterweave-tripkee-desc
   ancestry: Tripkee
   level: 1
   traits:

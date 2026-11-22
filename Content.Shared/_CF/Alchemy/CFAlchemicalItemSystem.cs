@@ -1,4 +1,5 @@
 using Content.Shared.CF.Combat;
+using Content.Shared.CF.Effects;
 using Content.Shared.DoAfter;
 using Content.Shared.IdentityManagement;
 using Content.Shared.Interaction;
@@ -27,6 +28,7 @@ public sealed partial class CFAlchemicalItemSystem : EntitySystem
     [Dependency] private SharedDoAfterSystem _doAfter = default!;
     [Dependency] private CFDyingSystem _dying = default!;
     [Dependency] private CFCombatBridgeSystem _bridge = default!;
+    [Dependency] private CFEffectSystem _effects = default!;
 
     public override void Initialize()
     {
@@ -110,6 +112,13 @@ public sealed partial class CFAlchemicalItemSystem : EntitySystem
     {
         if (TryComp(item, out CFHealConsumableComponent? heal))
             ApplyHeal(item, heal, user, target);
+
+        if (TryComp(item, out CFDrinkEffectsComponent? drink) && drink.Effects.Count > 0)
+        {
+            _bridge.TryEnsureCombatTarget(target, out _, out _, out _);
+            var args = _effects.BuildArgs(item, user, target, null, null, out _);
+            _effects.Run(drink.Effects, args);
+        }
     }
 
     private void ApplyHeal(

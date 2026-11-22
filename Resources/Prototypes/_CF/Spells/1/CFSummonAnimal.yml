@@ -1,0 +1,28 @@
+- type: entity
+  parent: CFSpellArea
+  id: CFSummonAnimal
+  name: Summon Animal
+  description: Call an animal to a spot within 30 feet to fight for you for a minute. A giant rat, or a wolf from a rank 2 slot, or a boar from rank 3. Point at an enemy to send it there first. Only Dispel Magic sends it back sooner.
+  components:
+  - type: Sprite
+    sprite: Objects/Magic/magicactions.rsi
+    layers:
+    - state: spell_default
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 1
+  - type: CFSpell
+    spell: SummonAnimal
+    rank: 1
+  - type: CFTargeting
+    delivery: Point
+    rangeFeet: 30
+  # Player Core: an animal of level -1 at rank 1, level 1 at rank 2 and level 2 at rank 3.
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFSummonEffect
+      durationSeconds: 60
+      creatures:
+      - { rank: 1, prototype: CFSummonedGiantRat }
+      - { rank: 2, prototype: CFSummonedWolf }
+      - { rank: 3, prototype: CFSummonedBoar }

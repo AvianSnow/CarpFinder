@@ -2,11 +2,16 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFEsotericPolymath
-  name: "Esoteric Polymath"
-  description: "Requires polymath muse."
+  name: cf-feat-esoteric-polymath
+  description: cf-feat-esoteric-polymath-desc
   class: Bard
   level: 2
   traits:
     - "Bard"
   prerequisites:
     - "polymath muse"
+  requiresChoice:
+    - MusePolymath
+  choices:
+    - kind: SignatureSpell
+      daily: true

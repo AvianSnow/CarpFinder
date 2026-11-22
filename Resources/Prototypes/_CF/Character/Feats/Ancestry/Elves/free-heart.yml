@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Shining Kingdoms
 - type: cfFeat
   id: CFFreeHeart
-  name: "Free Heart"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-free-heart
+  description: cf-feat-free-heart-desc
   ancestry: Elf
   level: 1
   traits:

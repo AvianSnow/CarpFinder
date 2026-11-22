@@ -27,6 +27,206 @@
   inhand:
     - CFHealingPotionMinor
 
+- type: loadout
+  id: CFLoadoutThievesToolkit
+  inhand:
+    - CFThievesToolkit
+
+- type: loadout
+  id: CFLoadoutHealersToolkit
+  inhand:
+    - CFHealersToolkit
+
+- type: loadout
+  id: CFLoadoutCrowbar
+  inhand:
+    - CFCrowbar
+
+- type: loadout
+  id: CFLoadoutCrowbarLevered
+  inhand:
+    - CFCrowbarLevered
+
+- type: loadout
+  id: CFLoadoutFormulaBookTools
+  inhand:
+    - CFFormulaBookTools
+
+- type: loadout
+  id: CFLoadoutFormulaBookMaterials
+  inhand:
+    - CFFormulaBookMaterials
+
+- type: loadout
+  id: CFLoadoutFormulaBookWeapons
+  inhand:
+    - CFFormulaBookWeapons
+
+- type: loadout
+  id: CFLoadoutFormulaBookArmor
+  inhand:
+    - CFFormulaBookArmor
+
+- type: loadout
+  id: CFLoadoutFormulaBookClothing
+  inhand:
+    - CFFormulaBookClothing
+
+- type: loadout
+  id: CFLoadoutFormulaBookBags
+  inhand:
+    - CFFormulaBookBags
+
+- type: loadout
+  id: CFLoadoutFormulaBookBuilding
+  inhand:
+    - CFFormulaBookBuilding
+
+- type: loadout
+  id: CFLoadoutFormulaBookFood
+  inhand:
+    - CFFormulaBookFood
+
+- type: loadout
+  id: CFLoadoutFormulaBookFarming
+  inhand:
+    - CFFormulaBookFarming
+
+- type: loadout
+  id: CFLoadoutFormulaBookAlchemy
+  inhand:
+    - CFFormulaBookAlchemy
+
+- type: loadout
+  id: CFLoadoutFormulaBookGoods
+  inhand:
+    - CFFormulaBookGoods
+
+- type: loadout
+  id: CFLoadoutColdWeather
+  equipment:
+    outerClothing: CFClothingColdWeather
+
+- type: loadout
+  id: CFLoadoutDesertClothing
+  equipment:
+    outerClothing: CFClothingDesert
+
+- type: loadout
+  id: CFLoadoutDagger
+  inhand:
+    - CFDagger
+
+- type: loadout
+  id: CFLoadoutRapier
+  inhand:
+    - CFRapier
+
+- type: loadout
+  id: CFLoadoutScimitar
+  inhand:
+    - CFScimitar
+
+- type: loadout
+  id: CFLoadoutGreatsword
+  inhand:
+    - CFGreatsword
+
+- type: loadout
+  id: CFLoadoutBattleAxe
+  inhand:
+    - CFBattleAxe
+
+- type: loadout
+  id: CFLoadoutWarhammer
+  inhand:
+    - CFWarhammer
+
+- type: loadout
+  id: CFLoadoutSpear
+  inhand:
+    - CFSpear
+
+- type: loadout
+  id: CFLoadoutHatchet
+  inhand:
+    - CFHatchet
+
+- type: loadout
+  id: CFLoadoutSickle
+  inhand:
+    - CFSickle
+
+- type: loadout
+  id: CFLoadoutLightHammer
+  inhand:
+    - CFLightHammer
+
+- type: loadout
+  id: CFLoadoutPick
+  inhand:
+    - CFPick
+
+- type: loadout
+  id: CFLoadoutShortbow
+  inhand:
+    - CFShortbow
+
+- type: loadout
+  id: CFLoadoutCrossbow
+  inhand:
+    - CFCrossbow
+
+- type: loadout
+  id: CFLoadoutHeavyCrossbow
+  inhand:
+    - CFHeavyCrossbow
+
+- type: loadout
+  id: CFLoadoutDart
+  inhand:
+    - CFDart
+
+- type: loadout
+  id: CFLoadoutWoodenShield
+  inhand:
+    - CFWoodenShield
+
+- type: loadout
+  id: CFLoadoutBuckler
+  inhand:
+    - CFBuckler
+
+- type: loadout
+  id: CFLoadoutTowerShield
+  inhand:
+    - CFTowerShield
+
+- type: loadout
+  id: CFLoadoutChainShirt
+  equipment:
+    outerClothing: CFChainShirt
+
+- type: loadout
+  id: CFLoadoutHideArmor
+  equipment:
+    outerClothing: CFHideArmor
+
+- type: loadout
+  id: CFLoadoutChainMail
+  equipment:
+    outerClothing: CFChainMail
+
+- type: loadout
+  id: CFLoadoutBreastplate
+  equipment:
+    outerClothing: CFBreastplate
+
+- type: loadout
+  id: CFLoadoutHalfPlate
+  equipment:
+    outerClothing: CFHalfPlate
+
 - type: loadoutGroup
   id: CFWeaponsMelee
   name: cf-loadout-group-weapons
@@ -37,6 +237,21 @@
   loadouts:
     - CFLoadoutLongsword
     - CFLoadoutLongbow
+    - CFLoadoutDagger
+    - CFLoadoutRapier
+    - CFLoadoutScimitar
+    - CFLoadoutGreatsword
+    - CFLoadoutBattleAxe
+    - CFLoadoutWarhammer
+    - CFLoadoutSpear
+    - CFLoadoutHatchet
+    - CFLoadoutSickle
+    - CFLoadoutLightHammer
+    - CFLoadoutPick
+    - CFLoadoutShortbow
+    - CFLoadoutCrossbow
+    - CFLoadoutHeavyCrossbow
+    - CFLoadoutDart
 
 - type: loadoutGroup
   id: CFDefenseArmor
@@ -48,6 +263,14 @@
   loadouts:
     - CFLoadoutLeatherArmor
     - CFLoadoutSteelShield
+    - CFLoadoutWoodenShield
+    - CFLoadoutBuckler
+    - CFLoadoutTowerShield
+    - CFLoadoutChainShirt
+    - CFLoadoutHideArmor
+    - CFLoadoutChainMail
+    - CFLoadoutBreastplate
+    - CFLoadoutHalfPlate
 
 - type: loadoutGroup
   id: CFGearBasics
@@ -58,6 +281,23 @@
   editorTab: Gear
   loadouts:
     - CFLoadoutHealingPotion
+    - CFLoadoutThievesToolkit
+    - CFLoadoutHealersToolkit
+    - CFLoadoutCrowbar
+    - CFLoadoutCrowbarLevered
+    - CFLoadoutFormulaBookTools
+    - CFLoadoutFormulaBookMaterials
+    - CFLoadoutFormulaBookWeapons
+    - CFLoadoutFormulaBookArmor
+    - CFLoadoutFormulaBookClothing
+    - CFLoadoutFormulaBookBags
+    - CFLoadoutFormulaBookBuilding
+    - CFLoadoutFormulaBookFood
+    - CFLoadoutFormulaBookFarming
+    - CFLoadoutFormulaBookAlchemy
+    - CFLoadoutFormulaBookGoods
+    - CFLoadoutColdWeather
+    - CFLoadoutDesertClothing
 
 # roleLoadout ids must be Job<JobId> (see LoadoutSystem.GetJobPrototype).
 - type: roleLoadout

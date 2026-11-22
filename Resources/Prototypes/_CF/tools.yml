@@ -1,0 +1,13 @@
+- type: tool
+  id: CFDigging
+  name: cp14-tool-quality-digging-name
+  toolName: cp14-tool-quality-digging-tool-name
+  spawn: CFShovel
+  icon: { sprite: _CP14/Objects/Weapons/Melee/Shovel/iron.rsi, state: icon}
+
+- type: tool
+  id: CFHammering
+  name: cp14-tool-quality-hammering-name
+  toolName: cp14-tool-quality-hammering-tool-name
+  spawn: CFLightHammer
+  icon: { sprite: _CP14/Objects/Weapons/Melee/Hammer/iron.rsi, state: icon}

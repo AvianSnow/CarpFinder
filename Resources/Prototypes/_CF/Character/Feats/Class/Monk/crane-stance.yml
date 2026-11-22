@@ -2,12 +2,14 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFCraneStance
-  name: "Crane Stance"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-crane-stance
+  description: cf-feat-crane-stance-desc
   class: Monk
   level: 1
   traits:
     - "Monk"
     - "Stance"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActCraneStance

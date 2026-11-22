@@ -1,37 +1,58 @@
+using System.Numerics;
 using Content.Shared.Actions.Events;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Effects;
-using Content.Shared.CF.Factions;
+using Content.Shared.CF.Hazards;
 using Content.Shared.CF.Preferences;
 using Content.Shared.CF.Spells;
 using Content.Shared.Hands.EntitySystems;
-using Content.Shared.Mobs.Components;
+using Content.Shared.Mobs.Systems;
 using Content.Shared.Popups;
+using Content.Shared.Throwing;
+using Robust.Shared.Physics.Systems;
 using Robust.Shared.Network;
 using Robust.Shared.Random;
+using Robust.Shared.Timing;
 
 namespace Content.Shared.CF.Actions;
 
 /// <summary>
-/// Demoralize, Trip, and the other activities on the action wedge.
+/// The activities still on the action wedge. Most actions use stock inputs instead: see <see cref="CFManeuverSystem"/>.
 /// Class features and chosen feats are the same kind of action, granted at spawn.
 /// </summary>
 public sealed partial class CFActivitySystem : EntitySystem
 {
+    /// <summary>
+    /// How long Courageous Anthem lasts from the action. Printed as 1 round, which is too short with no turns, so it is
+    /// a real minute. Playing a held instrument keeps it going for as long as the music lasts instead.
+    /// </summary>
+    public static readonly TimeSpan AnthemLasts = TimeSpan.FromMinutes(1);
+
+    /// <summary>Stock's jump speed. A leap lands as soon as it has covered the distance.</summary>
+    private const float LeapThrowSpeed = 10f;
+
     [Dependency] private INetManager _net = default!;
+    [Dependency] private IGameTiming _timing = default!;
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private SharedHandsSystem _hands = default!;
     [Dependency] private CFConditionSystem _conditions = default!;
     [Dependency] private CFStrikeSystem _strikes = default!;
     [Dependency] private CFActionPoolSystem _actions = default!;
+    [Dependency] private CFManeuverSystem _maneuvers = default!;
     [Dependency] private CFBonusSystem _bonuses = default!;
-    [Dependency] private CFShieldSystem _shields = default!;
-    [Dependency] private CFFactionSystem _factions = default!;
-    [Dependency] private EntityLookupSystem _lookup = default!;
+    [Dependency] private CFTrapLayerSystem _traps = default!;
+    [Dependency] private CFSpellSystem _spells = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
+    [Dependency] private ThrowingSystem _throwing = default!;
+    [Dependency] private SharedPhysicsSystem _physics = default!;
+    [Dependency] private CFTemporaryHpSystem _tempHp = default!;
+    [Dependency] private CFAuraSystem _auras = default!;
+    [Dependency] private Robust.Shared.Prototypes.IPrototypeManager _prototypes = default!;
+    [Dependency] private CFEffectSystem _effects = default!;
+    [Dependency] private MobStateSystem _mobState = default!;
 
     [SubscribeLocalEvent]
     private void OnSpellAttempt(Entity<CFSpellComponent> spell, ref ActionAttemptEvent args)
@@ -48,19 +69,32 @@ public sealed partial class CFActivitySystem : EntitySystem
     {
         switch (ent.Comp.Kind)
         {
-            case CFActivityKind.RaiseShield when !TryShield(args.User, out _):
+            case CFActivityKind.Spellstrike when CompOrNull<CFCombatOptionsComponent>(args.User)?.SpellstrikeSpent == true:
                 args.Cancelled = true;
-                args.Reason = Loc.GetString("cf-act-no-shield");
-                break;
-            case CFActivityKind.Finisher
-                when !TryComp(args.User, out CFCombatOptionsComponent? style) || !style.Panache:
-                args.Cancelled = true;
-                args.Reason = Loc.GetString("cf-act-no-panache");
+                args.Reason = Loc.GetString("cf-act-spellstrike-spent");
                 break;
             case CFActivityKind.Rage
                 when !TryComp(args.User, out CFCombatOptionsComponent? rage) || !rage.CanRage:
                 args.Cancelled = true;
                 args.Reason = Loc.GetString("cf-act-cannot");
+                break;
+            case CFActivityKind.Rage
+                when CompOrNull<CFCombatOptionsComponent>(args.User)?.Raging != true
+                     && _conditions.Value(args.User, CFConditionKind.Fatigued) > 0:
+                args.Cancelled = true;
+                args.Reason = Loc.GetString("cf-act-rage-fatigued");
+                break;
+            case CFActivityKind.Leap when !_maneuvers.CanUse(args.User, CFBasicAction.Leap):
+                args.Cancelled = true;
+                args.Reason = Loc.GetString("cf-act-leap-cannot");
+                break;
+            case CFActivityKind.LeftHandBlood when !HoldsWeapon(args.User):
+                args.Cancelled = true;
+                args.Reason = Loc.GetString("cf-act-needs-weapon");
+                break;
+            case CFActivityKind.ConstructTrap when !_traps.CanConstruct(args.User):
+                args.Cancelled = true;
+                args.Reason = Loc.GetString("cf-trap-cannot");
                 break;
         }
     }
@@ -77,20 +111,54 @@ public sealed partial class CFActivitySystem : EntitySystem
 
         switch (ent.Comp.Kind)
         {
-            case CFActivityKind.RaiseShield:
-                if (TryShield(args.Performer, out _))
-                    _conditions.RaiseShield(args.Performer);
-                break;
             case CFActivityKind.Rage:
                 ToggleRage(args.Performer);
                 break;
-            case CFActivityKind.PointBlank:
-                TogglePointBlank(args.Performer);
+            case CFActivityKind.Anthem:
+                Anthem(args.Performer);
                 break;
-            case CFActivityKind.Inspire:
-                Inspire(args.Performer);
+            case CFActivityKind.Leap:
+                Leap(args.Performer);
+                break;
+            case CFActivityKind.ConstructTrap:
+                _traps.TryConstruct(args.Performer);
+                break;
+            case CFActivityKind.SpellstrikeRecharge:
+                RechargeSpellstrike(args.Performer);
+                break;
+            case CFActivityKind.TailToxin:
+                Envenom(args.Performer, dice: 0, die: 0, unarmedOnly: false);
+                break;
+            case CFActivityKind.EnvenomFangs:
+                Envenom(args.Performer, dice: 1, die: 6, unarmedOnly: true);
+                break;
+            case CFActivityKind.LeftHandBlood:
+                _effects.DealDamage(args.Performer, args.Performer, 1, "Slashing", critical: false);
+                Envenom(args.Performer, dice: 1, die: 4, unarmedOnly: false, anyWeapon: true);
+                break;
+            case CFActivityKind.SparkFist:
+                var fist = EnsureComp<CFCombatOptionsComponent>(args.Performer);
+                fist.SparkFistUntil = _timing.CurTime + TimeSpan.FromSeconds(6);
+                Dirty(args.Performer, fist);
+                _popup.PopupEntity(Loc.GetString("cf-act-spark-fist"), args.Performer, args.Performer);
                 break;
         }
+    }
+
+    /// <summary>
+    /// Venom on the creature's weapon or fangs for 6 seconds. Dice of 0 means persistent poison equal to the level.
+    /// <paramref name="anyWeapon"/> is poison on a held weapon, whatever kind of damage it deals.
+    /// </summary>
+    private void Envenom(EntityUid user, int dice, int die, bool unarmedOnly, bool anyWeapon = false)
+    {
+        var options = EnsureComp<CFCombatOptionsComponent>(user);
+        options.TailToxinUntil = _timing.CurTime + TimeSpan.FromSeconds(6);
+        options.ToxinDice = dice;
+        options.ToxinDie = die;
+        options.ToxinUnarmedOnly = unarmedOnly;
+        options.ToxinAnyWeapon = anyWeapon;
+        Dirty(user, options);
+        _popup.PopupEntity(Loc.GetString("cf-act-tail-toxin"), user, user);
     }
 
     [SubscribeLocalEvent]
@@ -103,8 +171,7 @@ public sealed partial class CFActivitySystem : EntitySystem
         if (!_net.IsServer)
             return;
 
-        if (_conditions.IsCalmed(args.Performer)
-            && ent.Comp.Kind is not CFActivityKind.Demoralize and not CFActivityKind.Feint)
+        if (_conditions.IsCalmed(args.Performer))
         {
             _popup.PopupEntity(Loc.GetString("cf-cond-calmed"), args.Performer, args.Performer);
             return;
@@ -112,119 +179,58 @@ public sealed partial class CFActivitySystem : EntitySystem
 
         switch (ent.Comp.Kind)
         {
+            case CFActivityKind.Flurry:
+                Flurry(args.Performer, args.Target);
+                break;
             case CFActivityKind.Demoralize:
                 _conditions.TryDemoralize(args.Performer, args.Target);
-                break;
-            case CFActivityKind.Trip:
-                Trip(args.Performer, args.Target);
-                break;
-            case CFActivityKind.Shove:
-                Shove(args.Performer, args.Target);
-                break;
-            case CFActivityKind.Grapple:
-                Grapple(args.Performer, args.Target);
                 break;
             case CFActivityKind.Feint:
                 _conditions.TryFeint(args.Performer, args.Target);
                 break;
-            case CFActivityKind.HuntPrey:
-                Mark(args.Performer, args.Target, prey: true);
-                break;
-            case CFActivityKind.Exploit:
-                Mark(args.Performer, args.Target, prey: false);
-                break;
-            case CFActivityKind.Stratagem:
-                Stratagem(args.Performer, args.Target);
-                break;
-            case CFActivityKind.Flurry:
-                Flurry(args.Performer, args.Target);
+            case CFActivityKind.OverextendingFeint:
+                _conditions.TryFeint(args.Performer, args.Target, overextending: true);
                 break;
             case CFActivityKind.Spellstrike:
                 Spellstrike(args.Performer, args.Target);
                 break;
-            case CFActivityKind.Finisher:
-                Finisher(args.Performer, args.Target);
-                break;
-            case CFActivityKind.DoubleSlice:
-                DoubleSlice(args.Performer, args.Target);
-                break;
-            case CFActivityKind.ExactingStrike:
-                Exacting(args.Performer, args.Target);
+            case CFActivityKind.MagusAnalysis:
+                _maneuvers.TryRecall(args.Performer, args.Target);
+                RechargeSpellstrike(args.Performer);
                 break;
             case CFActivityKind.SuddenCharge:
-                StrikeHeld(args.Performer, args.Target, extraDice: 0, snag: false);
-                break;
-            case CFActivityKind.SnaggingStrike:
-                StrikeHeld(args.Performer, args.Target, extraDice: 0, snag: true);
-                break;
-            case CFActivityKind.ViciousSwing:
-                StrikeHeld(args.Performer, args.Target, extraDice: 1, snag: false);
-                break;
-            case CFActivityKind.TwinFeint:
-                TwinFeint(args.Performer, args.Target);
-                break;
-            case CFActivityKind.TumbleBehind:
-                Tumble(args.Performer, args.Target);
+                StrikeHeld(args.Performer, args.Target);
                 break;
         }
     }
 
-    private void Trip(EntityUid user, EntityUid target)
+    private bool HoldsWeapon(EntityUid user)
     {
-        var bonus = ManeuverBonus(user, t => t.Trip);
-        var degree = _conditions.RollSkill(user, target, "Athletics", CFAbility.Strength, CFDefenseType.Reflex, attackTrait: true, bonus);
-        if (degree is CFDegree.CriticalFailure)
+        foreach (var held in _hands.EnumerateHeld(user))
         {
-            _conditions.KnockProne(user);
-            return;
+            if (HasComp<CFWeaponComponent>(held))
+                return true;
         }
 
-        if (degree is not (CFDegree.Success or CFDegree.CriticalSuccess))
-        {
-            _popup.PopupEntity(Loc.GetString("cf-act-trip-fail"), user, user);
-            return;
-        }
-
-        _conditions.KnockProne(target);
-        if (degree == CFDegree.CriticalSuccess)
-            _conditions.SetOffGuardAll(target, 6f);
+        return false;
     }
 
-    private void Shove(EntityUid user, EntityUid target)
-    {
-        var bonus = ManeuverBonus(user, t => t.Shove);
-        var degree = _conditions.RollSkill(user, target, "Athletics", CFAbility.Strength, CFDefenseType.Fortitude, attackTrait: true, bonus);
-        if (degree is not (CFDegree.Success or CFDegree.CriticalSuccess))
-        {
-            _popup.PopupEntity(Loc.GetString("cf-act-shove-fail"), user, user);
-            return;
-        }
+    /// <summary>How long fatigue lasts: a minute of real time. The rules end it with a 10 minute rest.</summary>
+    public const float FatigueSeconds = 60f;
 
-        _conditions.ReleaseGrab(target);
-        _conditions.Push(user, target, degree == CFDegree.CriticalSuccess ? 10 : 5);
-        if (degree == CFDegree.CriticalSuccess)
-            _conditions.KnockProne(target);
-        else
-            _popup.PopupEntity(Loc.GetString("cf-act-shove"), target);
+    /// <summary>Fatigued for <see cref="FatigueSeconds"/>, as after Second Wind or Furious Finish. A fatigued creature cannot Rage.</summary>
+    public void Fatigue(EntityUid user)
+    {
+        _conditions.ApplyCondition(user, CFConditionKind.Fatigued, 1, FatigueSeconds, user, 0);
     }
 
-    private void Grapple(EntityUid user, EntityUid target)
+    /// <summary>How many rounds of the creature's Rage are left, for Furious Finish. 0 when it is not raging.</summary>
+    public int RageRoundsLeft(EntityUid user)
     {
-        var bonus = ManeuverBonus(user, t => t.Grapple);
-        var degree = _conditions.RollSkill(user, target, "Athletics", CFAbility.Strength, CFDefenseType.Fortitude, attackTrait: true, bonus);
-        if (degree == CFDegree.CriticalFailure)
-        {
-            _conditions.ApplyGrabbed(user, target);
-            return;
-        }
+        if (!TryComp(user, out CFRagingComponent? raging))
+            return 0;
 
-        if (degree is not (CFDegree.Success or CFDegree.CriticalSuccess))
-        {
-            _popup.PopupEntity(Loc.GetString("cf-act-grapple-fail"), user, user);
-            return;
-        }
-
-        _conditions.ApplyGrabbed(target, user);
+        return Math.Clamp((int) Math.Ceiling((raging.EndsAt - _timing.CurTime).TotalSeconds / 6.0), 0, 10);
     }
 
     private void ToggleRage(EntityUid user)
@@ -232,20 +238,73 @@ public sealed partial class CFActivitySystem : EntitySystem
         if (!TryComp(user, out CFCombatOptionsComponent? opt) || !opt.CanRage)
             return;
 
-        opt.Raging = !opt.Raging;
-        Dirty(user, opt);
+        SetRaging(user, !opt.Raging);
         _popup.PopupEntity(Loc.GetString(opt.Raging ? "cf-act-rage-start" : "cf-act-rage-end"), user, user);
     }
 
-    private void TogglePointBlank(EntityUid user)
+    public const string RageSource = "rage";
+    private static readonly TimeSpan RageTempHpWait = TimeSpan.FromMinutes(1);
+
+    /// <summary>How long a Rage lasts. The player may also end it sooner, which stands in for the encounter ending.</summary>
+    public static readonly TimeSpan RageLasts = TimeSpan.FromMinutes(1);
+
+    public override void Update(float frameTime)
     {
-        var opt = EnsureComp<CFCombatOptionsComponent>(user);
-        opt.PointBlank = !opt.PointBlank;
-        Dirty(user, opt);
-        _popup.PopupEntity(Loc.GetString(opt.PointBlank ? "cf-act-point-blank" : "cf-act-point-blank-end"), user, user);
+        base.Update(frameTime);
+        if (!_net.IsServer)
+            return;
+
+        var now = _timing.CurTime;
+        var query = EntityQueryEnumerator<CFRagingComponent>();
+        while (query.MoveNext(out var uid, out var raging))
+        {
+            if (now < raging.EndsAt && _mobState.IsAlive(uid))
+                continue;
+
+            SetRaging(uid, false);
+            _popup.PopupEntity(Loc.GetString("cf-act-rage-end"), uid, uid);
+        }
     }
 
-    private void Mark(EntityUid user, EntityUid target, bool prey)
+    /// <summary>
+    /// Starts or ends a Rage. Starting gives temporary Hit Points equal to level plus Constitution modifier, but only once a
+    /// minute unless the creature has Second Wind. They last until the Rage ends, which it does after
+    /// <see cref="RageLasts"/> or when the creature drops.
+    /// </summary>
+    public void SetRaging(EntityUid user, bool raging)
+    {
+        var opt = EnsureComp<CFCombatOptionsComponent>(user);
+        if (opt.Raging == raging)
+            return;
+
+        opt.Raging = raging;
+        if (raging)
+        {
+            var now = _timing.CurTime;
+            EnsureComp<CFRagingComponent>(user).EndsAt = now + RageLasts;
+            if (opt.SecondWind || now >= opt.RageTempHpReadyAt)
+            {
+                // Second Wind takes the temporary Hit Points early, and pays for it with fatigue when the Rage ends.
+                EnsureComp<CFRagingComponent>(user).Tiring = now < opt.RageTempHpReadyAt;
+                var level = CompOrNull<CFCombatantComponent>(user)?.Level ?? 1;
+                var constitution = CompOrNull<CFAbilityScoreComponent>(user)?.GetModifier(CFAbility.Constitution) ?? 0;
+                _tempHp.Grant(user, level + constitution, 0f, RageSource);
+                opt.RageTempHpReadyAt = now + RageTempHpWait;
+            }
+        }
+        else
+        {
+            if (CompOrNull<CFRagingComponent>(user)?.Tiring == true)
+                Fatigue(user);
+
+            RemCompDeferred<CFRagingComponent>(user);
+            _tempHp.Clear(user, RageSource);
+        }
+
+        Dirty(user, opt);
+    }
+
+    public void Mark(EntityUid user, EntityUid target, bool prey)
     {
         var opt = EnsureComp<CFCombatOptionsComponent>(user);
         if (prey)
@@ -253,6 +312,8 @@ public sealed partial class CFActivitySystem : EntitySystem
             opt.Prey = target;
             opt.PreyHitThisTurn = false;
             _popup.PopupEntity(Loc.GetString("cf-act-hunt-prey"), user, user);
+            if (opt.MonsterHunter)
+                _maneuvers.TryRecall(user, target, free: true);
         }
         else
         {
@@ -264,20 +325,33 @@ public sealed partial class CFActivitySystem : EntitySystem
         Dirty(user, opt);
     }
 
-    private void Stratagem(EntityUid user, EntityUid target)
+    public void Stratagem(EntityUid user, EntityUid target)
     {
         var opt = EnsureComp<CFCombatOptionsComponent>(user);
         opt.StratagemRoll = _random.Next(1, 21);
         opt.StratagemTarget = target;
         Dirty(user, opt);
+        if (opt.KnownWeaknesses)
+            _maneuvers.TryRecall(user, target, free: true);
         _popup.PopupEntity(Loc.GetString("cf-act-stratagem", ("roll", opt.StratagemRoll)), user, user);
     }
 
     private void Flurry(EntityUid user, EntityUid target)
     {
         var stats = _strikes.UnarmedStats(user);
-        _strikes.PerformStrike(user, target, stats, user, melee: true);
-        _strikes.PerformStrike(user, target, stats, user, melee: true);
+        var hurt = false;
+        void Resolved(CFDegree degree, int damage) => hurt |= degree.IsSuccess() && damage > 0;
+        _strikes.PerformStrike(user, target, stats, user, melee: true, resolved: Resolved);
+        _strikes.PerformStrike(user, target, stats, user, melee: true, resolved: Resolved);
+
+        // Stunning Blows: both Strikes went at one creature, so one that hurt it may stun.
+        if (!hurt || CompOrNull<CFCombatOptionsComponent>(user)?.StunningBlows != true)
+            return;
+
+        var dc = CFCasting.ClassDc(_prototypes, CompOrNull<CFCombatantComponent>(user), CompOrNull<CFAbilityScoreComponent>(user)).Dc;
+        var save = _conditions.RollDefense(target, CFDefenseType.Fortitude, dc, out _);
+        if (!save.IsSuccess())
+            _conditions.ApplyCondition(target, CFConditionKind.Stunned, save == CFDegree.CriticalFailure ? 3 : 1, 0f, user, 0);
     }
 
     private void Spellstrike(EntityUid user, EntityUid target)
@@ -287,19 +361,10 @@ public sealed partial class CFActivitySystem : EntitySystem
 
         var dice = 1;
         var die = 8;
-        if (TryComp(user, out CFSpellbookComponent? book) && book.Slots.Count > 1 && book.Slots[1] > 0)
+        if (_spells.TrySpendAnySlot(user, 1))
         {
-            var spent = book.Expended.Count > 1 ? book.Expended[1] : 0;
-            if (spent < book.Slots[1])
-            {
-                while (book.Expended.Count <= 1)
-                    book.Expended.Add(0);
-
-                book.Expended[1]++;
-                Dirty(user, book);
-                dice = 2;
-                die = 6;
-            }
+            dice = 2;
+            die = 6;
         }
 
         var bonus = 0;
@@ -307,9 +372,25 @@ public sealed partial class CFActivitySystem : EntitySystem
             bonus += _random.Next(1, die + 1);
 
         _strikes.PerformStrike(user, target, stats, weapon, melee: true, bonusDamage: bonus);
+        if (TryComp(user, out CFCombatOptionsComponent? options))
+        {
+            options.SpellstrikeSpent = true;
+            Dirty(user, options);
+        }
     }
 
-    private void Finisher(EntityUid user, EntityUid target)
+    /// <summary>Makes Spellstrike ready again.</summary>
+    public void RechargeSpellstrike(EntityUid user)
+    {
+        if (!TryComp(user, out CFCombatOptionsComponent? options) || !options.SpellstrikeSpent)
+            return;
+
+        options.SpellstrikeSpent = false;
+        Dirty(user, options);
+        _popup.PopupEntity(Loc.GetString("cf-act-spellstrike-ready"), user, user);
+    }
+
+    public void Finisher(EntityUid user, EntityUid target)
     {
         if (!TryComp(user, out CFCombatOptionsComponent? opt) || !opt.Panache)
             return;
@@ -317,98 +398,79 @@ public sealed partial class CFActivitySystem : EntitySystem
         if (!_strikes.TryMeleeWeapon(user, out var stats, out var weapon))
             return;
 
-        _strikes.PerformStrike(user, target, stats, weapon, melee: true, finisher: true);
+        // Spent first, so a finisher that drops its target can earn panache back.
         opt.Panache = false;
         Dirty(user, opt);
+        _strikes.PerformStrike(user, target, stats, weapon, melee: true, finisher: true);
     }
 
-    private void DoubleSlice(EntityUid user, EntityUid target)
+    private void StrikeHeld(EntityUid user, EntityUid target)
     {
-        if (!_strikes.TryMeleeWeapon(user, out var stats, out var weapon))
+        if (_strikes.TryMeleeWeapon(user, out var stats, out var weapon))
+            _strikes.PerformStrike(user, target, stats, weapon, melee: true);
+    }
+
+    /// <summary>Leap: 10 feet at Speed 15, 15 feet at Speed 30, and none below that.</summary>
+    public static int LeapTiles(int speedFeet)
+    {
+        return speedFeet >= 30 ? 3 : speedFeet >= 15 ? 2 : 0;
+    }
+
+    /// <summary>Jumps the way the creature faces. Combat mode turns it to the cursor, so that is where it aims.</summary>
+    public void Leap(EntityUid user)
+    {
+        var tiles = LeapTiles(CompOrNull<CFCombatantComponent>(user)?.SpeedFeet ?? 0);
+        if (tiles == 0)
             return;
 
-        var map = _actions.MapPenalty(user, stats.Agile);
-        _strikes.PerformStrike(user, target, stats, weapon, melee: true, fixedMap: map);
-        var second = stats.Agile ? 0 : -2;
-        _strikes.PerformStrike(user, target, stats, weapon, melee: true, fixedMap: map, attackPenalty: second);
+        if (CompOrNull<CFCombatOptionsComponent>(user)?.DancingLeaf == true)
+            tiles++;
+
+        LeapBy(user, tiles);
     }
 
-    private void Exacting(EntityUid user, EntityUid target)
+    /// <summary>Jumps the way the creature faces, this many tiles.</summary>
+    public void LeapBy(EntityUid user, float tiles)
     {
-        if (!_strikes.TryMeleeWeapon(user, out var stats, out var weapon))
-            return;
-
-        var hit = _strikes.PerformStrike(user, target, stats, weapon, melee: true);
-        if (!hit)
-            _actions.UndoAttack(user);
+        var xform = Transform(user);
+        var landing = xform.Coordinates.Offset(xform.LocalRotation.ToWorldVec() * tiles);
+        EnsureComp<CFLeapingComponent>(user);
+        _throwing.TryThrow(user, landing, LeapThrowSpeed, doSpin: false);
     }
 
-    private void StrikeHeld(EntityUid user, EntityUid target, int extraDice, bool snag)
+    /// <summary>
+    /// A Leap covers its distance and no more: the creature stops where it lands, instead of sliding on at the
+    /// speed of the throw. Standing still there, whatever is under it is what it landed on, an opening included.
+    /// </summary>
+    [SubscribeLocalEvent]
+    private void OnLeapEnded(Entity<CFLeapingComponent> ent, ref StopThrowEvent args)
     {
-        if (!_strikes.TryMeleeWeapon(user, out var stats, out var weapon))
-            return;
-
-        var hit = _strikes.PerformStrike(user, target, stats, weapon, melee: true, extraDice: extraDice);
-        if (hit && snag)
-            _conditions.SetOffGuardAll(target, 6f);
+        _physics.SetLinearVelocity(ent, Vector2.Zero);
+        RemComp<CFLeapingComponent>(ent);
     }
 
-    private void TwinFeint(EntityUid user, EntityUid target)
+    /// <summary>
+    /// Courageous Anthem for <see cref="AnthemLasts"/>: +1 status to attack rolls, damage rolls, and saves against fear
+    /// for the Bard and allies within 60 feet, as an aura that follows the Bard.
+    /// </summary>
+    public void Anthem(EntityUid user)
     {
-        _conditions.TryFeint(user, target);
-        StrikeHeld(user, target, extraDice: 0, snag: false);
+        Anthem(user, AnthemLasts);
     }
 
-    private void Tumble(EntityUid user, EntityUid target)
+    public void Anthem(EntityUid user, TimeSpan lasts)
     {
-        var degree = _conditions.RollSkill(user, target, "Acrobatics", CFAbility.Dexterity, CFDefenseType.Reflex);
-        if (degree is not (CFDegree.Success or CFDegree.CriticalSuccess))
-        {
-            _popup.PopupEntity(Loc.GetString("cf-act-tumble-fail"), user, user);
-            return;
-        }
-
-        _conditions.SetOffGuardTo(target, user, 6f);
-        _popup.PopupEntity(Loc.GetString("cf-act-tumble"), user, user);
-    }
-
-    private void Inspire(EntityUid user)
-    {
-        Buff(user);
-        var origin = _transform.GetMapCoordinates(user);
-        foreach (var uid in _lookup.GetEntitiesInRange(origin, 12f))
-        {
-            if (uid == user || !HasComp<MobStateComponent>(uid) || _factions.CanHarm(user, uid))
-                continue;
-
-            Buff(uid);
-        }
-
-        _popup.PopupEntity(Loc.GetString("cf-act-inspire"), user, user);
-    }
-
-    private void Buff(EntityUid ally)
-    {
-        _bonuses.AddBonus(ally, CFBonusStat.AttackRoll, CFBonusType.Status, 1, 12f);
-        _bonuses.AddBonus(ally, CFBonusStat.Saves, CFBonusType.Status, 1, 12f);
-    }
-
-    /// <summary>A held shield that is not broken can be raised.</summary>
-    private bool TryShield(EntityUid user, out CFShieldComponent? shield)
-    {
-        shield = null;
-        if (!_shields.TryGetHeldShield(user, out var held) || held.Comp.Broken)
-            return false;
-
-        shield = held.Comp;
-        return true;
+        var started = !_auras.AnthemActive(user);
+        _auras.Anthem(user, lasts);
+        if (started)
+            _popup.PopupEntity(Loc.GetString("cf-act-anthem"), user, user);
     }
 
     /// <summary>
     /// The item bonus a maneuver gets from the held weapon: its potency, when it has the matching trait
     /// (trip, shove, grapple, disarm). Fists have none.
     /// </summary>
-    private int ManeuverBonus(EntityUid user, Func<CFWeaponTraits, bool> hasTrait)
+    public int ManeuverBonus(EntityUid user, Func<CFWeaponTraits, bool> hasTrait)
     {
         if (!_strikes.TryMeleeWeapon(user, out var weapon, out var weaponUid) || weaponUid == user)
             return 0;

@@ -1,0 +1,168 @@
+# Crafting stations, from CP14's workbenchs.yml, anvil.yml and furnace.yml.
+# Materials are placed on top; ItemPlacer tracks them.
+
+- type: entity
+  abstract: true
+  parent: BaseStructure
+  id: CFBaseWorkbench
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    snapCardinals: true
+    sprite: _CP14/Structures/Furniture/workbench.rsi
+    state: filler
+  - type: Icon
+    sprite: _CP14/Structures/Furniture/workbench.rsi
+    state: filler
+  - type: ActivatableUI
+    key: enum.CFWorkbenchUiKey.Key
+    requiresComplex: true
+    singleUser: true
+  - type: UserInterface
+    interfaces:
+      enum.CFWorkbenchUiKey.Key:
+        type: CFWorkbenchBoundUserInterface
+  - type: Climbable
+  - type: Clickable
+  - type: InteractionOutline
+  - type: PlaceableSurface
+  - type: ItemPlacer
+    maxEntities: 0
+  - type: Damageable
+    damageModifierSet: Wood
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 60
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: WoodDestroy
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.45,-0.45,0.45,0.45"
+        density: 55
+        mask:
+        - TableMask
+        layer:
+        - TableLayer
+      fix2:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.4,-0.4,0.4,0.4"
+        mask:
+        - TabletopMachineMask
+        layer:
+        - Impassable
+        - MidImpassable
+        - LowImpassable
+        hard: false
+
+- type: entity
+  parent: CFBaseWorkbench
+  id: CFWorkbench
+  name: workbench
+  description: A table for making basic tools.
+  components:
+  - type: Sprite
+    state: workbench
+  - type: Icon
+    state: workbench
+  - type: CFWorkbench
+    recipeTags:
+    - CFRecipeWorkbench
+  - type: Construction
+    graph: CFWorkbench
+    node: CFWorkbench
+
+- type: entity
+  parent: CFBaseWorkbench
+  id: CFWorkbenchSewing
+  name: sewing table
+  description: A table with embroidery tools for making clothing and cloth.
+  components:
+  - type: Sprite
+    state: sewing_table
+  - type: Icon
+    state: sewing_table
+  - type: CFWorkbench
+    recipeTags:
+    - CFRecipeSewing
+  - type: Construction
+    graph: CFWorkbenchSewing
+    node: CFWorkbenchSewing
+
+- type: entity
+  parent: CFBaseWorkbench
+  id: CFWorkbenchLeather
+  name: tanner table
+  description: A table for processing leather and making leather goods.
+  components:
+  - type: Sprite
+    state: tanner_table
+  - type: Icon
+    state: tanner_table
+  - type: CFWorkbench
+    recipeTags:
+    - CFRecipeLeatherWorking
+  - type: Construction
+    graph: CFWorkbenchLeather
+    node: CFWorkbenchLeather
+
+- type: entity
+  parent: CFBaseWorkbench
+  id: CFWorkbenchAnvil
+  name: anvil
+  description: A big piece of metal for beating other metal into useful shapes.
+  components:
+  - type: Sprite
+    snapCardinals: false
+    sprite: _CP14/Structures/Specific/Blacksmith/anvil.rsi
+    state: icon
+  - type: Icon
+    sprite: _CP14/Structures/Specific/Blacksmith/anvil.rsi
+    state: icon
+  - type: Damageable
+    damageModifierSet: Metallic
+  - type: CFWorkbench
+    recipeTags:
+    - CFRecipeAnvil
+  - type: Construction
+    graph: CFWorkbenchAnvil
+    node: CFWorkbenchAnvil
+
+- type: entity
+  parent: CFBaseWorkbench
+  id: CFWorkbenchFurnace
+  name: melting furnace
+  description: A red-hot stone construction for smelting ore into pure metal.
+  components:
+  - type: Sprite
+    snapCardinals: false
+    drawdepth: Mobs
+    sprite: _CP14/Structures/Specific/Blacksmith/furnace.rsi
+    layers:
+    - state: base
+    - state: fire
+      shader: unshaded
+  - type: Icon
+    sprite: _CP14/Structures/Specific/Blacksmith/furnace.rsi
+    state: base
+  - type: Damageable
+    damageModifierSet: Metallic
+  - type: PointLight
+    color: "#99411f"
+    radius: 2
+    energy: 2
+  - type: CFWorkbench
+    recipeTags:
+    - CFRecipeMeltingFurnace
+  - type: Construction
+    graph: CFWorkbenchFurnace
+    node: CFWorkbenchFurnace

@@ -2,12 +2,18 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFCounterspellPreparedWizard
-  name: "Counterspell (Prepared)"
-  description: "Reaction. This feature will be implemented later."
+  name: cf-feat-counterspell-prepared-wizard
+  description: cf-feat-counterspell-prepared-wizard-desc
   class: Wizard
   level: 1
   traits:
     - "Witch"
     - "Wizard"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-counterspell
+        trigger: EnemyCastsSpell
+        counterspellPrepared: true
+        rangeFeet: 60

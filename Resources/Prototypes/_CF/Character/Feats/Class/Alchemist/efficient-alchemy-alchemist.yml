@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFEfficientAlchemyAlchemist
-  name: "Efficient Alchemy (Alchemist)"
-  description: "Requires advanced alchemy."
+  name: cf-feat-efficient-alchemy-alchemist
+  description: cf-feat-efficient-alchemy-alchemist-desc
   class: Alchemist
   level: 4
   traits:

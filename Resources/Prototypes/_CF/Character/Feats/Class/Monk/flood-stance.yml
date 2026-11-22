@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Rival Academies
 - type: cfFeat
   id: CFFloodStance
-  name: "Flood Stance"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-flood-stance
+  description: cf-feat-flood-stance-desc
   class: Monk
   level: 1
   rarity: Uncommon

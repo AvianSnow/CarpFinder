@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFTitanSlinger
-  name: "Titan Slinger"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-titan-slinger
+  description: cf-feat-titan-slinger-desc
   ancestry: Halfling
   level: 1
   traits:

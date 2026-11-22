@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFCombatReading
-  name: "Combat Reading"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-combat-reading
+  description: cf-feat-combat-reading-desc
   class: Bard
   level: 4
   traits:

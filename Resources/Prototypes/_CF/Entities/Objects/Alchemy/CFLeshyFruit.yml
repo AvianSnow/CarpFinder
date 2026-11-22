@@ -1,0 +1,43 @@
+# The fruit a Fruit Leshy grows each day. Eaten, it restores 1d8 Hit Points.
+# https://2e.aonprd.com/Heritages.aspx?Ancestry=... (Fruit Leshy, Player Core 2)
+# It is only 1d8 so far: the extra healing at higher levels is TBA.
+
+- type: entity
+  parent: BaseItem
+  id: CFLeshyFruit
+  name: leshy fruit
+  description: A fruit grown from a leshy's own body. Eaten fresh, it restores 1d8 Hit Points.
+  components:
+  - type: Sprite
+    sprite: Objects/Specific/Hydroponics/apple.rsi
+    state: produce
+  - type: Item
+    size: Tiny
+    sprite: Objects/Specific/Hydroponics/apple.rsi
+  - type: Tag
+    tags:
+    - CFConsumable
+    - CFHealing
+  - type: CFTrait
+    traits:
+    - Consumable
+    - Healing
+    - Primal
+  - type: CFAlchemicalItem
+    itemLevel: 1
+    priceGp: 0
+    consumable: true
+    bulk: L
+    delay: 1
+    forceFeedDelay: 3
+    useSound:
+      path: /Audio/Items/eating_1.ogg
+      params:
+        volume: -2
+        variation: 0.25
+  - type: CFItemUse
+    uses: Heals
+  - type: CFHealConsumable
+    healDice: 1
+    healDie: 8
+    healBonus: 0

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFCroakTalker
-  name: "Croak Talker"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-croak-talker
+  description: cf-feat-croak-talker-desc
   ancestry: Tripkee
   level: 1
   traits:

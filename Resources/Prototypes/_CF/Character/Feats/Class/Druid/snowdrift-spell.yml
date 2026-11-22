@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFSnowdriftSpell
-  name: "Snowdrift Spell"
-  description: "Requires storm order. Changes an item. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-snowdrift-spell
+  description: cf-feat-snowdrift-spell-desc
   class: Druid
   level: 4
   traits:
@@ -14,4 +14,8 @@
   prerequisites:
     - "storm order"
   action: Action
-  pendingAction: true
+  requiresChoice:
+    - OrderStorm
+  grants:
+    - !type:CFGrantAction
+      action: CFActSnowdriftSpell

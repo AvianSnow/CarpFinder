@@ -2,11 +2,19 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFLuckyBreak
-  name: "Lucky Break"
-  description: "Requires Cat's Luck."
+  name: cf-feat-lucky-break
+  description: cf-feat-lucky-break-desc
   ancestry: Catfolk
   level: 5
   traits:
     - "Catfolk"
   prerequisites:
     - "Cat's Luck"
+  requiresFeats:
+    - CFCatsLuck
+  grants:
+    - !type:CFGrantWidenReaction
+      name: cf-feat-cats-luck
+      anySave: true
+      andSkillChecks: true
+      skills: [Acrobatics, Athletics]

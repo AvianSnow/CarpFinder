@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFFarLobber
-  name: "Far Lobber"
-  description: "This feature will be implemented later."
+  name: cf-feat-far-lobber
+  description: cf-feat-far-lobber-desc
   class: Alchemist
   level: 1
   traits:

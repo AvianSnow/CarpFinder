@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Draconic Codex
 - type: cfFeat
   id: CFTiptheScales
-  name: "Tip the Scales"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-tipthe-scales
+  description: cf-feat-tipthe-scales-desc
   ancestry: Kobold
   level: 5
   traits:

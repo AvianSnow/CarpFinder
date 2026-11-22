@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Rival Academies
 - type: cfFeat
   id: CFConvergentTides
-  name: "Convergent Tides"
-  description: "Requires Arcane Cascade."
+  name: cf-feat-convergent-tides
+  description: cf-feat-convergent-tides-desc
   class: Magus
   level: 2
   rarity: Uncommon

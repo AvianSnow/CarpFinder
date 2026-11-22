@@ -2,7 +2,7 @@
   parent: CFSpellTarget
   id: CFStabilize
   name: Stabilize
-  description: A dying creature loses the dying condition and stays unconscious at 0 Hit Points.
+  description: A dying creature loses the dying condition and wakes at 1 Hit Point.
   components:
   - type: Sprite
     sprite: Objects/Magic/magicactions.rsi

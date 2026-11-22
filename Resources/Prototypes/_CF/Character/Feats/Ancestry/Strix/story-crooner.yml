@@ -2,12 +2,19 @@
 # source: Carpfinder Lost Omens Cheliax, Infernal Inheritance
 - type: cfFeat
   id: CFStoryCrooner
-  name: "Story Crooner"
-  description: "Trained in Performance. Also grants Impressive Performance. +1 circumstance bonus to Performance. Not applied in play yet. TBA - action will be added"
+  name: cf-feat-story-crooner
+  description: cf-feat-story-crooner-desc
   ancestry: Strix
   level: 1
   traits:
     - "Strix"
   trainedSkills:
     - Performance
-  pendingAction: true
+  grants:
+    - !type:CFGrantBonus
+      stat: SkillChecks
+      type: Circumstance
+      value: 1
+      skill: Performance
+    - !type:CFGrantFeat
+      feat: CFImpressivePerformance

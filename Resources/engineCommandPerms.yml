@@ -113,7 +113,8 @@
 - Flags: MODERATOR
   Commands:
   - kick
-  - respawn
+# CarpFinder: respawn is open to everyone, and RespawnCommand lets only moderators name someone else.
+#  - respawn
 
 - Flags: HOST
   Commands:
@@ -143,3 +144,4 @@
   - "|"
   - loglevel
   - oldhelp
+  - respawn # CarpFinder: players can send themselves back to the lobby

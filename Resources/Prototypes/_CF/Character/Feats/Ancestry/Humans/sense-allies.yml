@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFSenseAllies
-  name: "Sense Allies"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-sense-allies
+  description: cf-feat-sense-allies-desc
   ancestry: Human
   level: 5
   traits:

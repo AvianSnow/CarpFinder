@@ -1,0 +1,49 @@
+# Ported from CP14 by the CF converter.
+
+- type: construction
+  id: CFWindowWooden
+  graph: CFWindowWooden
+  startNode: start
+  targetNode: CFWindowWooden
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFWindowWoodenBirch
+  graph: CFWindowWooden
+  startNode: start
+  targetNode: CFWindowWoodenBirch
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+  - !type:TileNotBlocked
+
+- type: construction
+  id: CFWindowStoneBrick
+  graph: CFWindowStoneBrick
+  startNode: start
+  targetNode: CFWindowStoneBrick
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFWindowMarbleBrick
+  graph: CFWindowMarbleBrick
+  startNode: start
+  targetNode: CFWindowMarbleBrick
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked

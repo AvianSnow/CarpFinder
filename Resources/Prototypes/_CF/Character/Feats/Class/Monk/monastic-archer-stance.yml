@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFMonasticArcherStance
-  name: "Monastic Archer Stance"
-  description: "Ancestry weapons count as a simpler group for proficiency. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-monastic-archer-stance
+  description: cf-feat-monastic-archer-stance-desc
   class: Monk
   level: 1
   traits:

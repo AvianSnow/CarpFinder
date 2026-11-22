@@ -1,0 +1,29 @@
+# A wall ladder is nailed up from planks and pried back down. CrystallEdge places it from a folded ladder item;
+# here it comes from the construction menu, as our other wall mounts do.
+
+- type: constructionGraph
+  id: CFWoodenLadder
+  start: start
+  graph:
+    - node: start
+      edges:
+        - to: CFWoodenLadder
+          completed:
+            - !type:SnapToGrid
+          steps:
+            - material: CFWoodenPlanks
+              amount: 4
+              doAfter: 3
+
+    - node: CFWoodenLadder
+      entity: CFWoodenLadder
+      edges:
+        - to: start
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFWoodenPlanks1
+              amount: 3
+            - !type:DeleteEntity {}
+          steps:
+            - tool: Prying
+              doAfter: 2

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFIronFists
-  name: "Iron Fists"
-  description: "Your fist Strike deals 1d6 bludgeoning."
+  name: cf-feat-iron-fists
+  description: cf-feat-iron-fists-desc
   ancestry: Orc
   level: 1
   traits:

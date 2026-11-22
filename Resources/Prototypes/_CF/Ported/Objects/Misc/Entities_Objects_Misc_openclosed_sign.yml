@@ -1,0 +1,80 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  id: CFOpenSign
+  name: flip sign "Open"
+  description: A small double-sided sign that can be turned over
+  parent: 
+  - BaseItem
+  - CFBaseFlammable
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    noRot: true
+    sprite: _CP14/Objects/Misc/openclosed_sign.rsi
+    layers:
+      - state: table_sign
+      - state: en_open_sign
+        map: [signState]
+  - type: Item
+    size: Small
+  - type: Flippable
+    mirrorEntity: CFClosedSign
+  - type: Appearance
+  - type: InteractionOutline
+  - type: Damageable
+    damageModifierSet: Wood
+  - type: Injurable
+    damageContainer: Inorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTypeTrigger
+        damageType: Heat
+        damage: 6
+      behaviors:
+      - !type:DoActsBehavior
+        acts: ["Destruction"]
+      - !type:PlaySoundBehavior
+        sound:
+          collection: WoodDestroy
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFAsh1:
+            min: 1
+            max: 2
+    - trigger:
+        !type:DamageTrigger
+        damage: 10
+      behaviors:
+      - !type:DoActsBehavior
+        acts: ["Destruction"]
+      - !type:PlaySoundBehavior
+        sound:
+          collection: WoodDestroy
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFWoodenPlanks1:
+            min: 1
+            max: 1
+  - type: PhysicalComposition
+    materialComposition:
+      CFWoodenPlanks: 20
+
+- type: entity
+  id: CFClosedSign
+  name: flip sign "Closed"
+  description: A small double-sided sign that can be turned over
+  parent: 
+  - CFOpenSign
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    noRot: true
+    sprite: _CP14/Objects/Misc/openclosed_sign.rsi
+    layers:
+      - state: table_sign
+      - state: en_close_sign
+        map: [signState]
+  - type: Flippable
+    mirrorEntity: CFOpenSign

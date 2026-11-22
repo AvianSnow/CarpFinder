@@ -28,6 +28,14 @@
         Quantity: 100
   - type: DrainableSolution
     solution: pool
+  # CarpFinder: open water can be drunk from and drawn into a bucket, as the well can. The kobold tribe counts it as
+  # its water for the same reason.
+  - type: DrawableSolution
+    solution: pool
+  - type: Edible
+    edible: Drink
+    solution: pool
+  # CarpFinder end
   - type: SpeedModifierContacts
     walkSpeedModifier: 0.5
     sprintSpeedModifier: 0.5

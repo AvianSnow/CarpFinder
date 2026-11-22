@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFMagpieSnatch
-  name: "Magpie Snatch"
-  description: "Costs 2 actions. TBA - action will be added"
+  name: cf-feat-magpie-snatch
+  description: cf-feat-magpie-snatch-desc
   ancestry: Tengu
   level: 5
   traits:

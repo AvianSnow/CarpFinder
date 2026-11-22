@@ -2,8 +2,8 @@
 # source: Carpfinder Dark Archive (Remastered)
 - type: cfFeat
   id: CFHauntIngenuity
-  name: "Haunt Ingenuity"
-  description: "This feature will be implemented later."
+  name: cf-feat-haunt-ingenuity
+  description: cf-feat-haunt-ingenuity-desc
   class: Thaumaturge
   level: 1
   traits:

@@ -1,0 +1,363 @@
+# The brain every CF monster thinks with. The monster bases take it as a parent, such as
+# parent: [ SimpleMobBase, MobCombat, CFMonsterGhostRole, CFGOAPBrain ]. Stock SS14 mobs keep stock HTN.
+
+- type: entity
+  abstract: true
+  id: CFGOAPBrain
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: HTN
+    rootTask:
+      task: CFGOAPCompound
+  - type: CFGOAP
+  - type: CFGOAPSteering
+  - type: CFGOAPScentEmitter
+    layer: Ally
+
+- type: htnCompound
+  id: CFGOAPCompound
+  branches:
+  - tasks:
+    - !type:HTNPrimitiveTask
+      operator: !type:CFGOAPOperator
+
+# Goals. The highest priority that can be planned for wins.
+
+# Above everything, even running from a rout: burning kills faster than whatever it is running from.
+- type: cfGoapGoal
+  id: PutOutFire
+  avoids: [ OnFire ]
+  priority: 25
+  onlyWhen: [ OnFire ]
+
+# A Command spell's order. Never chosen from the lists: CFGOAPSystem plans it ahead of everything while the order lasts.
+- type: cfGoapGoal
+  id: Obey
+  wants: [ Obeyed ]
+  priority: 100
+
+# A raised shield stays up until it is lowered or breaks, so a creature raises it once, on seeing an enemy, and then
+# fights behind it. PF2e has it spend an action every turn; real time has no turns, so this is the one action it pays.
+# Above KillTarget, and below anything that keeps it alive.
+- type: cfGoapGoal
+  id: RaiseShield
+  wants: [ ShieldUp ]
+  priority: 5.8
+  onlyWhen: [ ShieldReady, TargetVisible, ActionsLeft ]
+
+# A creature that keeps a lair goes back to it once it strays too far or has been away too long (CFGOAPLair). It
+# still fights back while an enemy is in reach, so this is about chasing, not about being hit.
+- type: cfGoapGoal
+  id: ReturnToLair
+  wants: [ AtHome ]
+  priority: 5.9
+  onlyWhen: [ LeftLair ]
+  notWhen: [ TargetInReach ]
+
+# Not while its tribe is still talking to the target (society.yml).
+- type: cfGoapGoal
+  id: KillTarget
+  wants: [ TargetHurt ]
+  priority: 5
+  onlyWhen: [ TargetVisible ]
+  notWhen: [ Parleying ]
+
+- type: cfGoapGoal
+  id: HuntTarget
+  wants: [ TargetVisible ]
+  priority: 3
+  notWhen: [ TargetVisible ]
+
+- type: cfGoapGoal
+  id: StayAlive
+  wants: [ Safe ]
+  priority: 6
+  whenHurt: 6
+  belowFleeHealth: true
+
+- type: cfGoapGoal
+  id: Heal
+  avoids: [ Hurt ]
+  priority: 7
+  onlyWhen: [ Hurt ]
+
+- type: cfGoapGoal
+  id: ArmSelf
+  wants: [ HasWeapon ]
+  priority: 6
+  notWhen: [ HasWeapon ]
+
+- type: cfGoapGoal
+  id: Regroup
+  wants: [ Regrouped ]
+  priority: 2
+  onlyWhen: [ AlliesNearby ]
+  notWhen: [ TargetVisible ]
+
+- type: cfGoapGoal
+  id: Idle
+  wants: [ Idled ]
+  calm: true
+  priority: 1
+
+# With nothing better to do, it goes back to where it started instead of roaming off for good.
+- type: cfGoapGoal
+  id: GoHome
+  wants: [ AtHome ]
+  calm: true
+  priority: 1.5
+
+# A companion with nothing to fight keeps a little behind its master, and stands there while they stand. Above GoHome,
+# whose home for a companion is the same master, and Idle, so it never wanders off them.
+- type: cfGoapGoal
+  id: StayWithMaster
+  wants: [ WithMaster ]
+  calm: true
+  priority: 1.6
+  onlyWhen: [ HasMaster ]
+
+# With no trail or node to go on, it still goes and looks at the place.
+- type: cfGoapGoal
+  id: Investigate
+  wants: [ Investigated ]
+  priority: 2.5
+  onlyWhen: [ KnowsLkp ]
+  notWhen: [ TargetVisible ]
+
+# Actions.
+
+# A charged breath weapon that would catch the target comes before anything else it could do to it.
+- type: cfGoapAction
+  id: Breathe
+  step: Breathe
+  needs: [ TargetVisible, CanBreathe ]
+  gives: [ TargetHurt ]
+  cost: 0.3
+
+# A creature that keeps a lair stays put while its target is too far to go after, and lets it come, or lets its breath
+# recharge. It counts as doing something to the target, so KillTarget plans it instead of Close.
+- type: cfGoapAction
+  id: Await
+  step: Wait
+  needs: [ TargetVisible, Guarding ]
+  gives: [ TargetHurt ]
+  cost: 3
+
+- type: cfGoapAction
+  id: Strike
+  step: Strike
+  valuedBy: Strike
+  needs: [ TargetVisible, TargetInReach, HasWeapon ]
+  gives: [ TargetHurt ]
+
+# Under a Strike's cost of 1, so an archer keeps shooting even with an enemy beside it.
+- type: cfGoapAction
+  id: Shoot
+  step: Shoot
+  needs: [ TargetVisible, HasShot ]
+  gives: [ TargetHurt ]
+  cost: 0.9
+
+# These compete with a Strike for the same goal, so a poor Strike loses to them. Each counts as doing something to the
+# target. See tactics.yml.
+- type: cfGoapAction
+  id: Demoralize
+  step: Maneuver
+  maneuver: Demoralize
+  valuedBy: Demoralize
+  needs: [ TargetVisible ]
+  gives: [ TargetHurt ]
+
+- type: cfGoapAction
+  id: Feint
+  step: Maneuver
+  maneuver: Feint
+  valuedBy: Feint
+  needs: [ TargetVisible, TargetInReach ]
+  gives: [ TargetHurt ]
+
+# Raises a held shield, for 1 action. Its goal is RaiseShield.
+- type: cfGoapAction
+  id: RaiseShield
+  step: RaiseShield
+  needs: [ ShieldReady ]
+  gives: [ ShieldUp ]
+
+# Lets the pool refill, which clears Multiple Attack Penalty. Dear, so anything useful comes first.
+- type: cfGoapAction
+  id: HoldBack
+  step: Wait
+  valuedBy: HoldBack
+  needs: [ TargetVisible, TargetInReach ]
+  gives: [ TargetHurt ]
+  cost: 6
+
+- type: cfGoapAction
+  id: Close
+  step: Close
+  needs: [ TargetVisible ]
+  needsNot: [ NoWay, Guarding ]
+  gives: [ TargetInReach ]
+
+- type: cfGoapAction
+  id: Flee
+  step: Flee
+  needsNot: [ Cornered ]
+  gives: [ Safe ]
+
+# What is left when every way out leads past the threat.
+- type: cfGoapAction
+  id: FightBack
+  step: Strike
+  needs: [ Cornered, TargetVisible, TargetInReach, HasWeapon ]
+  gives: [ Safe ]
+
+- type: cfGoapAction
+  id: PickUpWeapon
+  step: PickUp
+  item: Weapon
+  needs: [ WeaponNearby ]
+  gives: [ HasWeapon ]
+  cost: 2
+
+- type: cfGoapAction
+  id: PickUpHealing
+  step: PickUp
+  item: Heals
+  needs: [ HealingNearby ]
+  gives: [ HasHealingItem ]
+  cost: 2
+
+- type: cfGoapAction
+  id: DrinkHealing
+  step: UseItem
+  item: Heals
+  needs: [ HasHealingItem ]
+  removes: [ Hurt ]
+
+- type: cfGoapAction
+  id: FollowScent
+  step: FollowScent
+  needs: [ ScentNearby ]
+  gives: [ TargetVisible ]
+  cost: 2
+
+- type: cfGoapAction
+  id: GoToLkp
+  step: GoToLkp
+  needs: [ KnowsLkp ]
+  needsNot: [ NoWay ]
+  gives: [ AtLkp ]
+  cost: 2
+
+- type: cfGoapAction
+  id: CheckNode
+  step: CheckNode
+  needs: [ AtLkp, NodeNearby ]
+  needsNot: [ NoWay ]
+  gives: [ TargetVisible ]
+  cost: 3
+
+# The same walk, but the point of it, so it lets the place go afterwards.
+- type: cfGoapAction
+  id: LookAround
+  step: GoToLkp
+  forgetsLkp: true
+  needs: [ KnowsLkp ]
+  needsNot: [ NoWay ]
+  gives: [ Investigated ]
+  cost: 2
+
+- type: cfGoapAction
+  id: GoHome
+  step: GoHome
+  needsNot: [ NoWay ]
+  gives: [ AtHome ]
+
+- type: cfGoapAction
+  id: PutOutFire
+  step: PutOutFire
+  needs: [ OnFire ]
+  removes: [ OnFire ]
+
+- type: cfGoapAction
+  id: Obey
+  step: Obey
+  gives: [ Obeyed ]
+
+- type: cfGoapAction
+  id: Wander
+  step: Wander
+  gives: [ Idled ]
+
+- type: cfGoapAction
+  id: Regroup
+  step: Regroup
+  gives: [ Regrouped ]
+
+- type: cfGoapAction
+  id: Follow
+  step: Follow
+  needs: [ HasMaster ]
+  gives: [ WithMaster ]
+
+# Personalities. They only change numbers, and can be swapped on any brain.
+
+- type: cfGoapProfile
+  id: Default
+  fleeHealth: 0.15
+
+- type: cfGoapProfile
+  id: Brave
+  maxSpeed: 1.2
+  arriveRadius: 0.75
+  lkpDwell: 0.5
+  smashPatience: 40
+  fleeHealth: 0
+  goalPriority:
+    StayAlive: 0.5
+    HuntTarget: 1.5
+    KillTarget: 1.5
+  actionCost:
+    FollowScent: 0.5
+    CheckNode: 2
+
+- type: cfGoapProfile
+  id: Stealthy
+  maxSpeed: 0.8
+  wallFollow: 0.6
+  smashPatience: 10
+  fleeHealth: 0.25
+  nodeTags:
+    Shadow: 3
+
+# Nervous: it rests less between idle walks, and the walks are short.
+- type: cfGoapProfile
+  id: Cowardly
+  wanderRestMin: 0.5
+  wanderRestMax: 1.5
+  wanderDistance: 3
+  lkpKeepOut: 5
+  smashPatience: 5
+  fleeHealth: 0.3
+  goalPriority:
+    StayAlive: 1.5
+  reflexes:
+  - trigger: NoiseNearby
+    goal: StayAlive
+    seconds: 3
+
+# Hidden hints for mappers. See .agent/investigation-nodes.md.
+
+- type: entity
+  parent: MarkerBase
+  id: CFInvestigationNode
+  name: investigation node
+  suffix: AI
+  components:
+  - type: CFGOAPInvestigationNode
+  - type: Sprite
+    layers:
+    - state: pink
+    - sprite: Objects/Misc/books.rsi
+      state: icon_magnifier

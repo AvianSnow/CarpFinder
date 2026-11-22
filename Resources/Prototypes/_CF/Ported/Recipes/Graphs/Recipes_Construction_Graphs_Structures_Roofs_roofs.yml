@@ -1,0 +1,73 @@
+# Ported from CP14 by the CF converter.
+
+- type: constructionGraph
+  id: CFRoofWooden
+  start: start
+  graph:
+    - node: start
+      actions:
+        - !type:DestroyEntity {}
+      edges:
+        - to: CFRoofWooden
+          steps:
+            - material: CFWoodenPlanks
+              amount: 1
+              doAfter: 2
+        - to: CFRoofWoodenBirch
+          steps:
+          - material: CFBirchWoodenPlanks
+            amount: 1
+            doAfter: 2
+
+    - node: CFRoofWooden
+      entity: CFRoofWooden
+      edges:
+        - to: start
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFWoodenPlanks1
+              amount: 1
+            - !type:DeleteEntity {}
+          steps:
+            - tool: Prying
+              doAfter: 2
+
+    - node: CFRoofWoodenBirch
+      entity: CFRoofWoodenBirch
+      edges:
+      - to: start
+        completed:
+        - !type:SpawnPrototype
+          prototype: CFBirchWoodenPlanks1
+          amount: 1
+        - !type:DeleteEntity { }
+        steps:
+        - tool: Prying
+          doAfter: 2
+
+- type: constructionGraph
+  id: CFRoofStone
+  start: start
+  graph:
+    - node: start
+      actions:
+        - !type:DestroyEntity {}
+      edges:
+        - to: CFRoofStone
+          steps:
+            - material: CFStone
+              amount: 1
+              doAfter: 2
+
+    - node: CFRoofStone
+      entity: CFRoofStone
+      edges:
+        - to: start
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFStoneBlock1
+              amount: 1
+            - !type:DeleteEntity {}
+          steps:
+            - tool: Prying
+              doAfter: 2

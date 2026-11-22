@@ -1,9 +1,15 @@
+using Content.Shared.CF.Preferences;
+using Content.Shared.Actions.Components;
+using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using Content.Shared.CF.Actions;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Effects.Areas;
 using Content.Shared.CF.Factions;
+using Content.Shared.CF.Spells;
+using Content.Shared.CF.Traits;
 using Content.Shared.Interaction;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
@@ -30,7 +36,9 @@ namespace Content.Shared.CF.Effects;
 public sealed partial class CFEffectSystem : EntitySystem
 {
     [Dependency] private INetManager _net = default!;
+    [Dependency] private CFSpellshapeSystem _spellshapes = default!;
     [Dependency] private IRobustRandom _random = default!;
+
     [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private SharedMapSystem _maps = default!;
@@ -45,7 +53,6 @@ public sealed partial class CFEffectSystem : EntitySystem
     [Dependency] private CFBonusSystem _bonuses = default!;
     [Dependency] private CFCombatBridgeSystem _bridge = default!;
     [Dependency] private CFDyingSystem _dying = default!;
-    [Dependency] private CFShieldSystem _shields = default!;
 
     public override void Update(float frameTime)
     {
@@ -85,6 +92,27 @@ public sealed partial class CFEffectSystem : EntitySystem
         return PassesFilter(user, target, filter, selfAllowed: true);
     }
 
+    /// <summary>How far a source reaches, in feet. No limit when it has no range.</summary>
+    private float MaxFeet(EntityUid source, EntityUid user, CFTargetingComponent targeting)
+    {
+        var extra = _spellshapes.ExtraRangeFeet(source, user);
+
+        // The chosen mode can set its own range (Heal's 1-action touch).
+        if (TryComp(source, out CFModeChoiceComponent? mode) && mode.ChosenOption() is { } chosen)
+        {
+            if (chosen.Touch)
+                return extra > 0 ? extra : TouchFeet;
+
+            if (chosen.RangeFeet > 0)
+                return chosen.RangeFeet + extra;
+        }
+
+        if (targeting.Touch)
+            return extra > 0 ? extra : TouchFeet;
+
+        return targeting.RangeFeet > 0 ? targeting.RangeFeet + extra : float.MaxValue;
+    }
+
     public bool InRange(EntityUid source, EntityUid user, EntityUid target)
     {
         if (!TryComp(source, out CFTargetingComponent? targeting))
@@ -96,7 +124,7 @@ public sealed partial class CFEffectSystem : EntitySystem
             return false;
 
         var feet = (from.Position - to.Position).Length() * CFAreaGrid.FeetPerTile;
-        if (targeting.RangeFeet > 0 && feet > targeting.RangeFeet + 0.05f)
+        if (feet > MaxFeet(source, user, targeting) + 0.05f)
             return false;
 
         return !targeting.LineOfEffect
@@ -114,7 +142,7 @@ public sealed partial class CFEffectSystem : EntitySystem
             return false;
 
         var feet = (from.Position - point.Position).Length() * CFAreaGrid.FeetPerTile;
-        if (targeting.RangeFeet > 0 && feet > targeting.RangeFeet + 0.05f)
+        if (feet > MaxFeet(source, user, targeting) + 0.05f)
             return false;
 
         return !targeting.LineOfEffect
@@ -136,15 +164,16 @@ public sealed partial class CFEffectSystem : EntitySystem
         }
 
         ResolveTarget(source, user, target);
-        if (targeting is { ExtraTargets: > 0 })
-            ChainTargets(source, user, target, targeting);
+        var extra = (targeting?.ExtraTargets ?? 0) + (_psi.Amped(source)?.AmpExtraTargets ?? 0);
+        if (targeting != null && extra > 0)
+            ChainTargets(source, user, target, targeting, extra);
     }
 
-    private void ChainTargets(EntityUid source, EntityUid user, EntityUid first, CFTargetingComponent targeting)
+    private void ChainTargets(EntityUid source, EntityUid user, EntityUid first, CFTargetingComponent targeting, int extra)
     {
         var origin = _transform.GetMapCoordinates(user);
         var reach = Math.Max(1f, targeting.RangeFeet / CFAreaGrid.FeetPerTile);
-        var left = targeting.ExtraTargets;
+        var left = extra;
         foreach (var uid in _lookup.GetEntitiesInRange(origin, reach))
         {
             if (uid == user || uid == first || !HasComp<MobStateComponent>(uid))
@@ -168,7 +197,16 @@ public sealed partial class CFEffectSystem : EntitySystem
     {
         failure = null;
         if (!TryComp(source, out CFAreaEffectComponent? area))
+        {
+            // A spot with no area around it, such as Figment's, still has to be in range.
+            if (CompOrNull<CFTargetingComponent>(source)?.Delivery == CFDelivery.Point && !InRange(source, user, aim))
+            {
+                failure = "cf-spell-out-of-range";
+                return false;
+            }
+
             return true;
+        }
 
         var userMap = _transform.GetMapCoordinates(user);
         if (!_maps.TryFindGridAt(userMap, out _, out _))
@@ -196,13 +234,30 @@ public sealed partial class CFEffectSystem : EntitySystem
     public int ResolveArea(EntityUid source, EntityUid user, MapCoordinates aim)
     {
         if (!TryComp(source, out CFAreaEffectComponent? area))
+        {
+            // No area: the effects happen once, at the spot, with no creature to roll against.
+            if (CompOrNull<CFTargetingComponent>(source)?.Delivery != CFDelivery.Point)
+                return 0;
+
+            var spot = _maps.TryFindGridAt(aim, out var grid, out _)
+                ? _transform.ToCoordinates(grid, aim)
+                : _transform.ToCoordinates(aim);
+            RunDegreeEffects(source, BuildArgs(source, user, null, spot, null, out _), landed: true);
             return 0;
+        }
+
+        // An area that fills with gas, fire or liquid spreads from where it starts, and has its own way of rolling.
+        if (_gas.TryStart((source, null), user, aim))
+            return 0;
+
+        if (_fills.TryStart(source, user, aim, out var affected))
+            return affected;
 
         var origin = _transform.GetMapCoordinates(user);
         var targets = CollectArea(
             user,
             area.Shape,
-            area.SizeFeet,
+            _spellshapes.AreaFeet(source, user, area),
             origin,
             aim,
             area.StartsAtPoint(),
@@ -221,6 +276,45 @@ public sealed partial class CFEffectSystem : EntitySystem
             _popup.PopupEntity(Loc.GetString("cf-spell-no-one"), user, user);
 
         return targets.Count;
+    }
+
+    /// <summary>
+    /// The area of the source's chosen mode, centred on the user, or a cone or line aimed at <paramref name="aim"/>. Every
+    /// creature in it is resolved. Returns how many there were. Heal and Harm's 3-action version, and Directed Channel.
+    /// </summary>
+    public int ResolveModeArea(EntityUid source, EntityUid user, CFModeOption mode, MapCoordinates aim)
+    {
+        if (mode.AreaShape is not { } shape)
+            return 0;
+
+        var origin = _transform.GetMapCoordinates(user);
+        var targets = CollectArea(
+            user,
+            shape,
+            mode.AreaFeet,
+            origin,
+            aim,
+            atPoint: false,
+            includeCenter: true,
+            selfAllowed: false,
+            mode.AreaFilter);
+
+        foreach (var target in targets)
+        {
+            ResolveTarget(source, user, target);
+        }
+
+        if (targets.Count == 0)
+            _popup.PopupEntity(Loc.GetString("cf-spell-no-one"), user, user);
+
+        return targets.Count;
+    }
+
+    /// <summary>True when the source is being used in a mode that covers an area, not one creature.</summary>
+    public bool IsAreaUse(EntityUid source)
+    {
+        return HasComp<CFAreaEffectComponent>(source)
+               || TryComp(source, out CFModeChoiceComponent? mode) && mode.ChosenOption() is { AreaShape: not null };
     }
 
     /// <summary>
@@ -244,9 +338,8 @@ public sealed partial class CFEffectSystem : EntitySystem
         EntityWhitelist? whitelist = null,
         int maxTargets = 0)
     {
-        var found = new List<EntityUid>();
         if (origin.MapId != aim.MapId || !_maps.TryFindGridAt(origin, out var grid, out var gridComp))
-            return found;
+            return new List<EntityUid>();
 
         var originLocal = _maps.WorldToLocal(grid, gridComp, origin.Position);
         var aimLocal = _maps.WorldToLocal(grid, gridComp, aim.Position);
@@ -254,6 +347,110 @@ public sealed partial class CFEffectSystem : EntitySystem
 
         var searchFrom = atPoint ? aim : origin;
         var reach = Math.Max(3f, sizeFeet / CFAreaGrid.FeetPerTile + 3f);
+        return CollectInTiles(user, (grid, gridComp), tiles, searchFrom, reach, filter, selfAllowed, whitelist, maxTargets);
+    }
+
+    /// <summary>
+    /// The grid tiles a source's area covers from where the user stands now, with spellshapes counted. False when the
+    /// source has no area, or the user is not on a grid.
+    /// </summary>
+    public bool AreaTiles(
+        EntityUid source,
+        EntityUid user,
+        MapCoordinates aim,
+        out Entity<MapGridComponent> grid,
+        [NotNullWhen(true)] out HashSet<Vector2i>? tiles)
+    {
+        grid = default;
+        tiles = null;
+        var origin = _transform.GetMapCoordinates(user);
+        if (!TryComp(source, out CFAreaEffectComponent? area)
+            || origin.MapId != aim.MapId
+            || !_maps.TryFindGridAt(origin, out var gridUid, out var gridComp))
+        {
+            return false;
+        }
+
+        grid = (gridUid, gridComp);
+        tiles = CFAreaGrid.Collect(
+            area.Shape,
+            _spellshapes.AreaFeet(source, user, area),
+            _maps.WorldToLocal(gridUid, gridComp, origin.Position),
+            _maps.WorldToLocal(gridUid, gridComp, aim.Position),
+            gridComp.TileSize,
+            area.IncludeSelf);
+        return true;
+    }
+
+    /// <summary>
+    /// Resolves the source on every creature standing in the given tiles now, with the filter of its area. For an area
+    /// that took time to fill, such as a breath that flows out as liquid. Returns how many were affected.
+    /// </summary>
+    public int ResolveTiles(EntityUid source, EntityUid user, Entity<MapGridComponent> grid, IReadOnlyCollection<Vector2i> tiles)
+    {
+        var targets = CreaturesInTiles(source, user, grid, tiles);
+        foreach (var target in targets)
+        {
+            ResolveTarget(source, user, target);
+        }
+
+        if (targets.Count == 0)
+            _popup.PopupEntity(Loc.GetString("cf-spell-no-one"), user, user);
+
+        return targets.Count;
+    }
+
+    /// <summary>The creatures standing in the given tiles now that the source's area would affect.</summary>
+    public List<EntityUid> CreaturesInTiles(
+        EntityUid source,
+        EntityUid user,
+        Entity<MapGridComponent> grid,
+        IReadOnlyCollection<Vector2i> tiles)
+    {
+        if (!TryComp(source, out CFAreaEffectComponent? area) || tiles.Count == 0)
+            return new List<EntityUid>();
+
+        // Search around the middle of the tiles, far enough to reach every one.
+        var center = Vector2.Zero;
+        foreach (var tile in tiles)
+        {
+            center += (Vector2) tile;
+        }
+
+        center = center / tiles.Count + new Vector2(0.5f, 0.5f);
+        var reach = 1.5f;
+        foreach (var tile in tiles)
+        {
+            reach = Math.Max(reach, ((Vector2) tile + new Vector2(0.5f, 0.5f) - center).Length() + 1.5f);
+        }
+
+        var searchFrom = _transform.ToMapCoordinates(new EntityCoordinates(grid, center * grid.Comp.TileSize));
+        var set = tiles as HashSet<Vector2i> ?? new HashSet<Vector2i>(tiles);
+        return CollectInTiles(
+            user,
+            grid,
+            set,
+            searchFrom,
+            reach * grid.Comp.TileSize,
+            area.Filter,
+            area.IncludeSelf,
+            area.Whitelist,
+            area.MaxTargets);
+    }
+
+    private List<EntityUid> CollectInTiles(
+        EntityUid user,
+        Entity<MapGridComponent> gridEnt,
+        HashSet<Vector2i> tiles,
+        MapCoordinates searchFrom,
+        float reach,
+        CFTargetFilter filter,
+        bool selfAllowed,
+        EntityWhitelist? whitelist,
+        int maxTargets)
+    {
+        var found = new List<EntityUid>();
+        var (grid, gridComp) = gridEnt;
         foreach (var uid in _lookup.GetEntitiesInRange(searchFrom, reach))
         {
             if (!HasComp<MobStateComponent>(uid) || !TryComp(uid, out TransformComponent? xform) || xform.GridUid != grid)
@@ -281,6 +478,18 @@ public sealed partial class CFEffectSystem : EntitySystem
 
     #region Checks
 
+    /// <summary>The next tile over, measured to a creature standing diagonally from the user.</summary>
+    private const float TouchFeet = 7.5f;
+
+    [Dependency] private CFAuraSystem _auras = default!;
+    [Dependency] private CFBreathGasSystem _gas = default!;
+    [Dependency] private CFAreaFillSystem _fills = default!;
+    [Dependency] private CFPsiSystem _psi = default!;
+    [Dependency] private CFTauntSystem _taunts = default!;
+    [Dependency] private CFReactionSystem _reactions = default!;
+    [Dependency] private CFVfxSystem _vfx = default!;
+    [Dependency] private CFTemporaryHpSystem _tempHp = default!;
+
     /// <summary>
     /// Rolls the source's check against one creature and runs its effect lists.
     /// Concealment and blindness force a flat check first. Returns true when the check landed.
@@ -293,19 +502,63 @@ public sealed partial class CFEffectSystem : EntitySystem
         var check = CompOrNull<CFCheckComponent>(source);
         var args = BuildArgs(source, user, target, Transform(target).Coordinates, check, out var stats);
 
+        var amp = _psi.Amped(source);
+        if (amp is { AmpOffGuard: true } && user != target)
+            _conditions.SetOffGuardTo(target, user, 6f);
+
+        // A taunted creature takes this on the attack or the DC of anything aimed past its taunter.
+        var taunted = check != null && check.Defense != CFDefenseType.None ? _taunts.NoteAttack(user, target) : 0;
+
         var landed = true;
         if (check != null && check.Defense == CFDefenseType.ArmorClass)
         {
-            args.Degree = RollAttack(user, target, check, stats.AttackBonus);
+            args.Degree = RollAttack(user, target, check, stats.AttackBonus + taunted);
+            landed = args.Degree.IsSuccess();
+            _auras.NoteAttacked(target, user);
+        }
+        else if (check is { Skill: { } skill, Defense: not CFDefenseType.None })
+        {
+            // A skill check against the target's defense DC: Goblin Song, Catfolk Dance.
+            var ability = _prototypes.TryIndex<CFAbilitySkillPrototype>(skill, out var skillProto) ? skillProto.Ability : CFAbility.Dexterity;
+            args.Degree = _conditions.RollSkill(user, target, skill, ability, check.Defense);
             landed = args.Degree.IsSuccess();
         }
-        else if (check != null && check.Defense != CFDefenseType.None)
+        else if (check != null
+                 && check.Defense != CFDefenseType.None
+                 && (check.HarmedBy is not { } energy || CFVitalEnergies.Harms(EntityManager, target, energy)))
         {
-            args.Degree = RollDefense(target, check.Defense, stats.Dc);
+            if (HasComp<CFSpellComponent>(source))
+                _vfx.Targeted(target, source);
+
+            args.Degree = _conditions.RollDefense(target, check.Defense, stats.Dc + taunted, out _, args.Traits);
             landed = !args.Degree.IsSuccess();
+
+            // Emotional Push: a failed save against the caster's emotion spell leaves the enemy open to it.
+            if (landed
+                && user != target
+                && args.Traits.Contains("Emotion")
+                && HasComp<CFSpellComponent>(source)
+                && CompOrNull<CFCombatOptionsComponent>(user)?.EmotionalPush == true)
+            {
+                _conditions.SetOffGuardTo(target, user, 6f);
+            }
         }
 
         RunDegreeEffects(source, args, landed);
+        _spellshapes.NoteAffected(user, source, target);
+        if (amp != null)
+        {
+            Run(amp.AmpEffects, args);
+            Run(args.Degree switch
+                {
+                    CFDegree.CriticalSuccess => amp.AmpCritical,
+                    CFDegree.Success => amp.AmpSuccess,
+                    CFDegree.Failure => amp.AmpFailure,
+                    _ => amp.AmpCriticalFailure,
+                },
+                args);
+        }
+
         return landed;
     }
 
@@ -339,6 +592,7 @@ public sealed partial class CFEffectSystem : EntitySystem
             Position = position,
             Defense = check?.Defense ?? CFDefenseType.None,
             BasicSave = check?.BasicSave ?? false,
+            Traits = SourceTraits(source),
             Rank = context.Rank,
             HeightenSteps = steps,
             Dc = stats.Dc,
@@ -402,15 +656,16 @@ public sealed partial class CFEffectSystem : EntitySystem
         if (_bridge.TryEnsureCombatTarget(target, out var defender, out _, out _))
             armorClass = defender.ArmorClass;
 
-        armorClass += _bonuses.Total(target, CFBonusStat.ArmorClass);
-        armorClass += _shields.RaisedBonus(target);
-        armorClass -= _conditions.Frightened(target);
-        armorClass -= _conditions.Clumsy(target);
+        armorClass += _conditions.ArmorClassModifier(target);
+        armorClass += _bonuses.AgainstSource(target, CFBonusStat.ArmorClass, user);
         armorClass -= check.TargetAcPenalty;
 
         attackBonus += check.AttackModifier;
         attackBonus += _bonuses.Total(user, CFBonusStat.AttackRoll);
+        attackBonus += _bonuses.AgainstSource(user, CFBonusStat.AttackRoll, target);
         attackBonus -= _conditions.Frightened(user);
+        attackBonus += _conditions.CircumstanceAttackPenalty(user, target);
+        _conditions.NoteAttackRoll(user, target, melee: false);
         if (check.MultipleAttackPenalty)
         {
             attackBonus += _actions.MapPenalty(user, agile: false);
@@ -421,35 +676,38 @@ public sealed partial class CFEffectSystem : EntitySystem
         if (_bonuses.TryConsumeFortune(user))
             d20 = Math.Max(d20, _random.Next(1, 21));
 
-        return CFDegrees.DegreeOfSuccess(d20, attackBonus, armorClass);
+        return AttackDegree(user, target, d20, attackBonus, armorClass);
     }
 
-    /// <summary>The target's save or Perception check against the DC.</summary>
-    public CFDegree RollDefense(EntityUid target, CFDefenseType defense, int dc)
+    /// <summary>A rolled attack's result, after the target's reactions. A spell is not a projectile, so it counts as melee to them.</summary>
+    public CFDegree AttackDegree(EntityUid user, EntityUid target, int d20, int attackBonus, int armorClass)
     {
-        var combat = CompOrNull<CFCombatantComponent>(target);
-        var abilities = CompOrNull<CFAbilityScoreComponent>(target);
-        var frightened = _conditions.Frightened(target);
-        int modifier;
-        if (defense == CFDefenseType.Perception)
-        {
-            modifier = CFDefense.PerceptionModifier(
-                _prototypes,
-                combat,
-                abilities,
-                _bonuses.Total(target, CFBonusStat.Perception),
-                frightened);
-        }
-        else
-        {
-            var status = _bonuses.Total(target, CFBonusStat.Saves);
-            if (defense == CFDefenseType.Reflex)
-                status -= _conditions.Clumsy(target);
+        var degree = CFDegrees.DegreeOfSuccess(d20, attackBonus, armorClass);
+        return _reactions.AnswerAttack(target, user, ranged: false, d20, attackBonus, ref armorClass, degree, strike: false);
+    }
 
-            modifier = CFDefense.SaveModifier(_prototypes, combat, abilities, defense, status, frightened);
+    /// <summary>A source's traits: those on the entity, and for a spell those on its prototype.</summary>
+    public HashSet<ProtoId<CFTraitPrototype>> SourceTraits(EntityUid source)
+    {
+        var traits = new HashSet<ProtoId<CFTraitPrototype>>();
+        if (TryComp(source, out CFTraitComponent? own))
+            traits.UnionWith(own.Traits);
+
+        // An action carries its creature's traits too, so a save upgrade against undead counts against a ghoul's spell.
+        if (TryComp(source, out ActionComponent? action)
+            && action.AttachedEntity is { } creature
+            && TryComp(creature, out CFTraitComponent? creatureTraits))
+        {
+            traits.UnionWith(creatureTraits.Traits);
         }
 
-        return CFDefense.Roll(_random, modifier, dc);
+        if (TryComp(source, out CFSpellComponent? spell))
+            traits.Add("Magical");
+
+        if (spell != null && _prototypes.TryIndex(spell.Spell, out CFSpellPrototype? proto))
+            traits.UnionWith(proto.Traits);
+
+        return traits;
     }
 
     #endregion

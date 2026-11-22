@@ -1,0 +1,28 @@
+# Ported from CP14 by the CF converter.
+
+- type: constructionGraph
+  id: CFWoodenCloset
+  start: start
+  graph:
+    - node: start
+      actions:
+      - !type:DestroyEntity {}
+      edges:
+        - to: CFWoodenCloset
+          completed:
+            - !type:SnapToGrid
+          steps:
+            - material: CFWoodenPlanks
+              amount: 4
+              doAfter: 2
+    - node: CFWoodenCloset
+      entity: CFWoodenCloset
+      edges:
+      - to: start
+        steps:
+        - tool: Prying
+          doAfter: 2
+        completed:
+        - !type:SpawnPrototype
+          prototype: CFWoodenPlanks1
+          amount: 4

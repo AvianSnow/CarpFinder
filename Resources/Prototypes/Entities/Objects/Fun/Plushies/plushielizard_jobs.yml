@@ -800,6 +800,26 @@
 
 - type: entity
   parent: BasePlushieLizardJob
+  id: PlushieLizardWizard
+  name: wizard lizard plushie
+  description: You are a lizard harry! A popular Wizard summon, it knows one spell Weh
+  components:
+  - type: Sprite
+    sprite: Objects/Fun/plushielizard_jobs/wizard.rsi
+  - type: Item
+    sprite: Objects/Fun/plushielizard_jobs/wizard.rsi
+  - type: Clothing
+    sprite: Objects/Fun/plushielizard_jobs/wizard.rsi
+    slots:
+    - HEAD
+    quickEquip: false
+    clothingVisuals:
+      head:
+      - state: equipped-HELMET
+        offset: "0, 0.06"
+
+- type: entity
+  parent: BasePlushieLizardJob
   id: PlushieLizardJobMultiweh
   name: multiweh lizard plushie
   description: An adorable stuffed toy that resembles a lizardperson as every job! It's a plushie of many talents. You can hear a HoP crying in the distance.

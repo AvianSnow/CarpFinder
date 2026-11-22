@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFBloodyBlows
-  name: "Bloody Blows"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-bloody-blows
+  description: cf-feat-bloody-blows-desc
   ancestry: Orc
   level: 5
   traits:

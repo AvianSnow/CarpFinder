@@ -9,6 +9,8 @@ public sealed class CFClientWallpaperSystem : CFSharedWallpaperSystem
 {
     public override void Initialize()
     {
+        base.Initialize();
+
         SubscribeLocalEvent<CFWallpaperHolderComponent, AfterAutoHandleStateEvent>(
             OnHandleState,
             after: [typeof(IconSmoothSystem), typeof(SharedRandomIconSmoothSystem), typeof(ClientRandomIconSmoothSystem)]);

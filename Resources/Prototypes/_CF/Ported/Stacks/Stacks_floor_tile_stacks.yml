@@ -1,0 +1,127 @@
+# Ported from CP14 by the CF converter.
+
+- type: stack
+  id: CFFloorTileFoundation
+  name: cp14-tiles-foundation
+  spawn: CFFloorTileFoundation
+  icon: { sprite: _CP14/Objects/Tile/tile.rsi, state: foundation }
+  maxCount: 30
+
+- type: stack
+  id: CFFloorTileMarbleBrick
+  name: cp14-tiles-stonebricks-marble
+  spawn: CFFloorTileMarbleBrick
+  icon: { sprite: _CP14/Objects/Tile/tile.rsi, state: marble }
+  maxCount: 30
+
+- type: stack
+  id: CFFloorTileMarbleSmallbricks
+  name: cp14-tiles-stonebricks-marble
+  spawn: CFFloorTileMarbleSmallbricks
+  icon: { sprite: _CP14/Objects/Tile/tile.rsi, state: marble_smallbricks }
+  maxCount: 30
+
+- type: stack
+  id: CFFloorTileOakWoodplanks
+  name: cp14-tiles-oak-woodplanks
+  spawn: CFFloorTileOakWoodplanks
+  icon: { sprite: _CP14/Objects/Tile/tile.rsi, state: oak_woodplanks }
+  maxCount: 30
+
+- type: stack
+  id: CFFloorTileOakWoodplanksBig
+  name: cp14-tiles-oak-woodplanks-big
+  spawn: CFFloorTileOakWoodplanksBig
+  icon: { sprite: _CP14/Objects/Tile/tile.rsi, state: oak_woodplanks_big }
+  maxCount: 30
+
+- type: stack
+  id: CFFloorTileOakWoodplanksCruciform
+  name: cp14-tiles-oak-woodplanks-cruciform
+  spawn: CFFloorTileOakWoodplanksCruciform
+  icon: { sprite: _CP14/Objects/Tile/tile.rsi, state: oak_woodplanks_cruciform }
+  maxCount: 30
+
+- type: stack
+  id: CFFloorTileOakWoodplanksStairs
+  name: cp14-tiles-oak-woodplanks-stairways
+  spawn: CFFloorTileOakWoodplanksStairs
+  icon: { sprite: _CP14/Objects/Tile/tile.rsi, state: oak_woodplanks_stairways }
+  maxCount: 30
+
+- type: stack
+  id: CFFloorTileStonebricks
+  name: cp14-tiles-stonebricks
+  spawn: CFFloorTileStonebricks
+  icon: { sprite: _CP14/Objects/Tile/tile.rsi, state: stonebrick }
+  maxCount: 30
+
+- type: stack
+  id: CFFloorTileStonebricksSmallCarved
+  name: cp14-tiles-stonebricks-small-carved1
+  spawn: CFFloorTileStonebricksSmallCarved
+  icon: { sprite: _CP14/Objects/Tile/tile.rsi, state: stonebrick_small_carved }
+  maxCount: 30
+
+- type: stack
+  id: CFFloorTileStonebricksSmallCarved2
+  name: cp14-tiles-stonebricks-small-carved2
+  spawn: CFFloorTileStonebricksSmallCarved2
+  icon: { sprite: _CP14/Objects/Tile/tile.rsi, state: stonebrick_small_carved2 }
+  maxCount: 30
+
+- type: stack
+  id: CFFloorTileStonebricksSquareCarved
+  name: cp14-tiles-stonebricks-square-carved
+  spawn: CFFloorTileStonebricksSquareCarved
+  icon: { sprite: _CP14/Objects/Tile/tile.rsi, state: stonebrick_square_carved }
+  maxCount: 30
+
+- type: stack
+  id: CFFloorTileBirchWoodplanks
+  name: cp14-tiles-birch-woodplanks
+  spawn: CFFloorTileOakWoodplanks
+  icon: { sprite: _CP14/Objects/Tile/tile.rsi, state: birch_woodplanks }
+  maxCount: 30
+
+- type: stack
+  id: CFFloorTileBirchWoodplanksBig
+  name: cp14-tiles-birch-woodplanks-big
+  spawn: CFFloorTileBirchWoodplanksBig
+  icon: { sprite: _CP14/Objects/Tile/tile.rsi, state: birch_woodplanks_big }
+  maxCount: 30
+
+- type: stack
+  id: CFFloorTileBirchWoodplanksCruciform
+  name: cp14-tiles-birch-woodplanks-cruciform
+  spawn: CFFloorTileBirchWoodplanksCruciform
+  icon: { sprite: _CP14/Objects/Tile/tile.rsi, state: birch_woodplanks_cruciform }
+  maxCount: 30
+
+- type: stack
+  id: CFFloorTileBirchWoodplanksStairs
+  name: cp14-tiles-birch-woodplanks-stairways
+  spawn: CFFloorTileBirchWoodplanksStairs
+  icon: { sprite: _CP14/Objects/Tile/tile.rsi, state: birch_woodplanks_stairways }
+  maxCount: 30
+
+- type: stack
+  id: CFFloorTileGrassBag
+  name: cp14-tiles-grass
+  spawn: CFFloorTileGrassBag
+  icon: { sprite: _CP14/Objects/Specific/Farming/grass_seeds.rsi, state: grass }
+  maxCount: 30
+
+- type: stack
+  id: CFFloorTileGrassBagLight
+  name: cp14-tiles-grass-light
+  spawn: CFFloorTileGrassBagLight
+  icon: { sprite: _CP14/Objects/Specific/Farming/grass_seeds.rsi, state: grass2 }
+  maxCount: 30
+
+- type: stack
+  id: CFFloorTileGrassBagTall
+  name: cp14-tiles-grass-tall
+  spawn: CFFloorTileGrassBagTall
+  icon: { sprite: _CP14/Objects/Specific/Farming/grass_seeds.rsi, state: grass3 }
+  maxCount: 30

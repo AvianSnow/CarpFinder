@@ -2,7 +2,7 @@
   parent: CFSpellArea
   id: CFBless
   name: Bless
-  description: You and nearby allies gain +1 to attack rolls and saves.
+  description: You and allies within 15 feet gain +1 to attack rolls.
   components:
   - type: Sprite
     sprite: Objects/Magic/magicactions.rsi
@@ -14,18 +14,17 @@
   - type: CFSpell
     spell: Bless
     rank: 1
+  - type: CFAreaFill
+    tile: CFFillMotes
+    tint: true
   - type: CFAreaEffect
     shape: Emanation
-    sizeFeet: 5
+    sizeFeet: 15
     includeSelf: true
     filter: Allies
   - type: CFDegreeEffects
     landed:
     - !type:CFBonusEffect
       stat: AttackRoll
-      type: Status
-      value: 1
-    - !type:CFBonusEffect
-      stat: Saves
       type: Status
       value: 1

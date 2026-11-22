@@ -2,8 +2,8 @@
 # source: Carpfinder Guns & Gears
 - type: cfFeat
   id: CFAdvancedConstructCompanion
-  name: "Advanced Construct Companion"
-  description: "Requires construct companion."
+  name: cf-feat-advanced-construct-companion
+  description: cf-feat-advanced-construct-companion-desc
   class: Inventor
   level: 4
   traits:

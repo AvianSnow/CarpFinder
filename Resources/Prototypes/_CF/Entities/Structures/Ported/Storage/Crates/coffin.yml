@@ -1,0 +1,52 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  parent:
+  - CFChestGeneric
+  - CFBaseFlammable
+  id: CFCrateCoffin
+  name: coffin
+  description: A comfortable and nice looking coffin to comfortably await your resurrection.
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Storage/Crates/coffin.rsi
+    layers:
+    - state: base
+    - state: closed
+      map: ["enum.StorageVisualLayers.Door"]
+    - state: paper
+      map: ["enum.PaperLabelVisuals.Layer"]
+  - type: Icon
+    sprite: _CP14/Structures/Storage/Crates/coffin.rsi
+    state: base
+  - type: Damageable
+    damageModifierSet: CFWoodStructural
+  - type: Injurable
+    damageContainer: StructuralInorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 50
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFWoodenPlanks1:
+            min: 1
+            max: 2
+      - !type:PlaySoundBehavior
+        sound:
+          collection: WoodDestroy
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: Construction
+    graph: CFCrateCoffin
+    node: CFCrateCoffin
+    containers:
+    - entity_storage
+  - type: PhysicalComposition
+    materialComposition:
+      CFWoodenPlanks: 30
+      CFCloth: 20
+  - type: EntityStorage
+    capacity: 1

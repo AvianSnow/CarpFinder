@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFAgonizingRebuke
-  name: "Agonizing Rebuke"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-agonizing-rebuke
+  description: cf-feat-agonizing-rebuke-desc
   ancestry: Hobgoblin
   level: 5
   traits:

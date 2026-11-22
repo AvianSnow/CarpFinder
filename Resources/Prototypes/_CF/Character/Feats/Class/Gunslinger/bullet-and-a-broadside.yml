@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens High Seas
 - type: cfFeat
   id: CFBulletandaBroadside
-  name: "Bullet and a Broadside"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-bulletanda-broadside
+  description: cf-feat-bulletanda-broadside-desc
   class: Gunslinger
   level: 2
   traits:

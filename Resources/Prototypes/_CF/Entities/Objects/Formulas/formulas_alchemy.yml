@@ -1,0 +1,112 @@
+# Formulas for the potions brewed in a cauldron (Crafting/recipes_alchemy.yml). Priced by item level, from the
+# Player Core table: level 1 is 1 gp, level 2 is 2 gp, level 4 is 5 gp.
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaElixirOfLifeMinor
+  name: formula (minor elixir of life)
+  components:
+  - type: CFFormula
+    recipes:
+    - ElixirOfLifeMinor
+  - type: CFItemPrice
+    copper: 100
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaCheetahsElixirLesser
+  name: formula (lesser cheetah's elixir)
+  components:
+  - type: CFFormula
+    recipes:
+    - CheetahsElixirLesser
+  - type: CFItemPrice
+    copper: 100
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaAntidoteLesser
+  name: formula (lesser antidote)
+  components:
+  - type: CFFormula
+    recipes:
+    - AntidoteLesser
+  - type: CFItemPrice
+    copper: 100
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaDarkvisionElixirLesser
+  name: formula (lesser darkvision elixir)
+  components:
+  - type: CFFormula
+    recipes:
+    - DarkvisionElixirLesser
+  - type: CFItemPrice
+    copper: 200
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaAlchemistsFireLesser
+  name: formula (lesser alchemist's fire)
+  components:
+  - type: CFFormula
+    recipes:
+    - AlchemistsFireLesser
+  - type: CFItemPrice
+    copper: 100
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaBottledLightningLesser
+  name: formula (lesser bottled lightning)
+  components:
+  - type: CFFormula
+    recipes:
+    - BottledLightningLesser
+  - type: CFItemPrice
+    copper: 100
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaHealingPotionMinor
+  name: formula (minor healing potion)
+  components:
+  - type: CFFormula
+    recipes:
+    - HealingPotionMinor
+  - type: CFItemPrice
+    copper: 100
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaGeckoPotion
+  name: formula (gecko potion)
+  components:
+  - type: CFFormula
+    recipes:
+    - GeckoPotion
+  - type: CFItemPrice
+    copper: 100
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaPotionOfEmergencyEscape
+  name: formula (potion of emergency escape)
+  components:
+  - type: CFFormula
+    recipes:
+    - PotionOfEmergencyEscape
+  - type: CFItemPrice
+    copper: 100
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaInvisibilityPotion
+  name: formula (invisibility potion)
+  components:
+  - type: CFFormula
+    recipes:
+    - InvisibilityPotion
+  - type: CFItemPrice
+    copper: 500

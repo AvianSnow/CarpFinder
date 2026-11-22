@@ -14,3 +14,5 @@ cf-hazard-triggered = { CAPITALIZE(THE($hazard)) } springs on { $target }!
 cf-hazard-disarm = Disarm trap
 cf-hazard-disarm-option = { $skill } (DC { $dc })
 cf-hazard-disarmed = { CAPITALIZE(THE($hazard)) } is disarmed.
+cf-trap-cannot = You cannot build a trap there.
+cf-trap-laid = You build a trap. Materials left for { $left }.

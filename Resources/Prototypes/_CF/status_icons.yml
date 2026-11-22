@@ -6,3 +6,12 @@
   icon:
     sprite: /Textures/_CF/Markers/flanked.rsi
     state: flanked
+
+- type: statusIcon
+  id: CFPvpIcon
+  priority: 5
+  locationPreference: Left
+  isShaded: false
+  icon:
+    sprite: /Textures/_CF/Markers/pvp.rsi
+    state: pvp

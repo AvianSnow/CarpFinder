@@ -1,0 +1,62 @@
+# Ported from CP14 by the CF converter.
+
+- type: constructionGraph
+  id: CFTargetStake
+  start: start
+  graph:
+    - node: start
+      edges:
+        - to: CFtargetStake
+          completed:
+            - !type:SnapToGrid
+              southRotation: true
+          steps:
+            - material: CFWoodenPlanks
+              amount: 2
+              doAfter: 2
+
+    - node: CFtargetStake
+      entity: CFTargetStake
+      edges:
+        - to: start
+          completed:
+            - !type:DeleteEntity {}
+          steps:
+            - tool: Screwing
+              doAfter: 1
+        - to: CFtarget
+          steps:
+            - material: CFWoodenPlanks
+              amount: 3
+              doAfter: 1
+            - tool: CFHammering
+              doAfter: 1
+
+    - node: CFtarget
+      entity: CFTarget
+      edges:
+        - to: CFtargetStake
+          completed:
+            - !type:GivePrototype
+              prototype: CFWoodenPlanks1
+              amount: 3
+          steps:
+            - tool: CFHammering
+              doAfter: 2
+
+- type: constructionGraph
+  id: CFTargetEffigy
+  start: start
+  graph:
+    - node: start
+      edges:
+        - to: CFtargetEffigy
+          completed:
+            - !type:SnapToGrid
+          steps:
+            - material: CFWoodenPlanks
+              amount: 5
+            - material: CFCloth
+              amount: 2
+    - node: CFtargetEffigy
+      entity: CFTargetEffigy

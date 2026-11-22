@@ -1,0 +1,43 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  abstract: true
+  parent: BaseDice
+  id: CFBaseDice
+  categories: [ ForkFiltered ]
+  components:
+  - type: Dice
+  - type: Sprite
+    sprite: _CP14/Objects/Fun/dice.rsi
+    noRot: true
+  - type: Tag
+    tags:
+    - Dice
+
+- type: entity
+  parent: CFBaseDice
+  id: CFd20Dice
+  name: d20
+  description: What are the odds of me drinking wine and choking and dropping the candle on the dwarf's head?
+  components:
+  - type: CFItemPrice
+    copper: 10 # KCTG: Bone Dice
+  - type: Dice
+    sides: 20
+    currentValue: 20
+  - type: Sprite
+    state: d20_20
+
+- type: entity
+  parent: CFBaseDice
+  id: CFd6Dice
+  name: d6
+  description: A bone cube for board games.
+  components:
+  - type: CFItemPrice
+    copper: 10 # KCTG: Bone Dice
+  - type: Dice
+    sides: 6
+    currentValue: 6
+  - type: Sprite
+    state: d6_6

@@ -1,0 +1,129 @@
+# Runesmith runes. What a rune does when invoked is on its Trace action in Actions/runes.yml.
+
+- type: cfRune
+  id: Atryl
+  name: cf-rune-atryl
+  action: CFActTraceAtryl
+  usage: Creature
+
+- type: cfRune
+  id: Baruiel
+  name: cf-rune-baruiel
+  action: CFActTraceBaruiel
+  usage: Creature
+
+- type: cfRune
+  id: Camonica
+  name: cf-rune-camonica
+  action: CFActTraceCamonica
+  usage: Creature
+
+- type: cfRune
+  id: Esvadir
+  name: cf-rune-esvadir
+  action: CFActTraceEsvadir
+  usage: Weapon
+  damageTypes: [ piercing, slashing ]
+  persistentPerDie: 2
+  invokesAdjacent: true
+
+- type: cfRune
+  id: Holtrik
+  name: cf-rune-holtrik
+  action: CFActTraceHoltrik
+  usage: Shield
+
+- type: cfRune
+  id: Ledria
+  name: cf-rune-ledria
+  action: CFActTraceLedria
+  usage: Creature
+  bonuses:
+    - stat: SkillChecks
+      type: Status
+      value: 1
+      skill: Deception
+    - stat: SkillChecks
+      type: Status
+      value: 1
+      skill: Diplomacy
+    - stat: SkillChecks
+      type: Status
+      value: 1
+      skill: Performance
+
+- type: cfRune
+  id: Lyskel
+  name: cf-rune-lyskel
+  action: CFActTraceLyskel
+  usage: Creature
+  bonuses:
+    - stat: Speed
+      type: Circumstance
+      value: -5
+
+- type: cfRune
+  id: Marssyl
+  name: cf-rune-marssyl
+  action: CFActTraceMarssyl
+  usage: Weapon
+  damageTypes: [ bludgeoning ]
+  splashPerDie: 1
+
+- type: cfRune
+  id: Oljinex
+  name: cf-rune-oljinex
+  action: CFActTraceOljinex
+  usage: Shield
+
+- type: cfRune
+  id: Pluuna
+  name: cf-rune-pluuna
+  action: CFActTracePluuna
+  usage: Creature
+
+- type: cfRune
+  id: Ranshu
+  name: cf-rune-ranshu
+  action: CFActTraceRanshu
+  usage: Creature
+
+- type: cfRune
+  id: Rehgog
+  name: cf-rune-rehgog
+  action: CFActTraceRehgog
+  usage: Creature
+
+- type: cfRune
+  id: Sertum
+  name: cf-rune-sertum
+  action: CFActTraceSertum
+  usage: Creature
+  bonuses:
+    - stat: SkillChecks
+      type: Status
+      value: 1
+      skill: Survival
+
+- type: cfRune
+  id: Thullax
+  name: cf-rune-thullax
+  action: CFActTraceThullax
+  usage: Creature
+
+- type: cfRune
+  id: Tilus
+  name: cf-rune-tilus
+  action: CFActTraceTilus
+  usage: Creature
+  bonuses:
+    - stat: SkillChecks
+      type: Status
+      value: 1
+      skill: Society
+
+- type: cfRune
+  id: Zohk
+  name: cf-rune-zohk
+  action: CFActTraceZohk
+  usage: Creature

@@ -3,6 +3,7 @@ using Content.Client.Message;
 using Content.Client.Players.PlayTimeTracking;
 using Content.Client.Sprite;
 using Content.Shared.CCVar;
+using Content.Shared.CF.Preferences;
 using Content.Shared.Humanoid;
 using Content.Shared.Humanoid.Markings;
 using Content.Shared.Preferences;
@@ -342,6 +343,9 @@ namespace Content.Client.Lobby.UI
             RefreshLoadouts();
             RefreshSpecies();
             UpdateBuilderSummary(); // CarpFinder: refresh PF2e summary from profile
+            _setupAccepted = Profile != null && CFCharacterRequirements.Missing(_prototypeManager, Profile).Count == 0;
+            ClosePicker();
+            ApplySetupStage();
             ReloadPreview();
         }
 

@@ -1,0 +1,49 @@
+- type: construction
+  parent: BaseFurniture
+  id: CFWorkbench
+  graph: CFWorkbench
+  startNode: start
+  targetNode: CFWorkbench
+  objectType: Structure
+  conditions:
+  - !type:TileNotBlocked
+
+- type: construction
+  parent: BaseFurniture
+  id: CFWorkbenchSewing
+  graph: CFWorkbenchSewing
+  startNode: start
+  targetNode: CFWorkbenchSewing
+  objectType: Structure
+  conditions:
+  - !type:TileNotBlocked
+
+- type: construction
+  parent: BaseFurniture
+  id: CFWorkbenchLeather
+  graph: CFWorkbenchLeather
+  startNode: start
+  targetNode: CFWorkbenchLeather
+  objectType: Structure
+  conditions:
+  - !type:TileNotBlocked
+
+- type: construction
+  parent: BaseFurniture
+  id: CFWorkbenchAnvil
+  graph: CFWorkbenchAnvil
+  startNode: start
+  targetNode: CFWorkbenchAnvil
+  objectType: Structure
+  conditions:
+  - !type:TileNotBlocked
+
+- type: construction
+  parent: BaseFurniture
+  id: CFWorkbenchFurnace
+  graph: CFWorkbenchFurnace
+  startNode: start
+  targetNode: CFWorkbenchFurnace
+  objectType: Structure
+  conditions:
+  - !type:TileNotBlocked

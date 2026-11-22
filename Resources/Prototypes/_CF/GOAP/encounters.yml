@@ -1,0 +1,205 @@
+# Encounters. Place a CFEncounterSpawner and pick one with its encounter field. As an aghost, use VV on the
+# spawner: "mobs" takes entity ids separated by commas and replaces the list here, "amount" is how many to spawn
+# (0 is one of each typed mob, or the encounter's count), and "armed" spawns it again.
+
+# Stand-in: this has no Marker component, because the client hides those until showmarkers, so everyone can see it.
+- type: entity
+  id: CFEncounterSpawner
+  name: encounter spawner
+  description: Spawns an encounter when an adventurer comes within 90 feet.
+  suffix: DM
+  categories: [ ForkFiltered ]
+  placement:
+    mode: SnapgridCenter
+  components:
+  - type: Transform
+    anchored: true
+  - type: Clickable
+  - type: InteractionOutline
+  - type: Tag
+    tags:
+    - ForceFixRotations
+  - type: Sprite
+    drawdepth: Overdoors
+    sprite: Markers/cross.rsi
+    layers:
+    - state: green
+  - type: CFGOAPEncounterSpawner
+  - type: DeviceLinkSource
+
+- type: sourcePort
+  id: CFEncounterMemberDied
+  name: cf-port-encounter-died
+  description: cf-port-encounter-died-desc
+
+- type: sourcePort
+  id: CFEncounterRouted
+  name: cf-port-encounter-routed
+  description: cf-port-encounter-routed-desc
+
+- type: sourcePort
+  id: CFEncounterCleared
+  name: cf-port-encounter-cleared
+  description: cf-port-encounter-cleared-desc
+
+# Four that work together to flank, and break and hide when half are down.
+- type: encounter
+  id: SmallGroup
+  mobs:
+  - CFKoboldWarrior
+  count: 4
+  routAt: 0.5
+  tactics: Skirmisher
+  goals:
+  - RunAway
+  - GoToGround
+  - StayHidden
+  actions:
+  - TakeFlank
+  - StrikeFlanked
+  - HideAway
+  - WaitHidden
+
+# The juvenile horned dragon, alone. It keeps its own lair, so it guards the spot it appears on and never runs.
+- type: encounter
+  id: DragonLair
+  mobs:
+  - CFMobJuvenileHornedDragon
+  count: 1
+
+# A spawner already set to the dragon, so a mapper can place one without VV.
+- type: entity
+  parent: CFEncounterSpawner
+  id: CFEncounterSpawnerDragonLair
+  name: dragon lair spawner
+  description: Spawns the juvenile horned dragon when an adventurer comes within 90 feet. It guards that spot.
+  components:
+  - type: Sprite
+    sprite: Markers/cross.rsi
+    layers:
+    - state: red
+  - type: CFGOAPEncounterSpawner
+    encounter: DragonLair
+
+# A wolf pack. They spread round their prey, so each bite has Pack Attack and a flank, and the last one runs.
+- type: encounter
+  id: WolfPack
+  mobs:
+  - CFMobWolf
+  count: 4
+  routAt: 0.25
+  goals:
+  - RunAway
+  actions:
+  - TakeFlank
+  - StrikeFlanked
+
+# A kobold trapper and the three warriors it sends in. The warriors flank. The trapper keeps its own brain, set on
+# CFMobKoboldTrapper: it stays back, shoots and lays traps. It is last so the first two warriors take opposite sides.
+# The last one left breaks. A ghost can take the trapper, and then points at an adventurer to set the warriors on them.
+- type: encounter
+  id: KoboldAmbush
+  mobs:
+  - CFKoboldWarrior
+  - CFKoboldWarrior
+  - CFKoboldWarrior
+  - CFMobKoboldTrapper
+  count: 4
+  routAt: 0.25
+  tactics: Skirmisher
+  goals:
+  - RunAway
+  - GoToGround
+  - StayHidden
+  actions:
+  - TakeFlank
+  - StrikeFlanked
+  - HideAway
+  - WaitHidden
+
+# Pack goals and actions.
+
+- type: cfGoapGoal
+  id: RunAway
+  wants: [ Safe ]
+  priority: 20
+  onlyWhen: [ Routed, TargetVisible ]
+
+- type: cfGoapGoal
+  id: GoToGround
+  wants: [ Hiding ]
+  priority: 19
+  onlyWhen: [ Routed ]
+  notWhen: [ TargetVisible, Hiding ]
+
+- type: cfGoapGoal
+  id: StayHidden
+  wants: [ Waited ]
+  priority: 18
+  onlyWhen: [ Routed, Hiding ]
+  notWhen: [ TargetVisible ]
+
+# A shooter's goals. These sit above KillTarget, so they interrupt shooting, and below PutOutFire and a rout.
+
+# Backs off from what comes close. Cornered ends this: there is nowhere left to back off to.
+- type: cfGoapGoal
+  id: KeepDistance
+  wants: [ Safe ]
+  priority: 6.4
+  onlyWhen: [ TooClose ]
+  notWhen: [ Cornered ]
+
+- type: cfGoapGoal
+  id: DrawSidearm
+  wants: [ SidearmDrawn ]
+  priority: 6.5
+  onlyWhen: [ ShouldDraw ]
+
+- type: cfGoapGoal
+  id: LayTrap
+  wants: [ TrapLaid ]
+  priority: 5.5
+  onlyWhen: [ CanLayTrap ]
+  notWhen: [ Parleying ]
+
+- type: cfGoapAction
+  id: ConstructTrap
+  step: LayTrap
+  needs: [ CanLayTrap ]
+  gives: [ TrapLaid ]
+
+- type: cfGoapAction
+  id: DrawSidearm
+  step: DrawSidearm
+  needs: [ ShouldDraw ]
+  gives: [ SidearmDrawn ]
+
+- type: cfGoapAction
+  id: TakeFlank
+  step: Flank
+  needs: [ TargetVisible, AlliesNearby ]
+  needsNot: [ NoWay, FlankBlocked ]
+  gives: [ AtFlank ]
+  cost: 0.4
+
+# Together these cost less than Close and Strike, so a creature with allies goes to its side first.
+# With no ally near, TakeFlank cannot run and it walks straight in.
+- type: cfGoapAction
+  id: StrikeFlanked
+  step: Strike
+  valuedBy: Strike
+  needs: [ TargetVisible, AtFlank, HasWeapon ]
+  gives: [ TargetHurt ]
+  cost: 0.4
+
+- type: cfGoapAction
+  id: HideAway
+  step: Maneuver
+  maneuver: Hide
+  needsNot: [ TargetVisible ]
+  gives: [ Hiding ]
+
+- type: cfGoapAction
+  id: WaitHidden
+  step: Wait
+  gives: [ Waited ]

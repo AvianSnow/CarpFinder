@@ -1,3 +1,5 @@
+using Content.Shared.CF.Harvest;
+using Content.Shared.CF.Languages;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Preferences;
 using Content.Shared.Damage.Components;
@@ -129,6 +131,10 @@ public sealed partial class CFCombatBridgeSystem : EntitySystem
         combatant.MaxHp = CFCommonerStats.HitPoints;
         combatant.CurrentHp = CFCommonerStats.HitPoints;
         combatant.ClassId = null;
+
+        // An animal that can be butchered dies at 0, as a monster does, so a hunt ends in a carcass and not a body
+        // that lies dying. Anything that speaks keeps the dying rules.
+        combatant.DiesAtZeroHp = HasComp<CFHarvestableComponent>(target) && !HasComp<CFLanguagesComponent>(target);
         Dirty(target, combatant);
 
         var abilities = EnsureComp<CFAbilityScoreComponent>(target);

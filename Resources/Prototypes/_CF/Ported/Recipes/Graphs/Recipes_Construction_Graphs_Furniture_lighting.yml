@@ -1,0 +1,21 @@
+# Ported from CP14 by the CF converter.
+
+- type: constructionGraph
+  id: CFBonfire
+  start: start
+  graph:
+    - node: start
+      actions:
+        - !type:DestroyEntity {}
+      edges:
+        - to: CFBonfire
+          steps:
+            - material: CFStone
+              amount: 2
+              doAfter: 2
+            - material: CFWoodenPlanks
+              amount: 1
+              doAfter: 2
+
+    - node: CFBonfire
+      entity: CFBonfire

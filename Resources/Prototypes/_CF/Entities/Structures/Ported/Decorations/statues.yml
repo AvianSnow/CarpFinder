@@ -1,0 +1,295 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  id: CFStatueGob
+  parent: BaseStructure
+  name: statue of Gob
+  description: It's beautiful.
+  categories: [ ForkFiltered ]
+  suffix: Normal
+  components:
+  - type: Sprite
+    noRot: true
+    sprite: _CP14/Structures/Decoration/statue_gob.rsi
+    layers:
+    - state: gob
+    - state: wire
+      map: ["wire"]
+      visible: false
+    - state: anim
+      map: ["garland"]
+      visible: false
+    drawdepth: Mobs
+    offset: "0.0,0.5"
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.45,-0.45,0.45,0.45"
+        density: 60
+        mask:
+        - MachineMask
+        layer:
+        - MachineLayer
+  - type: Damageable
+    damageModifierSet: CFRock
+  - type: Injurable
+    damageContainer: StructuralInorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 125
+      behaviors:
+      - !type:DoActsBehavior
+        acts: ["Destruction"]
+      - !type:PlaySoundBehavior
+        sound:
+          path: /Audio/Effects/break_stone.ogg
+          params:
+            volume: -4
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFStoneBlock1:
+            min: 4
+            max: 5
+  - type: Appearance
+  - type: HolidayVisuals
+    holidays:
+      festive:
+      - FestiveSeason
+  - type: GenericVisualizer
+    visuals:
+      enum.HolidayVisuals.Holiday:
+        wire:
+          festive:
+            state: wire
+        garland:
+          festive:
+            state: anim
+            shader: unshaded
+
+- type: entity
+  id: CFStatueGobVines
+  parent: CFStatueGob
+  name: statue of Gob
+  suffix: Normal. Overgrown.
+  components:
+  - type: Sprite
+    layers:
+    - state: gob_vines
+    - state: wire
+      map: ["wire"]
+      visible: false
+    - state: anim
+      map: ["garland"]
+      visible: false
+
+- type: entity
+  id: CFStatueGobRuined
+  parent: CFStatueGob
+  name: broken statue of Gob
+  suffix: Ruined
+  components:
+  - type: Sprite
+    layers:
+    - state: gob_ruined
+    - state: wire
+      map: ["wire"]
+      visible: false
+    - state: anim
+      map: ["garland"]
+      visible: false
+
+- type: entity
+  id: CFStatueGobRuinedVines
+  parent: CFStatueGob
+  name: broken statue of Gob
+  suffix: Ruined. Overgrown.
+  components:
+  - type: Sprite
+    layers:
+    - state: gob_ruined_vines
+    - state: wire
+      map: ["wire"]
+      visible: false
+    - state: anim
+      map: ["garland"]
+      visible: false
+
+- type: entity
+  id: CFStatueAngel
+  parent: BaseStructure
+  name: angel statue
+  description: A divine statue of a praying angel.
+  categories: [ ForkFiltered ]
+  suffix: Stone
+  components:
+  - type: Sprite
+    noRot: true
+    sprite: _CP14/Structures/Decoration/angel_statue.rsi
+    layers:
+    - state: statue1
+    drawdepth: Mobs
+    offset: "0.0,0.5"
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.45,-0.45,0.45,0.45"
+        density: 120
+        mask:
+        - MachineMask
+        layer:
+        - MachineLayer
+  - type: Damageable
+    damageModifierSet: CFRock
+  - type: Injurable
+    damageContainer: StructuralInorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 125
+      behaviors:
+      - !type:DoActsBehavior
+        acts: ["Destruction"]
+      - !type:PlaySoundBehavior
+        sound:
+          path: /Audio/Effects/break_stone.ogg
+          params:
+            volume: -4
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFStoneBlock1:
+            min: 4
+            max: 5
+  - type: Appearance
+
+- type: entity
+  id: CFStatueAngelMarble
+  parent: CFStatueAngel
+  suffix: Marble
+  components:
+  - type: Sprite
+    layers:
+    - state: statue2
+
+- type: entity
+  id: CFStatueAngelLimestone
+  parent: CFStatueAngel
+  suffix: Limestone
+  components:
+  - type: Sprite
+    layers:
+    - state: statue3
+
+- type: entity
+  id: CFStatueStoneHeadHigh
+  parent: BaseStructure
+  name: stone head
+  description: Strange stone heads, they seem to be watching.
+  categories: [ ForkFiltered ]
+  suffix: High
+  components:
+  - type: Sprite
+    noRot: true
+    sprite: _CP14/Structures/Decoration/stone_head_high.rsi
+    layers:
+    - state: statue_head_h
+    drawdepth: Mobs
+    offset: "0.0,0.5"
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.45,-0.45,0.45,0.45"
+        density: 200
+        mask:
+        - MachineMask
+        layer:
+        - MachineLayer
+  - type: Damageable
+    damageModifierSet: CFRock
+  - type: Injurable
+    damageContainer: StructuralInorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 150
+      behaviors:
+      - !type:DoActsBehavior
+        acts: ["Destruction"]
+      - !type:PlaySoundBehavior
+        sound:
+          path: /Audio/Effects/break_stone.ogg
+          params:
+            volume: -4
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFStoneBlock1:
+            min: 4
+            max: 5
+
+- type: entity
+  id: CFStatueStoneHeadLow
+  parent: CFStatueStoneHeadHigh
+  suffix: Low
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Decoration/stone_head_low.rsi
+    layers:
+    - state: statue_head_l
+
+- type: entity
+  id: CFStatueWizard
+  parent: BaseStructure
+  name: statue wizard
+  description: A statue of a magician holding magic.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    noRot: true
+    sprite: _CP14/Structures/Decoration/wizard_statue.rsi
+    layers:
+    - state: statue_wizard
+    drawdepth: Mobs
+    offset: "0.0,0.5"
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.2,-0.35,0.2,0.35"
+        density: 100
+        mask:
+        - MachineMask
+        layer:
+        - MachineLayer
+  - type: SpriteFade
+  - type: Damageable
+    damageModifierSet: CFRock
+  - type: Injurable
+    damageContainer: StructuralInorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 110
+      behaviors:
+      - !type:DoActsBehavior
+        acts: ["Destruction"]
+      - !type:PlaySoundBehavior
+        sound:
+          path: /Audio/Effects/break_stone.ogg
+          params:
+            volume: -4
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFStoneBlock1:
+            min: 2
+            max: 3

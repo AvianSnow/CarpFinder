@@ -1,0 +1,96 @@
+# Gems from CP14's jewelry, as Player Core precious stones. Each grade has a rolled Price; these are its average.
+# Gems sell for their full Price.
+
+- type: entity
+  abstract: true
+  parent: BaseItem
+  id: CFBaseGem
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    sprite: /Textures/_CP14/Objects/Economy/jewelry.rsi
+  - type: Item
+    size: Tiny
+  - type: CFItem
+    level: 4
+  - type: CFBulk
+    bulk: 0
+
+- type: entity
+  parent: CFBaseGem
+  id: CFGemRuby
+  name: ruby
+  description: A beautiful stone that is worth a lot of money.
+  components:
+  - type: Sprite
+    layers:
+    - state: ruby1
+      map: ["random"]
+  - type: RandomSprite
+    available:
+    - random:
+        ruby1: ""
+        ruby2: ""
+        ruby3: ""
+  - type: CFItemPrice
+    copper: 25000 # moderate: 1d4 x 100 gp
+    fullResale: true
+
+- type: entity
+  parent: CFBaseGem
+  id: CFGemEmerald
+  name: emerald
+  description: A beautiful stone that is worth a lot of money.
+  components:
+  - type: Sprite
+    layers:
+    - state: emerald1
+      map: ["random"]
+  - type: RandomSprite
+    available:
+    - random:
+        emerald1: ""
+        emerald4: ""
+        emerald2: ""
+        emerald3: ""
+  - type: CFItemPrice
+    copper: 25000 # moderate: 1d4 x 100 gp
+    fullResale: true
+
+- type: entity
+  parent: CFBaseGem
+  id: CFGemSapphire
+  name: sapphire
+  description: A beautiful stone that is worth a lot of money.
+  components:
+  - type: Sprite
+    layers:
+    - state: sapphire1
+      map: ["random"]
+  - type: RandomSprite
+    available:
+    - random:
+        sapphire1: ""
+        sapphire2: ""
+        sapphire3: ""
+  - type: CFItemPrice
+    copper: 25000 # moderate: 1d4 x 100 gp
+    fullResale: true
+
+- type: entity
+  parent: CFBaseGem
+  id: CFGemTopaz
+  name: topaz
+  description: A beautiful stone that is worth a lot of money.
+  components:
+  - type: Sprite
+    layers:
+    - state: topaz1
+      map: ["random"]
+  - type: RandomSprite
+    available:
+    - random:
+        topaz1: ""
+  - type: CFItemPrice
+    copper: 12500 # lesser: 1d4 x 50 gp
+    fullResale: true

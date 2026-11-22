@@ -2,12 +2,14 @@
 # source: Carpfinder Battlecry!
 - type: cfFeat
   id: CFUnsteadyingStrike
-  name: "Unsteadying Strike"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-unsteadying-strike
+  description: cf-feat-unsteadying-strike-desc
   class: Commander
   level: 4
   traits:
     - "Commander"
     - "Flourish"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActUnsteadyingStrike

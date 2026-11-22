@@ -1,0 +1,437 @@
+# Actions that only apply effects. CFEffectActionSystem runs them. Grant one with CFGrantAction.
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActExtravagantParry
+  name: Extravagant Parry
+  description: +1 circumstance bonus to AC for 6 seconds.
+  components:
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFBonusEffect
+      stat: ArmorClass
+      type: Circumstance
+      value: 1
+      durationSeconds: 6
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActTributaryCirculation
+  name: Tributary Circulation
+  description: +2 circumstance bonus to Will saves for 6 seconds.
+  components:
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFBonusEffect
+      stat: Will
+      type: Circumstance
+      value: 2
+      durationSeconds: 6
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActTranceOfCelerity
+  name: Trance of Celerity
+  description: +5 feet status bonus to Speed for a minute.
+  components:
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFBonusEffect
+      stat: Speed
+      type: Status
+      value: 5
+      durationSeconds: 60
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActNudgeScales
+  name: Nudge the Scales
+  description: Heal a creature within 30 feet for 2 Hit Points plus double your level.
+  components:
+  - type: TargetAction
+    range: 6.25
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFHealEffect
+      flat: 2
+      perLevel: 2
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActPsiBurst
+  name: Psi Burst
+  description: A creature within 30 feet takes 1d4 bludgeoning, basic Reflex. The damage grows at levels 3 and 5.
+  components:
+  - type: TargetAction
+    range: 6.25
+  - type: CFEffectAction
+  - type: CFCheck
+    defense: Reflex
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 4
+      damageType: Bludgeoning
+      diceEveryLevels: 2
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActDrainChalice
+  name: Drain the Chalice
+  description: You or an adjacent ally regain 3 Hit Points per level. The chalice refills in 10 minutes.
+  components:
+  - type: Action
+    useDelay: 600
+  - type: EntityTargetAction
+    canTargetSelf: true
+    whitelist:
+      components:
+      - MobState
+    event: !type:CFActivityTargetEvent
+  - type: CFNeedsImplement
+    kind: Chalice
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFHealEffect
+      perLevel: 3
+
+- type: entity
+  abstract: true
+  parent: CFActivityTarget
+  id: CFActFlingMagicBase
+  components:
+  - type: TargetAction
+    range: 12.25
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFNeedsImplement
+    kind: Wand
+  - type: CFEffectAction
+  - type: CFCheck
+    defense: Reflex
+    dcSource: Class
+
+- type: entity
+  parent: CFActFlingMagicBase
+  id: CFActFlingMagicFire
+  name: Fling Magic
+  description: A creature within 60 feet takes 3d4 fire damage, basic Reflex against your class DC, and 1d4 more at levels 3 and 5. Costs 2 actions.
+  components:
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 3
+      die: 4
+      damageType: Fire
+      diceEveryLevels: 2
+
+- type: entity
+  parent: CFActFlingMagicBase
+  id: CFActFlingMagicCold
+  name: Fling Magic
+  description: A creature within 60 feet takes 3d4 cold damage, basic Reflex against your class DC, and 1d4 more at levels 3 and 5. Costs 2 actions.
+  components:
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 3
+      die: 4
+      damageType: Cold
+      diceEveryLevels: 2
+
+- type: entity
+  parent: CFActFlingMagicBase
+  id: CFActFlingMagicElectricity
+  name: Fling Magic
+  description: A creature within 60 feet takes 3d4 electricity damage, basic Reflex against your class DC, and 1d4 more at levels 3 and 5. Costs 2 actions.
+  components:
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 3
+      die: 4
+      damageType: Electricity
+      diceEveryLevels: 2
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActUnleashPsyche
+  name: Unleash Psyche
+  description: For 12 seconds, damaging spells with no duration deal double their rank more. Needs a spell cast in the last 6 seconds. Stupefied 1 for 12 seconds after.
+  components:
+  - type: CFRadialSlot
+    group: Free
+    actions: 0
+  - type: CFUnleashAction
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActCalculateThreats
+  name: Calculate Threats
+  description: While Unleashed, +2 circumstance bonus to AC and Reflex for 6 seconds.
+  components:
+  - type: CFNeedsUnleashed
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFBonusEffect
+      stat: ArmorClass
+      type: Circumstance
+      value: 2
+      durationSeconds: 6
+    - !type:CFBonusEffect
+      stat: Reflex
+      type: Circumstance
+      value: 2
+      durationSeconds: 6
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActFadeIntoDaydreams
+  name: Fade into Daydreams
+  description: While Unleashed, you are concealed for 6 seconds.
+  components:
+  - type: CFNeedsUnleashed
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFApplyConditionEffect
+      condition: Concealed
+      durationSeconds: 6
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActRestoreTheMind
+  name: Restore the Mind
+  description: While Unleashed, an ally within 30 feet regains 2 Hit Points plus double your level. Once every 10 minutes.
+  components:
+  - type: Action
+    useDelay: 600
+  - type: TargetAction
+    range: 6.25
+  - type: CFNeedsUnleashed
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFHealEffect
+      flat: 2
+      perLevel: 2
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActOverdrive
+  name: Overdrive
+  description: A Crafting check. Your Strikes deal extra damage for a minute, based on your Intelligence. Then it needs a minute to cool.
+  components:
+  - type: Action
+    useDelay: 6
+  - type: CFOverdriveAction
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActExplode
+  name: Explode
+  description: Your innovation bursts, dealing 2d6 fire damage around it, basic Reflex, and more at level 3 and up. Costs 2 actions. An unstable action.
+  components:
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFExplodeAction
+  - type: CFAreaEffect
+    shape: Burst
+    sizeFeet: 5
+  - type: CFCheck
+    defense: Reflex
+    dcSource: Class
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 2
+      die: 6
+      damageType: Fire
+      diceFromLevel: true
+
+# Given by a battle form while it lasts. See CFBattleFormSystem.
+- type: entity
+  parent: CFActivityInstant
+  id: CFActDismissForm
+  name: Dismiss Form
+  description: Return to your own shape.
+  components:
+  - type: CFDismissFormAction
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActEmblazonArmament
+  name: Emblazon Armament
+  description: Draw your deity's symbol on the weapon or shield in your active hand. A follower of your deity deals 1 more damage with the weapon, or the shield has 1 more Hardness for them. Your last symbol fades. You can draw another in 10 minutes.
+  components:
+  - type: Action
+    useDelay: 600
+  - type: CFRadialSlot
+    actions: 3
+  - type: CFEmblazonAction
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActSearingRestoration
+  name: Searing Restoration
+  description: A small blast from your innovation closes wounds. You or an adjacent creature regain 1d10 Hit Points, and 1d10 more at level 3 and every 2 levels after, and get a flat check to stop bleeding. An unstable action.
+  components:
+  - type: EntityTargetAction
+    canTargetSelf: true
+    whitelist:
+      components:
+      - MobState
+    event: !type:CFActivityTargetEvent
+  - type: CFEffectAction
+    unstable: true
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFHealEffect
+      dice: 1
+      die: 10
+      diceEveryLevels: 2
+    - !type:CFRecoverPersistentEffect
+      damageType: Bleed
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActTwinParry
+  name: Twin Parry
+  description: With a melee weapon in each hand, +1 circumstance bonus to AC for 6 seconds.
+  components:
+  - type: CFEffectAction
+    needsWeaponInEachHand: true
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFBonusEffect
+      stat: ArmorClass
+      type: Circumstance
+      value: 1
+      durationSeconds: 6
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActRaiseSymbol
+  name: Raise Symbol
+  description: +2 circumstance bonus to saving throws for 6 seconds.
+  components:
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFBonusEffect
+      stat: Saves
+      type: Circumstance
+      value: 2
+      durationSeconds: 6
+
+# Guardian. Once an hour in the world is 15 minutes of real time at the default clock.
+- type: entity
+  parent: CFActivityInstant
+  id: CFActArmoredCourage
+  name: Armored Courage
+  description: In medium or heavy armor, gain temporary Hit Points equal to your level for a minute, and lower frightened by 1. Once an hour.
+  components:
+  - type: Action
+    useDelay: 900
+  - type: CFEffectAction
+    needsMediumOrHeavyArmor: true
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFTemporaryHpEffect
+      perLevel: 1
+      durationSeconds: 60
+    - !type:CFReduceFrightenedEffect
+
+# Ghostly Stride: a move that sets off no reactions.
+- type: entity
+  parent: CFActivityInstant
+  id: CFActGhostlyStride
+  name: Ghostly Stride
+  description: For 3 seconds you can leave an enemy's reach at no cost and without setting off a reaction.
+  components:
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFFreeStepEffect
+      durationSeconds: 3
+
+# Explosive Leap: the innovation throws its Inventor 30 feet.
+- type: entity
+  parent: CFActivityInstant
+  id: CFActExplosiveLeap
+  name: Explosive Leap
+  description: A blast from your innovation throws you 30 feet the way you are facing. An unstable action.
+  components:
+  - type: CFEffectAction
+    unstable: true
+  - type: CFTrait
+    traits: [Fire]
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFLeapEffect
+      feet: 30
+
+# Parries. Each is +AC for 6 seconds, with something particular in hand.
+- type: entity
+  parent: CFActivityInstant
+  id: CFActDuelingParry
+  name: Dueling Parry
+  description: With a one-handed melee weapon and your other hand free, +2 circumstance bonus to AC for 6 seconds.
+  components:
+  - type: CFEffectAction
+    needsWeaponAndFreeHand: true
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFBonusEffect
+      stat: ArmorClass
+      type: Circumstance
+      value: 2
+      durationSeconds: 6
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActRaiseHaft
+  name: Raise Haft
+  description: With a melee weapon in both hands, +1 circumstance bonus to AC for 6 seconds.
+  components:
+  - type: CFEffectAction
+    needsTwoHanded: Melee
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFBonusEffect
+      stat: ArmorClass
+      type: Circumstance
+      value: 1
+      durationSeconds: 6
+
+- type: entity
+  parent: CFActRaiseHaft
+  id: CFActDefensiveArmaments
+  name: Defensive Armaments
+  description: With a crossbow or firearm in both hands, +1 circumstance bonus to AC for 6 seconds.
+  components:
+  - type: CFEffectAction
+    needsTwoHanded: Ranged
+
+# Arcane Bond (Player Core, Wizard): once a day, a spent prepared spell comes back for one cast.
+- type: entity
+  parent: CFActivityInstant
+  id: CFActDrainBondedItem
+  name: Drain Bonded Item
+  description: Free, once a day. For 6 seconds, one prepared spell you already cast today can be cast again without a slot.
+  components:
+  - type: CFRadialSlot
+    group: Free
+    tab: Focus
+  - type: CFDailyUses
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDrainBondedItemEffect

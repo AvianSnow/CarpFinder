@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFSuddenChargeFighter
-  name: "Sudden Charge"
-  description: "Stride into reach and Strike. Costs 2 actions."
+  name: cf-feat-sudden-charge-fighter
+  description: cf-feat-sudden-charge-fighter-desc
   class: Fighter
   level: 1
   traits:
@@ -11,3 +11,6 @@
     - "Fighter"
     - "Flourish"
   action: Action
+  grants:
+    - !type:CFGrantAction
+      action: CFActSuddenCharge

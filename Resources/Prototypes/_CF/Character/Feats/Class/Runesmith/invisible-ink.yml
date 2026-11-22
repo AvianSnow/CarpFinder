@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFInvisibleInk
-  name: "Invisible Ink"
-  description: "This feature will be implemented later."
+  name: cf-feat-invisible-ink
+  description: cf-feat-invisible-ink-desc
   class: Runesmith
   level: 2
   traits:

@@ -1,0 +1,30 @@
+# Ported from CP14 by the CF converter.
+
+- type: constructionGraph
+  id: CFFurnace
+  start: start
+  graph:
+    - node: start
+      actions:
+      - !type:DestroyEntity {}
+      edges:
+        - to: CFFurnace
+          completed:
+            - !type:SnapToGrid
+          steps:
+            - material: CFIronBar
+              amount: 3
+              doAfter: 4
+    - node: CFFurnace
+      entity: CFFurnace
+      edges:
+      - to: start
+        steps:
+        - tool: Screwing
+          doAfter: 2
+        - tool: Prying
+          doAfter: 4
+        completed:
+        - !type:SpawnPrototype
+          prototype: CFIronBar1
+          amount: 3

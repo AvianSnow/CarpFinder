@@ -1,4 +1,4 @@
-﻿- type: entity
+- type: entity
   parent: CFSpellProjectile
   id: CFIgnition
   name: Ignition
@@ -14,6 +14,10 @@
   - type: CFSpell
     spell: Ignition
     rank: 0
+  - type: CFPsiCantrip
+    ampDice: 1
+    ampDie: 10
+    ampHeightenDice: 1
   - type: CFTargeting
     rangeFeet: 30
   - type: CFCheck

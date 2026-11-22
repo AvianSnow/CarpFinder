@@ -1,0 +1,63 @@
+using Robust.Shared.GameStates;
+using Robust.Shared.Prototypes;
+
+namespace Content.Shared.CF.Companions;
+
+/// <summary>
+/// A creature called by a spell or ability, such as a thrall. It carries the Summoned trait. When it dies, or its
+/// time is up, it vanishes in a puff of smoke and leaves no body, so it cannot be looted or harvested.
+/// </summary>
+[RegisterComponent, NetworkedComponent]
+public sealed partial class CFSummonedComponent : Component
+{
+    /// <summary>When a summoning spell's creature goes back. Zero means it stays until it dies or is sent away.</summary>
+    [DataField(customTypeSerializer: typeof(Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.TimeOffsetSerializer))]
+    public TimeSpan Until;
+
+    /// <summary>Called by a summoning spell, so Dispel Magic can send it back.</summary>
+    [DataField]
+    public bool FromSpell;
+
+    /// <summary>The rank and DC of the spell that called it, which a dispel has to beat.</summary>
+    [DataField]
+    public int Rank;
+
+    [DataField]
+    public int Dc;
+
+    /// <summary>What it leaves behind as it goes.</summary>
+    [DataField]
+    public EntProtoId Puff = "CFSummonPuff";
+}
+
+/// <summary>One creature a summoning spell can call, and the lowest rank of the spell that calls it.</summary>
+[DataDefinition]
+public sealed partial class CFSummonOption
+{
+    [DataField(required: true)]
+    public int Rank;
+
+    /// <summary>A creature parented on its monster and on <c>CFSummonedCreature</c>. See <c>Entities/Mobs/summons.yml</c>.</summary>
+    [DataField(required: true)]
+    public EntProtoId Prototype;
+}
+
+/// <summary>
+/// Asks the server to call a creature for <paramref name="Summoner"/>. The effect is in Shared and the companion code is
+/// on the server, so it goes by event. <see cref="Summoned"/> is filled in when it has been done.
+/// </summary>
+[ByRefEvent]
+public record struct CFSummonRequestEvent(
+    EntityUid Summoner,
+    EntProtoId Prototype,
+    Robust.Shared.Map.EntityCoordinates Where,
+    float Seconds,
+    int Rank,
+    int Dc)
+{
+    public EntityUid? Summoned;
+}
+
+/// <summary>Asks the server to send a summoned creature back, as a dispel does from Shared code.</summary>
+[ByRefEvent]
+public readonly record struct CFUnsummonRequestEvent(EntityUid Summoned);

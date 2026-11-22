@@ -52,7 +52,8 @@ public sealed partial class FireVisualizerSystem : VisualizerSystem<FireVisualsC
         if (component.Sprite != null)
             SpriteSystem.LayerSetRsi((uid, sprite), FireVisualLayers.Fire, new ResPath(component.Sprite));
 
-        UpdateAppearance(uid, component, sprite, appearance);
+        // CarpFinder: no UpdateAppearance here. On something already burning it spawns the light as a child of this
+        // entity while it is still initializing, which crashes a Debug client. AppearanceSystem runs it at startup.
     }
 
     protected override void OnAppearanceChange(EntityUid uid, FireVisualsComponent component, ref AppearanceChangeEvent args)

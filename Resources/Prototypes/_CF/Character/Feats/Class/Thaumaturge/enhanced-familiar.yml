@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFEnhancedFamiliarThaumaturge
-  name: "Enhanced Familiar"
-  description: "Requires a familiar."
+  name: cf-feat-enhanced-familiar-thaumaturge
+  description: cf-feat-enhanced-familiar-thaumaturge-desc
   class: Thaumaturge
   level: 2
   traits:

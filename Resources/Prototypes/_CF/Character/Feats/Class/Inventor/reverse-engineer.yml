@@ -2,8 +2,8 @@
 # source: Carpfinder Guns & Gears
 - type: cfFeat
   id: CFReverseEngineer
-  name: "Reverse Engineer"
-  description: "Requires trained in Crafting. +2 circumstance bonus to Crafting. This feature will be implemented later."
+  name: cf-feat-reverse-engineer
+  description: cf-feat-reverse-engineer-desc
   class: Inventor
   level: 2
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Dark Archive (Remastered)
 - type: cfFeat
   id: CFScrollThaumaturgy
-  name: "Scroll Thaumaturgy"
-  description: "This feature will be implemented later."
+  name: cf-feat-scroll-thaumaturgy
+  description: cf-feat-scroll-thaumaturgy-desc
   class: Thaumaturge
   level: 1
   traits:

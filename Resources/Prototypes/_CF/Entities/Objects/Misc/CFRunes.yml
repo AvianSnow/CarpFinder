@@ -1,0 +1,258 @@
+# Runes as items. A crafting recipe with attachRune puts one on a weapon or armor on the bench.
+
+- type: entity
+  parent: BaseItem
+  id: CFRuneItemWeaponPotency1
+  name: weapon potency rune (+1)
+  description: "Attack rolls with the weapon gain +1, and it can hold one property rune. Attach it at a workbench."
+  components:
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: _CP14/Effects/Magic/magic_trap.rsi
+    state: rune_energia
+  - type: CFBulk
+    bulk: 0
+  - type: CFItem
+    level: 2
+  - type: CFItemPrice
+    copper: 3500
+  - type: CFRuneItem
+    kind: WeaponPotency
+
+- type: entity
+  parent: BaseItem
+  id: CFRuneItemStriking
+  name: striking rune
+  description: "The weapon rolls one more damage die. Attach it at a workbench."
+  components:
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: _CP14/Effects/Magic/magic_trap.rsi
+    state: rune_energia
+  - type: CFBulk
+    bulk: 0
+  - type: CFItem
+    level: 4
+  - type: CFItemPrice
+    copper: 6500
+  - type: CFRuneItem
+    kind: Striking
+
+- type: entity
+  parent: BaseItem
+  id: CFRuneItemArmorPotency1
+  name: armor potency rune (+1)
+  description: "The armor gives +1 more to AC. Attach it at a workbench."
+  components:
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: _CP14/Effects/Magic/magic_trap.rsi
+    state: rune_energia
+  - type: CFBulk
+    bulk: 0
+  - type: CFItem
+    level: 5
+  - type: CFItemPrice
+    copper: 16000
+  - type: CFRuneItem
+    kind: ArmorPotency
+
+- type: entity
+  parent: BaseItem
+  id: CFRuneItemResilient
+  name: resilient rune
+  description: "The armor gives +1 to saving throws. Attach it at a workbench."
+  components:
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: _CP14/Effects/Magic/magic_trap.rsi
+    state: rune_energia
+  - type: CFBulk
+    bulk: 0
+  - type: CFItem
+    level: 8
+  - type: CFItemPrice
+    copper: 34000
+  - type: CFRuneItem
+    kind: Resilient
+
+- type: entity
+  parent: BaseItem
+  id: CFRuneItemFlaming
+  name: flaming rune
+  description: "1d6 fire damage on a hit. On a critical hit, also 1d10 persistent fire damage. Attach it at a workbench."
+  components:
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: _CP14/Effects/Magic/magic_trap.rsi
+    state: rune_energia
+  - type: CFBulk
+    bulk: 0
+  - type: CFItem
+    level: 8
+  - type: CFItemPrice
+    copper: 50000
+  - type: CFRuneItem
+    kind: Property
+    property: Flaming
+
+- type: entity
+  parent: BaseItem
+  id: CFRuneItemFrost
+  name: frost rune
+  description: "1d6 cold damage on a hit. Attach it at a workbench."
+  components:
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: _CP14/Effects/Magic/magic_trap.rsi
+    state: rune_energia
+  - type: CFBulk
+    bulk: 0
+  - type: CFItem
+    level: 8
+  - type: CFItemPrice
+    copper: 50000
+  - type: CFRuneItem
+    kind: Property
+    property: Frost
+
+- type: entity
+  parent: BaseItem
+  id: CFRuneItemShock
+  name: shock rune
+  description: "1d6 electricity damage on a hit. Attach it at a workbench."
+  components:
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: _CP14/Effects/Magic/magic_trap.rsi
+    state: rune_energia
+  - type: CFBulk
+    bulk: 0
+  - type: CFItem
+    level: 8
+  - type: CFItemPrice
+    copper: 50000
+  - type: CFRuneItem
+    kind: Property
+    property: Shock
+
+- type: entity
+  parent: BaseItem
+  id: CFRuneItemCorrosive
+  name: corrosive rune
+  description: "1d6 acid damage on a hit. Attach it at a workbench."
+  components:
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: _CP14/Effects/Magic/magic_trap.rsi
+    state: rune_energia
+  - type: CFBulk
+    bulk: 0
+  - type: CFItem
+    level: 8
+  - type: CFItemPrice
+    copper: 50000
+  - type: CFRuneItem
+    kind: Property
+    property: Corrosive
+
+- type: entity
+  parent: BaseItem
+  id: CFRuneItemThundering
+  name: thundering rune
+  description: "1d6 sonic damage on a hit. Attach it at a workbench."
+  components:
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: _CP14/Effects/Magic/magic_trap.rsi
+    state: rune_energia
+  - type: CFBulk
+    bulk: 0
+  - type: CFItem
+    level: 8
+  - type: CFItemPrice
+    copper: 50000
+  - type: CFRuneItem
+    kind: Property
+    property: Thundering
+
+- type: entity
+  parent: BaseItem
+  id: CFRuneEtchEsvadir
+  name: etch Esvadir
+  description: "Etches this rune on what is on the bench. It lasts until invoked. A piercing or slashing weapon. 2 persistent bleed per die."
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: _CP14/Effects/Magic/magic_trap.rsi
+    state: rune_energia
+  - type: CFItem
+    level: 1
+  - type: CFRuneItem
+    kind: Runesmith
+    rune: Esvadir
+
+- type: entity
+  parent: BaseItem
+  id: CFRuneEtchHoltrik
+  name: etch Holtrik
+  description: "Etches this rune on what is on the bench. It lasts until invoked. The bonus while the shield is raised: TBA."
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: _CP14/Effects/Magic/magic_trap.rsi
+    state: rune_energia
+  - type: CFItem
+    level: 1
+  - type: CFRuneItem
+    kind: Runesmith
+    rune: Holtrik
+
+- type: entity
+  parent: BaseItem
+  id: CFRuneEtchMarssyl
+  name: etch Marssyl
+  description: "Etches this rune on what is on the bench. It lasts until invoked. A bludgeoning weapon. 1 bludgeoning splash per die."
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: _CP14/Effects/Magic/magic_trap.rsi
+    state: rune_energia
+  - type: CFItem
+    level: 1
+  - type: CFRuneItem
+    kind: Runesmith
+    rune: Marssyl
+
+- type: entity
+  parent: BaseItem
+  id: CFRuneEtchOljinex
+  name: etch Oljinex
+  description: "Etches this rune on what is on the bench. It lasts until invoked. Hardness against ranged attacks: TBA."
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Item
+    size: Tiny
+  - type: Sprite
+    sprite: _CP14/Effects/Magic/magic_trap.rsi
+    state: rune_energia
+  - type: CFItem
+    level: 1
+  - type: CFRuneItem
+    kind: Runesmith
+    rune: Oljinex

@@ -1,5 +1,4 @@
 - type: construction
-  crystallPunkAllowed: true
   id: CFWoodenWall
   graph: CFWallWooden
   startNode: start
@@ -12,7 +11,6 @@
     - !type:TileNotBlocked
 
 - type: construction
-  crystallPunkAllowed: true
   id: CFWoodenWallBirch
   graph: CFWallWoodenBirch
   startNode: start
@@ -25,7 +23,6 @@
     - !type:TileNotBlocked
 
 - type: construction
-  crystallPunkAllowed: true
   id: CFWoodenWallSpruce
   graph: CFWallWoodenSpruce
   startNode: start
@@ -38,7 +35,6 @@
     - !type:TileNotBlocked
 
 - type: construction
-  crystallPunkAllowed: true
   id: CFWallWoodenPalisade
   graph: CFWallWoodenPalisade
   startNode: start
@@ -51,7 +47,6 @@
     - !type:TileNotBlocked
 
 - type: construction
-  crystallPunkAllowed: true
   id: CFWallDirt
   graph: CFWallDirt
   startNode: start
@@ -64,7 +59,6 @@
     - !type:TileNotBlocked
 
 - type: construction
-  crystallPunkAllowed: true
   id: CFWallStoneBrick
   graph: CFWallStoneBrick
   startNode: start
@@ -77,7 +71,6 @@
     - !type:TileNotBlocked
 
 - type: construction
-  crystallPunkAllowed: true
   id: CFWallMarbleBrick
   graph: CFWallMarbleBrick
   startNode: start

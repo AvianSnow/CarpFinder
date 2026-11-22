@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFRagingIntimidation
-  name: "Raging Intimidation"
-  description: "Also grants Intimidating Glare. Also grants Scare To Death. Changes an item. This feature will be implemented later."
+  name: cf-feat-raging-intimidation
+  description: cf-feat-raging-intimidation-desc
   class: Barbarian
   level: 1
   traits:

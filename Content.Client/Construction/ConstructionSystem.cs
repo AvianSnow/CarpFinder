@@ -225,7 +225,7 @@ namespace Content.Client.Construction
             return true;
         }
 
-        private void UpdateCraftingAvailability(bool available)
+        public void UpdateCraftingAvailability(bool available) // CarpFinder: CFConstructionGateSystem hides the menu from characters untrained in Crafting
         {
             if (CraftingEnabled == available)
                 return;

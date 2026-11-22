@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFCompanionsCry
-  name: "Companion's Cry"
-  description: "Requires an animal companion."
+  name: cf-feat-companions-cry
+  description: cf-feat-companions-cry-desc
   class: Ranger
   level: 4
   traits:

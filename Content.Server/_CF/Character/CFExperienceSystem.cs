@@ -1,3 +1,5 @@
+using Content.Server.CF.Companions;
+using Content.Shared.CF.Languages;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Factions;
@@ -16,6 +18,9 @@ public sealed partial class CFExperienceSystem : EntitySystem
     [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private CFCharacterSpawnSystem _spawn = default!;
+    [Dependency] private CFCharacterFeatureSystem _features = default!;
+    [Dependency] private CFCompanionSystem _companions = default!;
+    [Dependency] private CFLevelUpReportSystem _reports = default!;
 
     public IEnumerable<string> Factions()
     {
@@ -80,21 +85,58 @@ public sealed partial class CFExperienceSystem : EntitySystem
     /// </summary>
     public int AwardHazard(EntityUid user, int hazardLevel, bool complex)
     {
+        CFExperienceAwards.TryHazard(complex, hazardLevel - PartyLevel(user), out var xp);
+        return Award(user, xp);
+    }
+
+    /// <summary>XP for defeating a creature, by its level against the party level. Shared like hazard XP.</summary>
+    public int AwardCreature(EntityUid user, int creatureLevel)
+    {
+        CFExperienceAwards.TryAdversary(creatureLevel - PartyLevel(user), out var xp);
+        return Award(user, xp);
+    }
+
+    private int PartyLevel(EntityUid user)
+    {
         var factionId = CompOrNull<CFFactionComponent>(user)?.Faction.Id;
         var partyLevel = CompOrNull<CFCombatantComponent>(user)?.Level ?? 1;
+        if (factionId == null)
+            return partyLevel;
+
+        var query = EntityQueryEnumerator<CFExperienceComponent, CFFactionComponent, CFCombatantComponent>();
+        while (query.MoveNext(out _, out _, out var faction, out var combat))
+        {
+            if (faction.Faction.Id == factionId)
+                partyLevel = Math.Max(partyLevel, combat.Level);
+        }
+
+        return partyLevel;
+    }
+
+    /// <summary>The user's company: its highest level, and how many characters are in it.</summary>
+    public (int Level, int Size) Party(EntityUid user)
+    {
+        var size = 0;
+        var factionId = CompOrNull<CFFactionComponent>(user)?.Faction.Id;
         if (factionId != null)
         {
-            var query = EntityQueryEnumerator<CFExperienceComponent, CFFactionComponent, CFCombatantComponent>();
-            while (query.MoveNext(out _, out _, out var faction, out var combat))
+            var query = EntityQueryEnumerator<CFExperienceComponent, CFFactionComponent>();
+            while (query.MoveNext(out _, out var faction))
             {
                 if (faction.Faction.Id == factionId)
-                    partyLevel = Math.Max(partyLevel, combat.Level);
+                    size++;
             }
         }
 
-        if (!CFExperienceAwards.TryHazard(complex, hazardLevel - partyLevel, out var xp) || xp <= 0)
+        return (PartyLevel(user), Math.Max(1, size));
+    }
+
+    private int Award(EntityUid user, int xp)
+    {
+        if (xp <= 0)
             return 0;
 
+        var factionId = CompOrNull<CFFactionComponent>(user)?.Faction.Id;
         if (factionId != null && AwardFaction(factionId, xp).Count > 0)
             return xp;
 
@@ -103,39 +145,113 @@ public sealed partial class CFExperienceSystem : EntitySystem
     }
 
     [SubscribeLocalEvent]
+    private void OnCreatureDefeated(Entity<CFCombatantComponent> ent, ref CFCreatureDefeatedEvent args)
+    {
+        AwardCreature(args.Killer, args.Level);
+    }
+
+    [SubscribeLocalEvent]
     private void OnHazardDisarmed(Entity<CFHazardComponent> ent, ref CFHazardDisarmedEvent args)
     {
         AwardHazard(args.User, args.Level, args.Complex);
     }
 
+    /// <summary>
+    /// Adds XP. Reaching a level does not take it: the player picks it on the character sheet's Level Up tab, which
+    /// sends <see cref="CFLevelUpRequestEvent"/>.
+    /// </summary>
     public void AddXp(EntityUid mob, int amount)
     {
         if (amount <= 0 || !TryComp(mob, out CFExperienceComponent? xp) || !TryComp(mob, out CFCombatantComponent? combat))
             return;
 
+        var couldBefore = xp.CanLevelUp(combat.Level);
         xp.Xp += amount;
         _popup.PopupEntity(Loc.GetString("cf-xp-gained", ("xp", amount)), mob, mob);
-        while (combat.Level < CFExperienceComponent.MaxLevel && xp.Xp >= CFExperienceComponent.XpPerLevel)
-        {
-            xp.Xp -= CFExperienceComponent.XpPerLevel;
-            LevelUp(mob, combat, xp);
-        }
+        if (!couldBefore && xp.CanLevelUp(combat.Level))
+            _popup.PopupEntity(Loc.GetString("cf-xp-level-ready", ("level", combat.Level + 1)), mob, mob, PopupType.Large);
 
         Dirty(mob, xp);
+    }
+
+    /// <summary>
+    /// Takes the next level, if the character has the XP for it. <paramref name="picks"/> holds the player's picks for
+    /// that level, from the Level Up tab. They came from a client, so only that level's are read and each is checked,
+    /// as at spawn. With none, the character takes the picks it already has, which is what tests do.
+    /// </summary>
+    public bool TryLevelUp(EntityUid mob, CFCharacterBuildData? picks = null)
+    {
+        if (!TryComp(mob, out CFExperienceComponent? xp)
+            || !TryComp(mob, out CFCombatantComponent? combat)
+            || !xp.CanLevelUp(combat.Level))
+        {
+            return false;
+        }
+
+        var level = combat.Level + 1;
+        if (picks != null && xp.Build != null)
+        {
+            var before = xp.Build.Clone();
+            var build = xp.Build.Clone();
+            CFLevelUp.TakeLevel(_prototypes, build, picks, level);
+            CFSkills.DropUnqualifiedFeats(_prototypes, build, xp.AncestryId);
+            var modifiers = CompOrNull<CFAbilityScoreComponent>(mob)?.AbilityModifiers ?? new Dictionary<CFAbility, int>();
+
+            // Picks left open are skipped, not refused, so the player is never stuck. Each time, a report says why.
+            var known = CompOrNull<CFLanguagesComponent>(mob)?.Known;
+            var unfilled = CFLevelUp.UnfilledSlots(_prototypes, build, xp.AncestryId, level, modifiers, known);
+            _reports.Report(mob, level, unfilled, before, picks, build, xp.AncestryId, modifiers);
+
+            _spawn.CopyLevelPicks(mob, xp, build, xp.AncestryId, modifiers);
+        }
+        else if (xp.Build != null)
+        {
+            xp.Build.Level = level;
+        }
+
+        xp.Xp -= CFExperienceComponent.XpPerLevel;
+        LevelUp(mob, combat, xp);
+        Dirty(mob, xp);
+        return true;
+    }
+
+    /// <summary>Adds XP and takes every level it pays for, with the picks the character already has.</summary>
+    public void AddXpAndLevelUp(EntityUid mob, int amount)
+    {
+        AddXp(mob, amount);
+        while (TryLevelUp(mob))
+        {
+        }
+    }
+
+    [SubscribeNetworkEvent]
+    private void OnLevelUpRequest(CFLevelUpRequestEvent msg, EntitySessionEventArgs args)
+    {
+        if (args.SenderSession.AttachedEntity is not { } mob)
+            return;
+
+        TryLevelUp(mob, msg.Build);
     }
 
     private void LevelUp(EntityUid mob, CFCombatantComponent combat, CFExperienceComponent xp)
     {
         combat.Level++;
+        var constitutionRaised = ApplyLevelChoices(mob, combat, xp);
         var gain = 1;
-        if (combat.ClassId != null
-            && _prototypes.TryIndex(combat.ClassId, out CFClassPrototype? cls))
+        CFClassPrototype? cls = null;
+        if (combat.ClassId != null && _prototypes.TryIndex(combat.ClassId, out cls))
         {
             var con = TryComp(mob, out CFAbilityScoreComponent? scores)
                 ? scores.GetModifier(CFAbility.Constitution)
                 : 0;
             gain = Math.Max(1, cls.HitPoints + con);
         }
+
+        gain += combat.BonusHpPerLevel;
+
+        // Constitution counts for every level, so a rise pays back the earlier ones too.
+        if (constitutionRaised)
+            gain += combat.Level - 1;
 
         combat.MaxHp += gain;
         combat.CurrentHp += gain;
@@ -147,8 +263,69 @@ public sealed partial class CFExperienceSystem : EntitySystem
                 _spawn.ApplyFeat(mob, feat);
         }
 
+        if (cls != null)
+        {
+            _spawn.GrowSpellbook(mob, cls, combat.Level, xp);
+            _features.ApplyClassFeatures(mob, cls, combat.Level);
+        }
+
+        foreach (var choiceId in xp.ClassChoices)
+        {
+            if (_prototypes.TryIndex(choiceId, out CFClassChoicePrototype? choice))
+                _features.ApplyClassChoice(mob, choice, combat.Level);
+        }
+
         _spawn.RefreshArmorClass(mob);
+        if (xp.Build != null)
+            _spawn.EnsureCompanion(mob, xp.Build, combat.Level);
+
+        _companions.MatchOwnerLevel(mob, combat);
         _popup.PopupEntity(Loc.GetString("cf-xp-level", ("level", combat.Level)), mob, mob);
+    }
+
+    /// <summary>The skill increase and boosts picked in the lobby for this level. True if Constitution went up.</summary>
+    private bool ApplyLevelChoices(EntityUid mob, CFCombatantComponent combat, CFExperienceComponent xp)
+    {
+        var increase = combat.Level switch
+        {
+            3 => xp.SkillIncreaseLevel3,
+            5 => xp.SkillIncreaseLevel5,
+            _ => null,
+        };
+
+        if (!string.IsNullOrEmpty(increase))
+            combat.SkillIncreases.Add(increase);
+
+        if (xp.BonusSkillIncreases.TryGetValue(combat.Level, out var bonusIncrease))
+            combat.SkillIncreases.Add(bonusIncrease);
+
+        if (combat.Level != 5 || !TryComp(mob, out CFAbilityScoreComponent? abilities))
+            return false;
+
+        var constitutionRaised = false;
+        var intelligenceRaised = false;
+        foreach (var ability in xp.AbilityBoostsLevel5)
+        {
+            if (!CFAttributeMath.TryLevelBoost(abilities.AbilityModifiers, ability))
+                continue;
+
+            constitutionRaised |= ability == CFAbility.Constitution;
+            intelligenceRaised |= ability == CFAbility.Intelligence;
+        }
+
+        // Each point of Intelligence is a language, so a higher modifier teaches one more.
+        if (intelligenceRaised && xp.LanguageLevel5 is { } language)
+        {
+            var languages = EnsureComp<CFLanguagesComponent>(mob);
+            if (!languages.Known.Contains(language))
+            {
+                languages.Known.Add(language);
+                Dirty(mob, languages);
+            }
+        }
+
+        Dirty(mob, abilities);
+        return constitutionRaised;
     }
 
     private static List<string> FeatsAt(CFExperienceComponent xp, int level)
@@ -174,6 +351,21 @@ public sealed partial class CFExperienceSystem : EntitySystem
 
         if (!string.IsNullOrEmpty(id))
             feats.Add(id);
+
+        var general = level switch
+        {
+            2 => xp.SkillFeatLevel2,
+            3 => xp.GeneralFeatLevel3,
+            4 => xp.SkillFeatLevel4,
+            _ => null,
+        };
+
+        if (!string.IsNullOrEmpty(general))
+            feats.Add(general);
+
+        if (xp.BonusSkillFeats.TryGetValue(level, out var bonus))
+            feats.Add(bonus);
+
         return feats;
     }
 }

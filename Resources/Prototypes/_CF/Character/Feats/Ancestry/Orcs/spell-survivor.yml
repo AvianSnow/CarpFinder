@@ -2,8 +2,8 @@
 # source: Carpfinder #207: The Resurrection Flood
 - type: cfFeat
   id: CFSpellSurvivor
-  name: "Spell Survivor"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-spell-survivor
+  description: cf-feat-spell-survivor-desc
   ancestry: Orc
   level: 5
   rarity: Uncommon

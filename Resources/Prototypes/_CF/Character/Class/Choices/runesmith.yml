@@ -1,0 +1,1257 @@
+# CarpFinder: a Runesmith knows four runes, and two more from level 5. Each is offered in every slot.
+
+- type: cfClassChoice
+  id: Rune1Atryl
+  class: Runesmith
+  slot: cf-class-choice-rune-1
+  group: Atryl
+  name: cf-class-choice-rune1atryl
+  description: cf-class-choice-rune1atryl-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceAtryl
+
+- type: cfClassChoice
+  id: Rune2Atryl
+  class: Runesmith
+  slot: cf-class-choice-rune-2
+  group: Atryl
+  name: cf-class-choice-rune2atryl
+  description: cf-class-choice-rune2atryl-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceAtryl
+
+- type: cfClassChoice
+  id: Rune3Atryl
+  class: Runesmith
+  slot: cf-class-choice-rune-3
+  group: Atryl
+  name: cf-class-choice-rune3atryl
+  description: cf-class-choice-rune3atryl-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceAtryl
+
+- type: cfClassChoice
+  id: Rune4Atryl
+  class: Runesmith
+  slot: cf-class-choice-rune-4
+  group: Atryl
+  name: cf-class-choice-rune4atryl
+  description: cf-class-choice-rune4atryl-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceAtryl
+
+- type: cfClassChoice
+  id: Rune5Atryl
+  class: Runesmith
+  slot: cf-class-choice-rune-5
+  group: Atryl
+  name: cf-class-choice-rune5atryl
+  description: cf-class-choice-rune5atryl-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTraceAtryl
+
+- type: cfClassChoice
+  id: Rune6Atryl
+  class: Runesmith
+  slot: cf-class-choice-rune-6
+  group: Atryl
+  name: cf-class-choice-rune6atryl
+  description: cf-class-choice-rune6atryl-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTraceAtryl
+
+- type: cfClassChoice
+  id: Rune1Baruiel
+  class: Runesmith
+  slot: cf-class-choice-rune-1
+  group: Baruiel
+  name: cf-class-choice-rune1baruiel
+  description: cf-class-choice-rune1baruiel-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceBaruiel
+
+- type: cfClassChoice
+  id: Rune2Baruiel
+  class: Runesmith
+  slot: cf-class-choice-rune-2
+  group: Baruiel
+  name: cf-class-choice-rune2baruiel
+  description: cf-class-choice-rune2baruiel-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceBaruiel
+
+- type: cfClassChoice
+  id: Rune3Baruiel
+  class: Runesmith
+  slot: cf-class-choice-rune-3
+  group: Baruiel
+  name: cf-class-choice-rune3baruiel
+  description: cf-class-choice-rune3baruiel-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceBaruiel
+
+- type: cfClassChoice
+  id: Rune4Baruiel
+  class: Runesmith
+  slot: cf-class-choice-rune-4
+  group: Baruiel
+  name: cf-class-choice-rune4baruiel
+  description: cf-class-choice-rune4baruiel-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceBaruiel
+
+- type: cfClassChoice
+  id: Rune5Baruiel
+  class: Runesmith
+  slot: cf-class-choice-rune-5
+  group: Baruiel
+  name: cf-class-choice-rune5baruiel
+  description: cf-class-choice-rune5baruiel-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTraceBaruiel
+
+- type: cfClassChoice
+  id: Rune6Baruiel
+  class: Runesmith
+  slot: cf-class-choice-rune-6
+  group: Baruiel
+  name: cf-class-choice-rune6baruiel
+  description: cf-class-choice-rune6baruiel-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTraceBaruiel
+
+- type: cfClassChoice
+  id: Rune1Camonica
+  class: Runesmith
+  slot: cf-class-choice-rune-1
+  group: Camonica
+  name: cf-class-choice-rune1camonica
+  description: cf-class-choice-rune1camonica-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceCamonica
+
+- type: cfClassChoice
+  id: Rune2Camonica
+  class: Runesmith
+  slot: cf-class-choice-rune-2
+  group: Camonica
+  name: cf-class-choice-rune2camonica
+  description: cf-class-choice-rune2camonica-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceCamonica
+
+- type: cfClassChoice
+  id: Rune3Camonica
+  class: Runesmith
+  slot: cf-class-choice-rune-3
+  group: Camonica
+  name: cf-class-choice-rune3camonica
+  description: cf-class-choice-rune3camonica-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceCamonica
+
+- type: cfClassChoice
+  id: Rune4Camonica
+  class: Runesmith
+  slot: cf-class-choice-rune-4
+  group: Camonica
+  name: cf-class-choice-rune4camonica
+  description: cf-class-choice-rune4camonica-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceCamonica
+
+- type: cfClassChoice
+  id: Rune5Camonica
+  class: Runesmith
+  slot: cf-class-choice-rune-5
+  group: Camonica
+  name: cf-class-choice-rune5camonica
+  description: cf-class-choice-rune5camonica-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTraceCamonica
+
+- type: cfClassChoice
+  id: Rune6Camonica
+  class: Runesmith
+  slot: cf-class-choice-rune-6
+  group: Camonica
+  name: cf-class-choice-rune6camonica
+  description: cf-class-choice-rune6camonica-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTraceCamonica
+
+- type: cfClassChoice
+  id: Rune1Esvadir
+  class: Runesmith
+  slot: cf-class-choice-rune-1
+  group: Esvadir
+  name: cf-class-choice-rune1esvadir
+  description: cf-class-choice-rune1esvadir-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceEsvadir
+    - !type:CFGrantFormulas
+      recipes:
+      - EtchEsvadir
+
+- type: cfClassChoice
+  id: Rune2Esvadir
+  class: Runesmith
+  slot: cf-class-choice-rune-2
+  group: Esvadir
+  name: cf-class-choice-rune2esvadir
+  description: cf-class-choice-rune2esvadir-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceEsvadir
+    - !type:CFGrantFormulas
+      recipes:
+      - EtchEsvadir
+
+- type: cfClassChoice
+  id: Rune3Esvadir
+  class: Runesmith
+  slot: cf-class-choice-rune-3
+  group: Esvadir
+  name: cf-class-choice-rune3esvadir
+  description: cf-class-choice-rune3esvadir-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceEsvadir
+    - !type:CFGrantFormulas
+      recipes:
+      - EtchEsvadir
+
+- type: cfClassChoice
+  id: Rune4Esvadir
+  class: Runesmith
+  slot: cf-class-choice-rune-4
+  group: Esvadir
+  name: cf-class-choice-rune4esvadir
+  description: cf-class-choice-rune4esvadir-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceEsvadir
+    - !type:CFGrantFormulas
+      recipes:
+      - EtchEsvadir
+
+- type: cfClassChoice
+  id: Rune5Esvadir
+  class: Runesmith
+  slot: cf-class-choice-rune-5
+  group: Esvadir
+  name: cf-class-choice-rune5esvadir
+  description: cf-class-choice-rune5esvadir-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTraceEsvadir
+        - !type:CFGrantFormulas
+          recipes:
+          - EtchEsvadir
+
+- type: cfClassChoice
+  id: Rune6Esvadir
+  class: Runesmith
+  slot: cf-class-choice-rune-6
+  group: Esvadir
+  name: cf-class-choice-rune6esvadir
+  description: cf-class-choice-rune6esvadir-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTraceEsvadir
+        - !type:CFGrantFormulas
+          recipes:
+          - EtchEsvadir
+
+- type: cfClassChoice
+  id: Rune1Holtrik
+  class: Runesmith
+  slot: cf-class-choice-rune-1
+  group: Holtrik
+  name: cf-class-choice-rune1holtrik
+  description: cf-class-choice-rune1holtrik-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceHoltrik
+    - !type:CFGrantFormulas
+      recipes:
+      - EtchHoltrik
+
+- type: cfClassChoice
+  id: Rune2Holtrik
+  class: Runesmith
+  slot: cf-class-choice-rune-2
+  group: Holtrik
+  name: cf-class-choice-rune2holtrik
+  description: cf-class-choice-rune2holtrik-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceHoltrik
+    - !type:CFGrantFormulas
+      recipes:
+      - EtchHoltrik
+
+- type: cfClassChoice
+  id: Rune3Holtrik
+  class: Runesmith
+  slot: cf-class-choice-rune-3
+  group: Holtrik
+  name: cf-class-choice-rune3holtrik
+  description: cf-class-choice-rune3holtrik-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceHoltrik
+    - !type:CFGrantFormulas
+      recipes:
+      - EtchHoltrik
+
+- type: cfClassChoice
+  id: Rune4Holtrik
+  class: Runesmith
+  slot: cf-class-choice-rune-4
+  group: Holtrik
+  name: cf-class-choice-rune4holtrik
+  description: cf-class-choice-rune4holtrik-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceHoltrik
+    - !type:CFGrantFormulas
+      recipes:
+      - EtchHoltrik
+
+- type: cfClassChoice
+  id: Rune5Holtrik
+  class: Runesmith
+  slot: cf-class-choice-rune-5
+  group: Holtrik
+  name: cf-class-choice-rune5holtrik
+  description: cf-class-choice-rune5holtrik-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTraceHoltrik
+        - !type:CFGrantFormulas
+          recipes:
+          - EtchHoltrik
+
+- type: cfClassChoice
+  id: Rune6Holtrik
+  class: Runesmith
+  slot: cf-class-choice-rune-6
+  group: Holtrik
+  name: cf-class-choice-rune6holtrik
+  description: cf-class-choice-rune6holtrik-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTraceHoltrik
+        - !type:CFGrantFormulas
+          recipes:
+          - EtchHoltrik
+
+- type: cfClassChoice
+  id: Rune1Ledria
+  class: Runesmith
+  slot: cf-class-choice-rune-1
+  group: Ledria
+  name: cf-class-choice-rune1ledria
+  description: cf-class-choice-rune1ledria-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceLedria
+
+- type: cfClassChoice
+  id: Rune2Ledria
+  class: Runesmith
+  slot: cf-class-choice-rune-2
+  group: Ledria
+  name: cf-class-choice-rune2ledria
+  description: cf-class-choice-rune2ledria-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceLedria
+
+- type: cfClassChoice
+  id: Rune3Ledria
+  class: Runesmith
+  slot: cf-class-choice-rune-3
+  group: Ledria
+  name: cf-class-choice-rune3ledria
+  description: cf-class-choice-rune3ledria-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceLedria
+
+- type: cfClassChoice
+  id: Rune4Ledria
+  class: Runesmith
+  slot: cf-class-choice-rune-4
+  group: Ledria
+  name: cf-class-choice-rune4ledria
+  description: cf-class-choice-rune4ledria-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceLedria
+
+- type: cfClassChoice
+  id: Rune5Ledria
+  class: Runesmith
+  slot: cf-class-choice-rune-5
+  group: Ledria
+  name: cf-class-choice-rune5ledria
+  description: cf-class-choice-rune5ledria-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTraceLedria
+
+- type: cfClassChoice
+  id: Rune6Ledria
+  class: Runesmith
+  slot: cf-class-choice-rune-6
+  group: Ledria
+  name: cf-class-choice-rune6ledria
+  description: cf-class-choice-rune6ledria-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTraceLedria
+
+- type: cfClassChoice
+  id: Rune1Lyskel
+  class: Runesmith
+  slot: cf-class-choice-rune-1
+  group: Lyskel
+  name: cf-class-choice-rune1lyskel
+  description: cf-class-choice-rune1lyskel-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceLyskel
+
+- type: cfClassChoice
+  id: Rune2Lyskel
+  class: Runesmith
+  slot: cf-class-choice-rune-2
+  group: Lyskel
+  name: cf-class-choice-rune2lyskel
+  description: cf-class-choice-rune2lyskel-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceLyskel
+
+- type: cfClassChoice
+  id: Rune3Lyskel
+  class: Runesmith
+  slot: cf-class-choice-rune-3
+  group: Lyskel
+  name: cf-class-choice-rune3lyskel
+  description: cf-class-choice-rune3lyskel-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceLyskel
+
+- type: cfClassChoice
+  id: Rune4Lyskel
+  class: Runesmith
+  slot: cf-class-choice-rune-4
+  group: Lyskel
+  name: cf-class-choice-rune4lyskel
+  description: cf-class-choice-rune4lyskel-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceLyskel
+
+- type: cfClassChoice
+  id: Rune5Lyskel
+  class: Runesmith
+  slot: cf-class-choice-rune-5
+  group: Lyskel
+  name: cf-class-choice-rune5lyskel
+  description: cf-class-choice-rune5lyskel-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTraceLyskel
+
+- type: cfClassChoice
+  id: Rune6Lyskel
+  class: Runesmith
+  slot: cf-class-choice-rune-6
+  group: Lyskel
+  name: cf-class-choice-rune6lyskel
+  description: cf-class-choice-rune6lyskel-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTraceLyskel
+
+- type: cfClassChoice
+  id: Rune1Marssyl
+  class: Runesmith
+  slot: cf-class-choice-rune-1
+  group: Marssyl
+  name: cf-class-choice-rune1marssyl
+  description: cf-class-choice-rune1marssyl-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceMarssyl
+    - !type:CFGrantFormulas
+      recipes:
+      - EtchMarssyl
+
+- type: cfClassChoice
+  id: Rune2Marssyl
+  class: Runesmith
+  slot: cf-class-choice-rune-2
+  group: Marssyl
+  name: cf-class-choice-rune2marssyl
+  description: cf-class-choice-rune2marssyl-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceMarssyl
+    - !type:CFGrantFormulas
+      recipes:
+      - EtchMarssyl
+
+- type: cfClassChoice
+  id: Rune3Marssyl
+  class: Runesmith
+  slot: cf-class-choice-rune-3
+  group: Marssyl
+  name: cf-class-choice-rune3marssyl
+  description: cf-class-choice-rune3marssyl-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceMarssyl
+    - !type:CFGrantFormulas
+      recipes:
+      - EtchMarssyl
+
+- type: cfClassChoice
+  id: Rune4Marssyl
+  class: Runesmith
+  slot: cf-class-choice-rune-4
+  group: Marssyl
+  name: cf-class-choice-rune4marssyl
+  description: cf-class-choice-rune4marssyl-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceMarssyl
+    - !type:CFGrantFormulas
+      recipes:
+      - EtchMarssyl
+
+- type: cfClassChoice
+  id: Rune5Marssyl
+  class: Runesmith
+  slot: cf-class-choice-rune-5
+  group: Marssyl
+  name: cf-class-choice-rune5marssyl
+  description: cf-class-choice-rune5marssyl-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTraceMarssyl
+        - !type:CFGrantFormulas
+          recipes:
+          - EtchMarssyl
+
+- type: cfClassChoice
+  id: Rune6Marssyl
+  class: Runesmith
+  slot: cf-class-choice-rune-6
+  group: Marssyl
+  name: cf-class-choice-rune6marssyl
+  description: cf-class-choice-rune6marssyl-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTraceMarssyl
+        - !type:CFGrantFormulas
+          recipes:
+          - EtchMarssyl
+
+- type: cfClassChoice
+  id: Rune1Oljinex
+  class: Runesmith
+  slot: cf-class-choice-rune-1
+  group: Oljinex
+  name: cf-class-choice-rune1oljinex
+  description: cf-class-choice-rune1oljinex-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceOljinex
+    - !type:CFGrantFormulas
+      recipes:
+      - EtchOljinex
+
+- type: cfClassChoice
+  id: Rune2Oljinex
+  class: Runesmith
+  slot: cf-class-choice-rune-2
+  group: Oljinex
+  name: cf-class-choice-rune2oljinex
+  description: cf-class-choice-rune2oljinex-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceOljinex
+    - !type:CFGrantFormulas
+      recipes:
+      - EtchOljinex
+
+- type: cfClassChoice
+  id: Rune3Oljinex
+  class: Runesmith
+  slot: cf-class-choice-rune-3
+  group: Oljinex
+  name: cf-class-choice-rune3oljinex
+  description: cf-class-choice-rune3oljinex-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceOljinex
+    - !type:CFGrantFormulas
+      recipes:
+      - EtchOljinex
+
+- type: cfClassChoice
+  id: Rune4Oljinex
+  class: Runesmith
+  slot: cf-class-choice-rune-4
+  group: Oljinex
+  name: cf-class-choice-rune4oljinex
+  description: cf-class-choice-rune4oljinex-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceOljinex
+    - !type:CFGrantFormulas
+      recipes:
+      - EtchOljinex
+
+- type: cfClassChoice
+  id: Rune5Oljinex
+  class: Runesmith
+  slot: cf-class-choice-rune-5
+  group: Oljinex
+  name: cf-class-choice-rune5oljinex
+  description: cf-class-choice-rune5oljinex-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTraceOljinex
+        - !type:CFGrantFormulas
+          recipes:
+          - EtchOljinex
+
+- type: cfClassChoice
+  id: Rune6Oljinex
+  class: Runesmith
+  slot: cf-class-choice-rune-6
+  group: Oljinex
+  name: cf-class-choice-rune6oljinex
+  description: cf-class-choice-rune6oljinex-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTraceOljinex
+        - !type:CFGrantFormulas
+          recipes:
+          - EtchOljinex
+
+- type: cfClassChoice
+  id: Rune1Pluuna
+  class: Runesmith
+  slot: cf-class-choice-rune-1
+  group: Pluuna
+  name: cf-class-choice-rune1pluuna
+  description: cf-class-choice-rune1pluuna-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTracePluuna
+
+- type: cfClassChoice
+  id: Rune2Pluuna
+  class: Runesmith
+  slot: cf-class-choice-rune-2
+  group: Pluuna
+  name: cf-class-choice-rune2pluuna
+  description: cf-class-choice-rune2pluuna-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTracePluuna
+
+- type: cfClassChoice
+  id: Rune3Pluuna
+  class: Runesmith
+  slot: cf-class-choice-rune-3
+  group: Pluuna
+  name: cf-class-choice-rune3pluuna
+  description: cf-class-choice-rune3pluuna-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTracePluuna
+
+- type: cfClassChoice
+  id: Rune4Pluuna
+  class: Runesmith
+  slot: cf-class-choice-rune-4
+  group: Pluuna
+  name: cf-class-choice-rune4pluuna
+  description: cf-class-choice-rune4pluuna-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTracePluuna
+
+- type: cfClassChoice
+  id: Rune5Pluuna
+  class: Runesmith
+  slot: cf-class-choice-rune-5
+  group: Pluuna
+  name: cf-class-choice-rune5pluuna
+  description: cf-class-choice-rune5pluuna-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTracePluuna
+
+- type: cfClassChoice
+  id: Rune6Pluuna
+  class: Runesmith
+  slot: cf-class-choice-rune-6
+  group: Pluuna
+  name: cf-class-choice-rune6pluuna
+  description: cf-class-choice-rune6pluuna-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTracePluuna
+
+- type: cfClassChoice
+  id: Rune1Ranshu
+  class: Runesmith
+  slot: cf-class-choice-rune-1
+  group: Ranshu
+  name: cf-class-choice-rune1ranshu
+  description: cf-class-choice-rune1ranshu-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceRanshu
+
+- type: cfClassChoice
+  id: Rune2Ranshu
+  class: Runesmith
+  slot: cf-class-choice-rune-2
+  group: Ranshu
+  name: cf-class-choice-rune2ranshu
+  description: cf-class-choice-rune2ranshu-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceRanshu
+
+- type: cfClassChoice
+  id: Rune3Ranshu
+  class: Runesmith
+  slot: cf-class-choice-rune-3
+  group: Ranshu
+  name: cf-class-choice-rune3ranshu
+  description: cf-class-choice-rune3ranshu-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceRanshu
+
+- type: cfClassChoice
+  id: Rune4Ranshu
+  class: Runesmith
+  slot: cf-class-choice-rune-4
+  group: Ranshu
+  name: cf-class-choice-rune4ranshu
+  description: cf-class-choice-rune4ranshu-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceRanshu
+
+- type: cfClassChoice
+  id: Rune5Ranshu
+  class: Runesmith
+  slot: cf-class-choice-rune-5
+  group: Ranshu
+  name: cf-class-choice-rune5ranshu
+  description: cf-class-choice-rune5ranshu-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTraceRanshu
+
+- type: cfClassChoice
+  id: Rune6Ranshu
+  class: Runesmith
+  slot: cf-class-choice-rune-6
+  group: Ranshu
+  name: cf-class-choice-rune6ranshu
+  description: cf-class-choice-rune6ranshu-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTraceRanshu
+
+- type: cfClassChoice
+  id: Rune1Rehgog
+  class: Runesmith
+  slot: cf-class-choice-rune-1
+  group: Rehgog
+  name: cf-class-choice-rune1rehgog
+  description: cf-class-choice-rune1rehgog-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceRehgog
+
+- type: cfClassChoice
+  id: Rune2Rehgog
+  class: Runesmith
+  slot: cf-class-choice-rune-2
+  group: Rehgog
+  name: cf-class-choice-rune2rehgog
+  description: cf-class-choice-rune2rehgog-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceRehgog
+
+- type: cfClassChoice
+  id: Rune3Rehgog
+  class: Runesmith
+  slot: cf-class-choice-rune-3
+  group: Rehgog
+  name: cf-class-choice-rune3rehgog
+  description: cf-class-choice-rune3rehgog-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceRehgog
+
+- type: cfClassChoice
+  id: Rune4Rehgog
+  class: Runesmith
+  slot: cf-class-choice-rune-4
+  group: Rehgog
+  name: cf-class-choice-rune4rehgog
+  description: cf-class-choice-rune4rehgog-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceRehgog
+
+- type: cfClassChoice
+  id: Rune5Rehgog
+  class: Runesmith
+  slot: cf-class-choice-rune-5
+  group: Rehgog
+  name: cf-class-choice-rune5rehgog
+  description: cf-class-choice-rune5rehgog-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTraceRehgog
+
+- type: cfClassChoice
+  id: Rune6Rehgog
+  class: Runesmith
+  slot: cf-class-choice-rune-6
+  group: Rehgog
+  name: cf-class-choice-rune6rehgog
+  description: cf-class-choice-rune6rehgog-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTraceRehgog
+
+- type: cfClassChoice
+  id: Rune1Sertum
+  class: Runesmith
+  slot: cf-class-choice-rune-1
+  group: Sertum
+  name: cf-class-choice-rune1sertum
+  description: cf-class-choice-rune1sertum-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceSertum
+
+- type: cfClassChoice
+  id: Rune2Sertum
+  class: Runesmith
+  slot: cf-class-choice-rune-2
+  group: Sertum
+  name: cf-class-choice-rune2sertum
+  description: cf-class-choice-rune2sertum-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceSertum
+
+- type: cfClassChoice
+  id: Rune3Sertum
+  class: Runesmith
+  slot: cf-class-choice-rune-3
+  group: Sertum
+  name: cf-class-choice-rune3sertum
+  description: cf-class-choice-rune3sertum-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceSertum
+
+- type: cfClassChoice
+  id: Rune4Sertum
+  class: Runesmith
+  slot: cf-class-choice-rune-4
+  group: Sertum
+  name: cf-class-choice-rune4sertum
+  description: cf-class-choice-rune4sertum-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceSertum
+
+- type: cfClassChoice
+  id: Rune5Sertum
+  class: Runesmith
+  slot: cf-class-choice-rune-5
+  group: Sertum
+  name: cf-class-choice-rune5sertum
+  description: cf-class-choice-rune5sertum-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTraceSertum
+
+- type: cfClassChoice
+  id: Rune6Sertum
+  class: Runesmith
+  slot: cf-class-choice-rune-6
+  group: Sertum
+  name: cf-class-choice-rune6sertum
+  description: cf-class-choice-rune6sertum-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTraceSertum
+
+- type: cfClassChoice
+  id: Rune1Thullax
+  class: Runesmith
+  slot: cf-class-choice-rune-1
+  group: Thullax
+  name: cf-class-choice-rune1thullax
+  description: cf-class-choice-rune1thullax-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceThullax
+
+- type: cfClassChoice
+  id: Rune2Thullax
+  class: Runesmith
+  slot: cf-class-choice-rune-2
+  group: Thullax
+  name: cf-class-choice-rune2thullax
+  description: cf-class-choice-rune2thullax-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceThullax
+
+- type: cfClassChoice
+  id: Rune3Thullax
+  class: Runesmith
+  slot: cf-class-choice-rune-3
+  group: Thullax
+  name: cf-class-choice-rune3thullax
+  description: cf-class-choice-rune3thullax-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceThullax
+
+- type: cfClassChoice
+  id: Rune4Thullax
+  class: Runesmith
+  slot: cf-class-choice-rune-4
+  group: Thullax
+  name: cf-class-choice-rune4thullax
+  description: cf-class-choice-rune4thullax-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceThullax
+
+- type: cfClassChoice
+  id: Rune5Thullax
+  class: Runesmith
+  slot: cf-class-choice-rune-5
+  group: Thullax
+  name: cf-class-choice-rune5thullax
+  description: cf-class-choice-rune5thullax-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTraceThullax
+
+- type: cfClassChoice
+  id: Rune6Thullax
+  class: Runesmith
+  slot: cf-class-choice-rune-6
+  group: Thullax
+  name: cf-class-choice-rune6thullax
+  description: cf-class-choice-rune6thullax-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTraceThullax
+
+- type: cfClassChoice
+  id: Rune1Tilus
+  class: Runesmith
+  slot: cf-class-choice-rune-1
+  group: Tilus
+  name: cf-class-choice-rune1tilus
+  description: cf-class-choice-rune1tilus-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceTilus
+
+- type: cfClassChoice
+  id: Rune2Tilus
+  class: Runesmith
+  slot: cf-class-choice-rune-2
+  group: Tilus
+  name: cf-class-choice-rune2tilus
+  description: cf-class-choice-rune2tilus-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceTilus
+
+- type: cfClassChoice
+  id: Rune3Tilus
+  class: Runesmith
+  slot: cf-class-choice-rune-3
+  group: Tilus
+  name: cf-class-choice-rune3tilus
+  description: cf-class-choice-rune3tilus-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceTilus
+
+- type: cfClassChoice
+  id: Rune4Tilus
+  class: Runesmith
+  slot: cf-class-choice-rune-4
+  group: Tilus
+  name: cf-class-choice-rune4tilus
+  description: cf-class-choice-rune4tilus-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceTilus
+
+- type: cfClassChoice
+  id: Rune5Tilus
+  class: Runesmith
+  slot: cf-class-choice-rune-5
+  group: Tilus
+  name: cf-class-choice-rune5tilus
+  description: cf-class-choice-rune5tilus-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTraceTilus
+
+- type: cfClassChoice
+  id: Rune6Tilus
+  class: Runesmith
+  slot: cf-class-choice-rune-6
+  group: Tilus
+  name: cf-class-choice-rune6tilus
+  description: cf-class-choice-rune6tilus-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTraceTilus
+
+- type: cfClassChoice
+  id: Rune1Zohk
+  class: Runesmith
+  slot: cf-class-choice-rune-1
+  group: Zohk
+  name: cf-class-choice-rune1zohk
+  description: cf-class-choice-rune1zohk-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceZohk
+
+- type: cfClassChoice
+  id: Rune2Zohk
+  class: Runesmith
+  slot: cf-class-choice-rune-2
+  group: Zohk
+  name: cf-class-choice-rune2zohk
+  description: cf-class-choice-rune2zohk-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceZohk
+
+- type: cfClassChoice
+  id: Rune3Zohk
+  class: Runesmith
+  slot: cf-class-choice-rune-3
+  group: Zohk
+  name: cf-class-choice-rune3zohk
+  description: cf-class-choice-rune3zohk-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceZohk
+
+- type: cfClassChoice
+  id: Rune4Zohk
+  class: Runesmith
+  slot: cf-class-choice-rune-4
+  group: Zohk
+  name: cf-class-choice-rune4zohk
+  description: cf-class-choice-rune4zohk-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTraceZohk
+
+- type: cfClassChoice
+  id: Rune5Zohk
+  class: Runesmith
+  slot: cf-class-choice-rune-5
+  group: Zohk
+  name: cf-class-choice-rune5zohk
+  description: cf-class-choice-rune5zohk-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTraceZohk
+
+- type: cfClassChoice
+  id: Rune6Zohk
+  class: Runesmith
+  slot: cf-class-choice-rune-6
+  group: Zohk
+  name: cf-class-choice-rune6zohk
+  description: cf-class-choice-rune6zohk-desc
+  features:
+    - level: 5
+      name: "New Rune"
+      description: "You learn another rune."
+      grants:
+        - !type:CFGrantAction
+          action: CFActTraceZohk

@@ -1,5 +1,7 @@
 using System.Linq;
+using Content.Shared.CF.Character.Grants;
 using Content.Shared.CF.Preferences;
+using Content.Shared.Humanoid.Prototypes;
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared.CF.Character;
@@ -100,6 +102,115 @@ public static class CFSkills
     /// <summary>
     /// Background + free class skill picks for a build (class fixed skills stay on the class list).
     /// </summary>
+    /// <summary>
+    /// A skill increase raises a rank by one. Master needs level 7, so nothing below that goes past Expert.
+    /// </summary>
+    public static CFProficiencyRank RaiseRank(CFProficiencyRank rank, int increases)
+    {
+        for (var i = 0; i < increases; i++)
+        {
+            if (rank == CFProficiencyRank.Untrained)
+                rank = CFProficiencyRank.Trained;
+            else if (rank == CFProficiencyRank.Trained)
+                rank = CFProficiencyRank.Expert;
+        }
+
+        return rank;
+    }
+
+    /// <summary>The rank this build will have in a skill at a level, counting the skill increases by then.</summary>
+    public static CFProficiencyRank BuildRank(
+        IPrototypeManager prototypes,
+        CFCharacterBuildData build,
+        string? ancestryId,
+        string skillId,
+        int level)
+    {
+        CFClassPrototype? cls = null;
+        if (build.Class is { } classId)
+            prototypes.TryIndex(classId, out cls);
+
+        CFBackgroundPrototype? background = null;
+        if (build.Background is { } backgroundId)
+            prototypes.TryIndex(backgroundId, out background);
+
+        var trained = CollectTrainedSkills(prototypes, build, ancestryId, cls?.ID, level);
+        var increases = 0;
+        if (level >= 3 && build.SkillIncreaseLevel3?.Id == skillId)
+            increases++;
+        if (level >= 5 && build.SkillIncreaseLevel5?.Id == skillId)
+            increases++;
+
+        if (cls != null)
+        {
+            foreach (var bonusLevel in cls.BonusSkillIncreases)
+            {
+                if (bonusLevel <= level && build.BonusSkillIncreases.GetValueOrDefault(bonusLevel) == skillId)
+                    increases++;
+            }
+        }
+
+        return RaiseRank(GetSkillRank(cls, background, skillId, trained), increases);
+    }
+
+    /// <summary>Whether this build meets a feat's skill requirement at a level.</summary>
+    public static bool Qualifies(
+        IPrototypeManager prototypes,
+        CFCharacterBuildData build,
+        string? ancestryId,
+        CFFeatPrototype feat,
+        int level)
+    {
+        return (feat.RequiresSkill is not { } skill
+                || BuildRank(prototypes, build, ancestryId, skill.Id, level) >= feat.RequiresRank)
+               && MeetsPrerequisites(prototypes, build, ancestryId, feat, level);
+    }
+
+    /// <summary>
+    /// The prerequisites written as data: another feat, an attribute, a heritage. Skill ranks are <see cref="Qualifies"/>
+    /// and subclass picks <see cref="CFClassChoices.MeetsRequirement"/>. Anything else is text only.
+    /// </summary>
+    public static bool MeetsPrerequisites(
+        IPrototypeManager prototypes,
+        CFCharacterBuildData build,
+        string? ancestryId,
+        CFFeatPrototype feat,
+        int level)
+    {
+        if (feat.RequiresHeritage.Count > 0 && (build.Heritage is not { } heritage || !feat.RequiresHeritage.Contains(heritage)))
+            return false;
+
+        if (feat.RequiresFeats.Count > 0)
+        {
+            var had = SelectedFeats(prototypes, build, ancestryId, build.Class?.Id, level);
+            if (!had.Exists(other => other.ID != feat.ID && feat.RequiresFeats.Contains(other.ID)))
+                return false;
+        }
+
+        if (feat.RequiresAbility.Count > 0)
+        {
+            var species = ancestryId != null && prototypes.TryIndex<CFAncestryPrototype>(ancestryId, out var ancestry)
+                ? ancestry.Species
+                : new ProtoId<SpeciesPrototype>("Human");
+            var modifiers = CFAttributeMath.ComputeModifiers(prototypes, species, build);
+            if (level >= 5)
+            {
+                foreach (var boost in build.AbilityBoostsLevel5.Distinct().Take(CFAttributeMath.LevelFiveBoostCount))
+                {
+                    CFAttributeMath.TryLevelBoost(modifiers, boost);
+                }
+            }
+
+            foreach (var (ability, least) in feat.RequiresAbility)
+            {
+                if (modifiers.GetValueOrDefault(ability) < least)
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
     public static List<CFFeatPrototype> SelectedFeats(
         IPrototypeManager prototypes,
         CFCharacterBuildData build,
@@ -110,17 +221,234 @@ public static class CFSkills
         var result = new List<CFFeatPrototype>();
         if (level >= 1)
         {
+            foreach (var id in BackgroundFeats(prototypes, build))
+            {
+                AddFeat(prototypes, result, id, _ => true);
+            }
+
             AddFeat(prototypes, result, build.AncestryFeat, feat => feat.Fits(ancestryId, 1));
-            AddFeat(prototypes, result, build.ClassFeat, feat => feat.FitsClass(classId, 1));
+            AddFeat(prototypes, result, build.ClassFeat, feat => feat.FitsClass(classId, 1) && CFClassChoices.MeetsRequirement(prototypes, build, feat));
         }
 
         if (level >= 2)
-            AddFeat(prototypes, result, build.ClassFeatLevel2, feat => feat.FitsClass(classId, 2));
+        {
+            AddFeat(prototypes, result, build.ClassFeatLevel2, feat => feat.FitsClass(classId, 2) && CFClassChoices.MeetsRequirement(prototypes, build, feat));
+            AddFeat(prototypes, result, build.SkillFeatLevel2, feat => feat.FitsSkillSlot(2));
+        }
+
+        if (level >= 3)
+            AddFeat(prototypes, result, build.GeneralFeatLevel3, feat => feat.FitsGeneralSlot(3));
+
         if (level >= 4)
-            AddFeat(prototypes, result, build.ClassFeatLevel4, feat => feat.FitsClass(classId, 4));
+        {
+            AddFeat(prototypes, result, build.ClassFeatLevel4, feat => feat.FitsClass(classId, 4) && CFClassChoices.MeetsRequirement(prototypes, build, feat));
+            AddFeat(prototypes, result, build.SkillFeatLevel4, feat => feat.FitsSkillSlot(4));
+        }
+
         if (level >= 5)
             AddFeat(prototypes, result, build.AncestryFeatLevel5, feat => feat.Fits(ancestryId, 5));
+
+        if (classId != null && prototypes.TryIndex<CFClassPrototype>(classId, out var cls))
+        {
+            foreach (var bonusLevel in cls.BonusSkillFeats)
+            {
+                if (bonusLevel <= level && build.BonusSkillFeats.TryGetValue(bonusLevel, out var id))
+                    AddFeat(prototypes, result, new ProtoId<CFFeatPrototype>(id), feat => feat.FitsSkillSlot(bonusLevel));
+            }
+        }
+
+        foreach (var feat in ExtraFeats(prototypes, build, ancestryId, level, result))
+        {
+            AddFeat(prototypes, result, feat.ID, _ => true);
+        }
+
         return result;
+    }
+
+    /// <summary>
+    /// Feats the build has without a feat slot: given outright by a <see cref="CFGrantFeat"/> on its heritage, background,
+    /// subclass options, class features or feats, or chosen for a <see cref="CFOptionChoiceKind.Feat"/> choice on one of those.
+    /// A chosen feat only has to be of the right kind here. Whether it qualifies is checked when the pick is validated.
+    /// </summary>
+    /// <param name="slotFeats">The feats from the build's slots, whose grants and choices are read too. Null reads them itself.</param>
+    public static List<CFFeatPrototype> ExtraFeats(
+        IPrototypeManager prototypes,
+        CFCharacterBuildData build,
+        string? ancestryId,
+        int level,
+        IReadOnlyList<CFFeatPrototype>? slotFeats = null)
+    {
+        var result = new List<CFFeatPrototype>();
+        var classId = build.Class?.Id;
+
+        void Read(string source, IEnumerable<CFGrant> grants, IEnumerable<CFOptionChoice> choices)
+        {
+            foreach (var grant in grants.OfType<CFGrantFeat>())
+            {
+                AddFeat(prototypes, result, grant.Feat, _ => true);
+            }
+
+            var index = 0;
+            foreach (var choice in choices)
+            {
+                for (var i = 0; i < choice.Count; i++, index++)
+                {
+                    if (choice.Kind != CFOptionChoiceKind.Feat)
+                        continue;
+
+                    var slot = index;
+                    var pick = build.OptionPicks.FirstOrDefault(p => p.Source == source && p.Slot == slot);
+                    if (pick != null)
+                        AddFeat(prototypes, result, new ProtoId<CFFeatPrototype>(pick.Value), feat => CFOptionChoices.FeatFits(choice, feat, classId, ancestryId));
+                }
+            }
+        }
+
+        if (build.Heritage is { } heritageId
+            && prototypes.TryIndex(heritageId, out CFHeritagePrototype? heritage)
+            && heritage.Fits(ancestryId))
+        {
+            Read(heritage.ID, heritage.Grants, heritage.Choices);
+        }
+
+        if (build.Background is { } backgroundId && prototypes.TryIndex(backgroundId, out CFBackgroundPrototype? background))
+            Read(background.ID, background.Grants, Array.Empty<CFOptionChoice>());
+
+        foreach (var choice in CFClassChoices.Selected(prototypes, build))
+        {
+            Read(choice.ID, choice.Grants, choice.Choices);
+            foreach (var feature in choice.Features)
+            {
+                if (feature.Level <= level)
+                    Read(choice.ID, feature.Grants, Array.Empty<CFOptionChoice>());
+            }
+        }
+
+        if (classId != null && prototypes.TryIndex<CFClassPrototype>(classId, out var cls))
+        {
+            foreach (var feature in cls.Features)
+            {
+                if (feature.Level <= level)
+                    Read(CFOptionChoices.FeatureSource(cls, feature), feature.Grants, feature.Choices);
+            }
+        }
+
+        // Only the slot feats hand out more feats, so a feat given by another feat does not give a third.
+        var featsRead = slotFeats ?? SelectedFeats(prototypes, build, ancestryId, classId, level);
+        foreach (var feat in featsRead.ToList())
+        {
+            if (!result.Contains(feat))
+                Read(feat.ID, feat.Grants, feat.Choices);
+        }
+
+        return result;
+    }
+
+    /// <summary>The feats the build's background gives.</summary>
+    public static IReadOnlyList<ProtoId<CFFeatPrototype>> BackgroundFeats(IPrototypeManager prototypes, CFCharacterBuildData build)
+    {
+        return build.Background is { } id && prototypes.TryIndex(id, out CFBackgroundPrototype? background)
+            ? background.SkillFeats
+            : Array.Empty<ProtoId<CFFeatPrototype>>();
+    }
+
+    /// <summary>
+    /// Clears the skill and general feat slots the build no longer qualifies for, and extra slots its class does not have.
+    /// Dropping a feat can cost a later one the skill it trained, so this repeats until nothing changes.
+    /// </summary>
+    /// <returns>Whether anything was cleared.</returns>
+    public static bool DropUnqualifiedFeats(IPrototypeManager prototypes, CFCharacterBuildData build, string? ancestryId)
+    {
+        CFClassPrototype? cls = null;
+        if (build.Class is { } classId)
+            prototypes.TryIndex(classId, out cls);
+
+        var dropped = false;
+        foreach (var level in build.BonusSkillIncreases.Keys.ToList())
+        {
+            if (cls?.BonusSkillIncreases.Contains(level) == true)
+                continue;
+
+            build.BonusSkillIncreases.Remove(level);
+            dropped = true;
+        }
+
+        var given = BackgroundFeats(prototypes, build).Select(id => id.Id).ToHashSet();
+        bool Bad(string? id, int level)
+        {
+            return id != null
+                   && (given.Contains(id)
+                       || !prototypes.TryIndex<CFFeatPrototype>(id, out var feat)
+                       || !Qualifies(prototypes, build, ancestryId, feat, level));
+        }
+
+        bool again;
+        do
+        {
+            again = false;
+            if (Bad(build.SkillFeatLevel2?.Id, 2))
+            {
+                build.SkillFeatLevel2 = null;
+                again = true;
+            }
+
+            if (Bad(build.GeneralFeatLevel3?.Id, 3))
+            {
+                build.GeneralFeatLevel3 = null;
+                again = true;
+            }
+
+            if (Bad(build.SkillFeatLevel4?.Id, 4))
+            {
+                build.SkillFeatLevel4 = null;
+                again = true;
+            }
+
+            // Class and ancestry feats fit their slots by class and ancestry, which the builder checks. Here it is only
+            // their prerequisites, which a change elsewhere can take away.
+            if (Bad(build.AncestryFeat?.Id, 1))
+            {
+                build.AncestryFeat = null;
+                again = true;
+            }
+
+            if (Bad(build.ClassFeat?.Id, 1))
+            {
+                build.ClassFeat = null;
+                again = true;
+            }
+
+            if (Bad(build.ClassFeatLevel2?.Id, 2))
+            {
+                build.ClassFeatLevel2 = null;
+                again = true;
+            }
+
+            if (Bad(build.ClassFeatLevel4?.Id, 4))
+            {
+                build.ClassFeatLevel4 = null;
+                again = true;
+            }
+
+            if (Bad(build.AncestryFeatLevel5?.Id, 5))
+            {
+                build.AncestryFeatLevel5 = null;
+                again = true;
+            }
+
+            foreach (var (level, id) in build.BonusSkillFeats.ToList())
+            {
+                if (cls?.BonusSkillFeats.Contains(level) == true && !Bad(id, level))
+                    continue;
+
+                build.BonusSkillFeats.Remove(level);
+                again = true;
+            }
+
+            dropped |= again;
+        } while (again);
+
+        return dropped;
     }
 
     private static void AddFeat(
@@ -131,7 +459,8 @@ public static class CFSkills
     {
         if (id != null
             && prototypes.TryIndex(id.Value, out CFFeatPrototype? feat)
-            && fits(feat))
+            && fits(feat)
+            && !result.Exists(other => other.ID == feat.ID))
             result.Add(feat);
     }
 
@@ -159,6 +488,10 @@ public static class CFSkills
         foreach (var skill in build.ClassTrainedSkills)
             result.Add(skill.Id);
 
+        result.AddRange(CFClassChoices.TrainedSkills(prototypes, build));
+        result.AddRange(HeritageSkills(prototypes, build, ancestryId));
+        result.AddRange(CFOptionChoices.TrainedSkills(prototypes, build, ancestryId, level));
+
         foreach (var feat in SelectedFeats(prototypes, build, ancestryId, classId, level))
         {
             foreach (var skill in feat.TrainedSkills)
@@ -166,6 +499,23 @@ public static class CFSkills
         }
 
         return result.Distinct(StringComparer.Ordinal).ToList();
+    }
+
+    /// <summary>Skills trained by the build's heritage, if it fits the ancestry.</summary>
+    public static List<string> HeritageSkills(IPrototypeManager prototypes, CFCharacterBuildData build, string? ancestryId)
+    {
+        var result = new List<string>();
+        if (build.Heritage is not { } id
+            || !prototypes.TryIndex(id, out CFHeritagePrototype? heritage)
+            || !heritage.Fits(ancestryId))
+        {
+            return result;
+        }
+
+        foreach (var skill in heritage.TrainedSkills)
+            result.Add(skill.Id);
+
+        return result;
     }
 
     public static List<ProtoId<CFAbilitySkillPrototype>> BackgroundSkillSlots(CFBackgroundPrototype background)
@@ -189,6 +539,22 @@ public static class CFSkills
         return cls == null
             ? CFProficiencyRank.Untrained
             : RankFromList(cls.Proficiencies.SavingThrows, saveName);
+    }
+
+    /// <summary>A class's rank with a weapon category, by its name in <c>attacks:</c>.</summary>
+    public static CFProficiencyRank GetAttackRank(CFClassPrototype? cls, string proficiency)
+    {
+        return cls == null
+            ? CFProficiencyRank.Untrained
+            : RankFromList(cls.Proficiencies.Attacks, proficiency);
+    }
+
+    /// <summary>A class's rank with armor or unarmored defense, by its name in <c>defenses:</c>.</summary>
+    public static CFProficiencyRank GetDefenseRank(CFClassPrototype? cls, string proficiency)
+    {
+        return cls == null
+            ? CFProficiencyRank.Untrained
+            : RankFromList(cls.Proficiencies.Defenses, proficiency);
     }
 
     public static CFProficiencyRank GetPerceptionRank(CFClassPrototype? cls)

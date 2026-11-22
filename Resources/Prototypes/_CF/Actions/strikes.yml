@@ -1,0 +1,437 @@
+# Actions that are a Strike with something extra. CFStrikeActionSystem runs them.
+
+- type: entity
+  abstract: true
+  parent: CFActivityTarget
+  id: CFActStrikeBase
+  categories: [ HideSpawnMenu ]
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActIntimidatingStrike
+  name: Intimidating Strike
+  description: A melee Strike. If it deals damage the target is frightened 1, or frightened 2 on a critical hit. Costs 2 actions.
+  components:
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFStrikeAction
+    onHit:
+    - !type:CFApplyConditionEffect
+      condition: Frightened
+      value: 1
+    onCritical:
+    - !type:CFApplyConditionEffect
+      condition: Frightened
+      value: 2
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActDualHandedAssault
+  name: Dual-Handed Assault
+  description: Strike with a one-handed weapon gripped in both hands for a moment, so it hits harder. Needs a free hand. A flourish.
+  components:
+  - type: CFFlourish
+  - type: CFStrikeAction
+    twoHandedGrip: true
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActLunge
+  name: Lunge
+  description: A melee Strike with 5 feet more reach.
+  components:
+  - type: TargetAction
+    range: 3
+  - type: CFStrikeAction
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActHeadStomp
+  name: Head Stomp
+  description: An unarmed Strike against a prone creature. On a hit it is stupefied 1, or 2 on a critical hit, and off-guard.
+  components:
+  - type: CFStrikeAction
+    unarmedOnly: true
+    proneTarget: true
+    effectsNeedDamage: false
+    onHit:
+    - !type:CFApplyConditionEffect
+      condition: Stupefied
+      value: 1
+      durationSeconds: 6
+    - !type:CFOffGuardEffect {}
+    onCritical:
+    - !type:CFApplyConditionEffect
+      condition: Stupefied
+      value: 2
+      durationSeconds: 6
+    - !type:CFOffGuardEffect {}
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActTwinTakedown
+  name: Twin Takedown
+  description: Strike your prey once with the weapon in each hand. A flourish.
+  components:
+  - type: CFFlourish
+  - type: CFStrikeAction
+    twoWeapons: true
+    preyOnly: true
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActHuntersAim
+  name: Hunter's Aim
+  description: A ranged Strike at your prey with +2 to the attack roll, ignoring its concealment. Costs 2 actions and an arrow.
+  components:
+  - type: TargetAction
+    range: 200
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFStrikeAction
+    ranged: true
+    preyOnly: true
+    attackBonus: 2
+    ignoresConcealed: true
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActUnbalancingFinisher
+  name: Unbalancing Finisher
+  description: A melee finisher that spends your panache. If it deals damage, the target is off-guard for 6 seconds.
+  components:
+  - type: CFStrikeAction
+    finisher: true
+    onHit:
+    - !type:CFOffGuardEffect
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActMegatonStrike
+  name: Megaton Strike
+  description: A melee Strike with one extra damage die. Costs 2 actions.
+  components:
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFStrikeAction
+    extraDice: 1
+    unstable: true
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActSetUpStrike
+  name: Set-Up Strike
+  description: A melee Strike. On a hit, the target is off-guard for 6 seconds.
+  components:
+  - type: CFStrikeAction
+    effectsNeedDamage: false
+    onHit:
+    - !type:CFOffGuardEffect
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActRechargingFlurry
+  name: Recharging Flurry
+  description: Strike with the weapon in each hand, then recharge Spellstrike. Costs 2 actions.
+  components:
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFStrikeAction
+    twoWeapons: true
+    rechargesSpellstrike: true
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActTauntingStrike
+  name: Taunting Strike
+  description: A melee Strike that Taunts the target, hit or miss.
+  components:
+  - type: CFStrikeAction
+    tauntsTarget: true
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActProudNail
+  name: Proud Nail
+  description: A melee Strike with one extra damage die, against a creature that ignored your Taunt.
+  components:
+  - type: CFStrikeAction
+    needsIgnoredTaunt: true
+    extraDice: 1
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActReloadingStrike
+  name: Reloading Strike
+  description: An unarmed Strike, and your held firearm is loaded. The next shot does not pay for a reload.
+  components:
+  - type: CFStrikeAction
+    unarmedOnly: true
+    reloads: true
+
+# Brutish Shove: a press. A two-handed weapon's Strike that also Shoves.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActBrutishShove
+  name: Brutish Shove
+  description: A Strike with a two-handed weapon, after another attack this turn. A hit leaves the target off-guard for 6 seconds and shoves it 5 feet, 10 on a critical hit. A miss still leaves it off-guard.
+  components:
+  - type: CFStrikeAction
+    press: true
+    twoHandedWeapon: true
+    effectsNeedDamage: false
+    onHit:
+    - !type:CFOffGuardEffect
+    - !type:CFForcedMovementEffect
+      feet: 5
+    onCritical:
+    - !type:CFOffGuardEffect
+    - !type:CFForcedMovementEffect
+      feet: 10
+    onFailure:
+    - !type:CFOffGuardEffect
+
+# Combat Grab: a press. A Strike that grabs with the free hand.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActCombatGrab
+  name: Combat Grab
+  description: A melee Strike with one hand free, after another attack this turn. If it hits, you grab the target for 6 seconds, or until it Escapes.
+  components:
+  - type: CFStrikeAction
+    press: true
+    needsFreeHand: true
+    effectsNeedDamage: false
+    onHit:
+    - !type:CFGrabEffect
+      durationSeconds: 6
+
+# Slam Down: a Strike, then a Trip.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActSlamDown
+  name: Slam Down
+  description: A melee Strike. If it deals damage, roll Athletics against the target's Reflex DC to knock it prone. A critical success also deals 1d6 bludgeoning, and a critical failure knocks you prone. Costs 2 actions.
+  components:
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFTrait
+    traits:
+    - Flourish
+  - type: CFFlourish
+  - type: CFStrikeAction
+    onHit:
+    - !type:CFTripEffect
+
+# Unsteadying Strike: the target is easier to Shove, Grapple, Reposition and Disarm.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActUnsteadyingStrike
+  name: Unsteadying Strike
+  description: A melee Strike. If it hits, the target takes -2 circumstance to its DCs against being Shoved, Grappled, Repositioned or Disarmed for 6 seconds.
+  components:
+  - type: CFTrait
+    traits:
+    - Flourish
+  - type: CFFlourish
+  - type: CFStrikeAction
+    effectsNeedDamage: false
+    onHit:
+    - !type:CFBonusEffect
+      stat: ManeuverDc
+      type: Circumstance
+      value: -2
+      durationSeconds: 6
+
+# Swipe: one swing at two foes that stand side by side.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActSwipe
+  name: Swipe
+  description: A wide swing. Strike your target, and also an enemy beside it that is within your reach, at the same penalty. It counts as two attacks. Costs 2 actions.
+  components:
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFTrait
+    traits:
+    - Flourish
+  - type: CFFlourish
+  - type: CFStrikeAction
+    second: BesideTarget
+
+# Quick Reversal: a press. Both of two enemies in reach.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActQuickReversal
+  name: Quick Reversal
+  description: After another attack this turn, with two enemies in your reach, Strike one and then the other at the same penalty. The second Strike does not add to your multiple attack penalty.
+  components:
+  - type: CFTrait
+    traits:
+    - Flourish
+  - type: CFFlourish
+  - type: CFStrikeAction
+    press: true
+    second: OtherInReach
+    needsSecond: true
+    secondIsFree: true
+
+# Double Shot: two arrows at two targets.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActDoubleShot
+  name: Double Shot
+  description: Shoot your target and the nearest other enemy you can see within 60 feet, each at -2. It needs two arrows. Costs 2 actions.
+  components:
+  - type: TargetAction
+    range: 200
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFTrait
+    traits:
+    - Flourish
+  - type: CFFlourish
+  - type: CFStrikeAction
+    ranged: true
+    attackBonus: -2
+    second: OtherInRange
+
+# Hunted Shot: two arrows at the prey.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActHuntedShot
+  name: Hunted Shot
+  description: Two quick shots at your hunted prey. It needs two arrows.
+  components:
+  - type: TargetAction
+    range: 200
+  - type: CFTrait
+    traits:
+    - Flourish
+  - type: CFFlourish
+  - type: CFStrikeAction
+    ranged: true
+    preyOnly: true
+    twice: true
+
+# Impaling Finisher: through one foe into the one behind it.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActImpalingFinisher
+  name: Impaling Finisher
+  description: A finisher. Strike your target, and also an enemy standing straight behind it, at the same penalty. It counts as two attacks.
+  components:
+  - type: CFStrikeAction
+    finisher: true
+    second: BehindTarget
+
+# Actions with a Stride, Step or Leap in them. The user really moves: a short rush toward the target, or a hop away.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActDefensiveAdvance
+  name: Defensive Advance
+  description: Raise your shield, rush up to 25 feet to an enemy and Strike it. Costs 2 actions.
+  components:
+  - type: TargetAction
+    range: 6.5
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFTrait
+    traits:
+    - Flourish
+  - type: CFFlourish
+  - type: CFStrikeAction
+    raisesShield: true
+    closesFeet: 25
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActBarrelingCharge
+  name: Barreling Charge
+  description: Rush up to 25 feet to an enemy, through anyone in the way, and Strike it. Costs 2 actions.
+  components:
+  - type: TargetAction
+    range: 6.5
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFTrait
+    traits:
+    - Flourish
+  - type: CFFlourish
+  - type: CFStrikeAction
+    closesFeet: 25
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActFlyingKick
+  name: Flying Kick
+  description: Leap up to 15 feet at an enemy and Strike it with an unarmed attack. Costs 2 actions.
+  components:
+  - type: TargetAction
+    range: 4.5
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFStrikeAction
+    unarmedOnly: true
+    closesFeet: 15
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActPartingShot
+  name: Parting Shot
+  description: Hop 5 feet back from your target and shoot it. It is off-guard against the shot. Costs 2 actions.
+  components:
+  - type: TargetAction
+    range: 200
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFStrikeAction
+    ranged: true
+    stepsBackFeet: 5
+    targetOffGuard: true
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActRetreatingFinisher
+  name: Retreating Finisher
+  description: A finisher. If it misses, you can walk out of reach in the next 2 seconds at no cost and without setting off a reaction.
+  components:
+  - type: CFStrikeAction
+    finisher: true
+    onFailure:
+    - !type:CFFreeStepEffect
+      durationSeconds: 2
+
+# Furious Finish: the rest of the Rage in one blow.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActFuriousFinish
+  name: Furious Finish
+  description: A Strike while raging. If it hits, it deals 1 more damage for each round your Rage had left, up to 10. Your Rage then ends and you are fatigued for 1 minute.
+  components:
+  - type: CFStrikeAction
+    endsRage: true
+
+# Combat Assessment: a Strike that also sizes the enemy up.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActCombatAssessment
+  name: Combat Assessment
+  description: A melee Strike. If it hits, you also Recall Knowledge about the target at no extra cost.
+  components:
+  - type: CFStrikeAction
+    effectsNeedDamage: false
+    onHit:
+    - !type:CFRecallEffect
+
+# Quick Draw: a weapon out of its holster and into the enemy in one motion.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActQuickDraw
+  name: Quick Draw
+  description: Draw a weapon worn on your belt, back or neck into a free hand and Strike with it, all for 1 action. A bow shoots the arrow it has nocked.
+  components:
+  - type: TargetAction
+    range: 200
+  - type: CFStrikeAction
+    drawsWeapon: true

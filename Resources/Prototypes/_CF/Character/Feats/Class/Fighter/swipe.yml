@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFSwipeFighter
-  name: "Swipe"
-  description: "Costs 2 actions. This feature will be implemented later."
+  name: cf-feat-swipe-fighter
+  description: cf-feat-swipe-fighter-desc
   class: Fighter
   level: 4
   traits:
@@ -11,4 +11,6 @@
     - "Fighter"
     - "Flourish"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActSwipe

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFPlantEmpathy
-  name: "Plant Empathy"
-  description: "This feature will be implemented later."
+  name: cf-feat-plant-empathy
+  description: cf-feat-plant-empathy-desc
   class: Druid
   level: 1
   traits:

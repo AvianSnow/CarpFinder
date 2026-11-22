@@ -32,7 +32,10 @@ public sealed partial class InstrumentMenu : FancyWindow
     protected override void ExitedTree()
     {
         base.ExitedTree();
-        _currentMode?.Disable();
+        // CarpFinder: closing the window leaves the song playing. The server stops it once the player leaves the instrument
+        // (CFInstrumentSystem), and it does so at once for anyone it does not keep playing.
+        // _currentMode?.Disable();
+        // CarpFinder end
     }
 
     /// <summary>

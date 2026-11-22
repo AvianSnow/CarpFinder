@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFGoadingFeint
-  name: "Goading Feint"
-  description: "Requires trained in Deception."
+  name: cf-feat-goading-feint
+  description: cf-feat-goading-feint-desc
   class: Swashbuckler
   level: 1
   traits:

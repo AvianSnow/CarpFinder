@@ -1,3 +1,5 @@
+using Content.Shared.CF.Character.Grants;
+using Content.Shared.CF.Preferences;
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared.CF.Character;
@@ -58,6 +60,10 @@ public sealed partial class CFFeatPrototype : IPrototype
     [DataField]
     public List<string> Lores = new();
 
+    /// <summary>What the player picks when taking this.</summary>
+    [DataField]
+    public List<CFOptionChoice> Choices = new();
+
     /// <summary>Feet added to land Speed. Applied when the feat is chosen.</summary>
     [DataField]
     public int SpeedBonus;
@@ -81,9 +87,52 @@ public sealed partial class CFFeatPrototype : IPrototype
     [DataField]
     public CFFeatAction Action = CFFeatAction.Passive;
 
+    /// <summary>The character must have one of these subclass options. See <see cref="CFClassChoices.MeetsRequirement"/>.</summary>
+    [DataField]
+    public List<ProtoId<CFClassChoicePrototype>> RequiresChoice = new();
+
+    /// <summary>What this gives a character. See <see cref="CFGrant"/>.</summary>
+    [DataField]
+    public List<CFGrant> Grants = new();
+
     /// <summary>The feat grants an activity or attack the game cannot perform yet.</summary>
     [DataField]
     public bool PendingAction;
+
+    /// <summary>Set on general and skill feats, which belong to no ancestry or class.</summary>
+    [DataField]
+    public CFFeatCategory Category = CFFeatCategory.None;
+
+    /// <summary>A skill this feat needs, where the prerequisite is that simple. Anything else stays in the text.</summary>
+    [DataField]
+    public ProtoId<CFAbilitySkillPrototype>? RequiresSkill;
+
+    [DataField]
+    public CFProficiencyRank RequiresRank = CFProficiencyRank.Trained;
+
+    /// <summary>A feat the character must already have. Any one of these is enough. Written by <c>prerequisites.py</c>.</summary>
+    [DataField]
+    public List<ProtoId<CFFeatPrototype>> RequiresFeats = new();
+
+    /// <summary>Attribute modifiers the character needs, such as Strength 2.</summary>
+    [DataField]
+    public Dictionary<CFAbility, int> RequiresAbility = new();
+
+    /// <summary>The character needs one of these heritages.</summary>
+    [DataField]
+    public List<ProtoId<CFHeritagePrototype>> RequiresHeritage = new();
+
+    /// <summary>A skill feat slot takes skill feats only.</summary>
+    public bool FitsSkillSlot(int level)
+    {
+        return Category == CFFeatCategory.Skill && Level <= level;
+    }
+
+    /// <summary>A general feat slot also takes a skill feat, because every skill feat is a general feat.</summary>
+    public bool FitsGeneralSlot(int level)
+    {
+        return Category != CFFeatCategory.None && Level <= level;
+    }
 
     public bool Fits(string? ancestryId, int level)
     {
@@ -112,4 +161,11 @@ public sealed partial class CFFeatPrototype : IPrototype
 
         return false;
     }
+}
+
+public enum CFFeatCategory : byte
+{
+    None,
+    General,
+    Skill,
 }

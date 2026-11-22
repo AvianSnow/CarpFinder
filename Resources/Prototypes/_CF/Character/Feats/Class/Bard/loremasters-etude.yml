@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFLoremastersEtude
-  name: "Loremaster's Etude"
-  description: "Requires enigma muse."
+  name: cf-feat-loremasters-etude
+  description: cf-feat-loremasters-etude-desc
   class: Bard
   level: 2
   traits:
@@ -11,3 +11,16 @@
     - "Fortune"
   prerequisites:
     - "enigma muse"
+  requiresChoice:
+    - MuseEnigma
+  grants:
+    - !type:CFGrantFocusPoints
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-loremasters-etude
+        trigger: SkillCheckWouldFail
+        skills: [ Arcana, Lore, Nature, Occultism, Religion, Society ]
+        rerolls: true
+        keepsBetter: true
+        free: true
+        focusPoints: 1

@@ -1,3 +1,5 @@
+using System.Linq;
+using Content.Shared.CF.Preferences;
 using Content.Shared.CF.Traits;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Serialization;
@@ -100,34 +102,82 @@ public readonly record struct CFSpellRankSlots(int Rank, int Count);
 
 public static class CFSpellSlots
 {
-    /// <summary>Sheet shown until a class defines its own spellcasting.</summary>
-    public static readonly CFSpellRankSlots[] Preview =
-    {
-        new(0, 5),
-        new(1, 3),
-        new(2, 2),
-        new(3, 2),
-    };
-
     public const int BonusRank = -1;
 
-    public static IReadOnlyList<CFSpellRankSlots> ForClass(CFClassPrototype? cls)
+    /// <summary>The slots a class has at <paramref name="level"/>: none for a class that does not cast. The lobby builds level 1.</summary>
+    public static IReadOnlyList<CFSpellRankSlots> ForClass(CFClassPrototype? cls, int level = 1)
     {
+        var ranks = new List<CFSpellRankSlots>();
         var casting = cls?.Spellcasting;
         if (casting == null)
-            return Preview;
+            return ranks;
 
-        var ranks = new List<CFSpellRankSlots>();
         if (casting.Cantrips > 0)
             ranks.Add(new CFSpellRankSlots(0, casting.Cantrips));
 
-        for (var i = 0; i < casting.Slots.Count; i++)
+        var slots = casting.SlotsAt(level);
+        for (var i = 0; i < slots.Count; i++)
         {
-            if (casting.Slots[i] > 0)
-                ranks.Add(new CFSpellRankSlots(i + 1, casting.Slots[i]));
+            if (slots[i] > 0)
+                ranks.Add(new CFSpellRankSlots(i + 1, slots[i]));
         }
 
         return ranks;
+    }
+
+    /// <summary>The tradition a build's class casts from, or null when its class does not cast.</summary>
+    public static CFSpellTradition? TraditionOf(IPrototypeManager prototypes, CFCharacterBuildData build)
+    {
+        if (build.Class is not { } classId
+            || !prototypes.TryIndex(classId, out CFClassPrototype? cls)
+            || cls.Spellcasting is not { } casting)
+        {
+            return null;
+        }
+
+        return CFClassChoices.Tradition(prototypes, build, casting.Tradition);
+    }
+
+    /// <summary>
+    /// The spell picks a build may have at all: none for a class that does not cast, and otherwise only spells of the
+    /// tradition it casts from. A build comes from a client, so the server reads picks through this.
+    /// </summary>
+    public static List<CFSpellPick> Allowed(IPrototypeManager prototypes, CFCharacterBuildData build)
+    {
+        var result = new List<CFSpellPick>();
+        if (TraditionOf(prototypes, build) is not { } tradition)
+            return result;
+
+        foreach (var pick in build.Spells)
+        {
+            if (pick.HasSpell && prototypes.TryIndex(pick.Spell, out var spell) && spell.HasTradition(tradition))
+                result.Add(pick);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// The builder picks a character has by the time it has these slots: the first of each rank, up to that rank's slots.
+    /// A build comes from a client, so a spell above its slot's rank is left out.
+    /// </summary>
+    public static List<CFSpellPick> Within(IEnumerable<CFSpellPick> picks, IReadOnlyList<int> slots, IPrototypeManager prototypes)
+    {
+        var result = new List<CFSpellPick>();
+        var taken = new int[slots.Count];
+        foreach (var pick in picks.OrderBy(spell => spell.Rank).ThenBy(spell => spell.Index))
+        {
+            if (!pick.HasSpell || pick.Rank < 0 || pick.Rank >= slots.Count)
+                continue;
+
+            if (!prototypes.TryIndex(pick.Spell, out var spell) || spell.Rank > pick.Rank || taken[pick.Rank] >= slots[pick.Rank])
+                continue;
+
+            taken[pick.Rank]++;
+            result.Add(pick);
+        }
+
+        return result;
     }
 
     public static string ActionSymbols(CFSpellActionCost cost)

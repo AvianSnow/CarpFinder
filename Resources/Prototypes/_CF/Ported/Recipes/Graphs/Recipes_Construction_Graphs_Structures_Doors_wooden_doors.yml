@@ -1,0 +1,129 @@
+# Ported from CP14 by the CF converter.
+
+- type: constructionGraph
+  id: CFWoodenDoor
+  start: start
+  graph:
+    - node: start
+      actions:
+        - !type:DestroyEntity {}
+      edges:
+        - to: CFWoodenDoorFrame
+          steps:
+            - material: CFWoodenPlanks
+              amount: 2
+              doAfter: 2
+
+    - node: CFWoodenDoorFrame
+      entity: CFWoodenDoorFrame
+      edges:
+        - to: start
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFWoodenPlanks1
+              amount: 2
+            - !type:DeleteEntity {}
+          steps:
+            - tool: Prying
+              doAfter: 4
+        - to: CFWoodenDoorFrameMirrored
+          steps:
+            - tool: CFHammering
+              doAfter: 1
+        - to: CFWoodenDoor
+          steps:
+            - material: CFWoodenPlanks
+              amount: 2
+              doAfter: 2
+        - to: CFWoodenDoorWindowed
+          steps:
+            - material: CFWoodenPlanks
+              amount: 2
+              doAfter: 2
+
+    - node: CFWoodenDoorFrameMirrored
+      entity: CFWoodenDoorFrameMirrored
+      edges:
+        - to: start
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFWoodenPlanks1
+              amount: 2
+            - !type:DeleteEntity {}
+          steps:
+            - tool: Prying
+              doAfter: 4
+        - to: CFWoodenDoorFrame
+          steps:
+            - tool: CFHammering
+              doAfter: 1
+        - to: CFWoodenDoorMirrored
+          steps:
+            - material: CFWoodenPlanks
+              amount: 2
+              doAfter: 2
+        - to: CFWoodenDoorWindowedMirrored
+          steps:
+            - material: CFWoodenPlanks
+              amount: 2
+              doAfter: 2
+
+    - node: CFWoodenDoor
+      entity: CFWoodenDoor
+      edges:
+        - to: CFWoodenDoorFrame
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFWoodenPlanks1
+              amount: 2
+          conditions:
+          - !type:Locked
+            locked: false
+          steps:
+            - tool: Prying
+              doAfter: 4
+
+    - node: CFWoodenDoorMirrored
+      entity: CFWoodenDoorMirrored
+      edges:
+        - to: CFWoodenDoorFrameMirrored
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFWoodenPlanks1
+              amount: 2
+          conditions:
+          - !type:Locked
+            locked: false
+          steps:
+            - tool: Prying
+              doAfter: 4
+
+    - node: CFWoodenDoorWindowed
+      entity: CFWoodenDoorWindowed
+      edges:
+        - to: CFWoodenDoorFrame
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFWoodenPlanks1
+              amount: 2
+          conditions:
+          - !type:Locked
+            locked: false
+          steps:
+            - tool: Prying
+              doAfter: 4
+
+    - node: CFWoodenDoorWindowedMirrored
+      entity: CFWoodenDoorWindowedMirrored
+      edges:
+        - to: CFWoodenDoorFrameMirrored
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFWoodenPlanks1
+              amount: 2
+          conditions:
+          - !type:Locked
+            locked: false
+          steps:
+            - tool: Prying
+              doAfter: 4

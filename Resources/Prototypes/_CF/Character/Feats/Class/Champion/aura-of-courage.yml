@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFAuraofCourage
-  name: "Aura of Courage"
-  description: "Requires champion's aura and holy."
+  name: cf-feat-auraof-courage
+  description: cf-feat-auraof-courage-desc
   class: Champion
   level: 4
   traits:
@@ -11,3 +11,15 @@
   prerequisites:
     - "champion's aura"
     - "holy"
+  requiresChoice:
+    - CauseGrandeur
+    - CauseJustice
+    - CauseLiberation
+    - CauseRedemption
+  grants:
+    - !type:CFGrantOption
+      option: Bravery
+    - !type:CFGrantAura
+      effects:
+        - affects: Allies
+          easesFrightened: true

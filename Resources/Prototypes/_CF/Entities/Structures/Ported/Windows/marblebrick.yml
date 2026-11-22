@@ -1,0 +1,84 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  id: CFWindowMarbleBrick
+  parent: CFWindowBase
+  name: marble brick window
+  description: A marble brick wall with a glass window in it.
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Windows/marble_bricks_window.rsi
+  - type: Icon
+    sprite: _CP14/Structures/Windows/marble_bricks_window.rsi
+    state: full
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 50
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: WindowShatter
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFGlassShard:
+            min: 1
+            max: 2
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+      - !type:ChangeConstructionNodeBehavior
+        node: CFWindowMarbleBrickBroken
+  - type: Construction
+    graph: CFWindowMarbleBrick
+    node: CFWindowMarbleBrick
+
+- type: entity
+  id: CFWindowFrameMarbleBrick
+  name: marble brick window frame
+  parent: CFBaseWindowFrame
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Windows/marble_bricks_window_frame.rsi
+  - type: Icon
+    sprite: _CP14/Structures/Windows/marble_bricks_window_frame.rsi
+  - type: Damageable
+    damageModifierSet: CFRockStructural
+  - type: Injurable
+    damageContainer: StructuralInorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 100
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFMarbleBlock1:
+            min: 1
+            max: 2
+      - !type:PlaySoundBehavior
+        sound:
+          path: /Audio/Effects/break_stone.ogg
+          params:
+            volume: -6
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: Construction
+    graph: CFWindowMarbleBrick
+    node: CFWindowFrameMarbleBrick
+
+- type: entity
+  id: CFWindowMarbleBrickBroken
+  name: shattered marble brick window
+  parent:
+  - CFBaseWindowFrameBroken
+  - CFWindowFrameMarbleBrick
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Windows/marble_bricks_window_broken.rsi
+  - type: Icon
+    sprite: _CP14/Structures/Windows/marble_bricks_window_broken.rsi
+  - type: Construction
+    graph: CFWindowMarbleBrick
+    node: CFWindowMarbleBrickBroken

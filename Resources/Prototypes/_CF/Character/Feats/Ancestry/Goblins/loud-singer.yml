@@ -2,11 +2,16 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFLoudSinger
-  name: "Loud Singer"
-  description: "Requires Goblin Song."
+  name: cf-feat-loud-singer
+  description: cf-feat-loud-singer-desc
   ancestry: Goblin
   level: 5
   traits:
     - "Goblin"
   prerequisites:
     - "Goblin Song"
+  requiresFeats:
+    - CFGoblinSong
+  grants:
+    - !type:CFGrantAction
+      action: CFActGoblinSongLoud

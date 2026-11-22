@@ -1,4 +1,5 @@
 using Content.Shared.Actions;
+using Content.Shared.CF.Spells;
 
 namespace Content.Shared.CF.Effects;
 
@@ -17,6 +18,9 @@ public static class CFCastRequest
         if (entities.TryGetComponent(action, out CFModeChoiceComponent? mode))
             request.CFMode = mode.Chosen;
 
+        if (entities.TryGetComponent(action, out CFSpellComponent? spell))
+            request.CFRank = (byte) spell.ChosenRank;
+
         if (!entities.TryGetComponent(action, out CFProjectileDeliveryComponent? bolts) || !bolts.IsVolley)
             return;
 
@@ -32,6 +36,9 @@ public static class CFCastRequest
     {
         if (entities.TryGetComponent(action, out CFModeChoiceComponent? mode))
             mode.Chosen = request.CFMode;
+
+        if (entities.TryGetComponent(action, out CFSpellComponent? spell))
+            spell.ChosenRank = request.CFRank;
 
         if (!entities.TryGetComponent(action, out CFProjectileDeliveryComponent? bolts) || request.CFBolts == 0)
             return;

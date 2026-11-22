@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFScoutsWarningRanger
-  name: "Scout's Warning"
-  description: "Free action. This feature will be implemented later."
+  name: cf-feat-scouts-warning-ranger
+  description: cf-feat-scouts-warning-ranger-desc
   class: Ranger
   level: 4
   traits:

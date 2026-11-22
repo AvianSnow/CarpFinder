@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFSplitShot
-  name: "Split Shot"
-  description: "Changes an item. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-split-shot
+  description: cf-feat-split-shot-desc
   class: Sorcerer
   level: 4
   traits:

@@ -10,7 +10,9 @@ public enum CFShopCategory
     Consumable,
     Container,
     Equipment,
+    Food,
     Kit,
+    Material,
     Shield,
     Treasure,
     Weapon,
@@ -20,6 +22,10 @@ public enum CFShopCategory
 public sealed class CFShopListing
 {
     public required string Id { get; init; }
+
+    /// <summary>The entity whose sprite the row shows. Null when <see cref="Id"/> is the entity.</summary>
+    public string? Icon { get; init; }
+
     public required string Name { get; init; }
     public required string Description { get; init; }
     public int Level { get; init; }

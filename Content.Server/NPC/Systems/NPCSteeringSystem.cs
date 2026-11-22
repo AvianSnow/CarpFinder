@@ -2,6 +2,7 @@ using System.Numerics;
 using System.Threading;
 using System.Threading.Tasks;
 using Content.Server.Administration.Managers;
+using Content.Server.CF.GOAP.Steering;
 using Content.Server.DoAfter;
 using Content.Server.NPC.Components;
 using Content.Server.NPC.Events;
@@ -373,7 +374,10 @@ public sealed partial class NPCSteeringSystem : SharedNPCSteeringSystem
         }
 
         // Avoid static objects like walls
-        CollisionAvoidance(uid, steering, offsetRot, worldPos, agentRadius, layer, mask, xform, danger);
+        // CarpFinder: GOAP mobs have feelers for this. With no stock path the obstacle filter is skipped, so cables count
+        if (!HasComp<CFGOAPSteeringComponent>(uid))
+            CollisionAvoidance(uid, steering, offsetRot, worldPos, agentRadius, layer, mask, xform, danger);
+        // CarpFinder end
         DebugTools.Assert(!float.IsNaN(danger[0]));
 
         Separation(uid, offsetRot, worldPos, agentRadius, layer, mask, body, xform, danger);
@@ -400,7 +404,12 @@ public sealed partial class NPCSteeringSystem : SharedNPCSteeringSystem
 
         if (desiredDirection != -1)
         {
-            resultDirection = new Angle(desiredDirection * InterestRadians).ToVec();
+            // CarpFinder: GOAP mobs aim between the 12 directions, so they do not zigzag along a line between two
+            var slot = HasComp<CFGOAPSteeringComponent>(uid)
+                ? CFGOAPSteeringMath.Aim(steering.Interest, steering.Danger, desiredDirection)
+                : desiredDirection;
+            resultDirection = new Angle(slot * InterestRadians).ToVec();
+            // CarpFinder end
         }
 
         steering.LastSteerDirection = resultDirection;

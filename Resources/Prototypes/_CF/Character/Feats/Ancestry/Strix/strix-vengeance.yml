@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Cheliax, Infernal Inheritance
 - type: cfFeat
   id: CFStrixVengeance
-  name: "Strix Vengeance"
-  description: "Reaction. TBA - action will be added"
+  name: cf-feat-strix-vengeance
+  description: cf-feat-strix-vengeance-desc
   ancestry: Strix
   level: 5
   traits:
@@ -11,4 +11,11 @@
     - "Mental"
     - "Strix"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-strix-vengeance
+        trigger: CriticallyHit
+        allyTrait: Strix
+        markDamageDie: 6
+        cooldownSeconds: 600

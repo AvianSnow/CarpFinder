@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFOneToedHop
-  name: "One-Toed Hop"
-  description: "Costs 1 action. TBA - action will be added"
+  name: cf-feat-one-toed-hop
+  description: cf-feat-one-toed-hop-desc
   ancestry: Tengu
   level: 1
   traits:

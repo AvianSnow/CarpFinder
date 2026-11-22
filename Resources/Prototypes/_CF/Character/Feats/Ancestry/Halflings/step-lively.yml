@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFStepLively
-  name: "Step Lively"
-  description: "Reaction. TBA - action will be added"
+  name: cf-feat-step-lively
+  description: cf-feat-step-lively-desc
   ancestry: Halfling
   level: 5
   traits:

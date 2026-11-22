@@ -1,5 +1,11 @@
+using Robust.Shared.Prototypes;
+using Content.Shared.CF.Preferences;
+using Content.Shared.CF.Combat;
 using System.Numerics;
+using Content.Server.CF.GOAP;
+using Content.Server.CF.GOAP.Sensors;
 using Content.Server.NPC.Components;
+using Content.Server.NPC.HTN;
 using Content.Server.NPC.Systems;
 using Content.Shared.CF.Actions;
 using Content.Shared.CF.Companions;
@@ -21,9 +27,11 @@ using Robust.Shared.Map;
 namespace Content.Server.CF.Companions;
 
 /// <summary>
-/// Points the summoner's allies at a creature, sends them to fetch an item, calls them back when the summoner points at themself,
-/// or calls them off when the point is the floor.
-/// The ally closes in and Strikes with its own stat block. A ghost in the body is left in control.
+/// A companion thinks with a GOAP brain: it fights enemies it sees by itself and keeps close to its summoner
+/// (<c>CFGOAPCompanionSensorSystem</c>). Pointing only helps it. At a creature, that creature becomes the one it goes for
+/// first (<see cref="CFCompanionComponent.Target"/>, read by the sight sensor). At the summoner, it comes straight back.
+/// At an item, it fetches it, with its brain paused for the trip. At the floor, it forgets the creature it was sent at.
+/// A ghost in the body is left in control.
 /// </summary>
 public sealed partial class CFCompanionSystem : EntitySystem
 {
@@ -32,6 +40,7 @@ public sealed partial class CFCompanionSystem : EntitySystem
     private const float PickupRange = 0.6f;
     private const int FetchGiveUp = 45;
 
+    [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private SharedCombatModeSystem _combat = default!;
     [Dependency] private SharedContainerSystem _containers = default!;
@@ -41,6 +50,7 @@ public sealed partial class CFCompanionSystem : EntitySystem
     [Dependency] private NPCSteeringSystem _steering = default!;
     [Dependency] private CFActionPoolSystem _actions = default!;
     [Dependency] private CFFactionSystem _factions = default!;
+    [Dependency] private HTNSystem _htn = default!;
 
     private readonly List<(EntityUid Companion, EntityUid Item)> _pendingGives = new();
     private readonly HashSet<EntityUid> _thrown = new();
@@ -69,31 +79,12 @@ public sealed partial class CFCompanionSystem : EntitySystem
                 continue;
             }
 
-            if (comp.Target.IsValid())
+            // The creature it was sent at is gone, so it goes back to choosing for itself.
+            if (comp.Target.IsValid() && (!Exists(comp.Target) || !IsLiving(comp.Target)))
             {
-                if (!Exists(comp.Target) || !IsLiving(comp.Target))
-                {
-                    Stop(uid, comp);
-                    continue;
-                }
-
-                if (!HasMind(uid) && !HasComp<NPCMeleeCombatComponent>(uid))
-                    Order(uid, comp, comp.Target);
-
-                continue;
+                comp.Target = EntityUid.Invalid;
+                Dirty(uid, comp);
             }
-
-            if (!comp.Following)
-                continue;
-
-            if (!comp.Summoner.IsValid() || !Exists(comp.Summoner) || !IsLiving(comp.Summoner))
-            {
-                Stop(uid, comp);
-                continue;
-            }
-
-            if (!HasMind(uid) && !HasComp<NPCSteeringComponent>(uid))
-                Follow(uid, comp);
         }
     }
 
@@ -161,6 +152,20 @@ public sealed partial class CFCompanionSystem : EntitySystem
             Bind(nearest, ent);
     }
 
+    /// <summary>Sends a companion at a creature.</summary>
+    public void OrderAttack(EntityUid companion, EntityUid target)
+    {
+        if (TryComp(companion, out CFCompanionComponent? comp))
+            Order(companion, comp, target);
+    }
+
+    /// <summary>Makes a companion stop what it was ordered to do.</summary>
+    public void StopOrder(EntityUid companion)
+    {
+        if (TryComp(companion, out CFCompanionComponent? comp))
+            Stop(companion, comp);
+    }
+
     private void OnPointed(Entity<CFSummonerComponent> ent, ref AfterPointedAtEvent args)
     {
         var attack = IsOrder(ent.Owner, args.Pointed);
@@ -176,9 +181,6 @@ public sealed partial class CFCompanionSystem : EntitySystem
             any = true;
             if (args.Pointed == ent.Owner)
             {
-                if (comp.Following && !comp.Target.IsValid() && !comp.Fetch.IsValid())
-                    continue;
-
                 Follow(uid, comp);
                 changed = true;
             }
@@ -198,7 +200,7 @@ public sealed partial class CFCompanionSystem : EntitySystem
                 Fetch(uid, comp, args.Pointed);
                 changed = true;
             }
-            else if (comp.Target.IsValid() || comp.Following || comp.Fetch.IsValid())
+            else if (comp.Target.IsValid() || comp.Fetch.IsValid())
             {
                 Stop(uid, comp);
                 changed = true;
@@ -233,6 +235,32 @@ public sealed partial class CFCompanionSystem : EntitySystem
             Follow(companion, comp);
     }
 
+    /// <summary>
+    /// Brings the companions of <paramref name="owner"/> up to its level, from their <c>cfPet</c> tables. Wounds stay as they are:
+    /// a companion gains the new Hit Points on top of what it has left, and one that has fallen gains none until it is back up.
+    /// </summary>
+    public void MatchOwnerLevel(EntityUid owner, CFCombatantComponent ownerCombat)
+    {
+        var query = EntityQueryEnumerator<CFCompanionComponent, CFCombatantComponent>();
+        while (query.MoveNext(out var uid, out var companion, out var combat))
+        {
+            if (companion.Summoner != owner || !_prototypes.TryIndex<CFPetPrototype>(companion.PetId, out var pet))
+                continue;
+
+            var build = new CFCharacterBuildData { Level = ownerCombat.Level, PetBarding = companion.Barding };
+            var block = CFPetMath.Present(pet, build, null);
+            var gained = block.HitPoints - combat.MaxHp;
+
+            combat.Level = block.Level;
+            combat.MaxHp = block.HitPoints;
+            combat.ArmorClass = pet.UsesMaster ? ownerCombat.ArmorClass + CFPetMath.BardingOf(companion.Barding).Bonus : block.ArmorClass;
+            if (combat.CurrentHp > 0 && gained > 0)
+                combat.CurrentHp += gained;
+
+            Dirty(uid, combat);
+        }
+    }
+
     public void Bind(EntityUid summoner, EntityUid companion)
     {
         if (!TryComp(companion, out CFCompanionComponent? comp))
@@ -246,55 +274,120 @@ public sealed partial class CFCompanionSystem : EntitySystem
             _factions.SetFaction(companion, faction.Faction);
     }
 
+    /// <summary>
+    /// The creature becomes the one the companion goes for first. Pointing is an order: it is told where the creature
+    /// stands, so it goes there even without seeing it, and the leash does not call it back while that creature lives.
+    /// </summary>
     private void Order(EntityUid companion, CFCompanionComponent comp, EntityUid target)
     {
+        // A familiar is not sent at anyone.
+        if (comp.Peaceful)
+            return;
+
+        EndFetch(companion, comp);
         comp.Following = false;
-        comp.Fetch = EntityUid.Invalid;
-        comp.FetchWaits = 0;
+        comp.Recalled = false;
         comp.Target = target;
         Dirty(companion, comp);
 
-        var melee = EnsureComp<NPCMeleeCombatComponent>(companion);
-        melee.Target = target;
-        melee.MissChance = 0f;
-        if (TryComp(companion, out CombatModeComponent? mode))
-            _combat.SetInCombatMode(companion, true, mode);
+        if (TryComp(companion, out CFGOAPLairComponent? lair))
+        {
+            lair.Returning = false;
+            lair.AwaySince = null;
+        }
+
+        if (TryComp(companion, out CFGOAPComponent? brain))
+        {
+            brain.Target = target;
+            brain.Lkp = _transform.GetMapCoordinates(target);
+            brain.LkpReached = false;
+            brain.NodesChecked = 0;
+        }
+
+        ThinkNow(companion);
     }
 
+    /// <summary>
+    /// The companion comes straight back to its summoner. It always keeps close, so this only hurries it: it drops the
+    /// creature it was sent at and sets off home at once, fighting only what is in reach on the way.
+    /// </summary>
     private void Follow(EntityUid companion, CFCompanionComponent comp)
     {
+        EndFetch(companion, comp);
         comp.Following = true;
+        comp.Recalled = true;
         comp.Target = EntityUid.Invalid;
-        comp.Fetch = EntityUid.Invalid;
-        comp.FetchWaits = 0;
         Dirty(companion, comp);
-        RemComp<NPCMeleeCombatComponent>(companion);
 
-        if (HasMind(companion) || !comp.Summoner.IsValid())
-            return;
+        if (TryComp(companion, out CFGOAPLairComponent? lair))
+            lair.Returning = true;
 
-        var steering = _steering.Register(companion, new EntityCoordinates(comp.Summoner, Vector2.Zero));
-        steering.Range = FollowRange;
+        // It forgets the fight, or it would go looking for it again once back.
+        if (TryComp(companion, out CFGOAPComponent? brain))
+        {
+            brain.Target = null;
+            brain.Lkp = null;
+        }
+
+        ThinkNow(companion);
     }
 
     private void Fetch(EntityUid companion, CFCompanionComponent comp, EntityUid item)
     {
         comp.Following = false;
+        comp.Recalled = false;
         comp.Target = EntityUid.Invalid;
         comp.Fetch = item;
         comp.FetchWaits = 0;
         Dirty(companion, comp);
-        RemComp<NPCMeleeCombatComponent>(companion);
         if (TryComp(companion, out CombatModeComponent? mode))
             _combat.SetInCombatMode(companion, false, mode);
 
         if (HasMind(companion))
             return;
 
+        PauseBrain(companion, comp);
         MakeHandFree(companion, item);
         var steering = _steering.Register(companion, new EntityCoordinates(item, Vector2.Zero));
         steering.Range = PickupRange;
         steering.Status = SteeringStatus.Moving;
+    }
+
+    /// <summary>Fetching walks the companion itself, so its brain sleeps for the trip. HTN would fight the steering.</summary>
+    private void PauseBrain(EntityUid companion, CFCompanionComponent comp)
+    {
+        if (comp.BrainPaused || !TryComp(companion, out HTNComponent? htn))
+            return;
+
+        comp.BrainPaused = true;
+        _htn.SetHTNEnabled((companion, htn), false);
+    }
+
+    private void ResumeBrain(EntityUid companion, CFCompanionComponent comp)
+    {
+        if (!comp.BrainPaused)
+            return;
+
+        comp.BrainPaused = false;
+        _steering.Unregister(companion);
+        if (TryComp(companion, out HTNComponent? htn))
+            _htn.SetHTNEnabled((companion, htn), true);
+
+        ThinkNow(companion);
+    }
+
+    /// <summary>Ends a fetch and gives the companion its brain back.</summary>
+    private void EndFetch(EntityUid companion, CFCompanionComponent comp)
+    {
+        comp.Fetch = EntityUid.Invalid;
+        comp.FetchWaits = 0;
+        ResumeBrain(companion, comp);
+    }
+
+    private void ThinkNow(EntityUid companion)
+    {
+        if (TryComp(companion, out CFGOAPComponent? brain))
+            brain.NextThink = TimeSpan.Zero;
     }
 
     private void UpdateFetch(EntityUid uid, CFCompanionComponent comp)
@@ -428,15 +521,14 @@ public sealed partial class CFCompanionSystem : EntitySystem
         return !xform.Anchored && !_containers.IsEntityInContainer(uid);
     }
 
+    /// <summary>Forgets the creature it was sent at and any fetch. It still fights by itself.</summary>
     private void Stop(EntityUid companion, CFCompanionComponent comp)
     {
+        EndFetch(companion, comp);
         comp.Following = false;
+        comp.Recalled = false;
         comp.Target = EntityUid.Invalid;
-        comp.Fetch = EntityUid.Invalid;
-        comp.FetchWaits = 0;
         Dirty(companion, comp);
-        RemComp<NPCMeleeCombatComponent>(companion);
-        _steering.Unregister(companion);
     }
 
     private bool IsOrder(EntityUid summoner, EntityUid pointed)

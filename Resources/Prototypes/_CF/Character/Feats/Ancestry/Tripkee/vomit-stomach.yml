@@ -2,11 +2,18 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFVomitStomach
-  name: "Vomit Stomach"
-  description: "Reaction. TBA - action will be added"
+  name: cf-feat-vomit-stomach
+  description: cf-feat-vomit-stomach-desc
   ancestry: Tripkee
   level: 5
   traits:
     - "Tripkee"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-vomit-stomach
+        trigger: Sickened
+        sickenedLess: 2
+        leavesOffGuard: true
+        perDay: 1

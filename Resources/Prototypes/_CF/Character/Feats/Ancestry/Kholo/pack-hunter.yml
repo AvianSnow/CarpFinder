@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFPackHunter
-  name: "Pack Hunter"
-  description: "+2 circumstance bonus to Skill Check. Not applied in play yet."
+  name: cf-feat-pack-hunter
+  description: cf-feat-pack-hunter-desc
   ancestry: Kholo
   level: 1
   traits:

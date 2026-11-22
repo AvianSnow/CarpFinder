@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFPatternFlight
-  name: "Pattern Flight"
-  description: "Costs 2 actions. This feature will be implemented later."
+  name: cf-feat-pattern-flight
+  description: cf-feat-pattern-flight-desc
   class: Runesmith
   level: 2
   traits:

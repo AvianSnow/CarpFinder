@@ -1,0 +1,78 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  parent: CrateGeneric
+  id: CFCrateDirtPitGrave
+  categories: [ ForkFiltered ]
+  name: dirt pit
+  description: "There's something buried here... or someone..."
+  components:
+  - type: Sprite
+    noRot: false
+    snapCardinals: true
+    sprite: _CP14/Structures/Storage/dirt_pit.rsi
+    layers:
+    - state: base
+    - state: closed
+      map: ["enum.StorageVisualLayers.Door"]
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 200 # discourage just beating the grave to break it open
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: CFDigging
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFDirtBlock1:
+            min: 2
+            max: 3
+  - type: Fixtures
+    fixtures:
+      rune:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.4,-0.4,0.4,0.4"
+        hard: false
+        mask:
+          - ItemMask
+        layer:
+          - SlipLayer
+  - type: Physics
+    bodyType: Static
+  - type: Grave
+  - type: EntityStorage
+    airtight: true
+    isCollidableWhenOpen: false
+    closeSound:
+      collection: CFDigging
+    openSound:
+      collection: CFDigging
+  - type: Construction
+    graph: CFCrateDirtPitGrave
+    node: CFCrateDirtPitGrave
+
+- type: entity
+  parent: CFCrateDirtPitGrave
+  id: CFCrateDirtPitGraveFilled
+  suffix: Random filled
+  components:
+  - type: EntityTableContainerFill
+    containers:
+      entity_storage: !type:NestedSelector
+        tableId: CFTombstoneTable
+        rolls: !type:ConstantNumberSelector
+          value: 4
+
+- type: entityTable
+  id: CFTombstoneTable
+  table: !type:GroupSelector
+    children:
+    - id: CFBone1
+    - id: CFCopperCoin
+      weight: 0.2
+

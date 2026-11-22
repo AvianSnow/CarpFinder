@@ -2,8 +2,8 @@
 # source: Carpfinder Dark Archive (Remastered)
 - type: cfFeat
   id: CFAstralTether
-  name: "Astral Tether"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-astral-tether
+  description: cf-feat-astral-tether-desc
   class: Psychic
   level: 4
   traits:

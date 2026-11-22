@@ -1,0 +1,58 @@
+# Ported from CP14 by the CF converter.
+
+# Wooden
+
+- type: entity
+  parent: [ CFWoodenDoor, CFLockSimple ]
+  id: CFWoodenDoorAlchemy1
+  suffix: Alchemy 1
+  components:
+  - type: CFLock
+    forceDc: 20
+    keyId: Alchemy1
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent:
+  - CFWoodenDoorAlchemy1
+  - CFWoodenDoorMirrored
+  id: CFWoodenDoorAlchemyMirrored1
+  suffix: Alchemy 1, Mirrored
+
+- type: entity
+  parent: [ CFWoodenDoor, CFLockSimple ]
+  id: CFWoodenDoorAlchemy2
+  suffix: Alchemy 2
+  components:
+  - type: CFLock
+    forceDc: 20
+    keyId: Alchemy2
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent:
+  - CFWoodenDoorAlchemy2
+  - CFWoodenDoorMirrored
+  id: CFWoodenDoorAlchemyMirrored2
+  suffix: Alchemy 2, Mirrored
+
+- type: entity
+  parent: [ CFWoodenDoor, CFLockSimple ]
+  id: CFWoodenDoorAlchemy3
+  suffix: Alchemy 3
+  components:
+  - type: CFLock
+    forceDc: 20
+    keyId: Alchemy3
+  - type: Lock
+    locked: true
+
+- type: entity
+  parent:
+  - CFWoodenDoorAlchemy3
+  - CFWoodenDoorMirrored
+  id: CFWoodenDoorAlchemyMirrored3
+  suffix: Alchemy 3, Mirrored
+

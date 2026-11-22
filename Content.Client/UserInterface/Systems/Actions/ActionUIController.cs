@@ -16,6 +16,7 @@ using Content.Shared.Actions;
 using Content.Shared.Actions.Components;
 using Content.Shared.CF.Effects;
 using Content.Shared.CF.Effects.Areas;
+using Content.Shared.CF.Spells;
 using Content.Shared.Charges.Systems;
 using Content.Shared.Input;
 using Robust.Client.GameObjects;
@@ -63,6 +64,9 @@ public sealed partial class ActionUIController : UIController, IOnStateChanged<G
     private MenuButton? ActionButton => UIManager.GetActiveUIWidgetOrNull<MenuBar.Widgets.GameTopMenuBar>()?.ActionButton;
 
     public bool IsDragging => _menuDragHelper.IsDragging;
+
+    // CarpFinder: the HUD deck's lock. Actions cannot be dragged or cleared from their slots.
+    public bool CFLocked { get; set; }
 
     /// <summary>
     /// Action slot we are currently selecting a target for.
@@ -239,6 +243,16 @@ public sealed partial class ActionUIController : UIController, IOnStateChanged<G
 
     private void TriggerAction(int index)
     {
+        // CarpFinder: with Basic, Class or Spells chosen on the HUD deck, the number keys use that tab's first two rows.
+        if (UIManager.GetActiveUIWidgetOrNull<Content.Client.CF.Hud.CFGameHud>() is { Visible: true } cfHud
+            && cfHud.Deck.TryKeyed(index, out var keyed))
+        {
+            if (keyed != null && _actionsSystem?.GetAction(keyed.Value) is { } keyedAction)
+                UseAction(keyedAction);
+            return;
+        }
+        // CarpFinder end
+
         if (!_actions.TryGetValue(index, out var actionId) ||
             _actionsSystem?.GetAction(actionId) is not {} action)
         {
@@ -259,6 +273,23 @@ public sealed partial class ActionUIController : UIController, IOnStateChanged<G
             return;
         }
 
+        // CarpFinder: a spell with no slot, charge or Focus Point left is greyed out and does nothing.
+        if (EntityManager.TryGetComponent(action, out CFSpellComponent? spell)
+            && _playerManager.LocalEntity is { } caster
+            && !EntityManager.System<CFSpellSystem>().HasSlot(caster, spell))
+            return;
+        // CarpFinder end
+
+        // CarpFinder: a spell castable at several ranks asks which one first.
+        if (EntityManager.System<CFRankMenuSystem>().TryOffer(action, () => CFOfferCastMenus(action)))
+            return;
+
+        CFOfferCastMenus(action);
+    }
+
+    // CarpFinder: what happens once a spell's rank is settled.
+    private void CFOfferCastMenus(Entity<ActionComponent> action)
+    {
         // CarpFinder: a mode choice (prestidigitation) asks which mode, then a volley (Force Barrage) asks how many bolts.
         if (EntityManager.System<CFModeMenuSystem>().TryOffer(action, () => ActivateAction(action)))
             return;
@@ -289,6 +320,11 @@ public sealed partial class ActionUIController : UIController, IOnStateChanged<G
 
         if (_actions.Contains(action))
             return;
+
+        // CarpFinder: the basic actions live on the HUD deck, and only join the numbered slots when dragged there.
+        if (!action.Comp.AutoPopulate)
+            return;
+        // CarpFinder end
 
         _actions.Add(action);
     }
@@ -554,6 +590,16 @@ public sealed partial class ActionUIController : UIController, IOnStateChanged<G
         HandleActionUnpressed(args, dragged);
     }
 
+    // CarpFinder: the HUD deck's buttons act like the action window's: click to use, drag onto a slot.
+    public void RegisterDeckButton(ActionButton button)
+    {
+        button.Locked = true;
+        button.ActionPressed += OnWindowActionPressed;
+        button.ActionUnpressed += OnWindowActionUnPressed;
+        button.ActionFocusExited += OnWindowActionFocusExisted;
+    }
+    // CarpFinder end
+
     private void OnWindowActionFocusExisted(ActionButton button)
     {
         _menuDragHelper.EndDrag();
@@ -563,6 +609,9 @@ public sealed partial class ActionUIController : UIController, IOnStateChanged<G
     {
         if (args.Function == EngineKeyFunctions.UIRightClick)
         {
+            if (CFLocked) // CarpFinder: the lock also stops right-click clearing a slot.
+                return;
+
             SetAction(button, null);
             args.Handle();
             return;
@@ -577,7 +626,7 @@ public sealed partial class ActionUIController : UIController, IOnStateChanged<G
     private void HandleActionPressed(GUIBoundKeyEventArgs args, ActionButton button)
     {
         args.Handle();
-        if (button.Action != null)
+        if (button.Action != null && !CFLocked) // CarpFinder: the lock stops a drag from starting.
         {
             _menuDragHelper.MouseDown(button);
             return;

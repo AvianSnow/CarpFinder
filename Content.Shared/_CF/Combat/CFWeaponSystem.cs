@@ -1,3 +1,5 @@
+using Content.Shared.CF.Character;
+using Content.Shared.CF.Checks;
 using Content.Shared.CF.Traits;
 using Content.Shared.Wieldable.Components;
 using Robust.Shared.Prototypes;
@@ -43,7 +45,7 @@ public sealed partial class CFWeaponSystem : EntitySystem
         stats = new CFStrikeWeaponStats(
             data.DamageDice + striking,
             die,
-            data.DamageType,
+            CompOrNull<CFDamageModeComponent>(weapon)?.Current?.Id ?? data.DamageType,
             data.Category.Proficiency(),
             traits,
             Ranged: ranged || thrown,
@@ -51,8 +53,82 @@ public sealed partial class CFWeaponSystem : EntitySystem
             Potency: Math.Clamp(runes?.Potency ?? 0, 0, 3),
             Striking: striking,
             Reload: ranged ? shooter!.Reload : 0,
-            ThrownStrike: thrown);
+            ThrownStrike: thrown,
+            Improvised: data.Improvised,
+            Item: weapon);
         return true;
+    }
+
+    /// <summary>
+    /// A creature's proficiency for a Strike: its rank with the weapon's category or group, whichever is better.
+    /// A familiar weapon also uses the rank of the simpler category it counts as.
+    /// </summary>
+    public CFProficiencyRank Rank(CFCombatantComponent combat, CFStrikeWeaponStats weapon)
+    {
+        var rank = CFDefense.AttackRank(_prototypes, combat, weapon.Proficiency);
+        if (weapon.Item is not { } item || !TryComp(item, out CFWeaponComponent? data))
+            return rank;
+
+        // A weapon group's rank (Fighter Weapon Mastery) is one step lower for advanced weapons: master makes them expert.
+        var group = CFDefense.Best(combat, data.Group.ToString(), CFProficiencyRank.Untrained);
+        if (data.Category == CFWeaponCategory.Advanced && group > CFProficiencyRank.Trained)
+            group -= 2;
+
+        if (group > rank)
+            rank = group;
+
+        var counts = data.Category;
+        if (MetaData(item).EntityPrototype is { } proto && combat.FamiliarWeapons.Contains(proto.ID))
+        {
+            counts = CFWeaponCategory.Simple;
+            rank = rank < CFProficiencyRank.Trained ? CFProficiencyRank.Trained : rank;
+        }
+        else if (IsFamiliarByTrait(combat, item))
+        {
+            counts = counts == CFWeaponCategory.Advanced ? CFWeaponCategory.Martial : CFWeaponCategory.Simple;
+        }
+
+        if (counts >= data.Category)
+            return rank;
+
+        var simpler = CFDefense.AttackRank(_prototypes, combat, counts.Proficiency());
+        return simpler > rank ? simpler : rank;
+    }
+
+    private bool IsFamiliarByTrait(CFCombatantComponent combat, EntityUid item)
+    {
+        return combat.FamiliarWeaponTraits.Count > 0
+               && TryComp(item, out CFTraitComponent? traits)
+               && traits.HasAny(combat.FamiliarWeaponTraits);
+    }
+
+    /// <summary>Thrown range increment in feet. 0 when this is not a thrown weapon.</summary>
+    public int ThrownIncrement(EntityUid item)
+    {
+        return HasComp<CFWeaponComponent>(item) ? Traits(item).Thrown : 0;
+    }
+
+    /// <summary>
+    /// How far an item can be thrown, in tiles. A thrown weapon reaches its last range increment, the same limit
+    /// a ranged Strike has. Anything else keeps <paramref name="handRange"/>.
+    /// </summary>
+    public float ThrowRange(EntityUid item, float handRange)
+    {
+        var increment = ThrownIncrement(item);
+        return increment > 0 ? increment * CFMelee.MaxRangeIncrements / CFMelee.FeetPerTile : handRange;
+    }
+
+    /// <summary>
+    /// Whether a right-click with this item is a maneuver instead of a wide swing: a shield, or a weapon
+    /// with the shove or disarm trait. The sweep trait keeps its wide swing.
+    /// </summary>
+    public bool ManeuverOnRightClick(EntityUid weapon)
+    {
+        if (HasComp<CFShieldComponent>(weapon))
+            return true;
+
+        var traits = Traits(weapon);
+        return !traits.Sweep && (traits.Shove || traits.Disarm);
     }
 
     /// <summary>Melee reach in feet: the weapon's own reach, raised by the reach trait.</summary>

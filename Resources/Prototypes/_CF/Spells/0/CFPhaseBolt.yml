@@ -1,4 +1,4 @@
-﻿- type: entity
+- type: entity
   parent: CFSpellProjectile
   id: CFPhaseBolt
   name: Phase Bolt
@@ -14,6 +14,9 @@
   - type: CFSpell
     spell: PhaseBolt
     rank: 0
+  - type: CFPsiCantrip
+    ampOffGuard: true
+    ampHeightenDice: 2
   - type: CFTargeting
     rangeFeet: 60
   - type: CFCheck

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFLeadingDance
-  name: "Leading Dance"
-  description: "Requires trained in Performance. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-leading-dance
+  description: cf-feat-leading-dance-desc
   class: Swashbuckler
   level: 4
   traits:

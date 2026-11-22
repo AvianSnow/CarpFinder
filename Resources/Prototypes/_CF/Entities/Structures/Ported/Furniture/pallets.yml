@@ -1,0 +1,99 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  id: CFBasePallets
+  abstract: true
+  categories: [ ForkFiltered ]
+  placement:
+    mode: SnapgridCenter
+  components:
+  - type: Clickable
+  - type: Sprite
+    sprite: _CP14/Structures/Furniture/pallets.rsi
+    snapCardinals: true
+    drawdepth: FloorTiles
+  - type: Transform
+    anchored: true
+  - type: Tag
+    tags:
+      - Catwalk
+
+- type: entity
+  id: CFWoodenPallet
+  parent:
+  - CFBasePallets
+  - CFBaseFlammable
+  name: wooden pallet
+  description: Wooden goods stand.
+  components:
+  - type: Sprite
+    state: wooden
+  - type: FootstepModifier
+    footstepSoundCollection:
+      collection: FootstepWood
+  - type: Damageable
+    damageModifierSet: CFWood
+  - type: Injurable
+    damageContainer: Inorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 500
+      behaviors:
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+    - trigger:
+        !type:DamageTrigger
+        damage: 200
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFWoodenPlanks1:
+            min: 1
+            max: 1
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: Construction
+    graph: CFWoodenPallet
+    node: CFWoodenPallet
+
+- type: entity
+  id: CFWoodenPalletSell
+  parent: CFWoodenPallet
+  name: selling wooden pallet
+  description: Goods left here are teleported to the Merchants' Guild, which keeps half the price for the magic. Merchants are members and keep it all.
+  components:
+  - type: Sprite
+    layers:
+    - state: wooden
+    - state: sell
+  - type: CFGuildPallet
+    kind: Sell
+  - type: ActivatableUI
+    key: enum.CFMerchantUiKey.Key
+    requiresComplex: true
+  - type: UserInterface
+    interfaces:
+      enum.CFMerchantUiKey.Key:
+        type: CFMerchantBoundUserInterface
+
+- type: entity
+  id: CFWoodenPalletBuy
+  parent: CFWoodenPallet
+  name: buying wooden pallet
+  description: Merchants' Guild orders arrive here, for a merchant standing beside it.
+  components:
+  - type: Sprite
+    layers:
+    - state: wooden
+    - state: buy
+  - type: CFGuildPallet
+    kind: Buy
+  - type: ActivatableUI
+    key: enum.CFMerchantUiKey.Key
+    requiresComplex: true
+  - type: UserInterface
+    interfaces:
+      enum.CFMerchantUiKey.Key:
+        type: CFMerchantBoundUserInterface

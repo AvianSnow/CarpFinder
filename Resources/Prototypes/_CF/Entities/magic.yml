@@ -1,3 +1,21 @@
+# Know the Way's arrow. It points north on any screen, because it turns with the world.
+- type: entity
+  id: CFNorthArrow
+  name: north
+  categories: [ HideSpawnMenu ]
+  save: false
+  components:
+  - type: TimedDespawn
+    lifetime: 6
+  - type: Tag
+    tags:
+    - HideContextMenu
+  - type: Sprite
+    sprite: Interface/Misc/pointing.rsi
+    state: pointing
+    drawdepth: Overlays
+    color: "#8ec8ff"
+
 - type: entity
   id: CFBaseMagicImpact
   name: magic impact
@@ -14,3 +32,67 @@
     drawdepth: Effects
     sprite: _CP14/Effects/Magic/cast_impact.rsi
     noRot: true
+
+# Spawned by CFVfxSystem, which also sets the colour. The sprites are white so they tint cleanly.
+- type: entity
+  id: CFVfxCast
+  parent: CFBaseMagicImpact
+  categories: [ HideSpawnMenu ]
+  save: false
+  components:
+  - type: CFVfx
+  - type: Sprite
+    noRot: true
+    drawdepth: Effects
+    sprite: _CP14/Effects/Magic/cast_impact.rsi
+    layers:
+    - state: circle_increase
+      shader: unshaded
+    - state: particles_up
+      shader: unshaded
+
+- type: entity
+  id: CFVfxTargeted
+  parent: CFBaseMagicImpact
+  categories: [ HideSpawnMenu ]
+  save: false
+  components:
+  - type: CFVfx
+  - type: Sprite
+    noRot: true
+    drawdepth: Effects
+    sprite: _CP14/Effects/Magic/cast_impact.rsi
+    layers:
+    - state: stars
+      shader: unshaded
+
+- type: entity
+  id: CFVfxHealing
+  parent: CFBaseMagicImpact
+  categories: [ HideSpawnMenu ]
+  save: false
+  components:
+  - type: CFVfx
+  - type: Sprite
+    noRot: true
+    drawdepth: Effects
+    sprite: _CP14/Effects/Magic/cast_impact.rsi
+    layers:
+    - state: wave_up
+      shader: unshaded
+    - state: particles_up
+      shader: unshaded
+
+# What a summoned creature leaves as it vanishes, on death or when its time is up (CFSummonedSystem).
+- type: entity
+  parent: WizardSmoke
+  id: CFSummonPuff
+  name: puff of smoke
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Smoke
+    spreadAmount: 0
+  - type: TimedDespawn
+    lifetime: 1.5
+  - type: EmitSoundOnSpawn
+    sound: /Audio/Effects/smoke.ogg

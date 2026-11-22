@@ -33,6 +33,13 @@ public sealed partial class CFAreaEffectComponent : Component
     /// <summary>Only these entities are affected. Creatures (MobState) are always required.</summary>
     [DataField]
     public EntityWhitelist? Whitelist;
+
+    /// <summary>A sustained spell's area grows this much each time it runs again, up to <see cref="MaxFeet"/> (Protective Wards).</summary>
+    [DataField]
+    public int GrowsFeet;
+
+    [DataField]
+    public int MaxFeet;
 }
 
 public enum CFAreaShape : byte

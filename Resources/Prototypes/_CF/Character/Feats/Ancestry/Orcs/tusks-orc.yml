@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFTusksOrc
-  name: "Tusks (Orc)"
-  description: "Your unarmed Strike deals 1d6 piercing."
+  name: cf-feat-tusks-orc
+  description: cf-feat-tusks-orc-desc
   ancestry: Orc
   level: 1
   traits:

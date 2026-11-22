@@ -290,7 +290,7 @@ namespace Content.Shared.Storage
     public record struct StorageInteractAttemptEvent(bool Silent, bool Cancelled = false);
 
     [ByRefEvent]
-    public record struct StorageInteractUsingAttemptEvent(bool Cancelled = false);
+    public record struct StorageInteractUsingAttemptEvent(EntityUid User, EntityUid Used, bool Cancelled = false); // CarpFinder: who, and with what, so a system can keep one kind of item out of the storage
 
     [NetSerializable]
     [Serializable]

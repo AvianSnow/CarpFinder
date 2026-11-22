@@ -1,0 +1,51 @@
+# What breath weapons leave on the floor when they pour out as liquid (CFBreathWeapon.reagent, CFBreathFlowSystem), such
+# as Toxic Spew. The breath does its harm through its own save, once it has filled, so the reagent itself is harmless.
+# evaporationSpeed is units per second: 48 units go from a smooth sheet to a few drops and are gone in about 20 seconds.
+
+- type: reagent
+  id: CFToxicSpew
+  name: cf-reagent-name-toxic-spew
+  desc: cf-reagent-desc-toxic-spew
+  group: Toxins
+  flavor: bitter
+  physicalDesc: reagent-physical-desc-cloudy
+  color: "#4FD13A"
+  evaporationSpeed: 2.5
+
+# What spells leave on the floor (CFAreaFill.reagent). None evaporates or slips by itself: the fill removes its puddles
+# when it ends, and the spell's own save decides who falls.
+- type: reagent
+  id: CFGrease
+  name: cf-reagent-name-grease
+  desc: cf-reagent-desc-grease
+  flavor: oily
+  physicalDesc: reagent-physical-desc-oily
+  color: "#8A7A3A"
+
+- type: reagent
+  id: CFAcidSplash
+  name: cf-reagent-name-acid-splash
+  desc: cf-reagent-desc-acid-splash
+  flavor: acid
+  physicalDesc: reagent-physical-desc-acidic
+  color: "#9FE04A"
+  evaporationSpeed: 2.5
+
+- type: reagent
+  id: CFConjuredWater
+  name: cf-reagent-name-conjured-water
+  desc: cf-reagent-desc-conjured-water
+  flavor: water
+  physicalDesc: reagent-physical-desc-translucent
+  color: "#75B1F0C0"
+  evaporationSpeed: 2.5
+
+# A healing potion broken on the floor (CFSmashPotion). The healing is on the puddle (CFHealingPuddle), not in the
+# reagent, so it does not evaporate and mopping it up loses it.
+- type: reagent
+  id: CFHealingDraught
+  name: cf-reagent-name-healing-draught
+  desc: cf-reagent-desc-healing-draught
+  flavor: sweet
+  physicalDesc: reagent-physical-desc-glowing
+  color: "#C41E3A"

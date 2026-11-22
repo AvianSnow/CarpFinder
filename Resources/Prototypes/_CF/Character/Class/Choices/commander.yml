@@ -1,0 +1,211 @@
+# CarpFinder: Commander tactics you can use from level 1. A character prepares three, chosen in the lobby.
+
+- type: cfClassChoice
+  id: TacticFirstPincerAttack
+  class: Commander
+  slot: cf-class-choice-tactic-first
+  name: cf-class-choice-tactic-first-pincerattack
+  description: cf-class-choice-tactic-first-pincerattack-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticPincerAttack
+
+- type: cfClassChoice
+  id: TacticFirstReload
+  class: Commander
+  slot: cf-class-choice-tactic-first
+  name: cf-class-choice-tactic-first-reload
+  description: cf-class-choice-tactic-first-reload-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticReload
+
+- type: cfClassChoice
+  id: TacticFirstShieldsUp
+  class: Commander
+  slot: cf-class-choice-tactic-first
+  name: cf-class-choice-tactic-first-shieldsup
+  description: cf-class-choice-tactic-first-shieldsup-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticShieldsUp
+
+- type: cfClassChoice
+  id: TacticFirstStrikeHard
+  class: Commander
+  slot: cf-class-choice-tactic-first
+  name: cf-class-choice-tactic-first-strikehard
+  description: cf-class-choice-tactic-first-strikehard-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticStrikeHard
+
+- type: cfClassChoice
+  id: TacticFirstTakedown
+  class: Commander
+  slot: cf-class-choice-tactic-first
+  name: cf-class-choice-tactic-first-takedown
+  description: cf-class-choice-tactic-first-takedown-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticTakedown
+
+- type: cfClassChoice
+  id: TacticFirstDefensiveRetreat
+  class: Commander
+  slot: cf-class-choice-tactic-first
+  name: cf-class-choice-tactic-first-defensiveretreat
+  description: cf-class-choice-tactic-first-defensiveretreat-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticDefensiveRetreat
+
+- type: cfClassChoice
+  id: TacticFirstGatherToMe
+  class: Commander
+  slot: cf-class-choice-tactic-first
+  name: cf-class-choice-tactic-first-gathertome
+  description: cf-class-choice-tactic-first-gathertome-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticGatherToMe
+
+- type: cfClassChoice
+  id: TacticSecondPincerAttack
+  class: Commander
+  slot: cf-class-choice-tactic-second
+  name: cf-class-choice-tactic-second-pincerattack
+  description: cf-class-choice-tactic-second-pincerattack-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticPincerAttack
+
+- type: cfClassChoice
+  id: TacticSecondReload
+  class: Commander
+  slot: cf-class-choice-tactic-second
+  name: cf-class-choice-tactic-second-reload
+  description: cf-class-choice-tactic-second-reload-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticReload
+
+- type: cfClassChoice
+  id: TacticSecondShieldsUp
+  class: Commander
+  slot: cf-class-choice-tactic-second
+  name: cf-class-choice-tactic-second-shieldsup
+  description: cf-class-choice-tactic-second-shieldsup-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticShieldsUp
+
+- type: cfClassChoice
+  id: TacticSecondStrikeHard
+  class: Commander
+  slot: cf-class-choice-tactic-second
+  name: cf-class-choice-tactic-second-strikehard
+  description: cf-class-choice-tactic-second-strikehard-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticStrikeHard
+
+- type: cfClassChoice
+  id: TacticSecondTakedown
+  class: Commander
+  slot: cf-class-choice-tactic-second
+  name: cf-class-choice-tactic-second-takedown
+  description: cf-class-choice-tactic-second-takedown-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticTakedown
+
+- type: cfClassChoice
+  id: TacticSecondDefensiveRetreat
+  class: Commander
+  slot: cf-class-choice-tactic-second
+  name: cf-class-choice-tactic-second-defensiveretreat
+  description: cf-class-choice-tactic-second-defensiveretreat-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticDefensiveRetreat
+
+- type: cfClassChoice
+  id: TacticSecondGatherToMe
+  class: Commander
+  slot: cf-class-choice-tactic-second
+  name: cf-class-choice-tactic-second-gathertome
+  description: cf-class-choice-tactic-second-gathertome-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticGatherToMe
+
+- type: cfClassChoice
+  id: TacticThirdPincerAttack
+  class: Commander
+  slot: cf-class-choice-tactic-third
+  name: cf-class-choice-tactic-third-pincerattack
+  description: cf-class-choice-tactic-third-pincerattack-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticPincerAttack
+
+- type: cfClassChoice
+  id: TacticThirdReload
+  class: Commander
+  slot: cf-class-choice-tactic-third
+  name: cf-class-choice-tactic-third-reload
+  description: cf-class-choice-tactic-third-reload-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticReload
+
+- type: cfClassChoice
+  id: TacticThirdShieldsUp
+  class: Commander
+  slot: cf-class-choice-tactic-third
+  name: cf-class-choice-tactic-third-shieldsup
+  description: cf-class-choice-tactic-third-shieldsup-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticShieldsUp
+
+- type: cfClassChoice
+  id: TacticThirdStrikeHard
+  class: Commander
+  slot: cf-class-choice-tactic-third
+  name: cf-class-choice-tactic-third-strikehard
+  description: cf-class-choice-tactic-third-strikehard-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticStrikeHard
+
+- type: cfClassChoice
+  id: TacticThirdTakedown
+  class: Commander
+  slot: cf-class-choice-tactic-third
+  name: cf-class-choice-tactic-third-takedown
+  description: cf-class-choice-tactic-third-takedown-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticTakedown
+
+- type: cfClassChoice
+  id: TacticThirdDefensiveRetreat
+  class: Commander
+  slot: cf-class-choice-tactic-third
+  name: cf-class-choice-tactic-third-defensiveretreat
+  description: cf-class-choice-tactic-third-defensiveretreat-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticDefensiveRetreat
+
+- type: cfClassChoice
+  id: TacticThirdGatherToMe
+  class: Commander
+  slot: cf-class-choice-tactic-third
+  name: cf-class-choice-tactic-third-gathertome
+  description: cf-class-choice-tactic-third-gathertome-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticGatherToMe

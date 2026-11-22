@@ -1,4 +1,4 @@
-using System.Linq;
+using Content.Shared.CF.Preferences;
 using Content.Shared.Clothing;
 using Content.Shared.GameTicking;
 using Content.Shared.Preferences;
@@ -31,19 +31,19 @@ public static class CFBuilderRole
             return false;
 
         roleProto = resolved;
+        // A copy: the profile shares its loadouts with the saved one, so editing this in place changed both, the
+        // editor saw nothing to save, and a bought item never reached the server.
         roleLoadout = profile.GetLoadoutOrDefault(
             roleId,
             session,
             profile.Species,
             IoCManager.Resolve<IEntityManager>(),
-            prototypes);
+            prototypes).Clone();
         return true;
     }
 
     public static JobPrototype PreferredJob(HumanoidCharacterProfile profile, IPrototypeManager prototypes)
     {
-        var highPriorityJob = profile.JobPriorities.FirstOrDefault(pair => pair.Value == JobPriority.High).Key;
-        var jobId = string.IsNullOrEmpty(highPriorityJob) ? GameTicker.FallbackOverflowJob : highPriorityJob;
-        return prototypes.Index<JobPrototype>(jobId);
+        return prototypes.Index(CFCharacterRequirements.ChosenJob(prototypes, profile) ?? GameTicker.FallbackOverflowJob);
     }
 }

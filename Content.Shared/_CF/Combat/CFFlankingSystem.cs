@@ -1,5 +1,6 @@
 using Content.Shared.ActionBlocker;
 using Content.Shared.CF.Factions;
+using Content.Shared.Climbing.Components;
 using Content.Shared.Examine;
 using Content.Shared.Hands;
 using Content.Shared.Hands.EntitySystems;
@@ -30,6 +31,7 @@ namespace Content.Shared.CF.Combat;
 public sealed partial class CFFlankingSystem : EntitySystem
 {
     [Dependency] private INetManager _net = default!;
+    [Dependency] private CFReactionSystem _reactions = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private FixtureSystem _fixtures = default!;
     [Dependency] private SharedHandsSystem _hands = default!;
@@ -41,6 +43,7 @@ public sealed partial class CFFlankingSystem : EntitySystem
     [Dependency] private SharedContainerSystem _container = default!;
     [Dependency] private SharedStatusIconSystem _statusIcons = default!;
     [Dependency] private CFWeaponSystem _weapons = default!;
+    [Dependency] private EntityLookupSystem _lookup = default!;
 
     /// <summary>Foe to the allies whose reach sensors currently overlap that foe.</summary>
     private readonly Dictionary<EntityUid, HashSet<EntityUid>> _inReach = new();
@@ -145,6 +148,7 @@ public sealed partial class CFFlankingSystem : EntitySystem
             return;
 
         RemoveOverlap(ent.Owner, args.OtherEntity);
+        _reactions.NoteLeftReach(ent.Owner, args.OtherEntity);
     }
 
     [SubscribeLocalEvent]
@@ -236,6 +240,36 @@ public sealed partial class CFFlankingSystem : EntitySystem
     /// <summary>
     /// True when <paramref name="attacker"/> is flanking <paramref name="target"/> with an ally.
     /// </summary>
+    /// <summary>
+    /// The hostile creatures inside this one's reach sensor. The physics engine keeps this up to date,
+    /// so it costs nothing to read. Server only.
+    /// </summary>
+    public IReadOnlyCollection<EntityUid> EnemiesInReach(EntityUid uid)
+    {
+        return _overlapping.TryGetValue(uid, out var enemies) ? enemies : Array.Empty<EntityUid>();
+    }
+
+    /// <summary>
+    /// How many of the attacker's allies, not counting the attacker, could Strike the target in melee now. Ally, enemy,
+    /// reach and being able to act mean what they mean for flanking. For Pack Attack.
+    /// </summary>
+    public int AlliesThreatening(EntityUid target, EntityUid attacker)
+    {
+        var count = 0;
+        var at = _transform.GetMapCoordinates(target);
+        foreach (var other in _lookup.GetEntitiesInRange<CFCombatantComponent>(at, CFFlanking.SearchRange))
+        {
+            var uid = other.Owner;
+            if (uid == attacker || uid == target || !AreAllies(attacker, uid) || !IsHostileTo(uid, target) || !CanAct(uid))
+                continue;
+
+            if (CFFlanking.InReach(_transform.GetWorldPosition(uid), at.Position, GetMeleeReachFeet(uid)))
+                count++;
+        }
+
+        return count;
+    }
+
     public bool IsOffGuardTo(EntityUid target, EntityUid attacker)
     {
         if (!_net.IsServer)
@@ -278,6 +312,10 @@ public sealed partial class CFFlankingSystem : EntitySystem
 
         if (created)
             sensor.ReachFeet = reach;
+
+        // Stock ends a climb when any fixture touches a wall, and this one reaches well past the body.
+        if (created && TryComp(uid, out ClimbingComponent? climbing))
+            climbing.TransitionCollisionMask = 0;
     }
 
     private bool IsSensor(EntityUid uid, Fixture fixture)

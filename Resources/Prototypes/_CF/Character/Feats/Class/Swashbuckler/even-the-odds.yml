@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFEventheOdds
-  name: "Even the Odds"
-  description: "Free action. This feature will be implemented later."
+  name: cf-feat-eventhe-odds
+  description: cf-feat-eventhe-odds-desc
   class: Swashbuckler
   level: 4
   traits:

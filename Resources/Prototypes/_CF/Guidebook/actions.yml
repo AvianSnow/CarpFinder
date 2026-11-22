@@ -1,0 +1,5 @@
+- type: guideEntry
+  id: CFActions
+  name: guide-entry-cf-actions
+  priority: 1
+  text: "/ServerInfo/Guidebook/_CF/Actions.xml"

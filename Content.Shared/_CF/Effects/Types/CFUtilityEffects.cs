@@ -48,13 +48,105 @@ public sealed partial class CFForcedMovementEffect : CFEffect
     }
 }
 
-/// <summary>A dying creature loses the dying condition and stays unconscious at 0 HP.</summary>
+/// <summary>
+/// For a while the user can leave an enemy's reach at no cost and without setting off a reaction: a free Step, or a Stride
+/// that does not provoke.
+/// </summary>
+public sealed partial class CFFreeStepEffect : CFEffect
+{
+    [DataField]
+    public float DurationSeconds = 2f;
+
+    public override void Apply(IEntityManager entities, CFEffectArgs args)
+    {
+        entities.System<CFReactionSystem>().CoverSteps(args.User, DurationSeconds);
+    }
+}
+
+/// <summary>The user ignores every difficult terrain for a while (Light Paws).</summary>
+public sealed partial class CFIgnoreTerrainEffect : CFEffect
+{
+    [DataField]
+    public float DurationSeconds = 6f;
+
+    public override void Apply(IEntityManager entities, CFEffectArgs args)
+    {
+        entities.System<Content.Shared.CF.Terrain.CFTerrainSystem>().IgnoreAllFor(args.User, DurationSeconds);
+    }
+}
+
+/// <summary>The user jumps the way it faces, this many feet.</summary>
+public sealed partial class CFLeapEffect : CFEffect
+{
+    [DataField(required: true)]
+    public int Feet;
+
+    public override void Apply(IEntityManager entities, CFEffectArgs args)
+    {
+        entities.System<Content.Shared.CF.Actions.CFActivitySystem>().LeapBy(args.User, Feet / CFMelee.FeetPerTile);
+    }
+}
+
+/// <summary>A free Recall Knowledge about the target, as part of another action (Combat Assessment).</summary>
+public sealed partial class CFRecallEffect : CFEffect
+{
+    public override void Apply(IEntityManager entities, CFEffectArgs args)
+    {
+        if (args.Target is { } target && target != args.User)
+            entities.System<Content.Shared.CF.Actions.CFManeuverSystem>().TryRecall(args.User, target, free: true);
+    }
+}
+
+/// <summary>The user grabs the target with no check, as Combat Grab does after its Strike. It lets go after a while.</summary>
+public sealed partial class CFGrabEffect : CFEffect
+{
+    [DataField]
+    public float DurationSeconds = 6f;
+
+    public override void Apply(IEntityManager entities, CFEffectArgs args)
+    {
+        if (args.Target is not { } target || target == args.User)
+            return;
+
+        entities.System<CFConditionSystem>().ApplyGrabbed(target, args.User, DurationSeconds);
+    }
+}
+
+/// <summary>
+/// The user rolls Athletics against the target's Reflex DC to knock it prone, as a Trip. A critical success also deals
+/// 1d6 bludgeoning damage, and a critical failure knocks the user prone.
+/// </summary>
+public sealed partial class CFTripEffect : CFEffect
+{
+    public override void Apply(IEntityManager entities, CFEffectArgs args)
+    {
+        if (args.Target is not { } target || target == args.User)
+            return;
+
+        var conditions = entities.System<CFConditionSystem>();
+        switch (conditions.RollSkill(args.User, target, "Athletics", Content.Shared.CF.Preferences.CFAbility.Strength, Content.Shared.CF.Checks.CFDefenseType.Reflex, attackTrait: true))
+        {
+            case Content.Shared.CF.Checks.CFDegree.CriticalSuccess:
+                conditions.KnockProne(target);
+                entities.System<CFEffectSystem>().DealDamage(args.User, target, entities.System<CFEffectSystem>().Roll(1, 6, 0), "Bludgeoning", critical: false);
+                break;
+            case Content.Shared.CF.Checks.CFDegree.Success:
+                conditions.KnockProne(target);
+                break;
+            case Content.Shared.CF.Checks.CFDegree.CriticalFailure:
+                conditions.KnockProne(args.User);
+                break;
+        }
+    }
+}
+
+/// <summary>A dying creature loses the dying condition and wakes at 1 HP.</summary>
 public sealed partial class CFStabilizeEffect : CFEffect
 {
     public override void Apply(IEntityManager entities, CFEffectArgs args)
     {
         if (args.Target is { } target)
-            entities.System<CFDyingSystem>().Stabilize(target);
+            entities.System<CFDyingSystem>().Stabilize(target, args.User);
     }
 }
 
@@ -74,6 +166,42 @@ public sealed partial class CFSpawnEffect : CFEffect
     }
 }
 
+/// <summary>
+/// Calls a creature to fight for the user, at the aimed spot or beside the user, for a while. The spell's rank picks
+/// which: the last entry of <see cref="Creatures"/> it reaches. The creature is bound to the user as a companion, so it
+/// fights the user's enemies and can be pointed at a target. It stays its time with no input, as every sustained spell
+/// here does, and only a dispel sends it back sooner.
+/// </summary>
+public sealed partial class CFSummonEffect : CFEffect
+{
+    [DataField(required: true)]
+    public List<Content.Shared.CF.Companions.CFSummonOption> Creatures = new();
+
+    [DataField]
+    public float DurationSeconds = 60f;
+
+    public override void Apply(IEntityManager entities, CFEffectArgs args)
+    {
+        EntProtoId? pick = null;
+        var reached = int.MinValue;
+        foreach (var option in Creatures)
+        {
+            if (option.Rank > args.Rank || option.Rank < reached)
+                continue;
+
+            reached = option.Rank;
+            pick = option.Prototype;
+        }
+
+        if (pick is not { } prototype)
+            return;
+
+        var where = args.Position ?? entities.GetComponent<TransformComponent>(args.User).Coordinates;
+        var request = new Content.Shared.CF.Companions.CFSummonRequestEvent(args.User, prototype, where, DurationSeconds, args.Rank, args.Dc);
+        entities.EventBus.RaiseEvent(EventSource.Local, ref request);
+    }
+}
+
 public sealed partial class CFSoundEffect : CFEffect
 {
     [DataField(required: true)]
@@ -86,6 +214,16 @@ public sealed partial class CFSoundEffect : CFEffect
     {
         if (CFEffectAnchors.Resolve(entities, args, At) is { } coords)
             entities.System<SharedAudioSystem>().PlayPvs(Sound, coords);
+    }
+}
+
+/// <summary>Kills the target outright, as the last stage of a poison.</summary>
+public sealed partial class CFKillEffect : CFEffect
+{
+    public override void Apply(IEntityManager entities, CFEffectArgs args)
+    {
+        if (args.Target is { } target)
+            entities.System<CFDyingSystem>().Kill(target, args.User == target ? null : args.User);
     }
 }
 

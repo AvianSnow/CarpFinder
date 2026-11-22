@@ -48,6 +48,7 @@ public sealed class CFHazardTest : GameTest
         var abilities = SEntMan.GetComponent<CFAbilityScoreComponent>(mob);
         abilities.AbilityModifiers[CFAbility.Wisdom] = wisdom;
         abilities.AbilityModifiers[CFAbility.Dexterity] = dexterity;
+        SEntMan.GetComponent<CFCombatantComponent>(mob).PrintedPerception = wisdom;
         return mob;
     }
 

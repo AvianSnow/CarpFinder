@@ -4,7 +4,6 @@ using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Inventory;
 using Content.Shared.Item;
 using Content.Shared.Popups;
-using Content.Shared.CF.Combat;
 using Content.Shared.CF.Shop;
 using Content.Shared.Storage;
 using Content.Shared.Storage.EntitySystems;
@@ -13,12 +12,16 @@ using Robust.Shared.Prototypes;
 namespace Content.Server.CF.Shop;
 
 /// <summary>
-/// Spawns accepted shop lines onto the player: an empty hand, then the backpack, then the ground nearby.
+/// Spawns accepted shop lines onto the player: an empty hand, then the backpack, then the ground nearby. A merchant
+/// standing by a guild buy pallet gets them on the pallet instead. Paid from the wallet.
 /// </summary>
-public sealed class CFShopSystem : EntitySystem
+public sealed partial class CFShopSystem : EntitySystem
 {
     private const int MaxItems = 100;
     private const string BackSlot = "back";
+
+    /// <summary>How close a merchant has to stand to a buy pallet for their orders to land on it.</summary>
+    private const float BuyPalletRange = 2f;
 
     private static readonly Vector2[] DropOffsets =
     {
@@ -38,6 +41,8 @@ public sealed class CFShopSystem : EntitySystem
     [Dependency] private SharedStorageSystem _storage = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private EntityLookupSystem _lookup = default!;
+    [Dependency] private CFCoinSystem _coins = default!;
 
     private int _drop;
 
@@ -49,16 +54,15 @@ public sealed class CFShopSystem : EntitySystem
 
     private void OnPurchase(CFShopPurchaseEvent ev, EntitySessionEventArgs args)
     {
-        if (args.SenderSession.AttachedEntity is not { } user)
-            return;
+        if (args.SenderSession.AttachedEntity is { } user)
+            Purchase(user, ev);
+    }
 
-        var purse = EnsureComp<CFPurseComponent>(user);
-        if (!purse.Seeded)
-        {
-            var level = TryComp<CFCombatantComponent>(user, out var combatant) ? combatant.Level : 1;
-            purse.Copper = CFCoins.StartingCopper(level);
-            purse.Seeded = true;
-        }
+    /// <summary>Buys the accepted lines. Only characters with shop access can.</summary>
+    public void Purchase(EntityUid user, CFShopPurchaseEvent ev)
+    {
+        if (!HasComp<CFShopAccessComponent>(user))
+            return;
 
         var plan = new List<(string Prototype, int Count)>();
         var total = 0;
@@ -85,31 +89,46 @@ public sealed class CFShopSystem : EntitySystem
         }
 
         if (plan.Count == 0)
-        {
-            Dirty(user, purse);
             return;
-        }
 
-        if (purse.Copper < total)
+        if (!_coins.TrySpend(user, total))
         {
-            Dirty(user, purse);
             _popup.PopupEntity(Loc.GetString("cf-shop-short"), user, user);
             return;
         }
 
+        var pallet = BuyPalletNear(user);
         var given = 0;
         foreach (var (prototype, count) in plan)
         {
             for (var i = 0; i < count; i++)
-                GiveOne(user, prototype);
+            {
+                if (pallet != null)
+                    Spawn(prototype, Transform(pallet.Value).Coordinates);
+                else
+                    GiveOne(user, prototype);
+            }
 
             given += count;
         }
 
-        purse.Copper -= total;
-        Dirty(user, purse);
         if (given > 0)
-            _popup.PopupEntity(Loc.GetString("cf-shop-bought", ("count", given)), user, user);
+        {
+            var message = pallet != null ? "cf-shop-bought-pallet" : "cf-shop-bought";
+            _popup.PopupEntity(Loc.GetString(message, ("count", given)), user, user);
+        }
+    }
+
+    /// <summary>A Merchants' Guild buy pallet within reach of the user, where orders are delivered.</summary>
+    public EntityUid? BuyPalletNear(EntityUid user)
+    {
+        foreach (var pallet in _lookup.GetEntitiesInRange<CFGuildPalletComponent>(Transform(user).Coordinates, BuyPalletRange))
+        {
+            if (pallet.Comp.Kind == CFGuildPalletKind.Buy)
+                return pallet;
+        }
+
+        return null;
     }
 
     private bool IsShopItem(string id)
@@ -123,9 +142,15 @@ public sealed class CFShopSystem : EntitySystem
         return proto.TryGetComponent<ItemComponent>(out _);
     }
 
-    private void GiveOne(EntityUid user, string prototype)
+    /// <summary>Spawns one item into an empty hand, else the backpack, else on the ground nearby.</summary>
+    public void GiveOne(EntityUid user, string prototype)
     {
-        var spawned = Spawn(prototype, Transform(user).Coordinates);
+        Give(user, Spawn(prototype, Transform(user).Coordinates));
+    }
+
+    /// <summary>Puts an existing item into an empty hand, else the backpack, else on the ground nearby.</summary>
+    public void Give(EntityUid user, EntityUid spawned)
+    {
         if (TryPutInHand(user, spawned))
             return;
 

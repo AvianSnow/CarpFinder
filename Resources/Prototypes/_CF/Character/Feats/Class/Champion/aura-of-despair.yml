@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFAuraofDespair
-  name: "Aura of Despair"
-  description: "Requires champion's aura and unholy."
+  name: cf-feat-auraof-despair
+  description: cf-feat-auraof-despair-desc
   class: Champion
   level: 4
   rarity: Uncommon
@@ -12,3 +12,17 @@
   prerequisites:
     - "champion's aura"
     - "unholy"
+  requiresChoice:
+    - CauseDesecration
+    - CauseIniquity
+    - CauseObedience
+  grants:
+    - !type:CFGrantAura
+      effects:
+        - affects: Enemies
+          stat: Saves
+          type: Circumstance
+          value: -1
+          trait: Fear
+        - affects: Enemies
+          keepsFrightened: true

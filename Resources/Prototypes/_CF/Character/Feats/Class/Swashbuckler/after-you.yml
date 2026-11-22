@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFAfterYou
-  name: "After You"
-  description: "Free action. This feature will be implemented later."
+  name: cf-feat-after-you
+  description: cf-feat-after-you-desc
   class: Swashbuckler
   level: 2
   traits:

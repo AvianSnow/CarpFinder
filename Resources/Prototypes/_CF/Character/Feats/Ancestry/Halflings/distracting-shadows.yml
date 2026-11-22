@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFDistractingShadows
-  name: "Distracting Shadows"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-distracting-shadows
+  description: cf-feat-distracting-shadows-desc
   ancestry: Halfling
   level: 1
   traits:

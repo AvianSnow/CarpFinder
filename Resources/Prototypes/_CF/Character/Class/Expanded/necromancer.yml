@@ -35,33 +35,58 @@
     cantrips: 5
     slots:
       - 1
+    laterSlots:
+      - [ 2 ]
+      - [ 2, 1 ]
+      - [ 2, 2 ]
+      - [ 2, 2, 1 ]
     prepared: true
   features:
     - level: 1
       name: "Fatal Method"
-      description: "This feature will be implemented later."
+      description: "Choose a fatal method in the builder."
     - level: 1
       name: "Grave Spells"
-      description: "This feature will be implemented later."
+      description: "You know Create Thrall and Thrall Charge, can Command a Thrall, and know the Necrotic Bomb grave spell. Your fascination adds another. Regaining Focus by destroying a thrall: TBA"
+      grants:
+        - !type:CFGrantThralls {}
+        - !type:CFGrantSpell
+          spell: CreateThrall
+        - !type:CFGrantSpell
+          spell: ThrallCharge
+        - !type:CFGrantAction
+          action: CFActCommandThrall
+        - !type:CFGrantFocusSpell
+          spell: NecroticBomb
     - level: 1
       name: "Grim Fascination"
-      description: "This feature will be implemented later."
+      description: "Choose a grim fascination in the builder. It gives you a grave spell and improves your thralls."
     - level: 1
       name: "Mastery of Life and Death"
-      description: "This feature will be implemented later."
+      description: "Swap void and vitality on your spells: TBA"
     - level: 1
       name: "Necromancer Spellcasting"
       description: "Level 1 cantrips and spell slots are on the spell sheet."
     - level: 1
       name: "Undead Lore"
-      description: "This feature will be implemented later."
+      description: "Recall Knowledge about undead: TBA"
     - level: 3
       name: "Inevitable Return"
-      description: "This feature will be implemented later."
+      description: "Reaction. A thrall rises from a fresh corpse near you. There is no trigger for a creature dying near you yet: TBA"
     - level: 3
       name: "Mental Wards"
-      description: "This feature will be implemented later."
+      description: "Expert in Will saves. Better results against undead minds: TBA"
+      grants:
+        - !type:CFGrantProficiency
+          proficiencies:
+            - Will
+          rank: Expert
     - level: 5
       name: "Reflex Expertise"
-      description: "This feature will be implemented later."
+      description: "Expert in Reflex saves."
+      grants:
+        - !type:CFGrantProficiency
+          proficiencies:
+            - Reflex
+          rank: Expert
   # Class key-attribute boost is applied from keyAbility in code (PF2e).

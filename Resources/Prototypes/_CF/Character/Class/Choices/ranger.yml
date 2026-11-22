@@ -1,0 +1,30 @@
+# CarpFinder: Hunter's Edge, Player Core.
+- type: cfClassChoice
+  id: EdgeFlurry
+  class: Ranger
+  slot: cf-class-choice-hunters-edge
+  name: cf-class-choice-edge-flurry
+  description: cf-class-choice-edge-flurry-desc
+  grants:
+  - !type:CFGrantOption
+    option: PreyFlurry
+
+- type: cfClassChoice
+  id: EdgeOutwit
+  class: Ranger
+  slot: cf-class-choice-hunters-edge
+  name: cf-class-choice-edge-outwit
+  description: cf-class-choice-edge-outwit-desc
+  grants:
+  - !type:CFGrantOption
+    option: PreyOutwit
+
+- type: cfClassChoice
+  id: EdgePrecision
+  class: Ranger
+  slot: cf-class-choice-hunters-edge
+  name: cf-class-choice-edge-precision
+  description: cf-class-choice-edge-precision-desc
+  grants:
+  - !type:CFGrantOption
+    option: PreyPrecision

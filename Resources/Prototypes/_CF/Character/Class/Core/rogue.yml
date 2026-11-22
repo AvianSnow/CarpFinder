@@ -7,6 +7,8 @@
   keyAbility: Dexterity
   hitPointsAbility: Constitution
   classDC: cf-class-rogue
+  bonusSkillFeats: [ 1, 3, 5 ]
+  bonusSkillIncreases: [ 2, 4 ]
   proficiencies:
     perception:
       expert:
@@ -33,17 +35,37 @@
   features:
     - level: 1
       name: "Rogue's Racket"
-      description: "This feature will be implemented later."
+      description: "Choose how you make your living with the Rogue's Racket button."
     - level: 1
       name: "Sneak Attack"
-      description: "Melee Strikes against an off-guard creature deal extra precision damage."
+      description: "Agile or finesse attacks and ranged weapons deal extra precision damage to off-guard creatures. A thrown weapon must be agile or finesse."
+      grants:
+        - !type:CFGrantOption
+          option: SneakAttack
     - level: 1
       name: "Surprise Attack"
-      description: "This feature will be implemented later."
+      description: "When you start a fight, with the first attack after 30 seconds without one, a creature that has not been fighting is off-guard to you for 6 seconds. The bonus to initiative from Deception or Stealth has nothing to add to."
+      grants:
+        - !type:CFGrantOption
+          option: SurpriseAttack
     - level: 3
       name: "Deny Advantage"
-      description: "This feature will be implemented later."
+      description: "You are not off-guard to flanking or hidden creatures of your level or lower."
+      grants:
+        - !type:CFGrantOption
+          option: DenyAdvantage
     - level: 5
       name: "Weapon Tricks"
-      description: "This feature will be implemented later."
+      description: "Expert with simple weapons, martial weapons and unarmed attacks. A critical hit on an off-guard creature with an agile or finesse attack gets its critical specialization."
+      grants:
+        - !type:CFGrantCriticalSpecialization
+          specialization:
+            agileOrFinesse: true
+            when: TargetOffGuard
+        - !type:CFGrantProficiency
+          proficiencies:
+            - SimpleWeapons
+            - MartialWeapons
+            - Unarmed
+          rank: Expert
   # Class key-attribute boost is applied from keyAbility in code (PF2e).

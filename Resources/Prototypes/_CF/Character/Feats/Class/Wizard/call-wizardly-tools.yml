@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFCallWizardlyTools
-  name: "Call Wizardly Tools"
-  description: "Requires arcane bond. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-call-wizardly-tools
+  description: cf-feat-call-wizardly-tools-desc
   class: Wizard
   level: 4
   traits:

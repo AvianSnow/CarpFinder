@@ -3,6 +3,7 @@
   id: BaseItem
   name: "item"
   components:
+  - type: CFZPhysics # CarpFinder: items fall between levels
   - type: Item
     size: Small
   - type: Animateable

@@ -16,6 +16,9 @@
     rank: 2
   - type: CFTargeting
     rangeFeet: 120
+  - type: CFAreaFill
+    tile: CFFillMotes
+    tint: true
   - type: CFAreaEffect
     shape: Burst
     sizeFeet: 10

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFDraconicArrogance
-  name: "Draconic Arrogance"
-  description: "Requires dragon instinct. +2 status bonus to Saving Throw. This feature will be implemented later."
+  name: cf-feat-draconic-arrogance
+  description: cf-feat-draconic-arrogance-desc
   class: Barbarian
   level: 1
   traits:
@@ -11,4 +11,12 @@
     - "Rage"
   prerequisites:
     - "dragon instinct"
-  pendingAction: true
+  grants:
+    - !type:CFGrantWhile
+      while: Raging
+      stat: Saves
+      type: Status
+      value: 2
+      trait: Emotion
+  requiresChoice:
+    - InstinctDragon

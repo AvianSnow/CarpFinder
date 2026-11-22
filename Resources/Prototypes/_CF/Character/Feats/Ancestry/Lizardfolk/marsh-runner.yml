@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFMarshRunner
-  name: "Marsh Runner"
-  description: "Requires You have a swim Speed."
+  name: cf-feat-marsh-runner
+  description: cf-feat-marsh-runner-desc
   ancestry: Lizardfolk
   level: 1
   traits:

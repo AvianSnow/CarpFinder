@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFExtendBoost
-  name: "Extend Boost"
-  description: "This feature will be implemented later."
+  name: cf-feat-extend-boost
+  description: cf-feat-extend-boost-desc
   class: Summoner
   level: 1
   traits:

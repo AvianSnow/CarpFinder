@@ -1,0 +1,9 @@
+cmd-cf_outdoors-desc = Makes the map you are on an outdoor world.
+cmd-cf_outdoors-help = Usage: cf_outdoors [preset], such as CFOutdoorsTemperate, CFOutdoorsArctic or CFOutdoorsDesert
+cmd-cf_outdoors-unknown = { $preset } is not an outdoor preset.
+cmd-cf_outdoors-no-map = You are not on a map.
+cmd-cf_outdoors-done = This map now uses { $preset }.
+cf-farming-low-energy = It looks starved of light.
+cf-farming-low-water = The soil is dry.
+cf-farming-soil-wrong = { CAPITALIZE(THE($seed)) } will not grow here. It needs a seedbed.
+cf-farming-soil-occupied = Something is already growing here.

@@ -1,0 +1,15 @@
+# What a kobold carries on its back. A tribe's members stash in it what they cannot put in a store, so their hands
+# stay free. The same backpack as the adventurer's kit, empty.
+- type: entity
+  parent: ClothingBackpack
+  id: CFKoboldBackpack
+  name: kobold pack
+  description: A small hide pack, patched and repatched. It smells of smoke and dried meat.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    sprite: _CP14/Clothing/Back/Backpacks/backpack_t1.rsi
+  - type: Clothing
+    sprite: _CP14/Clothing/Back/Backpacks/backpack_t1.rsi
+  - type: CFItemPrice
+    copper: 10

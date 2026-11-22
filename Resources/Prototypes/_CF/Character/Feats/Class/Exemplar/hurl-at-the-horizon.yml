@@ -2,8 +2,8 @@
 # source: Carpfinder War of Immortals
 - type: cfFeat
   id: CFHurlattheHorizon
-  name: "Hurl at the Horizon"
-  description: "Changes an item. This feature will be implemented later."
+  name: cf-feat-hurlatthe-horizon
+  description: cf-feat-hurlatthe-horizon-desc
   class: Exemplar
   level: 2
   traits:

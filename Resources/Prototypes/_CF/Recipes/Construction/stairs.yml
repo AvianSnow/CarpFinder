@@ -1,0 +1,194 @@
+# Staircases from the construction menu. Build one on the lower level, facing the way it climbs, and take the
+# floor tile above its top out on the level above.
+
+- type: construction
+  id: CFZLevelStairsFrame
+  graph: CFZLevelStairs
+  startNode: start
+  targetNode: CFZLevelStairsFrame
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFZLevelStairsWooden
+  graph: CFZLevelStairs
+  startNode: start
+  targetNode: CFZLevelStairsWooden
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFZLevelStairsWoodenCorner
+  graph: CFZLevelStairs
+  startNode: start
+  targetNode: CFZLevelStairsWoodenCorner
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFZLevelStairsWoodenCornerInner
+  graph: CFZLevelStairs
+  startNode: start
+  targetNode: CFZLevelStairsWoodenCornerInner
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFZLevelStairsStone
+  graph: CFZLevelStairs
+  startNode: start
+  targetNode: CFZLevelStairsStone
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFZLevelStairsStoneCorner
+  graph: CFZLevelStairs
+  startNode: start
+  targetNode: CFZLevelStairsStoneCorner
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFZLevelStairsStoneCornerInner
+  graph: CFZLevelStairs
+  startNode: start
+  targetNode: CFZLevelStairsStoneCornerInner
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFZLevelStairsRoofRed
+  graph: CFZLevelStairs
+  startNode: start
+  targetNode: CFZLevelStairsRoofRed
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFZLevelStairsRoofRedCorner
+  graph: CFZLevelStairs
+  startNode: start
+  targetNode: CFZLevelStairsRoofRedCorner
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFZLevelStairsRoofRedCornerInner
+  graph: CFZLevelStairs
+  startNode: start
+  targetNode: CFZLevelStairsRoofRedCornerInner
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFZLevelStairsRoofGreen
+  graph: CFZLevelStairs
+  startNode: start
+  targetNode: CFZLevelStairsRoofGreen
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFZLevelStairsRoofGreenCorner
+  graph: CFZLevelStairs
+  startNode: start
+  targetNode: CFZLevelStairsRoofGreenCorner
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFZLevelStairsRoofGreenCornerInner
+  graph: CFZLevelStairs
+  startNode: start
+  targetNode: CFZLevelStairsRoofGreenCornerInner
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFZLevelStairsRoofBlue
+  graph: CFZLevelStairs
+  startNode: start
+  targetNode: CFZLevelStairsRoofBlue
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFZLevelStairsRoofBlueCorner
+  graph: CFZLevelStairs
+  startNode: start
+  targetNode: CFZLevelStairsRoofBlueCorner
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked
+
+- type: construction
+  id: CFZLevelStairsRoofBlueCornerInner
+  graph: CFZLevelStairs
+  startNode: start
+  targetNode: CFZLevelStairsRoofBlueCornerInner
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: false
+  conditions:
+    - !type:TileNotBlocked

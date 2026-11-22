@@ -1,0 +1,311 @@
+# Crops, from CP14's Flora/Gatherable. Plant seeds in a seedbed, keep them watered, and pick them by hand.
+
+- type: entity
+  abstract: true
+  parent:
+  - CFBaseFlammableSpreading
+  - BaseStructure
+  - Solution
+  id: CFPlantBase
+  categories: [ ForkFiltered ]
+  components:
+  - type: PlacementReplacement
+    key: CFPlant
+  - type: Sprite
+    snapCardinals: true
+    drawdepth: FloorTiles
+    sprite: _CP14/Structures/Specific/Farming/seedbed.rsi
+  - type: InteractionOutline
+  - type: Clickable
+  - type: Physics
+    canCollide: false
+    bodyType: Static
+  - type: Appearance
+  - type: Damageable
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 15
+      behaviors:
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: Fixtures
+    fixtures:
+      fix1:
+        hard: false
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.45,-0.45,0.45,0.45"
+        density: 60
+        mask:
+        - HalfWallLayer
+        layer:
+        - MidImpassable
+        - LowImpassable
+  - type: CFPlant
+  - type: Solution
+    id: plant
+    solution:
+      maxVol: 200
+  - type: RefillableSolution
+    solution: plant
+    maxRefill: 50
+  - type: ExaminableSolution
+    solution: plant
+  - type: SolutionContainerVisuals
+    maxFillLevels: 4
+    fillBaseName: liq-
+    solutionName: plant
+
+- type: entity
+  id: CFPlantCabbage
+  parent: CFPlantBase
+  name: cabbage
+  description: You see a cabbage in front of you. Perhaps you were born in one.
+  components:
+  - type: Sprite
+    layers:
+    - state: liq-1
+      map: ["enum.SolutionContainerLayers.Fill"]
+      visible: false
+    - state: grow-1
+      sprite: _CP14/Structures/Flora/Farm/cabbage.rsi
+      map: ["enum.CFPlantVisualLayers.Base"]
+  - type: CFPlantGatherable
+    loot: !type:AllSelector
+      children:
+      - id: CFFoodCabbage
+        rolls: !type:RangeNumberSelector
+          range: 6, 8
+      - id: CFSeedCabbage
+        rolls: !type:RangeNumberSelector
+          range: 1, 2
+
+- type: entity
+  id: CFPlantCotton
+  parent: CFPlantBase
+  name: cotton
+  description: In a way, you're growing future clothes.
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    layers:
+    - state: liq-1
+      map: ["enum.SolutionContainerLayers.Fill"]
+      visible: false
+    - state: grow-1
+      offset: 0, 0.5
+      sprite: _CP14/Structures/Flora/Farm/cotton.rsi
+      map: ["enum.CFPlantVisualLayers.Base"]
+  - type: CFPlantGatherable
+    loot: !type:AllSelector
+      children:
+      - id: CFCotton
+        rolls: !type:RangeNumberSelector
+          range: 4, 6
+      - id: CFSeedCotton
+        rolls: !type:RangeNumberSelector
+          range: 1, 2
+
+- type: entity
+  id: CFPlantCucumber
+  parent: CFPlantBase
+  name: cucumber
+  description: Don't trust people who know how to turn into pickles.
+  components:
+  - type: Sprite
+    layers:
+    - state: liq-1
+      map: ["enum.SolutionContainerLayers.Fill"]
+      visible: false
+    - state: grow-1
+      sprite: _CP14/Structures/Flora/Farm/cucumber.rsi
+      map: ["enum.CFPlantVisualLayers.Base"]
+  - type: CFPlantGatherable
+    deleteAfterHarvest: false
+    loot: !type:AllSelector
+      children:
+      - id: CFFoodCucumber
+        rolls: !type:RangeNumberSelector
+          range: 4, 6
+      - id: CFSeedCucumber
+        rolls: !type:RangeNumberSelector
+          range: 0, 2
+  - type: CFPlant
+    growthPerUpdate: 0.06
+
+- type: entity
+  id: CFPlantOnion
+  parent: CFPlantBase
+  name: onion
+  description: He's so cute it brings tears to my eyes to cut him up.
+  components:
+  - type: Sprite
+    layers:
+    - state: liq-1
+      map: ["enum.SolutionContainerLayers.Fill"]
+      visible: false
+    - state: grow-1
+      sprite: _CP14/Structures/Flora/Farm/onion.rsi
+      map: ["enum.CFPlantVisualLayers.Base"]
+  - type: CFPlantGatherable
+    loot: !type:AllSelector
+      children:
+      - id: CFFoodOnion
+        rolls: !type:RangeNumberSelector
+          range: 4, 6
+
+- type: entity
+  id: CFPlantPepper
+  parent: CFPlantBase
+  name: pepper
+  description: Russian roulette. Are you hot, or are you sweet peppers?
+  components:
+  - type: Sprite
+    layers:
+    - state: liq-1
+      map: ["enum.SolutionContainerLayers.Fill"]
+      visible: false
+    - state: grow-1
+      sprite: _CP14/Structures/Flora/Farm/pepper.rsi
+      map: ["enum.CFPlantVisualLayers.Base"]
+  - type: CFPlant
+    growthPerUpdate: 0.06
+    growthSteps: 5
+  - type: CFPlantGatherable
+    deleteAfterHarvest: false
+    loot: !type:AllSelector
+      children:
+      - id: CFFoodPepper
+        rolls: !type:RangeNumberSelector
+          range: 4, 6
+      - id: CFSeedPepper
+        rolls: !type:RangeNumberSelector
+          range: 1, 2
+
+- type: entity
+  id: CFPlantPotato
+  parent: CFPlantBase
+  name: potato
+  description: Some like to associate themselves with potatoes. People like that are not bad people.
+  components:
+  - type: Sprite
+    layers:
+    - state: liq-1
+      map: ["enum.SolutionContainerLayers.Fill"]
+      visible: false
+    - state: grow-1
+      sprite: _CP14/Structures/Flora/Farm/potato.rsi
+      map: ["enum.CFPlantVisualLayers.Base"]
+  - type: CFPlant
+    growthSteps: 5
+  - type: CFPlantGatherable
+    loot: !type:AllSelector
+      children:
+      - id: CFFoodPotato
+        rolls: !type:RangeNumberSelector
+          range: 4, 6
+
+- type: entity
+  id: CFPlantPumpkin
+  parent: CFPlantBase
+  name: pumpkin
+  description: Legends say there is a pumpkin king who stares into your soul through the crowns of trees.
+  components:
+  - type: Sprite
+    layers:
+    - state: liq-1
+      map: ["enum.SolutionContainerLayers.Fill"]
+      visible: false
+    - state: grow-1
+      sprite: _CP14/Structures/Flora/Farm/pumpkin.rsi
+      map: ["enum.CFPlantVisualLayers.Base"]
+  - type: CFPlantGatherable
+    loot: !type:AllSelector
+      children:
+      - id: CFFoodPumpkin
+        rolls: !type:RangeNumberSelector
+          range: 4, 6
+      - id: CFSeedPumpkin
+        rolls: !type:RangeNumberSelector
+          range: 1, 2
+
+- type: entity
+  id: CFPlantSage
+  parent: CFPlantBase
+  name: sage
+  description: Medicinal sage. Some love it for its medicinal properties, others for its narcotic properties. Which side are you on?
+  components:
+  - type: Sprite
+    layers:
+    - state: liq-1
+      map: ["enum.SolutionContainerLayers.Fill"]
+      visible: false
+    - state: grow-1
+      sprite: _CP14/Structures/Flora/Farm/sage.rsi
+      map: ["enum.CFPlantVisualLayers.Base"]
+  - type: CFPlant
+    growthSteps: 4
+  - type: CFPlantGatherable
+    loot: !type:AllSelector
+      children:
+      - id: CFWildSage
+        rolls: !type:RangeNumberSelector
+          range: 4, 6
+      - id: CFSeedSage
+        rolls: !type:RangeNumberSelector
+          range: 1, 2
+
+- type: entity
+  id: CFPlantTomatoes
+  parent: CFPlantBase
+  name: tomatoes
+  description: On the one hand, it's a delicious fruit. But why eat it when it's much more fun to use tomatoes as a throwing projectile?
+  components:
+  - type: Sprite
+    layers:
+    - state: liq-1
+      map: ["enum.SolutionContainerLayers.Fill"]
+      visible: false
+    - state: grow-1
+      sprite: _CP14/Structures/Flora/Farm/tomatoes.rsi
+      map: ["enum.CFPlantVisualLayers.Base"]
+  - type: CFPlantGatherable
+    deleteAfterHarvest: false
+    loot: !type:AllSelector
+      children:
+      - id: CFFoodTomatoes
+        rolls: !type:RangeNumberSelector
+          range: 4, 6
+      - id: CFSeedTomato
+        rolls: !type:RangeNumberSelector
+          range: 0, 2
+  - type: CFPlant
+    growthPerUpdate: 0.06
+
+- type: entity
+  id: CFPlantWheat
+  parent: CFPlantBase
+  name: wheat
+  description: Most popular crop. Unpretentious, it opens the way to an abundance of flour products.
+  components:
+  - type: Sprite
+    layers:
+    - state: liq-1
+      map: ["enum.SolutionContainerLayers.Fill"]
+      visible: false
+    - state: grow-1
+      sprite: _CP14/Structures/Flora/Farm/wheat.rsi
+      map: ["enum.CFPlantVisualLayers.Base"]
+  - type: CFPlant
+    growthSteps: 5
+  - type: CFPlantGatherable
+    loot: !type:AllSelector
+      children:
+      - id: CFWheat
+        rolls: !type:RangeNumberSelector
+          range: 4, 6
+      - id: CFSeedWheat
+        rolls: !type:RangeNumberSelector
+          range: 1, 2

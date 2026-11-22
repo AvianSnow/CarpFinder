@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Cheliax, Infernal Inheritance
 - type: cfFeat
   id: CFShadowBlending
-  name: "Shadow Blending"
-  description: "Reaction. TBA - action will be added"
+  name: cf-feat-shadow-blending
+  description: cf-feat-shadow-blending-desc
   ancestry: Fetchling
   level: 1
   traits:

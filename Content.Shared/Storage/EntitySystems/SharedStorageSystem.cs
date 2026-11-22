@@ -468,7 +468,7 @@ public abstract partial class SharedStorageSystem : EntitySystem
         if (args.Handled || !storageComp.ClickInsert || !CanInteract(args.User, (uid, storageComp), silent: false))
             return;
 
-        var attemptEv = new StorageInteractUsingAttemptEvent();
+        var attemptEv = new StorageInteractUsingAttemptEvent(args.User, args.Used); // CarpFinder: the event carries the item
         RaiseLocalEvent(uid, ref attemptEv);
         if (attemptEv.Cancelled)
             return;

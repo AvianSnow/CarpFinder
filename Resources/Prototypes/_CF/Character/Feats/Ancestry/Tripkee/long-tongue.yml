@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFLongTongue
-  name: "Long Tongue"
-  description: "Requires snaptongue tripkee."
+  name: cf-feat-long-tongue
+  description: cf-feat-long-tongue-desc
   ancestry: Tripkee
   level: 5
   traits:

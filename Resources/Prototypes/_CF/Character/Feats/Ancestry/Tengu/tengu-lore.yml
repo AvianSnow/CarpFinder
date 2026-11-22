@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFTenguLore
-  name: "Tengu Lore"
-  description: "Lore: Tengu Lore. Trained in Society and Survival."
+  name: cf-feat-tengu-lore
+  description: cf-feat-tengu-lore-desc
   ancestry: Tengu
   level: 1
   traits:

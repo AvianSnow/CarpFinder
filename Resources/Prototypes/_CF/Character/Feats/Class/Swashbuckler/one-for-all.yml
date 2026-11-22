@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFOneforAll
-  name: "One for All"
-  description: "Requires trained in Diplomacy. Costs 1 action. This feature will be implemented later."
+  name: cf-feat-onefor-all
+  description: cf-feat-onefor-all-desc
   class: Swashbuckler
   level: 1
   traits:

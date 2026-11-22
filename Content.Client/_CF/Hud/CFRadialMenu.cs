@@ -85,7 +85,8 @@ public static class CFRadialMenu
         foreach (var action in actions.GetClientActions())
         {
             if (!entities.TryGetComponent<CFRadialSlotComponent>(action.Owner, out var slot)
-                || slot.Group == CFRadialGroup.Reaction)
+                || slot.Group == CFRadialGroup.Reaction
+                || !slot.Wheel)
                 continue;
 
             var option = new RadialMenuActionOption<Entity<ActionComponent>>(useAction, action)

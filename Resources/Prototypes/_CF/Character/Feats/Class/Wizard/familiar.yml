@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFFamiliarWizard
-  name: "Familiar"
-  description: "Also grants Pet. This feature will be implemented later."
+  name: cf-feat-familiar-wizard
+  description: cf-feat-familiar-wizard-desc
   class: Wizard
   level: 1
   traits:
@@ -11,4 +11,6 @@
     - "Sorcerer"
     - "Thaumaturge"
     - "Wizard"
-  pendingAction: true
+  grants:
+    - !type:CFGrantPet
+      kind: Familiar

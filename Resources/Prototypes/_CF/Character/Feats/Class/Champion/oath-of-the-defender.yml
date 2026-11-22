@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Divine Mysteries
 - type: cfFeat
   id: CFOathoftheDefender
-  name: "Oath of the Defender"
-  description: "This feature will be implemented later."
+  name: cf-feat-oathofthe-defender
+  description: cf-feat-oathofthe-defender-desc
   class: Champion
   level: 2
   traits:

@@ -1,0 +1,229 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  parent: BaseItem
+  id: CFFloorTileItemBase
+  name: carpet
+  description: Rolled up carpet for easy transport.
+  abstract: true
+  components:
+  - type: Stack
+    count: 1
+  - type: Sprite
+    sprite: _CP14/Structures/Furniture/Carpets/icons.rsi
+  - type: StackPrice
+    price: 0.5
+  - type: SpawnAfterInteract 
+    doAfter: 0.5
+    removeOnInteract: true
+
+- type: entity
+  name: blue carpet
+  parent: CFFloorTileItemBase
+  id: CFFloorCarpetItemBlue1
+  categories: [ ForkFiltered ]
+  suffix: Blue
+  components:
+  - type: Sprite
+    state: blue
+  - type: Stack
+    stackType: CFFloorCarpetBlue
+  - type: SpawnAfterInteract 
+    prototype: CFCarpetBlue
+  - type: PhysicalComposition
+    materialComposition:
+      CFCloth: 15
+
+- type: entity
+  name: red carpet
+  parent: CFFloorTileItemBase
+  id: CFFloorCarpetItemRed1
+  categories: [ ForkFiltered ]
+  suffix: Red
+  components:
+  - type: Sprite
+    state: red
+  - type: Item
+    heldPrefix: carpet-Red
+  - type: Stack
+    stackType: CFFloorCarpetRed
+  - type: SpawnAfterInteract 
+    prototype: CFCarpetRed
+  - type: PhysicalComposition
+    materialComposition:
+      CFCloth: 15
+
+- type: entity
+  name: cyan carpet
+  parent: CFFloorTileItemBase
+  id: CFFloorCarpetItemCyan1
+  categories: [ ForkFiltered ]
+  suffix: Cyan
+  components:
+  - type: Sprite
+    state: cyan
+  - type: Item
+    heldPrefix: carpet-Cyan
+  - type: Stack
+    stackType: CFFloorCarpetCyan
+  - type: SpawnAfterInteract 
+    prototype: CFCarpetCyan
+  - type: PhysicalComposition
+    materialComposition:
+      CFCloth: 15
+
+- type: entity
+  name: green carpet
+  parent: CFFloorTileItemBase
+  id: CFFloorCarpetItemGreen1
+  categories: [ ForkFiltered ]
+  suffix: Green
+  components:
+  - type: Sprite
+    state: green
+  - type: Item
+    heldPrefix: carpet-Green
+  - type: Stack
+    stackType: CFFloorCarpetGreen
+  - type: SpawnAfterInteract 
+    prototype: CFCarpetGreen
+  - type: PhysicalComposition
+    materialComposition:
+      CFCloth: 15
+
+- type: entity
+  name: orange carpet
+  parent: CFFloorTileItemBase
+  id: CFFloorCarpetItemOrange1
+  categories: [ ForkFiltered ]
+  suffix: Orange
+  components:
+  - type: Sprite
+    state: orange
+  - type: Item
+    heldPrefix: carpet-Orange
+  - type: Stack
+    stackType: CFFloorCarpetOrange
+  - type: SpawnAfterInteract 
+    prototype: CFCarpetOrange
+  - type: PhysicalComposition
+    materialComposition:
+      CFCloth: 15
+
+- type: entity
+  name: purpule carpet
+  parent: CFFloorTileItemBase
+  id: CFFloorCarpetItemPurple1
+  categories: [ ForkFiltered ]
+  suffix: Purple
+  components:
+  - type: Sprite
+    state: purple
+  - type: Item
+    heldPrefix: carpet-Purple
+  - type: Stack
+    stackType: CFFloorCarpetPurple
+  - type: SpawnAfterInteract 
+    prototype: CFCarpetPurple
+  - type: PhysicalComposition
+    materialComposition:
+      CFCloth: 15
+
+- type: entity
+  name: black carpet
+  parent: CFFloorTileItemBase
+  id: CFFloorCarpetItemBlack1
+  categories: [ ForkFiltered ]
+  suffix: Black
+  components:
+  - type: Sprite
+    state: black
+  - type: Stack
+    stackType: CFFloorCarpetBlack
+  - type: SpawnAfterInteract 
+    prototype: CFCarpetBlack
+  - type: PhysicalComposition
+    materialComposition:
+      CFCloth: 15
+
+- type: entity
+  name: yellow carpet
+  parent: CFFloorTileItemBase
+  id: CFFloorCarpetItemYellow1
+  categories: [ ForkFiltered ]
+  suffix: Yellow
+  components:
+  - type: Sprite
+    state: yellow
+  - type: Stack
+    stackType: CFFloorCarpetYellow
+  - type: SpawnAfterInteract 
+    prototype: CFCarpetYellow
+  - type: PhysicalComposition
+    materialComposition:
+      CFCloth: 15
+#staks
+
+- type: entity
+  id: CFFloorCarpetItemBlue10
+  parent: CFFloorCarpetItemBlue1
+  suffix: Blue 10
+  components:
+  - type: Stack
+    count: 10
+
+- type: entity
+  id: CFFloorCarpetItemRed10
+  parent: CFFloorCarpetItemRed1
+  suffix: Red 10
+  components:
+  - type: Stack
+    count: 10
+
+- type: entity
+  id: CFFloorCarpetItemCyan10
+  parent: CFFloorCarpetItemCyan1
+  suffix: Cyan 10
+  components:
+  - type: Stack
+    count: 10
+
+- type: entity
+  id: CFFloorCarpetItemGreen10
+  parent: CFFloorCarpetItemGreen1
+  suffix: Green 10
+  components:
+  - type: Stack
+    count: 10
+
+- type: entity
+  id: CFFloorCarpetItemOrange10
+  parent: CFFloorCarpetItemOrange1
+  suffix: Orange 10
+  components:
+  - type: Stack
+    count: 10
+
+- type: entity
+  id: CFFloorCarpetItemPurple10
+  parent: CFFloorCarpetItemPurple1
+  suffix: Purple 10
+  components:
+  - type: Stack
+    count: 10
+
+- type: entity
+  id: CFFloorCarpetItemBlack10
+  parent: CFFloorCarpetItemBlack1
+  suffix: Black 10
+  components:
+  - type: Stack
+    count: 10
+
+- type: entity
+  id: CFFloorCarpetItemYellow10
+  parent: CFFloorCarpetItemYellow1
+  suffix: Yellow 10
+  components:
+  - type: Stack
+    count: 10

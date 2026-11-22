@@ -1,0 +1,324 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  parent: BaseItem
+  id: CFFloorTileBase
+  description: Makes the floor more pleasant for your feet. And your eyes.
+  abstract: true
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Tile/tile.rsi
+  - type: Item
+    sprite: _CP14/Objects/Tile/tile.rsi
+    size: Normal
+  - type: Stack
+    count: 1
+  - type: FloorTile
+    placeTileSound:
+      collection: CFDigging #TODO
+      params:
+        variation: 0.03
+        volume: 2
+  - type: Damageable
+  - type: Injurable
+    damageContainer: Inorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 30
+      behaviors:
+        - !type:DoActsBehavior
+          acts: [ "Destruction" ]
+    - trigger:
+        !type:DamageTrigger
+        damage: 20
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: MetalBreak
+          params:
+            volume: -8
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+
+- type: entity
+  parent: CFFloorTileBase
+  id: CFFloorTileFoundation
+  name: foundation floor tile
+  components:
+  - type: Sprite
+    state: foundation
+  - type: FloorTile
+    outputs:
+      - CFFloorFoundation
+  - type: Stack
+    stackType: CFFloorTileFoundation
+  - type: PhysicalComposition
+    materialComposition:
+      CFStone: 5
+
+- type: entity
+  parent: CFFloorTileBase
+  id: CFFloorTileMarbleBrick
+  name: marble brick
+  components:
+  - type: Sprite
+    state: marble
+  - type: FloorTile
+    outputs:
+      - CFFloorMarble
+  - type: Stack
+    stackType: CFFloorTileMarbleBrick
+  - type: PhysicalComposition
+    materialComposition:
+      CFMarbleStone: 5
+
+- type: entity
+  parent: CFFloorTileBase
+  id: CFFloorTileMarbleSmallbricks
+  name: marble small brick
+  components:
+  - type: Sprite
+    state: marble_smallbricks
+  - type: FloorTile
+    outputs:
+      - CFFloorMarbleSmallbricks
+  - type: Stack
+    stackType: CFFloorTileMarbleSmallbricks
+  - type: PhysicalComposition
+    materialComposition:
+      CFMarbleStone: 5
+
+- type: entity
+  parent: CFFloorTileBase
+  id: CFFloorTileOakWoodplanks
+  name: oak woodplanks
+  components:
+  - type: Sprite
+    state: oak_woodplanks
+  - type: FloorTile
+    placeTileSound:
+      path: /Audio/Effects/woodenclosetclose.ogg
+      params:
+        variation: 0.03
+        volume: 2
+    outputs:
+      - CFFloorOakWoodPlanks
+  - type: Stack
+    stackType: CFFloorTileOakWoodplanks
+  - type: PhysicalComposition
+    materialComposition:
+      CFWoodenPlanks: 5
+
+- type: entity
+  parent: CFFloorTileBase
+  id: CFFloorTileOakWoodplanksBig
+  name: oak big woodplanks
+  components:
+  - type: Sprite
+    state: oak_woodplanks_big
+  - type: FloorTile
+    placeTileSound:
+      path: /Audio/Effects/woodenclosetclose.ogg
+      params:
+        variation: 0.03
+        volume: 2
+    outputs:
+      - CFFloorOakWoodPlanksBig
+  - type: Stack
+    stackType: CFFloorTileOakWoodplanksBig
+  - type: PhysicalComposition
+    materialComposition:
+      CFWoodenPlanks: 5
+
+- type: entity
+  parent: CFFloorTileBase
+  id: CFFloorTileOakWoodplanksCruciform
+  name: oak cruciform woodplanks
+  components:
+  - type: Sprite
+    state: oak_woodplanks_cruciform
+  - type: FloorTile
+    placeTileSound:
+      path: /Audio/Effects/woodenclosetclose.ogg
+      params:
+        variation: 0.03
+        volume: 2
+    outputs:
+      - CFFloorOakWoodPlanksCruciform
+  - type: Stack
+    stackType: CFFloorTileOakWoodplanksCruciform
+  - type: PhysicalComposition
+    materialComposition:
+      CFWoodenPlanks: 5
+
+- type: entity
+  parent: CFFloorTileBase
+  id: CFFloorTileOakWoodplanksStairs
+  name: oak stairs woodplanks
+  components:
+  - type: Sprite
+    state: oak_woodplanks_stairways
+  - type: FloorTile
+    placeTileSound:
+      path: /Audio/Effects/woodenclosetclose.ogg
+      params:
+        variation: 0.03
+        volume: 2
+    outputs:
+      - CFFloorOakWoodPlanksStairways
+  - type: Stack
+    stackType: CFFloorTileOakWoodplanksStairs
+  - type: PhysicalComposition
+    materialComposition:
+      CFWoodenPlanks: 5
+
+- type: entity
+  parent: CFFloorTileBase
+  id: CFFloorTileStonebricks
+  name: stonebrick
+  components:
+  - type: Sprite
+    state: stonebrick
+  - type: FloorTile
+    outputs:
+      - CFFloorStonebricks
+  - type: Stack
+    stackType: CFFloorTileStonebricks
+  - type: PhysicalComposition
+    materialComposition:
+      CFStone: 5
+
+- type: entity
+  parent: CFFloorTileBase
+  id: CFFloorTileStonebricksSmallCarved
+  name: small carved stonebricks
+  components:
+  - type: Sprite
+    state: stonebrick_small_carved
+  - type: FloorTile
+    outputs:
+      - CFFloorStonebricksSmallCarved1
+  - type: Stack
+    stackType: CFFloorTileStonebricksSmallCarved
+  - type: PhysicalComposition
+    materialComposition:
+      CFStone: 5
+
+- type: entity
+  parent: CFFloorTileBase
+  id: CFFloorTileStonebricksSmallCarved2
+  name: small carved stonebricks 2
+  components:
+  - type: Sprite
+    state: stonebrick_small_carved2
+  - type: FloorTile
+    outputs:
+      - CFFloorStonebricksSmallCarved2
+  - type: Stack
+    stackType: CFFloorTileStonebricksSmallCarved2
+  - type: PhysicalComposition
+    materialComposition:
+      CFStone: 5
+
+- type: entity
+  parent: CFFloorTileBase
+  id: CFFloorTileStonebricksSquareCarved
+  name: square carved stonebricks
+  components:
+  - type: Sprite
+    state: stonebrick_square_carved
+  - type: FloorTile
+    outputs:
+      - CFFloorStonebricksSquareCarved
+  - type: Stack
+    stackType: CFFloorTileStonebricksSquareCarved
+  - type: PhysicalComposition
+    materialComposition:
+      CFStone: 5
+
+- type: entity
+  parent: CFFloorTileBase
+  id: CFFloorTileBirchWoodplanks
+  name: birch woodplanks
+  components:
+  - type: Sprite
+    state: birch_woodplanks
+  - type: FloorTile
+    placeTileSound:
+      path: /Audio/Effects/woodenclosetclose.ogg
+      params:
+        variation: 0.03
+        volume: 2
+    outputs:
+      - CFFloorBirchWoodPlanks
+  - type: Stack
+    stackType: CFFloorTileBirchWoodplanks
+  - type: PhysicalComposition
+    materialComposition:
+      CFWoodenPlanks: 5
+
+- type: entity
+  parent: CFFloorTileBase
+  id: CFFloorTileBirchWoodplanksBig
+  name: birch big woodplanks
+  components:
+  - type: Sprite
+    state: birch_woodplanks_big
+  - type: FloorTile
+    placeTileSound:
+      path: /Audio/Effects/woodenclosetclose.ogg
+      params:
+        variation: 0.03
+        volume: 2
+    outputs:
+      - CFFloorBirchWoodPlanksBig
+  - type: Stack
+    stackType: CFFloorTileBirchWoodplanksBig
+  - type: PhysicalComposition
+    materialComposition:
+      CFWoodenPlanks: 5
+
+- type: entity
+  parent: CFFloorTileBase
+  id: CFFloorTileBirchWoodplanksCruciform
+  name: birch cruciform woodplanks
+  components:
+  - type: Sprite
+    state: birch_woodplanks_cruciform
+  - type: FloorTile
+    placeTileSound:
+      path: /Audio/Effects/woodenclosetclose.ogg
+      params:
+        variation: 0.03
+        volume: 2
+    outputs:
+      - CFFloorBirchWoodPlanksCruciform
+  - type: Stack
+    stackType: CFFloorTileBirchWoodplanksCruciform
+  - type: PhysicalComposition
+    materialComposition:
+      CFWoodenPlanks: 5
+
+- type: entity
+  parent: CFFloorTileBase
+  id: CFFloorTileBirchWoodplanksStairs
+  name: birch stairs woodplanks
+  components:
+  - type: Sprite
+    state: birch_woodplanks_stairways
+  - type: FloorTile
+    placeTileSound:
+      path: /Audio/Effects/woodenclosetclose.ogg
+      params:
+        variation: 0.03
+        volume: 2
+    outputs:
+      - CFFloorBirchWoodPlanksStairways
+  - type: Stack
+    stackType: CFFloorTileBirchWoodplanksStairs
+  - type: PhysicalComposition
+    materialComposition:
+      CFWoodenPlanks: 5

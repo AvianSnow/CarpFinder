@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFMountainStrategy
-  name: "Mountain Strategy"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-mountain-strategy
+  description: cf-feat-mountain-strategy-desc
   ancestry: Dwarf
   level: 1
   traits:

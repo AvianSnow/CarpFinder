@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFTripkeeGlide
-  name: "Tripkee Glide"
-  description: "Requires windweb tripkee. Costs 1 action. TBA - action will be added"
+  name: cf-feat-tripkee-glide
+  description: cf-feat-tripkee-glide-desc
   ancestry: Tripkee
   level: 5
   traits:

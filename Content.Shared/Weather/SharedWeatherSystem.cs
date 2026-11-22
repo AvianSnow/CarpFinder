@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Content.Shared.CF.ZLevels.Roof;
 using Content.Shared.Light.Components;
 using Content.Shared.Light.EntitySystems;
 using Content.Shared.Maps;
@@ -19,6 +20,7 @@ public abstract partial class SharedWeatherSystem : EntitySystem
     [Dependency] private ITileDefinitionManager _tileDefManager = default!;
     [Dependency] private SharedMapSystem _mapSystem = default!;
     [Dependency] private SharedRoofSystem _roof = default!;
+    [Dependency] private CFSharedZLevelsRoofSystem _zLevelRoof = default!; // CarpFinder
     [Dependency] private StatusEffectsSystem _statusEffects = default!;
 
     [Dependency] private EntityQuery<BlockWeatherComponent> _blockQuery = default!;
@@ -29,14 +31,21 @@ public abstract partial class SharedWeatherSystem : EntitySystem
 
     public bool CanWeatherAffect(Entity<MapGridComponent?, RoofComponent?> ent, TileRef tileRef)
     {
-        if (tileRef.Tile.IsEmpty)
-            return true;
-
+        // CarpFinder: an empty tile is not always open sky. On a stack of levels a roof above can cover it, so it is
+        // checked like any other tile. Nothing below says no to it except a roof, because it has no tile definition
         if (!Resolve(ent, ref ent.Comp1))
             return false;
 
         if (Resolve(ent, ref ent.Comp2, false) && _roof.IsRooved((ent, ent.Comp1, ent.Comp2), tileRef.GridIndices))
             return false;
+
+        // A floor on a level above shields this tile from weather even when it is glass, which casts no roof shadow
+        if (_zLevelRoof.IsWeatherBlocked(ent.Owner, tileRef.GridIndices))
+            return false;
+
+        if (tileRef.Tile.IsEmpty)
+            return true;
+        // CarpFinder end
 
         var tileDef = (ContentTileDefinition)_tileDefManager[tileRef.Tile.TypeId];
 

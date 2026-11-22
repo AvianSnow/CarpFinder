@@ -2,8 +2,8 @@
 # source: Carpfinder Dark Archive (Remastered)
 - type: cfFeat
   id: CFBreachedDefenses
-  name: "Breached Defenses"
-  description: "Requires Exploit Vulnerability."
+  name: cf-feat-breached-defenses
+  description: cf-feat-breached-defenses-desc
   class: Thaumaturge
   level: 4
   traits:

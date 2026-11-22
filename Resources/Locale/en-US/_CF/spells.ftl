@@ -6,7 +6,35 @@ cf-spell-no-grid = Area spells need a tiled floor.
 cf-spell-no-one = The spell finds no one.
 cf-spell-resisted = The spell has no effect.
 cf-spell-affected = The spell takes hold.
-cf-spell-stabilize = The creature is stabilized and stays unconscious.
+cf-spell-dispelled = { $spell } is dispelled.
+cf-spell-dispel-failed = { $spell } holds.
+cf-spell-nothing-to-dispel = There is no spell there to dispel.
+cf-battle-form-start = Becomes a { $form }!
+cf-battle-form-end = Returns to their own form.
+cf-battle-form-no-spells = You cannot cast spells in this form.
+cf-battle-form-too-weak = That shape needs Untamed Form at rank { $rank }.
+cf-battle-form-pest = Pest
+cf-battle-form-ape = Ape
+cf-battle-form-bear = Bear
+cf-battle-form-bull = Bull
+cf-battle-form-canine = Canine
+cf-battle-form-cat = Cat
+cf-battle-form-deer = Deer
+cf-command-approach = Approach
+cf-command-approach-desc = It walks up to you.
+cf-command-drop = Drop
+cf-command-drop-desc = It lets go of everything it holds.
+cf-command-fall = Fall
+cf-command-fall-desc = It drops prone.
+cf-command-flee = Flee
+cf-command-flee-desc = It runs away from you.
+cf-command-halt = Halt
+cf-command-halt-desc = It stands where it is.
+cf-command-obeys = { $order }!
+cf-command-not-understood = { CAPITALIZE(THE($target)) } does not understand you.
+cf-spell-sigil-placed = Your sigil glows on the floor.
+cf-figment-dispelled = Your hand passes through it. It was an illusion.
+cf-spell-stabilize = Stabilized! (1 HP)
 cf-spell-sleep = The creature falls unconscious.
 cf-spell-paralyze = The creature is paralyzed.
 cf-spell-prone = The creature falls prone.
@@ -39,3 +67,40 @@ cf-spell-bolt-choice =
         [one] Store 1 bolt. Click a creature to send it. Uses 1 action and one spell slot.
        *[other] Store { $count } bolts. Each click sends one, at the same creature or another. Uses { $count } actions and one spell slot.
     }
+cf-magic-none = You sense no magic nearby.
+cf-magic-present = You sense magic nearby.
+cf-magic-level = You sense magic nearby. The strongest is level { $level }.
+cf-magic-source = Magic
+cf-magic-aura-magical = { CAPITALIZE(THE($target)) } has a magical aura.
+cf-magic-aura-mundane = { CAPITALIZE(THE($target)) } has no magical aura.
+
+# Heal and Harm: how many actions, picked from the action wheel (CFModeChoice on the spell).
+cf-mode-heal-1 = 1 action: touch
+cf-mode-heal-1-desc = Touch a creature: 1d8 Hit Points, or 1d8 vitality damage to undead.
+cf-mode-heal-2 = 2 actions: 30 feet
+cf-mode-heal-2-desc = A creature within 30 feet: 1d8+8 Hit Points, or 1d8 vitality damage to undead.
+cf-mode-heal-3 = 3 actions: emanation
+cf-mode-heal-3-desc = Every creature within 30 feet of you, at once: 1d8 Hit Points to the living, 1d8 vitality damage to undead.
+cf-mode-heal-cone = 3 actions: 60-foot cone
+cf-mode-heal-cone-desc = Directed Channel. Click a creature to aim a 60-foot cone at it: 1d8 Hit Points to the living, 1d8 vitality damage to undead.
+cf-mode-harm-1 = 1 action: touch
+cf-mode-harm-1-desc = Touch a creature: 1d8 void damage, or 1d8 Hit Points to undead.
+cf-mode-harm-2 = 2 actions: 30 feet
+cf-mode-harm-2-desc = A creature within 30 feet: 1d8 void damage, or 1d8+8 Hit Points to undead.
+cf-mode-harm-3 = 3 actions: emanation
+cf-mode-harm-3-desc = Every creature within 30 feet of you, at once: 1d8 void damage to the living, 1d8 Hit Points to undead.
+cf-mode-harm-cone = 3 actions: 60-foot cone
+cf-mode-harm-cone-desc = Directed Channel. Click a creature to aim a 60-foot cone at it: 1d8 void damage to the living, 1d8 Hit Points to undead.
+
+# Resist Energy: the energy, picked from the action wheel.
+cf-mode-resist-acid = Acid
+cf-mode-resist-cold = Cold
+cf-mode-resist-electricity = Electricity
+cf-mode-resist-fire = Fire
+cf-mode-resist-sonic = Sonic
+
+# Earthworks: how many actions, and so how big a burst.
+cf-mode-earthworks-1 = 1 action: 5-foot burst
+cf-mode-earthworks-2 = 2 actions: 10-foot burst
+cf-mode-earthworks-3 = 3 actions: 15-foot burst
+cf-drain-bonded-item = Your bonded item gives up its power.

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFSwiftSwimmer
-  name: "Swift Swimmer"
-  description: "Swim Speed 15 feet. Not applied in play yet. Swim Speed 25 feet. Not applied in play yet."
+  name: cf-feat-swift-swimmer
+  description: cf-feat-swift-swimmer-desc
   ancestry: Lizardfolk
   level: 5
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFRuneSinger
-  name: "Rune-Singer"
-  description: "Requires trained in Performance. Changes an item. This feature will be implemented later."
+  name: cf-feat-rune-singer
+  description: cf-feat-rune-singer-desc
   class: Runesmith
   level: 1
   traits:

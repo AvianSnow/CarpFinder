@@ -1,0 +1,16 @@
+{
+	"folders": [
+		{
+			"path": "../../../.."
+		},
+		{
+			"path": "../../../../../crystall-punk-14"
+		},
+		{
+			"path": "../../../../../crystall-edge"
+		}
+	],
+	"settings": {
+		"dotnet.defaultSolution": "CarpFinder/SpaceStation14.slnx"
+	}
+}

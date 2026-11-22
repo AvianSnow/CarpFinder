@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFExpertDrillSergeant
-  name: "Expert Drill Sergeant"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-expert-drill-sergeant
+  description: cf-feat-expert-drill-sergeant-desc
   ancestry: Hobgoblin
   level: 5
   traits:

@@ -59,7 +59,7 @@ public sealed partial class MeleeWeaponSystem
             if (meleeWeaponComponent.SwingLeft)
                 angle *= -1;
 
-            length = (1 / meleeWeaponComponent.AttackRate) * 0.6f;
+            length = (1 / meleeWeaponComponent.AttackRate) * 0.3f; // CarpFinder: swing animation at half length
             offset = meleeWeaponComponent.AnimationOffset;
         }
         _sprite.SetRotation((animationUid, sprite), localPos.ToWorldAngle());

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFWhispersofWeakness
-  name: "Whispers of Weakness"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-whispersof-weakness
+  description: cf-feat-whispersof-weakness-desc
   class: Oracle
   level: 1
   traits:

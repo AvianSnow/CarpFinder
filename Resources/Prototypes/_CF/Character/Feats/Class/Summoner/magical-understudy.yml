@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFMagicalUnderstudy
-  name: "Magical Understudy"
-  description: "This feature will be implemented later."
+  name: cf-feat-magical-understudy
+  description: cf-feat-magical-understudy-desc
   class: Summoner
   level: 2
   traits:

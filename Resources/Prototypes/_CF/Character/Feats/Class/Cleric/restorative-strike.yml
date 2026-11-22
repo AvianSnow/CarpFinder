@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFRestorativeStrike
-  name: "Restorative Strike"
-  description: "Costs 2 actions. This feature will be implemented later."
+  name: cf-feat-restorative-strike
+  description: cf-feat-restorative-strike-desc
   class: Cleric
   level: 4
   traits:

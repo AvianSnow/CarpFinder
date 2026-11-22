@@ -1,0 +1,29 @@
+# Ported from CP14 by the CF converter.
+
+- type: constructionGraph
+  id: CFMannequin
+  start: start
+  graph:
+    - node: start
+      actions:
+        - !type:DestroyEntity {}
+      edges:
+        - to: CFmannequin
+          completed:
+            - !type:SnapToGrid { }
+          steps:
+            - material: CFWoodenPlanks
+              amount: 2
+              doAfter: 3
+    - node: CFmannequin
+      entity: CFMannequin
+      edges:
+        - to: start
+          completed:
+            - !type:EmptyAllContainers
+            - !type:SpawnPrototype
+              prototype: CFWoodenPlanks1
+              amount: 2
+          steps:
+            - tool: CFHammering
+              doAfter: 3

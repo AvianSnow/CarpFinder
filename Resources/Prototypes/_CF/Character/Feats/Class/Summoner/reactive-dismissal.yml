@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFReactiveDismissal
-  name: "Reactive Dismissal"
-  description: "Reaction. This feature will be implemented later."
+  name: cf-feat-reactive-dismissal
+  description: cf-feat-reactive-dismissal-desc
   class: Summoner
   level: 4
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFAcuteVision
-  name: "Acute Vision"
-  description: "This feature will be implemented later."
+  name: cf-feat-acute-vision
+  description: cf-feat-acute-vision-desc
   class: Barbarian
   level: 1
   traits:

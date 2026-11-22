@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFFantasticLeaps
-  name: "Fantastic Leaps"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-fantastic-leaps
+  description: cf-feat-fantastic-leaps-desc
   ancestry: Tripkee
   level: 5
   traits:

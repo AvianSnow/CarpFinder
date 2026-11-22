@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Tian Xia Character Guide
 - type: cfFeat
   id: CFGloriousGamtu
-  name: "Glorious Gamtu"
-  description: "Requires dokkaebi goblin heritage. Costs 1 action. TBA - action will be added"
+  name: cf-feat-glorious-gamtu
+  description: cf-feat-glorious-gamtu-desc
   ancestry: Goblin
   level: 5
   traits:

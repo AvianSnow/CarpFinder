@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFLinkedFocus
-  name: "Linked Focus"
-  description: "Requires arcane bond and curriculum spells."
+  name: cf-feat-linked-focus
+  description: cf-feat-linked-focus-desc
   class: Wizard
   level: 4
   traits:

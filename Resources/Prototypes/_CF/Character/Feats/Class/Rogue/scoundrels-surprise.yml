@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFScoundrelsSurprise
-  name: "Scoundrel's Surprise"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-scoundrels-surprise
+  description: cf-feat-scoundrels-surprise-desc
   class: Rogue
   level: 4
   traits:

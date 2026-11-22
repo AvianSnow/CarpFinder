@@ -2,11 +2,19 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFPoisonResistanceAlchemist
-  name: "Poison Resistance"
-  description: "+1 status bonus to Saving Throw. Has a resistance. This feature will be implemented later."
+  name: cf-feat-poison-resistance-alchemist
+  description: cf-feat-poison-resistance-alchemist-desc
   class: Alchemist
   level: 2
   traits:
     - "Alchemist"
     - "Druid"
-  pendingAction: true
+  grants:
+    - !type:CFGrantResistance
+      damageType: Poison
+      halfLevel: true
+    - !type:CFGrantBonus
+      stat: Saves
+      type: Status
+      value: 1
+      trait: Poison

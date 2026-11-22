@@ -2,9 +2,12 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFTumbleBehindSwashbuckler
-  name: "Tumble Behind (Swashbuckler)"
-  description: "Acrobatics against Reflex. Success makes the target off-guard to you."
+  name: cf-feat-tumble-behind-swashbuckler
+  description: cf-feat-tumble-behind-swashbuckler-desc
   class: Swashbuckler
   level: 2
   traits:
     - "Swashbuckler"
+  grants:
+    - !type:CFGrantOption
+      option: TumbleBehind

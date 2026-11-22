@@ -35,26 +35,52 @@
   features:
     - level: 1
       name: "Explode"
-      description: "This feature will be implemented later."
+      description: "Explode is on your action wheel. An unstable action: fire around your innovation, and your innovation may stop working until retuned."
+      grants:
+        - !type:CFGrantAction
+          action: CFActExplode
     - level: 1
       name: "Innovation"
-      description: "This feature will be implemented later."
+      description: "Choose an innovation and a modification in the builder. You start with it. Rebuilding one that is destroyed: TBA"
     - level: 1
       name: "Overdrive"
-      description: "This feature will be implemented later."
+      description: "Overdrive is on your action wheel. A Crafting check: your Strikes deal half your Intelligence more for a minute, or all of it on a critical success. A critical failure burns you."
+      grants:
+        - !type:CFGrantAction
+          action: CFActOverdrive
     - level: 1
       name: "Peerless Inventor"
-      description: "This feature will be implemented later."
+      description: "The Inventor skill feat: TBA"
     - level: 1
       name: "Shield Block"
-      description: "This feature will be implemented later."
+      description: "You can spend your reaction to block damage with a raised shield."
+      grants:
+        - !type:CFGrantOption
+          option: ShieldBlock
     - level: 3
       name: "Expert Overdrive"
-      description: "This feature will be implemented later."
+      description: "Expert in Crafting, and Overdrive adds 1 more damage."
+      grants:
+        - !type:CFGrantProficiency
+          proficiencies:
+            - Crafting
+          rank: Expert
+        - !type:CFGrantOption
+          option: ExpertOverdrive
     - level: 3
       name: "Reconfigure"
-      description: "This feature will be implemented later."
+      description: "Change your innovation in downtime: TBA"
     - level: 5
       name: "Inventor Weapon Expertise"
-      description: "This feature will be implemented later."
+      description: "Expert with simple weapons, martial weapons and unarmed attacks. A critical hit with your weapon innovation gets its critical specialization."
+      grants:
+        - !type:CFGrantCriticalSpecialization
+          specialization:
+            innovationOnly: true
+        - !type:CFGrantProficiency
+          proficiencies:
+            - SimpleWeapons
+            - MartialWeapons
+            - Unarmed
+          rank: Expert
   # Class key-attribute boost is applied from keyAbility in code (PF2e).

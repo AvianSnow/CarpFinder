@@ -34,17 +34,46 @@
   features:
     - level: 1
       name: "Instinct"
-      description: "This feature will be implemented later."
+      description: "Choose an instinct in the builder. It changes what your Rage does."
     - level: 1
       name: "Quick-Tempered"
-      description: "This feature will be implemented later."
+      description: "You Rage for free as a fight begins: at the first attack you make or take after 30 seconds without one. Not in heavy armor, and not while fatigued."
+      grants:
+        - !type:CFGrantOption
+          option: QuickTempered
     - level: 1
       name: "Rage"
-      description: "Rage is on your action wheel. While raging, melee Strikes deal +2 damage and your AC takes -1."
+      description: "Rage is on your action wheel. While raging, melee Strikes deal +2 damage, or +1 with an agile attack. You gain temporary Hit Points equal to your level plus your Constitution modifier, once a minute. A Rage lasts 1 minute, or until you drop or end it yourself."
+      grants:
+        - !type:CFGrantOption
+          option: CanRage
+        - !type:CFGrantAction
+          action: CFActRage
     - level: 3
       name: "Furious Footfalls"
-      description: "This feature will be implemented later."
+      description: "+5 feet status bonus to Speed, or +10 feet while raging."
+      grants:
+        - !type:CFGrantBonus
+          stat: Speed
+          type: Status
+          value: 5
+        - !type:CFGrantWhile
+          while: Raging
+          stat: Speed
+          type: Status
+          value: 10
     - level: 5
       name: "Brutality"
-      description: "This feature will be implemented later."
+      description: "Expert with simple weapons, martial weapons and unarmed attacks. While raging, a critical hit in melee gets its critical specialization."
+      grants:
+        - !type:CFGrantCriticalSpecialization
+          specialization:
+            meleeOnly: true
+            when: Raging
+        - !type:CFGrantProficiency
+          proficiencies:
+            - SimpleWeapons
+            - MartialWeapons
+            - Unarmed
+          rank: Expert
   # Class key-attribute boost is applied from keyAbility in code (PF2e).

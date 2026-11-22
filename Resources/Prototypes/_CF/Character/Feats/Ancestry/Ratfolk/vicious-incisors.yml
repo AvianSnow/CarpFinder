@@ -2,9 +2,15 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFViciousIncisors
-  name: "Vicious Incisors"
-  description: "Changes an item. Not applied in play yet."
+  name: cf-feat-vicious-incisors
+  description: cf-feat-vicious-incisors-desc
   ancestry: Ratfolk
   level: 1
   traits:
     - "Ratfolk"
+  grants:
+    - !type:CFGrantUnarmedAttack
+      die: 6
+      damageType: Piercing
+      finesse: true
+      agile: true

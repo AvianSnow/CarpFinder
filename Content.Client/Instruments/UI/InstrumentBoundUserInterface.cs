@@ -82,6 +82,10 @@ public sealed partial class InstrumentBoundUserInterface : BoundUserInterface
         // Add additional concrete InstrumentMidiSourceBase types here.
         _instrumentMenu.SetupSources(_fileSource, _bandSource, _inputSource);
         _instrumentMenu.SwitchMode(_fileSource);
+        // CarpFinder: a song kept playing with the window shut shows as playing, so Play stops it
+        if (instrument.IsMidiOpen)
+            _fileSource.IsPlaying = true;
+        // CarpFinder end
 
         // Initialize controls used to configure various system parameters.
         // Append any additional configuration controls here.

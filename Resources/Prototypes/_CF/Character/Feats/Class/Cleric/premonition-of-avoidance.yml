@@ -2,11 +2,17 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFPremonitionofAvoidance
-  name: "Premonition of Avoidance"
-  description: "+2 circumstance bonus to Saving Throw. Reaction. This feature will be implemented later."
+  name: cf-feat-premonitionof-avoidance
+  description: cf-feat-premonitionof-avoidance-desc
   class: Cleric
   level: 1
   traits:
     - "Cleric"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-feat-premonitionof-avoidance
+        trigger: SaveWouldFail
+        saveBonus: 2
+        trait: Trap

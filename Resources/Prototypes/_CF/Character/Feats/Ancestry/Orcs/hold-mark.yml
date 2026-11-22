@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFHoldMark
-  name: "Hold Mark"
-  description: "Trained in Diplomacy, Survival, Religion, and Intimidation. +1 status bonus to Saving Throw. Not applied in play yet."
+  name: cf-feat-hold-mark
+  description: cf-feat-hold-mark-desc
   ancestry: Orc
   level: 1
   traits:

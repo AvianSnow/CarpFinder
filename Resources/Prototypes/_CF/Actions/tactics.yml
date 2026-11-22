@@ -1,0 +1,103 @@
+# Commander's tactics. CFTacticSystem runs them.
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActTacticPincerAttack
+  name: Pincer Attack
+  description: Enemies next to any of your squad are off-guard to the whole squad for 6 seconds.
+  components:
+  - type: CFTacticAction
+    offGuardAdjacent: true
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActTacticReload
+  name: Reload!
+  description: Everyone in your squad loads the weapon they are holding.
+  components:
+  - type: CFTacticAction
+    reloads: true
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActTacticShieldsUp
+  name: Shields Up!
+  description: Everyone in your squad raises a held shield.
+  components:
+  - type: CFTacticAction
+    raisesShields: true
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTacticStrikeHard
+  name: Strike Hard!
+  description: A member of your squad Strikes the nearest enemy in their reach. Costs 2 actions.
+  components:
+  - type: TargetAction
+    range: 6.25
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFTacticAction
+    targetStrikes: true
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTacticTakedown
+  name: Tactical Takedown
+  description: An enemy with two of your squad next to it must save or fall prone. Reflex against your class DC. Costs 2 actions.
+  components:
+  - type: TargetAction
+    range: 6.25
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFTacticAction
+    needsSquadAdjacent: 2
+  - type: CFCheck
+    defense: Reflex
+    dcSource: Class
+  - type: CFDegreeEffects
+    failure:
+    - !type:CFApplyConditionEffect
+      condition: Prone
+    criticalFailure:
+    - !type:CFApplyConditionEffect
+      condition: Prone
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActTacticDefensiveRetreat
+  name: Defensive Retreat
+  description: Your squad gets +10 feet Speed for 3 seconds to fall back. Costs 2 actions.
+  components:
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFTacticAction
+    squadEffects:
+    - !type:CFBonusEffect
+      stat: Speed
+      type: Status
+      value: 10
+      durationSeconds: 3
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActTacticGatherToMe
+  name: Gather to Me!
+  description: Your squad gets +10 feet Speed for 3 seconds to reach you.
+  components:
+  - type: CFTacticAction
+    squadEffects:
+    - !type:CFBonusEffect
+      stat: Speed
+      type: Status
+      value: 10
+      durationSeconds: 3
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActBannersInspiration
+  name: Banner's Inspiration
+  description: Everyone in your squad loses 1 from frightened.
+  components:
+  - type: CFTacticAction
+    easesFrightened: true

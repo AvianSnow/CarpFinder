@@ -1,3 +1,4 @@
+using Content.Shared.CF.Preferences;
 using Content.Shared.CF.Shop;
 using Content.Shared.Clothing;
 using Content.Shared.Preferences;
@@ -100,7 +101,7 @@ public sealed class LoadoutCategoryTabController
                 if (!_prototypes.TryIndex(pick.Prototype, out var loadout))
                     continue;
 
-                _groups.AddChild(OwnedRow(group.ID, loadout));
+                _groups.AddChild(OwnedRow(roleProto.ID, group.ID, loadout));
             }
         }
 
@@ -121,7 +122,7 @@ public sealed class LoadoutCategoryTabController
         }
     }
 
-    private Control OwnedRow(string groupId, LoadoutPrototype loadout)
+    private Control OwnedRow(string roleId, string groupId, LoadoutPrototype loadout)
     {
         var row = new BoxContainer
         {
@@ -130,9 +131,11 @@ public sealed class LoadoutCategoryTabController
             SeparationOverride = 8,
         };
 
+        var name = IoCManager.Resolve<IEntityManager>().System<LoadoutSystem>().GetName(loadout);
+        var copies = CFCoins.CopiesOf(_profile!.CFBuild, roleId, loadout.ID);
         row.AddChild(new Label
         {
-            Text = IoCManager.Resolve<IEntityManager>().System<LoadoutSystem>().GetName(loadout),
+            Text = copies > 0 ? $"{name} x{copies + 1}" : name,
             HorizontalExpand = true,
             ClipText = true,
         });
@@ -150,15 +153,25 @@ public sealed class LoadoutCategoryTabController
         };
         var id = loadout.ID;
         var capturedGroup = groupId;
-        sell.OnPressed += _ => Commit(id, capturedGroup);
+        sell.OnPressed += _ => Commit(roleId, id, capturedGroup);
         row.AddChild(sell);
         return row;
     }
 
-    private void Commit(string loadoutId, string groupId)
+    private void Commit(string roleId, string loadoutId, string groupId)
     {
         if (_profile == null || _prototypes == null || _onChanged == null)
             return;
+
+        // Spare copies are sold first, and the last one is the loadout itself.
+        var copies = CFCoins.CopiesOf(_profile.CFBuild, roleId, loadoutId);
+        if (copies > 0)
+        {
+            var build = _profile.CFBuild.Clone();
+            CFCoins.SetCopies(build, roleId, loadoutId, copies - 1);
+            _onChanged(_profile.WithCFBuild(build));
+            return;
+        }
 
         if (!CFBuilderRole.TryGet(_profile, _jobOverride, _session, _prototypes, out _, out var roleLoadout))
             return;

@@ -2,10 +2,14 @@
 # source: Carpfinder Lost Omens Divine Mysteries
 - type: cfFeat
   id: CFSplinterFaithCleric
-  name: "Splinter Faith"
-  description: "This feature will be implemented later."
+  name: cf-feat-splinter-faith-cleric
+  description: cf-feat-splinter-faith-cleric-desc
   class: Cleric
   level: 1
   traits:
     - "Champion"
     - "Cleric"
+  choices:
+    - kind: Domain
+      count: 4
+      anyDomain: true

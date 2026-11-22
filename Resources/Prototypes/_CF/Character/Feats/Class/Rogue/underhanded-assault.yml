@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFUnderhandedAssault
-  name: "Underhanded Assault"
-  description: "Requires trained in Stealth. -2 bonus to Stealth. Costs 2 actions. This feature will be implemented later."
+  name: cf-feat-underhanded-assault
+  description: cf-feat-underhanded-assault-desc
   class: Rogue
   level: 2
   traits:

@@ -2,8 +2,8 @@
 # source: Carpfinder War of Immortals
 - type: cfFeat
   id: CFEnergizedSpark
-  name: "Energized Spark"
-  description: "This feature will be implemented later."
+  name: cf-feat-energized-spark
+  description: cf-feat-energized-spark-desc
   class: Exemplar
   level: 1
   traits:

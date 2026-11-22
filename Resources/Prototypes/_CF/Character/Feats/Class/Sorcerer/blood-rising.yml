@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFBloodRising
-  name: "Blood Rising"
-  description: "Changes an item. Reaction. This feature will be implemented later."
+  name: cf-feat-blood-rising
+  description: cf-feat-blood-rising-desc
   class: Sorcerer
   level: 1
   traits:

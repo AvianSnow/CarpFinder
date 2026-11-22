@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFHalflingLore
-  name: "Halfling Lore"
-  description: "Lore: Halfling Lore. Trained in Acrobatics and Stealth."
+  name: cf-feat-halfling-lore
+  description: cf-feat-halfling-lore-desc
   ancestry: Halfling
   level: 1
   traits:

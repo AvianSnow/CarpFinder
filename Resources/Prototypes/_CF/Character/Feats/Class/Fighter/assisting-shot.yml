@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFAssistingShot
-  name: "Assisting Shot"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-assisting-shot
+  description: cf-feat-assisting-shot-desc
   class: Fighter
   level: 2
   traits:

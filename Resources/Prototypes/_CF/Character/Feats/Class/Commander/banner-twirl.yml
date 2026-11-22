@@ -2,8 +2,8 @@
 # source: Carpfinder Battlecry!
 - type: cfFeat
   id: CFBannerTwirl
-  name: "Banner Twirl"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-banner-twirl
+  description: cf-feat-banner-twirl-desc
   class: Commander
   level: 4
   traits:

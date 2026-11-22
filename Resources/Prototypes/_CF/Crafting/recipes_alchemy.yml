@@ -1,0 +1,159 @@
+# Potions brewed in a cauldron (CFCauldron). The ingredients and 10 units of water go in, it boils on a fire for
+# craftTime seconds, then the brewer rolls Crafting against the item's DC, with the Alchemical Crafting or Magical
+# Crafting feat as the item asks. Each recipe needs its formula (Entities/Objects/Formulas/formulas_alchemy.yml).
+#
+# The ingredients come to about half the item's Archives of Nethys price, as the Craft activity asks: a level 1 item
+# at 3 gp is 150 copper of herbs. Prices are on the ingredients (Entities/Objects/Alchemy/ingredients.yml):
+# dayflin 30, sage 40, blue amanita 50, air lily 50, fly agaric 50, blood rose 60, silver needle 60, lumishroom 80,
+# chromium slime 400. CFAlchemyTest keeps the sums near half price.
+
+# Elixir of Life (Minor), 3 gp: sage 40 + blue amanita 50 + silver needle 60 = 150.
+- type: craftingRecipe
+  id: ElixirOfLifeMinor
+  tag: CFRecipeCauldron
+  category: Alchemy
+  craftTime: 20
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFWildSage
+  - !type:CFItemRequirement
+    protoId: CFBlueAmanita
+  - !type:CFItemRequirement
+    protoId: CFSilverNeedle
+  result: CFElixirOfLifeMinor
+
+# Cheetah's Elixir (Lesser), 3 gp: air lily 50 + dayflin 30 + lumishroom 80 = 160.
+- type: craftingRecipe
+  id: CheetahsElixirLesser
+  tag: CFRecipeCauldron
+  category: Alchemy
+  craftTime: 20
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFAirLily
+  - !type:CFItemRequirement
+    protoId: CFDayflin
+  - !type:CFItemRequirement
+    protoId: CFLumiMushroom
+  result: CFCheetahsElixirLesser
+
+# Antidote (Lesser), 3 gp: fly agaric 50 + silver needle 60 + sage 40 = 150.
+- type: craftingRecipe
+  id: AntidoteLesser
+  tag: CFRecipeCauldron
+  category: Alchemy
+  craftTime: 20
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFAgaricMushroom
+  - !type:CFItemRequirement
+    protoId: CFSilverNeedle
+  - !type:CFItemRequirement
+    protoId: CFWildSage
+  result: CFAntidoteLesser
+
+# Darkvision Elixir (Lesser), 6 gp: three lumishrooms 240 + silver needle 60 = 300.
+- type: craftingRecipe
+  id: DarkvisionElixirLesser
+  tag: CFRecipeCauldron
+  category: Alchemy
+  craftTime: 30
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFLumiMushroom
+    count: 3
+  - !type:CFItemRequirement
+    protoId: CFSilverNeedle
+  result: CFDarkvisionElixirLesser
+
+# Alchemist's Fire (Lesser), 3 gp: blood rose 60 + fly agaric 50 + dayflin 30 = 140.
+- type: craftingRecipe
+  id: AlchemistsFireLesser
+  tag: CFRecipeCauldron
+  category: Alchemy
+  craftTime: 20
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFBloodFlower
+  - !type:CFItemRequirement
+    protoId: CFAgaricMushroom
+  - !type:CFItemRequirement
+    protoId: CFDayflin
+  result: CFAlchemistsFireLesser
+
+# Bottled Lightning (Lesser), 3 gp: two air lilies 100 + blue amanita 50 = 150.
+- type: craftingRecipe
+  id: BottledLightningLesser
+  tag: CFRecipeCauldron
+  category: Alchemy
+  craftTime: 20
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFAirLily
+    count: 2
+  - !type:CFItemRequirement
+    protoId: CFBlueAmanita
+  result: CFBottledLightningLesser
+
+# Healing Potion (Minor), 4 gp: blue amanita 50 + sage 40 + blood rose 60 + air lily 50 = 200.
+- type: craftingRecipe
+  id: HealingPotionMinor
+  tag: CFRecipeCauldron
+  category: Alchemy
+  craftTime: 20
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFBlueAmanita
+  - !type:CFItemRequirement
+    protoId: CFWildSage
+  - !type:CFItemRequirement
+    protoId: CFBloodFlower
+  - !type:CFItemRequirement
+    protoId: CFAirLily
+  result: CFHealingPotionMinor
+
+# Gecko Potion, 3 gp: lumishroom 80 + two dayflins 60 = 140.
+- type: craftingRecipe
+  id: GeckoPotion
+  tag: CFRecipeCauldron
+  category: Alchemy
+  craftTime: 20
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFLumiMushroom
+  - !type:CFItemRequirement
+    protoId: CFDayflin
+    count: 2
+  result: CFGeckoPotion
+
+# Potion of Emergency Escape, 3 gp: two air lilies 100 + fly agaric 50 = 150.
+- type: craftingRecipe
+  id: PotionOfEmergencyEscape
+  tag: CFRecipeCauldron
+  category: Alchemy
+  craftTime: 20
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFAirLily
+    count: 2
+  - !type:CFItemRequirement
+    protoId: CFAgaricMushroom
+  result: CFPotionOfEmergencyEscape
+
+# Invisibility Potion, 20 gp: two chromium slimes 800 + lumishroom 80 + blue amanita 50 + silver needle 60 = 990.
+- type: craftingRecipe
+  id: InvisibilityPotion
+  tag: CFRecipeCauldron
+  category: Alchemy
+  craftTime: 60
+  requirements:
+  - !type:CFItemRequirement
+    protoId: CFChromiumSlime
+    count: 2
+  - !type:CFItemRequirement
+    protoId: CFLumiMushroom
+  - !type:CFItemRequirement
+    protoId: CFBlueAmanita
+  - !type:CFItemRequirement
+    protoId: CFSilverNeedle
+  result: CFInvisibilityPotion

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFPersonofInterest
-  name: "Person of Interest"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-personof-interest
+  description: cf-feat-personof-interest-desc
   class: Investigator
   level: 2
   traits:

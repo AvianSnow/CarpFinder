@@ -73,6 +73,17 @@
         HorizontalExpand="True"
         AppendStyleClass="{x:Static style:StyleClass.ButtonSquare}"
         />
+    <!-- CarpFinder: the language menu. No key: upstream keybinds are not edited. -->
+    <ui:MenuButton
+        Name="CFLanguageButton"
+        Access="Internal"
+        Icon="{xe:Tex '/Textures/_Starlight/Interface/language.png'}"
+        ToolTip="{Loc 'cf-language-menu-tooltip'}"
+        MinSize="42 64"
+        HorizontalExpand="True"
+        AppendStyleClass="{x:Static style:StyleClass.ButtonSquare}"
+        />
+    <!-- CarpFinder end -->
     <ui:MenuButton
         Name="AdminButton"
         Access="Internal"

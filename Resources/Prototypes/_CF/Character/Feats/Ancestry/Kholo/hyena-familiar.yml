@@ -2,9 +2,12 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFHyenaFamiliar
-  name: "Hyena Familiar"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-hyena-familiar
+  description: cf-feat-hyena-familiar-desc
   ancestry: Kholo
   level: 1
   traits:
     - "Kholo"
+  grants:
+    - !type:CFGrantPet
+      kind: Familiar

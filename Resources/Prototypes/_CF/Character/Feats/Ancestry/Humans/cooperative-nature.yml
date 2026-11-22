@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFCooperativeNature
-  name: "Cooperative Nature"
-  description: "+4 circumstance bonus to Check. Not applied in play yet."
+  name: cf-feat-cooperative-nature
+  description: cf-feat-cooperative-nature-desc
   ancestry: Human
   level: 1
   traits:

@@ -1,0 +1,42 @@
+# Ported from CP14 by the CF converter.
+
+- type: constructionGraph
+  id: CFWallmountTorch
+  start: start
+  graph:
+    - node: start
+      actions:
+        - !type:DestroyEntity {}
+      edges:
+        - to: CFWallmountTorch
+          steps:
+            - material: CFWoodenPlanks
+              amount: 1
+              doAfter: 1
+            - material: CFCloth
+              amount: 1
+              doAfter: 1
+
+    - node: CFWallmountTorch
+      entity: CFWallmountTorch
+
+- type: constructionGraph
+  id: CFFloorTorch
+  start: start
+  graph:
+    - node: start
+      actions:
+        - !type:DestroyEntity {}
+      edges:
+        - to: CFFloorTorch
+          steps:
+            - material: CFWoodenPlanks
+              amount: 1
+              doAfter: 1
+            - material: CFCloth
+              amount: 1
+              doAfter: 1
+
+    - node: CFFloorTorch
+      entity: CFFloorTorch
+

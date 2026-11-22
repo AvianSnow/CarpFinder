@@ -49,14 +49,22 @@ public sealed partial class ChatSystem
 
         var messageName = ChatNameLinks ? $"[textlink=\"{FormattedMessage.EscapeStringParameter(name)}\" entity=\"{GetNetEntity(source)}\" entitynamecolor=\"true\"]" : FormattedMessage.EscapeText(name);
 
-        var wrappedMessage = Loc.GetString(speech.Bold ? "chat-manager-entity-say-bold-wrap-message" : "chat-manager-entity-say-wrap-message",
+        // CarpFinder: the same line twice, for listeners with and without the language
+        var cfSpeech = CFGetSpeech(source, message);
+        var cfVerb = Loc.GetString(_random.Pick(speech.SpeechVerbStrings));
+        string CFWrap(string text) => Loc.GetString(speech.Bold ? "chat-manager-entity-say-bold-wrap-message" : "chat-manager-entity-say-wrap-message",
             ("entityName", messageName),
-            ("verb", Loc.GetString(_random.Pick(speech.SpeechVerbStrings))),
+            ("verb", cfVerb),
             ("fontType", speech.FontId),
             ("fontSize", speech.FontSize),
-            ("message", FormattedMessage.EscapeText(message)));
+            ("message", FormattedMessage.EscapeText(text)));
 
-        SendInVoiceRange(ChatChannel.Local, message, wrappedMessage, source, range);
+        var wrappedMessage = CFWrap(cfSpeech?.Tagged ?? message);
+        if (cfSpeech != null)
+            cfSpeech.WrappedGarbled = CFWrap(cfSpeech.Garbled);
+        // CarpFinder end
+
+        SendInVoiceRange(ChatChannel.Local, message, wrappedMessage, source, range, cfSpeech: cfSpeech); // CarpFinder: per listener
 
         var ev = new EntitySpokeEvent(source, message, null, null);
         RaiseLocalEvent(source, ev, true);
@@ -128,6 +136,22 @@ public sealed partial class ChatSystem
         var wrappedUnknownMessage = Loc.GetString("chat-manager-entity-whisper-unknown-wrap-message",
             ("message", FormattedMessage.EscapeText(obfuscatedMessage)));
 
+        // CarpFinder: the same lines again, for listeners without the language
+        var cfSpeech = CFGetSpeech(source, message);
+        var cfObfuscated = cfSpeech == null ? obfuscatedMessage : ObfuscateMessageReadability(cfSpeech.Garbled, 0.2f);
+        var cfWrappedObfuscated = Loc.GetString("chat-manager-entity-whisper-wrap-message",
+            ("entityName", nameIdentity), ("message", FormattedMessage.EscapeText(cfObfuscated)));
+        var cfWrappedUnknown = Loc.GetString("chat-manager-entity-whisper-unknown-wrap-message",
+            ("message", FormattedMessage.EscapeText(cfObfuscated)));
+        if (cfSpeech != null)
+        {
+            cfSpeech.WrappedGarbled = Loc.GetString("chat-manager-entity-whisper-wrap-message",
+                ("entityName", name), ("message", FormattedMessage.EscapeText(cfSpeech.Garbled)));
+            wrappedMessage = Loc.GetString("chat-manager-entity-whisper-wrap-message",
+                ("entityName", name), ("message", FormattedMessage.EscapeText(cfSpeech.Tagged)));
+        }
+        // CarpFinder end
+
 
         foreach (var (session, data) in GetRecipients(source, WhisperMuffledRange))
         {
@@ -140,14 +164,16 @@ public sealed partial class ChatSystem
             if (MessageRangeCheck(session, data, range) != MessageRangeCheckResult.Full)
                 continue; // Won't get logged to chat, and ghosts are too far away to see the pop-up, so we just won't send it to them.
 
+            var cfForeign = CFIsForeign(cfSpeech, listener); // CarpFinder: per listener
+
             if (data.Range <= WhisperClearRange || data.Observer)
-                _chatManager.ChatMessageToOne(ChatChannel.Whisper, message, wrappedMessage, source, false, session.Channel);
+                _chatManager.ChatMessageToOne(ChatChannel.Whisper, cfForeign ? cfSpeech!.Garbled : message, cfForeign ? cfSpeech!.WrappedGarbled : wrappedMessage, source, false, session.Channel); // CarpFinder: per listener
             //If listener is too far, they only hear fragments of the message
             else if (_examineSystem.InRangeUnOccluded(source, listener, WhisperMuffledRange))
-                _chatManager.ChatMessageToOne(ChatChannel.Whisper, obfuscatedMessage, wrappedobfuscatedMessage, source, false, session.Channel);
+                _chatManager.ChatMessageToOne(ChatChannel.Whisper, cfForeign ? cfObfuscated : obfuscatedMessage, cfForeign ? cfWrappedObfuscated : wrappedobfuscatedMessage, source, false, session.Channel); // CarpFinder: per listener
             //If listener is too far and has no line of sight, they can't identify the whisperer's identity
             else
-                _chatManager.ChatMessageToOne(ChatChannel.Whisper, obfuscatedMessage, wrappedUnknownMessage, source, false, session.Channel);
+                _chatManager.ChatMessageToOne(ChatChannel.Whisper, cfForeign ? cfObfuscated : obfuscatedMessage, cfForeign ? cfWrappedUnknown : wrappedUnknownMessage, source, false, session.Channel); // CarpFinder: per listener
         }
 
         _replay.RecordServerMessage(new ChatMessage(ChatChannel.Whisper, message, wrappedMessage, GetNetEntity(source), null, MessageRangeHideChatForReplay(range)));

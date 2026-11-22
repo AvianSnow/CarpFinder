@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFIncriminatingSpell
-  name: "Incriminating Spell"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-incriminating-spell
+  description: cf-feat-incriminating-spell-desc
   class: Wizard
   level: 4
   traits:

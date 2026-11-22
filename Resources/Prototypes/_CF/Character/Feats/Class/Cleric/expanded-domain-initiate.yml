@@ -2,11 +2,17 @@
 # source: Carpfinder Lost Omens Divine Mysteries
 - type: cfFeat
   id: CFExpandedDomainInitiate
-  name: "Expanded Domain Initiate"
-  description: "Requires Domain Initiate."
+  name: cf-feat-expanded-domain-initiate
+  description: cf-feat-expanded-domain-initiate-desc
   class: Cleric
   level: 4
   traits:
     - "Cleric"
   prerequisites:
     - "Domain Initiate"
+  requiresFeats:
+    - CFDomainInitiate
+  choices:
+    - kind: Domain
+  grants:
+    - !type:CFGrantDomainSpell

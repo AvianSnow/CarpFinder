@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFKholoLore
-  name: "Kholo Lore"
-  description: "Lore: Kholo Lore. Trained in Stealth and Survival."
+  name: cf-feat-kholo-lore
+  description: cf-feat-kholo-lore-desc
   ancestry: Kholo
   level: 1
   traits:

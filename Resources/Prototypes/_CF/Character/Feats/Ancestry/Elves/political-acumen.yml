@@ -2,8 +2,8 @@
 # source: Carpfinder #210: Whispers in the Dirt
 - type: cfFeat
   id: CFPoliticalAcumen
-  name: "Political Acumen"
-  description: "Requires trained in Perception. +2 circumstance bonus to Perception. Not applied in play yet."
+  name: cf-feat-political-acumen
+  description: cf-feat-political-acumen-desc
   ancestry: Elf
   level: 1
   rarity: Uncommon

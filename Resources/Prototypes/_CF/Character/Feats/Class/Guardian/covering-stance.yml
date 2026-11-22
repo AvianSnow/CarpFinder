@@ -2,8 +2,8 @@
 # source: Carpfinder Battlecry!
 - type: cfFeat
   id: CFCoveringStance
-  name: "Covering Stance"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-covering-stance
+  description: cf-feat-covering-stance-desc
   class: Guardian
   level: 2
   traits:

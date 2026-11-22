@@ -24,6 +24,9 @@ public static class CFMelee
     /// <summary>Approximate PF feet per SS14 tile (1 tile ≈ 1.5 m ≈ 5 ft grid square).</summary>
     public const float FeetPerTile = 5f;
 
+    /// <summary>A ranged Strike cannot reach past this many range increments.</summary>
+    public const int MaxRangeIncrements = 6;
+
     /// <summary>
     /// Multiple Attack Penalty for an attack roll. <paramref name="attacksAlreadyMade"/> is how many
     /// attack rolls this creature has made since its action pool was last full.
@@ -35,6 +38,19 @@ public static class CFMelee
             return step == 0 ? 0 : step == 1 ? -4 : -8;
 
         return step == 0 ? 0 : step == 1 ? -5 : -10;
+    }
+
+    /// <summary>The Flurry edge: −3 and −6 against prey instead of −5 and −10, or −2 and −4 with an agile weapon.</summary>
+    public static int PreyFlurryPenalty(int penalty)
+    {
+        return penalty switch
+        {
+            -5 => -3,
+            -10 => -6,
+            -4 => -2,
+            -8 => -4,
+            _ => penalty,
+        };
     }
 
     public static bool InReach(float distance) => distance <= MeleeRange;
@@ -73,11 +89,11 @@ public static class CFMelee
         CFAbilityScoreComponent abilities,
         CFCombatantComponent combatant,
         CFStrikeWeaponStats weapon,
-        bool weaponTrained,
+        CFProficiencyRank rank,
         float distanceFeet = 0f,
         bool ignoreVolley = false)
     {
-        var proficiency = CFAttributeMath.ProficiencyBonus(combatant.Level, weaponTrained);
+        var proficiency = CFSkills.ProficiencyBonus(combatant.Level, rank);
         int ability;
         if (weapon.Ranged)
             ability = abilities.GetModifier(CFAbility.Dexterity);
@@ -86,7 +102,12 @@ public static class CFMelee
         else
             ability = abilities.GetModifier(CFAbility.Strength);
 
-        var bonus = ability + proficiency + combatant.StrikeAdjustment;
+        var bonus = !weapon.Ranged && combatant.PrintedAttack is { } printed
+            ? printed
+            : ability + proficiency + combatant.StrikeAdjustment;
+        if (weapon.Improvised)
+            bonus -= 2;
+
         bonus += RangeIncrementPenalty(distanceFeet, weapon.RangeIncrementFeet);
         if (!ignoreVolley)
             bonus += VolleyPenalty(distanceFeet, weapon.Traits.Volley);
@@ -95,11 +116,22 @@ public static class CFMelee
 
     /// <summary>
     /// Damage modifier. Melee and thrown add Strength. Propulsive adds half a positive Strength
-    /// (all of a negative one). Other ranged weapons add nothing.
+    /// (all of a negative one). Other ranged weapons add nothing. With <paramref name="finesseDexterity"/>, finesse
+    /// melee Strikes add Dexterity instead when it is higher.
     /// </summary>
-    public static int DamageBonus(CFAbilityScoreComponent abilities, CFStrikeWeaponStats weapon)
+    public static int DamageBonus(
+        CFAbilityScoreComponent abilities,
+        CFStrikeWeaponStats weapon,
+        CFCombatantComponent? combatant = null,
+        bool finesseDexterity = false)
     {
+        if (!weapon.Ranged && combatant?.PrintedDamage is { } printed)
+            return printed;
+
         var str = abilities.GetModifier(CFAbility.Strength);
+        if (finesseDexterity && !weapon.Ranged && weapon.Finesse)
+            return Math.Max(str, abilities.GetModifier(CFAbility.Dexterity));
+
         if (!weapon.Ranged || weapon.ThrownStrike)
             return str;
 
@@ -131,7 +163,7 @@ public static class CFMelee
         if (incrementIndex <= 1)
             return 0;
 
-        if (incrementIndex > 6)
+        if (incrementIndex > MaxRangeIncrements)
             return -999;
 
         return -2 * (incrementIndex - 1);

@@ -135,7 +135,7 @@ public sealed partial class MeleeWeaponSystem : SharedMeleeWeaponSystem
         if (altDown == BoundKeyState.Down)
         {
             // If it's an unarmed attack then do a disarm
-            if (weapon.AltDisarm && weaponUid == entity)
+            if (weapon.AltDisarm && weaponUid == entity || EntityManager.System<Content.Shared.CF.Combat.CFWeaponSystem>().ManeuverOnRightClick(weaponUid)) // CarpFinder: shields and shove or disarm weapons maneuver on right-click
             {
                 ClientDisarm(entity, mousePos, coordinates);
                 return;
@@ -207,6 +207,19 @@ public sealed partial class MeleeWeaponSystem : SharedMeleeWeaponSystem
     private void ClientLightAttack(EntityUid attacker, MapCoordinates mousePos, EntityCoordinates coordinates, EntityUid weaponUid, MeleeWeaponComponent meleeComponent)
     {
         var attackerPos = TransformSystem.GetMapCoordinates(attacker);
+
+        // CarpFinder: a swing in the general direction hits the closest enemy, even with the cursor past the weapon's reach
+        if (_stateManager.CurrentState is GameplayStateBase aimScreen)
+        {
+            var clicked = aimScreen.GetClickedEntity(mousePos);
+            if (!Interaction.CombatModeCanHandInteract(attacker, clicked)
+                && EntityManager.System<Content.Shared.CF.Combat.CFMeleeAimSystem>().TryPick(attacker, clicked, mousePos, meleeComponent.Range, out var assisted))
+            {
+                RaisePredictiveEvent(new LightAttackEvent(GetNetEntity(assisted), GetNetEntity(weaponUid), GetNetCoordinates(Transform(assisted).Coordinates)));
+                return;
+            }
+        }
+        // CarpFinder end
 
         if (mousePos.MapId != attackerPos.MapId || (attackerPos.Position - mousePos.Position).Length() > meleeComponent.Range)
             return;

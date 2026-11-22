@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFRatspeak
-  name: "Ratspeak"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-ratspeak
+  description: cf-feat-ratspeak-desc
   ancestry: Ratfolk
   level: 1
   traits:

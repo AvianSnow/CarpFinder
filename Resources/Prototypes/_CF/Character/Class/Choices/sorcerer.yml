@@ -1,0 +1,204 @@
+# CarpFinder: Sorcerer bloodlines, Player Core 2. Sorcerous gifts that have no spell in the game yet are left out.
+- type: cfClassChoice
+  id: BloodlineAberrant
+  class: Sorcerer
+  slot: cf-class-choice-bloodline
+  name: cf-class-choice-bloodlineaberrant
+  description: cf-class-choice-bloodlineaberrant-desc
+  tradition: Occult
+  trainedSkills:
+    - Intimidation
+    - Occultism
+  grants:
+    - !type:CFGrantSpell
+      spell: Daze
+    - !type:CFGrantSpell
+      spell: PhantomPain
+
+- type: cfClassChoice
+  id: BloodlineAngelic
+  class: Sorcerer
+  slot: cf-class-choice-bloodline
+  name: cf-class-choice-bloodlineangelic
+  description: cf-class-choice-bloodlineangelic-desc
+  tradition: Divine
+  trainedSkills:
+    - Diplomacy
+    - Religion
+  grants:
+    - !type:CFGrantSpell
+      spell: Light
+    - !type:CFGrantSpell
+      spell: Heal
+
+- type: cfClassChoice
+  id: BloodlineDemonic
+  class: Sorcerer
+  slot: cf-class-choice-bloodline
+  name: cf-class-choice-bloodlinedemonic
+  description: cf-class-choice-bloodlinedemonic-desc
+  tradition: Divine
+  trainedSkills:
+    - Intimidation
+    - Religion
+  grants:
+    - !type:CFGrantSpell
+      spell: Fear
+
+- type: cfClassChoice
+  id: BloodlineDiabolic
+  class: Sorcerer
+  slot: cf-class-choice-bloodline
+  name: cf-class-choice-bloodlinediabolic
+  description: cf-class-choice-bloodlinediabolic-desc
+  tradition: Divine
+  trainedSkills:
+    - Deception
+    - Religion
+  grants:
+    - !type:CFGrantSpell
+      spell: Ignition
+    - !type:CFGrantSpell
+      spell: Charm
+
+- type: cfClassChoice
+  id: BloodlineDraconicArcane
+  class: Sorcerer
+  slot: cf-class-choice-bloodline
+  name: cf-class-choice-bloodlinedraconicarcane
+  description: cf-class-choice-bloodlinedraconicarcane-desc
+  tradition: Arcane
+  trainedSkills:
+    - Intimidation
+    - Arcana
+  grants:
+    - !type:CFGrantSpell
+      spell: Shield
+    - !type:CFGrantSpell
+      spell: Fear
+
+- type: cfClassChoice
+  id: BloodlineDraconicDivine
+  class: Sorcerer
+  slot: cf-class-choice-bloodline
+  name: cf-class-choice-bloodlinedraconicdivine
+  description: cf-class-choice-bloodlinedraconicdivine-desc
+  tradition: Divine
+  trainedSkills:
+    - Intimidation
+    - Religion
+  grants:
+    - !type:CFGrantSpell
+      spell: Shield
+    - !type:CFGrantSpell
+      spell: Fear
+
+- type: cfClassChoice
+  id: BloodlineDraconicOccult
+  class: Sorcerer
+  slot: cf-class-choice-bloodline
+  name: cf-class-choice-bloodlinedraconicoccult
+  description: cf-class-choice-bloodlinedraconicoccult-desc
+  tradition: Occult
+  trainedSkills:
+    - Intimidation
+    - Occultism
+  grants:
+    - !type:CFGrantSpell
+      spell: Shield
+    - !type:CFGrantSpell
+      spell: Fear
+
+- type: cfClassChoice
+  id: BloodlineDraconicPrimal
+  class: Sorcerer
+  slot: cf-class-choice-bloodline
+  name: cf-class-choice-bloodlinedraconicprimal
+  description: cf-class-choice-bloodlinedraconicprimal-desc
+  tradition: Primal
+  trainedSkills:
+    - Intimidation
+    - Nature
+  grants:
+    - !type:CFGrantSpell
+      spell: Shield
+    - !type:CFGrantSpell
+      spell: Fear
+
+- type: cfClassChoice
+  id: BloodlineElemental
+  class: Sorcerer
+  slot: cf-class-choice-bloodline
+  name: cf-class-choice-bloodlineelemental
+  description: cf-class-choice-bloodlineelemental-desc
+  tradition: Primal
+  trainedSkills:
+    - Intimidation
+    - Nature
+  grants:
+    - !type:CFGrantSpell
+      spell: Ignition
+    - !type:CFGrantSpell
+      spell: BreatheFire
+
+- type: cfClassChoice
+  id: BloodlineFey
+  class: Sorcerer
+  slot: cf-class-choice-bloodline
+  name: cf-class-choice-bloodlinefey
+  description: cf-class-choice-bloodlinefey-desc
+  tradition: Primal
+  trainedSkills:
+    - Deception
+    - Nature
+  grants:
+    - !type:CFGrantSpell
+      spell: Figment
+    - !type:CFGrantSpell
+      spell: Charm
+
+- type: cfClassChoice
+  id: BloodlineHag
+  class: Sorcerer
+  slot: cf-class-choice-bloodline
+  name: cf-class-choice-bloodlinehag
+  description: cf-class-choice-bloodlinehag-desc
+  tradition: Occult
+  trainedSkills:
+    - Deception
+    - Occultism
+  grants:
+    - !type:CFGrantSpell
+      spell: Daze
+
+- type: cfClassChoice
+  id: BloodlineImperial
+  class: Sorcerer
+  slot: cf-class-choice-bloodline
+  name: cf-class-choice-bloodlineimperial
+  description: cf-class-choice-bloodlineimperial-desc
+  tradition: Arcane
+  trainedSkills:
+    - Arcana
+    - Society
+  grants:
+    - !type:CFGrantSpell
+      spell: DetectMagic
+    - !type:CFGrantSpell
+      spell: ForceBarrage
+
+- type: cfClassChoice
+  id: BloodlineUndead
+  class: Sorcerer
+  slot: cf-class-choice-bloodline
+  name: cf-class-choice-bloodlineundead
+  description: cf-class-choice-bloodlineundead-desc
+  tradition: Divine
+  trainedSkills:
+    - Intimidation
+    - Religion
+  grants:
+    - !type:CFGrantSpell
+      spell: VoidWarp
+    - !type:CFGrantSpell
+      spell: Harm

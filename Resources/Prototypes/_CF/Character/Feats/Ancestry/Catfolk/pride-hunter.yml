@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFPrideHunter
-  name: "Pride Hunter"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-pride-hunter
+  description: cf-feat-pride-hunter-desc
   ancestry: Catfolk
   level: 5
   traits:

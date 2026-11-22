@@ -1,5 +1,7 @@
+using System.Linq;
+using Content.Shared.CF.Languages;
+using Content.Server.CF.GOAP.Influence;
 using System.Numerics;
-using Content.Shared.Actions;
 using Content.Shared.CF.Actions;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Companions;
@@ -7,13 +9,13 @@ using Content.Shared.CF.Shop;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Factions;
 using Content.Shared.CF.Preferences;
+using Content.Shared.CF.Scent;
 using Robust.Shared.GameObjects;
 using Content.Server.CF.Companions;
 using Content.Shared.GameTicking;
 using Content.Shared.Inventory;
 using Content.Shared.Movement.Components;
 using Content.Shared.Movement.Systems;
-using Content.Shared.Overlays;
 using Robust.Shared.Prototypes;
 
 namespace Content.Server.CF.Character;
@@ -23,15 +25,34 @@ namespace Content.Server.CF.Character;
 /// </summary>
 public sealed partial class CFCharacterSpawnSystem : EntitySystem
 {
+    /// <summary>The HUD deck's Common tab. Everyone has these.</summary>
+    private static readonly EntProtoId[] BasicActions =
+    {
+        "CFActManeuver",
+        "CFActGrapple",
+        "CFActTumble",
+        "CFActDemoralize",
+        "CFActFeint",
+        "CFActAid",
+        "CFActRecall",
+        "CFActHide",
+        "CFActSeek",
+    };
+
     [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private InventorySystem _inventory = default!;
     [Dependency] private CFFactionSystem _factions = default!;
-    [Dependency] private SharedActionsSystem _actions = default!;
     [Dependency] private CFActionPoolSystem _actionPool = default!;
     [Dependency] private MovementSpeedModifierSystem _speed = default!;
     [Dependency] private CFCompanionSystem _companions = default!;
     [Dependency] private MetaDataSystem _meta = default!;
     [Dependency] private CFArmorSystem _armor = default!;
+    [Dependency] private CFCharacterFeatureSystem _features = default!;
+    [Dependency] private Content.Server.CF.Shop.CFShopSystem _shop = default!;
+    [Dependency] private Content.Server.CF.Shop.CFCoinSystem _coins = default!;
+
+    /// <summary>Every character starts with their leftover coin in this, in a pocket.</summary>
+    private const string WalletPrototype = "CFWallet";
 
     /// <summary>Carpfinder Speed of 25 feet is the usual human walk.</summary>
     private const float BaselineSpeedFeet = 25f;
@@ -42,6 +63,7 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         ApplyBuild(args.Mob, args.Profile);
         GrantPurse(args.Mob, args.Profile, args.JobId);
         _factions.AssignJob(args.Mob, args.JobId);
+        EnsureComp<CFPvpComponent>(args.Mob);
         SpawnCompanion(args.Mob, args.Profile);
     }
 
@@ -51,21 +73,45 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
     /// </summary>
     private void SpawnCompanion(EntityUid mob, Content.Shared.Preferences.HumanoidCharacterProfile profile)
     {
-        var build = profile.CFBuild;
+        SpawnCompanion(mob, profile.CFBuild, CFAttributeMath.Snapshot(_prototypes, profile), 0);
+    }
+
+    /// <summary>
+    /// A level taken in play can bring a companion or familiar the character did not spawn with. If the build now grants one
+    /// and none is following, it appears. Its AC is set from its master by <c>CFCompanionSystem.MatchOwnerLevel</c>.
+    /// </summary>
+    public void EnsureCompanion(EntityUid mob, CFCharacterBuildData build, int level)
+    {
+        var query = EntityQueryEnumerator<CFCompanionComponent>();
+        while (query.MoveNext(out _, out var existing))
+        {
+            if (existing.Summoner == mob && !string.IsNullOrEmpty(existing.PetId))
+                return;
+        }
+
+        SpawnCompanion(mob, build, null, level);
+    }
+
+    private void SpawnCompanion(EntityUid mob, CFCharacterBuildData build, CFCharacterSheet? sheet, int level)
+    {
         CFPetPrototype? pet = null;
         if (!string.IsNullOrEmpty(build.PetId)
             && _prototypes.TryIndex<CFPetPrototype>(build.PetId, out var saved)
-            && CFPetMath.BuildGrants(_prototypes, build, saved.Kind))
+            && CFPetMath.BuildGrants(_prototypes, build, saved.Kind, level))
         {
             pet = saved;
         }
-        else if (CFPetMath.BuildGrants(_prototypes, build, CFPetKind.Companion))
+        else if (CFPetMath.BuildGrants(_prototypes, build, CFPetKind.Companion, level))
         {
             pet = FirstPet(CFPetKind.Companion);
         }
-        else if (CFPetMath.BuildGrants(_prototypes, build, CFPetKind.Familiar))
+        else if (CFPetMath.BuildGrants(_prototypes, build, CFPetKind.Familiar, level))
         {
             pet = FirstPet(CFPetKind.Familiar);
+        }
+        else if (CFPetMath.BuildGrants(_prototypes, build, CFPetKind.Construct, level))
+        {
+            pet = FirstPet(CFPetKind.Construct);
         }
 
         if (pet == null)
@@ -74,10 +120,15 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         var prototype = _prototypes.HasIndex<EntityPrototype>(pet.Entity) ? pet.Entity : "CFSummon";
         var companion = Spawn(prototype, Transform(mob).Coordinates.Offset(new Vector2(1f, 0f)));
         _companions.Bind(mob, companion);
+        if (TryComp(companion, out CFCompanionComponent? bound))
+        {
+            bound.PetId = pet.ID;
+            bound.Barding = build.PetBarding;
+        }
+
         if (!string.IsNullOrWhiteSpace(build.PetName))
             _meta.SetEntityName(companion, build.PetName.Trim());
 
-        var sheet = CFAttributeMath.Snapshot(_prototypes, profile);
         var block = CFPetMath.Present(pet, build, sheet);
         var combat = EnsureComp<CFCombatantComponent>(companion);
         combat.Level = block.Level;
@@ -114,10 +165,30 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
 
     private void GrantPurse(EntityUid mob, Content.Shared.Preferences.HumanoidCharacterProfile profile, string? jobId)
     {
-        var purse = EnsureComp<CFPurseComponent>(mob);
-        purse.Copper = CFCoins.Remaining(profile, jobId, _prototypes);
-        purse.Seeded = true;
-        Dirty(mob, purse);
+        var copies = CFCoins.AffordableCopies(profile, jobId, _prototypes, out var left);
+        foreach (var (item, count) in copies)
+        {
+            for (var i = 0; i < count; i++)
+            {
+                _shop.GiveOne(mob, item);
+            }
+        }
+
+        GiveWallet(mob, left);
+    }
+
+    /// <summary>
+    /// Gives the character a wallet holding <paramref name="copper"/> in coins: in a pocket, else a hand or the bag.
+    /// </summary>
+    public EntityUid GiveWallet(EntityUid mob, int copper)
+    {
+        var wallet = Spawn(WalletPrototype, Transform(mob).Coordinates);
+        if (!_inventory.TryEquip(mob, wallet, "pocket1", silent: true, force: true)
+            && !_inventory.TryEquip(mob, wallet, "pocket2", silent: true, force: true))
+            _shop.Give(mob, wallet);
+
+        _coins.PayInto(wallet, mob, copper);
+        return wallet;
     }
 
     public void ApplyBuild(EntityUid mob, Content.Shared.Preferences.HumanoidCharacterProfile profile)
@@ -135,20 +206,19 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         combatant.CurrentHp = sheet.MaxHp;
         combatant.ClassId = profile.CFBuild.Class?.Id;
         combatant.BackgroundId = profile.CFBuild.Background?.Id;
+        combatant.KeyAbility = sheet.Class == null ? null : CFClassChoices.KeyAbility(_prototypes, profile.CFBuild, sheet.Class);
         _armor.RefreshArmorClass(mob);
         var ancestryId = sheet.Ancestry?.ID;
         var classId = sheet.Class?.ID;
-        var chosenFeats = CFSkills.SelectedFeats(_prototypes, profile.CFBuild, ancestryId, classId, 1);
+        // The build comes from a client, so a feat it cannot have goes before anything reads it.
+        var checkedBuild = profile.CFBuild.Clone();
+        CFSkills.DropUnqualifiedFeats(_prototypes, checkedBuild, ancestryId);
+        var chosenFeats = CFSkills.SelectedFeats(_prototypes, checkedBuild, ancestryId, classId, 1);
         var speedBonus = 0;
-        combatant.TrainedSkills = CFSkills.CollectTrainedSkills(_prototypes, profile.CFBuild, ancestryId, classId, 1);
+        combatant.TrainedSkills = CFSkills.CollectTrainedSkills(_prototypes, checkedBuild, ancestryId, classId, 1);
         var xp = EnsureComp<CFExperienceComponent>(mob);
         xp.Xp = 0;
-        xp.AncestryFeat = IdOf(profile.CFBuild.AncestryFeat);
-        xp.ClassFeat = IdOf(profile.CFBuild.ClassFeat);
-        xp.ClassFeatLevel2 = IdOf(profile.CFBuild.ClassFeatLevel2);
-        xp.ClassFeatLevel4 = IdOf(profile.CFBuild.ClassFeatLevel4);
-        xp.AncestryFeatLevel5 = IdOf(profile.CFBuild.AncestryFeatLevel5);
-        Dirty(mob, xp);
+        CopyLevelPicks(mob, xp, checkedBuild, ancestryId, sheet.Modifiers);
         combatant.LoreNames.Clear();
         foreach (var chosen in chosenFeats)
         {
@@ -169,15 +239,80 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         if (heritage != null && !heritage.Fits(sheet.Ancestry?.ID))
             heritage = null;
         ApplyAncestry(mob, sheet.Ancestry, heritage, speedBonus);
+        var languages = EnsureComp<CFLanguagesComponent>(mob);
+        languages.Known = CFLanguageRules.Known(_prototypes, sheet.Ancestry, profile.CFBuild.Languages, sheet.Modifiers);
+        Dirty(mob, languages);
         _actionPool.Ensure(mob);
         ApplySpellbook(mob, profile, sheet.Class);
-        GrantSpellActions(mob, profile);
-        GrantActivities(mob, profile, sheet.Class, chosenFeats);
+        GrantSpellActions(mob, profile, sheet.Class);
+        ApplyFeatures(mob, profile, sheet.Ancestry, heritage, sheet.Class, chosenFeats);
     }
 
     /// <summary>
-    /// Speed scales the usual walk and sprint. Darkvision uses the same night-vision overlay as goblins.
+    /// Copies a build's picks for every level onto the character's XP record, each checked, because a build comes from a
+    /// client. Spawning does this with the lobby's build, and taking a level does it again with that level's picks.
     /// </summary>
+    public void CopyLevelPicks(
+        EntityUid mob,
+        CFExperienceComponent xp,
+        CFCharacterBuildData checkedBuild,
+        string? ancestryId,
+        IReadOnlyDictionary<CFAbility, int> modifiers)
+    {
+        xp.Build = checkedBuild;
+        xp.AncestryId = ancestryId;
+        xp.AncestryFeat = IdOf(checkedBuild.AncestryFeat);
+        xp.ClassFeat = IdOf(checkedBuild.ClassFeat);
+        xp.ClassFeatLevel2 = ChoiceFeat(checkedBuild, checkedBuild.ClassFeatLevel2);
+        xp.ClassFeatLevel4 = ChoiceFeat(checkedBuild, checkedBuild.ClassFeatLevel4);
+        xp.AncestryFeatLevel5 = IdOf(checkedBuild.AncestryFeatLevel5);
+        xp.SkillFeatLevel2 = QualifiedFeat(checkedBuild, ancestryId, checkedBuild.SkillFeatLevel2, 2, skillSlot: true);
+        xp.GeneralFeatLevel3 = QualifiedFeat(checkedBuild, ancestryId, checkedBuild.GeneralFeatLevel3, 3, skillSlot: false);
+        xp.SkillFeatLevel4 = QualifiedFeat(checkedBuild, ancestryId, checkedBuild.SkillFeatLevel4, 4, skillSlot: true);
+        xp.SkillIncreaseLevel3 = KnownSkill(checkedBuild.SkillIncreaseLevel3);
+        xp.SkillIncreaseLevel5 = KnownSkill(checkedBuild.SkillIncreaseLevel5);
+        xp.BonusSkillFeats = checkedBuild.BonusSkillFeats
+            .Where(pair => pair.Key > 1 && QualifiedFeat(checkedBuild, ancestryId, new ProtoId<CFFeatPrototype>(pair.Value), pair.Key, skillSlot: true) != null)
+            .ToDictionary(pair => pair.Key, pair => pair.Value);
+        xp.BonusSkillIncreases = checkedBuild.BonusSkillIncreases
+            .Where(pair => _prototypes.HasIndex<CFAbilitySkillPrototype>(pair.Value))
+            .ToDictionary(pair => pair.Key, pair => pair.Value);
+        xp.AbilityBoostsLevel5 = checkedBuild.AbilityBoostsLevel5.Distinct().Take(CFAttributeMath.LevelFiveBoostCount).ToList();
+        xp.ClassChoices = CFClassChoices.Selected(_prototypes, checkedBuild).Select(choice => choice.ID).ToList();
+        xp.OptionPicks = CFOptionChoices.Valid(_prototypes, checkedBuild, ancestryId);
+        // Only spells of the tradition the class casts from, and none for a class that does not cast.
+        xp.SpellPicks = CFSpellSlots.Allowed(_prototypes, checkedBuild).Select(spell => spell.Copy()).ToList();
+
+        CFAncestryPrototype? ancestry = null;
+        if (ancestryId != null)
+            _prototypes.TryIndex(ancestryId, out ancestry);
+
+        xp.LanguageLevel5 = CFLanguageRules.LevelFiveLanguage(modifiers, xp.AbilityBoostsLevel5)
+            ? CFLanguageRules.LevelFivePick(_prototypes, ancestry, checkedBuild.Languages, modifiers)?.Id
+            : null;
+        Dirty(mob, xp);
+    }
+
+    /// <summary>The feat, if it fits the slot and the build meets its skill requirement by that level.</summary>
+    private string? QualifiedFeat(
+        CFCharacterBuildData build,
+        string? ancestryId,
+        ProtoId<CFFeatPrototype>? id,
+        int level,
+        bool skillSlot)
+    {
+        if (id == null || !_prototypes.TryIndex(id.Value, out var feat))
+            return null;
+
+        var fits = skillSlot ? feat.FitsSkillSlot(level) : feat.FitsGeneralSlot(level);
+        return fits && CFSkills.Qualifies(_prototypes, build, ancestryId, feat, level) ? feat.ID : null;
+    }
+
+    private string? KnownSkill(ProtoId<CFAbilitySkillPrototype>? skill)
+    {
+        return skill != null && _prototypes.HasIndex(skill.Value) ? skill.Value.Id : null;
+    }
+
     private void ApplyAncestry(EntityUid mob, CFAncestryPrototype? ancestry, CFHeritagePrototype? heritage, int speedBonus)
     {
         var speed = CFAttributeMath.EffectiveSpeed(ancestry, heritage) + Math.Max(0, speedBonus);
@@ -197,31 +332,71 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         if (!CFAttributeMath.HasDarkvision(ancestry, heritage))
             return;
 
-        var vision = EnsureComp<NightVisionComponent>(mob);
-        vision.Enabled = true;
-        vision.Prioritized = true;
-        vision.LightingColor = new Color((byte) 0x9B, (byte) 0xB6, (byte) 0xFF, (byte) 0x30);
-        vision.NoiseAmount = 0f;
-        Dirty(mob, vision);
+        _features.GrantSense(mob, CFSense.Darkvision);
     }
 
     /// <summary>
     /// Known spells become radial actions when a matching <c>CF{spell}</c> entity exists.
     /// </summary>
-    private void GrantSpellActions(EntityUid mob, Content.Shared.Preferences.HumanoidCharacterProfile profile)
+    private void GrantSpellActions(EntityUid mob, Content.Shared.Preferences.HumanoidCharacterProfile profile, CFClassPrototype? cls)
     {
-        var granted = new HashSet<string>();
-        foreach (var pick in profile.CFBuild.Spells)
+        // A class that does not cast gets nothing from the spells tab: its spells come from grants.
+        if (cls?.Spellcasting is not { } casting)
+            return;
+
+        // Picks for later levels wait for GrowSpellbook. A spell with no slot of its rank would otherwise be at will.
+        var allowed = CFSpellSlots.Allowed(_prototypes, profile.CFBuild);
+        foreach (var pick in CFSpellSlots.Within(allowed, casting.AllSlotsAt(1), _prototypes))
         {
-            if (!pick.HasSpell || pick.Rank < 0)
-                continue;
-
-            var id = "CF" + pick.Spell.Id;
-            if (!granted.Add(id) || !_prototypes.TryIndex<EntityPrototype>(id, out _))
-                continue;
-
-            _actions.AddAction(mob, id);
+            _features.GrantSpell(mob, pick.Spell);
         }
+    }
+
+    /// <summary>
+    /// Gives a caster its new level's slots, and the spells picked for them in the lobby. A prepared caster has them ready at once,
+    /// as well as planned for its next long rest.
+    /// </summary>
+    public void GrowSpellbook(EntityUid mob, CFClassPrototype cls, int level, CFExperienceComponent xp)
+    {
+        if (cls.Spellcasting is not { } casting || !TryComp(mob, out CFSpellbookComponent? book))
+            return;
+
+        var before = casting.AllSlotsAt(level - 1);
+        var after = casting.AllSlotsAt(level);
+        var known = CFSpellSlots.Within(xp.SpellPicks, before, _prototypes);
+        foreach (var pick in CFSpellSlots.Within(xp.SpellPicks, after, _prototypes))
+        {
+            if (known.Exists(old => old.Rank == pick.Rank && old.Index == pick.Index))
+                continue;
+
+            _features.GrantSpell(mob, pick.Spell);
+            if (pick.Rank <= 0)
+                continue;
+
+            if (!casting.Prepared)
+            {
+                book.KnownAtRank.Add(new CFPreparedSlot(pick.Spell, pick.Rank));
+                continue;
+            }
+
+            if (!book.Repertoire.Contains(pick.Spell))
+                book.Repertoire.Add(pick.Spell);
+
+            book.PreparedSlots.Add(new CFPreparedSlot(pick.Spell, pick.Rank));
+            book.PlannedSlots.Add(new CFPreparedSlot(pick.Spell, pick.Rank));
+        }
+
+        // Divine Font's slots move up to the new highest rank, so Heal and Harm heighten with the cleric.
+        book.Slots = new List<int>(after);
+        AddFontSlots(book);
+
+        book.PreparableSlots = new List<int>(after);
+        while (book.Expended.Count < book.Slots.Count)
+        {
+            book.Expended.Add(0);
+        }
+
+        Dirty(mob, book);
     }
 
     /// <summary>
@@ -243,7 +418,7 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         for (var i = 0; i < book.Slots.Count; i++)
             book.Expended.Add(0);
 
-        foreach (var pick in profile.CFBuild.Spells)
+        foreach (var pick in CFSpellSlots.Allowed(_prototypes, profile.CFBuild))
         {
             if (!pick.Expended || !pick.HasSpell || pick.Rank < 0 || pick.Rank >= book.Expended.Count)
                 continue;
@@ -251,170 +426,133 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
             book.Expended[pick.Rank]++;
         }
 
+        ApplyPrepared(book, profile, casting);
+
         book.FocusPoints = casting.FocusPoints;
         book.FocusSpent = 0;
         if (cls != null && cls.ID == "Cleric" && book.Slots.Count > 1 && TryComp(mob, out CFAbilityScoreComponent? scores))
-            book.Slots[1] += Math.Max(1, scores.GetModifier(CFAbility.Charisma));
+        {
+            // Divine Font: extra slots of the highest rank, for what the deity offers.
+            book.FontSlots = Math.Max(1, scores.GetModifier(CFAbility.Charisma));
+            AddFontSlots(book);
+            if (CFClassChoices.SelectedDeity(_prototypes, profile.CFBuild) is { DivineFont.Count: > 0 } deity)
+            {
+                book.SpareSlotSpells.AddRange(deity.DivineFont);
+            }
+            else
+            {
+                book.SpareSlotSpells.Add("Heal");
+                book.SpareSlotSpells.Add("Harm");
+            }
+        }
 
         Dirty(mob, book);
     }
 
+    private static void AddFontSlots(CFSpellbookComponent book)
+    {
+        if (book.FontSlots <= 0)
+            return;
+
+        for (var rank = book.Slots.Count - 1; rank > 0; rank--)
+        {
+            if (book.Slots[rank] <= 0)
+                continue;
+
+            book.Slots[rank] += book.FontSlots;
+            return;
+        }
+    }
+
+    /// <summary>A prepared caster starts with one charge per spell picked in the lobby, and plans the same for its next long rest.</summary>
+    private void ApplyPrepared(
+        CFSpellbookComponent book,
+        Content.Shared.Preferences.HumanoidCharacterProfile profile,
+        CFSpellcasting casting)
+    {
+        book.Prepared = casting.Prepared;
+        book.PreparedSlots.Clear();
+        book.PlannedSlots.Clear();
+        book.Repertoire.Clear();
+        book.SpareSlotSpells.Clear();
+        book.KnownAtRank.Clear();
+        book.SignatureSpells.Clear();
+        book.PreparableSlots = new List<int>(book.Slots);
+        foreach (var pick in CFSpellSlots.Within(CFSpellSlots.Allowed(_prototypes, profile.CFBuild), book.Slots, _prototypes))
+        {
+            if (pick.Rank <= 0)
+                continue;
+
+            if (!casting.Prepared)
+            {
+                book.KnownAtRank.Add(new CFPreparedSlot(pick.Spell, pick.Rank));
+                continue;
+            }
+
+            if (!book.Repertoire.Contains(pick.Spell))
+                book.Repertoire.Add(pick.Spell);
+
+            book.PreparedSlots.Add(new CFPreparedSlot(pick.Spell, pick.Rank, pick.Expended));
+            book.PlannedSlots.Add(new CFPreparedSlot(pick.Spell, pick.Rank));
+        }
+    }
+
     /// <summary>
-    /// Basic skill actions, class identity, and the level 1 feats already chosen.
+    /// What every character has, then the grants of everything chosen for level 1.
     /// Later feats are stored on <see cref="CFExperienceComponent"/> and granted on level up.
     /// </summary>
-    private void GrantActivities(
+    private void ApplyFeatures(
         EntityUid mob,
         Content.Shared.Preferences.HumanoidCharacterProfile profile,
+        CFAncestryPrototype? ancestry,
+        CFHeritagePrototype? heritage,
         CFClassPrototype? cls,
         List<CFFeatPrototype> feats)
     {
-        _ = profile;
         var options = EnsureComp<CFCombatOptionsComponent>(mob);
-        Grant(mob, "CFActDemoralize");
-        Grant(mob, "CFActTrip");
-        Grant(mob, "CFActShove");
-        Grant(mob, "CFActGrapple");
-        Grant(mob, "CFActFeint");
-        Grant(mob, "CFActRaiseShield");
+        EnsureComp<CFGOAPScentEmitterComponent>(mob);
+        EnsureComp<CFScentComponent>(mob);
+        _features.GrantAction(mob, "CFActLeap");
+        foreach (var action in BasicActions)
+            _features.GrantAction(mob, action);
 
-        switch (cls?.ID)
+        if (ancestry != null)
+            _features.Apply(mob, ancestry.Grants, $"ancestry:{ancestry.ID}");
+
+        if (heritage != null)
         {
-            case "Rogue":
-                options.SneakAttack = true;
-                break;
-            case "Barbarian":
-                options.CanRage = true;
-                Grant(mob, "CFActRage");
-                break;
-            case "Fighter":
-                options.ReactiveStrike = true;
-                options.ShieldBlock = true;
-                break;
-            case "Monk":
-                options.Flurry = true;
-                options.PowerfulFist = true;
-                Grant(mob, "CFActFlurry");
-                break;
-            case "Ranger":
-                Grant(mob, "CFActHuntPrey");
-                break;
-            case "Swashbuckler":
-                options.PanacheStyle = true;
-                Grant(mob, "CFActFinisher");
-                break;
-            case "Magus":
-                options.Spellstrike = true;
-                Grant(mob, "CFActSpellstrike");
-                break;
-            case "Investigator":
-                options.Devise = true;
-                Grant(mob, "CFActStratagem");
-                break;
-            case "Thaumaturge":
-                options.Exploit = true;
-                Grant(mob, "CFActExploit");
-                break;
-            case "Bard":
-                Grant(mob, "CFActInspire");
-                break;
-            case "Champion":
-                options.Champion = true;
-                options.ShieldBlock = true;
-                break;
-            case "Alchemist":
-                Spawn("CFHealingPotionMinor", Transform(mob).Coordinates);
-                Spawn("CFHealingPotionMinor", Transform(mob).Coordinates);
-                break;
+            _features.Apply(mob, heritage.Grants, $"heritage:{heritage.ID}");
+            _features.ApplyOptionPicks(mob, heritage.ID);
         }
+
+        if (_prototypes.Resolve(profile.CFBuild.Background, out var background))
+            _features.Apply(mob, background.Grants, $"background:{background.ID}");
+
+        if (cls != null)
+            _features.ApplyClassFeatures(mob, cls, 1);
+
+        foreach (var choice in CFClassChoices.Selected(_prototypes, profile.CFBuild))
+        {
+            _features.ApplyClassChoice(mob, choice, 1);
+            _features.ApplyOptionPicks(mob, choice.ID);
+        }
+
+        if (CFClassChoices.SelectedDeity(_prototypes, profile.CFBuild) is { } deity)
+            _features.Apply(mob, deity.Grants, $"deity:{deity.ID}");
 
         foreach (var feat in feats)
             ApplyFeat(mob, feat, options, adjustSpeed: false);
 
         Dirty(mob, options);
+
+        // A grant can raise an armor proficiency, so AC is worked out again now they have all run.
+        _armor.RefreshArmorClass(mob);
     }
 
-    /// <summary>Trains the feat's skills, replaces the fist when it should, and grants a feat action that already runs.</summary>
+    /// <summary>Trains the feat's skills, replaces the fist when it should, and runs the feat's grants.</summary>
     public void ApplyFeat(EntityUid mob, CFFeatPrototype feat, CFCombatOptionsComponent? options = null, bool adjustSpeed = true)
     {
-        options ??= EnsureComp<CFCombatOptionsComponent>(mob);
-        var combat = EnsureComp<CFCombatantComponent>(mob);
-
-        foreach (var skill in feat.TrainedSkills)
-        {
-            if (!combat.TrainedSkills.Contains(skill.Id))
-                combat.TrainedSkills.Add(skill.Id);
-        }
-
-        foreach (var lore in feat.Lores)
-        {
-            if (!combat.LoreNames.Contains(lore))
-                combat.LoreNames.Add(lore);
-        }
-
-        if (adjustSpeed && feat.SpeedBonus > 0 && TryComp(mob, out MovementSpeedModifierComponent? movement))
-        {
-            combat.SpeedFeet += feat.SpeedBonus;
-            var scale = feat.SpeedBonus / BaselineSpeedFeet;
-            _speed.ChangeBaseSpeed(
-                mob,
-                movement.BaseWalkSpeed + 2.5f * scale,
-                movement.BaseSprintSpeed + 4.5f * scale,
-                movement.BaseAcceleration);
-        }
-
-        if (feat.NaturalDie > options.NaturalDie)
-        {
-            options.NaturalDice = Math.Max(1, feat.NaturalDice);
-            options.NaturalDie = feat.NaturalDie;
-            options.NaturalType = feat.NaturalDamage;
-            options.NaturalFinesse = feat.NaturalFinesse;
-            options.NaturalAgile = feat.NaturalAgile;
-        }
-
-        switch (feat.ID)
-        {
-            case "CFDoubleSlice":
-                Grant(mob, "CFActDoubleSlice");
-                break;
-            case "CFExactingStrike":
-                Grant(mob, "CFActExactingStrike");
-                break;
-            case "CFSuddenChargeFighter":
-            case "CFSuddenChargeBarbarian":
-                Grant(mob, "CFActSuddenCharge");
-                break;
-            case "CFSnaggingStrike":
-                Grant(mob, "CFActSnaggingStrike");
-                break;
-            case "CFViciousSwing":
-                Grant(mob, "CFActViciousSwing");
-                break;
-            case "CFPointBlankStance":
-                Grant(mob, "CFActPointBlank");
-                break;
-            case "CFReactiveShieldFighter":
-            case "CFReactiveShieldGuardian":
-                options.ReactiveShield = true;
-                break;
-            case "CFTwinFeint":
-                Grant(mob, "CFActTwinFeint");
-                break;
-            case "CFYoureNextRogue":
-            case "CFYoureNextSwashbuckler":
-                options.YoureNext = true;
-                break;
-            case "CFNimbleDodge":
-                options.NimbleDodge = true;
-                break;
-            case "CFTumbleBehindRogue":
-            case "CFTumbleBehindSwashbuckler":
-                Grant(mob, "CFActTumbleBehind");
-                break;
-        }
-
-        Dirty(mob, combat);
-        Dirty(mob, options);
+        _features.ApplyFeat(mob, feat, adjustSpeed);
     }
 
     /// <summary>Armor class follows the new level. Hit points are changed by the level-up itself.</summary>
@@ -423,14 +561,16 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         _armor.RefreshArmorClass(mob);
     }
 
+    /// <summary>The feat, if the build has the subclass option it asks for.</summary>
+    private string? ChoiceFeat(CFCharacterBuildData build, ProtoId<CFFeatPrototype>? id)
+    {
+        return id is { } feat && _prototypes.TryIndex(feat, out CFFeatPrototype? proto) && !CFClassChoices.MeetsRequirement(_prototypes, build, proto)
+            ? null
+            : id?.Id;
+    }
+
     private static string? IdOf(ProtoId<CFFeatPrototype>? feat)
     {
         return feat?.Id;
-    }
-
-    private void Grant(EntityUid mob, string id)
-    {
-        if (_prototypes.TryIndex<EntityPrototype>(id, out _))
-            _actions.AddAction(mob, id);
     }
 }

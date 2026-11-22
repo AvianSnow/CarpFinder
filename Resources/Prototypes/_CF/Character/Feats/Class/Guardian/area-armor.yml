@@ -2,8 +2,8 @@
 # source: Carpfinder Battlecry!
 - type: cfFeat
   id: CFAreaArmor
-  name: "Area Armor"
-  description: "This feature will be implemented later."
+  name: cf-feat-area-armor
+  description: cf-feat-area-armor-desc
   class: Guardian
   level: 4
   traits:

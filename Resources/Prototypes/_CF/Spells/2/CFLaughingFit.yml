@@ -2,7 +2,7 @@
   parent: CFSpellTarget
   id: CFLaughingFit
   name: Laughing Fit
-  description: On a failed Will save the target falls prone.
+  description: On a failed Will save the target falls prone. It has to save again every 6 seconds for a minute, and only Dispel Magic ends it sooner.
   components:
   - type: Sprite
     sprite: Objects/Magic/magicactions.rsi
@@ -14,6 +14,7 @@
   - type: CFSpell
     spell: LaughingFit
     rank: 2
+    sustained: true
   - type: CFTargeting
     rangeFeet: 30
   - type: CFCheck

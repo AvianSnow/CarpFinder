@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Tian Xia Character Guide
 - type: cfFeat
   id: CFRekindledLight
-  name: "Rekindled Light"
-  description: "Requires Star Orb. Reaction. TBA - action will be added"
+  name: cf-feat-rekindled-light
+  description: cf-feat-rekindled-light-desc
   ancestry: Kitsune
   level: 5
   traits:

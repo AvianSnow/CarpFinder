@@ -1,0 +1,88 @@
+# The bases every CF monster is built on. Each monster has a file of its own, in the folder of its creature type, and
+# carries that type as a trait on CFTrait. See .agent/importcreatures.md.
+# Monster Core creatures on CP14 bodies. Numbers are the printed stat blocks, checked on Archives of Nethys.
+# Copy one for a new creature. printedAttack and printedDamage are the melee Strike's +N and +M in "+N, 1dX+M".
+
+# What makes a monster playable. Every monster takes this as a parent, and sets its own name and description on GhostRole.
+# GhostTakeoverAvailable is what lets a ghost actually take the body: without it the role is listed and does nothing.
+# Stock HTN sleeps while a player is in the body and wakes if they leave, and a GOAP brain runs inside HTN.
+- type: entity
+  abstract: true
+  id: CFMonsterGhostRole
+  categories: [ HideSpawnMenu ]
+  components:
+    - type: GhostRole
+      makeSentient: true
+      allowMovement: true
+      allowSpeech: true
+      rules: cf-ghost-monster-rules
+      mindRoles:
+        - MindRoleGhostRoleTeamAntagonist
+    - type: GhostTakeoverAvailable
+
+# What every CF monster is, whatever body it has. Every monster has this as a parent, directly or through
+# CFBaseCreature. A monster on a stock body lists the body first and this second: [ MobBaseKobold, CFBaseMonster ].
+# With two parents the first parent's copy of a component wins, so such a monster still sets its own HTN,
+# NpcFactionMember and GhostRole fields where the stock body has them. See .agent/importcreatures.md.
+#
+# - It thinks with a GOAP brain (CFGOAPBrain) and a ghost can take it (CFMonsterGhostRole).
+# - It is in the Monster faction, which every adventure company opposes.
+# - It fights on its printed stat block: CFCombatant with printed numbers, CFAbilityScore and CFCombatOptions.
+#   CF Strikes, saves and conditions read only these. It dies at 0 Hit Points, which is what makes it worth XP.
+# - Dead, it can be harvested for monster parts by someone trained in Survival (CFHarvestable). Set parts on it to
+#   say what the body gives; with none it gives generic monster parts. Their worth comes from the level.
+- type: entity
+  abstract: true
+  parent: [ CFMonsterGhostRole, CFGOAPBrain ]
+  id: CFBaseMonster
+  categories: [ HideSpawnMenu ]
+  components:
+    - type: InputMover
+    - type: MobMover
+    - type: CombatMode
+    - type: HTN
+      rootTask:
+        task: CFGOAPCompound
+    - type: NpcFactionMember
+      factions:
+        - SimpleHostile
+    - type: CFFaction
+      faction: Monster
+    - type: CFCombatant
+      diesAtZeroHp: true
+    - type: CFAbilityScore
+    - type: CFCombatOptions
+    - type: CFHarvestable
+    # Leaves a scent trail that a creature with the Scent sense can see (CFSmeller).
+    - type: CFScent
+
+# A monster with an animal's body: one natural attack, no hands, and Bestial noises for speech.
+- type: entity
+  abstract: true
+  parent: [ SimpleMobBase, MobCombat, CFBaseMonster ]
+  id: CFBaseCreature
+  suffix: Monster
+  categories: [ ForkFiltered ]
+  components:
+    # SimpleMobBase comes first, so the brain's parts it also has are set again here.
+    - type: InputMover
+    - type: MobMover
+    - type: HTN
+      rootTask:
+        task: CFGOAPCompound
+    - type: NpcFactionMember
+      factions:
+        - SimpleHostile
+    # Animals make noises. A player in one cannot talk, and does not understand speech.
+    - type: CFLanguages
+      known: [ Bestial ]
+    - type: Appearance
+    - type: MeleeWeapon
+      angle: 0
+      animation: WeaponArcBite
+      attackRate: 1
+      soundHit:
+        path: /Audio/Effects/bite.ogg
+      damage:
+        types:
+          Piercing: 0

@@ -2,10 +2,13 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFSnaggingStrike
-  name: "Snagging Strike"
-  description: "A Strike. On a hit the target is off-guard until your next turn."
+  name: cf-feat-snagging-strike
+  description: cf-feat-snagging-strike-desc
   class: Fighter
   level: 1
   traits:
     - "Fighter"
   action: Action
+  grants:
+    - !type:CFGrantOption
+      option: SnaggingStrike

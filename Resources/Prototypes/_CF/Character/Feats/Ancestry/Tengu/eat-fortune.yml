@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFEatFortune
-  name: "Eat Fortune"
-  description: "Reaction. TBA - action will be added"
+  name: cf-feat-eat-fortune
+  description: cf-feat-eat-fortune-desc
   ancestry: Tengu
   level: 5
   traits:

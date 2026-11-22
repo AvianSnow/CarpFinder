@@ -25,9 +25,16 @@ public sealed partial class CFActionPoolComponent : Component
     [DataField, AutoNetworkedField]
     public float Stamina = -1f;
 
-    /// <summary>Seconds to regain one point of stamina.</summary>
+    /// <summary>Seconds to regain one point of stamina while a player is in the body.</summary>
     [DataField, AutoNetworkedField]
-    public float RegenSeconds = 1.45f;
+    public float RegenSeconds = 1.2f;
+
+    /// <summary>Seconds to regain one point of stamina with no player in the body.</summary>
+    [DataField, AutoNetworkedField]
+    public float NpcRegenSeconds = 1.5f;
+
+    /// <summary>When an NPC has finished thinking about its next attack. Zero means it has not started.</summary>
+    public TimeSpan ThinkingUntil;
 
     /// <summary>
     /// Strikes and spell attacks already made since this pool was last full.
@@ -36,6 +43,14 @@ public sealed partial class CFActionPoolComponent : Component
     /// </summary>
     [DataField, AutoNetworkedField]
     public int MapAttacks;
+
+    /// <summary>A Step already paid for covers any other enemy's reach left before this time.</summary>
+    [DataField]
+    public TimeSpan StepCoveredUntil;
+
+    /// <summary>A flourish action was used since this pool was last full. Only one is allowed.</summary>
+    [DataField, AutoNetworkedField]
+    public bool Flourished;
 
     /// <summary>The creature this one last Struck at, for the sweep trait. Only meaningful while <see cref="MapAttacks"/> is above 0.</summary>
     public EntityUid? LastStrikeTarget;

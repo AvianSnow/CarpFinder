@@ -6,14 +6,16 @@
   suffix: Empty
   categories: [ForkFiltered]
   components:
+    - type: CFZPhysics # CarpFinder: falls to the level below when loose over an opening
     - type: Sprite
       drawdepth: Mobs
       sprite: _CP14/Structures/Furniture/Barrels/crane_barrel.rsi
       layers:
         - state: barrel
     - type: Damageable
-      damageContainer: Inorganic
       damageModifierSet: CFWood
+    - type: Injurable
+      damageContainer: Inorganic
     - type: Physics
       bodyType: Static
     - type: Transform
@@ -48,12 +50,12 @@
                 collection: WoodDestroy
             - !type:DoActsBehavior
               acts: ["Destruction"]
-    - type: SolutionContainerManager
-      solutions:
-        barrel:
-          maxVol: 500
+    - type: Solution
+      id: barrel
+      solution:
+        maxVol: 500
     - type: Construction
-      graph: CFWoodenBarrel
+      graph: CFCraneBarrel
       node: CFWoodenBarrel
     - type: PhysicalComposition
       materialComposition:
@@ -65,12 +67,12 @@
   suffix: Beer. Dwarf
   categories: [ForkFiltered]
   components:
-    - type: SolutionContainerManager
-      solutions:
-        barrel:
-          reagents:
-            - ReagentId: CFDwarfBeer
-              Quantity: 500
+    - type: Solution
+      id: barrel
+      solution:
+        reagents:
+          - ReagentId: CFDwarfBeer
+            Quantity: 500
     - type: Label
       currentLabel: cf-reagent-name-dwarfbeer
 
@@ -80,12 +82,12 @@
   suffix: Beer. Gerbil
   categories: [ForkFiltered]
   components:
-    - type: SolutionContainerManager
-      solutions:
-        barrel:
-          reagents:
-            - ReagentId: CFBeeerGerbil
-              Quantity: 500
+    - type: Solution
+      id: barrel
+      solution:
+        reagents:
+          - ReagentId: CFBeerGerbil
+            Quantity: 500
     - type: Label
       currentLabel: cf-reagent-name-gerbil
 
@@ -95,12 +97,12 @@
   suffix: Beer. Breeze
   categories: [ForkFiltered]
   components:
-    - type: SolutionContainerManager
-      solutions:
-        barrel:
-          reagents:
-            - ReagentId: CFBeeerBreeze
-              Quantity: 500
+    - type: Solution
+      id: barrel
+      solution:
+        reagents:
+          - ReagentId: CFBeerBreeze
+            Quantity: 500
     - type: Label
       currentLabel: cf-reagent-name-breeze
 
@@ -110,12 +112,12 @@
   suffix: Beer. BlowLaw
   categories: [ForkFiltered]
   components:
-    - type: SolutionContainerManager
-      solutions:
-        barrel:
-          reagents:
-            - ReagentId: CFBeeerBlowLaw
-              Quantity: 500
+    - type: Solution
+      id: barrel
+      solution:
+        reagents:
+          - ReagentId: CFBeerBlowLaw
+            Quantity: 500
     - type: Label
       currentLabel: cf-reagent-name-blowlaw
 
@@ -125,12 +127,12 @@
   suffix: Ale. BloodyTear
   categories: [ForkFiltered]
   components:
-    - type: SolutionContainerManager
-      solutions:
-        barrel:
-          reagents:
-            - ReagentId: CFAleBloodyTear
-              Quantity: 500
+    - type: Solution
+      id: barrel
+      solution:
+        reagents:
+          - ReagentId: CFAleBloodyTear
+            Quantity: 500
     - type: Label
       currentLabel: cf-reagent-name-bloody-tear
 
@@ -140,12 +142,12 @@
   suffix: Ale. Bottomless
   categories: [ForkFiltered]
   components:
-    - type: SolutionContainerManager
-      solutions:
-        barrel:
-          reagents:
-            - ReagentId: CFAleBottomless
-              Quantity: 500
+    - type: Solution
+      id: barrel
+      solution:
+        reagents:
+          - ReagentId: CFAleBottomless
+            Quantity: 500
     - type: Label
       currentLabel: cf-reagent-name-bottomless
 
@@ -155,12 +157,12 @@
   suffix: Wine. ZellasianPleasure
   categories: [ForkFiltered]
   components:
-    - type: SolutionContainerManager
-      solutions:
-        barrel:
-          reagents:
-            - ReagentId: CFWineZellasianPleasure
-              Quantity: 500
+    - type: Solution
+      id: barrel
+      solution:
+        reagents:
+          - ReagentId: CFWineZellasianPleasure
+            Quantity: 500
     - type: Label
       currentLabel: cf-reagent-name-zellasian-pleasure
 
@@ -170,12 +172,12 @@
   suffix: Wine. Leeks
   categories: [ForkFiltered]
   components:
-    - type: SolutionContainerManager
-      solutions:
-        barrel:
-          reagents:
-            - ReagentId: CFWineLeeks
-              Quantity: 500
+    - type: Solution
+      id: barrel
+      solution:
+        reagents:
+          - ReagentId: CFWineLeeks
+            Quantity: 500
     - type: Label
       currentLabel: cf-reagent-name-leeks
 
@@ -185,12 +187,12 @@
   suffix: Wine. Durandate
   categories: [ForkFiltered]
   components:
-    - type: SolutionContainerManager
-      solutions:
-        barrel:
-          reagents:
-            - ReagentId: CFWineDurandate
-              Quantity: 500
+    - type: Solution
+      id: barrel
+      solution:
+        reagents:
+          - ReagentId: CFWineDurandate
+            Quantity: 500
     - type: Label
       currentLabel: cf-reagent-name-durandate
 
@@ -225,8 +227,9 @@
           layer:
             - TabletopMachineLayer
     - type: Damageable
-      damageContainer: Inorganic
       damageModifierSet: CFWood
+    - type: Injurable
+      damageContainer: Inorganic
     - type: Destructible
       thresholds:
         - trigger: !type:DamageTrigger
@@ -256,10 +259,10 @@
                 collection: WoodDestroy
             - !type:DoActsBehavior
               acts: ["Destruction"]
-    - type: SolutionContainerManager
-      solutions:
-        barrel:
-          maxVol: 50
+    - type: Solution
+      id: barrel
+      solution:
+        maxVol: 50
     - type: Construction
       graph: CFCraneBarrelSmall
       node: CFCraneBarrelSmall
@@ -270,12 +273,12 @@
   suffix: Beer. Dwarf
   categories: [ForkFiltered]
   components:
-    - type: SolutionContainerManager
-      solutions:
-        barrel:
-          reagents:
-            - ReagentId: CFDwarfBeer
-              Quantity: 50
+    - type: Solution
+      id: barrel
+      solution:
+        reagents:
+          - ReagentId: CFDwarfBeer
+            Quantity: 50
 
 - type: entity
   parent: CFCraneBarrelSmall
@@ -283,12 +286,12 @@
   suffix: Beer. Gerbil
   categories: [ForkFiltered]
   components:
-    - type: SolutionContainerManager
-      solutions:
-        barrel:
-          reagents:
-            - ReagentId: CFBeerGerbil
-              Quantity: 50
+    - type: Solution
+      id: barrel
+      solution:
+        reagents:
+          - ReagentId: CFBeerGerbil
+            Quantity: 50
 
 - type: entity
   parent: CFCraneBarrelSmall
@@ -296,12 +299,12 @@
   suffix: Beer. Breeze
   categories: [ForkFiltered]
   components:
-    - type: SolutionContainerManager
-      solutions:
-        barrel:
-          reagents:
-            - ReagentId: CFBeerBreeze
-              Quantity: 50
+    - type: Solution
+      id: barrel
+      solution:
+        reagents:
+          - ReagentId: CFBeerBreeze
+            Quantity: 50
 
 - type: entity
   parent: CFCraneBarrelSmall
@@ -309,12 +312,12 @@
   suffix: Beer. BlowLaw
   categories: [ForkFiltered]
   components:
-    - type: SolutionContainerManager
-      solutions:
-        barrel:
-          reagents:
-            - ReagentId: CFBeerBlowLaw
-              Quantity: 50
+    - type: Solution
+      id: barrel
+      solution:
+        reagents:
+          - ReagentId: CFBeerBlowLaw
+            Quantity: 50
 
 - type: entity
   parent: CFCraneBarrelSmall
@@ -322,12 +325,12 @@
   suffix: Ale. BloodyTear
   categories: [ForkFiltered]
   components:
-    - type: SolutionContainerManager
-      solutions:
-        barrel:
-          reagents:
-            - ReagentId: CFAleBloodyTear
-              Quantity: 50
+    - type: Solution
+      id: barrel
+      solution:
+        reagents:
+          - ReagentId: CFAleBloodyTear
+            Quantity: 50
 
 - type: entity
   parent: CFCraneBarrelSmall
@@ -335,9 +338,9 @@
   suffix: Ale. Bottomless
   categories: [ForkFiltered]
   components:
-    - type: SolutionContainerManager
-      solutions:
-        barrel:
-          reagents:
-            - ReagentId: CFAleBottomless
-              Quantity: 50
+    - type: Solution
+      id: barrel
+      solution:
+        reagents:
+          - ReagentId: CFAleBottomless
+            Quantity: 50

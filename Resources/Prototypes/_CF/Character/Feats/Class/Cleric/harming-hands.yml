@@ -2,11 +2,14 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFHarmingHands
-  name: "Harming Hands"
-  description: "Requires harmful font."
+  name: cf-feat-harming-hands
+  description: cf-feat-harming-hands-desc
   class: Cleric
   level: 1
   traits:
     - "Cleric"
   prerequisites:
     - "harmful font"
+  grants:
+    - !type:CFGrantOption
+      option: HarmingHands

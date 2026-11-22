@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFEnergyHeart
-  name: "Energy Heart"
-  description: "This feature will be implemented later."
+  name: cf-feat-energy-heart
+  description: cf-feat-energy-heart-desc
   class: Summoner
   level: 1
   traits:

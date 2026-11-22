@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFDisarmingFlair
-  name: "Disarming Flair"
-  description: "Changes an item. This feature will be implemented later."
+  name: cf-feat-disarming-flair
+  description: cf-feat-disarming-flair-desc
   class: Swashbuckler
   level: 1
   traits:

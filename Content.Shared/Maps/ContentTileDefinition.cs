@@ -134,6 +134,29 @@ public sealed partial class ContentTileDefinition : IPrototype, IInheritingProto
     /// <summary>
     /// Hide this tile in the tile placement editor.
     /// </summary>
+    // CarpFinder: z-levels. A transparent tile shows the level below and casts no roof shadow on it
+    [DataField] public bool Transparent = false;
+
+    /// <summary>
+    /// CarpFinder: shields the levels below from weather. Glass is transparent and still blocks weather.
+    /// </summary>
+    [DataField] public bool BlocksWeather = true;
+
+    /// <summary>
+    /// CarpFinder: the lip drawn under this tile where its edge borders an opening into the level below.
+    /// The texture is as high as the lip is thick, and every 32 pixels of width is a variant.
+    /// </summary>
+    [DataField] public ResPath VolumeSprite { get; private set; } = new("/Textures/_CE/Tiles/Volume/default.png");
+
+    /// <summary>
+    /// CarpFinder: the tile is difficult terrain of this cause, read by CFTerrainSystem. Null is easy ground.
+    /// </summary>
+    [DataField("cfDifficultTerrain")] public Content.Shared.CF.Terrain.CFTerrainCause? CFDifficultTerrain;
+
+    /// <summary>CarpFinder: the tile's difficult terrain is greater difficult terrain.</summary>
+    [DataField("cfGreaterDifficultTerrain")] public bool CFGreaterDifficultTerrain;
+    // CarpFinder end
+
     [DataField] public bool EditorHidden { get; private set; } = false;
 
     /// <summary>

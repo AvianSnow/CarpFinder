@@ -1,0 +1,144 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  parent: BaseStructure
+  id: CFBaseDoorFrame
+  categories: [ ForkFiltered ]
+  abstract: true
+  components:
+  - type: InteractionOutline
+  - type: Physics
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.49,-0.49,0.49,0.49"
+        density: 100
+        mask:
+        - FullTileMask
+        layer:
+        - AirlockLayer
+
+- type: entity
+  parent: CFBaseDoorFrame
+  id: CFWoodenDoorFrame
+  name: wooden door frame
+  description: An unfinished wooden door.
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Doors/wooden_frame.rsi
+    drawdepth: Mobs
+    state: closed
+  - type: Damageable
+    damageModifierSet: CFWoodStructural
+  - type: Injurable
+    damageContainer: Inorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 50
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFWoodenPlanks1:
+            min: 1
+            max: 2
+      - !type:DoActsBehavior
+        acts: ["Destruction"]
+  - type: Construction
+    graph: CFWoodenDoor
+    node: CFWoodenDoorFrame
+
+- type: entity
+  parent: CFWoodenDoorFrame
+  id: CFWoodenDoorFrameMirrored
+  components:
+  - type: Sprite
+    state: closed_mirrored
+  - type: Construction
+    graph: CFWoodenDoor
+    node: CFWoodenDoorFrameMirrored
+
+- type: entity
+  parent: CFBaseDoorFrame
+  id: CFWoodenBirchDoorFrame
+  name: wooden birch door frame
+  description: An unfinished wooden birch door.
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Doors/wooden_birch_frame.rsi
+    drawdepth: Mobs
+    state: closed
+  - type: Damageable
+    damageModifierSet: CFWoodStructural
+  - type: Injurable
+    damageContainer: Inorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 50
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFBirchWoodenPlanks1:
+            min: 1
+            max: 2
+      - !type:DoActsBehavior
+        acts: ["Destruction"]
+  - type: Construction
+    graph: CFWoodenBirchDoor
+    node: CFWoodenBirchDoorFrame
+
+- type: entity
+  parent: CFWoodenBirchDoorFrame
+  id: CFWoodenBirchDoorFrameMirrored
+  components:
+  - type: Sprite
+    state: closed_mirrored
+  - type: Construction
+    graph: CFWoodenBirchDoor
+    node: CFWoodenBirchDoorFrameMirrored
+
+- type: entity
+  parent: CFBaseDoorFrame
+  id: CFIronDoorFrame
+  name: iron door frame
+  description: An unfinished iron door.
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Doors/iron_frame.rsi
+    drawdepth: Mobs
+    state: closed
+  - type: Damageable
+    damageModifierSet: CFMetallic
+  - type: Injurable
+    damageContainer: Inorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 50
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFIronBar1:
+            min: 1
+            max: 2
+      - !type:DoActsBehavior
+        acts: ["Destruction"]
+  - type: Construction
+    graph: CFIronDoor
+    node: CFIronDoorFrame
+
+- type: entity
+  parent: CFIronDoorFrame
+  id: CFIronDoorFrameMirrored
+  components:
+  - type: Sprite
+    state: closed_mirrored
+  - type: Construction
+    graph: CFIronDoor
+    node: CFIronDoorFrameMirrored

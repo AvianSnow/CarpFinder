@@ -1,0 +1,81 @@
+# Alcohol (Gamemastery Guide pg. 120). Only drinking more raises the stage.
+# Effect durations are real seconds: 10 world minutes is 150, 8 world hours is 7200.
+# The +1 item bonus to saves against fear has no stat to land on yet, so stages 1 and 2 only show the popup.
+
+- type: cfAffliction
+  id: Alcohol
+  dc: 12
+  onsetWorldMinutes: 10
+  failureRaisesStage: false
+  exposureCooldownSeconds: 60
+  stages:
+  - worldMinutes: 10
+    effects:
+    - !type:CFPopupEffect
+      text: cf-affliction-alcohol-1
+      userOnly: true
+  - worldMinutes: 10
+    effects:
+    - !type:CFPopupEffect
+      text: cf-affliction-alcohol-2
+      userOnly: true
+    - !type:CFApplyConditionEffect
+      condition: OffGuard
+      durationSeconds: 150
+  - worldMinutes: 10
+    effects:
+    - !type:CFPopupEffect
+      text: cf-affliction-alcohol-3
+      userOnly: true
+    - !type:CFApplyConditionEffect
+      condition: Clumsy
+      value: 1
+      durationSeconds: 150
+    - !type:CFApplyConditionEffect
+      condition: OffGuard
+      durationSeconds: 150
+    - !type:CFApplyConditionEffect
+      condition: Stupefied
+      value: 2
+      durationSeconds: 150
+  - worldMinutes: 10
+    effects:
+    - !type:CFPopupEffect
+      text: cf-affliction-alcohol-4
+      userOnly: true
+    - !type:CFApplyConditionEffect
+      condition: Clumsy
+      value: 2
+      durationSeconds: 150
+    - !type:CFApplyConditionEffect
+      condition: Sickened
+      value: 2
+      durationSeconds: 150
+  - worldMinutes: 10
+    effects:
+    - !type:CFPopupEffect
+      text: cf-affliction-alcohol-5
+      userOnly: true
+    - !type:CFApplyConditionEffect
+      condition: Clumsy
+      value: 2
+      durationSeconds: 150
+    - !type:CFApplyConditionEffect
+      condition: Sickened
+      value: 2
+      durationSeconds: 150
+    - !type:CFApplyConditionEffect
+      condition: Stupefied
+      value: 2
+      durationSeconds: 150
+  - worldMinutes: 480
+    effects:
+    - !type:CFPopupEffect
+      text: cf-affliction-alcohol-6
+      userOnly: true
+    - !type:CFApplyConditionEffect
+      condition: Asleep
+      durationSeconds: 7200
+  - worldMinutes: 0
+    effects:
+    - !type:CFKillEffect

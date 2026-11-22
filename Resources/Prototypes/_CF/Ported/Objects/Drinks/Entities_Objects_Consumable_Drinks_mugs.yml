@@ -1,0 +1,109 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  parent: BaseItem
+  id: CFDrinkBaseMug
+  abstract: true
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    sprite: Objects/Consumable/Drinks/mug.rsi
+    layers:
+      - state: icon-0
+      - map: ["enum.SolutionContainerLayers.Fill"]
+        state: icon-3
+        visible: false
+  - type: MeleeWeapon
+    soundNoDamage:
+      path: "/Audio/Effects/Fluids/splat.ogg"
+    damage:
+      types:
+        Blunt: 0
+  - type: Solution
+    id: mug
+    solution:
+      maxVol: 10
+  - type: MixableSolution
+    solution: mug
+  - type: FitsInDispenser
+    solution: mug
+  - type: RefillableSolution
+    solution: mug
+  - type: DrainableSolution
+    solution: mug
+  - type: ExaminableSolution
+    solution: mug
+  - type: DrawableSolution
+    solution: mug
+  - type: InjectableSolution
+    solution: mug
+  - type: SolutionItemStatus
+    solution: mug
+  - type: UserInterface
+    interfaces:
+      enum.TransferAmountUiKey.Key:
+        type: TransferAmountBoundUserInterface
+  - type: Spillable
+    solution: mug
+  - type: Edible
+    edible: Drink
+    solution: mug
+    destroyOnEmpty: false # a mug is drunk from, not eaten
+  - type: Appearance
+  - type: SolutionTransfer
+    canChangeTransferAmount: true
+    transferAmount: 10
+  - type: SolutionContainerVisuals
+    maxFillLevels: 3
+    fillBaseName: icon-
+
+- type: entity
+  parent: CFDrinkBaseMug
+  id: CFMetalBeerMug
+  name: metal mug
+  categories: [ ForkFiltered ]
+  description: The most common metal mug.
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Consumable/Drinks/beer_mug_4.rsi
+  - type: DamageOnLand
+    damage:
+      types:
+        Blunt: 2
+  - type: DamageOtherOnHit
+    damage:
+      types:
+        Blunt: 2
+
+- type: entity
+  parent: CFDrinkBaseMug
+  id: CFWoodenBeerMug
+  name: wooden mug
+  categories: [ ForkFiltered ]
+  description: Wooden mug for beer.
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Consumable/Drinks/beer_mug_1.rsi
+  - type: PhysicalComposition
+    materialComposition:
+      CFWoodenPlanks: 20
+
+- type: entity
+  parent: CFDrinkBaseMug
+  id: CFSteelBeerMug
+  name: beer mug
+  categories: [ ForkFiltered ]
+  description: Wooden mug with iron inclusions.
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Consumable/Drinks/beer_mug_2.rsi
+
+- type: entity
+  parent: CFDrinkBaseMug
+  id: CFSteelWoodBeerMug
+  name: beer mug
+  categories: [ ForkFiltered ]
+  description: Wooden mug with iron inclusions.
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Consumable/Drinks/beer_mug_3.rsi

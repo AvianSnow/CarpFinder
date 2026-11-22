@@ -2,11 +2,17 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFAdrenalineRush
-  name: "Adrenaline Rush"
-  description: "+1 status bonus to Athletics. This feature will be implemented later."
+  name: cf-feat-adrenaline-rush
+  description: cf-feat-adrenaline-rush-desc
   class: Barbarian
   level: 1
   traits:
     - "Barbarian"
     - "Rage"
-  pendingAction: true
+  grants:
+    - !type:CFGrantWhile
+      while: Raging
+      stat: SkillChecks
+      type: Status
+      value: 1
+      skill: Athletics

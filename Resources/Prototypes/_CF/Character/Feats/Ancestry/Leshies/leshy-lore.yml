@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFLeshyLore
-  name: "Leshy Lore"
-  description: "Lore: Leshy Lore. Trained in Nature and Stealth."
+  name: cf-feat-leshy-lore
+  description: cf-feat-leshy-lore-desc
   ancestry: Leshy
   level: 1
   traits:

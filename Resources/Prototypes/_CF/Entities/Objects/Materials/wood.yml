@@ -5,6 +5,9 @@
   description: A piece of unprocessed wood. Good material for building, or starting a fire.
   categories: [ForkFiltered]
   components:
+    - type: CFItemPrice
+      copper: 20 # KCTG: Oak Log
+      fullResale: true
     - type: Item
       size: Normal
       shape:
@@ -39,8 +42,9 @@
       spawnCount: 3
     - type: Appearance
     - type: Damageable
-      damageContainer: Inorganic
       damageModifierSet: Wood
+    - type: Injurable
+      damageContainer: Inorganic
     - type: Destructible
       thresholds:
         - trigger: !type:DamageTrigger
@@ -63,6 +67,9 @@
   categories: [ForkFiltered]
   suffix: 1
   components:
+    - type: CFItemPrice
+      copper: 25 # KCTG: Oak Plank
+      fullResale: true
     - type: Item
       size: Normal
     - type: Sprite
@@ -98,8 +105,9 @@
       materialComposition:
         CFWoodenPlanks: 10
     - type: Damageable
-      damageContainer: Inorganic
       damageModifierSet: Wood
+    - type: Injurable
+      damageContainer: Inorganic
     - type: Destructible
       thresholds:
         - trigger: !type:DamageTrigger
@@ -116,6 +124,9 @@
   parent: CFWoodenPlanks1
   suffix: 10
   components:
+    - type: CFItemPrice
+      copper: 250 # KCTG: Oak Plank, 10 at 2 sp 5 cp
+      fullResale: true
     - type: Stack
       count: 10
 
@@ -124,6 +135,9 @@
   parent: CFWoodenPlanks1
   suffix: 20
   components:
+    - type: CFItemPrice
+      copper: 500 # KCTG: Oak Plank, 20 at 2 sp 5 cp
+      fullResale: true
     - type: Stack
       count: 20
 
@@ -134,6 +148,9 @@
   parent: CFWoodLog
   name: lucens log
   components:
+    - type: CFItemPrice
+      copper: 20 # KCTG: Oak Log
+      fullResale: true
     - type: Sprite
       sprite: _CP14/Objects/Materials/wood_lucens.rsi
       layers:
@@ -158,6 +175,9 @@
   name: lucens planks
   suffix: 1
   components:
+    - type: CFItemPrice
+      copper: 25 # KCTG: Oak Plank
+      fullResale: true
     - type: Sprite
       sprite: _CP14/Objects/Materials/wood_lucens.rsi
       layers:
@@ -180,6 +200,9 @@
   parent: CFLucensWoodenPlanks1
   suffix: 10
   components:
+    - type: CFItemPrice
+      copper: 250 # KCTG: Oak Plank, 10 at 2 sp 5 cp
+      fullResale: true
     - type: Stack
       count: 10
 
@@ -188,6 +211,9 @@
   parent: CFLucensWoodenPlanks1
   suffix: 20
   components:
+    - type: CFItemPrice
+      copper: 500 # KCTG: Oak Plank, 20 at 2 sp 5 cp
+      fullResale: true
     - type: Stack
       count: 20
 
@@ -198,6 +224,9 @@
   parent: CFWoodLog
   name: birch log
   components:
+    - type: CFItemPrice
+      copper: 17 # KCTG: Birch Log
+      fullResale: true
     - type: Sprite
       sprite: _CP14/Objects/Materials/wood_birch.rsi
       layers:
@@ -219,6 +248,9 @@
   name: birch planks
   suffix: 1
   components:
+    - type: CFItemPrice
+      copper: 20 # KCTG: Birch Plank
+      fullResale: true
     - type: Sprite
       sprite: _CP14/Objects/Materials/wood_birch.rsi
       layers:
@@ -238,6 +270,9 @@
   parent: CFBirchWoodenPlanks1
   suffix: 10
   components:
+    - type: CFItemPrice
+      copper: 200 # KCTG: Birch Plank, 10 at 2 sp
+      fullResale: true
     - type: Stack
       count: 10
 
@@ -246,6 +281,9 @@
   parent: CFBirchWoodenPlanks1
   suffix: 20
   components:
+    - type: CFItemPrice
+      copper: 400 # KCTG: Birch Plank, 20 at 2 sp
+      fullResale: true
     - type: Stack
       count: 20
 
@@ -256,6 +294,9 @@
   parent: CFWoodLog
   name: spruce log
   components:
+    - type: CFItemPrice
+      copper: 20 # KCTG: Fir Log
+      fullResale: true
     - type: Sprite
       sprite: _CP14/Objects/Materials/wood_spruce.rsi
       layers:
@@ -277,6 +318,9 @@
   name: spruce planks
   suffix: 1
   components:
+    - type: CFItemPrice
+      copper: 20 # KCTG: Fir Plank
+      fullResale: true
     - type: Sprite
       sprite: _CP14/Objects/Materials/wood_spruce.rsi
       layers:
@@ -296,6 +340,9 @@
   parent: CFSpruceWoodenPlanks1
   suffix: 10
   components:
+    - type: CFItemPrice
+      copper: 200 # KCTG: Fir Plank, 10 at 2 sp
+      fullResale: true
     - type: Stack
       count: 10
 
@@ -304,5 +351,8 @@
   parent: CFSpruceWoodenPlanks1
   suffix: 20
   components:
+    - type: CFItemPrice
+      copper: 400 # KCTG: Fir Plank, 20 at 2 sp
+      fullResale: true
     - type: Stack
       count: 20

@@ -19,6 +19,13 @@ public sealed partial class CFCheckComponent : Component
     [DataField]
     public bool BasicSave = true;
 
+    /// <summary>
+    /// When set, the user rolls this skill against the DC of <see cref="Defense"/> instead of the target saving, as Goblin
+    /// Song rolls Performance against Will DC. The degree is then the user's, so <c>success</c> effects run when it lands.
+    /// </summary>
+    [DataField]
+    public string? Skill;
+
     [DataField]
     public CFDcSource DcSource = CFDcSource.Spell;
 
@@ -29,6 +36,12 @@ public sealed partial class CFCheckComponent : Component
     /// <summary>Added to the user's attack roll.</summary>
     [DataField]
     public int AttackModifier;
+
+    /// <summary>
+    /// Only a creature this energy harms rolls the save. One it heals takes no roll (Heal on the living, Harm on the undead).
+    /// </summary>
+    [DataField]
+    public CFVitalEnergy? HarmedBy;
 
     /// <summary>Subtracted from the target's AC on an attack roll (phase bolt cuts circumstance bonuses).</summary>
     [DataField]

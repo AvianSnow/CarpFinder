@@ -1,0 +1,37 @@
+# Ported from CP14 by the CF converter.
+
+- type: construction
+  id: CFRoofWooden
+  graph: CFRoofWooden
+  startNode: start
+  targetNode: CFRoofWooden
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: true
+  conditions:
+  - !type:CFNoRoofInTile
+
+- type: construction
+  id: CFRoofWoodenBirch
+  graph: CFRoofWooden
+  startNode: start
+  targetNode: CFRoofWoodenBirch
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: true
+  conditions:
+  - !type:CFNoRoofInTile
+
+- type: construction
+  id: CFRoofStone
+  graph: CFRoofStone
+  startNode: start
+  targetNode: CFRoofStone
+  category: construction-category-structures
+  objectType: Structure
+  placementMode: SnapgridCenter
+  canBuildInImpassable: true
+  conditions:
+  - !type:CFNoRoofInTile

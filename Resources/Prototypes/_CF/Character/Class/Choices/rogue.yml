@@ -1,0 +1,76 @@
+# CarpFinder: Rogue's Racket, Player Core pages 166 and 167.
+# A racket's attribute can be the key attribute instead of Dexterity. keyAbility is what it uses until the player picks.
+- type: cfClassChoice
+  id: Mastermind
+  class: Rogue
+  slot: cf-class-choice-racket
+  name: cf-class-choice-mastermind
+  description: cf-class-choice-mastermind-desc
+  keyAbility: Intelligence
+  trainedSkills:
+    - Society
+  choices:
+    - kind: Skill
+      skills:
+        - Arcana
+        - Nature
+        - Occultism
+        - Religion
+    - kind: KeyAttribute
+      abilities: [ Dexterity, Intelligence ]
+  grants:
+    - !type:CFGrantOption
+      option: MastermindRecall
+
+- type: cfClassChoice
+  id: Ruffian
+  class: Rogue
+  slot: cf-class-choice-racket
+  name: cf-class-choice-ruffian
+  description: cf-class-choice-ruffian-desc
+  keyAbility: Strength
+  trainedSkills:
+    - Intimidation
+  choices:
+    - kind: KeyAttribute
+      abilities: [ Dexterity, Strength ]
+  grants:
+    - !type:CFGrantProficiency
+      proficiencies:
+        - MediumArmor
+      rank: Trained
+    - !type:CFGrantOption
+      option: AnyWeaponSneak
+    - !type:CFGrantCriticalSpecialization
+      specialization:
+        sneakAttackWeapon: true
+        when: TargetOffGuard
+
+- type: cfClassChoice
+  id: Scoundrel
+  class: Rogue
+  slot: cf-class-choice-racket
+  name: cf-class-choice-scoundrel
+  description: cf-class-choice-scoundrel-desc
+  keyAbility: Charisma
+  trainedSkills:
+    - Deception
+    - Diplomacy
+  choices:
+    - kind: KeyAttribute
+      abilities: [ Dexterity, Charisma ]
+  grants:
+    - !type:CFGrantOption
+      option: ScoundrelFeint
+
+- type: cfClassChoice
+  id: Thief
+  class: Rogue
+  slot: cf-class-choice-racket
+  name: cf-class-choice-thief
+  description: cf-class-choice-thief-desc
+  trainedSkills:
+    - Thievery
+  grants:
+    - !type:CFGrantOption
+      option: FinesseDexterity

@@ -2,9 +2,16 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFHalflingWeaponFamiliarity
-  name: "Halfling Weapon Familiarity"
-  description: "Ancestry weapons count as a simpler group for proficiency. Not applied in combat yet."
+  name: cf-feat-halfling-weapon-familiarity
+  description: cf-feat-halfling-weapon-familiarity-desc
   ancestry: Halfling
   level: 1
   traits:
     - "Halfling"
+  grants:
+    - !type:CFGrantWeaponFamiliarity
+      criticalSpecializationLevel: 5
+      traits:
+      - Halfling
+      weapons:
+      - CFSling

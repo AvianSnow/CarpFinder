@@ -1,0 +1,92 @@
+# CarpFinder: our own pantheon. Placeholder names and lore, to be replaced when the setting is written.
+# Each gives a skill, a favored weapon and a divine font. An empty divineFont means the follower can use both.
+# Domains are cfDomain prototypes (domains.yml), offered by Domain Initiate, Deity's Domain and the like.
+
+- type: cfDeity
+  id: Solhara
+  name: cf-deity-solhara
+  description: cf-deity-solhara-desc
+  domains: [ Sun, Healing, Repose ]
+  divineFont: [ Heal ]
+  trainedSkills:
+    - Medicine
+  grants:
+    - !type:CFGrantWeaponFamiliarity
+      weapons: [ CFSpear ]
+      favored: true
+
+- type: cfDeity
+  id: Keth
+  name: cf-deity-keth
+  description: cf-deity-keth-desc
+  domains: [ Truth, Duty, Protection ]
+  divineFont: [ Heal ]
+  trainedSkills:
+    - Society
+  grants:
+    - !type:CFGrantWeaponFamiliarity
+      weapons: [ CFLongsword ]
+      favored: true
+
+- type: cfDeity
+  id: Brannoch
+  name: cf-deity-brannoch
+  description: cf-deity-brannoch-desc
+  domains: [ Creation, Earth, Family ]
+  divineFont: [ Heal ]
+  trainedSkills:
+    - Crafting
+  grants:
+    - !type:CFGrantWeaponFamiliarity
+      weapons: [ CFWarhammer ]
+      favored: true
+
+- type: cfDeity
+  id: Vaelis
+  name: cf-deity-vaelis
+  description: cf-deity-vaelis-desc
+  domains: [ Air, Travel, Luck ]
+  trainedSkills:
+    - Acrobatics
+  grants:
+    - !type:CFGrantWeaponFamiliarity
+      weapons: [ CFShortbow ]
+      favored: true
+
+- type: cfDeity
+  id: Morvane
+  name: cf-deity-morvane
+  description: cf-deity-morvane-desc
+  domains: [ Death, Fate, Soul ]
+  trainedSkills:
+    - Religion
+  grants:
+    - !type:CFGrantWeaponFamiliarity
+      weapons: [ CFStaff ]
+      favored: true
+
+- type: cfDeity
+  id: Sivri
+  name: cf-deity-sivri
+  description: cf-deity-sivri-desc
+  domains: [ Secrecy, Trickery, Darkness ]
+  divineFont: [ Harm ]
+  trainedSkills:
+    - Stealth
+  grants:
+    - !type:CFGrantWeaponFamiliarity
+      weapons: [ CFDagger ]
+      favored: true
+
+- type: cfDeity
+  id: Ombrix
+  name: cf-deity-ombrix
+  description: cf-deity-ombrix-desc
+  domains: [ Undeath, Tyranny, Might ]
+  divineFont: [ Harm ]
+  trainedSkills:
+    - Intimidation
+  grants:
+    - !type:CFGrantWeaponFamiliarity
+      weapons: [ CFGreatsword ]
+      favored: true

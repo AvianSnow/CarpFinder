@@ -23,7 +23,7 @@
     West: /Textures/_CP14/Tiles/Grass/double_edge_W.png
   baseTurf: CFFloorDirt
   deconstructTools: [ CFDigging ]
-  itemDrop: CFFloorDirt
+  itemDrop: CFRandomDirtLootSpawner
   isSubfloor: false
   footstepSounds:
     collection: FootstepGrass
@@ -55,7 +55,7 @@
     West: /Textures/_CP14/Tiles/GrassLight/double_edge_W.png
   baseTurf: CFFloorDirt
   deconstructTools: [ CFDigging ]
-  itemDrop: CFFloorDirt
+  itemDrop: CFRandomDirtLootSpawner
   isSubfloor: false
   footstepSounds:
     collection: FootstepGrass
@@ -86,8 +86,8 @@
     North: /Textures/_CP14/Tiles/GrassTall/double_edge_N.png
     West: /Textures/_CP14/Tiles/GrassTall/double_edge_W.png
   baseTurf: CFFloorDirt
-  deconstructTools: [ CFFloorDirt ]
-  itemDrop: CFFloorDirt
+  deconstructTools: [ CFDigging ]
+  itemDrop: CFRandomDirtLootSpawner
   isSubfloor: false
   footstepSounds:
     collection: FootstepGrass
@@ -118,8 +118,8 @@
     North: /Textures/_CP14/Tiles/GrassBlood/double_edge_N.png
     West: /Textures/_CP14/Tiles/GrassBlood/double_edge_W.png
   baseTurf: CFFloorDirt
-  deconstructTools: [ CFFloorDirt ]
-  itemDrop: CFFloorDirt
+  deconstructTools: [ CFDigging ]
+  itemDrop: CFRandomDirtLootSpawner
   isSubfloor: false
   footstepSounds:
     collection: FootstepGrass
@@ -150,8 +150,8 @@
     North: /Textures/_CP14/Tiles/GrassBloodLight/double_edge_N.png
     West: /Textures/_CP14/Tiles/GrassBloodLight/double_edge_W.png
   baseTurf: CFFloorDirt
-  deconstructTools: [ CFFloorDirt ]
-  itemDrop: CFFloorDirt
+  deconstructTools: [ CFDigging ]
+  itemDrop: CFRandomDirtLootSpawner
   isSubfloor: false
   footstepSounds:
     collection: FootstepGrass
@@ -182,8 +182,8 @@
     North: /Textures/_CP14/Tiles/GrassBloodTall/double_edge_N.png
     West: /Textures/_CP14/Tiles/GrassBloodTall/double_edge_W.png
   baseTurf: CFFloorDirt
-  deconstructTools: [ CFFloorDirt ]
-  itemDrop: CFFloorDirt
+  deconstructTools: [ CFDigging ]
+  itemDrop: CFRandomDirtLootSpawner
   isSubfloor: false
   footstepSounds:
     collection: FootstepGrass

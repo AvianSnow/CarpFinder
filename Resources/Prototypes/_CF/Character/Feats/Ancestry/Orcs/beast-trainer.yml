@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFBeastTrainer
-  name: "Beast Trainer"
-  description: "Trained in Nature. Grants an item. Not added in play yet."
+  name: cf-feat-beast-trainer
+  description: cf-feat-beast-trainer-desc
   ancestry: Orc
   level: 1
   traits:

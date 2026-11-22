@@ -110,6 +110,11 @@ public abstract partial class SharedStunSystem
     {
         // hate. let me tell you how much i hate...
         // this may have unforseen consequences. blame scar
+        // CarpFinder: a prone creature being deleted must not stand, or stamina adds a status effect to the dying entity
+        if (TerminatingOrDeleted(entity))
+            return;
+        // CarpFinder end
+
         ForceStandUp((entity.Owner, null), true);
     }
 
@@ -469,7 +474,23 @@ public abstract partial class SharedStunSystem
         if (intersecting.Count == 0)
             return false;
 
-        var ourAABB = _entityLookup.GetAABBNoContainer(entity, entity.Comp.LocalPosition, entity.Comp.LocalRotation);
+        // CarpFinder: only fixtures that stand up count, or the flanking sensor makes every table in reach "no room"
+        var ourTransform = new Transform(entity.Comp.LocalPosition, entity.Comp.LocalRotation);
+        var ourAABB = new Box2(entity.Comp.LocalPosition, entity.Comp.LocalPosition);
+        if (_fixtureQuery.TryGetComponent(entity, out var ourFixtures))
+        {
+            foreach (var ourFixture in ourFixtures.Fixtures.Values)
+            {
+                if (!ourFixture.Hard)
+                    continue;
+
+                for (var i = 0; i < ourFixture.Shape.ChildCount; i++)
+                {
+                    ourAABB = ourAABB.Union(ourFixture.Shape.ComputeAABB(ourTransform, i));
+                }
+            }
+        }
+        // CarpFinder end
 
         foreach (var ent in intersecting)
         {

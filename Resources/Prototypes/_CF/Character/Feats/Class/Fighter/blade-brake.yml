@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFBladeBrake
-  name: "Blade Brake"
-  description: "Reaction. This feature will be implemented later."
+  name: cf-feat-blade-brake
+  description: cf-feat-blade-brake-desc
   class: Fighter
   level: 2
   traits:

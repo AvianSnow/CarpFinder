@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFTenaciousToxins
-  name: "Tenacious Toxins"
-  description: "This feature will be implemented later."
+  name: cf-feat-tenacious-toxins
+  description: cf-feat-tenacious-toxins-desc
   class: Alchemist
   level: 4
   traits:

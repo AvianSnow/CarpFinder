@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFJunkTinker
-  name: "Junk Tinker"
-  description: "Passive feat. Its special rule is not applied in play yet."
+  name: cf-feat-junk-tinker
+  description: cf-feat-junk-tinker-desc
   ancestry: Goblin
   level: 1
   traits:

@@ -219,6 +219,13 @@ public abstract partial class SharedPointingSystem : EntitySystem
             var gotEv = new AfterGotPointedAtEvent(pointer);
             RaiseLocalEvent(pointedMessageTarget, ref gotEv);
         }
+        // CarpFinder: pointing at the ground is Seek
+        else
+        {
+            var groundEv = new Content.Shared.CF.Detection.CFPointedAtGroundEvent(mapCoordinates);
+            RaiseLocalEvent(pointer, ref groundEv);
+        }
+        // CarpFinder end
     }
 
     protected virtual bool ShouldPointingArrowGoRogue()

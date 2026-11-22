@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFHobgoblinLore
-  name: "Hobgoblin Lore"
-  description: "Trained in Athletics and Crafting."
+  name: cf-feat-hobgoblin-lore
+  description: cf-feat-hobgoblin-lore-desc
   ancestry: Hobgoblin
   level: 1
   traits:

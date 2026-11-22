@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFEnhancedFamiliarMagus
-  name: "Enhanced Familiar"
-  description: "Requires a familiar."
+  name: cf-feat-enhanced-familiar-magus
+  description: cf-feat-enhanced-familiar-magus-desc
   class: Magus
   level: 2
   traits:

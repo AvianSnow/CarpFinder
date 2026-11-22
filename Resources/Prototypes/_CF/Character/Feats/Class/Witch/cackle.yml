@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFCackle
-  name: "Cackle"
-  description: "This feature will be implemented later."
+  name: cf-feat-cackle
+  description: cf-feat-cackle-desc
   class: Witch
   level: 1
   traits:

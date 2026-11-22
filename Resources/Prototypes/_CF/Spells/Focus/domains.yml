@@ -1,0 +1,708 @@
+# Domain spells (Player Core and Divine Mysteries): the first spell of each domain our deities have. A cfDomain grants one
+# (Character/domains.yml). Each costs a Focus Point and heightens to half the caster's level, rounded up. Spells cast as a
+# reaction are not here: their domain grants a CFGrantReaction instead.
+
+- type: entity
+  parent: CFSpellArea
+  id: CFDazzlingFlash
+  name: Dazzling Flash
+  description: "A 15-foot cone of light, Fortitude save. Success: dazzled 6 seconds. Failure: blinded 6 seconds and dazzled a minute. Critical failure: dazzled an hour. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 2
+  - type: CFSpell
+    spell: DazzlingFlash
+    rank: 0
+    focus: true
+  - type: CFAreaEffect
+    shape: Cone
+    sizeFeet: 15
+  - type: CFCheck
+    defense: Fortitude
+    basicSave: false
+  - type: CFDegreeEffects
+    success:
+    - !type:CFApplyConditionEffect
+      condition: Dazzled
+      value: 1
+      durationSeconds: 6
+    failure:
+    - !type:CFApplyConditionEffect
+      condition: Blinded
+      value: 1
+      durationSeconds: 6
+    - !type:CFApplyConditionEffect
+      condition: Dazzled
+      value: 1
+      durationSeconds: 60
+    criticalFailure:
+    - !type:CFApplyConditionEffect
+      condition: Blinded
+      value: 1
+      durationSeconds: 6
+    - !type:CFApplyConditionEffect
+      condition: Dazzled
+      value: 1
+      durationSeconds: 3600
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFHealersBlessing
+  name: Healer's Blessing
+  description: "For a minute an ally regains 2 more Hit Points each time a spell heals it, 2 more per rank above the first. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: HealersBlessing
+    rank: 0
+    focus: true
+  - type: EntityTargetAction
+    canTargetSelf: true
+  - type: CFTargeting
+    rangeFeet: 30
+    filter: Allies
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: SpellHealing
+      type: Untyped
+      value: 2
+      heightenValue: 2
+      durationSeconds: 60
+
+- type: entity
+  parent: CFSpellInstant
+  id: CFWordOfTruth
+  name: Word of Truth
+  description: "A symbol of your deity shows that you believe what you say: +2 status to Diplomacy for a minute. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: WordOfTruth
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    filter: All
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: SkillChecks
+      skill: Diplomacy
+      value: 2
+      durationSeconds: 60
+
+- type: entity
+  parent: CFSpellInstant
+  id: CFSwearOath
+  name: Swear Oath
+  description: "You swear to act: +1 status to attack rolls and skill checks for 6 seconds. The rules have you Ready an action for it. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: SwearOath
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    filter: All
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: AttackRoll
+      value: 1
+      durationSeconds: 6
+    - !type:CFBonusEffect
+      stat: SkillChecks
+      value: 1
+      durationSeconds: 6
+
+- type: entity
+  parent: CFSpellArea
+  id: CFCreativeSplash
+  name: Creative Splash
+  description: "Paint splashes a 5-foot burst within 30 feet, Will save. One colour per cast: white dazzles, red enfeebles, yellow frightens, blue makes clumsy. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 2
+  - type: CFSpell
+    spell: CreativeSplash
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+  - type: CFAreaEffect
+    shape: Burst
+    sizeFeet: 5
+  - type: CFCheck
+    defense: Will
+    basicSave: false
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFRandomOptionEffect
+      options:
+      - failure:
+        - !type:CFApplyConditionEffect
+          condition: Dazzled
+          value: 1
+          durationSeconds: 6
+        criticalFailure:
+        - !type:CFApplyConditionEffect
+          condition: Dazzled
+          value: 1
+          durationSeconds: 60
+      - failure:
+        - !type:CFApplyConditionEffect
+          condition: Enfeebled
+          value: 1
+          durationSeconds: 6
+        criticalFailure:
+        - !type:CFApplyConditionEffect
+          condition: Enfeebled
+          value: 2
+          durationSeconds: 6
+      - failure:
+        - !type:CFApplyConditionEffect
+          condition: Frightened
+          value: 1
+          durationSeconds: 6
+        criticalFailure:
+        - !type:CFApplyConditionEffect
+          condition: Frightened
+          value: 2
+          durationSeconds: 6
+      - failure:
+        - !type:CFApplyConditionEffect
+          condition: Clumsy
+          value: 1
+          durationSeconds: 6
+        criticalFailure:
+        - !type:CFApplyConditionEffect
+          condition: Clumsy
+          value: 2
+          durationSeconds: 6
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFHurtlingStone
+  name: Hurtling Stone
+  description: "A spell attack with a stone: 2d6 bludgeoning, 1d6 more per rank, and a push of 5 feet, or 10 on a critical hit. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: HurtlingStone
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 60
+  - type: CFCheck
+    defense: ArmorClass
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 2
+      die: 6
+      damageType: Bludgeoning
+      heightenDice: 1
+    success:
+    - !type:CFForcedMovementEffect
+      feet: 5
+    criticalSuccess:
+    - !type:CFForcedMovementEffect
+      feet: 10
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFSoothingWords
+  name: Soothing Words
+  description: "An ally gains +1 status to Will saves for a minute, +2 against emotion effects. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: SoothingWords
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+    filter: Allies
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: Will
+      value: 1
+      durationSeconds: 60
+    - !type:CFBonusEffect
+      stat: Will
+      value: 2
+      trait: Emotion
+      durationSeconds: 60
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFPushingGust
+  name: Pushing Gust
+  description: "A gust pushes a creature, Fortitude save. Success: 5 feet. Failure: 10 feet. Critical failure: 10 feet and prone. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 2
+  - type: CFSpell
+    spell: PushingGust
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 500
+  - type: CFCheck
+    defense: Fortitude
+    basicSave: false
+  - type: CFDegreeEffects
+    success:
+    - !type:CFForcedMovementEffect
+      feet: 5
+    failure:
+    - !type:CFForcedMovementEffect
+      feet: 10
+    criticalFailure:
+    - !type:CFForcedMovementEffect
+      feet: 10
+    - !type:CFApplyConditionEffect
+      condition: Prone
+      value: 1
+      durationSeconds: 6
+
+- type: entity
+  parent: CFSpellInstant
+  id: CFAgileFeet
+  name: Agile Feet
+  description: "For 6 seconds: +5 status to Speed, difficult terrain is ignored, and leaving an enemy's reach in the first 2 seconds is a free Step. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: AgileFeet
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    filter: All
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: Speed
+      value: 5
+      durationSeconds: 6
+    - !type:CFIgnoreTerrainEffect
+      durationSeconds: 6
+    - !type:CFFreeStepEffect
+      durationSeconds: 2
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFBitOfLuck
+  name: Bit of Luck
+  description: "For a minute, the next saving throw a willing creature makes is rolled twice and keeps the better. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 2
+  - type: CFSpell
+    spell: BitOfLuck
+    rank: 0
+    focus: true
+  - type: EntityTargetAction
+    canTargetSelf: true
+  - type: CFTargeting
+    rangeFeet: 30
+    filter: Allies
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFFortuneEffect
+      save: true
+      durationSeconds: 60
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFReadFate
+  name: Read Fate
+  description: "You learn one word about a creature's near future, or that it is inconclusive. Only you see it. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 2
+  - type: CFSpell
+    spell: ReadFate
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+    filter: All
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFReadFateEffect
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFEjectSoul
+  name: Eject Soul
+  description: "A touch loosens a creature's soul, Fortitude save. Failure: stunned 1. Critical failure: stunned for a round. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 2
+  - type: CFSpell
+    spell: EjectSoul
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 5
+    touch: true
+  - type: CFCheck
+    defense: Fortitude
+    basicSave: false
+  - type: CFDegreeEffects
+    failure:
+    - !type:CFApplyConditionEffect
+      condition: Stunned
+      value: 1
+      durationSeconds: 6
+    criticalFailure:
+    - !type:CFApplyConditionEffect
+      condition: Stunned
+      value: 3
+      durationSeconds: 6
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFCloakOfShadow
+  name: Cloak of Shadow
+  description: "Shadows wrap a willing creature: it is concealed for a minute. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: CloakOfShadow
+    rank: 0
+    focus: true
+  - type: EntityTargetAction
+    canTargetSelf: true
+  - type: CFTargeting
+    rangeFeet: 5
+    touch: true
+    filter: Allies
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFApplyConditionEffect
+      condition: Concealed
+      value: 1
+      durationSeconds: 60
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFTouchOfUndeath
+  name: Touch of Undeath
+  description: "A touch deals 1d6 void, 1d6 more per rank, basic Fortitude. On a failure vitality heals it only half for 6 seconds, or a minute on a critical failure. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: TouchOfUndeath
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 5
+    touch: true
+  - type: CFCheck
+    defense: Fortitude
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 6
+      damageType: Void
+      heightenDice: 1
+    failure:
+    - !type:CFApplyConditionEffect
+      condition: HealingHalved
+      value: 1
+      durationSeconds: 6
+    criticalFailure:
+    - !type:CFApplyConditionEffect
+      condition: HealingHalved
+      value: 1
+      durationSeconds: 60
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFTouchOfObedience
+  name: Touch of Obedience
+  description: "A touch erodes a creature's will, Will save. Success: stupefied 1 for 6 seconds. Failure: stupefied 2. Critical failure: stupefied 2 for a minute and prone. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: TouchOfObedience
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 5
+    touch: true
+  - type: CFCheck
+    defense: Will
+    basicSave: false
+  - type: CFDegreeEffects
+    success:
+    - !type:CFApplyConditionEffect
+      condition: Stupefied
+      value: 1
+      durationSeconds: 6
+    failure:
+    - !type:CFApplyConditionEffect
+      condition: Stupefied
+      value: 2
+      durationSeconds: 6
+    criticalFailure:
+    - !type:CFApplyConditionEffect
+      condition: Stupefied
+      value: 2
+      durationSeconds: 60
+    - !type:CFApplyConditionEffect
+      condition: Prone
+      value: 1
+      durationSeconds: 6
+
+- type: entity
+  parent: CFSpellInstant
+  id: CFAthleticRush
+  name: Athletic Rush
+  description: "For 6 seconds: +10 status to Speed and +2 status to Athletics. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: AthleticRush
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    filter: All
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: Speed
+      value: 10
+      durationSeconds: 6
+    - !type:CFBonusEffect
+      stat: SkillChecks
+      skill: Athletics
+      value: 2
+      durationSeconds: 6
+
+- type: cfSpell
+  id: DazzlingFlash
+  name: Dazzling Flash
+  rank: 1
+  traits: [Concentrate, Light, Manipulate, Visual]
+  actionCost: Two
+  range: 15-foot cone
+  targets: creatures in the cone
+  defense: Fortitude
+  summary: "Creatures in the cone are dazzled, or blinded for a round and dazzled for longer."
+  heightened: "At rank 3 the cone is 30 feet: TBA"
+
+- type: cfSpell
+  id: HealersBlessing
+  name: Healer's Blessing
+  rank: 1
+  traits: [Concentrate]
+  actionCost: One
+  range: 30 feet
+  targets: 1 willing living creature
+  summary: "A healing spell restores 2 more Hit Points to the target for a minute."
+  heightened: "2 more per rank"
+
+- type: cfSpell
+  id: WordOfTruth
+  name: Word of Truth
+  rank: 1
+  traits: [Concentrate]
+  actionCost: One
+  range: self
+  targets: self
+  summary: "+2 status to Diplomacy. That listeners know you believe what you say is for play."
+
+- type: cfSpell
+  id: SwearOath
+  name: Swear Oath
+  rank: 1
+  traits: [Concentrate]
+  actionCost: One
+  range: self
+  targets: self
+  summary: "+1 status to attack rolls and skill checks until your next turn."
+  heightened: "+2 at rank 5: TBA"
+
+- type: cfSpell
+  id: CreativeSplash
+  name: Creative Splash
+  rank: 1
+  traits: [Concentrate, Illusion, Manipulate, Visual]
+  actionCost: Two
+  range: 30 feet
+  targets: 5-foot burst
+  defense: Will
+  summary: "A random colour: dazzled, enfeebled, frightened or clumsy on a failed save."
+
+- type: cfSpell
+  id: HurtlingStone
+  name: Hurtling Stone
+  rank: 1
+  traits: [Attack, Earth, Manipulate]
+  actionCost: One
+  range: 60 feet
+  targets: 1 creature
+  defense: AC
+  summary: "2d6 bludgeoning on a hit, double on a critical hit, and a short push."
+  heightened: "1d6 more per rank"
+
+- type: cfSpell
+  id: SoothingWords
+  name: Soothing Words
+  rank: 1
+  traits: [Concentrate, Emotion, Mental]
+  actionCost: One
+  range: 30 feet
+  targets: 1 ally
+  summary: "+1 status to Will saves, +2 against emotion. Counteracting an emotion effect on the target: TBA"
+
+- type: cfSpell
+  id: PushingGust
+  name: Pushing Gust
+  rank: 1
+  traits: [Air, Concentrate, Manipulate]
+  actionCost: Two
+  range: 500 feet
+  targets: 1 creature
+  defense: Fortitude
+  summary: "The target is pushed away, and knocked prone on a critical failure."
+
+- type: cfSpell
+  id: AgileFeet
+  name: Agile Feet
+  rank: 1
+  traits: [Manipulate]
+  actionCost: One
+  range: self
+  targets: self
+  summary: "+5 feet Speed, ignore difficult terrain, and Step for free."
+
+- type: cfSpell
+  id: BitOfLuck
+  name: Bit of Luck
+  rank: 1
+  traits: [Concentrate, Fortune, Manipulate]
+  actionCost: Two
+  range: 30 feet
+  targets: 1 willing creature
+  summary: "The target rolls its next save twice and keeps the better. The 24 hour immunity: TBA"
+
+- type: cfSpell
+  id: ReadFate
+  name: Read Fate
+  rank: 1
+  traits: [Concentrate, Manipulate, Prediction]
+  actionCost: Two
+  range: 30 feet
+  targets: 1 creature other than you
+  summary: "One enigmatic word about the target's fate."
+
+- type: cfSpell
+  id: EjectSoul
+  name: Eject Soul
+  rank: 1
+  traits: [Concentrate, Incapacitation, Manipulate]
+  actionCost: Two
+  range: touch
+  targets: 1 living creature that has a soul
+  defense: Fortitude
+  summary: "Stunned on a failure. The soul leaving the body on a critical failure: TBA"
+
+- type: cfSpell
+  id: CloakOfShadow
+  name: Cloak of Shadow
+  rank: 1
+  traits: [Aura, Darkness, Manipulate, Shadow]
+  actionCost: One
+  range: touch
+  targets: 1 willing creature
+  summary: "The target is concealed. The rules dim the light around it instead, and the light layer is TBA, so here it is concealed outright."
+
+- type: cfSpell
+  id: TouchOfUndeath
+  name: Touch of Undeath
+  rank: 1
+  traits: [Manipulate, Void]
+  actionCost: One
+  range: touch
+  targets: 1 living creature
+  defense: basic Fortitude
+  summary: "Void damage, and healing on the target is halved on a failure."
+  heightened: "1d6 more per rank"
+
+- type: cfSpell
+  id: TouchOfObedience
+  name: Touch of Obedience
+  rank: 1
+  traits: [Manipulate, Mental]
+  actionCost: One
+  range: touch
+  targets: 1 living creature
+  defense: Will
+  summary: "Stupefied, and prone on a critical failure. The hour of immunity: TBA"
+
+- type: cfSpell
+  id: AthleticRush
+  name: Athletic Rush
+  rank: 1
+  traits: [Manipulate]
+  actionCost: One
+  range: self
+  targets: self
+  summary: "+10 feet Speed and +2 to Athletics for a round."

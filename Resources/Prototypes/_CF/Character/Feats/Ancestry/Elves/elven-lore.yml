@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFElvenLore
-  name: "Elven Lore"
-  description: "Lore: Elf Lore. Trained in Arcana and Nature."
+  name: cf-feat-elven-lore
+  description: cf-feat-elven-lore-desc
   ancestry: Elf
   level: 1
   traits:

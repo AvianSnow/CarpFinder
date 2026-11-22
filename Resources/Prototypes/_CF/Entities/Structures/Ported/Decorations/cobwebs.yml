@@ -1,0 +1,69 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  id: CFCobwebRight1
+  parent:
+  - CFBaseWallmount
+  - CFBaseFlammable
+  name: cobweb
+  description: The sticky web is surprisingly strong and unpleasant.
+  categories: [ ForkFiltered ]
+  suffix: Right. Corner.
+  placement:
+    mode: SnapgridCenter
+  components:
+  - type: Clickable
+  - type: Sprite
+    sprite: _CP14/Structures/Decoration/cobweb.rsi
+    state: cobweb_right1
+  - type: Transform
+    anchored: true
+  - type: Damageable
+    damageModifierSet: CFWood
+  - type: Injurable
+    damageContainer: Inorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 20
+      behaviors:
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: SpriteFade
+  - type: SpeedModifierContacts
+    walkSpeedModifier: 0.5
+    sprintSpeedModifier: 0.5
+  - type: CFIgnitionModifier
+    ignitionTimeModifier: 0.75
+    hideCaution: true
+  - type: FireVisuals
+    sprite: Mobs/Effects/onfire.rsi
+    normalState: Mouse_burning # I need a burning sprite on the Wallmount
+
+- type: entity
+  id: CFCobwebLeft1
+  parent: CFCobwebRight1
+  suffix: Left. Corner.
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Decoration/cobweb.rsi
+    state: cobweb_left1
+
+- type: entity
+  id: CFCobwebLeft2
+  parent: CFCobwebRight1
+  suffix: Left. Flat.
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Decoration/cobweb.rsi
+    state: cobweb_left2
+
+- type: entity
+  id: CFCobwebRight2
+  parent: CFCobwebLeft2
+  suffix: Right. Flat.
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Decoration/cobweb.rsi
+    state: cobweb_right2

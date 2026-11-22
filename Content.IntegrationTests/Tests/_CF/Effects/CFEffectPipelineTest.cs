@@ -109,7 +109,8 @@ public sealed class CFEffectPipelineTest : GameTest
     [Test]
     public async Task ForceBarrageVolleySpendsOneSlot()
     {
-        await CreateFloor();
+        // The bolts need a clear line, which the area spells' big footprint cannot promise.
+        _map = await CFDevMap.Load(Pair, new Box2i(-1, -1, 5, 2));
         EntityUid caster = default;
         EntityUid target = default;
         EntityUid spell = default;
@@ -153,7 +154,9 @@ public sealed class CFEffectPipelineTest : GameTest
     [Test]
     public async Task ConeHitsOnlyInFront()
     {
-        var map = await CreateFloor();
+        // The flames stop at walls, so the cone needs clear floor.
+        _map = await CFDevMap.Load(Pair, new Box2i(-3, -1, 6, 2), avoidStructures: true);
+        var map = _map.MapId;
         await Server.WaitAssertion(() =>
         {
             var caster = Mob(0, 0);

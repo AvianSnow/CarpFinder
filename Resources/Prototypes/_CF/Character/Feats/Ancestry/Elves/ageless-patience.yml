@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFAgelessPatience
-  name: "Ageless Patience"
-  description: "+2 circumstance bonus to Perception and Skill Check. Not applied in play yet. Improves Skill Check results. Not applied in play yet. Improves Perception results. Not applied in play yet."
+  name: cf-feat-ageless-patience
+  description: cf-feat-ageless-patience-desc
   ancestry: Elf
   level: 5
   traits:

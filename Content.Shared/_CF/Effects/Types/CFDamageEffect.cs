@@ -1,3 +1,5 @@
+using Content.Shared.CF.Spells;
+using Content.Shared.CF.Combat;
 using Content.Shared.CF.DamageTypes;
 using Robust.Shared.Prototypes;
 
@@ -32,6 +34,14 @@ public sealed partial class CFDamageEffect : CFEffect
     [DataField]
     public int HeightenFlat;
 
+    /// <summary>At least one die per level of the user, as Explode.</summary>
+    [DataField]
+    public bool DiceFromLevel;
+
+    /// <summary>One more die every this many levels of the user, from level 1. 0 means none.</summary>
+    [DataField]
+    public int DiceEveryLevels;
+
     /// <summary>False when this effect sits in a degree list and should always deal its full roll.</summary>
     [DataField]
     public bool ScaleByDegree = true;
@@ -64,13 +74,20 @@ public sealed partial class CFDamageEffect : CFEffect
         }
 
         var critical = multiplier >= 2f;
-        var dice = Dice + HeightenDice * args.HeightenSteps;
+        var amp = system.AmpOf(args);
+        var dice = (amp is { AmpDice: > 0 } ? amp.AmpDice : Dice) + (amp is { AmpHeightenDice: > 0 } ? amp.AmpHeightenDice : HeightenDice) * args.HeightenSteps;
+        if (DiceFromLevel)
+            dice = Math.Max(dice, entities.GetComponentOrNull<CFCombatantComponent>(args.User)?.Level ?? 1);
+
+        if (DiceEveryLevels > 0)
+            dice += ((entities.GetComponentOrNull<CFCombatantComponent>(args.User)?.Level ?? 1) - 1) / DiceEveryLevels;
+
         var flat = Flat + HeightenFlat * args.HeightenSteps + (AddAbilityModifier ? args.AbilityModifier : 0);
 
         // An effect that only adds persistent damage (a flaming rune's critical) deals nothing up front.
         if (dice > 0 || flat > 0)
         {
-            var rolled = system.Roll(dice, Die, flat);
+            var rolled = system.Roll(dice, system.SpellDie(args, amp is { AmpDie: > 0 } ? amp.AmpDie : Die), flat + system.DamageBonus(args.User) + system.PotencyBonus(args) + system.UnleashBonus(args));
             var amount = multiplier < 1f ? (int) (rolled * multiplier) : rolled * (int) multiplier;
             system.DealDamage(args.User, target, amount, DamageType, critical);
         }

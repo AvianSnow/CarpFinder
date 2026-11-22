@@ -1,0 +1,49 @@
+<Document>
+# Actions and controls
+Most actions use the controls you already have. They are not on the wheel, so this page lists them. Each one costs 1 action unless it says otherwise.
+
+## Fighting
+- [bold]Left-click in combat mode:[/bold] Strike. Aim roughly toward an enemy in reach and you hit the closest one. Neutral creatures have to be clicked.
+- [bold]Right-click in combat mode:[/bold] a wide swing. With an empty hand, a shield, or a weapon with the shove or disarm trait, it Shoves or Disarms instead. Three shoves in a row knock a target prone.
+- [bold]Use in hand (Z), a weapon with several damage types:[/bold] switches to the next type, for 1 action. The hand panel shows which is set.
+- [bold]Throw a weapon with the thrown trait:[/bold] a ranged Strike at the first enemy it touches. It flies to your cursor, up to six times its range. Past its range you take a penalty, and a spear sticks in what it hits.
+- [bold]Pull a living enemy:[/bold] Grapple. Press a move key while grabbed to Escape.
+- [bold]Ctrl and right-click while grabbing an enemy:[/bold] Reposition it.
+- [bold]Run into an enemy and keep pushing:[/bold] Tumble Through. It uses Acrobatics against their Reflex. Walking never tumbles.
+- [bold]Run out of an enemy's reach:[/bold] An enemy with Reactive Strike or a similar reaction gets a free Strike at you. Walking out is a Step instead: it costs 1 action and is safe, but with no actions left you are caught anyway.
+
+## Pointing in combat mode
+- [bold]At an enemy in reach:[/bold] Feint. You need to be trained in Deception. A success leaves it off-guard to your next melee attack, a critical success to all your melee attacks for 6 seconds. If your class marks enemies, the first point marks and the second Feints.
+- [bold]At an enemy further away:[/bold] your class mark, if you have one.
+- [bold]At the ground:[/bold] Seek. You search a 30-foot area for hidden creatures and traps.
+
+## Emotes in combat mode
+Pick these from the emote wheel. Typing them is only roleplay.
+- [bold]Scream:[/bold] Demoralize the enemy you are aiming at, within 30 feet.
+- [bold]Whistle:[/bold] Create a Diversion. Nearby enemies you fool lose sight of you.
+
+## Staying out of sight
+- [bold]Right-click cover, then Hide:[/bold] you need cover from an enemy to hide from it. Shutting yourself in a closet also works, and costs no action.
+- [bold]Walk while hidden:[/bold] Sneak. It spends an action every couple of seconds, and the result is secret. Running, or doing anything else, gives you away.
+
+## Helping
+- [bold]Click a creature with a healer's toolkit:[/bold] Treat Wounds. It takes 12 seconds and 3 actions spread across them, and needs training in Medicine. You hold your patient still until it is done, and if they break free it ends.
+- [bold]Throw a healing potion:[/bold] it breaks. On a living creature it heals them as if they drank it. Anywhere else it leaves a puddle, good for 5 minutes, that heals whoever lies prone in it or drinks it (alt-click the puddle).
+- [bold]Use a healer's toolkit in hand in combat mode:[/bold] Battle Medicine on the nearest hurt ally, if you have the feat.
+- [bold]Right-click an ally, then Aid:[/bold] help with their next check.
+- [bold]Buckle into a bed, then use Sleep:[/bold] a long rest. It restores your Hit Points, spell slots and focus points.
+- [bold]Examine a creature, then the information icon:[/bold] Recall Knowledge. You get one try per creature.
+
+## Feats that use these controls
+- [bold]Double Slice, Twin Feint:[/bold] right-click one creature with a melee weapon in each hand. 2 actions.
+- [bold]Vicious Swing:[/bold] right-click one creature. 2 actions. With two or more creatures in the arc, it stays a wide swing.
+- [bold]Snagging Strike, Exacting Strike, Tumble Behind:[/bold] these happen on their own.
+- [bold]Confident Finisher:[/bold] Alt and Z with your weapon in hand, aimed at an enemy in reach.
+- [bold]Courageous Anthem:[/bold] use the wheel for a minute of it, or play a held instrument and it lasts as long as the music. The music plays on with the instrument window closed, while the instrument stays in your hands.
+
+## Languages
+Press the speech bubble button on the top bar to open the language menu, and choose the language you speak. You always read your own words. Anyone else who does not know the language hears nonsense, and the same word always sounds the same. Your ancestry teaches you some languages, and each point of Intelligence adds one more.
+
+## Still on the wheel
+Spells, Leap, Rage, Flurry of Blows, Spellstrike, Sudden Charge, and Point-Blank Stance.
+</Document>

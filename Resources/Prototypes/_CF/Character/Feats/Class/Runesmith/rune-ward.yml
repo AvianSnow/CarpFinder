@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFRuneWard
-  name: "Rune Ward"
-  description: "+1 circumstance bonus to Ac and Saving Throw. Reaction. This feature will be implemented later."
+  name: cf-feat-rune-ward
+  description: cf-feat-rune-ward-desc
   class: Runesmith
   level: 1
   traits:

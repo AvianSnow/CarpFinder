@@ -1,18 +1,32 @@
+using Content.Shared.CF.Checks;
+using Content.Shared.CF.Traits;
+using Robust.Shared.GameStates;
+using Robust.Shared.Prototypes;
+using Robust.Shared.Serialization;
+
 namespace Content.Shared.CF.Effects;
 
 /// <summary>
-/// Timed bonuses and penalties on a creature: bless, shield, mystic armor, heroism, runic weapon, haste.
-/// Server-only. Read totals with <see cref="CFBonusSystem.Total"/>, which applies the remaster stacking rules.
+/// Bonuses and penalties on a creature: timed ones such as bless, shield and heroism, and lasting ones from equipment
+/// and character options. Only the bonuses reach the client, for the HUD and sheet. Read totals with <see cref="CFBonusSystem.Total"/>, which applies the remaster stacking rules.
 /// </summary>
-[RegisterComponent, Access(typeof(CFBonusSystem))]
+[RegisterComponent, NetworkedComponent, AutoGenerateComponentState, Access(typeof(CFBonusSystem))]
 public sealed partial class CFBonusesComponent : Component
 {
-    [DataField]
+    [DataField, AutoNetworkedField]
     public List<CFActiveBonus> Bonuses = new();
+
+    /// <summary>Save results made a degree better. Applied by <see cref="CFBonusSystem.UpgradeSave"/>.</summary>
+    [DataField]
+    public List<CFSaveUpgrade> SaveUpgrades = new();
 
     /// <summary>The next attack roll is rolled twice and the higher result used (sure strike). Until this time.</summary>
     [DataField]
     public TimeSpan FortuneUntil;
+
+    /// <summary>Until this time the next saving throw is rolled twice, and the better result kept (Bit of Luck).</summary>
+    [DataField]
+    public TimeSpan SaveFortuneUntil;
 
     /// <summary>Non-zero while quickened or slowed has replaced the action cap.</summary>
     [DataField]
@@ -22,7 +36,7 @@ public sealed partial class CFBonusesComponent : Component
     public TimeSpan ActionCapUntil;
 }
 
-[DataDefinition]
+[DataDefinition, Serializable, NetSerializable]
 public sealed partial class CFActiveBonus
 {
     [DataField]
@@ -41,6 +55,34 @@ public sealed partial class CFActiveBonus
     /// <summary>Set for bonuses from worn equipment. They last until the equipment changes, not for a time.</summary>
     [DataField]
     public CFEquipmentBonusSlot? Equipment;
+
+    /// <summary>When set, this only counts against a source with this trait.</summary>
+    [DataField]
+    public ProtoId<CFTraitPrototype>? Trait;
+
+    /// <summary>When set on <see cref="CFBonusStat.SkillChecks"/>, this only counts for this skill.</summary>
+    [DataField]
+    public string? Skill;
+
+    /// <summary>What added a bonus that can end early, such as a stance. See <see cref="CFBonusSystem.RemoveBonusesFrom"/>.</summary>
+    [DataField]
+    public string? Source;
+}
+
+/// <summary>One save result that becomes a degree better, such as a success against fear.</summary>
+[DataDefinition]
+public sealed partial class CFSaveUpgrade
+{
+    /// <summary>Null means every save.</summary>
+    [DataField]
+    public CFDefenseType? Save;
+
+    /// <summary>When set, this only works against a source with this trait.</summary>
+    [DataField]
+    public ProtoId<CFTraitPrototype>? Trait;
+
+    [DataField]
+    public CFDegree From = CFDegree.Success;
 }
 
 /// <summary>Where a lasting equipment bonus comes from, so re-equipping replaces it instead of adding another.</summary>
@@ -66,6 +108,26 @@ public enum CFBonusStat : byte
 
     /// <summary>Extra weapon damage dice on Strikes (runic weapon). Not a typed bonus: the highest applies.</summary>
     WeaponDice,
+
+    /// <summary>Every damage roll: melee, ranged and spells. Counts as one stat with <see cref="MeleeDamage"/> for stacking.</summary>
+    Damage,
+
+    /// <summary>One save. Counts as one stat with <see cref="Saves"/> for stacking.</summary>
+    Fortitude,
+    Reflex,
+    Will,
+
+    /// <summary>All Speeds, in feet. <c>CFArmorSystem</c> reads it with the other Speed penalties.</summary>
+    Speed,
+
+    /// <summary>Athletics checks to Shove, Trip, Disarm, Grapple or Reposition.</summary>
+    Maneuvers,
+
+    /// <summary>The DC against someone Shoving, Tripping, Disarming, Grappling or Repositioning this creature.</summary>
+    ManeuverDc,
+
+    /// <summary>Extra Hit Points each time a spell heals this creature (Healer's Blessing).</summary>
+    SpellHealing,
 }
 
 /// <summary>Bonuses of the same type do not stack: the highest bonus and the worst penalty of each type apply.</summary>

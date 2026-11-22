@@ -2,8 +2,8 @@
 # source: Carpfinder Guns & Gears
 - type: cfFeat
   id: CFHaphazardRepair
-  name: "Haphazard Repair"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-haphazard-repair
+  description: cf-feat-haphazard-repair-desc
   class: Inventor
   level: 1
   traits:

@@ -1,0 +1,495 @@
+# CarpFinder: an Animist attunes to two apparitions. Each is offered in both slots, and a build can only have it once.
+
+- type: cfClassChoice
+  id: PrimaryCrafter
+  class: Animist
+  slot: cf-class-choice-apparition-primary
+  group: Crafter
+  name: cf-class-choice-primarycrafter
+  description: cf-class-choice-primarycrafter-desc
+  trainedSkills:
+    - Lore
+  grants:
+    - !type:CFGrantApparition
+      primary: true
+      spells:
+        - Sigil
+
+- type: cfClassChoice
+  id: SecondCrafter
+  class: Animist
+  slot: cf-class-choice-apparition-second
+  group: Crafter
+  name: cf-class-choice-secondcrafter
+  description: cf-class-choice-secondcrafter-desc
+  trainedSkills:
+    - Lore
+  grants:
+    - !type:CFGrantApparition
+      spells:
+        - Sigil
+
+- type: cfClassChoice
+  id: PrimaryCustodian
+  class: Animist
+  slot: cf-class-choice-apparition-primary
+  group: Custodian
+  name: cf-class-choice-primarycustodian
+  description: cf-class-choice-primarycustodian-desc
+  trainedSkills:
+    - Lore
+  grants:
+    - !type:CFGrantApparition
+      primary: true
+      vessel: GardenOfHealing
+      spells:
+        - TangleVine
+
+- type: cfClassChoice
+  id: SecondCustodian
+  class: Animist
+  slot: cf-class-choice-apparition-second
+  group: Custodian
+  name: cf-class-choice-secondcustodian
+  description: cf-class-choice-secondcustodian-desc
+  trainedSkills:
+    - Lore
+  grants:
+    - !type:CFGrantApparition
+      vessel: GardenOfHealing
+      spells:
+        - TangleVine
+
+- type: cfClassChoice
+  id: PrimaryEcho
+  class: Animist
+  slot: cf-class-choice-apparition-primary
+  group: Echo
+  name: cf-class-choice-primaryecho
+  description: cf-class-choice-primaryecho-desc
+  trainedSkills:
+    - Lore
+  grants:
+    - !type:CFGrantApparition
+      primary: true
+      vessel: StoreTime
+      spells:
+        - Figment
+  features:
+    - level: 3
+      name: "Apparition Spell"
+      description: "Your apparition teaches you another spell."
+      grants:
+        - !type:CFGrantApparition
+          spells:
+            - DispelMagic
+
+- type: cfClassChoice
+  id: SecondEcho
+  class: Animist
+  slot: cf-class-choice-apparition-second
+  group: Echo
+  name: cf-class-choice-secondecho
+  description: cf-class-choice-secondecho-desc
+  trainedSkills:
+    - Lore
+  grants:
+    - !type:CFGrantApparition
+      vessel: StoreTime
+      spells:
+        - Figment
+  features:
+    - level: 3
+      name: "Apparition Spell"
+      description: "Your apparition teaches you another spell."
+      grants:
+        - !type:CFGrantApparition
+          spells:
+            - DispelMagic
+
+- type: cfClassChoice
+  id: PrimaryImpostor
+  class: Animist
+  slot: cf-class-choice-apparition-primary
+  group: Impostor
+  name: cf-class-choice-primaryimpostor
+  description: cf-class-choice-primaryimpostor-desc
+  trainedSkills:
+    - Lore
+  grants:
+    - !type:CFGrantApparition
+      primary: true
+      vessel: DiscomfitingWhisper
+  features:
+    - level: 3
+      name: "Apparition Spell"
+      description: "Your apparition teaches you another spell."
+      grants:
+        - !type:CFGrantApparition
+          spells:
+            - Invisibility
+
+- type: cfClassChoice
+  id: SecondImpostor
+  class: Animist
+  slot: cf-class-choice-apparition-second
+  group: Impostor
+  name: cf-class-choice-secondimpostor
+  description: cf-class-choice-secondimpostor-desc
+  trainedSkills:
+    - Lore
+  grants:
+    - !type:CFGrantApparition
+      vessel: DiscomfitingWhisper
+  features:
+    - level: 3
+      name: "Apparition Spell"
+      description: "Your apparition teaches you another spell."
+      grants:
+        - !type:CFGrantApparition
+          spells:
+            - Invisibility
+
+- type: cfClassChoice
+  id: PrimaryLamentation
+  class: Animist
+  slot: cf-class-choice-apparition-primary
+  group: Lamentation
+  name: cf-class-choice-primarylamentation
+  description: cf-class-choice-primarylamentation-desc
+  trainedSkills:
+    - Lore
+  grants:
+    - !type:CFGrantApparition
+      primary: true
+      vessel: WishMarket
+      spells:
+        - SureStrike
+
+- type: cfClassChoice
+  id: SecondLamentation
+  class: Animist
+  slot: cf-class-choice-apparition-second
+  group: Lamentation
+  name: cf-class-choice-secondlamentation
+  description: cf-class-choice-secondlamentation-desc
+  trainedSkills:
+    - Lore
+  grants:
+    - !type:CFGrantApparition
+      vessel: WishMarket
+      spells:
+        - SureStrike
+
+- type: cfClassChoice
+  id: PrimaryLurker
+  class: Animist
+  slot: cf-class-choice-apparition-primary
+  group: Lurker
+  name: cf-class-choice-primarylurker
+  description: cf-class-choice-primarylurker-desc
+  trainedSkills:
+    - Lore
+  grants:
+    - !type:CFGrantApparition
+      primary: true
+      vessel: DevouringDarkForm
+
+- type: cfClassChoice
+  id: SecondLurker
+  class: Animist
+  slot: cf-class-choice-apparition-second
+  group: Lurker
+  name: cf-class-choice-secondlurker
+  description: cf-class-choice-secondlurker-desc
+  trainedSkills:
+    - Lore
+  grants:
+    - !type:CFGrantApparition
+      vessel: DevouringDarkForm
+
+- type: cfClassChoice
+  id: PrimaryMonarch
+  class: Animist
+  slot: cf-class-choice-apparition-primary
+  group: Monarch
+  name: cf-class-choice-primarymonarch
+  description: cf-class-choice-primarymonarch-desc
+  trainedSkills:
+    - Lore
+  grants:
+    - !type:CFGrantApparition
+      primary: true
+      vessel: NymphsGrace
+      spells:
+        - TangleVine
+        - Charm
+
+- type: cfClassChoice
+  id: SecondMonarch
+  class: Animist
+  slot: cf-class-choice-apparition-second
+  group: Monarch
+  name: cf-class-choice-secondmonarch
+  description: cf-class-choice-secondmonarch-desc
+  trainedSkills:
+    - Lore
+  grants:
+    - !type:CFGrantApparition
+      vessel: NymphsGrace
+      spells:
+        - TangleVine
+        - Charm
+
+- type: cfClassChoice
+  id: PrimaryReveler
+  class: Animist
+  slot: cf-class-choice-apparition-primary
+  group: Reveler
+  name: cf-class-choice-primaryreveler
+  description: cf-class-choice-primaryreveler-desc
+  trainedSkills:
+    - Lore
+  grants:
+    - !type:CFGrantApparition
+      primary: true
+      vessel: TrickstersMirrors
+      spells:
+        - Prestidigitation
+  features:
+    - level: 3
+      name: "Apparition Spell"
+      description: "Your apparition teaches you another spell."
+      grants:
+        - !type:CFGrantApparition
+          spells:
+            - LaughingFit
+
+- type: cfClassChoice
+  id: SecondReveler
+  class: Animist
+  slot: cf-class-choice-apparition-second
+  group: Reveler
+  name: cf-class-choice-secondreveler
+  description: cf-class-choice-secondreveler-desc
+  trainedSkills:
+    - Lore
+  grants:
+    - !type:CFGrantApparition
+      vessel: TrickstersMirrors
+      spells:
+        - Prestidigitation
+  features:
+    - level: 3
+      name: "Apparition Spell"
+      description: "Your apparition teaches you another spell."
+      grants:
+        - !type:CFGrantApparition
+          spells:
+            - LaughingFit
+
+- type: cfClassChoice
+  id: PrimaryShepherd
+  class: Animist
+  slot: cf-class-choice-apparition-primary
+  group: Shepherd
+  name: cf-class-choice-primaryshepherd
+  description: cf-class-choice-primaryshepherd-desc
+  trainedSkills:
+    - Lore
+  grants:
+    - !type:CFGrantApparition
+      primary: true
+      vessel: GiftOfTheAnemos
+
+- type: cfClassChoice
+  id: SecondShepherd
+  class: Animist
+  slot: cf-class-choice-apparition-second
+  group: Shepherd
+  name: cf-class-choice-secondshepherd
+  description: cf-class-choice-secondshepherd-desc
+  trainedSkills:
+    - Lore
+  grants:
+    - !type:CFGrantApparition
+      vessel: GiftOfTheAnemos
+
+- type: cfClassChoice
+  id: PrimarySpeaker
+  class: Animist
+  slot: cf-class-choice-apparition-primary
+  group: Speaker
+  name: cf-class-choice-primaryspeaker
+  description: cf-class-choice-primaryspeaker-desc
+  trainedSkills:
+    - Lore
+  grants:
+    - !type:CFGrantApparition
+      primary: true
+      vessel: CrownOfProphets
+
+- type: cfClassChoice
+  id: SecondSpeaker
+  class: Animist
+  slot: cf-class-choice-apparition-second
+  group: Speaker
+  name: cf-class-choice-secondspeaker
+  description: cf-class-choice-secondspeaker-desc
+  trainedSkills:
+    - Lore
+  grants:
+    - !type:CFGrantApparition
+      vessel: CrownOfProphets
+
+- type: cfClassChoice
+  id: PrimaryStalker
+  class: Animist
+  slot: cf-class-choice-apparition-primary
+  group: Stalker
+  name: cf-class-choice-primarystalker
+  description: cf-class-choice-primarystalker-desc
+  trainedSkills:
+    - Lore
+  grants:
+    - !type:CFGrantApparition
+      primary: true
+
+- type: cfClassChoice
+  id: SecondStalker
+  class: Animist
+  slot: cf-class-choice-apparition-second
+  group: Stalker
+  name: cf-class-choice-secondstalker
+  description: cf-class-choice-secondstalker-desc
+  trainedSkills:
+    - Lore
+  grants:
+    - !type:CFGrantApparition
+
+- type: cfClassChoice
+  id: PrimarySteward
+  class: Animist
+  slot: cf-class-choice-apparition-primary
+  group: Steward
+  name: cf-class-choice-primarysteward
+  description: cf-class-choice-primarysteward-desc
+  trainedSkills:
+    - Lore
+  grants:
+    - !type:CFGrantApparition
+      primary: true
+      vessel: EarthsBile
+      spells:
+        - Ignition
+  features:
+    - level: 5
+      name: "Apparition Spell"
+      description: "Your apparition teaches you another spell."
+      grants:
+        - !type:CFGrantApparition
+          spells:
+            - Fireball
+
+- type: cfClassChoice
+  id: SecondSteward
+  class: Animist
+  slot: cf-class-choice-apparition-second
+  group: Steward
+  name: cf-class-choice-secondsteward
+  description: cf-class-choice-secondsteward-desc
+  trainedSkills:
+    - Lore
+  grants:
+    - !type:CFGrantApparition
+      vessel: EarthsBile
+      spells:
+        - Ignition
+  features:
+    - level: 5
+      name: "Apparition Spell"
+      description: "Your apparition teaches you another spell."
+      grants:
+        - !type:CFGrantApparition
+          spells:
+            - Fireball
+
+- type: cfClassChoice
+  id: PrimaryVanguard
+  class: Animist
+  slot: cf-class-choice-apparition-primary
+  group: Vanguard
+  name: cf-class-choice-primaryvanguard
+  description: cf-class-choice-primaryvanguard-desc
+  trainedSkills:
+    - Lore
+  grants:
+    - !type:CFGrantApparition
+      primary: true
+      vessel: RiverCarvingMountains
+      spells:
+        - HydraulicPush
+
+- type: cfClassChoice
+  id: SecondVanguard
+  class: Animist
+  slot: cf-class-choice-apparition-second
+  group: Vanguard
+  name: cf-class-choice-secondvanguard
+  description: cf-class-choice-secondvanguard-desc
+  trainedSkills:
+    - Lore
+  grants:
+    - !type:CFGrantApparition
+      vessel: RiverCarvingMountains
+      spells:
+        - HydraulicPush
+
+- type: cfClassChoice
+  id: PrimaryWitness
+  class: Animist
+  slot: cf-class-choice-apparition-primary
+  group: Witness
+  name: cf-class-choice-primarywitness
+  description: cf-class-choice-primarywitness-desc
+  trainedSkills:
+    - Lore
+  grants:
+    - !type:CFGrantApparition
+      primary: true
+      vessel: EmbodimentOfBattle
+      spells:
+        - Shield
+        - SureStrike
+  features:
+    - level: 3
+      name: "Apparition Spell"
+      description: "Your apparition teaches you another spell."
+      grants:
+        - !type:CFGrantApparition
+          spells:
+            - Enlarge
+
+- type: cfClassChoice
+  id: SecondWitness
+  class: Animist
+  slot: cf-class-choice-apparition-second
+  group: Witness
+  name: cf-class-choice-secondwitness
+  description: cf-class-choice-secondwitness-desc
+  trainedSkills:
+    - Lore
+  grants:
+    - !type:CFGrantApparition
+      vessel: EmbodimentOfBattle
+      spells:
+        - Shield
+        - SureStrike
+  features:
+    - level: 3
+      name: "Apparition Spell"
+      description: "Your apparition teaches you another spell."
+      grants:
+        - !type:CFGrantApparition
+          spells:
+            - Enlarge

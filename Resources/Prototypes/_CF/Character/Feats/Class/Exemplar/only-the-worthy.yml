@@ -2,8 +2,8 @@
 # source: Carpfinder War of Immortals
 - type: cfFeat
   id: CFOnlytheWorthy
-  name: "Only the Worthy"
-  description: "This feature will be implemented later."
+  name: cf-feat-onlythe-worthy
+  description: cf-feat-onlythe-worthy-desc
   class: Exemplar
   level: 4
   traits:

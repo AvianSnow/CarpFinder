@@ -34,14 +34,36 @@
   features:
     - level: 1
       name: "Reactive Strike"
-      description: "When a creature in your reach casts a spell or makes a ranged Strike, you can Strike it. Uses your reaction."
+      description: "When an enemy in your reach casts a spell, makes a ranged Strike, or runs out of your reach, you Strike it. Uses your reaction. An enemy that walks out and spends 1 action is safe."
+      grants:
+        - !type:CFGrantOption
+          option: ReactiveStrike
     - level: 1
       name: "Shield Block"
       description: "While your shield is raised, you can spend your reaction to block 5 damage."
+      grants:
+        - !type:CFGrantOption
+          option: ShieldBlock
     - level: 3
       name: "Bravery"
-      description: "This feature will be implemented later."
+      description: "Expert in Will saves. A success against fear becomes a critical success, and frightened is 1 lower whenever you gain it."
+      grants:
+        - !type:CFGrantProficiency
+          proficiencies:
+            - Will
+          rank: Expert
+        - !type:CFGrantSaveUpgrade
+          trait: Fear
+        - !type:CFGrantOption
+          option: Bravery
     - level: 5
       name: "Fighter Weapon Mastery"
-      description: "This feature will be implemented later."
+      description: "Choose a weapon group. You become a master with it. Advanced weapons in that group become expert. A critical hit with a weapon you are a master with gets its critical specialization."
+      grants:
+        - !type:CFGrantCriticalSpecialization
+          specialization:
+            minRank: Master
+      choiceTitle: cf-class-feature-weapon-mastery
+      choices:
+        - kind: WeaponGroup
   # Class key-attribute boost is applied from keyAbility in code (PF2e).

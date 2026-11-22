@@ -1,6 +1,6 @@
 namespace Content.Server.CF.Temperature;
 
-[RegisterComponent, AutoGenerateComponentPause, Access(typeof(CFFireSpreadSystem))]
+[RegisterComponent, Access(typeof(CFFireSpreadSystem))]
 public sealed partial class CFAutoIgniteComponent : Component
 {
     [DataField]

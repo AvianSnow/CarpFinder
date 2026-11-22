@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFUndeadCreator
-  name: "Undead Creator"
-  description: "Requires You aren't holy. Grants Create Undead. This feature will be implemented later."
+  name: cf-feat-undead-creator
+  description: cf-feat-undead-creator-desc
   class: Necromancer
   level: 2
   rarity: Uncommon

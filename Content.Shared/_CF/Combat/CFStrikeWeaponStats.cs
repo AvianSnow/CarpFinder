@@ -5,7 +5,7 @@ namespace Content.Shared.CF.Combat;
 
 /// <summary>
 /// Snapshot of a weapon for one Strike: dice after runes and two-hand, damage type, proficiency,
-/// and the weapon's traits resolved from their <c>cfTrait</c> rules.
+/// and the weapon's traits resolved from their <c>cfTrait</c> rules. <c>Item</c> is null for fists.
 /// Built by <see cref="CFWeaponSystem.Stats"/> or <see cref="CFStrikeSystem.UnarmedStats"/>.
 /// </summary>
 public readonly record struct CFStrikeWeaponStats(
@@ -19,7 +19,9 @@ public readonly record struct CFStrikeWeaponStats(
     int Potency = 0,
     int Striking = 0,
     int Reload = 0,
-    bool ThrownStrike = false)
+    bool ThrownStrike = false,
+    bool Improvised = false,
+    EntityUid? Item = null)
 {
     public bool Agile => Traits.Agile;
     public bool Finesse => Traits.Finesse;
@@ -59,6 +61,15 @@ public sealed record CFWeaponTraits
 
     /// <summary>On a critical hit the weapon's dice become this size, plus one extra die of it.</summary>
     public int Fatal { get; init; }
+
+    /// <summary>Damage uses the weaker of the target's piercing and bludgeoning resistance.</summary>
+    public bool Concussive { get; init; }
+
+    /// <summary>+1 damage, and -2 to hit without Strength +2.</summary>
+    public bool Kickback { get; init; }
+
+    /// <summary>The radius in feet of the splash on a hit. 0 means none.</summary>
+    public int Scatter { get; init; }
 
     /// <summary>Die size when wielded in two hands.</summary>
     public int TwoHand { get; init; }
@@ -103,6 +114,9 @@ public sealed record CFWeaponTraits
                 CFTraitRule.Volley => result with { Volley = Math.Max(result.Volley, trait.Value) },
                 CFTraitRule.Deadly => result with { Deadly = Math.Max(result.Deadly, trait.Value) },
                 CFTraitRule.Fatal => result with { Fatal = Math.Max(result.Fatal, trait.Value) },
+                CFTraitRule.Concussive => result with { Concussive = true },
+                CFTraitRule.Kickback => result with { Kickback = true },
+                CFTraitRule.Scatter => result with { Scatter = Math.Max(result.Scatter, trait.Value) },
                 CFTraitRule.TwoHand => result with { TwoHand = Math.Max(result.TwoHand, trait.Value) },
                 _ => result,
             };
@@ -114,3 +128,10 @@ public sealed record CFWeaponTraits
         return versatile == null ? result : result with { Versatile = versatile };
     }
 }
+
+/// <summary>What a Strike would roll with, from <see cref="CFStrikeSystem.TryPreviewMelee"/>.</summary>
+/// <param name="Attack">The attack bonus before Multiple Attack Penalty.</param>
+/// <param name="Map">The Multiple Attack Penalty on the next attack, as zero or less.</param>
+/// <param name="ArmorClass">What it has to beat.</param>
+/// <param name="AverageDamage">The damage of a plain hit, on average.</param>
+public readonly record struct CFStrikePreview(int Attack, int Map, int ArmorClass, float AverageDamage);

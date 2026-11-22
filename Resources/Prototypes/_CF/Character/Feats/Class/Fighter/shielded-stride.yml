@@ -2,9 +2,12 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFShieldedStride
-  name: "Shielded Stride"
-  description: "This feature will be implemented later."
+  name: cf-feat-shielded-stride
+  description: cf-feat-shielded-stride-desc
   class: Fighter
   level: 4
   traits:
     - "Fighter"
+  grants:
+    - !type:CFGrantOption
+      option: FreeStepWithShield

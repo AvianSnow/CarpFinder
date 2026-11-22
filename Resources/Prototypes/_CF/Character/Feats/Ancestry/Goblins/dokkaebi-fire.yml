@@ -2,8 +2,8 @@
 # source: Carpfinder Lost Omens Tian Xia Character Guide
 - type: cfFeat
   id: CFDokkaebiFire
-  name: "Dokkaebi Fire"
-  description: "Requires dokkaebi goblin heritage. +1 status bonus to Ignition Inline Damage. Not applied in play yet. Changes an item. Not applied in play yet."
+  name: cf-feat-dokkaebi-fire
+  description: cf-feat-dokkaebi-fire-desc
   ancestry: Goblin
   level: 1
   traits:

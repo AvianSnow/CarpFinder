@@ -2,9 +2,25 @@
 # source: Carpfinder Lost Omens Cheliax, Infernal Inheritance
 - type: cfFeat
   id: CFHardtoFool
-  name: "Hard to Fool"
-  description: "+1 circumstance bonus to Perception. Not applied in play yet. +1 circumstance bonus to Will. Not applied in play yet."
+  name: cf-feat-hardto-fool
+  description: cf-feat-hardto-fool-desc
   ancestry: Fetchling
   level: 1
   traits:
     - "Fetchling"
+  grants:
+    - !type:CFGrantBonus
+      stat: Perception
+      type: Circumstance
+      value: 1
+      trait: Illusion
+    - !type:CFGrantBonus
+      stat: Will
+      type: Circumstance
+      value: 1
+      trait: Illusion
+    - !type:CFGrantBonus
+      stat: Will
+      type: Circumstance
+      value: 1
+      trait: Shadow

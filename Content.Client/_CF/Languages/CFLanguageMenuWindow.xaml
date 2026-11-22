@@ -1,0 +1,30 @@
+<!-- After LanguageMenuWindow in Starlight (https://github.com/ss14Starlight/space-station-14). -->
+<DefaultWindow xmlns="https://spacestation14.io"
+               xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+               x:Class="Content.Client.CF.Languages.CFLanguageMenuWindow"
+               Title="{Loc 'cf-language-menu-title'}"
+               SetSize="300 300">
+    <BoxContainer Orientation="Vertical"
+                  SeparationOverride="4"
+                  MinWidth="150">
+        <PanelContainer StyleClasses="PdaBorderRect">
+            <Label Name="CurrentLanguageLabel"
+                   Access="Public"
+                   HorizontalExpand="True"
+                   Margin="4 2" />
+        </PanelContainer>
+
+        <ScrollContainer HorizontalExpand="True"
+                         VerticalExpand="True"
+                         HScrollEnabled="False"
+                         VScrollEnabled="True"
+                         MinHeight="50">
+            <!-- Filled in code: one row per language the body knows. -->
+            <BoxContainer Name="KnownList"
+                          Access="Public"
+                          HorizontalExpand="True"
+                          SeparationOverride="2"
+                          Orientation="Vertical" />
+        </ScrollContainer>
+    </BoxContainer>
+</DefaultWindow>

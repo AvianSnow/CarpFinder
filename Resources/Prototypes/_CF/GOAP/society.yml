@@ -1,0 +1,215 @@
+# A tribe's life: eating, drinking, farming, storing food, sharing it, talking, and talking to strangers before
+# fighting them. An encounter with tribe: true gets all of this on every member, a leader with its own lists included.
+# CFGOAPTribeSystem keeps what the tribe knows, and the steps are in Content.Server/_CF/GOAP/Society. See .agent/society.md.
+#
+# All of it sits under the fighting goals (5 and up) and under hunting and investigating, so a threat always comes
+# first. A language model can force one of these for a while (CFSocietyAdvisorSystem), never a fight.
+
+# The tribe is talking to the stranger in front of it. Above KillTarget, which does not count while this holds.
+- type: cfGoapGoal
+  id: Parley
+  wants: [ Socialized ]
+  priority: 5.5
+  onlyWhen: [ TargetVisible, Parleying ]
+
+- type: cfGoapGoal
+  id: Drink
+  avoids: [ Thirsty ]
+  priority: 2.4
+  onlyWhen: [ Thirsty ]
+  notWhen: [ TargetVisible ]
+
+- type: cfGoapGoal
+  id: Eat
+  avoids: [ Hungry ]
+  priority: 2.3
+  onlyWhen: [ Hungry ]
+  notWhen: [ TargetVisible ]
+
+- type: cfGoapGoal
+  id: ShareFood
+  wants: [ Shared ]
+  priority: 2.2
+  onlyWhen: [ MateHungry ]
+  notWhen: [ TargetVisible ]
+
+# Food it holds or sees goes home into a store, for the others to eat from. A hungry member eats first.
+- type: cfGoapGoal
+  id: StockFood
+  wants: [ FoodStored ]
+  priority: 2
+  notWhen: [ TargetVisible, Hungry ]
+
+# One thing done for the plots. The cheapest action that applies is the one that gets done, so a ripe crop is picked
+# before dry soil is watered, and looking at a plot nobody has checked comes last.
+- type: cfGoapGoal
+  id: TendCrops
+  wants: [ CropsTended ]
+  priority: 1.9
+  notWhen: [ TargetVisible ]
+
+# The fire fed and relit (and stoked for ash when a plot is poor), rubbish thrown out of the nest, puddles wiped up,
+# coins, potions and fuel put in the stores, and anything in its own hand that nobody can use put away.
+- type: cfGoapGoal
+  id: KeepNest
+  avoids: [ NestUntended ]
+  priority: 1.8
+  onlyWhen: [ NestUntended ]
+  notWhen: [ TargetVisible ]
+
+- type: cfGoapGoal
+  id: Socialize
+  wants: [ Socialized ]
+  calm: true
+  priority: 1.7
+  onlyWhen: [ WantsChat ]
+  notWhen: [ TargetVisible ]
+
+# Actions.
+
+- type: cfGoapAction
+  id: Parley
+  step: Parley
+  needs: [ TargetVisible, Parleying ]
+  gives: [ Socialized ]
+
+- type: cfGoapAction
+  id: Drink
+  step: Drink
+  needs: [ Thirsty ]
+  removes: [ Thirsty ]
+
+# Raw food is cooked first when the tribe has a fire burning. With no fire it is eaten as it is.
+- type: cfGoapAction
+  id: Eat
+  step: Eat
+  needs: [ HasFood ]
+  needsNot: [ FoodRaw ]
+  removes: [ Hungry ]
+
+# Only a hungry member takes from the stores. Without that, stocking up would be taking food out to put it back.
+- type: cfGoapAction
+  id: TakeStoredFood
+  step: TakeFood
+  fromStore: true
+  needs: [ StoredFood, Hungry ]
+  gives: [ HasFood ]
+  cost: 2
+
+- type: cfGoapAction
+  id: PickUpFood
+  step: TakeFood
+  needs: [ LooseFood ]
+  gives: [ HasFood ]
+  cost: 1.5
+
+# One stage of work on what it holds: wheat ground at the mortar, flour mixed into water, dough or raw meat held over
+# the fire, a loaf sliced. Thinking sees what it holds afterwards and plans the next stage, so bread takes four of these.
+- type: cfGoapAction
+  id: PrepareFood
+  step: Prepare
+  needs: [ HasFood, FoodRaw ]
+  removes: [ FoodRaw ]
+
+- type: cfGoapAction
+  id: KeepNest
+  step: KeepNest
+  needs: [ NestUntended ]
+  removes: [ NestUntended ]
+
+- type: cfGoapAction
+  id: StoreFood
+  step: StoreFood
+  needs: [ HasFood ]
+  needsNot: [ FoodRaw ]
+  gives: [ FoodStored ]
+
+- type: cfGoapAction
+  id: GiveFood
+  step: GiveFood
+  needs: [ HasFood, MateHungry ]
+  gives: [ Shared ]
+
+- type: cfGoapAction
+  id: Harvest
+  step: Harvest
+  needs: [ CropReady ]
+  gives: [ CropsTended ]
+
+- type: cfGoapAction
+  id: WaterSoil
+  step: WaterSoil
+  needs: [ SoilDry ]
+  gives: [ CropsTended ]
+  cost: 1.5
+
+- type: cfGoapAction
+  id: PlantSeed
+  step: PlantSeed
+  needs: [ CanPlant ]
+  gives: [ CropsTended ]
+  cost: 2
+
+- type: cfGoapAction
+  id: FeedSoil
+  step: FeedSoil
+  needs: [ SoilPoor ]
+  gives: [ CropsTended ]
+  cost: 2.5
+
+- type: cfGoapAction
+  id: InspectSoil
+  step: InspectSoil
+  needs: [ SoilUnchecked ]
+  gives: [ CropsTended ]
+  cost: 3
+
+- type: cfGoapAction
+  id: Chat
+  step: Chat
+  needs: [ WantsChat ]
+  needsNot: [ Parleying, TargetVisible ]
+  gives: [ Socialized ]
+
+# A kobold tribe: a trapper, who leads as the most skilled, and five warriors. They live round the nearest fire to
+# the spawner. Strangers are asked for food before they are fought, unless they walk armed into the nest of a tribe
+# that is neither hungry nor outnumbered.
+- type: encounter
+  id: KoboldTribe
+  tribe: true
+  mobs:
+  - CFKoboldWarrior
+  - CFKoboldWarrior
+  - CFKoboldWarrior
+  - CFKoboldWarrior
+  - CFKoboldWarrior
+  - CFMobKoboldTrapper
+  count: 6
+  tactics: Skirmisher
+  actions:
+  - TakeFlank
+  - StrikeFlanked
+  # Laid down beside them: a mortar for wheat, a bucket for the well, a knife for a loaf, a survival knife for what
+  # they hunt, clippers for seeds, and planks for the fire.
+  supplies:
+  - CFMortarAndPestle
+  - CFBucket
+  - KitchenKnife
+  - CFSurvivalKnife
+  - HydroponicsToolClippers
+  - CFWoodenPlanks10
+
+# A spawner already set to the tribe. It spawns as the map starts, because a tribe lives whether or not anyone watches.
+- type: entity
+  parent: CFEncounterSpawner
+  id: CFEncounterSpawnerKoboldTribe
+  name: kobold tribe spawner
+  description: Spawns a kobold tribe at once. They make their nest at the nearest fire, farm, store food, and ask strangers for food before fighting.
+  components:
+  - type: Sprite
+    sprite: Markers/cross.rsi
+    layers:
+    - state: blue
+  - type: CFGOAPEncounterSpawner
+    encounter: KoboldTribe
+    immediate: true

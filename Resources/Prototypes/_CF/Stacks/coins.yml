@@ -1,0 +1,37 @@
+# PF2e coins, from CP14. Sprites stay under _CP14.
+
+- type: stack
+  id: CFCopperCoin
+  name: cf-stack-copper-coin
+  spawn: CFCopperCoin1
+  icon:
+    sprite: /Textures/_CP14/Objects/Economy/cp_coin.rsi
+    state: coin1
+  maxCount: 100
+
+- type: stack
+  id: CFSilverCoin
+  name: cf-stack-silver-coin
+  spawn: CFSilverCoin1
+  icon:
+    sprite: /Textures/_CP14/Objects/Economy/sp_coin.rsi
+    state: coin1
+  maxCount: 100
+
+- type: stack
+  id: CFGoldCoin
+  name: cf-stack-gold-coin
+  spawn: CFGoldCoin1
+  icon:
+    sprite: /Textures/_CP14/Objects/Economy/gp_coin.rsi
+    state: coin1
+  maxCount: 100
+
+- type: stack
+  id: CFPlatinumCoin
+  name: cf-stack-platinum-coin
+  spawn: CFPlatinumCoin1
+  icon:
+    sprite: /Textures/_CP14/Objects/Economy/pp_coin.rsi
+    state: coin1
+  maxCount: 100

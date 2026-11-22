@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFOversizedThrow
-  name: "Oversized Throw"
-  description: "Costs 2 actions. This feature will be implemented later."
+  name: cf-feat-oversized-throw
+  description: cf-feat-oversized-throw-desc
   class: Barbarian
   level: 4
   traits:

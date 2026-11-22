@@ -1,0 +1,157 @@
+# Ported from CP14 by the CF converter.
+
+- type: entity
+  id: CFCarpetBase
+  parent:
+  - BaseStructure
+  - CFBaseFlammableSpreadingStrong
+  name: carpet
+  description: "Fancy walking surface."
+  categories: [ ForkFiltered ]
+  abstract: true
+  components:
+  - type: PlacementReplacement
+    key: floorTile
+  - type: Sprite
+    drawdepth: FloorTiles
+  - type: Icon
+    state: full
+  - type: IconSmooth
+    key: full
+    states:
+    - !type:CornerSpriteSmoothing
+      mask: [ full ]
+      base: carpet_
+  - type: Tag
+    tags:
+    - Carpet
+    - ForceFixRotations
+  - type: Physics
+    canCollide: false
+  - type: Fixtures
+  - type: Damageable
+  - type: Injurable
+    damageContainer: Inorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 10
+      behaviors:
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: Butcherable
+    butcheringType: Knife
+    butcherDelay: 2
+
+- type: entity
+  id: CFCarpetBlue
+  parent: CFCarpetBase
+  suffix: Blue
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Furniture/Carpets/blue_carpet.rsi
+  - type: Icon
+    sprite: _CP14/Structures/Furniture/Carpets/blue_carpet.rsi
+  - type: Butcherable
+    spawned:
+    - id: CFFloorCarpetItemBlue1
+      amount: 1
+
+- type: entity
+  id: CFCarpetRed
+  parent: CFCarpetBase
+  suffix: Red
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Furniture/Carpets/red_carpet.rsi
+  - type: Icon
+    sprite: _CP14/Structures/Furniture/Carpets/red_carpet.rsi
+  - type: Butcherable
+    spawned:
+    - id: CFFloorCarpetItemRed1
+      amount: 1
+
+- type: entity
+  id: CFCarpetCyan
+  parent: CFCarpetBase
+  suffix: Cyan
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Furniture/Carpets/cyan_carpet.rsi
+  - type: Icon
+    sprite: _CP14/Structures/Furniture/Carpets/cyan_carpet.rsi
+  - type: Butcherable
+    spawned:
+    - id: CFFloorCarpetItemCyan1
+      amount: 1
+
+- type: entity
+  id: CFCarpetGreen
+  parent: CFCarpetBase
+  suffix: Green
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Furniture/Carpets/green_carpet.rsi
+  - type: Icon
+    sprite: _CP14/Structures/Furniture/Carpets/green_carpet.rsi
+  - type: Butcherable
+    spawned:
+    - id: CFFloorCarpetItemGreen1
+      amount: 1
+
+- type: entity
+  id: CFCarpetOrange
+  parent: CFCarpetBase
+  suffix: Orange
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Furniture/Carpets/orange_carpet.rsi
+  - type: Icon
+    sprite: _CP14/Structures/Furniture/Carpets/orange_carpet.rsi
+  - type: Butcherable
+    spawned:
+    - id: CFFloorCarpetItemOrange1
+      amount: 1
+
+- type: entity
+  id: CFCarpetPurple
+  parent: CFCarpetBase
+  suffix: Purple
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Furniture/Carpets/purple_carpet.rsi
+  - type: Icon
+    sprite: _CP14/Structures/Furniture/Carpets/purple_carpet.rsi
+  - type: Butcherable
+    spawned:
+    - id: CFFloorCarpetItemPurple1
+      amount: 1
+
+- type: entity
+  id: CFCarpetBlack
+  parent: CFCarpetBase
+  suffix: Black
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Furniture/Carpets/black_carpet.rsi
+  - type: Icon
+    sprite: _CP14/Structures/Furniture/Carpets/black_carpet.rsi
+  - type: Butcherable
+    spawned:
+    - id: CFFloorCarpetItemBlack1
+      amount: 1
+
+- type: entity
+  id: CFCarpetYellow
+  parent: CFCarpetBase
+  suffix: Yellow
+  components:
+  - type: Sprite
+    sprite: _CP14/Structures/Furniture/Carpets/yellow_carpet.rsi
+  - type: Icon
+    sprite: _CP14/Structures/Furniture/Carpets/yellow_carpet.rsi
+  - type: Butcherable
+    spawned:
+    - id: CFFloorCarpetItemYellow1
+      amount: 1

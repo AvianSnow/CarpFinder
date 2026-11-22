@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFReboundingToss
-  name: "Rebounding Toss"
-  description: "Costs 2 actions. This feature will be implemented later."
+  name: cf-feat-rebounding-toss
+  description: cf-feat-rebounding-toss-desc
   class: Fighter
   level: 2
   traits:

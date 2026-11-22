@@ -2,8 +2,8 @@
 # source: Carpfinder #217: Death Sails a Wine-Dark Sea
 - type: cfFeat
   id: CFToppleTheTitans
-  name: "Topple The Titans"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-topple-the-titans
+  description: cf-feat-topple-the-titans-desc
   class: Exemplar
   level: 4
   rarity: Uncommon

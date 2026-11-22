@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFWatchfulHalfling
-  name: "Watchful Halfling"
-  description: "+2 circumstance bonus to Perception. Not applied in play yet."
+  name: cf-feat-watchful-halfling
+  description: cf-feat-watchful-halfling-desc
   ancestry: Halfling
   level: 1
   traits:

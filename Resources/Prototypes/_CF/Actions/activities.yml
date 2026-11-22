@@ -49,84 +49,25 @@
     actions: 1
 
 - type: entity
-  parent: CFActivityTarget
-  id: CFActDemoralize
-  name: Demoralize
-  description: Intimidation against Will. Success frightens the target.
-  components:
-  - type: TargetAction
-    range: 6
-  - type: CFActivity
-    kind: Demoralize
-
-- type: entity
-  parent: CFActivityTarget
-  id: CFActTrip
-  name: Trip
-  description: Athletics against Reflex. Success knocks the target prone.
-  components:
-  - type: CFActivity
-    kind: Trip
-
-- type: entity
-  parent: CFActivityTarget
-  id: CFActShove
-  name: Shove
-  description: Athletics against Fortitude. Success pushes the target.
-  components:
-  - type: CFActivity
-    kind: Shove
-
-- type: entity
-  parent: CFActivityTarget
-  id: CFActGrapple
-  name: Grapple
-  description: Athletics against Fortitude. Success grabs the target.
-  components:
-  - type: CFActivity
-    kind: Grapple
-
-- type: entity
-  parent: CFActivityTarget
-  id: CFActFeint
-  name: Feint
-  description: Deception against Perception. Success makes the target off-guard to you.
-  components:
-  - type: CFActivity
-    kind: Feint
-
-- type: entity
   parent: CFActivityInstant
-  id: CFActRaiseShield
-  name: Raise a Shield
-  description: You gain a +2 circumstance bonus to AC until your next turn. Needs a shield in your active hand.
+  id: CFActConstructTrap
+  name: Construct Trap
+  description: Build a rudimentary trap on the square you are facing. It springs on any enemy that comes adjacent to it.
   components:
-  - type: Sprite
-    sprite: Objects/Weapons/Melee/shields.rsi
-    layers:
-    - state: riot-icon
   - type: CFActivity
-    kind: RaiseShield
+    kind: ConstructTrap
+  - type: CFRadialSlot
+    group: Action
+    actions: 3
 
 - type: entity
   parent: CFActivityInstant
   id: CFActRage
   name: Rage
-  description: +2 damage and -1 AC until you end the rage. You cannot cast spells while raging.
+  description: +2 damage on melee Strikes for a minute, or until you end the rage. You cannot cast spells while raging.
   components:
   - type: CFActivity
     kind: Rage
-
-- type: entity
-  parent: CFActivityTarget
-  id: CFActHuntPrey
-  name: Hunt Prey
-  description: Mark a creature. Your first hit against it each turn deals 1d8 extra precision damage.
-  components:
-  - type: TargetAction
-    range: 12
-  - type: CFActivity
-    kind: HuntPrey
 
 - type: entity
   parent: CFActivityTarget
@@ -136,6 +77,7 @@
   components:
   - type: CFActivity
     kind: Flurry
+  - type: CFFlourish
 
 - type: entity
   parent: CFActivityTarget
@@ -149,64 +91,13 @@
     kind: Spellstrike
 
 - type: entity
-  parent: CFActivityTarget
-  id: CFActStratagem
-  name: Devise a Stratagem
-  description: Roll a d20. Your next Strike against that creature uses it.
-  components:
-  - type: TargetAction
-    range: 12
-  - type: CFActivity
-    kind: Stratagem
-
-- type: entity
-  parent: CFActivityTarget
-  id: CFActExploit
-  name: Exploit Vulnerability
-  description: The creature is off-guard to you and your Strikes deal 2 extra damage.
-  components:
-  - type: TargetAction
-    range: 6
-  - type: CFActivity
-    kind: Exploit
-
-- type: entity
   parent: CFActivityInstant
-  id: CFActInspire
-  name: Inspire Courage
-  description: You and nearby allies gain +1 to attacks and saves for a short while.
+  id: CFActAnthem
+  name: Courageous Anthem
+  description: For one minute, you and allies within 60 feet gain +1 to attacks, damage, and saves against fear. Playing a held instrument does the same for as long as the music lasts.
   components:
   - type: CFActivity
-    kind: Inspire
-
-- type: entity
-  parent: CFActivityTarget
-  id: CFActFinisher
-  name: Confident Finisher
-  description: A Strike that spends panache. A miss still deals 2 precision damage.
-  components:
-  - type: CFActivity
-    kind: Finisher
-
-- type: entity
-  parent: CFActivityTarget
-  id: CFActDoubleSlice
-  name: Double Slice
-  description: Two Strikes at your current multiple attack penalty. The second takes -2 if the weapon is not agile.
-  components:
-  - type: CFRadialSlot
-    actions: 2
-  - type: CFActivity
-    kind: DoubleSlice
-
-- type: entity
-  parent: CFActivityTarget
-  id: CFActExactingStrike
-  name: Exacting Strike
-  description: A Strike. If you miss, it does not raise your multiple attack penalty.
-  components:
-  - type: CFActivity
-    kind: ExactingStrike
+    kind: Anthem
 
 - type: entity
   parent: CFActivityTarget
@@ -220,52 +111,179 @@
     actions: 2
   - type: CFActivity
     kind: SuddenCharge
-
-- type: entity
-  parent: CFActivityTarget
-  id: CFActSnaggingStrike
-  name: Snagging Strike
-  description: A Strike that leaves the target off-guard on a hit.
-  components:
-  - type: CFActivity
-    kind: SnaggingStrike
-
-- type: entity
-  parent: CFActivityTarget
-  id: CFActViciousSwing
-  name: Vicious Swing
-  description: A Strike with an extra damage die. Costs 2 actions.
-  components:
-  - type: CFRadialSlot
-    actions: 2
-  - type: CFActivity
-    kind: ViciousSwing
+  - type: CFFlourish
 
 - type: entity
   parent: CFActivityInstant
-  id: CFActPointBlank
-  name: Point-Blank Stance
-  description: Ignore volley and gain +2 damage with ranged Strikes inside the first range increment.
+  id: CFActLeap
+  name: Leap
+  description: Jump the way you are facing. 10 feet, or 15 feet with a Speed of 30 or more.
+  components:
+  - type: Sprite
+    sprite: Interface/Actions/jump.rsi
+    layers:
+    - state: icon
+  - type: CFActivity
+    kind: Leap
+  - type: CFRadialSlot
+    group: Action
+    actions: 1
+    tab: Common
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActSpellstrikeRecharge
+  name: Recharge Spellstrike
+  description: Makes Spellstrike ready to use again. Costs 1 action.
   components:
   - type: CFActivity
-    kind: PointBlank
+    kind: SpellstrikeRecharge
 
 - type: entity
   parent: CFActivityTarget
-  id: CFActTwinFeint
-  name: Twin Feint
-  description: Feint, then Strike. Costs 2 actions.
+  id: CFActMagusAnalysis
+  name: Magus's Analysis
+  description: Recall Knowledge about a creature, and recharge Spellstrike. Costs 1 action.
+  components:
+  - type: TargetAction
+    range: 6.25
+  - type: CFRadialSlot
+    group: Free
+    actions: 0
+  - type: CFActivity
+    kind: MagusAnalysis
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActCommandThrall
+  name: Command a Thrall
+  description: Your nearest thrall attacks a creature for 6 seconds, with your spell attack. Costs 1 action.
+  components:
+  - type: TargetAction
+    range: 24.25
+  - type: CFCommandThrallAction
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActCircleOfSpirits
+  name: Circle of Spirits
+  description: Your second apparition becomes your primary one, and you swap vessel spells. Costs 1 action, once per round.
+  components:
+  - type: Action
+    useDelay: 6
+  - type: CFCircleOfSpiritsAction
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActManifestEidolon
+  name: Manifest Eidolon
+  description: Brings your eidolon into the world beside you, or sends it back. It stays within 100 feet, and shares your Hit Points. Costs 3 actions.
   components:
   - type: CFRadialSlot
-    actions: 2
-  - type: CFActivity
-    kind: TwinFeint
+    actions: 3
+  - type: CFManifestEidolonAction
 
 - type: entity
   parent: CFActivityTarget
-  id: CFActTumbleBehind
-  name: Tumble Behind
-  description: Acrobatics against Reflex. Success makes the target off-guard to you.
+  id: CFActFuriousStrike
+  name: Furious Strike
+  description: Your eidolon makes a Strike with an extra die and +1 damage. It has to be able to reach the target. Costs 2 actions.
   components:
+  - type: TargetAction
+    range: 20
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFEidolonStrikeAction
+    extraDice: 1
+    bonusDamage: 1
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTendrilStrike
+  name: Tendril Strike
+  description: Your eidolon makes a Strike with 5 feet more reach. Costs 1 action.
+  components:
+  - type: TargetAction
+    range: 20
+  - type: CFEidolonStrikeAction
+    extraReachFeet: 5
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActDragonBreath
+  name: Dragon Breath
+  description: "Your eidolon breathes a 30-foot cone of fire at the nearest enemy: 1d6, and 1d6 more at level 3 and every 2 levels after, basic Reflex against your spell DC. Costs 2 actions."
+  components:
+  - type: Action
+    useDelay: 15
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFOnEidolonEffect
+      effects:
+      - !type:CFThrallBlastEffect
+        shape: Cone
+        sizeFeet: 30
+        defense: Reflex
+        destroys: false
+        effects:
+        - !type:CFDamageEffect
+          dice: 1
+          die: 6
+          damageType: Fire
+          diceEveryLevels: 2
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActDefendSummoner
+  name: Defend Summoner
+  description: Your eidolon guards you. +2 circumstance to AC for 6 seconds. It should only count while you are within its reach, TBA. Costs 1 action.
+  components:
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: ArmorClass
+      type: Circumstance
+      value: 2
+      durationSeconds: 6
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActTandemMovement
+  name: Tandem Movement
+  description: You and your eidolon each get +10 feet Speed for 3 seconds, standing in for the Stride. Costs 1 action.
+  components:
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: Speed
+      type: Status
+      value: 10
+      durationSeconds: 3
+    - !type:CFOnEidolonEffect
+      effects:
+      - !type:CFBonusEffect
+        stat: Speed
+        type: Status
+        value: 10
+        durationSeconds: 3
+
+# Overextending Feint (Player Core, page 169): a Feint that leaves the target overreaching instead of off-guard.
+- type: entity
+  parent: CFActivityTarget
+  id: CFActOverextendingFeint
+  name: Overextending Feint
+  description: Feint a creature in reach. On a success it takes -2 circumstance to its next attack roll against you within 6 seconds, or to all of them for 6 seconds on a critical success. It is not off-guard.
+  components:
+  - type: Sprite
+    layers:
+    - texture: Interface/Actions/harmOff.png
   - type: CFActivity
-    kind: TumbleBehind
+    kind: OverextendingFeint
+  - type: CFTrait
+    traits:
+    - Mental

@@ -6,6 +6,9 @@
   description: A heavy, slightly green, piece of refined copper
   categories: [ ForkFiltered ]
   components:
+  - type: CFItemPrice
+    copper: 50 # KCTG: Copper Ingot
+    fullResale: true
   - type: Item
     size: Normal
   - type: Sprite
@@ -32,6 +35,9 @@
   parent: CFCopperBar1
   suffix: 5
   components:
+  - type: CFItemPrice
+    copper: 250 # KCTG: Copper Ingot, 5 at 5 sp
+    fullResale: true
   - type: Stack
     count: 5
 
@@ -40,6 +46,9 @@
   parent: CFCopperBar1
   suffix: 10
   components:
+  - type: CFItemPrice
+    copper: 500 # KCTG: Copper Ingot, 10 at 5 sp
+    fullResale: true
   - type: Stack
     count: 10
 
@@ -51,6 +60,9 @@
   description: A heavy piece of refined iron
   categories: [ ForkFiltered ]
   components:
+  - type: CFItemPrice
+    copper: 100 # KCTG: Iron Ingot
+    fullResale: true
   - type: Item
     size: Normal
   - type: Sprite
@@ -77,6 +89,9 @@
   parent: CFIronBar1
   suffix: 5
   components:
+  - type: CFItemPrice
+    copper: 500 # KCTG: Iron Ingot, 5 at 1 gp
+    fullResale: true
   - type: Stack
     count: 5
 
@@ -85,6 +100,9 @@
   parent: CFIronBar1
   suffix: 10
   components:
+  - type: CFItemPrice
+    copper: 1000 # KCTG: Iron Ingot, 10 at 1 gp
+    fullResale: true
   - type: Stack
     count: 10
 
@@ -96,6 +114,9 @@
   description: The best friend for magotechnology. The secrets of its production are hidden.
   categories: [ ForkFiltered ]
   components:
+  - type: CFItemPrice
+    copper: 75 # KCTG: Pure-Metal Brass Ingot
+    fullResale: true
   - type: Item
     size: Normal
   - type: Sprite
@@ -122,6 +143,9 @@
   parent: CFBrassBar1
   suffix: 5
   components:
+  - type: CFItemPrice
+    copper: 375 # KCTG: Pure-Metal Brass Ingot, 5 at 7 sp 5 cp
+    fullResale: true
   - type: Stack
     count: 5
 
@@ -132,6 +156,9 @@
   description: A warm to the touch, soft piece of refined gold.
   categories: [ ForkFiltered, DoNotMap ]
   components:
+  - type: CFItemPrice
+    copper: 5000 # KCTG: Gold Ingot
+    fullResale: true
   - type: Item
     size: Normal
   - type: Sprite
@@ -159,6 +186,9 @@
   categories: [ DoNotMap ]
   suffix: 5
   components:
+  - type: CFItemPrice
+    copper: 25000 # KCTG: Gold Ingot, 5 at 50 gp
+    fullResale: true
   - type: Stack
     count: 5
 
@@ -168,6 +198,9 @@
   categories: [ DoNotMap ]
   suffix: 10
   components:
+  - type: CFItemPrice
+    copper: 50000 # KCTG: Gold Ingot, 10 at 50 gp
+    fullResale: true
   - type: Stack
     count: 10
 

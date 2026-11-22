@@ -2,8 +2,8 @@
 # source: Carpfinder Impossible Magic
 - type: cfFeat
   id: CFSmithingWeapons
-  name: "Smithing Weapons"
-  description: "+1 bonus to Strike Damage. This feature will be implemented later."
+  name: cf-feat-smithing-weapons
+  description: cf-feat-smithing-weapons-desc
   class: Runesmith
   level: 1
   traits:

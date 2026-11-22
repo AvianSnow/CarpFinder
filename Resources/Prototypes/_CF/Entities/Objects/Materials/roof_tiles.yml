@@ -1,0 +1,59 @@
+# CrystallEdge's roof tiles: laid as a floor (the CFRoof* tiles) or on a stairs frame as a roof ramp. The sprites
+# are CrystallEdge's, in Textures/_CE (Objects/tile.rsi and Tiles/roof_*.png).
+
+- type: entity
+  parent: CFFloorTileBase
+  id: CFFloorTileRoofRed
+  name: red roof tile
+  components:
+  - type: Sprite
+    sprite: _CE/Objects/tile.rsi
+    state: roof_red
+  - type: Item
+    sprite: _CE/Objects/tile.rsi
+  - type: FloorTile
+    outputs:
+    - CFRoofRed
+  - type: Stack
+    stackType: CFFloorTileRoofRed
+  - type: PhysicalComposition
+    materialComposition:
+      CFStone: 2
+
+- type: entity
+  parent: CFFloorTileBase
+  id: CFFloorTileRoofGreen
+  name: green roof tile
+  components:
+  - type: Sprite
+    sprite: _CE/Objects/tile.rsi
+    state: roof_green
+  - type: Item
+    sprite: _CE/Objects/tile.rsi
+  - type: FloorTile
+    outputs:
+    - CFRoofGreen
+  - type: Stack
+    stackType: CFFloorTileRoofGreen
+  - type: PhysicalComposition
+    materialComposition:
+      CFStone: 2
+
+- type: entity
+  parent: CFFloorTileBase
+  id: CFFloorTileRoofBlue
+  name: blue roof tile
+  components:
+  - type: Sprite
+    sprite: _CE/Objects/tile.rsi
+    state: roof_blue
+  - type: Item
+    sprite: _CE/Objects/tile.rsi
+  - type: FloorTile
+    outputs:
+    - CFRoofBlue
+  - type: Stack
+    stackType: CFFloorTileRoofBlue
+  - type: PhysicalComposition
+    materialComposition:
+      CFStone: 2

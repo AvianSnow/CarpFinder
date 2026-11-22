@@ -41,3 +41,5 @@ cf-stack-wallpaper = rolls of wallpaper
 cf-stack-wood-planks = oak planks
 cf-stack-wood-planks-birch = birch planks
 cf-materials-unit-pile = pile
+cf-material-lucens-planks = lucens planks
+cf-material-spruce-planks = spruce planks

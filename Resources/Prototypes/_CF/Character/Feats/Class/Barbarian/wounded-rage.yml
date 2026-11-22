@@ -2,11 +2,16 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFWoundedRage
-  name: "Wounded Rage"
-  description: "Reaction. This feature will be implemented later."
+  name: cf-feat-wounded-rage
+  description: cf-feat-wounded-rage-desc
   class: Barbarian
   level: 4
   traits:
     - "Barbarian"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-feat-wounded-rage
+        trigger: Damaged
+        entersRage: true

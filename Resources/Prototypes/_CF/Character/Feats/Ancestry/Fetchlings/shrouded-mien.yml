@@ -2,12 +2,14 @@
 # source: Carpfinder Lost Omens Cheliax, Infernal Inheritance
 - type: cfFeat
   id: CFShroudedMien
-  name: "Shrouded Mien"
-  description: "Trained in Deception. Also grants Lengthy Diversion. TBA - action will be added"
+  name: cf-feat-shrouded-mien
+  description: cf-feat-shrouded-mien-desc
   ancestry: Fetchling
   level: 1
   traits:
     - "Fetchling"
   trainedSkills:
     - Deception
-  pendingAction: true
+  grants:
+    - !type:CFGrantFeat
+      feat: CFLengthyDiversion

@@ -1,0 +1,52 @@
+# A seedbed that can be built on any floor, for places with no ground to dig: a ship's deck, a stone island.
+# Seeds go in it as they go in soil dug with a fork. The sprite is stock's hydroponics soil.
+
+- type: entity
+  parent: BaseStructure
+  id: CFSeedbed
+  name: seedbed
+  description: A plank frame filled with soil. Seeds can be planted in it.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    sprite: Structures/Hydroponics/misc.rsi
+    state: soil
+    drawdepth: LowFloors
+    noRot: true
+  - type: Icon
+    sprite: Structures/Hydroponics/misc.rsi
+    state: soil
+  - type: Clickable
+  - type: InteractionOutline
+  - type: Physics
+    canCollide: false
+    bodyType: Static
+  - type: Fixtures
+    fixtures:
+      fix1:
+        hard: false
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.45,-0.45,0.45,0.45"
+        density: 60
+        mask:
+        - HalfWallLayer
+        layer:
+        - LowImpassable
+  - type: Damageable
+    damageModifierSet: Wood
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 40
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          collection: WoodDestroy
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+  - type: CFSoil
+  - type: Construction
+    graph: CFSeedbed
+    node: CFSeedbed

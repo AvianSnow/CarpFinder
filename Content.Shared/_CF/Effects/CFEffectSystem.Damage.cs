@@ -1,3 +1,6 @@
+using Content.Shared.CF.Traits;
+using Content.Shared.CF.Effects.Areas;
+using Content.Shared.CF.Spells;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.DamageTypes;
@@ -18,6 +21,44 @@ public sealed partial class CFEffectSystem
             return Math.Max(0, flat);
 
         return CFMelee.RollDamage(random, dice, die, flat, critical);
+    }
+
+    /// <summary>What the user adds to a damage roll that is not a Strike.</summary>
+    public int DamageBonus(EntityUid user)
+    {
+        return _bonuses.Total(user, CFBonusStat.Damage);
+    }
+
+    /// <summary>What Sorcerous Potency adds to a spell cast from a slot: its rank. Cantrips and focus spells get nothing.</summary>
+    public int PotencyBonus(CFEffectArgs args)
+    {
+        return CompOrNull<CFCombatOptionsComponent>(args.User)?.SorcerousPotency == true
+               && TryComp(args.Source, out CFSpellComponent? spell)
+               && !spell.Focus
+               && spell.Rank > 0
+            ? spell.ResolvedRank
+            : 0;
+    }
+
+    /// <summary>What the cast behind these effects is amped with, or null.</summary>
+    public CFPsiCantripComponent? AmpOf(CFEffectArgs args)
+    {
+        return _psi.Amped(args.Source);
+    }
+
+    /// <summary>A duration, or the amp's replacement for it.</summary>
+    public float Duration(CFEffectArgs args, float seconds)
+    {
+        return AmpOf(args) is { AmpDurationSeconds: > 0 } amp ? amp.AmpDurationSeconds : seconds;
+    }
+
+    /// <summary>What an Unleashed Psyche adds to a damaging spell with no duration: double its rank.</summary>
+    public int UnleashBonus(CFEffectArgs args)
+    {
+        if (!HasComp<CFUnleashedComponent>(args.User) || !TryComp(args.Source, out CFSpellComponent? spell) || !_spellshapes.HasNoDuration(args.Source))
+            return 0;
+
+        return 2 * (spell.Rank > 0 ? spell.Rank : CFCasting.CantripRank(CompOrNull<CFCombatantComponent>(args.User)?.Level ?? 1));
     }
 
     public int Roll(int dice, int die, int flat)
@@ -78,10 +119,18 @@ public sealed partial class CFEffectSystem
             return;
         }
 
+        if (!isObject)
+        {
+            amount = _reactions.AnswerDamage(target, user, amount, damageType);
+            amount = _tempHp.Absorb(target, combat, amount);
+        }
+
         if (amount > 0)
         {
             combat.CurrentHp = Math.Max(0, combat.CurrentHp - amount);
             Dirty(target, combat);
+            var damaged = new CFDamagedEvent(user, amount);
+            RaiseLocalEvent(target, ref damaged);
         }
 
         if (!isObject && combat.CurrentHp <= 0 && amount > 0)
@@ -92,13 +141,77 @@ public sealed partial class CFEffectSystem
         ShowNumber(target, display, amount, damageType);
     }
 
-    public void Heal(EntityUid user, EntityUid target, int amount)
+    /// <summary>Healing Hands and Harming Hands make those two spells roll d10s.</summary>
+    public int SpellDie(CFEffectArgs args, int die)
     {
+        if (die != 8
+            || !TryComp(args.User, out CFCombatOptionsComponent? options)
+            || !TryComp(args.Source, out CFSpellComponent? spell))
+        {
+            return die;
+        }
+
+        return options.HealingHands && spell.Spell == "Heal" || options.HarmingHands && spell.Spell == "Harm" ? 10 : die;
+    }
+
+    /// <param name="voidEnergy">Void healing (Harm), which heals only the undead. Otherwise vitality, which heals only the living.</param>
+    public void Heal(EntityUid user, EntityUid target, int amount, bool voidEnergy = false)
+    {
+        // Constructs are not alive: what heals the living does nothing for them.
         if (amount <= 0 || !_bridge.TryEnsureCombatTarget(target, out _, out _, out _))
             return;
 
-        _dying.RestoreHitPoints(target, amount, user);
+        if (voidEnergy ? !HasComp<CFVoidHealingComponent>(target) : HasComp<CFVoidHealingComponent>(target) || CompOrNull<CFTraitComponent>(target)?.HasTrait("Construct") == true)
+            return;
+
+        // Touch of Undeath: vitality heals only half.
+        if (!voidEnergy && _conditions.Value(target, CFConditionKind.HealingHalved) > 0)
+            amount = Math.Max(1, amount / 2);
+
+        _dying.RestoreHitPoints(target, amount, user, voidEnergy);
         ShowNumber(target, CFDegree.Success, amount, "Vitality");
+
+        _vfx.Healing(target);
+        if (user != target)
+            _vfx.Healing(user);
+    }
+
+    /// <summary>
+    /// Communal Healing: when a heal spell heals one creature, another living creature within 30 feet regains the spell's
+    /// rank in Hit Points. The caster comes first, then the nearest hurt ally.
+    /// </summary>
+    public void CommunalHealing(EntityUid user, EntityUid healed, int rank)
+    {
+        EntityUid? other = null;
+        if (user != healed && IsHurt(user))
+        {
+            other = user;
+        }
+        else
+        {
+            var best = float.MaxValue;
+            var from = _transform.GetWorldPosition(user);
+            foreach (var (uid, _) in _lookup.GetEntitiesInRange<CFCombatantComponent>(Transform(user).Coordinates, 30f / CFAreaGrid.FeetPerTile))
+            {
+                if (uid == healed || !IsHurt(uid) || !PassesFilter(user, uid, CFTargetFilter.Allies, selfAllowed: true) || !CFVitalEnergies.IsLiving(EntityManager, uid))
+                    continue;
+
+                var distance = (_transform.GetWorldPosition(uid) - from).Length();
+                if (distance < best)
+                {
+                    best = distance;
+                    other = uid;
+                }
+            }
+        }
+
+        if (other is { } target)
+            Heal(user, target, rank);
+    }
+
+    private bool IsHurt(EntityUid uid)
+    {
+        return TryComp(uid, out CFCombatantComponent? combat) && combat.CurrentHp < combat.MaxHp;
     }
 
     /// <summary>The floating "miss" number for an attack that missed or a save that took nothing.</summary>

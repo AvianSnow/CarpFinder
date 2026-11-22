@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFDastardlyDash
-  name: "Dastardly Dash"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-dastardly-dash
+  description: cf-feat-dastardly-dash-desc
   class: Swashbuckler
   level: 4
   traits:

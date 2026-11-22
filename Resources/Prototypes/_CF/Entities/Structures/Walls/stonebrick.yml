@@ -15,8 +15,9 @@
       graph: CFWallStoneBrick
       node: CFWallFrameStoneBrick
     - type: Damageable
-      damageContainer: StructuralInorganic
       damageModifierSet: CFRockStructural
+    - type: Injurable
+      damageContainer: StructuralInorganic
     - type: Destructible
       thresholds:
         - trigger: !type:DamageTrigger
@@ -53,8 +54,9 @@
       graph: CFWallStoneBrick
       node: CFWallStoneBrick
     - type: Damageable
-      damageContainer: StructuralInorganic
       damageModifierSet: CFRockStructural
+    - type: Injurable
+      damageContainer: StructuralInorganic
     - type: Destructible
       thresholds:
         - trigger: !type:DamageTrigger
@@ -93,8 +95,9 @@
       graph: CFWallMarbleBrick
       node: CFWallFrameMarbleBrick
     - type: Damageable
-      damageContainer: StructuralInorganic
       damageModifierSet: CFRockStructural
+    - type: Injurable
+      damageContainer: StructuralInorganic
     - type: Destructible
       thresholds:
         - trigger: !type:DamageTrigger
@@ -128,8 +131,9 @@
           mask: [CFWall]
           base: stonebricks
     - type: Damageable
-      damageContainer: StructuralInorganic
       damageModifierSet: CFRockStructural
+    - type: Injurable
+      damageContainer: StructuralInorganic
     - type: Destructible
       thresholds:
         - trigger: !type:DamageTrigger
@@ -169,8 +173,9 @@
           mask: [CFWall]
           base: stonebricks
     - type: Damageable
-      damageContainer: StructuralInorganic
       damageModifierSet: CFRockStructural
+    - type: Injurable
+      damageContainer: StructuralInorganic
     - type: Destructible
       thresholds:
         - trigger: !type:DamageTrigger

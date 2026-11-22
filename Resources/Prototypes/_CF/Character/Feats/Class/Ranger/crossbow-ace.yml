@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFCrossbowAce
-  name: "Crossbow Ace"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-crossbow-ace
+  description: cf-feat-crossbow-ace-desc
   class: Ranger
   level: 1
   traits:

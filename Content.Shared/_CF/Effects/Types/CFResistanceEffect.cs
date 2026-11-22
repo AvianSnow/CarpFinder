@@ -7,8 +7,9 @@ namespace Content.Shared.CF.Effects;
 /// <summary>The target resists an amount of one damage type for a time (resist energy).</summary>
 public sealed partial class CFResistanceEffect : CFEffect
 {
-    [DataField(required: true)]
-    public ProtoId<CFDamageTypePrototype> DamageType;
+    /// <summary>The type resisted. A source with a mode menu can pick it instead (<see cref="CFModeOption.DamageType"/>).</summary>
+    [DataField]
+    public ProtoId<CFDamageTypePrototype> DamageType = "Fire";
 
     [DataField(required: true)]
     public int Amount;
@@ -24,10 +25,11 @@ public sealed partial class CFResistanceEffect : CFEffect
         if (args.Target is not { } target)
             return;
 
+        var type = entities.GetComponentOrNull<CFModeChoiceComponent>(args.Source)?.ChosenOption()?.DamageType ?? DamageType;
         var amount = Amount + HeightenAmount * args.HeightenSteps;
-        entities.System<CFBonusSystem>().AddResistance(target, DamageType, amount, weakness: false, DurationSeconds);
+        entities.System<CFBonusSystem>().AddResistance(target, type, amount, weakness: false, entities.System<CFEffectSystem>().Duration(args, DurationSeconds));
         entities.System<SharedPopupSystem>().PopupEntity(
-            Loc.GetString("cf-cond-resist", ("type", DamageType.Id), ("amount", amount)),
+            Loc.GetString("cf-cond-resist", ("type", type.Id), ("amount", amount)),
             target);
     }
 }

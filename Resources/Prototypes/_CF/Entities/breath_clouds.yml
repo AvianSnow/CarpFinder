@@ -1,0 +1,38 @@
+# One tile of a breath weapon's gas cloud (CFBreathGas on the action, CFBreathGasSystem). The server spawns one per tile
+# the gas reaches and sets its Density, 1 to 6, as the gas there thickens and thins; 0 hides it. Drawn as stock atmos
+# draws gas, with the gas's own animated sheet, on the Gasses draw depth. TimedDespawn is only a backstop: the system
+# deletes the cloud when the gas has gone.
+
+- type: entity
+  id: CFBreathCloudPoison
+  name: toxic cloud
+  categories: [ HideSpawnMenu ]
+  save: false
+  components:
+  - type: CFBreathCloudTile
+  - type: TimedDespawn
+    lifetime: 30
+  - type: Tag
+    tags:
+    - HideContextMenu
+  - type: Transform
+    noRot: true
+  - type: Sprite
+    sprite: Effects/atmospherics.rsi
+    drawdepth: Gasses
+    layers:
+    - state: tritium
+      map: [ "cloud" ]
+      visible: false
+  - type: Appearance
+  - type: GenericVisualizer
+    visuals:
+      enum.CFBreathCloudVisuals.Density:
+        cloud:
+          0: { visible: false }
+          1: { visible: true, color: "#FFFFFF33" }
+          2: { visible: true, color: "#FFFFFF59" }
+          3: { visible: true, color: "#FFFFFF80" }
+          4: { visible: true, color: "#FFFFFFA6" }
+          5: { visible: true, color: "#FFFFFFC7" }
+          6: { visible: true, color: "#FFFFFFE6" }

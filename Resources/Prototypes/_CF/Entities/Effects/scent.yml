@@ -1,0 +1,42 @@
+# Scent trails, after Starlight's scent system (used with permission). A creature with CFScent leaves these marks, and only
+# a sniffing CFSmeller is sent them (visibility layer 64, CFScentVisibility.Layer). The client colours and fades them.
+
+- type: entity
+  id: CFScentMarker
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: TimedDespawn
+    lifetime: 300
+  - type: CFScentMarker
+  - type: Transform
+    gridTraversal: false
+  - type: Visibility
+    layer: 64
+  - type: Sprite
+    drawdepth: Effects
+    layers:
+    - sprite: Effects/chemsmoke.rsi
+      state: chemsmoke
+      shader: unshaded
+  - type: AnimationPlayer
+  - type: Tag
+    tags:
+    - HideContextMenu
+
+# The Sniff action a smeller has. Free: smelling costs no action in PF2e.
+- type: entity
+  parent: BaseAction
+  id: CFActSniff
+  name: Sniff
+  description: Follow your nose. While on, you see the scent trails creatures have left in the last five minutes, each in its own colour.
+  components:
+  - type: Action
+    useDelay: 0.5
+    icon: { sprite: _Starlight/Interface/Actions/actions_scent.rsi, state: smell-off }
+    iconOn: { sprite: _Starlight/Interface/Actions/actions_scent.rsi, state: smell-on }
+  - type: InstantAction
+    event: !type:CFToggleSniffActionEvent
+  - type: CFRadialSlot
+    group: Free
+    actions: 0
+    tab: Common

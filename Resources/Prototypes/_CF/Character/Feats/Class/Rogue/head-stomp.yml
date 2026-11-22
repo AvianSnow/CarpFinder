@@ -2,11 +2,13 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFHeadStomp
-  name: "Head Stomp"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-head-stomp
+  description: cf-feat-head-stomp-desc
   class: Rogue
   level: 4
   traits:
     - "Rogue"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActHeadStomp

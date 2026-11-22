@@ -1,4 +1,5 @@
 using Content.Shared.CF.Character;
+using Content.Shared.CF.Character.Grants;
 using Content.Shared.CF.Preferences;
 using Robust.Shared.Prototypes;
 
@@ -24,24 +25,36 @@ public static class CFPetMath
     }
 
     /// <summary>The saved build actually has this companion or familiar, not only the option to take one.</summary>
-    public static bool BuildGrants(IPrototypeManager prototypes, CFCharacterBuildData build, CFPetKind kind)
+    /// <param name="atLevel">The character's level, when it is not the build's own: a level taken in play.</param>
+    public static bool BuildGrants(IPrototypeManager prototypes, CFCharacterBuildData build, CFPetKind kind, int atLevel = 0)
     {
-        var companion = kind == CFPetKind.Companion;
-        var level = Math.Max(1, build.Level);
-        if (build.Class != null && prototypes.TryIndex(build.Class.Value, out CFClassPrototype? cls))
+        if (kind == CFPetKind.Construct && build.ClassChoices.Contains("InnovationConstruct"))
+            return true;
+
+        var level = Math.Max(1, Math.Max(atLevel, build.Level));
+
+        // A feat that another option hands out, such as the Leaf order's Leshy Familiar, counts as much as a picked one.
+        foreach (var extra in CFSkills.ExtraFeats(prototypes, build, null, level))
+        {
+            if (Gives(extra, kind))
+                return true;
+        }
+
+        if (kind != CFPetKind.Construct && build.Class != null && prototypes.TryIndex(build.Class.Value, out CFClassPrototype? cls))
         {
             foreach (var feature in cls.Features)
             {
-                if (feature.Level <= level && Matches(feature.Name, companion))
+                if (feature.Level <= level && Matches(feature.Name, kind == CFPetKind.Companion))
                     return true;
             }
         }
 
-        return FeatGrants(prototypes, build.ClassFeat, companion, level)
-               || FeatGrants(prototypes, build.AncestryFeat, companion, level)
-               || FeatGrants(prototypes, build.ClassFeatLevel2, companion, level)
-               || FeatGrants(prototypes, build.ClassFeatLevel4, companion, level)
-               || FeatGrants(prototypes, build.AncestryFeatLevel5, companion, level);
+        // A feat counts from the level of the slot it sits in, not from its own level.
+        return FeatGrants(prototypes, build.ClassFeat, kind)
+               || FeatGrants(prototypes, build.AncestryFeat, kind)
+               || level >= 2 && FeatGrants(prototypes, build.ClassFeatLevel2, kind)
+               || level >= 4 && FeatGrants(prototypes, build.ClassFeatLevel4, kind)
+               || level >= 5 && FeatGrants(prototypes, build.AncestryFeatLevel5, kind);
     }
 
     public static CFPetBlock Present(
@@ -100,7 +113,7 @@ public static class CFPetMath
         }
 
         var skills = new List<CFPetSkillLine>();
-        if (pet.Kind == CFPetKind.Companion)
+        if (pet.Kind is CFPetKind.Companion or CFPetKind.Construct)
         {
             AddTrainedSkill(skills, pet, level, "Acrobatics", CFAbility.Dexterity);
             AddTrainedSkill(skills, pet, level, "Athletics", CFAbility.Strength);
@@ -205,25 +218,36 @@ public static class CFPetMath
             if (!string.Equals(feat.Class, classId, StringComparison.Ordinal)
                 && !feat.Classes.Contains(classId))
                 continue;
-            if (Matches(feat.Name, companion))
+            if (Gives(feat, companion ? CFPetKind.Companion : CFPetKind.Familiar))
                 return true;
         }
 
         return false;
     }
 
-    private static bool FeatGrants(IPrototypeManager prototypes, ProtoId<CFFeatPrototype>? id, bool companion, int level)
+    private static bool FeatGrants(IPrototypeManager prototypes, ProtoId<CFFeatPrototype>? id, CFPetKind kind)
     {
-        if (id == null || !prototypes.TryIndex(id.Value, out CFFeatPrototype? feat))
-            return false;
-
-        return feat.Level <= level && Matches(feat.Name, companion);
+        return id != null && prototypes.TryIndex(id.Value, out CFFeatPrototype? feat) && Gives(feat, kind);
     }
 
+    /// <summary>The feat has a <see cref="CFGrantPet"/> of this kind.</summary>
+    private static bool Gives(CFFeatPrototype feat, CFPetKind kind)
+    {
+        foreach (var grant in feat.Grants)
+        {
+            if (grant is CFGrantPet pet && pet.Kind == kind)
+                return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>Takes a class feature's name, so spaces do not count. Feats say it with a <see cref="CFGrantPet"/>.</summary>
     private static bool Matches(string name, bool companion)
     {
+        name = name.Replace(" ", string.Empty);
         if (companion)
-            return name.Contains("Animal Companion", StringComparison.OrdinalIgnoreCase);
+            return name.Contains("AnimalCompanion", StringComparison.OrdinalIgnoreCase);
 
         return name.Contains("Familiar", StringComparison.OrdinalIgnoreCase)
                && !name.Contains("Familiarity", StringComparison.OrdinalIgnoreCase);

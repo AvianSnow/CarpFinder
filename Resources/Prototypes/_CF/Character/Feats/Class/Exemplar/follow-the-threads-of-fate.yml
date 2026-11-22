@@ -2,8 +2,8 @@
 # source: Carpfinder #217: Death Sails a Wine-Dark Sea
 - type: cfFeat
   id: CFFollowtheThreadsofFate
-  name: "Follow the Threads of Fate"
-  description: "Grants Unravel The Future. Changes an item. This feature will be implemented later."
+  name: cf-feat-followthe-threadsof-fate
+  description: cf-feat-followthe-threadsof-fate-desc
   class: Exemplar
   level: 4
   rarity: Uncommon

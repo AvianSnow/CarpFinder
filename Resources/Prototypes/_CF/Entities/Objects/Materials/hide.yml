@@ -30,6 +30,9 @@
   description: Untreated thin animal hide. It seems you can push it with your finger!
   suffix: leather T1 (1)
   components:
+  - type: CFItemPrice
+    copper: 50 # KCTG: Cowhide
+    fullResale: true
   - type: Appearance
   - type: Item
     size: Normal
@@ -56,6 +59,9 @@
   parent: CFThinLeather1
   suffix: leather T1 (3)
   components:
+    - type: CFItemPrice
+      copper: 100 # KCTG: Cowhide, 2 at 5 sp
+      fullResale: true
     - type: Stack
       count: 2
 
@@ -64,6 +70,9 @@
   parent: CFThinLeather1
   suffix: leather T1 (5)
   components:
+    - type: CFItemPrice
+      copper: 250 # KCTG: Cowhide, 5 at 5 sp
+      fullResale: true
     - type: Stack
       count: 5
 
@@ -75,6 +84,9 @@
   description: Untreated animal hide. It would make a great pouch.
   suffix: leather T2 (1)
   components:
+  - type: CFItemPrice
+    copper: 100 # KCTG: Cured Hide
+    fullResale: true
   - type: Appearance
   - type: Item
     size: Normal
@@ -103,6 +115,9 @@
   parent: CFLeather1
   suffix: leather T2 (3)
   components:
+    - type: CFItemPrice
+      copper: 300 # KCTG: Cured Hide, 3 at 1 gp
+      fullResale: true
     - type: Stack
       count: 3
 
@@ -111,6 +126,9 @@
   parent: CFLeather1
   suffix: leather T2 (5)
   components:
+    - type: CFItemPrice
+      copper: 500 # KCTG: Cured Hide, 5 at 1 gp
+      fullResale: true
     - type: Stack
       count: 5
 
@@ -122,6 +140,9 @@
   description: Durable animal hide. It would make great expensive boots or even protect against cuts.
   suffix: leather T3 (1)
   components:
+  - type: CFItemPrice
+    copper: 250 # KCTG: Grain Leather
+    fullResale: true
   - type: Appearance
   - type: Item
     size: Normal
@@ -150,6 +171,9 @@
   parent: CFRuggedLeather1
   suffix: leather T3 (3)
   components:
+    - type: CFItemPrice
+      copper: 750 # KCTG: Grain Leather, 3 at 2 gp 5 sp
+      fullResale: true
     - type: Stack
       count: 3
 
@@ -158,6 +182,9 @@
   parent: CFRuggedLeather1
   suffix: leather T3 (5)
   components:
+    - type: CFItemPrice
+      copper: 1250 # KCTG: Grain Leather, 5 at 2 gp 5 sp
+      fullResale: true
     - type: Stack
       count: 5
 

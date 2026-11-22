@@ -1,0 +1,361 @@
+# CrystallEdge's stairs (https://github.com/crystallpunk-14/crystall-edge), with permission from eshhhed. A ramp
+# with CFZLevelHighGround that a creature walks up and down between two levels, in place of the CP14 teleport
+# stairs. The sprites are CrystallEdge's, CC-BY-SA-4.0, and stay in Resources/Textures/_CE.
+#
+# Mapping: the stairs stand on a floor tile of the lower level, and the tile straight above them on the level
+# above is left empty. The ramp climbs towards the side the sprite rises to: north with no rotation. Whoever
+# reaches the top steps out onto the level above through the empty tile, and whoever walks onto that empty tile
+# from above comes down the ramp. The top edge is a thin wall, so nobody walks off it at ground level. Only the
+# sides of the ramp are open. A corner turns the ramp through a quarter; an inner corner is the inside bend.
+
+- type: entity
+  id: CFZLevelStairsBase
+  abstract: true
+  categories: [ ForkFiltered ]
+  name: stairs
+  description: Be careful, the higher you climb, the harder the fall.
+  placement:
+    mode: SnapgridCenter
+    snap:
+    - Wall
+  components:
+  - type: Transform
+    anchored: true
+  - type: Clickable
+  - type: InteractionOutline
+  - type: Tag
+    tags:
+    - Structure
+  - type: PlacementReplacement
+    key: walls
+  - type: Occluder
+    polygon:
+    - "-0.5,0.25"
+    - "0.5,0.25"
+    - "0.5,0.5"
+    - "-0.5,0.5"
+  - type: Sprite
+    state: straight
+    drawdepth: Mobs
+  - type: Physics
+    bodyType: Static
+  - type: Fixtures
+    fixtures:
+      hard:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.5,0.5,0.5,0.6"
+        mask:
+        - FullTileMask
+        layer:
+        - WallLayer
+        density: 1000
+        hard: true
+      slowdown:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.4,-0.4,0.4,0.4"
+        layer:
+        - SlipLayer
+        mask:
+        - ItemMask
+        density: 1000
+        hard: false
+  - type: CFZLevelHighGround
+    stick: true
+    heightCurve:
+    - 1.05
+    - 1.05
+    - 0.1
+  - type: SpeedModifierContacts
+    walkSpeedModifier: 0.3
+    sprintSpeedModifier: 0.3
+
+- type: entity
+  parent: CFZLevelStairsBase
+  id: CFZLevelStairsCornerBase
+  abstract: true
+  components:
+  - type: Sprite
+    state: corner
+  - type: Occluder
+    enabled: false
+  - type: CFZLevelHighGround
+    corner: true
+    heightCurve:
+    - 1.05
+    - 1.05
+    - 0.5
+    - 0.1
+  - type: Fixtures
+    fixtures:
+      hard:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "0.5,0.5,0.6,0.6"
+        mask:
+        - FullTileMask
+        layer:
+        - WallLayer
+        density: 1000
+        hard: true
+      slowdown:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.4,-0.4,0.4,0.4"
+        layer:
+        - SlipLayer
+        mask:
+        - ItemMask
+        density: 1000
+        hard: false
+
+- type: entity
+  parent: CFZLevelStairsCornerBase
+  id: CFZLevelStairsCornerInnerBase
+  abstract: true
+  components:
+  - type: Occluder
+    enabled: true
+    polygon:
+    - "-0.5,-0.5"
+    - "0.5,-0.5"
+    - "0.5,0.5"
+    - "-0.5,0.5"
+  - type: Sprite
+    state: internal_corner
+
+# The frame: the wooden scaffold every staircase starts as. Not a ramp yet.
+
+- type: entity
+  id: CFZLevelStairsFrameBase
+  abstract: true
+  categories: [ ForkFiltered ]
+  name: stairs frame
+  description: An unfinished wooden frame. It needs planks or stone on it before it is safe to climb.
+  placement:
+    mode: SnapgridCenter
+    snap:
+    - Wall
+  components:
+  - type: Transform
+    anchored: true
+  - type: Clickable
+  - type: InteractionOutline
+  - type: Tag
+    tags:
+    - Structure
+  - type: PlacementReplacement
+    key: walls
+  - type: Sprite
+    sprite: _CE/Structures/Architecture/Stairs/frame.rsi
+    state: straight
+    drawdepth: Mobs
+  - type: Physics
+    bodyType: Static
+  - type: Fixtures
+    fixtures:
+      hard:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.5,0.5,0.5,0.6"
+        mask:
+        - FullTileMask
+        layer:
+        - WallLayer
+        density: 1000
+        hard: true
+  - type: Damageable
+    damageModifierSet: CFWoodStructural
+  - type: Injurable
+    damageContainer: StructuralInorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 20
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFWoodenPlanks1:
+            min: 1
+            max: 2
+      - !type:PlaySoundBehavior
+        sound:
+          collection: WoodDestroy
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+
+- type: entity
+  parent: CFZLevelStairsFrameBase
+  id: CFZLevelStairsFrame
+  components:
+  - type: Construction
+    graph: CFZLevelStairs
+    node: CFZLevelStairsFrame
+
+- type: entity
+  parent: CFZLevelStairsFrameBase
+  id: CFZLevelStairsFrameCorner
+  suffix: Corner
+  components:
+  - type: Sprite
+    state: corner
+  - type: Fixtures
+    fixtures:
+      hard:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "0.5,0.5,0.6,0.6"
+        mask:
+        - FullTileMask
+        layer:
+        - WallLayer
+        density: 1000
+        hard: true
+  - type: Construction
+    graph: CFZLevelStairs
+    node: CFZLevelStairsFrameCorner
+
+- type: entity
+  parent: CFZLevelStairsFrameCorner
+  id: CFZLevelStairsFrameCornerInner
+  suffix: Inner Corner
+  components:
+  - type: Sprite
+    state: internal_corner
+  - type: Construction
+    graph: CFZLevelStairs
+    node: CFZLevelStairsFrameCornerInner
+
+# Wooden stairs
+
+- type: entity
+  id: CFZLevelStairsWoodenBase
+  abstract: true
+  name: wooden stairs
+  components:
+  - type: Sprite
+    sprite: _CE/Structures/Architecture/Stairs/wooden.rsi
+  - type: Damageable
+    damageModifierSet: CFWoodStructural
+  - type: Injurable
+    damageContainer: StructuralInorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 50
+      behaviors:
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFWoodenPlanks1:
+            min: 1
+            max: 2
+      - !type:PlaySoundBehavior
+        sound:
+          collection: WoodDestroy
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+
+- type: entity
+  parent:
+  - CFZLevelStairsBase
+  - CFZLevelStairsWoodenBase
+  id: CFZLevelStairsWooden
+  name: wooden stairs
+  components:
+  - type: Construction
+    graph: CFZLevelStairs
+    node: CFZLevelStairsWooden
+
+- type: entity
+  parent:
+  - CFZLevelStairsCornerBase
+  - CFZLevelStairsWoodenBase
+  id: CFZLevelStairsWoodenCorner
+  name: wooden stairs
+  suffix: Corner
+  components:
+  - type: Construction
+    graph: CFZLevelStairs
+    node: CFZLevelStairsWoodenCorner
+
+- type: entity
+  parent:
+  - CFZLevelStairsCornerInnerBase
+  - CFZLevelStairsWoodenBase
+  id: CFZLevelStairsWoodenCornerInner
+  name: wooden stairs
+  suffix: Inner Corner
+  components:
+  - type: Construction
+    graph: CFZLevelStairs
+    node: CFZLevelStairsWoodenCornerInner
+
+# Stone stairs
+
+- type: entity
+  id: CFZLevelStairsStoneBase
+  abstract: true
+  name: stone stairs
+  components:
+  - type: Sprite
+    sprite: _CE/Structures/Architecture/Stairs/stone.rsi
+  - type: Damageable
+    damageModifierSet: CFRockStructural
+  - type: Injurable
+    damageContainer: StructuralInorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 100
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          path: /Audio/Effects/break_stone.ogg
+          params:
+            volume: -6
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFStoneBlock1:
+            min: 1
+            max: 2
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+
+- type: entity
+  parent:
+  - CFZLevelStairsBase
+  - CFZLevelStairsStoneBase
+  id: CFZLevelStairsStone
+  name: stone stairs
+  components:
+  - type: Construction
+    graph: CFZLevelStairs
+    node: CFZLevelStairsStone
+
+- type: entity
+  parent:
+  - CFZLevelStairsCornerBase
+  - CFZLevelStairsStoneBase
+  id: CFZLevelStairsStoneCorner
+  name: stone stairs
+  suffix: Corner
+  components:
+  - type: Construction
+    graph: CFZLevelStairs
+    node: CFZLevelStairsStoneCorner
+
+- type: entity
+  parent:
+  - CFZLevelStairsCornerInnerBase
+  - CFZLevelStairsStoneBase
+  id: CFZLevelStairsStoneCornerInner
+  name: stone stairs
+  suffix: Inner Corner
+  components:
+  - type: Construction
+    graph: CFZLevelStairs
+    node: CFZLevelStairsStoneCornerInner

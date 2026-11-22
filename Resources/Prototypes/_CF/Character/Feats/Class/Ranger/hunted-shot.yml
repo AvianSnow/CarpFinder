@@ -2,12 +2,14 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFHuntedShot
-  name: "Hunted Shot"
-  description: "Costs 1 action. This feature will be implemented later."
+  name: cf-feat-hunted-shot
+  description: cf-feat-hunted-shot-desc
   class: Ranger
   level: 1
   traits:
     - "Flourish"
     - "Ranger"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActHuntedShot

@@ -2,11 +2,16 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFReactivePursuit
-  name: "Reactive Pursuit"
-  description: "Reaction. This feature will be implemented later."
+  name: cf-feat-reactive-pursuit
+  description: cf-feat-reactive-pursuit-desc
   class: Rogue
   level: 4
   traits:
     - "Rogue"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-reactive-pursuit
+        trigger: EnemyLeftReach
+        follows: true

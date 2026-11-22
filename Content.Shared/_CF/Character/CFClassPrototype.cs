@@ -1,3 +1,4 @@
+using Content.Shared.CF.Character.Grants;
 using Content.Shared.CF.Preferences;
 using Robust.Shared.Prototypes;
 
@@ -49,6 +50,18 @@ public sealed partial class CFClassPrototype : IPrototype
 
     [DataField]
     public CFRarity Rarity = CFRarity.Common;
+
+    /// <summary>True for classes that follow a deity. The builder then offers a <see cref="CFDeityPrototype"/>.</summary>
+    [DataField]
+    public bool UsesDeity;
+
+    /// <summary>Levels with a skill feat on top of the even levels every class has. A Rogue has 1, 3 and 5.</summary>
+    [DataField]
+    public List<int> BonusSkillFeats = new();
+
+    /// <summary>Levels with a skill increase on top of the odd levels from 3 that every class has. A Rogue has 2 and 4.</summary>
+    [DataField]
+    public List<int> BonusSkillIncreases = new();
 }
 
 /// <summary>One class feature gained by the given level. Later levels are not imported.</summary>
@@ -63,6 +76,21 @@ public sealed partial class CFClassFeature
 
     [DataField]
     public string Description { get; private set; } = "";
+
+    /// <summary>What the player picks for this feature, in the lobby.</summary>
+    [DataField]
+    public List<CFOptionChoice> Choices = new();
+
+    /// <summary>The title of the pick screen, when this has <see cref="Choices"/>.</summary>
+    [DataField]
+    public LocId? ChoiceTitle;
+
+    /// <summary>What this gives a character when <see cref="Level"/> is reached. See <see cref="CFGrant"/>.</summary>
+    [DataField]
+    public List<CFGrant> Grants = new();
+
+    /// <summary>True when none of this feature works yet. One with part of its rules working only says which part in its text.</summary>
+    public bool Unfinished => Grants.Count == 0 && Choices.Count == 0 && Description.Contains("TBA");
 }
 
 /// <summary>
@@ -82,6 +110,27 @@ public sealed partial class CFSpellcasting
 
     [DataField]
     public List<int> Slots = new();
+
+    /// <summary>Slots per rank at each level from 2, one list per level. Empty means <see cref="Slots"/> at every level.</summary>
+    [DataField]
+    public List<List<int>> LaterSlots = new();
+
+    /// <summary>Slots per rank at a level, starting from rank 1.</summary>
+    public List<int> SlotsAt(int level)
+    {
+        if (level <= 1 || LaterSlots.Count == 0)
+            return Slots;
+
+        return LaterSlots[Math.Min(level - 2, LaterSlots.Count - 1)];
+    }
+
+    /// <summary>The same with cantrips at index 0, as <see cref="CFSpellbookComponent.Slots"/> holds them.</summary>
+    public List<int> AllSlotsAt(int level)
+    {
+        var all = new List<int> { Cantrips };
+        all.AddRange(SlotsAt(level));
+        return all;
+    }
 
     [DataField]
     public int FocusPoints;

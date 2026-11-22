@@ -1,0 +1,15 @@
+<BoxContainer xmlns="https://spacestation14.io"
+              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+              x:Class="Content.Client.CF.Character.CFReactionsTab"
+              Orientation="Vertical"
+              HorizontalExpand="True"
+              VerticalExpand="True"
+              Margin="8"
+              SeparationOverride="8">
+    <PanelContainer StyleClasses="BackgroundDark">
+        <Label Text="{Loc 'cf-sheet-reactions-help'}" Margin="8" StyleClasses="LabelSubText"/>
+    </PanelContainer>
+    <ScrollContainer VerticalExpand="True" HorizontalExpand="True" HScrollEnabled="False">
+        <BoxContainer Name="Rows" Orientation="Vertical" HorizontalExpand="True" SeparationOverride="4"/>
+    </ScrollContainer>
+</BoxContainer>

@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFFlamboyantAthlete
-  name: "Flamboyant Athlete"
-  description: "Requires expert in Athletics. This feature will be implemented later."
+  name: cf-feat-flamboyant-athlete
+  description: cf-feat-flamboyant-athlete-desc
   class: Swashbuckler
   level: 4
   traits:

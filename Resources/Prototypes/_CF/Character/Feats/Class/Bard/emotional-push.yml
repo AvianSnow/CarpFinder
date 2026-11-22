@@ -2,12 +2,14 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFEmotionalPush
-  name: "Emotional Push"
-  description: "Reaction. This feature will be implemented later."
+  name: cf-feat-emotional-push
+  description: cf-feat-emotional-push-desc
   class: Bard
   level: 2
   traits:
     - "Bard"
     - "Concentrate"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantOption
+      option: EmotionalPush

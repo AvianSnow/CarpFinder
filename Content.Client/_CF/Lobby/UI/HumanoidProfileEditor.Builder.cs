@@ -1,3 +1,5 @@
+using Content.Shared.CF.DamageTypes;
+using Content.Shared.CF.Languages;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -37,16 +39,39 @@ public sealed partial class HumanoidProfileEditor
         ClassFeatLevel2,
         ClassFeatLevel4,
         AncestryFeatLevel5,
+        SkillFeatLevel2,
+        GeneralFeatLevel3,
+        SkillFeatLevel4,
+        BonusSkillFeat,
+        ClassChoice,
+        Deity,
     }
 
     private enum SkillAssignMode
     {
+        OptionChoice,
+        Language,
+        IncreaseLevel3,
+        IncreaseLevel5,
+        BonusIncrease,
         Background,
         Class,
     }
 
+    /// <summary>Which level's extra slot <see cref="BuilderSelection.BonusSkillFeat"/> or the bonus increase is for.</summary>
+    private int _bonusLevel;
+
+    /// <summary>The character has been accepted, so everything past the first step is shown.</summary>
+    private bool _setupAccepted;
+
     private BuilderSelection _selection = BuilderSelection.Ancestry;
     private SkillAssignMode _skillMode;
+
+    /// <summary>The option whose choices the skill view is showing.</summary>
+    private string _optionSource = string.Empty;
+
+    /// <summary>True while the boost view shows level 5's boosts, not level 1's.</summary>
+    private bool _levelBoosts;
     private bool _pickerOpen;
     private string? _pendingId;
     private string? _prdUrl;
@@ -88,11 +113,24 @@ public sealed partial class HumanoidProfileEditor
         AncestryFeatSlot.OnPressed += _ => ShowAncestryFeatSelection(1);
         Level5FeatSlot.OnPressed += _ => ShowAncestryFeatSelection(5);
         SpriteSlot.OnPressed += _ => ShowSpriteSelection();
+        DeitySlot.OnPressed += _ => ShowDeitySelection();
 
         SkillView.OnClosed += ClosePicker;
         SkillView.OnAccept += AcceptSkillAssignment;
         SkillTrainingButton.OnPressed += _ => ShowSkillTraining();
         ClassSkillButton.OnPressed += _ => ShowClassSkill();
+        LanguagesButton.OnPressed += _ => ShowLanguages();
+        Level2SkillFeatSlot.OnPressed += _ => ShowGeneralFeatSelection(BuilderSelection.SkillFeatLevel2, 2);
+        Level3GeneralFeatSlot.OnPressed += _ => ShowGeneralFeatSelection(BuilderSelection.GeneralFeatLevel3, 3);
+        Level4SkillFeatSlot.OnPressed += _ => ShowGeneralFeatSelection(BuilderSelection.SkillFeatLevel4, 4);
+        Level1BonusSkillFeatSlot.OnPressed += _ => ShowGeneralFeatSelection(BuilderSelection.BonusSkillFeat, 1);
+        Level3BonusSkillFeatSlot.OnPressed += _ => ShowGeneralFeatSelection(BuilderSelection.BonusSkillFeat, 3);
+        Level5BonusSkillFeatSlot.OnPressed += _ => ShowGeneralFeatSelection(BuilderSelection.BonusSkillFeat, 5);
+        Level2BonusSkillIncreaseSlot.OnPressed += _ => ShowSkillIncrease(2, bonus: true);
+        Level4BonusSkillIncreaseSlot.OnPressed += _ => ShowSkillIncrease(4, bonus: true);
+        Level3SkillIncreaseSlot.OnPressed += _ => ShowSkillIncrease(3);
+        Level5SkillIncreaseSlot.OnPressed += _ => ShowSkillIncrease(5);
+        Level5BoostsSlot.OnPressed += _ => ShowLevelBoosts();
 
         TabContainer.SetTabTitle(DetailsTab, Loc.GetString("cf-character-builder-details-tab"));
         TabContainer.SetTabTitle(ShopTabIndex, Loc.GetString("cf-character-builder-shop-tab"));
@@ -102,11 +140,47 @@ public sealed partial class HumanoidProfileEditor
         TabContainer.SetTabTitle(SpellsTabIndex, Loc.GetString("cf-character-builder-spells-tab"));
         TabContainer.SetTabTitle(PetTabIndex, Loc.GetString("cf-character-builder-pet-tab"));
 
+        AcceptCharacterButton.OnPressed += _ => AcceptCharacter();
+
         UpdateBuilderSummary();
+        ApplySetupStage();
         Level2Toggle.OnPressed += _ => Level2Body.Visible = Level2Toggle.Pressed;
         Level3Toggle.OnPressed += _ => Level3Body.Visible = Level3Toggle.Pressed;
         Level4Toggle.OnPressed += _ => Level4Body.Visible = Level4Toggle.Pressed;
         Level5Toggle.OnPressed += _ => Level5Body.Visible = Level5Toggle.Pressed;
+    }
+
+    /// <summary>Levels and the tabs stay hidden until the ancestry, background, class and job are chosen and accepted.</summary>
+    private void ApplySetupStage()
+    {
+        LevelsHeading.Visible = _setupAccepted;
+        LevelsScroll.Visible = _setupAccepted;
+        if (!SelectionView.Visible && !BoostView.Visible && !SkillView.Visible && !JobPane.Visible)
+            EditorPane.Visible = _setupAccepted;
+    }
+
+    private void AcceptCharacter()
+    {
+        if (Profile == null || CFCharacterRequirements.Missing(_prototypeManager, Profile).Count > 0)
+            return;
+
+        ClosePicker();
+        _setupAccepted = true;
+        ApplySetupStage();
+        Save?.Invoke();
+    }
+
+    /// <summary>Accept only lights up once there is nothing left to choose, and says what is if there is.</summary>
+    private void UpdateAcceptButton()
+    {
+        var missing = Profile == null
+            ? new List<LocId>()
+            : CFCharacterRequirements.Missing(_prototypeManager, Profile);
+
+        AcceptCharacterButton.Disabled = Profile == null || missing.Count > 0;
+        AcceptCharacterButton.ToolTip = missing.Count == 0
+            ? null
+            : Loc.GetString("cf-character-missing-tooltip", ("missing", string.Join(", ", missing.Select(id => Loc.GetString(id)))));
     }
 
     private CFCharacterBuildData CurrentBuild()
@@ -119,6 +193,8 @@ public sealed partial class HumanoidProfileEditor
         if (Profile == null)
             return;
 
+        // Any change here can cost a later feat its skill rank.
+        CFSkills.DropUnqualifiedFeats(_prototypeManager, build, CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species)?.ID);
         Profile = Profile.WithCFBuild(build);
         SetDirty();
         UpdateBuilderSummary();
@@ -128,8 +204,143 @@ public sealed partial class HumanoidProfileEditor
     {
         var id = _pendingId;
         ClosePicker();
-        if (id != null)
-            OnBuilderOptionSelected(id);
+        if (id == null)
+            return;
+
+        OnBuilderOptionSelected(id);
+
+        // A new option that needs a cantrip or skill asks for it straight away. It can be changed later from its button.
+        if (Profile != null
+            && OptionSlots(CurrentBuild()).Any(slot => slot.Source == id)
+            && CurrentBuild().OptionPicks.All(pick => pick.Source != id))
+        {
+            ShowOptionChoices(id);
+        }
+    }
+
+    private List<CFOptionSlot> OptionSlots(CFCharacterBuildData build)
+    {
+        return Profile == null
+            ? new List<CFOptionSlot>()
+            : CFOptionChoices.Slots(_prototypeManager, build, CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species)?.ID, level: 1);
+    }
+
+    /// <summary>One button for each option in the build that has something to choose.</summary>
+    private void RefreshOptionChoiceSlots(CFCharacterBuildData build)
+    {
+        OptionChoiceSlots.RemoveAllChildren();
+        foreach (var group in OptionSlots(build).GroupBy(slot => slot.Source))
+        {
+            var source = group.Key;
+            var picks = group
+                .Select(slot => build.OptionPicks.FirstOrDefault(p => p.Source == slot.Source && p.Slot == slot.Slot))
+                .Where(pick => pick != null)
+                .Select(pick => OptionLabel(pick!.Value))
+                .ToList();
+            var button = new Button
+            {
+                Text = Loc.GetString(
+                    "cf-character-builder-option-choice",
+                    ("name", Loc.GetString(group.First().SourceName)),
+                    ("picks", picks.Count == group.Count()
+                        ? string.Join(", ", picks)
+                        : Loc.GetString("cf-character-builder-option-choose"))),
+                HorizontalExpand = true,
+            };
+            button.OnPressed += _ => ShowOptionChoices(source);
+            OptionChoiceSlots.AddChild(button);
+        }
+    }
+
+    private string OptionLabel(string value)
+    {
+        if (value.StartsWith(CFOptionChoices.SignaturePrefix, StringComparison.Ordinal))
+            value = value[CFOptionChoices.SignaturePrefix.Length..];
+
+        if (_prototypeManager.TryIndex<CFSpellPrototype>(value, out var spell))
+            return spell.Name;
+
+        if (_prototypeManager.TryIndex<CFLanguagePrototype>(value, out var language))
+            return Loc.GetString(language.Name);
+
+        if (_prototypeManager.TryIndex<CFFeatPrototype>(value, out var feat))
+            return FeatName(feat);
+
+        if (_prototypeManager.TryIndex<CFDamageTypePrototype>(value, out var damageType))
+            return Loc.GetString(damageType.Name);
+
+        if (_prototypeManager.TryIndex<CFDomainPrototype>(value, out var domain))
+            return Loc.GetString(domain.Name);
+
+        if (Enum.TryParse<Content.Shared.CF.Terrain.CFFavoredTerrain>(value, out var terrain))
+            return Loc.GetString($"cf-terrain-favored-{terrain.ToString().ToLowerInvariant()}");
+
+        return SkillLabelMap().GetValueOrDefault(value, value);
+    }
+
+    private void ShowOptionChoices(string source)
+    {
+        var build = CurrentBuild();
+        var slots = OptionSlots(build).Where(slot => slot.Source == source).ToList();
+        if (Profile == null || slots.Count == 0)
+            return;
+
+        _skillMode = SkillAssignMode.OptionChoice;
+        _optionSource = source;
+
+        // Skills the character already has are not offered, and neither is one this option is about to replace.
+        var ownPicks = build.OptionPicks.Where(pick => pick.Source == source).Select(pick => pick.Value).ToHashSet();
+        var ancestry = CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species)?.ID;
+        var trained = CFSkills.CollectTrainedSkills(_prototypeManager, build, ancestry, build.Class?.Id, CFExperienceComponent.MaxLevel).ToHashSet();
+        if (build.Class is { } classId && _prototypeManager.TryIndex(classId, out CFClassPrototype? cls))
+            trained.UnionWith(cls.Proficiencies.Skills.Trained);
+
+        // Nor is a feat the character already has.
+        var hasFeats = CFSkills.SelectedFeats(_prototypeManager, build, ancestry, build.Class?.Id, CFExperienceComponent.MaxLevel)
+            .Select(feat => feat.ID)
+            .ToHashSet();
+
+        var definitions = new List<SkillSlotDefinition>();
+        foreach (var slot in slots)
+        {
+            var allowed = CFOptionChoices.Allowed(_prototypeManager, slot.Choice, build, ancestry)
+                .Where(id => slot.Choice.Kind != CFOptionChoiceKind.Skill || ownPicks.Contains(id) || !trained.Contains(id))
+                .Where(id => slot.Choice.Kind != CFOptionChoiceKind.Feat || ownPicks.Contains(id) || !hasFeats.Contains(id))
+                .OrderBy(OptionLabel, StringComparer.CurrentCultureIgnoreCase)
+                .ToList();
+
+            // Signature spells are per rank, and a character may not have learned a spell of every rank. Accept needs every row filled.
+            if (slot.Choice.Kind == CFOptionChoiceKind.SignatureSpell && allowed.Count == 0)
+                continue;
+
+            definitions.Add(new SkillSlotDefinition
+            {
+                Id = slot.Slot.ToString(),
+                Label = Loc.GetString(slot.Choice.Kind switch
+                {
+                    CFOptionChoiceKind.SignatureSpell => "cf-character-builder-option-signature",
+                    CFOptionChoiceKind.Cantrip => "cf-character-builder-option-cantrip",
+                    CFOptionChoiceKind.WeaponGroup => "cf-character-builder-option-weapon-group",
+                    CFOptionChoiceKind.Language => "cf-character-builder-option-language",
+                    CFOptionChoiceKind.KeyAttribute => "cf-character-builder-option-key-attribute",
+                    CFOptionChoiceKind.SaveOrPerception => "cf-character-builder-option-save",
+                    CFOptionChoiceKind.Feat => "cf-character-builder-option-feat",
+                    CFOptionChoiceKind.DamageType => "cf-character-builder-option-damage-type",
+                    CFOptionChoiceKind.Terrain => "cf-character-builder-option-terrain",
+                    CFOptionChoiceKind.Domain => "cf-character-builder-option-domain",
+                    _ => "cf-character-builder-option-skill",
+                }),
+                Allowed = allowed,
+                Labels = allowed.ToDictionary(id => id, OptionLabel),
+                Selected = build.OptionPicks.FirstOrDefault(p => p.Source == source && p.Slot == slot.Slot)?.Value,
+            });
+        }
+
+        SkillView.Show(
+            Loc.GetString(slots[0].SourceName),
+            Loc.GetString("cf-character-builder-option-help"),
+            definitions);
+        OpenSkillView();
     }
 
     private void ClosePicker()
@@ -140,7 +351,7 @@ public sealed partial class HumanoidProfileEditor
         BoostView.Visible = false;
         SkillView.Visible = false;
         JobPane.Visible = false;
-        EditorPane.Visible = true;
+        EditorPane.Visible = _setupAccepted;
         AncestryButton.Pressed = false;
         BackgroundButton.Pressed = false;
         ClassButton.Pressed = false;
@@ -261,6 +472,8 @@ public sealed partial class HumanoidProfileEditor
             {
                 var next = CurrentBuild();
                 next.Heritage = id;
+                if (_prototypeManager.TryIndex<CFHeritagePrototype>(id, out var pickedHeritage))
+                    next.ClassTrainedSkills.RemoveAll(skill => pickedHeritage.TrainedSkills.Contains(skill));
                 SetBuild(next);
                 if (Profile != null
                     && CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species) is { } ancestry
@@ -287,6 +500,21 @@ public sealed partial class HumanoidProfileEditor
                     && _prototypeManager.TryIndex(next.ClassFeatLevel4.Value, out CFFeatPrototype? classFeatLevel4)
                     && !classFeatLevel4.FitsClass(id, 4))
                     next.ClassFeatLevel4 = null;
+                CFClassChoices.Sanitize(_prototypeManager, next);
+                SetBuild(next);
+                break;
+            }
+            case BuilderSelection.ClassChoice:
+            {
+                var next = CurrentBuild();
+                CFClassChoices.Assign(_prototypeManager, next, id);
+                SetBuild(next);
+                break;
+            }
+            case BuilderSelection.Deity:
+            {
+                var next = CurrentBuild();
+                CFClassChoices.AssignDeity(_prototypeManager, next, id);
                 SetBuild(next);
                 break;
             }
@@ -299,6 +527,34 @@ public sealed partial class HumanoidProfileEditor
             case BuilderSelection.ClassFeatLevel4:
                 SetBuild(AssignClassFeat(CurrentBuild(), 4, id));
                 break;
+            case BuilderSelection.SkillFeatLevel2:
+            {
+                var next = CurrentBuild();
+                next.SkillFeatLevel2 = id;
+                SetBuild(next);
+                break;
+            }
+            case BuilderSelection.GeneralFeatLevel3:
+            {
+                var next = CurrentBuild();
+                next.GeneralFeatLevel3 = id;
+                SetBuild(next);
+                break;
+            }
+            case BuilderSelection.SkillFeatLevel4:
+            {
+                var next = CurrentBuild();
+                next.SkillFeatLevel4 = id;
+                SetBuild(next);
+                break;
+            }
+            case BuilderSelection.BonusSkillFeat:
+            {
+                var next = CurrentBuild();
+                next.BonusSkillFeats[_bonusLevel] = id;
+                SetBuild(next);
+                break;
+            }
             case BuilderSelection.AncestryFeatLevel5:
             {
                 var next = CurrentBuild();
@@ -338,7 +594,7 @@ public sealed partial class HumanoidProfileEditor
                 Speed = Stat("cf-character-builder-stat-speed", $"{ancestry.Speed} {Loc.GetString("cf-character-builder-feet")}"),
                 Boosts = Stat("cf-character-builder-stat-boosts", FormatBoosts(ancestry.AbilityBoosts)),
                 Flaws = Stat("cf-character-builder-stat-flaws", FormatAbilities(ancestry.AbilityFlaws)),
-                Languages = Stat("cf-character-builder-stat-languages", JoinLoc(ancestry.Languages)),
+                Languages = Stat("cf-character-builder-stat-languages", JoinLanguages(ancestry.Languages)),
             });
         }
 
@@ -441,7 +697,12 @@ public sealed partial class HumanoidProfileEditor
 
         var lines = new List<string> { text };
         foreach (var feature in cls.Features.OrderBy(feature => feature.Level).ThenBy(feature => feature.Name, StringComparer.Ordinal))
-            lines.Add($"Level {feature.Level}: {feature.Name}. {feature.Description}");
+        {
+            var name = feature.Unfinished
+                ? Loc.GetString("cf-character-builder-feat-tba", ("name", feature.Name))
+                : feature.Name;
+            lines.Add($"Level {feature.Level}: {name}. {feature.Description}");
+        }
 
         return string.Join("\n", lines);
     }
@@ -491,14 +752,17 @@ public sealed partial class HumanoidProfileEditor
         var options = new List<Pf2eListEntry>();
 
         foreach (var feat in _prototypeManager.EnumeratePrototypes<CFFeatPrototype>()
-                     .Where(feat => ancestry != null && feat.Fits(ancestry.ID, maxLevel) && feat.ID != other)
+                     .Where(feat => ancestry != null
+                                    && feat.Fits(ancestry.ID, maxLevel)
+                                    && feat.ID != other
+                                    && CFSkills.MeetsPrerequisites(_prototypeManager, build, ancestry.ID, feat, maxLevel))
                      .OrderBy(feat => feat.Level)
                      .ThenBy(feat => Loc.GetString(feat.Name), StringComparer.CurrentCultureIgnoreCase))
         {
             options.Add(new Pf2eListEntry
             {
                 Id = feat.ID,
-                Name = Loc.GetString(feat.Name),
+                Name = FeatName(feat),
                 Rarity = feat.Rarity,
                 Traits = Loc.GetString("cf-character-builder-feat-level", ("level", feat.Level)),
                 Description = Loc.GetString(feat.Description),
@@ -538,6 +802,7 @@ public sealed partial class HumanoidProfileEditor
         Level4FeatSlot.Pressed = maxLevel >= 4;
 
         var build = CurrentBuild();
+        var ancestryId = CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species)?.ID;
         var classId = build.Class?.Id;
         var selected = maxLevel switch
         {
@@ -556,14 +821,17 @@ public sealed partial class HumanoidProfileEditor
         var options = new List<Pf2eListEntry>();
 
         foreach (var feat in _prototypeManager.EnumeratePrototypes<CFFeatPrototype>()
-                     .Where(feat => feat.FitsClass(classId, maxLevel) && !taken.Contains(feat.ID))
+                     .Where(feat => feat.FitsClass(classId, maxLevel)
+                                    && CFClassChoices.MeetsRequirement(_prototypeManager, build, feat)
+                                    && CFSkills.MeetsPrerequisites(_prototypeManager, build, ancestryId, feat, maxLevel)
+                                    && !taken.Contains(feat.ID))
                      .OrderBy(feat => feat.Level)
                      .ThenBy(feat => Loc.GetString(feat.Name), StringComparer.CurrentCultureIgnoreCase))
         {
             options.Add(new Pf2eListEntry
             {
                 Id = feat.ID,
-                Name = Loc.GetString(feat.Name),
+                Name = FeatName(feat),
                 Rarity = feat.Rarity,
                 Traits = Loc.GetString("cf-character-builder-feat-level", ("level", feat.Level)),
                 Description = Loc.GetString(feat.Description),
@@ -576,6 +844,192 @@ public sealed partial class HumanoidProfileEditor
             options,
             selected);
         OpenPicker();
+    }
+
+    /// <summary>A subclass option's name, marked if it has no effect in play yet.</summary>
+    private static string ClassChoiceName(CFClassChoicePrototype choice)
+    {
+        var name = Loc.GetString(choice.Name);
+        var unfinished = choice.Grants.Count == 0
+                         && choice.Features.Count == 0
+                         && choice.Choices.Count == 0
+                         && choice.TrainedSkills.Count == 0
+                         && choice.KeyAbility == null
+                         && Loc.GetString(choice.Description).Contains("TBA");
+        return unfinished ? Loc.GetString("cf-character-builder-feat-tba", ("name", name)) : name;
+    }
+
+    /// <summary>A heritage's name, marked if it has no effect in play yet.</summary>
+    private static string HeritageName(CFHeritagePrototype heritage)
+    {
+        var name = Loc.GetString(heritage.Name);
+        var unfinished = heritage.Grants.Count == 0
+                         && heritage.TrainedSkills.Count == 0
+                         && heritage.Choices.Count == 0
+                         && heritage is { HitPoints: 0, Speed: 0, Size: null, Darkvision: false, UpgradeVision: false }
+                         && Loc.GetString(heritage.Description).Contains("TBA");
+        return unfinished ? Loc.GetString("cf-character-builder-feat-tba", ("name", name)) : name;
+    }
+
+    /// <summary>A feat's name, marked if it has no effect in play yet.</summary>
+    private static string FeatName(CFFeatPrototype feat)
+    {
+        var name = Loc.GetString(feat.Name);
+        var text = Loc.GetString(feat.Description);
+        var unfinished = feat.PendingAction
+                         || feat.Grants.Count == 0
+                            && feat.Choices.Count == 0
+                            && (text.Contains("implemented later")
+                                || text.Contains("TBA")
+                                || text.Contains("ot applied in play"));
+        return unfinished ? Loc.GetString("cf-character-builder-feat-tba", ("name", name)) : name;
+    }
+
+    /// <summary>The list for a skill or general feat slot. Feats the build cannot qualify for by then are left out.</summary>
+    private void ShowGeneralFeatSelection(BuilderSelection slot, int level)
+    {
+        if (Profile == null)
+            return;
+
+        _selection = slot;
+        _prdUrl = AncestryPrd;
+        AncestryButton.Pressed = false;
+        BackgroundButton.Pressed = false;
+        ClassButton.Pressed = false;
+        JobButton.Pressed = false;
+        HeritageSlot.Pressed = false;
+        SpriteSlot.Pressed = false;
+        AncestryFeatSlot.Pressed = false;
+        ClassFeatSlot.Pressed = false;
+        Level2FeatSlot.Pressed = false;
+        Level4FeatSlot.Pressed = false;
+        Level5FeatSlot.Pressed = false;
+
+        var build = CurrentBuild();
+        var ancestryId = CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species)?.ID;
+        var skillSlot = slot != BuilderSelection.GeneralFeatLevel3;
+        var selected = slot switch
+        {
+            BuilderSelection.SkillFeatLevel2 => build.SkillFeatLevel2?.Id,
+            BuilderSelection.GeneralFeatLevel3 => build.GeneralFeatLevel3?.Id,
+            BuilderSelection.BonusSkillFeat => build.BonusSkillFeats.GetValueOrDefault(level),
+            _ => build.SkillFeatLevel4?.Id,
+        };
+
+        if (slot == BuilderSelection.BonusSkillFeat)
+            _bonusLevel = level;
+
+        var taken = new HashSet<string?> { build.SkillFeatLevel2?.Id, build.GeneralFeatLevel3?.Id, build.SkillFeatLevel4?.Id };
+        taken.UnionWith(build.BonusSkillFeats.Values);
+        taken.UnionWith(CFSkills.BackgroundFeats(_prototypeManager, build).Select(id => id.Id));
+        taken.Remove(selected);
+        _pendingId = selected;
+
+        var options = new List<Pf2eListEntry>();
+        foreach (var feat in _prototypeManager.EnumeratePrototypes<CFFeatPrototype>()
+                     .Where(feat => (skillSlot ? feat.FitsSkillSlot(level) : feat.FitsGeneralSlot(level))
+                                    && !taken.Contains(feat.ID)
+                                    && CFSkills.Qualifies(_prototypeManager, build, ancestryId, feat, level))
+                     .OrderBy(feat => feat.Level)
+                     .ThenBy(feat => Loc.GetString(feat.Name), StringComparer.CurrentCultureIgnoreCase))
+        {
+            var description = Loc.GetString(feat.Description);
+            if (feat.Prerequisites.Count > 0)
+            {
+                description += "\n" + Loc.GetString(
+                    "cf-character-builder-feat-prerequisites",
+                    ("prerequisites", string.Join("; ", feat.Prerequisites)));
+            }
+
+            options.Add(new Pf2eListEntry
+            {
+                Id = feat.ID,
+                Name = FeatName(feat),
+                Rarity = feat.Rarity,
+                Traits = Loc.GetString("cf-character-builder-feat-level", ("level", feat.Level)),
+                Description = description,
+            });
+        }
+
+        SelectionView.Show(
+            Loc.GetString(skillSlot ? "cf-character-builder-skill-feat" : "cf-character-builder-general-feat"),
+            Loc.GetString("cf-character-builder-filter-all-feats"),
+            options,
+            selected);
+        OpenPicker();
+    }
+
+    /// <summary>One skill to raise a rank, from those still below Expert before this level.</summary>
+    private void ShowSkillIncrease(int level, bool bonus = false)
+    {
+        if (Profile == null)
+            return;
+
+        _bonusLevel = level;
+        _skillMode = bonus
+            ? SkillAssignMode.BonusIncrease
+            : level == 3 ? SkillAssignMode.IncreaseLevel3 : SkillAssignMode.IncreaseLevel5;
+        var build = CurrentBuild();
+        var ancestryId = CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species)?.ID;
+        var allowed = new List<string>();
+        var labels = new Dictionary<string, string>();
+        foreach (var skill in _prototypeManager.EnumeratePrototypes<CFAbilitySkillPrototype>().OrderBy(skill => skill.Order))
+        {
+            if (CFSkills.BuildRank(_prototypeManager, build, ancestryId, skill.ID, level - 1) >= CFProficiencyRank.Expert)
+                continue;
+
+            allowed.Add(skill.ID);
+            labels[skill.ID] = Loc.GetString(skill.Name);
+        }
+
+        var current = bonus
+            ? build.BonusSkillIncreases.GetValueOrDefault(level)
+            : level == 3 ? build.SkillIncreaseLevel3?.Id : build.SkillIncreaseLevel5?.Id;
+        var slots = new List<SkillSlotDefinition>
+        {
+            new()
+            {
+                Id = "increase",
+                Label = Loc.GetString("cf-character-builder-skill-increase"),
+                Allowed = allowed,
+                Labels = labels,
+                Selected = current != null && allowed.Contains(current) ? current : null,
+            },
+        };
+
+        SkillView.Show(
+            Loc.GetString("cf-character-builder-skill-increase"),
+            Loc.GetString("cf-character-builder-skill-increase-help"),
+            slots);
+        OpenSkillView();
+    }
+
+    /// <summary>Four different attributes. The boost view keeps a group's rows different.</summary>
+    private void ShowLevelBoosts()
+    {
+        if (Profile == null)
+            return;
+
+        _levelBoosts = true;
+        var build = CurrentBuild();
+        var slots = new List<BoostSlotDefinition>();
+        for (var i = 0; i < CFAttributeMath.LevelFiveBoostCount; i++)
+        {
+            slots.Add(new BoostSlotDefinition
+            {
+                Id = $"level-{i}",
+                Group = "level",
+                Label = Loc.GetString("cf-character-builder-level-boost-slot", ("index", i + 1)),
+                Allowed = AllAbilities.ToList(),
+                Selected = i < build.AbilityBoostsLevel5.Count ? build.AbilityBoostsLevel5[i] : null,
+            });
+        }
+
+        BoostView.Show(
+            Loc.GetString("cf-character-builder-level-boosts"),
+            Loc.GetString("cf-character-builder-level-boosts-help"),
+            slots);
+        OpenBoostView();
     }
 
     private void ShowHeritageSelection()
@@ -612,7 +1066,7 @@ public sealed partial class HumanoidProfileEditor
             options.Add(new Pf2eListEntry
             {
                 Id = heritage.ID,
-                Name = Loc.GetString(heritage.Name),
+                Name = HeritageName(heritage),
                 Rarity = heritage.Rarity,
                 Traits = traits,
                 Description = Loc.GetString(heritage.Description),
@@ -632,6 +1086,149 @@ public sealed partial class HumanoidProfileEditor
             options,
             selected);
         OpenPicker();
+    }
+
+    /// <summary>One button per subclass slot the class has options in, and one for a deity if it follows one.</summary>
+    private void RefreshClassChoiceSlots(CFCharacterBuildData build)
+    {
+        ClassChoiceSlots.RemoveAllChildren();
+        DeitySlot.Visible = false;
+        if (build.Class is not { } classId || !_prototypeManager.TryIndex(classId, out CFClassPrototype? cls))
+            return;
+
+        var none = Loc.GetString("cf-character-builder-none");
+        var selected = CFClassChoices.Selected(_prototypeManager, build);
+        foreach (var slot in CFClassChoices.Slots(_prototypeManager, classId))
+        {
+            var pick = selected.FirstOrDefault(choice => choice.Slot == slot);
+            var button = new Button
+            {
+                Text = Loc.GetString(
+                    "cf-character-builder-choice-selected",
+                    ("slot", Loc.GetString(slot)),
+                    ("name", pick == null ? none : Loc.GetString(pick.Name))),
+                HorizontalExpand = true,
+            };
+            button.OnPressed += _ => ShowClassChoiceSelection(slot);
+            ClassChoiceSlots.AddChild(button);
+        }
+
+        if (!cls.UsesDeity)
+            return;
+
+        DeitySlot.Visible = true;
+        DeitySlot.Disabled = !_prototypeManager.EnumeratePrototypes<CFDeityPrototype>().Any();
+        if (DeitySlot.Disabled)
+        {
+            DeitySlot.Text = Loc.GetString("cf-character-builder-deity-tba");
+            return;
+        }
+
+        var deity = CFClassChoices.SelectedDeity(_prototypeManager, build);
+        DeitySlot.Text = Loc.GetString(
+            "cf-character-builder-deity-selected",
+            ("name", deity == null ? none : Loc.GetString(deity.Name)));
+    }
+
+    private void ReleaseBuilderSlots()
+    {
+        AncestryButton.Pressed = false;
+        BackgroundButton.Pressed = false;
+        ClassButton.Pressed = false;
+        JobButton.Pressed = false;
+        HeritageSlot.Pressed = false;
+        SpriteSlot.Pressed = false;
+        AncestryFeatSlot.Pressed = false;
+        ClassFeatSlot.Pressed = false;
+        Level2FeatSlot.Pressed = false;
+        Level4FeatSlot.Pressed = false;
+        Level5FeatSlot.Pressed = false;
+    }
+
+    private void ShowClassChoiceSelection(LocId slot)
+    {
+        if (Profile?.CFBuild.Class is not { } classId)
+            return;
+
+        _selection = BuilderSelection.ClassChoice;
+        _prdUrl = ClassPrd;
+        ReleaseBuilderSlots();
+
+        var selected = CFClassChoices.Selected(_prototypeManager, Profile.CFBuild)
+            .FirstOrDefault(choice => choice.Slot == slot)?.ID;
+        _pendingId = selected;
+
+        var labels = SkillLabelMap();
+        var options = new List<Pf2eListEntry>();
+        foreach (var choice in _prototypeManager.EnumeratePrototypes<CFClassChoicePrototype>()
+                     .Where(choice => choice.Class == classId && choice.Slot == slot)
+                     .OrderBy(choice => Loc.GetString(choice.Name), StringComparer.CurrentCultureIgnoreCase))
+        {
+            options.Add(new Pf2eListEntry
+            {
+                Id = choice.ID,
+                Name = ClassChoiceName(choice),
+                Rarity = choice.Rarity,
+                Traits = choice.KeyAbility is { } key
+                    ? Loc.GetString("cf-character-builder-class-key-ability", ("ability", AbilityName(key)))
+                    : null,
+                Description = Loc.GetString(choice.Description),
+                Rules = DescribeTrainedSkills(choice.TrainedSkills, labels),
+            });
+        }
+
+        SelectionView.Show(
+            Loc.GetString(slot),
+            Loc.GetString("cf-character-builder-filter-all-choices"),
+            options,
+            selected);
+        OpenPicker();
+    }
+
+    private void ShowDeitySelection()
+    {
+        if (Profile == null)
+            return;
+
+        _selection = BuilderSelection.Deity;
+        _prdUrl = ClassPrd;
+        ReleaseBuilderSlots();
+
+        var selected = CFClassChoices.SelectedDeity(_prototypeManager, Profile.CFBuild)?.ID;
+        _pendingId = selected;
+
+        var labels = SkillLabelMap();
+        var options = new List<Pf2eListEntry>();
+        foreach (var deity in _prototypeManager.EnumeratePrototypes<CFDeityPrototype>()
+                     .OrderBy(deity => Loc.GetString(deity.Name), StringComparer.CurrentCultureIgnoreCase))
+        {
+            options.Add(new Pf2eListEntry
+            {
+                Id = deity.ID,
+                Name = Loc.GetString(deity.Name),
+                Rarity = deity.Rarity,
+                Description = Loc.GetString(deity.Description),
+                Rules = DescribeTrainedSkills(deity.TrainedSkills, labels),
+            });
+        }
+
+        SelectionView.Show(
+            Loc.GetString("cf-character-builder-title-deity"),
+            Loc.GetString("cf-character-builder-filter-all-deities"),
+            options,
+            selected);
+        OpenPicker();
+    }
+
+    private static string? DescribeTrainedSkills(
+        List<ProtoId<CFAbilitySkillPrototype>> skills,
+        IReadOnlyDictionary<string, string> labels)
+    {
+        if (skills.Count == 0)
+            return null;
+
+        var names = skills.Select(skill => labels.GetValueOrDefault(skill.Id, skill.Id));
+        return Loc.GetString("cf-character-builder-choice-trained", ("skills", string.Join(", ", names)));
     }
 
     private void ShowSpriteSelection()
@@ -726,10 +1323,18 @@ public sealed partial class HumanoidProfileEditor
         }
     }
 
+    /// <summary>A <c>"license"</c> or <c>"copyright"</c> string in an RSI's meta.json.</summary>
+    private static readonly Regex MetaField = new("\"(?<key>license|copyright)\"\\s*:\\s*\"(?<value>(?:\\\\.|[^\"\\\\])*)\"");
+
     private static string? MatchMeta(string text, string key)
     {
-        var match = Regex.Match(text, $"\"{key}\"\\s*:\\s*\"(?<value>(?:\\\\.|[^\"\\\\])*)\"");
-        return match.Success ? Regex.Unescape(match.Groups["value"].Value) : null;
+        for (var match = MetaField.Match(text); match.Success; match = match.NextMatch())
+        {
+            if (match.Groups["key"].Value == key)
+                return Regex.Unescape(match.Groups["value"].Value);
+        }
+
+        return null;
     }
 
     private void ShowBoostAssignment()
@@ -737,6 +1342,7 @@ public sealed partial class HumanoidProfileEditor
         if (Profile == null)
             return;
 
+        _levelBoosts = false;
         var build = CurrentBuild();
         var ancestry = CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species);
         var slots = new List<BoostSlotDefinition>();
@@ -833,6 +1439,20 @@ public sealed partial class HumanoidProfileEditor
 
         var selections = BoostView.GetSelections();
         var build = CurrentBuild();
+        if (_levelBoosts)
+        {
+            build.AbilityBoostsLevel5.Clear();
+            for (var i = 0; i < CFAttributeMath.LevelFiveBoostCount; i++)
+            {
+                if (selections.TryGetValue($"level-{i}", out var boost) && boost is { } ability && !build.AbilityBoostsLevel5.Contains(ability))
+                    build.AbilityBoostsLevel5.Add(ability);
+            }
+
+            ClosePicker();
+            SetBuild(build);
+            return;
+        }
+
         var ancestry = CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species);
 
         build.AncestryFreeBoosts.Clear();
@@ -940,6 +1560,104 @@ public sealed partial class HumanoidProfileEditor
         OpenSkillView();
     }
 
+    private void ShowLanguages()
+    {
+        if (Profile == null)
+            return;
+
+        _skillMode = SkillAssignMode.Language;
+        var build = CurrentBuild();
+        var sheet = CFAttributeMath.Snapshot(_prototypeManager, Profile);
+        var atFirst = CFLanguageRules.PickCount(sheet.Modifiers);
+        var count = LanguageSlots(build);
+        var title = Loc.GetString("cf-character-builder-languages");
+        if (count == 0)
+        {
+            SkillView.Show(title, Loc.GetString("cf-character-builder-languages-none"), Array.Empty<SkillSlotDefinition>());
+            OpenSkillView();
+            return;
+        }
+
+        var pickable = CFLanguageRules.Pickable(_prototypeManager, sheet.Ancestry);
+        var allowed = pickable.Select(language => language.ID).ToList();
+        var labels = pickable.ToDictionary(language => language.ID, language => Loc.GetString(language.Name));
+        var slots = new List<SkillSlotDefinition>();
+        for (var i = 0; i < count; i++)
+        {
+            string? selected = null;
+            if (i < build.Languages.Count && allowed.Contains(build.Languages[i].Id))
+                selected = build.Languages[i].Id;
+
+            slots.Add(new SkillSlotDefinition
+            {
+                Id = $"language-{i}",
+                Label = i < atFirst
+                    ? Loc.GetString("cf-character-builder-language-slot", ("index", i + 1))
+                    : Loc.GetString("cf-character-builder-language-slot-level-5"),
+                Allowed = allowed,
+                Labels = labels,
+                Selected = selected,
+            });
+        }
+
+        SkillView.Show(title, Loc.GetString("cf-character-builder-languages-help"), slots);
+        OpenSkillView();
+    }
+
+    private string FeatSlotText(string slot, ProtoId<CFFeatPrototype>? feat)
+    {
+        return feat != null && _prototypeManager.TryIndex(feat.Value, out var prototype)
+            ? Loc.GetString("cf-character-builder-slot-selected", ("slot", Loc.GetString(slot)), ("name", Loc.GetString(prototype.Name)))
+            : Loc.GetString(slot);
+    }
+
+    /// <summary>The extra skill feat and increase slots show only for a class that has them at that level.</summary>
+    private void UpdateBonusSlots(CFCharacterBuildData build)
+    {
+        CFClassPrototype? cls = null;
+        if (build.Class is { } classId)
+            _prototypeManager.TryIndex(classId, out cls);
+
+        foreach (var (button, level) in new[] { (Level1BonusSkillFeatSlot, 1), (Level3BonusSkillFeatSlot, 3), (Level5BonusSkillFeatSlot, 5) })
+        {
+            button.Visible = cls?.BonusSkillFeats.Contains(level) == true;
+            button.Text = FeatSlotText(
+                "cf-character-builder-skill-feat",
+                build.BonusSkillFeats.TryGetValue(level, out var feat) ? new ProtoId<CFFeatPrototype>(feat) : (ProtoId<CFFeatPrototype>?) null);
+        }
+
+        foreach (var (button, level) in new[] { (Level2BonusSkillIncreaseSlot, 2), (Level4BonusSkillIncreaseSlot, 4) })
+        {
+            button.Visible = cls?.BonusSkillIncreases.Contains(level) == true;
+            button.Text = SkillSlotText(
+                build.BonusSkillIncreases.TryGetValue(level, out var skill) ? new ProtoId<CFAbilitySkillPrototype>(skill) : (ProtoId<CFAbilitySkillPrototype>?) null);
+        }
+    }
+
+    private string SkillSlotText(ProtoId<CFAbilitySkillPrototype>? skill)
+    {
+        var slot = Loc.GetString("cf-character-builder-skill-increase");
+        return skill != null && _prototypeManager.TryIndex(skill.Value, out var prototype)
+            ? Loc.GetString("cf-character-builder-slot-selected", ("slot", slot), ("name", Loc.GetString(prototype.Name)))
+            : slot;
+    }
+
+    private bool IsLanguagesComplete(CFCharacterBuildData build)
+    {
+        return Profile != null && build.Languages.Count >= LanguageSlots(build);
+    }
+
+    /// <summary>One per point of Intelligence, and one more if a level 5 boost raises it.</summary>
+    private int LanguageSlots(CFCharacterBuildData build)
+    {
+        if (Profile == null)
+            return 0;
+
+        var modifiers = CFAttributeMath.Snapshot(_prototypeManager, Profile.WithCFBuild(build)).Modifiers;
+        return CFLanguageRules.PickCount(modifiers)
+               + (CFLanguageRules.LevelFiveLanguage(modifiers, build.AbilityBoostsLevel5) ? 1 : 0);
+    }
+
     private void ShowClassSkill()
     {
         _skillMode = SkillAssignMode.Class;
@@ -970,6 +1688,12 @@ public sealed partial class HumanoidProfileEditor
 
         var blocked = new HashSet<string>(StringComparer.Ordinal);
         foreach (var skill in cls.Proficiencies.Skills.Trained)
+            blocked.Add(skill);
+
+        foreach (var skill in CFClassChoices.TrainedSkills(_prototypeManager, build))
+            blocked.Add(skill);
+
+        foreach (var skill in CFSkills.HeritageSkills(_prototypeManager, build, CFAttributeMath.FindAncestry(_prototypeManager, Profile.Species)?.ID))
             blocked.Add(skill);
 
         if (build.BackgroundTrainedSkills.Count > 0)
@@ -1024,7 +1748,46 @@ public sealed partial class HumanoidProfileEditor
         var selections = SkillView.GetSelections();
         var build = CurrentBuild();
 
-        if (_skillMode == SkillAssignMode.Background)
+        if (_skillMode == SkillAssignMode.OptionChoice)
+        {
+            build.OptionPicks.RemoveAll(pick => pick.Source == _optionSource);
+            foreach (var (slot, value) in selections)
+            {
+                if (value != null)
+                    build.OptionPicks.Add(new CFOptionPick { Source = _optionSource, Slot = int.Parse(slot), Value = value });
+            }
+
+            build.ClassTrainedSkills.RemoveAll(skill => selections.Values.Contains(skill.Id));
+            ClosePicker();
+            SetBuild(build);
+            return;
+        }
+
+        if (_skillMode == SkillAssignMode.BonusIncrease)
+        {
+            if (selections.TryGetValue("increase", out var bonusIncrease) && bonusIncrease != null)
+                build.BonusSkillIncreases[_bonusLevel] = bonusIncrease;
+            else
+                build.BonusSkillIncreases.Remove(_bonusLevel);
+        }
+        else if (_skillMode is SkillAssignMode.IncreaseLevel3 or SkillAssignMode.IncreaseLevel5)
+        {
+            selections.TryGetValue("increase", out var increase);
+            if (_skillMode == SkillAssignMode.IncreaseLevel3)
+                build.SkillIncreaseLevel3 = increase;
+            else
+                build.SkillIncreaseLevel5 = increase;
+        }
+        else if (_skillMode == SkillAssignMode.Language)
+        {
+            build.Languages.Clear();
+            foreach (var selected in selections.Values)
+            {
+                if (selected != null && build.Languages.All(language => language.Id != selected))
+                    build.Languages.Add(selected);
+            }
+        }
+        else if (_skillMode == SkillAssignMode.Background)
         {
             if (build.Background == null
                 || !_prototypeManager.TryIndex(build.Background.Value, out CFBackgroundPrototype? background))
@@ -1082,6 +1845,7 @@ public sealed partial class HumanoidProfileEditor
 
     private void UpdateBuilderSummary()
     {
+        UpdateAcceptButton();
         var ancestry = Loc.GetString("cf-character-builder-none");
         if (Profile != null && _prototypeManager.TryIndex(Profile.Species, out SpeciesPrototype? species))
             ancestry = Loc.GetString(species.Name);
@@ -1099,8 +1863,7 @@ public sealed partial class HumanoidProfileEditor
         var jobName = Loc.GetString("cf-character-builder-none");
         if (Profile != null)
         {
-            var highPriorityJob = Profile.JobPriorities.FirstOrDefault(priority => priority.Value == JobPriority.High).Key;
-            if (!string.IsNullOrEmpty(highPriorityJob) && _prototypeManager.TryIndex<JobPrototype>(highPriorityJob, out var job))
+            if (CFCharacterRequirements.ChosenJob(_prototypeManager, Profile) is { } chosenJob && _prototypeManager.TryIndex(chosenJob, out var job))
                 jobName = job.LocalizedName;
         }
 
@@ -1113,6 +1876,8 @@ public sealed partial class HumanoidProfileEditor
         if (build.Heritage != null && _prototypeManager.TryIndex(build.Heritage.Value, out CFHeritagePrototype? chosenHeritage))
             heritageName = Loc.GetString(chosenHeritage.Name);
         HeritageSlot.Text = Loc.GetString("cf-character-builder-heritage-selected", ("name", heritageName));
+        RefreshClassChoiceSlots(build);
+        RefreshOptionChoiceSlots(build);
 
         var featName = Loc.GetString("cf-character-builder-none");
         if (build.AncestryFeat != null && _prototypeManager.TryIndex(build.AncestryFeat.Value, out CFFeatPrototype? chosenFeat))
@@ -1163,6 +1928,20 @@ public sealed partial class HumanoidProfileEditor
         ClassSkillButton.Text = IsClassSkillComplete(build)
             ? Loc.GetString("cf-character-builder-class-skill-done")
             : Loc.GetString("cf-character-builder-class-skill");
+
+        Level2SkillFeatSlot.Text = FeatSlotText("cf-character-builder-skill-feat", build.SkillFeatLevel2);
+        Level3GeneralFeatSlot.Text = FeatSlotText("cf-character-builder-general-feat", build.GeneralFeatLevel3);
+        Level4SkillFeatSlot.Text = FeatSlotText("cf-character-builder-skill-feat", build.SkillFeatLevel4);
+        Level3SkillIncreaseSlot.Text = SkillSlotText(build.SkillIncreaseLevel3);
+        Level5SkillIncreaseSlot.Text = SkillSlotText(build.SkillIncreaseLevel5);
+        UpdateBonusSlots(build);
+        Level5BoostsSlot.Text = build.AbilityBoostsLevel5.Count >= CFAttributeMath.LevelFiveBoostCount
+            ? Loc.GetString("cf-character-builder-level-boosts-done")
+            : Loc.GetString("cf-character-builder-level-boosts");
+
+        LanguagesButton.Text = IsLanguagesComplete(build)
+            ? Loc.GetString("cf-character-builder-languages-done")
+            : Loc.GetString("cf-character-builder-languages");
 
         UpdateHeaderStats();
     }
@@ -1323,6 +2102,11 @@ public sealed partial class HumanoidProfileEditor
     private static string Stat(string locId, string value)
     {
         return Loc.GetString(locId, ("value", value));
+    }
+
+    private string JoinLanguages(IEnumerable<ProtoId<CFLanguagePrototype>> ids)
+    {
+        return JoinLoc(ids.Select(id => _prototypeManager.Index(id).Name));
     }
 
     private static string JoinLoc(IEnumerable<LocId> ids)

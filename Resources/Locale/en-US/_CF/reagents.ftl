@@ -16,3 +16,26 @@ cf-reagent-name-essence-chaos = essence of chaos
 cf-reagent-desc-essence-chaos = The elemental essence of chaos.
 cf-reagent-name-essence-magic = essence of magic
 cf-reagent-desc-essence-magic = A concentrated essence of magical energy.
+reagent-physical-desc-colorless = colorless
+reagent-physical-desc-sparkling = sparkling
+cp14-flavor-base-salt = salty
+cf-reagent-name-toxic-spew = toxic spew
+cf-reagent-desc-toxic-spew = What is left of a toxic spew: a green, reeking film that clings to the floor until it fumes away.
+cf-reagent-name-grease = conjured grease
+cf-reagent-desc-grease = A slick film left by a Grease spell. It is gone when the spell ends.
+cf-reagent-name-acid-splash = conjured acid
+cf-reagent-desc-acid-splash = What a splash of magical acid leaves behind. It has spent itself and soon fumes away.
+cf-reagent-name-conjured-water = conjured water
+cf-reagent-desc-conjured-water = Water called up by a spell. It dries quickly.
+cf-reagent-name-healing-draught = spilled healing potion
+cf-reagent-desc-healing-draught = A healing potion that ended up on the floor. Still good, for a few minutes, for anyone willing to roll in it or drink it.
+
+cf-reagent-name-wort = wort
+cf-reagent-desc-wort = Wheat mashed in water. Left in a barrel, it becomes beer.
+cf-reagent-name-must = must
+cf-reagent-desc-must = Crushed fruit in water. Left in a barrel, it becomes wine.
+cf-reagent-name-pumpkin-mash = pumpkin mash
+cf-reagent-desc-pumpkin-mash = Pumpkin mashed in water. Left in a barrel, it becomes ale.
+
+cf-reagent-name-spoiled-brew = spoiled brew
+cf-reagent-desc-spoiled-brew = What a potion becomes when the brewing goes badly wrong. Foul, and good for nothing.

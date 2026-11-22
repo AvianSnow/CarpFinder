@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFAnimalEmpathyRanger
-  name: "Animal Empathy (Ranger)"
-  description: "This feature will be implemented later."
+  name: cf-feat-animal-empathy-ranger
+  description: cf-feat-animal-empathy-ranger-desc
   class: Ranger
   level: 2
   traits:

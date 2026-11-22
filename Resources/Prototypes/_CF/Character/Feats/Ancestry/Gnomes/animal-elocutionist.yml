@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core
 - type: cfFeat
   id: CFAnimalElocutionist
-  name: "Animal Elocutionist"
-  description: "+1 circumstance bonus to Diplomacy. Not applied in play yet."
+  name: cf-feat-animal-elocutionist
+  description: cf-feat-animal-elocutionist-desc
   ancestry: Gnome
   level: 1
   traits:

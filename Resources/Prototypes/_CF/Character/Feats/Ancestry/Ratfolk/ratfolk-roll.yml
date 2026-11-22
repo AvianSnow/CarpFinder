@@ -2,8 +2,8 @@
 # source: Carpfinder Player Core 2
 - type: cfFeat
   id: CFRatfolkRoll
-  name: "Ratfolk Roll"
-  description: "Costs 2 actions. TBA - action will be added"
+  name: cf-feat-ratfolk-roll
+  description: cf-feat-ratfolk-roll-desc
   ancestry: Ratfolk
   level: 5
   traits:

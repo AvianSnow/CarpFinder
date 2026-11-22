@@ -15,6 +15,15 @@
         <Button Name="PrintButton" Text="{Loc 'cf-spell-print'}" />
     </BoxContainer>
     <ScrollContainer VerticalExpand="True" HorizontalExpand="True" HScrollEnabled="False">
-        <BoxContainer Name="SpellRanks" Orientation="Vertical" HorizontalExpand="True" Margin="8 0 8 8" SeparationOverride="12" />
+        <BoxContainer Orientation="Vertical" HorizontalExpand="True">
+            <PanelContainer Name="GrantedPanel" StyleClasses="PanelDark" Margin="8 0 8 8" Visible="False">
+                <BoxContainer Orientation="Vertical" Margin="8" SeparationOverride="2">
+                    <Label Text="{Loc 'cf-spell-granted-title'}" FontColorOverride="#E6C15A" />
+                    <Label Text="{Loc 'cf-spell-granted-hint'}" FontColorOverride="#9aa0aa" />
+                    <BoxContainer Name="GrantedSpells" Orientation="Vertical" SeparationOverride="2" />
+                </BoxContainer>
+            </PanelContainer>
+            <BoxContainer Name="SpellRanks" Orientation="Vertical" HorizontalExpand="True" Margin="8 0 8 8" SeparationOverride="12" />
+        </BoxContainer>
     </ScrollContainer>
 </BoxContainer>

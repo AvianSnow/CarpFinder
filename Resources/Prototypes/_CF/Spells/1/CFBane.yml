@@ -14,9 +14,12 @@
   - type: CFSpell
     spell: Bane
     rank: 1
+  - type: CFAreaFill
+    tile: CFFillMotes
+    tint: true
   - type: CFAreaEffect
     shape: Emanation
-    sizeFeet: 5
+    sizeFeet: 10
   - type: CFCheck
     defense: Will
     basicSave: false
