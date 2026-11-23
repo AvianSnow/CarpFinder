@@ -1,0 +1,25 @@
+# Verdant Weapon (Druid feat 1). Right-click the seed in hand to grow it into a weapon, and the weapon to turn it back.
+# The rules imprint one weapon in 10 minutes: here the seed can become any of these, one at a time.
+
+- type: entity
+  parent: BaseItem
+  id: CFVerdantSeed
+  name: verdant seed
+  description: A seed full of primal energy. Held in hand, it can grow into a staff, a spear or a sling, and back again.
+  components:
+  - type: Sprite
+    sprite: Objects/Specific/Hydroponics/seeds.rsi
+    state: seed
+  - type: Item
+    size: Tiny
+  - type: CFBulk
+    bulk: 0
+  - type: CFTrait
+    traits:
+    - Primal
+    - Magical
+  - type: CFVerdantSeed
+    weapons:
+    - CFStaff
+    - CFSpear
+    - CFSling

@@ -37,11 +37,50 @@ public static class CFClassChoices
     /// <summary>Whether the build has a subclass option this feat asks for.</summary>
     public static bool MeetsRequirement(IPrototypeManager prototypes, CFCharacterBuildData build, CFFeatPrototype feat)
     {
-        if (feat.RequiresChoice.Count == 0)
+        if (feat.RequiresChoice.Count == 0 || HasOwn(prototypes, build, feat))
             return true;
 
+        var joined = Joined(prototypes, build);
+        return feat.RequiresChoice.Any(joined.Contains);
+    }
+
+    /// <summary>Whether one of the subclass options this feat asks for is the build's own pick.</summary>
+    public static bool HasOwn(IPrototypeManager prototypes, CFCharacterBuildData build, CFFeatPrototype feat)
+    {
         var selected = Selected(prototypes, build);
         return feat.RequiresChoice.Any(id => selected.Exists(choice => choice.ID == id.Id));
+    }
+
+    /// <summary>
+    /// Subclass options the build counts as having without picking them: a class feat with a
+    /// <see cref="CFOptionChoice.JoinsSubclass"/> choice (Order Explorer) joins the options its chosen feat asks for.
+    /// Only the class feat slots are read, so this never asks what the build qualifies for.
+    /// </summary>
+    public static List<ProtoId<CFClassChoicePrototype>> Joined(IPrototypeManager prototypes, CFCharacterBuildData build)
+    {
+        var result = new List<ProtoId<CFClassChoicePrototype>>();
+        foreach (var slot in new[] { build.ClassFeat, build.ClassFeatLevel2, build.ClassFeatLevel4 })
+        {
+            if (slot is not { } id || !prototypes.TryIndex(id, out CFFeatPrototype? source))
+                continue;
+
+            var index = 0;
+            foreach (var choice in source.Choices)
+            {
+                for (var i = 0; i < choice.Count; i++, index++)
+                {
+                    if (!choice.JoinsSubclass)
+                        continue;
+
+                    var at = index;
+                    var pick = build.OptionPicks.FirstOrDefault(p => p.Source == source.ID && p.Slot == at);
+                    if (pick != null && prototypes.TryIndex<CFFeatPrototype>(pick.Value, out var joinedFeat))
+                        result.AddRange(joinedFeat.RequiresChoice);
+                }
+            }
+        }
+
+        return result;
     }
 
     /// <summary>The build's deity, if it has one and its class follows one.</summary>

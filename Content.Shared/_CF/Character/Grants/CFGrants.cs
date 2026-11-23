@@ -946,3 +946,41 @@ public sealed partial class CFGrantDomainSpell : CFGrant
         features.Apply(args.Mob, domain.Grants, $"{args.Source}:domain:{domain.ID}");
     }
 }
+
+/// <summary>
+/// A focus spell by what the player picked for another option: Order Magic gives the order spell of the order that Order
+/// Explorer joined. Keys are that pick's values.
+/// </summary>
+public sealed partial class CFGrantChosenFocusSpell : CFGrant
+{
+    /// <summary>The option whose pick is read. Null reads this option's own.</summary>
+    [DataField]
+    public string? PickOf;
+
+    [DataField(required: true)]
+    public Dictionary<string, ProtoId<CFSpellPrototype>> Spells = new();
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        var features = entities.System<CFCharacterFeatureSystem>();
+        if (features.Pick(args.Mob, PickOf ?? args.Source) is { } pick && Spells.TryGetValue(pick, out var spell))
+            features.GrantFocusSpell(args.Mob, spell);
+    }
+}
+
+/// <summary>A language the character knows beside its ancestry's and its picks, such as the druids' Wildsong.</summary>
+public sealed partial class CFGrantLanguage : CFGrant
+{
+    [DataField(required: true)]
+    public ProtoId<Content.Shared.CF.Languages.CFLanguagePrototype> Language;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        var languages = entities.EnsureComponent<Content.Shared.CF.Languages.CFLanguagesComponent>(args.Mob);
+        if (languages.Known.Contains(Language))
+            return;
+
+        languages.Known.Add(Language);
+        entities.Dirty(args.Mob, languages);
+    }
+}

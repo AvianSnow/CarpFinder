@@ -121,6 +121,22 @@ public sealed partial class CFStrikeActionSystem : EntitySystem
         if (action.Press && CompOrNull<CFActionPoolComponent>(user)?.MapAttacks is null or 0)
             return "cf-strike-action-needs-press";
 
+        if (action.SameTarget
+            && (CompOrNull<CFActionPoolComponent>(user) is not { MapAttacks: > 0 } pool || pool.LastStrikeTarget != target))
+        {
+            return "cf-strike-action-needs-same";
+        }
+
+        if (action.NeedsMorph && !Content.Shared.CF.Spells.CFMorphs.IsMorphed(EntityManager, user, needsAttack: true))
+            return "cf-strike-action-needs-morph";
+
+        if (action.UnarmedTypes.Count > 0)
+        {
+            var type = _strikes.UnarmedStats(user).DamageType;
+            if (!action.UnarmedTypes.Exists(wanted => string.Equals(wanted, type, StringComparison.OrdinalIgnoreCase)))
+                return "cf-strike-action-needs-unarmed-type";
+        }
+
         if (action.NeedsFreeHand && _hands.CountFreeHands(user) == 0)
             return "cf-strike-action-needs-hand";
 

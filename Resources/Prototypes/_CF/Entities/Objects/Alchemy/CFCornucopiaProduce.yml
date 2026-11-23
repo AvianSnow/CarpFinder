@@ -1,0 +1,15 @@
+# What the Leaf order's Cornucopia spell spills out. Eaten, it restores 1d6+4 Hit Points, and it withers after 10 minutes.
+# Left out: eating several pieces from one casting with a single action, and six pieces counting as a meal.
+
+- type: entity
+  parent: CFLeshyFruit
+  id: CFCornucopiaProduce
+  name: cornucopia produce
+  description: Fresh produce from a druid's cornucopia. Eaten, it restores 1d6+4 Hit Points. It withers within 10 minutes.
+  components:
+  - type: CFHealConsumable
+    healDice: 1
+    healDie: 6
+    healBonus: 4
+  - type: TimedDespawn
+    lifetime: 600

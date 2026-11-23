@@ -88,8 +88,14 @@ public sealed partial class CFEffectSystem : EntitySystem
     /// <summary>The clicked creature is a legal target for this source.</summary>
     public bool CanTarget(EntityUid source, EntityUid user, EntityUid target)
     {
-        var filter = CompOrNull<CFTargetingComponent>(source)?.Filter ?? CFTargetFilter.Enemies;
-        return PassesFilter(user, target, filter, selfAllowed: true);
+        var targeting = CompOrNull<CFTargetingComponent>(source);
+        if (targeting is { TargetTraits.Count: > 0 }
+            && CompOrNull<Content.Shared.CF.Traits.CFTraitComponent>(target)?.HasAny(targeting.TargetTraits) != true)
+        {
+            return false;
+        }
+
+        return PassesFilter(user, target, targeting?.Filter ?? CFTargetFilter.Enemies, selfAllowed: true);
     }
 
     /// <summary>How far a source reaches, in feet. No limit when it has no range.</summary>

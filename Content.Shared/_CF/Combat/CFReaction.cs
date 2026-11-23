@@ -64,6 +64,9 @@ public enum CFReactionTrigger : byte
     /// <summary>This creature is becoming sickened.</summary>
     Sickened,
 
+    /// <summary>This creature is becoming frightened.</summary>
+    Frightened,
+
     /// <summary>An ally within <see cref="CFReaction.RangeFeet"/> has dropped to 0 Hit Points.</summary>
     AllyDropped,
 
@@ -157,6 +160,14 @@ public sealed partial class CFReaction
     /// <summary>With <see cref="CFReactionTrigger.Sickened"/>, how much comes off the sickened value.</summary>
     [DataField]
     public int SickenedLess;
+
+    /// <summary>With <see cref="CFReactionTrigger.Frightened"/>, how much comes off the frightened value.</summary>
+    [DataField]
+    public int FrightenedLess;
+
+    /// <summary>Only under a morph or polymorph effect: a battle form, or an animal Rage (Creature Comforts).</summary>
+    [DataField]
+    public bool WhileMorphed;
 
     /// <summary>
     /// The creature rushes toward whoever set the reaction off, up to its Speed, and that move sets off no reactions: an enemy

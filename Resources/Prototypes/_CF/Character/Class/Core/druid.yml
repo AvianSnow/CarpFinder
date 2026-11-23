@@ -45,7 +45,7 @@
   features:
     - level: 1
       name: "Anathema (Druid)"
-      description: "The acts your order forbids: TBA"
+      description: "Despoiling natural places, taking more from nature than you need, and teaching the Wildsong to those who are not druids are anathema. Your order adds its own. Nothing in the game checks this: TBA"
     - level: 1
       name: "Druid Spellcasting"
       description: "Level 1 cantrips and spell slots are on the spell sheet."
@@ -60,10 +60,19 @@
           option: ShieldBlock
     - level: 1
       name: "Voice of Nature"
-      description: "Your bond with the natural world: TBA"
+      description: "You gain your choice of the Animal Empathy or Plant Empathy druid feat."
+      choiceTitle: cf-class-feature-voice-of-nature
+      choices:
+        - kind: Feat
+          featSlot: ClassFeat
+          featLevel: 1
+          feats: [ CFAnimalEmpathy, CFPlantEmpathy ]
     - level: 1
       name: "Wildsong"
-      description: "The druids' secret language: TBA"
+      description: "You know the Wildsong, the druids' secret language, beside your other languages. Choose it in the language menu to speak it."
+      grants:
+        - !type:CFGrantLanguage
+          language: Wildsong
     - level: 3
       name: "Fortitude Expertise"
       description: "Expert in Fortitude saves."

@@ -19,6 +19,7 @@ cf-class-choice-edge-precision = Precision
 cf-class-choice-edge-precision-desc = The first time you hit your prey each turn, you deal 1d8 extra precision damage.
 
 cf-class-feature-weapon-mastery = Fighter Weapon Mastery
+cf-class-feature-voice-of-nature = Voice of Nature
 cf-class-feature-signature-spells = Signature Spells
 
 cf-class-choice-muse = Muse
@@ -39,11 +40,11 @@ cf-class-choice-doctrine-warpriest-desc = Trained in light and medium armor, exp
 
 cf-class-choice-order = Druidic Order
 cf-class-choice-order-animal = Animal
-cf-class-choice-order-animal-desc = You are trained in Athletics, and have the Animal Companion feat: pick the animal on the Pet tab. The heal animal order spell: TBA
+cf-class-choice-order-animal-desc = You are trained in Athletics, and have the Animal Companion feat: pick the animal on the Pet tab. You can cast heal animal as a focus spell, which heals your companion and other animals.
 cf-class-choice-order-leaf = Leaf
-cf-class-choice-order-leaf-desc = You are trained in Diplomacy, and have the Leshy Familiar feat: pick the familiar on the Pet tab. Its order spell: TBA
+cf-class-choice-order-leaf-desc = You are trained in Diplomacy, and have the Leshy Familiar feat: pick the familiar on the Pet tab. You can cast cornucopia as a focus spell, which makes produce that heals whoever eats it.
 cf-class-choice-order-storm = Storm
-cf-class-choice-order-storm-desc = You are trained in Acrobatics and can cast tempest surge as a focus spell. The Storm Born feat: TBA
+cf-class-choice-order-storm-desc = You are trained in Acrobatics, have the Storm Born feat, and can cast tempest surge as a focus spell.
 cf-class-choice-order-untamed = Untamed
 cf-class-choice-order-untamed-desc = You are trained in Intimidation, and have the Untamed Form feat and its order spell.
 

@@ -1512,3 +1512,89 @@
   duration: sustained up to 4 rounds
   summary: "Fast healing 2 and 2 temporary Hit Points each round."
   heightened: "Both increase by 2 per rank."
+
+# Druid order spells. Tempest Surge and Untamed Form are above.
+- type: entity
+  parent: CFSpellTarget
+  id: CFHealAnimal
+  name: Heal Animal
+  description: "Pick 1 or 2 actions. 1: touch an animal, 1d8 Hit Points. 2: an animal within 30 feet, 1d8+8. Costs a Focus Point."
+  components:
+  - type: Sprite
+    sprite: Objects/Magic/magicactions.rsi
+    layers:
+    - state: spell_default
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 2
+  - type: CFSpell
+    spell: HealAnimal
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+    filter: All
+    targetTraits: [ Animal ]
+  - type: CFModeChoice
+    modes:
+    - { value: 1, name: cf-mode-heal-1, tooltip: cf-mode-heal-animal-1-desc, actions: 1, touch: true }
+    - { value: 2, name: cf-mode-heal-2, tooltip: cf-mode-heal-animal-2-desc, actions: 2 }
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFVitalEnergyEffect
+      energy: Vitality
+      healingFlat: 8
+      heightenHealingFlat: 8
+      healingFlatMode: 2
+
+- type: cfSpell
+  id: HealAnimal
+  name: Heal Animal
+  rank: 1
+  traits: [Healing, Manipulate, Vitality]
+  actionCost: Variable
+  range: touch or 30 feet
+  targets: 1 living animal
+  summary: An animal regains 1d8 Hit Points with a touch, or 1d8+8 from 30 feet for 2 actions.
+  heightened: Healing increases by 1d8 per rank, and the 2-action version's extra healing by 8.
+
+- type: entity
+  parent: CFSpellInstant
+  id: CFCornucopia
+  name: Cornucopia
+  description: "A wicker horn spills a piece of produce into your hand. Eaten, it restores 1d6+4 Hit Points. It withers after 10 minutes. One more piece at level 3 and at level 5. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 2
+  - type: CFSpell
+    spell: Cornucopia
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    filter: All
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFSpawnEffect
+      prototype: CFCornucopiaProduce
+      at: User
+      heightenCount: 1
+      toHand: true
+
+- type: cfSpell
+  id: Cornucopia
+  name: Cornucopia
+  rank: 1
+  traits: [Concentrate, Healing, Manipulate, Plant, Vitality]
+  actionCost: Two
+  duration: 10 minutes
+  summary: A piece of produce appears in your hand. A creature that eats it regains 1d6+4 Hit Points. It withers after 10 minutes.
+  heightened: One more piece of produce per rank.

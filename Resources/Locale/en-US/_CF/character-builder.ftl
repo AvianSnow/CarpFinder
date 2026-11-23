@@ -165,6 +165,7 @@ cf-language-amurrun = Amurrun
 cf-language-kholo = Kholo
 cf-language-sakvroth = Sakvroth
 cf-language-bestial = Animal noises
+cf-language-wildsong = Wildsong
 cf-language-mindless = Moaning
 cf-language-iruxi = Iruxi
 cf-language-ysoki = Ysoki

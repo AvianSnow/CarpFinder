@@ -13,6 +13,8 @@
   prerequisites:
     - "animal instinct or untamed order"
   action: Action
-  pendingAction: true
   requiresChoice:
     - InstinctAnimal
+  grants:
+    - !type:CFGrantAction
+      action: CFActBrutalCrush

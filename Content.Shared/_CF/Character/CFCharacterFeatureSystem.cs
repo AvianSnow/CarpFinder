@@ -237,6 +237,13 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
 
     public void GrantFocusSpell(EntityUid mob, ProtoId<CFSpellPrototype> spell)
     {
+        // The same spell from a second option adds no second Focus Point (Order Magic after the Untamed Form feat).
+        foreach (var existing in _actions.GetActions(mob))
+        {
+            if (MetaData(existing).EntityPrototype?.ID == "CF" + spell.Id)
+                return;
+        }
+
         GrantSpell(mob, spell);
         var book = EnsureComp<CFSpellbookComponent>(mob);
         book.FocusPoints = Math.Min(CFFocusSystem.MaxFocusPoints, book.FocusPoints + 1);

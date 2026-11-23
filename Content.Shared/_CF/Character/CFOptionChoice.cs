@@ -85,6 +85,18 @@ public sealed partial class CFOptionChoice
     [DataField]
     public string? FeatTrait;
 
+    /// <summary>A <see cref="CFOptionChoiceKind.Feat"/> choice only offers these feats (Voice of Nature). Empty means any.</summary>
+    [DataField]
+    public List<ProtoId<CFFeatPrototype>> Feats = new();
+
+    /// <summary>
+    /// A <see cref="CFOptionChoiceKind.Feat"/> choice offers feats of a subclass option the build does not have, and the
+    /// build then counts as having that option for feats that ask for it (Order Explorer). Feats of its own option are
+    /// left out. See <see cref="CFClassChoices.Joined"/>.
+    /// </summary>
+    [DataField]
+    public bool JoinsSubclass;
+
     /// <summary>A <see cref="CFOptionChoiceKind.Domain"/> choice offers every domain, not only the deity's (Splinter Faith).</summary>
     [DataField]
     public bool AnyDomain;

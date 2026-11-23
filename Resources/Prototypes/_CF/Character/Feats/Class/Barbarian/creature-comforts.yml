@@ -12,6 +12,12 @@
   prerequisites:
     - "animal instinct or untamed order"
   action: Reaction
-  pendingAction: true
   requiresChoice:
     - InstinctAnimal
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-creature-comforts
+        trigger: Frightened
+        frightenedLess: 1
+        whileMorphed: true

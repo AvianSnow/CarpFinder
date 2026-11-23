@@ -8,4 +8,9 @@
   level: 2
   traits:
     - "Druid"
-  pendingAction: true
+  # The feat picked says which order is joined. CFClassChoices.Joined reads it for later feats.
+  choices:
+    - kind: Feat
+      featSlot: ClassFeat
+      featLevel: 1
+      joinsSubclass: true

@@ -29,6 +29,10 @@ public sealed partial class CFTargetingComponent : Component
     /// <summary>Walls and closed doors block the effect. Remaster spells need line of effect.</summary>
     [DataField]
     public bool LineOfEffect;
+
+    /// <summary>Only a creature with one of these traits can be targeted (Heal Animal). Empty means any.</summary>
+    [DataField]
+    public List<Robust.Shared.Prototypes.ProtoId<Content.Shared.CF.Traits.CFTraitPrototype>> TargetTraits = new();
 }
 
 public enum CFDelivery : byte

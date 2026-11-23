@@ -112,7 +112,9 @@ public static class CFOptionChoices
             {
                 if (FeatFits(choice, feat, build.Class?.Id, ancestryId)
                     && CFSkills.Qualifies(prototypes, build, ancestryId, feat, choice.FeatLevel)
-                    && (choice.FeatSlot != CFLevelSlot.ClassFeat || CFClassChoices.MeetsRequirement(prototypes, build, feat)))
+                    && (choice.JoinsSubclass
+                        ? feat.RequiresChoice.Count > 0 && !CFClassChoices.HasOwn(prototypes, build, feat)
+                        : choice.FeatSlot != CFLevelSlot.ClassFeat || CFClassChoices.MeetsRequirement(prototypes, build, feat)))
                 {
                     feats.Add(feat.ID);
                 }
@@ -207,6 +209,9 @@ public static class CFOptionChoices
     public static bool FeatFits(CFOptionChoice choice, CFFeatPrototype feat, string? classId, string? ancestryId)
     {
         if (choice.FeatTrait is { } trait && !feat.Traits.Contains(trait))
+            return false;
+
+        if (choice.Feats.Count > 0 && !choice.Feats.Contains(feat.ID))
             return false;
 
         return choice.FeatSlot switch

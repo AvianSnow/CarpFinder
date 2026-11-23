@@ -129,6 +129,14 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         if (!string.IsNullOrWhiteSpace(build.PetName))
             _meta.SetEntityName(companion, build.PetName.Trim());
 
+        // An animal companion is an animal, which Heal Animal asks for. The bodies are stock ones with no traits.
+        if (pet.Kind == CFPetKind.Companion)
+        {
+            var traits = EnsureComp<Content.Shared.CF.Traits.CFTraitComponent>(companion);
+            traits.Traits.Add("Animal");
+            Dirty(companion, traits);
+        }
+
         var block = CFPetMath.Present(pet, build, sheet);
         var combat = EnsureComp<CFCombatantComponent>(companion);
         combat.Level = block.Level;

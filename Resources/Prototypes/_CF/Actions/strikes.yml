@@ -435,3 +435,44 @@
     range: 200
   - type: CFStrikeAction
     drawsWeapon: true
+
+# Howl of the Wild's morph feats, for a Druid in a battle form and an animal Barbarian in a Rage.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActRipAndTear
+  name: Rip and Tear
+  description: An unarmed Strike at the creature you last attacked this turn, with a battle form's or an animal Rage's piercing or slashing attack. If it deals damage, the target takes 1d6 persistent bleed.
+  components:
+  - type: CFStrikeAction
+    unarmedOnly: true
+    needsMorph: true
+    sameTarget: true
+    unarmedTypes: [ Piercing, Slashing ]
+    onHit:
+    - !type:CFDamageEffect
+      damageType: Bleed
+      scaleByDegree: false
+      persistentDice: 1
+      persistentDie: 6
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActBrutalCrush
+  name: Brutal Crush
+  description: An unarmed Strike at the creature you last attacked this turn, with a battle form's or an animal Rage's bludgeoning attack. If it deals damage, the target is stupefied 2 for 6 seconds, or stupefied 3 on a critical hit.
+  components:
+  - type: CFStrikeAction
+    unarmedOnly: true
+    needsMorph: true
+    sameTarget: true
+    unarmedTypes: [ Bludgeoning ]
+    onHit:
+    - !type:CFApplyConditionEffect
+      condition: Stupefied
+      value: 2
+      durationSeconds: 6
+    onCritical:
+    - !type:CFApplyConditionEffect
+      condition: Stupefied
+      value: 3
+      durationSeconds: 6

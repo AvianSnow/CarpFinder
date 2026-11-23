@@ -128,3 +128,10 @@
   name: cf-language-mindless
   rarity: Rare
   syllables: [ uhh, nnh, hhrr, ghh, aah, mmh, rrh, hhn ]
+
+# The druids' secret language. Rare, so nobody picks it: the Druid's Wildsong feature gives it.
+- type: language
+  id: Wildsong
+  name: cf-language-wildsong
+  rarity: Rare
+  syllables: [ twee, hoo, rrill, chirr, lu, kaa, whit, ooo, trill, yip ]

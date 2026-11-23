@@ -10,6 +10,8 @@
   grants:
   - !type:CFGrantFeat
     feat: CFAnimalCompanion
+  - !type:CFGrantFocusSpell
+    spell: HealAnimal
 
 - type: cfClassChoice
   id: OrderLeaf
@@ -22,6 +24,8 @@
   grants:
   - !type:CFGrantFeat
     feat: CFLeshyFamiliar
+  - !type:CFGrantFocusSpell
+    spell: Cornucopia
 
 - type: cfClassChoice
   id: OrderStorm
@@ -32,6 +36,8 @@
   trainedSkills:
   - Acrobatics
   grants:
+  - !type:CFGrantFeat
+    feat: CFStormBorn
   - !type:CFGrantFocusSpell
     spell: TempestSurge
 

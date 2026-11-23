@@ -104,3 +104,5 @@ cf-mode-earthworks-1 = 1 action: 5-foot burst
 cf-mode-earthworks-2 = 2 actions: 10-foot burst
 cf-mode-earthworks-3 = 3 actions: 15-foot burst
 cf-drain-bonded-item = Your bonded item gives up its power.
+cf-mode-heal-animal-1-desc = Touch an animal: 1d8 Hit Points.
+cf-mode-heal-animal-2-desc = An animal within 30 feet: 1d8+8 Hit Points.

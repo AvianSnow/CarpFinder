@@ -194,6 +194,23 @@ public sealed partial class CFBattleFormOption
 /// Battle forms. The form's unarmed attack replaces the fist, with the form's attack modifier and AC unless the creature's
 /// own are higher. It cannot cast spells or use a weapon in the form, which lasts until it runs out or the creature drops.
 /// </summary>
+/// <summary>What counts as being under a morph or polymorph effect, for the feats that ask (Rip and Tear, Creature Comforts).</summary>
+public static class CFMorphs
+{
+    /// <summary>
+    /// A battle form, or a Rage that gives an animal's attack. <paramref name="needsAttack"/> leaves out a form with no
+    /// Strikes, such as a pest's.
+    /// </summary>
+    public static bool IsMorphed(IEntityManager entities, EntityUid uid, bool needsAttack = false)
+    {
+        if (entities.TryGetComponent(uid, out CFBattleFormComponent? form))
+            return !needsAttack || !form.NoStrikes;
+
+        return entities.TryGetComponent(uid, out Content.Shared.CF.Combat.CFCombatOptionsComponent? options)
+               && options is { Raging: true, RageAttackDie: > 0 };
+    }
+}
+
 public sealed partial class CFBattleFormSystem : EntitySystem
 {
     private const string BonusSource = "battle-form";

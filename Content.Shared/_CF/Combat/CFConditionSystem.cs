@@ -240,6 +240,10 @@ public sealed partial class CFConditionSystem : EntitySystem
         if (CompOrNull<CFCombatOptionsComponent>(target)?.Bravery == true && --value <= 0)
             return;
 
+        // Only a creature that is not frightened yet becomes frightened, so a reaction to that has nothing to answer otherwise.
+        if (value > 0 && Frightened(target) == 0)
+            value = _reactions.AnswerFrightened(target, value);
+
         if (value <= 0)
             return;
 

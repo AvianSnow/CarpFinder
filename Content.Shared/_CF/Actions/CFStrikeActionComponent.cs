@@ -143,6 +143,21 @@ public sealed partial class CFStrikeActionComponent : Component
     [DataField]
     public bool Press;
 
+    /// <summary>
+    /// Needs an unarmed attack from a morph or polymorph effect: a battle form with Strikes, or an animal Rage. See
+    /// <c>CFMorphs</c>.
+    /// </summary>
+    [DataField]
+    public bool NeedsMorph;
+
+    /// <summary>The target has to be the one the last Strike this turn went at (Rip and Tear).</summary>
+    [DataField]
+    public bool SameTarget;
+
+    /// <summary>With <see cref="UnarmedOnly"/>, the unarmed attack has to deal one of these damage types. Empty means any.</summary>
+    [DataField]
+    public List<string> UnarmedTypes = new();
+
     /// <summary>Runs on the target after a miss that is not a critical miss.</summary>
     [DataField]
     public List<CFEffect> OnFailure = new();

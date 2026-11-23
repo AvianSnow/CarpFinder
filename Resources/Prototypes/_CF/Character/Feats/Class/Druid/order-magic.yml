@@ -12,3 +12,11 @@
     - "Order Explorer"
   requiresFeats:
     - CFOrderExplorer
+  grants:
+    - !type:CFGrantChosenFocusSpell
+      pickOf: CFOrderExplorer
+      spells:
+        CFAnimalCompanion: HealAnimal
+        CFLeshyFamiliar: Cornucopia
+        CFStormBorn: TempestSurge
+        CFUntamedForm: UntamedForm

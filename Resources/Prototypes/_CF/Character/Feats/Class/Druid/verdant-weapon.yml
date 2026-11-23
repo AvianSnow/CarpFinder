@@ -9,4 +9,6 @@
   traits:
     - "Druid"
     - "Exploration"
-  pendingAction: true
+  grants:
+    - !type:CFGrantItem
+      item: CFVerdantSeed

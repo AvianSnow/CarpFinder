@@ -1264,6 +1264,21 @@ public sealed partial class CFReactionSystem : EntitySystem
         return value;
     }
 
+    /// <summary>The frightened value a creature really gets, after a reaction such as Creature Comforts.</summary>
+    public int AnswerFrightened(EntityUid uid, int value)
+    {
+        if (value <= 0 || !_net.IsServer || !TryComp(uid, out CFReactionsComponent? reactions))
+            return value;
+
+        foreach (var known in Ordered(uid, reactions))
+        {
+            if (known.Reaction.Trigger == CFReactionTrigger.Frightened && known.Reaction.FrightenedLess > 0 && TrySpend(uid, known))
+                return Math.Max(0, value - known.Reaction.FrightenedLess);
+        }
+
+        return value;
+    }
+
     [SubscribeLocalEvent]
     private void OnDamaged(Entity<CFReactionsComponent> ent, ref CFDamagedEvent args)
     {
@@ -1320,6 +1335,7 @@ public sealed partial class CFReactionSystem : EntitySystem
         return (known.Reaction.PerDay <= 0 || known.UsedToday < known.Reaction.PerDay)
                && _timing.CurTime >= known.ReadyAt
                && (!known.Reaction.WhileRaging || CompOrNull<CFCombatOptionsComponent>(uid)?.Raging == true)
+               && (!known.Reaction.WhileMorphed || Content.Shared.CF.Spells.CFMorphs.IsMorphed(EntityManager, uid))
                && (known.Reaction.Implement is not { } kind || _implements.IsHolding(uid, kind))
                && _mobState.IsAlive(uid)
                && TryComp(uid, out CFCombatOptionsComponent? options)

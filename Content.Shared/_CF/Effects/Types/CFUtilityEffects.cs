@@ -159,10 +159,29 @@ public sealed partial class CFSpawnEffect : CFEffect
     [DataField]
     public CFEffectAnchor At = CFEffectAnchor.Target;
 
+    [DataField]
+    public int Count = 1;
+
+    /// <summary>One more for each step the source is heightened (Cornucopia).</summary>
+    [DataField]
+    public int HeightenCount;
+
+    /// <summary>Goes into the user's free hand, and stays where it appeared when there is none.</summary>
+    [DataField]
+    public bool ToHand;
+
     public override void Apply(IEntityManager entities, CFEffectArgs args)
     {
-        if (CFEffectAnchors.Resolve(entities, args, At) is { } coords)
-            entities.SpawnEntity(Prototype, coords);
+        if (CFEffectAnchors.Resolve(entities, args, At) is not { } coords)
+            return;
+
+        var count = Count + HeightenCount * args.HeightenSteps;
+        for (var i = 0; i < count; i++)
+        {
+            var spawned = entities.SpawnAttachedTo(Prototype, coords);
+            if (ToHand)
+                entities.System<Content.Shared.Hands.EntitySystems.SharedHandsSystem>().TryPickupAnyHand(args.User, spawned, animate: false);
+        }
     }
 }
 
