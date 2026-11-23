@@ -129,9 +129,10 @@ public sealed class CFFocusTest : GameTest
         await Server.WaitPost(() =>
         {
             var hero = Spawn("CFFocusHero");
-            for (var i = 0; i < 5; i++)
+            // Five different focus spells: the same one a second time adds no point.
+            foreach (var spell in new[] { "ForceBolt", "TempestSurge", "LayOnHands", "HealAnimal", "Cornucopia" })
             {
-                Features.GrantFocusSpell(hero, "ForceBolt");
+                Features.GrantFocusSpell(hero, spell);
             }
 
             points = Book(hero).FocusPoints;

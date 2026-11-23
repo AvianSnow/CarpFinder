@@ -627,10 +627,11 @@ public sealed partial class CFGOAPTribeSystem : EntitySystem
             record.Food = Math.Max(0, record.Food + by);
         else if (stage != CFFoodStage.None)
             record.Ingredients = Math.Max(0, record.Ingredients + by);
-        else if (IsValuable(item))
-            record.Valuables = Math.Max(0, record.Valuables + by);
+        // Fuel first: planks and logs are trade goods with a full resale price, and must still count as firewood.
         else if (IsFuel(item))
             record.Fuel = Math.Max(0, record.Fuel + by);
+        else if (IsValuable(item))
+            record.Valuables = Math.Max(0, record.Valuables + by);
     }
 
     public bool IsDrink(EntityUid uid)
