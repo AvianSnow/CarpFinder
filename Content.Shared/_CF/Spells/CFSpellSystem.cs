@@ -33,6 +33,7 @@ public sealed partial class CFSpellSystem : EntitySystem
     [Dependency] private CFSpellshapeSystem _spellshapes = default!;
     [Dependency] private CFVfxSystem _vfx = default!;
     [Dependency] private CFReactionSystem _reactions = default!;
+    [Dependency] private CFBloodMagicSystem _blood = default!;
     [Dependency] private Robust.Shared.Prototypes.IPrototypeManager _prototypes = default!;
     [Dependency] private Content.Shared.Mobs.Systems.MobStateSystem _mobState = default!;
 
@@ -404,6 +405,7 @@ public sealed partial class CFSpellSystem : EntitySystem
     {
         _conditions.NoteAttack(caster);
         _conditions.NoteCast(caster);
+        _blood.Finish(caster);
         if (!_spellshapes.IsSubtle(caster))
             _strikes.ReactiveStrike(caster);
 
@@ -438,6 +440,7 @@ public sealed partial class CFSpellSystem : EntitySystem
         if (!TrySpend(caster, spell.Comp))
             return false;
 
+        _blood.Begin(caster, spell);
         if (hex)
         {
             if (TryComp(caster, out CFSpellbookComponent? hexBook))

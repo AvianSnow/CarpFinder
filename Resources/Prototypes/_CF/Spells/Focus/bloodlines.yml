@@ -1,0 +1,477 @@
+# Sorcerer bloodline spells (Player Core 2): the initial focus spell of each bloodline. Casting one sets off the
+# bloodline's blood magic (CFBloodMagicSystem). Tentacular Limbs and Undeath's Blessing are not built.
+
+- type: entity
+  parent: CFSpellArea
+  id: CFAngelicHalo
+  name: Angelic Halo
+  description: "You and allies within 15 feet regain 2 more Hit Points from healing spells for a minute, 2 more per rank. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: AngelicHalo
+    rank: 0
+    focus: true
+  - type: CFAreaEffect
+    shape: Emanation
+    sizeFeet: 15
+    includeSelf: true
+    filter: Allies
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: SpellHealing
+      value: 2
+      heightenValue: 2
+      durationSeconds: 60
+
+- type: cfSpell
+  id: AngelicHalo
+  name: Angelic Halo
+  rank: 1
+  traits: [Aura, Concentrate]
+  actionCost: One
+  summary: "Allies in a 15-foot emanation gain a status bonus to Hit Points regained from heal equal to double its rank. It is given to those in the area when it is cast, and does not follow you."
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFGluttonsJaws
+  name: Glutton's Jaws
+  description: "A spell attack against a creature within 30 feet for 2d6 piercing damage. On a hit you gain 1d4 temporary Hit Points for 6 seconds. 2d6 and 1d4 more per rank. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 2
+  - type: CFSpell
+    spell: GluttonsJaws
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+  - type: CFCheck
+    defense: ArmorClass
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 2
+      die: 6
+      damageType: Piercing
+      heightenDice: 2
+    landed:
+    - !type:CFTemporaryHpEffect
+      dice: 1
+      die: 4
+      heightenDice: 1
+      durationSeconds: 6
+      toUser: true
+
+- type: cfSpell
+  id: GluttonsJaws
+  name: Glutton's Jaws
+  rank: 1
+  traits: [Attack, Concentrate, Manipulate]
+  actionCost: Two
+  summary: "A spell attack for 2d6 piercing damage. On a hit you gain 1d4 temporary Hit Points."
+  defense: AC
+  heightened: "Damage increases by 2d6 and the temporary Hit Points by 1d4 per rank."
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFDiabolicEdict
+  name: Diabolic Edict
+  description: "An ally within 30 feet gets +1 status to attack rolls and skill checks for 6 seconds. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: DiabolicEdict
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+    filter: Allies
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: AttackRoll
+      value: 1
+      durationSeconds: 6
+    - !type:CFBonusEffect
+      stat: SkillChecks
+      value: 1
+      durationSeconds: 6
+
+- type: cfSpell
+  id: DiabolicEdict
+  name: Diabolic Edict
+  rank: 1
+  traits: [Concentrate]
+  actionCost: One
+  summary: "A willing creature gains a +1 status bonus to attack rolls and skill checks for a task. The penalty for refusing is TBA."
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFFlurryOfClawsArcane
+  name: Flurry of Claws
+  description: "Spell attacks against a creature within 30 feet and one more near it. Each hit deals 1d8 slashing and 1d4 force damage, 1d8 and 1d4 more per rank. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 2
+  - type: CFSpell
+    spell: FlurryOfClawsArcane
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+    extraTargets: 1
+  - type: CFCheck
+    defense: ArmorClass
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 8
+      damageType: Slashing
+      heightenDice: 1
+    - !type:CFDamageEffect
+      dice: 1
+      die: 4
+      damageType: Force
+      heightenDice: 1
+
+- type: cfSpell
+  id: FlurryOfClawsArcane
+  name: Flurry of Claws
+  rank: 1
+  traits: [Attack, Concentrate, Manipulate]
+  actionCost: Two
+  summary: "Spell attacks against two creatures. Each hit deals 1d8 slashing plus 1d4 force damage."
+  defense: AC
+  heightened: "The damage increases by 1d8 and 1d4 per rank."
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFFlurryOfClawsDivine
+  name: Flurry of Claws
+  description: "Spell attacks against a creature within 30 feet and one more near it. Each hit deals 1d8 slashing and 1d4 spirit damage, 1d8 and 1d4 more per rank. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 2
+  - type: CFSpell
+    spell: FlurryOfClawsDivine
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+    extraTargets: 1
+  - type: CFCheck
+    defense: ArmorClass
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 8
+      damageType: Slashing
+      heightenDice: 1
+    - !type:CFDamageEffect
+      dice: 1
+      die: 4
+      damageType: Spirit
+      heightenDice: 1
+
+- type: cfSpell
+  id: FlurryOfClawsDivine
+  name: Flurry of Claws
+  rank: 1
+  traits: [Attack, Concentrate, Manipulate]
+  actionCost: Two
+  summary: "Spell attacks against two creatures. Each hit deals 1d8 slashing plus 1d4 spirit damage."
+  defense: AC
+  heightened: "The damage increases by 1d8 and 1d4 per rank."
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFFlurryOfClawsOccult
+  name: Flurry of Claws
+  description: "Spell attacks against a creature within 30 feet and one more near it. Each hit deals 1d8 slashing and 1d4 mental damage, 1d8 and 1d4 more per rank. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 2
+  - type: CFSpell
+    spell: FlurryOfClawsOccult
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+    extraTargets: 1
+  - type: CFCheck
+    defense: ArmorClass
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 8
+      damageType: Slashing
+      heightenDice: 1
+    - !type:CFDamageEffect
+      dice: 1
+      die: 4
+      damageType: Mental
+      heightenDice: 1
+
+- type: cfSpell
+  id: FlurryOfClawsOccult
+  name: Flurry of Claws
+  rank: 1
+  traits: [Attack, Concentrate, Manipulate]
+  actionCost: Two
+  summary: "Spell attacks against two creatures. Each hit deals 1d8 slashing plus 1d4 mental damage."
+  defense: AC
+  heightened: "The damage increases by 1d8 and 1d4 per rank."
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFFlurryOfClawsPrimal
+  name: Flurry of Claws
+  description: "Spell attacks against a creature within 30 feet and one more near it. Each hit deals 1d8 slashing and 1d4 fire damage, 1d8 and 1d4 more per rank. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 2
+  - type: CFSpell
+    spell: FlurryOfClawsPrimal
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+    extraTargets: 1
+  - type: CFCheck
+    defense: ArmorClass
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 8
+      damageType: Slashing
+      heightenDice: 1
+    - !type:CFDamageEffect
+      dice: 1
+      die: 4
+      damageType: Fire
+      heightenDice: 1
+
+- type: cfSpell
+  id: FlurryOfClawsPrimal
+  name: Flurry of Claws
+  rank: 1
+  traits: [Attack, Concentrate, Manipulate]
+  actionCost: Two
+  summary: "Spell attacks against two creatures. Each hit deals 1d8 slashing plus 1d4 fire damage."
+  defense: AC
+  heightened: "The damage increases by 1d8 and 1d4 per rank."
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFElementalToss
+  name: Elemental Toss
+  description: "A spell attack against a creature within 30 feet for 1d8 fire damage, 1d8 more per rank. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: ElementalToss
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+  - type: CFCheck
+    defense: ArmorClass
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 8
+      damageType: Fire
+      heightenDice: 1
+
+- type: cfSpell
+  id: ElementalToss
+  name: Elemental Toss
+  rank: 1
+  traits: [Attack, Manipulate]
+  actionCost: One
+  summary: "A ranged spell attack for 1d8 damage of your element. Only fire is built."
+  defense: AC
+  heightened: "The damage increases by 1d8 per rank."
+
+- type: entity
+  parent: CFSpellArea
+  id: CFFaerieDust
+  name: Faerie Dust
+  description: "Pick 1, 2 or 3 actions: a 5, 10 or 15-foot burst within 30 feet. Will save. Failure: -2 status to Perception and Will saves for 6 seconds. Critical failure: also -1 for a minute. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: FaerieDust
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+  - type: CFModeChoice
+    modes:
+    - { value: 1, name: cf-mode-faerie-dust-1, actions: 1, sizeFeet: 5 }
+    - { value: 2, name: cf-mode-faerie-dust-2, actions: 2, sizeFeet: 10 }
+    - { value: 3, name: cf-mode-faerie-dust-3, actions: 3, sizeFeet: 15 }
+  - type: CFAreaEffect
+    shape: Burst
+    sizeFeet: 5
+    filter: All
+  - type: CFCheck
+    defense: Will
+    basicSave: false
+  - type: CFDegreeEffects
+    failure:
+    - !type:CFBonusEffect
+      stat: Perception
+      value: -2
+      durationSeconds: 6
+    - !type:CFBonusEffect
+      stat: Will
+      value: -2
+      durationSeconds: 6
+    criticalFailure:
+    - !type:CFBonusEffect
+      stat: Perception
+      value: -2
+      durationSeconds: 6
+    - !type:CFBonusEffect
+      stat: Will
+      value: -2
+      durationSeconds: 6
+    - !type:CFBonusEffect
+      stat: Perception
+      value: -1
+      durationSeconds: 60
+    - !type:CFBonusEffect
+      stat: Will
+      value: -1
+      durationSeconds: 60
+
+- type: cfSpell
+  id: FaerieDust
+  name: Faerie Dust
+  rank: 1
+  traits: [Concentrate, Manipulate, Mental]
+  actionCost: Variable
+  summary: "Creatures in a burst that fail a Will save take a -2 status penalty to Perception and Will saves. Losing their reactions is TBA."
+  defense: Will
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFJealousHex
+  name: Jealous Hex
+  description: "A creature within 30 feet rolls Will. On a failure it is enfeebled, clumsy, drained or stupefied 1 for a minute, by its highest attribute. 2 on a critical failure. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: JealousHex
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+  - type: CFCheck
+    defense: Will
+    basicSave: false
+  - type: CFDegreeEffects
+    failure:
+    - !type:CFJealousHexEffect
+      value: 1
+    criticalFailure:
+    - !type:CFJealousHexEffect
+      value: 2
+
+- type: cfSpell
+  id: JealousHex
+  name: Jealous Hex
+  rank: 1
+  traits: [Concentrate, Curse]
+  actionCost: One
+  summary: "The target takes a condition by its highest attribute: enfeebled, clumsy, drained or stupefied. A new save each turn is TBA."
+  defense: Will
+
+- type: entity
+  parent: CFSpellInstant
+  id: CFAncestralMemories
+  name: Ancestral Memories
+  description: "You get +1 status to attack rolls for 6 seconds, +2 from level 9. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: AncestralMemories
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    filter: All
+  - type: CFHeighten
+    baseRank: 1
+    interval: 4
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: AttackRoll
+      value: 1
+      heightenValue: 1
+      durationSeconds: 6
+
+- type: cfSpell
+  id: AncestralMemories
+  name: Ancestral Memories
+  rank: 1
+  traits: [Concentrate]
+  actionCost: One
+  summary: "You gain a +1 status bonus to your next spell attack roll. The penalty to an enemy's save instead is TBA."

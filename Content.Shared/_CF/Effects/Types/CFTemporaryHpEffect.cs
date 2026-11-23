@@ -12,6 +12,20 @@ public sealed partial class CFTemporaryHpEffect : CFEffect
     [DataField]
     public int PerLevel;
 
+    /// <summary>Dice rolled into the amount, and one more of them per heighten step (Glutton's Jaws: 1d4 a rank).</summary>
+    [DataField]
+    public int Dice;
+
+    [DataField]
+    public int Die = 4;
+
+    [DataField]
+    public int HeightenDice;
+
+    /// <summary>The user gets them, whoever the effect's target is.</summary>
+    [DataField]
+    public bool ToUser;
+
     /// <summary>Half the user's level more, rounded down (a Witch's Restored Spirit).</summary>
     [DataField]
     public bool HalfLevel;
@@ -32,6 +46,13 @@ public sealed partial class CFTemporaryHpEffect : CFEffect
         var target = args.Target ?? args.User;
         var level = entities.GetComponentOrNull<CFCombatantComponent>(args.User)?.Level ?? 1;
         var amount = Amount + HeightenAmount * args.HeightenSteps + PerLevel * level + (HalfLevel ? level / 2 : 0);
+        var dice = Dice + HeightenDice * args.HeightenSteps;
+        if (dice > 0)
+            amount += entities.System<CFEffectSystem>().Roll(dice, Die, 0);
+
+        if (ToUser)
+            target = args.User;
+
         if (FromTargetLevel)
         {
             amount += entities.GetComponentOrNull<CFCombatantComponent>(target)?.Level ?? 0;

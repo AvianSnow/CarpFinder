@@ -129,3 +129,6 @@ cf-mode-lay-on-hands-1-desc = A touch restores 6 Hit Points.
 cf-mode-lay-on-hands-2-desc = A touch restores 6 Hit Points and ends a condition your Mercy covers.
 cf-mode-touch-of-the-void-1-desc = A touch deals 1d6 void damage.
 cf-mode-touch-of-the-void-2-desc = A touch deals 1d6 void damage, and enfeebles on a failed save.
+cf-mode-faerie-dust-1 = 1 action: 5-foot burst
+cf-mode-faerie-dust-2 = 2 actions: 10-foot burst
+cf-mode-faerie-dust-3 = 3 actions: 15-foot burst

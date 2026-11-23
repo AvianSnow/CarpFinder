@@ -28,6 +28,10 @@ public sealed partial class CFEffectActionComponent : Component
     [DataField]
     public bool NeedsWeaponAndFreeHand;
 
+    /// <summary>Only within 6 seconds of the user's blood magic taking effect (Bleed Out).</summary>
+    [DataField]
+    public bool NeedsBloodMagic;
+
     /// <summary>Only while raging: the rage trait.</summary>
     [DataField]
     public bool NeedsRaging;

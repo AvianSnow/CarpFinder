@@ -165,6 +165,7 @@ cf-strike-action-needs-second = You need a second enemy in reach.
 cf-strike-action-needs-rage = You have to be raging.
 cf-strike-action-needs-holstered = You need a weapon on your belt, back or neck, and a free hand.
 cf-strike-action-needs-press = You have to attack first this turn.
+cf-act-needs-blood-magic = You need your blood magic to have taken effect in the last 6 seconds.
 cf-strike-action-needs-same = It has to be the creature you last attacked this turn.
 cf-strike-action-needs-morph = You need an attack from a battle form or an animal Rage.
 cf-strike-action-needs-unarmed-type = Your unarmed attack deals the wrong kind of damage for that.

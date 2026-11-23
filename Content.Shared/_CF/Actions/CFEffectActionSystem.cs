@@ -29,6 +29,13 @@ public sealed partial class CFEffectActionSystem : EntitySystem
             return;
         }
 
+        if (ent.Comp.NeedsBloodMagic && !EntityManager.System<Content.Shared.CF.Spells.CFBloodMagicSystem>().Recent(args.User))
+        {
+            args.Cancelled = true;
+            args.Reason = Loc.GetString("cf-act-needs-blood-magic");
+            return;
+        }
+
         if (ent.Comp.NeedsRaging && CompOrNull<Content.Shared.CF.Combat.CFCombatOptionsComponent>(args.User)?.Raging != true)
         {
             args.Cancelled = true;

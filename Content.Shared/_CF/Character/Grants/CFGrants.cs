@@ -1139,3 +1139,31 @@ public sealed partial class CFGrantVials : CFGrant
         entities.System<Content.Shared.CF.Alchemy.CFQuickAlchemySystem>().Refill(args.Mob);
     }
 }
+
+/// <summary>
+/// A Sorcerer's blood magic: which spells set it off and what it does. A second grant adds to the first, as Propelling
+/// Sorcery adds a free Step to what the bloodline gives. See <c>CFBloodMagicSystem</c>.
+/// </summary>
+public sealed partial class CFGrantBloodMagic : CFGrant
+{
+    [DataField]
+    public List<ProtoId<CFSpellPrototype>> Spells = new();
+
+    [DataField]
+    public List<CFEffect> OnSelf = new();
+
+    [DataField]
+    public List<CFEffect> OnTarget = new();
+
+    [DataField]
+    public bool SharesWithAlly;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        var blood = entities.EnsureComponent<Content.Shared.CF.Spells.CFBloodMagicComponent>(args.Mob);
+        blood.Spells.UnionWith(Spells);
+        blood.OnSelf.AddRange(OnSelf);
+        blood.OnTarget.AddRange(OnTarget);
+        blood.SharesWithAlly |= SharesWithAlly;
+    }
+}

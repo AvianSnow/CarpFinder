@@ -8,4 +8,8 @@
   level: 2
   traits:
     - "Sorcerer"
-  pendingAction: true
+  grants:
+    - !type:CFGrantBloodMagic
+      onSelf:
+      - !type:CFFreeStepEffect
+        durationSeconds: 3

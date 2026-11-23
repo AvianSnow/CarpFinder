@@ -630,3 +630,20 @@
   - type: CFDegreeEffects
     effects:
     - !type:CFPersonOfInterestEffect {}
+
+# Sorcerer: Bleed Out. Only within 6 seconds of blood magic.
+- type: entity
+  parent: CFActivityTarget
+  id: CFActBleedOut
+  name: Bleed Out
+  description: Within 6 seconds of your blood magic, a spell attack against a creature within 60 feet. On a hit it takes persistent bleed damage equal to the rank of the spell that set the blood magic off.
+  components:
+  - type: TargetAction
+    range: 12.25
+  - type: CFEffectAction
+    needsBloodMagic: true
+  - type: CFCheck
+    defense: ArmorClass
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBleedOutEffect {}

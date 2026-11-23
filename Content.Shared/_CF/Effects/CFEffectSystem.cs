@@ -508,6 +508,9 @@ public sealed partial class CFEffectSystem : EntitySystem
         var check = CompOrNull<CFCheckComponent>(source);
         var args = BuildArgs(source, user, target, Transform(target).Coordinates, check, out var stats);
 
+        // A Sorcerer's blood magic goes to the first enemy its bloodline spell reaches.
+        EntityManager.System<Content.Shared.CF.Spells.CFBloodMagicSystem>().NoteTarget(user, source, target);
+
         var amp = _psi.Amped(source);
         if (amp is { AmpOffGuard: true } && user != target)
             _conditions.SetOffGuardTo(target, user, 6f);
