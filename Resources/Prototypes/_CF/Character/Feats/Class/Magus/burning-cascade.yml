@@ -10,4 +10,6 @@
     - "Magus"
   prerequisites:
     - "Arcane Cascade"
-  pendingAction: true
+  grants:
+    - !type:CFGrantOption
+      option: BurningCascade

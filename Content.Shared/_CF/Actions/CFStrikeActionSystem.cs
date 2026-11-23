@@ -77,6 +77,13 @@ public sealed partial class CFStrikeActionSystem : EntitySystem
     /// <summary>The message for why this cannot be used on that target, or null if it can.</summary>
     private string? WhyNot(EntityUid user, EntityUid target, CFStrikeActionComponent action)
     {
+        if (action.FocusPoints > 0
+            && (!TryComp(user, out Content.Shared.CF.Character.CFSpellbookComponent? focus)
+                || Content.Shared.CF.Spells.CFFocusSystem.Remaining(focus) < action.FocusPoints))
+        {
+            return "cf-spell-no-focus";
+        }
+
         if (action.PreyOnly && CompOrNull<CFCombatOptionsComponent>(user)?.Prey != target)
             return "cf-strike-action-needs-prey";
 
@@ -180,6 +187,12 @@ public sealed partial class CFStrikeActionSystem : EntitySystem
     {
         var action = ent.Comp;
         void Resolved(CFDegree degree, int damage) => RunEffects(ent, user, target, degree, damage);
+
+        if (action.FocusPoints > 0 && TryComp(user, out Content.Shared.CF.Character.CFSpellbookComponent? book))
+        {
+            book.FocusSpent += action.FocusPoints;
+            Dirty(user, book);
+        }
 
         if (action.RaisesShield && _shields.TryGetUsableShield(user, out var shield))
             _shields.SetRaised(shield, true);

@@ -5,6 +5,13 @@
   slot: cf-class-choice-hybrid-study
   name: cf-class-choice-studyalooffirmament
   description: cf-class-choice-studyalooffirmament-desc
+  grants:
+    - !type:CFGrantFocusPoints
+      count: 1
+    - !type:CFGrantAction
+      action: CFActSkyLaughsAtWaves
+    - !type:CFGrantFeat
+      feat: CFCatFall
 
 - type: cfClassChoice
   id: StudyInexorableIron
@@ -12,6 +19,13 @@
   slot: cf-class-choice-hybrid-study
   name: cf-class-choice-studyinexorableiron
   description: cf-class-choice-studyinexorableiron-desc
+  grants:
+    - !type:CFGrantFocusPoints
+      count: 1
+    - !type:CFGrantAction
+      action: CFActThunderousStrike
+    - !type:CFGrantOption
+      option: InexorableIron
 
 - type: cfClassChoice
   id: StudyLaughingShadow
@@ -19,6 +33,13 @@
   slot: cf-class-choice-hybrid-study
   name: cf-class-choice-studylaughingshadow
   description: cf-class-choice-studylaughingshadow-desc
+  grants:
+    - !type:CFGrantFocusPoints
+      count: 1
+    - !type:CFGrantAction
+      action: CFActDimensionalAssault
+    - !type:CFGrantOption
+      option: LaughingShadow
 
 - type: cfClassChoice
   id: StudyResurgentMaelstrom
@@ -36,6 +57,16 @@
   grants:
     - !type:CFGrantOption
       option: ShieldBlock
+    - !type:CFGrantFocusPoints
+      count: 1
+    - !type:CFGrantAction
+      action: CFActShieldingStrike
+    - !type:CFGrantWhile
+      while: ShieldRaised
+      stat: Saves
+      type: Circumstance
+      value: 2
+      trait: Magical
 
 - type: cfClassChoice
   id: StudyStarlitSpan
@@ -43,6 +74,11 @@
   slot: cf-class-choice-hybrid-study
   name: cf-class-choice-studystarlitspan
   description: cf-class-choice-studystarlitspan-desc
+  grants:
+    - !type:CFGrantFocusPoints
+      count: 1
+    - !type:CFGrantAction
+      action: CFActShootingStar
 
 - type: cfClassChoice
   id: StudyTwistingTree
@@ -50,6 +86,11 @@
   slot: cf-class-choice-hybrid-study
   name: cf-class-choice-studytwistingtree
   description: cf-class-choice-studytwistingtree-desc
+  grants:
+    - !type:CFGrantFocusPoints
+      count: 1
+    - !type:CFGrantAction
+      action: CFActSpinningStaff
 
 - type: cfClassChoice
   id: StudyTwofoldTine
@@ -57,6 +98,11 @@
   slot: cf-class-choice-hybrid-study
   name: cf-class-choice-studytwofoldtine
   description: cf-class-choice-studytwofoldtine-desc
+  grants:
+    - !type:CFGrantFocusPoints
+      count: 1
+    - !type:CFGrantAction
+      action: CFActForceFling
 
 - type: cfClassChoice
   id: StudyUnfurlingBrocade

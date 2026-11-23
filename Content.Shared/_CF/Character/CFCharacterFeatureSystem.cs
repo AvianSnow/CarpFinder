@@ -610,6 +610,15 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
             case CFCombatOption.EnduringAlchemy:
                 options.EnduringAlchemy = true;
                 break;
+            case CFCombatOption.InexorableIron:
+                options.InexorableIron = true;
+                break;
+            case CFCombatOption.LaughingShadow:
+                options.LaughingShadow = true;
+                break;
+            case CFCombatOption.BurningCascade:
+                options.BurningCascade = true;
+                break;
             case CFCombatOption.Cruelty:
                 options.Cruelty = true;
                 break;

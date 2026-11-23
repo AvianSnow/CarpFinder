@@ -469,6 +469,18 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public bool Cruelty;
 
+    /// <summary>The Inexorable Iron hybrid study: temporary Hit Points on entering Arcane Cascade with a two-handed weapon.</summary>
+    [DataField]
+    public bool InexorableIron;
+
+    /// <summary>The Laughing Shadow hybrid study: a status bonus to Speed in Arcane Cascade.</summary>
+    [DataField]
+    public bool LaughingShadow;
+
+    /// <summary>Entering Arcane Cascade deals its extra damage to enemies within 5 feet (Burning Cascade).</summary>
+    [DataField]
+    public bool BurningCascade;
+
     /// <summary>The Bomber research field: bombs do not splash allies, a vial can be cold, electricity or fire, and from level 5 the splash is at least the Intelligence modifier. The mode menu reads it.</summary>
     [DataField, AutoNetworkedField]
     public bool BomberField;
@@ -645,6 +657,9 @@ public static class CFReactions
 /// <summary>The flags on <see cref="CFCombatOptionsComponent"/> that a <c>CFGrantOption</c> can set.</summary>
 public enum CFCombatOption : byte
 {
+    InexorableIron,
+    LaughingShadow,
+    BurningCascade,
     BomberField,
     ToxicologistField,
     ChirurgeonField,

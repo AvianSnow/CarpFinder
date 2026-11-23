@@ -52,10 +52,10 @@
           action: CFActArcaneCascade
     - level: 1
       name: "Conflux Spells"
-      description: "Focus spells from your hybrid study: TBA"
+      description: "Your hybrid study gives you its conflux spell and a Focus Point. Casting a conflux spell recharges Spellstrike."
     - level: 1
       name: "Hybrid Study"
-      description: "Choose a hybrid study in the builder. What each study does depends on recharging Spellstrike: TBA"
+      description: "Choose a hybrid study in the builder. It gives a conflux spell, and most add something to Arcane Cascade."
     - level: 1
       name: "Magus Spellcasting"
       description: "Level 1 cantrips and spell slots are on the spell sheet."

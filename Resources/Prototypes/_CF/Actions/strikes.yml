@@ -512,3 +512,97 @@
       value: -2
       trait: Hex
       durationSeconds: 6
+
+# Magus conflux spells that are a Strike. Each costs a Focus Point and recharges Spellstrike. Force Fang is a spell
+# (Spells/Focus/focus.yml).
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActThunderousStrike
+  name: Thunderous Strike
+  description: "A melee Strike with a weapon held in both hands. On a hit the target takes 2 sonic damage more, and 1 more every 2 levels. A conflux spell: it costs a Focus Point and recharges Spellstrike."
+  components:
+  - type: CFStrikeAction
+    focusPoints: 1
+    rechargesSpellstrike: true
+    twoHandedWeapon: true
+    onHit:
+    - !type:CFDamageEffect
+      damageType: Sonic
+      scaleByDegree: false
+      flat: 2
+      flatEveryLevels: 2
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActDimensionalAssault
+  name: Dimensional Assault
+  description: "You cross up to 15 feet to an enemy and make a melee Strike. A conflux spell: it costs a Focus Point and recharges Spellstrike."
+  components:
+  - type: TargetAction
+    range: 4.25
+  - type: CFStrikeAction
+    focusPoints: 1
+    rechargesSpellstrike: true
+    closesFeet: 15
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActShieldingStrike
+  name: Shielding Strike
+  description: "You raise your shield and make a melee Strike. A conflux spell: it costs a Focus Point and recharges Spellstrike."
+  components:
+  - type: CFStrikeAction
+    focusPoints: 1
+    rechargesSpellstrike: true
+    raisesShield: true
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActShootingStar
+  name: Shooting Star
+  description: "A ranged Strike that ignores the target's concealment. A conflux spell: it costs a Focus Point and recharges Spellstrike."
+  components:
+  - type: TargetAction
+    range: 20
+  - type: CFStrikeAction
+    focusPoints: 1
+    rechargesSpellstrike: true
+    ranged: true
+    ignoresConcealed: true
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActSpinningStaff
+  name: Spinning Staff
+  description: "A melee Strike with a staff, and a second one at another enemy in reach. A conflux spell: it costs a Focus Point and recharges Spellstrike."
+  components:
+  - type: CFStrikeAction
+    focusPoints: 1
+    rechargesSpellstrike: true
+    groups: [ Club ]
+    second: OtherInReach
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActForceFling
+  name: Force Fling
+  description: "A melee Strike at a creature up to 15 feet away. A conflux spell: it costs a Focus Point and recharges Spellstrike."
+  components:
+  - type: TargetAction
+    range: 3.25
+  - type: CFStrikeAction
+    focusPoints: 1
+    rechargesSpellstrike: true
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActSkyLaughsAtWaves
+  name: Sky Laughs at Waves
+  description: "You soar up to 25 feet to an enemy and make a melee Strike. A conflux spell: it costs a Focus Point and recharges Spellstrike."
+  components:
+  - type: TargetAction
+    range: 6.25
+  - type: CFStrikeAction
+    focusPoints: 1
+    rechargesSpellstrike: true
+    closesFeet: 25

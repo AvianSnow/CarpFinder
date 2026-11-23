@@ -22,7 +22,8 @@ namespace Content.Shared.CF.Actions;
 /// </summary>
 public sealed partial class CFStanceSystem : EntitySystem
 {
-    private const string BonusSource = "stance";
+    /// <summary>What a stance's bonuses are filed under. Anything added under it ends with the stance.</summary>
+    public const string BonusSource = "stance";
 
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private INetManager _net = default!;
@@ -168,6 +169,10 @@ public sealed partial class CFStanceSystem : EntitySystem
             _bonuses.AddPermanentBonus(user, bonus.Stat, bonus.Type, bonus.Value, skill: bonus.Skill, source: BonusSource);
         }
 
+        // Before the refresh, so what a handler adds under BonusSource counts at once.
+        var entered = new CFStanceEnteredEvent(proto.ID);
+        RaiseLocalEvent(user, ref entered);
+
         _armor.RefreshArmorClass(user);
         _features.SetActionToggled(user, proto.ID, true);
         _popup.PopupEntity(Loc.GetString("cf-stance-enter", ("name", MetaData(ent).EntityName)), user, user);
@@ -231,3 +236,7 @@ public sealed partial class CFStanceSystem : EntitySystem
             _popup.PopupEntity(Loc.GetString("cf-stance-only-strikes"), ent, ent);
     }
 }
+
+/// <summary>Raised on a creature that has just entered a stance, on the server.</summary>
+[ByRefEvent]
+public readonly record struct CFStanceEnteredEvent(string Stance);

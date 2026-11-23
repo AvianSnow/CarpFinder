@@ -143,6 +143,10 @@ public sealed partial class CFStrikeActionComponent : Component
     [DataField]
     public bool Press;
 
+    /// <summary>Focus Points the action costs: a Magus's conflux spell that is a Strike.</summary>
+    [DataField]
+    public int FocusPoints;
+
     /// <summary>
     /// Needs an unarmed attack from a morph or polymorph effect: a battle form with Strikes, or an animal Rage. See
     /// <c>CFMorphs</c>.

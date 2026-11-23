@@ -219,6 +219,8 @@ This engine differs from CP14's fork in more places. A ported prototype needs th
 - `Sharp` is gone with no replacement: butchering goes through the kitchen spike. `Tool` with `Slicing` stays.
 - CP14 files can start with a BOM. Read them as `utf-8-sig`, or the first prototype is lost with no error.
 
+A `description:` or other plain YAML value with a colon followed by a space in it (`A conflux spell: it costs...`) has to be in quotes. Unquoted, the whole file fails to parse and every prototype in it is lost. If one of them is a parent, the game and the test host die at startup with `KeyNotFoundException: The given key 'CFActStrikeBase' was not present in the dictionary` from `PushKindInheritance`, which names the parent and not the bad line. A Tools build does not catch it: only loading prototypes does.
+
 A prototype that fails to read is logged once and dropped: `Reading ...EntityPrototype(id) threw the following exception`. The first symptom is often an unrelated "invalid id" error from something that refers to it. Neither the linter nor `SpawnAndDirtyAllEntities` reports it: `CFScissors` sat broken behind a clean lint until a recipe asked for it. To check, run any test with `--logger "console;verbosity=detailed"` and grep for `threw the following`.
 
 The linter also skips abstract entities, so a bad field there only shows up in the spawn test.
