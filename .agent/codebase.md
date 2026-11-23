@@ -141,7 +141,8 @@ An area with `CFAreaFill` or `CFBreathGas` is drawn on its tiles. `ResolveArea` 
 | Right-click a verdant seed in hand, or the weapon grown from it | Grow it into a staff, spear or sling, or return it to seed (1 action) | `CFVerdantSeedSystem` |
 | Throw a healing potion | It breaks. On a living creature it heals them. Otherwise it leaves a puddle that heals whoever lies prone in it or drinks it (alt-click), once, within 5 minutes | `CFSmashPotionSystem` |
 | Aid verb on an ally | Aid (1 action) | `CFManeuverSystem.TryAid` |
-| Sleep action while buckled to a bed | Long rest: full hit points, spell slots and focus. Refused with an enemy close by, and once per 15 minutes | `CFLongRestSystem` |
+| Sleep button on the alerts panel, the column on the right with the temperature and pressure icons, shown while buckled to a bed | Long rest: full hit points, spell slots and focus. Refused with an enemy close by, and once per 15 minutes. Asleep, the button is Wake. The stock Sleep and Wake actions are kept off the hotbar | `CFRestAlertSystem`, `CFLongRestSystem` |
+| Look up button on the same panel, shown when there is a level above | The level above is drawn where its floor is open or transparent. Click again to look back down. Ghosts, which have no alerts panel, keep the `CFActionToggleLookUp` action | `CFSharedZLevelsSystem.RefreshLookAlert` |
 | Speech bubble button on the top bar | The language menu: choose which language you speak (free). It has no key | `CFLanguageMenuUIController`, `CFLanguageSystem` |
 | Examine tab, information icon | Recall Knowledge (1 action) | `CFManeuverSystem.TryRecall` |
 | Use in hand (Z), melee weapon, as a Swashbuckler who knows more than one finisher | The weapon is set to the next finisher (free). The hand status shows which. A shield still raises, and a weapon with `CFDamageMode` still changes type | `CFFinisherSystem.Next` |
@@ -230,6 +231,7 @@ All edits carry `// CarpFinder` markers, so `grep -rn CarpFinder Content.Client 
 | Spell requests | `Content.Shared/Actions/ActionEvents.cs`, `SharedActionsSystem.cs` | Bolt count and mode on the perform request |
 | Radial wheel and hotbar | `SimpleRadialMenu.xaml.cs`, `ActionUIController.cs` (also the number keys on deck tabs), `ActionButtonContainer.cs`, `EmotesUIController.cs`, `HandsUIController.cs` | The CF wheel and action HUD: the deck's buttons and lock, greying a spent spell, the item status panels (each hand's panel only follows that hand) |
 | Game screens | `DefaultGameScreen.xaml(.cs)`, `SeparatedChatGameScreen.xaml(.cs)` | Puts `CFGameHud` bottom centre and lifts the bag windows above it |
+| Hotbar | `Resources/Prototypes/Actions/types.yml` | `ActionSleep` and `ActionWake` have `autoPopulate: false`: they are buttons on the alerts panel (`CFRestAlertSystem`), and the hotbar is already full |
 | Joining a round | `Content.Server/GameTicking/ServerGameTicker.Lobby.cs`, `ServerGameTicker.Spawning.cs` | An unfinished character cannot ready up or spawn |
 | Respawn | `Content.Server/GameTicking/Commands/RespawnCommand.cs`, `Resources/engineCommandPerms.yml` | Anyone can `respawn` themselves back to the lobby for a new character. Only a moderator can name someone else. The old body drops everything it carried and is deleted, which gives its job slot back. Bodies are also found by player (`CFPlayerBodyComponent.User`) |
 | Language menu | `Content.Client/UserInterface/Systems/MenuBar/Widgets/GameTopMenuBar.xaml`, `GameTopMenuBarUIController.cs` | A speech bubble button on the top bar opens `CFLanguageMenuWindow` |

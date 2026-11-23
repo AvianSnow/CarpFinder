@@ -1,0 +1,52 @@
+# Buttons on the alerts panel, the column on the right of the screen with the temperature and pressure icons.
+# Each is a clickable alert, shown and cleared by a system, so the hotbar stays for actions a player arranges.
+
+- type: alertCategory
+  id: CFRest
+
+- type: alertCategory
+  id: CFLook
+
+# Shown while buckled to a bed. Clicking it is the stock Sleep action: in a bed, a long rest.
+- type: alert
+  id: CFSleep
+  category: CFRest
+  clickEvent: !type:CFSleepAlertEvent
+  icons:
+  - sprite: Clothing/Head/Hats/pyjamasyndicatered.rsi
+    state: icon
+  name: cf-alert-sleep-name
+  description: cf-alert-sleep-desc
+
+# Shown while asleep. Clicking it is the stock Wake up action.
+- type: alert
+  id: CFWake
+  category: CFRest
+  clickEvent: !type:CFWakeAlertEvent
+  icons:
+  - sprite: Clothing/Head/Hats/pyjamasyndicatered.rsi
+    state: icon
+  name: cf-alert-wake-name
+  description: cf-alert-wake-desc
+
+# Shown when there is a level above and the player is looking at their own. Clicking it looks up.
+- type: alert
+  id: CFLookUp
+  category: CFLook
+  clickEvent: !type:CFLookUpAlertEvent
+  icons:
+  - sprite: _CE/Actions/zlevels.rsi
+    state: eye_down
+  name: cf-alert-look-up-name
+  description: cf-alert-look-up-desc
+
+# Shown while looking at the level above. Clicking it looks back down.
+- type: alert
+  id: CFLookDown
+  category: CFLook
+  clickEvent: !type:CFLookUpAlertEvent
+  icons:
+  - sprite: _CE/Actions/zlevels.rsi
+    state: eye_up
+  name: cf-alert-look-down-name
+  description: cf-alert-look-down-desc

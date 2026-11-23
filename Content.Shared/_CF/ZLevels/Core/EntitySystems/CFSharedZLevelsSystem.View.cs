@@ -3,18 +3,27 @@
 // CarpFinder changes: CF names and namespaces, and whatever each file's comments say.
 
 using System.Numerics;
+using Content.Shared.Alert;
 using Robust.Shared.Analyzers;
 using Content.Shared.CF.ZLevels.Core.Components;
 using Content.Shared.Maps;
 using Content.Shared.Toggleable;
 using JetBrains.Annotations;
 using Robust.Shared.Map;
+using Robust.Shared.Prototypes;
 
 namespace Content.Shared.CF.ZLevels.Core.EntitySystems;
 
 public abstract partial class CFSharedZLevelsSystem
 {
     [Dependency] protected ITileDefinitionManager TilDefMan = null!;
+    [Dependency] private AlertsSystem _alerts = null!;
+
+    // CarpFinder: Look up is a button on the alerts panel, beside the temperature and pressure icons, for anything
+    // with an alerts panel. The toggle action stays for ghosts, which have none.
+    public static readonly ProtoId<AlertCategoryPrototype> LookAlertCategory = "CFLook";
+    public static readonly ProtoId<AlertPrototype> LookUpAlert = "CFLookUp";
+    public static readonly ProtoId<AlertPrototype> LookDownAlert = "CFLookDown";
 
     [SubscribeLocalEvent]
     private void OnToggleLookUp(Entity<CFZLevelViewerComponent> entity, ref ToggleActionEvent args)
@@ -26,11 +35,51 @@ public abstract partial class CFSharedZLevelsSystem
             return;
 
         args.Handled = true;
+        SetLookUp(entity, !entity.Comp.LookUp);
+    }
 
-        entity.Comp.LookUp = !entity.Comp.LookUp;
+    [SubscribeLocalEvent]
+    private void OnLookUpAlert(Entity<CFZLevelViewerComponent> entity, ref CFLookUpAlertEvent args)
+    {
+        if (args.Handled)
+            return;
+
+        args.Handled = true;
+        SetLookUp(entity, !entity.Comp.LookUp);
+    }
+
+    private void SetLookUp(Entity<CFZLevelViewerComponent> entity, bool lookUp)
+    {
+        entity.Comp.LookUp = lookUp;
         DirtyField(entity, entity.Comp, nameof(CFZLevelViewerComponent.LookUp));
 
-        _actions.SetToggled(entity.Comp.ActionEntity, entity.Comp.LookUp);
+        if (entity.Comp.ActionEntity != null)
+            _actions.SetToggled(entity.Comp.ActionEntity, lookUp);
+
+        RefreshLookAlert(entity);
+    }
+
+    /// <summary>
+    /// Shows the Look up button, or Looking up while the viewer looks up, when there is a level above to look at.
+    /// With nothing above, or no alerts panel, it shows nothing.
+    /// </summary>
+    protected void RefreshLookAlert(Entity<CFZLevelViewerComponent> entity)
+    {
+        if (!HasComp<AlertsComponent>(entity) || TerminatingOrDeleted(entity))
+            return;
+
+        if (Transform(entity).MapUid is not { } map || !TryMapUp(map, out _))
+        {
+            _alerts.ClearAlertCategory(entity.Owner, LookAlertCategory);
+            return;
+        }
+
+        _alerts.ShowAlert(entity.Owner, entity.Comp.LookUp ? LookDownAlert : LookUpAlert);
+    }
+
+    protected void ClearLookAlert(EntityUid uid)
+    {
+        _alerts.ClearAlertCategory(uid, LookAlertCategory);
     }
 
     /// <summary>
@@ -202,3 +251,6 @@ public abstract partial class CFSharedZLevelsSystem
         }
     }
 }
+
+/// <summary>Clicking the Look up or Looking up button on the alerts panel.</summary>
+public sealed partial class CFLookUpAlertEvent : BaseAlertEvent;

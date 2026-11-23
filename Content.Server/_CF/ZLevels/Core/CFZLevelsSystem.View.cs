@@ -5,6 +5,7 @@
 using Content.Shared.CF.ZLevels.Core.Components;
 using Content.Shared.CF.ZLevels.Core.EntitySystems;
 using Content.Shared.Actions;
+using Content.Shared.Alert;
 using Content.Shared.IdentityManagement;
 using Content.Shared.Popups;
 using Robust.Server.GameObjects;
@@ -75,7 +76,12 @@ public sealed partial class CFZLevelsSystem
     [SubscribeLocalEvent]
     private void OnViewerInit(Entity<CFZLevelViewerComponent> ent, ref MapInitEvent args)
     {
-        _actions.AddAction(ent, ref ent.Comp.ActionEntity, ent.Comp.ActionId);
+        // CarpFinder: a body with an alerts panel gets the Look up button there; a ghost keeps the action.
+        if (HasComp<AlertsComponent>(ent))
+            RefreshLookAlert(ent);
+        else
+            _actions.AddAction(ent, ref ent.Comp.ActionEntity, ent.Comp.ActionId);
+
         _meta.AddFlag(ent, MetaDataFlags.ExtraTransformEvents);
     }
 
@@ -83,6 +89,7 @@ public sealed partial class CFZLevelsSystem
     private void OnCompRemove(Entity<CFZLevelViewerComponent> ent, ref ComponentRemove args)
     {
         _actions.RemoveAction(ent.Comp.ActionEntity);
+        ClearLookAlert(ent); // CarpFinder
         _meta.RemoveFlag(ent, MetaDataFlags.ExtraTransformEvents);
 
         foreach (var eye in ent.Comp.Eyes)
@@ -119,6 +126,8 @@ public sealed partial class CFZLevelsSystem
                 QueueDel(eye);
         }
         eyes.Clear();
+
+        RefreshLookAlert(ent); // CarpFinder: the level above may have come or gone
 
         if (!TryComp<ActorComponent>(ent, out var actor))
             return;

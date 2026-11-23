@@ -385,6 +385,7 @@
   description: Go to sleep.
   components:
   - type: Action
+    autoPopulate: false # CarpFinder: Sleep is a button on the alerts panel (CFRestAlertSystem), not the hotbar
   - type: Sprite
     sprite: Clothing/Head/Hats/pyjamasyndicatered.rsi
     layers:
@@ -399,6 +400,7 @@
   description: Stop sleeping.
   components:
   - type: Action
+    autoPopulate: false # CarpFinder: Wake up is a button on the alerts panel (CFRestAlertSystem), not the hotbar
     startDelay: true
     useDelay: 2
   - type: Sprite
