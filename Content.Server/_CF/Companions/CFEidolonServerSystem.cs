@@ -28,6 +28,11 @@ public sealed partial class CFEidolonServerSystem : EntitySystem
     [Dependency] private CFBonusSystem _bonuses = default!;
     [Dependency] private CFCompanionSystem _companions = default!;
     [Dependency] private CFDyingSystem _dying = default!;
+    [Dependency] private CFReactionSystem _reactions = default!;
+    [Dependency] private CFCharacterFeatureSystem _features = default!;
+
+    /// <summary>After a Reactive Dismissal, how long before the eidolon can be manifested again.</summary>
+    private static readonly TimeSpan DismissalWait = TimeSpan.FromSeconds(6);
 
     [SubscribeLocalEvent]
     private void OnManifest(Entity<CFManifestEidolonActionComponent> ent, ref CFActivityInstantEvent args)
@@ -48,7 +53,7 @@ public sealed partial class CFEidolonServerSystem : EntitySystem
             return true;
         }
 
-        if (!TryComp(summoner, out CFCombatantComponent? combat) || combat.CurrentHp <= 0)
+        if (!TryComp(summoner, out CFCombatantComponent? combat) || combat.CurrentHp <= 0 || _timing.CurTime < link.NextManifest)
         {
             _popup.PopupEntity(Loc.GetString("cf-eidolon-cannot"), summoner, summoner);
             return false;
@@ -58,6 +63,7 @@ public sealed partial class CFEidolonServerSystem : EntitySystem
         _companions.Bind(summoner, eidolon);
         link.Eidolon = eidolon;
         link.SharedHp = combat.CurrentHp;
+        EnsureComp<CFEidolonBodyComponent>(eidolon).Summoner = summoner;
 
         // The stock mob base numbers its name, as if this were one of a crowd.
         RemComp<NameIdentifierComponent>(eidolon);
@@ -67,11 +73,72 @@ public sealed partial class CFEidolonServerSystem : EntitySystem
         if (link.Resistance is { } resistance)
             _bonuses.AddPermanentResistance(eidolon, resistance, 0, halfLevel: true);
 
+        // Energy Heart and its kin: half the level, at least 1.
+        foreach (var type in link.Resistances)
+        {
+            _bonuses.AddPermanentResistance(eidolon, type, 1, halfLevel: true);
+        }
+
         if (link.VoidHealing)
             EnsureComp<CFVoidHealingComponent>(eidolon);
 
+        if (link.Traits.Count > 0)
+        {
+            var traits = EnsureComp<Content.Shared.CF.Traits.CFTraitComponent>(eidolon);
+            foreach (var trait in link.Traits)
+            {
+                traits.Traits.Add(trait);
+            }
+
+            Dirty(eidolon, traits);
+        }
+
+        foreach (var trait in link.SaveBonusTraits)
+        {
+            _bonuses.AddPermanentBonus(eidolon, CFBonusStat.Saves, CFBonusType.Circumstance, 2, trait, null, "eidolon");
+        }
+
+        if (link.Senses)
+        {
+            _features.GrantSense(eidolon, CFSense.Darkvision);
+            EnsureComp<Content.Shared.CF.Scent.CFSmellerComponent>(eidolon);
+        }
+
+        if (link.ReactiveDismissal)
+        {
+            _reactions.Add(eidolon, new CFReaction
+            {
+                Name = "cf-reaction-reactive-dismissal",
+                Trigger = CFReactionTrigger.WouldBeDamaged,
+                AnyDistance = true,
+                ResistDoubleLevel = true,
+                Dismisses = true,
+            }, "eidolon");
+        }
+
+        if (link.StrikesBack)
+        {
+            _reactions.Add(eidolon, new CFReaction
+            {
+                Name = "cf-reaction-surprising-anatomy",
+                Trigger = CFReactionTrigger.Damaged,
+                Strikes = true,
+            }, "eidolon");
+        }
+
         _companions.ComeAlong(eidolon);
         return true;
+    }
+
+    [SubscribeLocalEvent]
+    private void OnDismiss(Entity<CFEidolonBodyComponent> ent, ref CFEidolonDismissEvent args)
+    {
+        if (!TryComp(ent.Comp.Summoner, out CFEidolonLinkComponent? link) || link.Eidolon != ent.Owner)
+            return;
+
+        link.NextManifest = _timing.CurTime + DismissalWait;
+        Unmanifest(ent.Comp.Summoner, link);
+        _popup.PopupEntity(Loc.GetString("cf-eidolon-dismissed"), ent.Comp.Summoner, ent.Comp.Summoner);
     }
 
     [Dependency] private MetaDataSystem _metaData = default!;
@@ -121,6 +188,7 @@ public sealed partial class CFEidolonServerSystem : EntitySystem
         options.NaturalDice = 1;
         options.NaturalDie = 8;
         options.NaturalType = link.AttackType;
+        options.NaturalVersatile = link.Versatile;
         options.NaturalFinesse = link.DexterityKey;
         options.NaturalAgile = false;
         Dirty(eidolon, options);
@@ -148,6 +216,10 @@ public sealed partial class CFEidolonServerSystem : EntitySystem
             link.NextTether = now + CheckTether;
             if (eidolon.Level != summoner.Level || eidolon.MaxHp != summoner.MaxHp)
                 ApplyStats(link.Eidolon, link, summoner);
+
+            // Unfetter Eidolon: the tether lets go for a while. When it ends, an eidolon still far away is pulled back.
+            if (now < link.UnfetteredUntil)
+                continue;
 
             var apart = _transform.GetMapCoordinates(uid).MapId != _transform.GetMapCoordinates(link.Eidolon).MapId
                         || (_transform.GetWorldPosition(uid) - _transform.GetWorldPosition(link.Eidolon)).Length() > TetherTiles;

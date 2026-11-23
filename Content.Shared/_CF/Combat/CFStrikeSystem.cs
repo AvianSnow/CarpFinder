@@ -71,6 +71,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
     [Dependency] private Content.Shared.CF.Spells.CFPsiSystem _psi = default!;
     [Dependency] private CFIkonSystem _ikons = default!;
     [Dependency] private CFRuneSystem _runes = default!;
+    [Dependency] private Content.Shared.CF.Companions.CFEidolonSystem _eidolons = default!;
     [Dependency] private CFTauntSystem _taunts = default!;
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
@@ -1041,6 +1042,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
         {
             _ikons.NoteHit(user, target, rolled, weaponUid, criticalHit, damage);
             _runes.NoteHit(user, target, rolled, weaponUid);
+            _eidolons.NoteHit(user, target, rolled, criticalHit, damage);
         }
 
         if (hit && !alreadyDown)

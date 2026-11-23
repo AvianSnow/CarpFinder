@@ -287,3 +287,29 @@
   - type: CFTrait
     traits:
     - Mental
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActEidolonShot
+  name: Eidolon Shot
+  description: Your eidolon makes its ranged attack at a creature within 30 feet, 1d4 of the energy you chose. Costs 1 action.
+  components:
+  - type: TargetAction
+    range: 20
+  - type: CFEidolonStrikeAction
+    ranged: true
+    rangeFeet: 30
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActBeastsCharge
+  name: "Beast's Charge"
+  description: Your eidolon rushes up to 50 feet at a creature and Strikes it, with +1 to the attack roll after a run-up of 20 feet or more. Costs 2 actions.
+  components:
+  - type: TargetAction
+    range: 20
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFEidolonStrikeAction
+    closesFeet: 50
+    bonusIfRushed: 1

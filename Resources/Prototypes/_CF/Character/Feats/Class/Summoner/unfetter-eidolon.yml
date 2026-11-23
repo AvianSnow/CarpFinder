@@ -8,3 +8,6 @@
   level: 1
   traits:
     - "Summoner"
+  grants:
+    - !type:CFGrantFocusSpell
+      spell: UnfetterEidolon

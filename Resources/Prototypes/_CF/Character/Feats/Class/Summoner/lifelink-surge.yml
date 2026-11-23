@@ -8,3 +8,6 @@
   level: 4
   traits:
     - "Summoner"
+  grants:
+    - !type:CFGrantFocusSpell
+      spell: LifelinkSurge

@@ -1670,6 +1670,109 @@
         value: 20
         durationSeconds: 60
 
+- type: entity
+  parent: CFSpellInstant
+  id: CFExtendBoost
+  name: Extend Boost
+  description: "Boost Eidolon for 18 seconds: +2 status to your eidolon's damage. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: ExtendBoost
+    rank: 0
+    focus: true
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFOnEidolonEffect
+      effects:
+      - !type:CFBonusEffect
+        stat: Damage
+        type: Status
+        value: 2
+        durationSeconds: 18
+
+- type: entity
+  parent: CFSpellInstant
+  id: CFLifelinkSurge
+  name: Lifelink Surge
+  description: "Your eidolon regains 4 Hit Points every 6 seconds for 24 seconds, 2 more per rank. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 2
+  - type: CFSpell
+    spell: LifelinkSurge
+    rank: 0
+    focus: true
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFOnEidolonEffect
+      effects:
+      - !type:CFFastHealingEffect
+        amount: 4
+        heightenAmount: 2
+        durationSeconds: 24
+
+- type: entity
+  parent: CFSpellInstant
+  id: CFUnfetterEidolon
+  name: Unfetter Eidolon
+  description: "For a minute your eidolon can go as far from you as it likes. When the minute ends, one more than 100 feet away unmanifests. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 2
+  - type: CFSpell
+    spell: UnfetterEidolon
+    rank: 0
+    focus: true
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFUnfetterEffect
+      durationSeconds: 60
+
+- type: cfSpell
+  id: ExtendBoost
+  name: Extend Boost
+  rank: 1
+  traits: [Concentrate]
+  actionCost: One
+  range: 100 feet
+  targets: your eidolon
+  duration: 18 seconds
+  summary: "Boost Eidolon that lasts 18 seconds. The rules make it a skill check, and let it extend Reinforce Eidolon too."
+
+- type: cfSpell
+  id: LifelinkSurge
+  name: Lifelink Surge
+  rank: 1
+  traits: [Concentrate, Healing, Manipulate]
+  actionCost: Two
+  range: 100 feet
+  targets: your eidolon
+  duration: 24 seconds
+  summary: "Your eidolon regains 4 Hit Points every 6 seconds for 24 seconds."
+  heightened: 2 more each pulse per rank.
+
+- type: cfSpell
+  id: UnfetterEidolon
+  name: Unfetter Eidolon
+  rank: 1
+  traits: [Concentrate, Manipulate]
+  actionCost: Two
+  range: 100 feet
+  targets: your eidolon
+  duration: 1 minute
+  summary: "Your eidolon may go as far from you as it likes. When the minute ends, one more than 100 feet away unmanifests."
+
 - type: cfSpell
   id: BoostEidolon
   name: Boost Eidolon

@@ -373,6 +373,22 @@ public sealed partial class CFReaction
     /// </summary>
     [DataField]
     public bool TempHpLevel;
+
+    /// <summary>Resists twice the owner's level (Reactive Dismissal).</summary>
+    [DataField]
+    public bool ResistDoubleLevel;
+
+    /// <summary>With <see cref="CFReactionTrigger.WouldBeDamaged"/> on an eidolon: it unmanifests as the blow lands (Reactive Dismissal).</summary>
+    [DataField]
+    public bool Dismisses;
+
+    /// <summary>
+    /// With <see cref="CFReactionTrigger.Damaged"/>: the owner's manifested eidolon Strikes the attacker, when both are within
+    /// 15 feet of the owner (Dutiful Retaliation). With <see cref="Strikes"/> instead, the owner itself Strikes back at an
+    /// adjacent attacker (Surprising Anatomy).
+    /// </summary>
+    [DataField]
+    public bool EidolonStrikes;
 }
 
 /// <summary>Temporary Hit Points a reaction gives once the blow it answered has landed (Void Siphon).</summary>

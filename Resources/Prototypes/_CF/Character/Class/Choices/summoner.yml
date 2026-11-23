@@ -17,6 +17,8 @@
       intelligence: 1
       wisdom: 1
       charisma: -1
+    - !type:CFGrantEidolonBuild
+      strikesBack: true
 
 - type: cfClassChoice
   id: EidolonAngel
@@ -35,6 +37,9 @@
       intelligence: -1
       wisdom: 1
       charisma: 2
+    - !type:CFGrantEidolonBuild
+      spiritAgainst: Unholy
+      traits: [ Holy ]
 
 - type: cfClassChoice
   id: EidolonAngerPhantom
@@ -73,6 +78,8 @@
       intelligence: -1
       wisdom: 1
       charisma: 0
+    - !type:CFGrantAction
+      action: CFActBeastsCharge
 
 - type: cfClassChoice
   id: EidolonConstruct
@@ -91,6 +98,8 @@
       intelligence: 1
       wisdom: 0
       charisma: -1
+    - !type:CFGrantEidolonBuild
+      saveBonusTraits: [ Death, Disease, Poison ]
 
 - type: cfClassChoice
   id: EidolonDemon
@@ -102,6 +111,9 @@
   trainedSkills:
     - Intimidation
     - Religion
+  choices:
+    - kind: Named
+      options: [ VersatileB, VersatileP, VersatileS ]
   grants:
     - !type:CFGrantEidolon
       name: demon eidolon
@@ -109,6 +121,20 @@
       intelligence: 0
       wisdom: -1
       charisma: 1
+    - !type:CFGrantEidolonBuild
+      spiritAgainst: Holy
+      traits: [ Unholy ]
+    - !type:CFGrantChosen
+      options:
+        VersatileB:
+          - !type:CFGrantEidolonBuild
+            versatile: Bludgeoning
+        VersatileP:
+          - !type:CFGrantEidolonBuild
+            versatile: Piercing
+        VersatileS:
+          - !type:CFGrantEidolonBuild
+            versatile: Slashing
 
 - type: cfClassChoice
   id: EidolonDevotionPhantom
@@ -127,6 +153,11 @@
       intelligence: 0
       wisdom: 0
       charisma: 0
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-dutiful-retaliation
+        trigger: Damaged
+        eidolonStrikes: true
 
 - type: cfClassChoice
   id: EidolonDragon
@@ -165,6 +196,8 @@
       intelligence: 0
       wisdom: 1
       charisma: 0
+    - !type:CFGrantEidolonBuild
+      saveBonusTraits: [ Poison, Sleep ]
 
 - type: cfClassChoice
   id: EidolonFey
@@ -203,6 +236,8 @@
       charisma: 0
       speedFeet: 20
       resistance: Acid
+    - !type:CFGrantEidolonBuild
+      saveBonusTraits: [ Mental ]
 
 - type: cfClassChoice
   id: EidolonPlant
@@ -241,6 +276,8 @@
       intelligence: 0
       wisdom: 1
       charisma: -1
+    - !type:CFGrantEidolonBuild
+      spiritTouch: true
 
 - type: cfClassChoice
   id: EidolonSwarm
@@ -278,6 +315,8 @@
       wisdom: 1
       charisma: 0
       voidHealing: true
+    - !type:CFGrantEidolonBuild
+      saveBonusTraits: [ Death, Disease, Poison ]
 
 - type: cfClassChoice
   id: EidolonKeyStrength

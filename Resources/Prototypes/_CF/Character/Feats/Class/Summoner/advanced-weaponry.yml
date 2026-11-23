@@ -9,3 +9,18 @@
   traits:
     - "Evolution"
     - "Summoner"
+  choices:
+    - kind: Named
+      options: [ VersatileB, VersatileP, VersatileS ]
+  grants:
+    - !type:CFGrantChosen
+      options:
+        VersatileB:
+          - !type:CFGrantEidolonBuild
+            versatile: Bludgeoning
+        VersatileP:
+          - !type:CFGrantEidolonBuild
+            versatile: Piercing
+        VersatileS:
+          - !type:CFGrantEidolonBuild
+            versatile: Slashing

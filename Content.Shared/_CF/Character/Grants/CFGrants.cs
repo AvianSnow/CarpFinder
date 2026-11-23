@@ -546,6 +546,37 @@ public sealed partial class CFGrantEidolonBuild : CFGrant
     [DataField]
     public int ExtraSpeed;
 
+    /// <summary>A second damage type the attack can deal. Empty leaves it alone.</summary>
+    [DataField]
+    public string Versatile = string.Empty;
+
+    [DataField]
+    public bool Senses;
+
+    [DataField]
+    public bool BloodlettingClaws;
+
+    [DataField]
+    public bool ReactiveDismissal;
+
+    [DataField]
+    public bool StrikesBack;
+
+    [DataField]
+    public bool SpiritTouch;
+
+    [DataField]
+    public ProtoId<CFTraitPrototype>? SpiritAgainst;
+
+    [DataField]
+    public List<ProtoId<CFTraitPrototype>> Traits = new();
+
+    [DataField]
+    public List<ProtoId<CFTraitPrototype>> SaveBonusTraits = new();
+
+    [DataField]
+    public List<ProtoId<CFDamageTypePrototype>> Resistances = new();
+
     public override void Apply(IEntityManager entities, CFGrantArgs args)
     {
         var link = entities.EnsureComponent<CFEidolonLinkComponent>(args.Mob);
@@ -555,7 +586,74 @@ public sealed partial class CFGrantEidolonBuild : CFGrant
         if (AttackType.Length > 0)
             link.AttackType = AttackType;
 
+        if (Versatile.Length > 0)
+            link.Versatile = Versatile;
+
         link.ExtraSpeed += ExtraSpeed;
+        link.Senses |= Senses;
+        link.BloodlettingClaws |= BloodlettingClaws;
+        link.ReactiveDismissal |= ReactiveDismissal;
+        link.StrikesBack |= StrikesBack;
+        link.SpiritTouch |= SpiritTouch;
+        link.SpiritAgainst ??= SpiritAgainst;
+        foreach (var trait in Traits)
+        {
+            if (!link.Traits.Contains(trait))
+                link.Traits.Add(trait);
+        }
+
+        foreach (var trait in SaveBonusTraits)
+        {
+            if (!link.SaveBonusTraits.Contains(trait))
+                link.SaveBonusTraits.Add(trait);
+        }
+
+        foreach (var type in Resistances)
+        {
+            if (!link.Resistances.Contains(type))
+                link.Resistances.Add(type);
+        }
+    }
+}
+
+public enum CFEidolonEnergyUse : byte
+{
+    /// <summary>Energy Heart: the attack deals the energy, and the eidolon resists it.</summary>
+    Attack,
+
+    /// <summary>Dual Energy Heart: the attack can deal the energy instead, and the eidolon resists it.</summary>
+    Versatile,
+
+    /// <summary>Ranged Combatant: the ranged attack deals it.</summary>
+    Ranged,
+}
+
+/// <summary>An energy the player picked for the eidolon (a <c>DamageType</c> choice), and what it is for.</summary>
+public sealed partial class CFGrantEidolonEnergy : CFGrant
+{
+    [DataField(required: true)]
+    public CFEidolonEnergyUse Use;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        var features = entities.System<CFCharacterFeatureSystem>();
+        var link = entities.EnsureComponent<CFEidolonLinkComponent>(args.Mob);
+        var type = features.Pick(args.Mob, args.Source);
+        switch (Use)
+        {
+            case CFEidolonEnergyUse.Attack:
+                link.AttackType = type ?? "fire";
+                break;
+            case CFEidolonEnergyUse.Versatile:
+                link.Versatile = type ?? "cold";
+                break;
+            case CFEidolonEnergyUse.Ranged:
+                link.RangedType = type ?? "Bludgeoning";
+                return;
+        }
+
+        if (type != null && !link.Resistances.Contains(type))
+            link.Resistances.Add(type);
     }
 }
 

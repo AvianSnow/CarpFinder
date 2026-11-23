@@ -9,4 +9,6 @@
   traits:
     - "Summoner"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantEidolonBuild
+      reactiveDismissal: true

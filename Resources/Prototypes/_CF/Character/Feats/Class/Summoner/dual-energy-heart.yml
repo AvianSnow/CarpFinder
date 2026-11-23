@@ -13,3 +13,9 @@
     - "Energy Heart"
   requiresFeats:
     - CFEnergyHeart
+  choices:
+    - kind: DamageType
+      damageTypes: [ Acid, Cold, Electricity, Fire ]
+  grants:
+    - !type:CFGrantEidolonEnergy
+      use: Versatile

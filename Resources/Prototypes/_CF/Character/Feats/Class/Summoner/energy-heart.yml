@@ -9,3 +9,9 @@
   traits:
     - "Evolution"
     - "Summoner"
+  choices:
+    - kind: DamageType
+      damageTypes: [ Acid, Cold, Electricity, Fire ]
+  grants:
+    - !type:CFGrantEidolonEnergy
+      use: Attack

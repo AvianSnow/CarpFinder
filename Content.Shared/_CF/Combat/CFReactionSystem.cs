@@ -72,6 +72,7 @@ public sealed partial class CFReactionSystem : EntitySystem
     [Dependency] private Content.Shared.CF.Terrain.CFTerrainSystem _terrain = default!;
     [Dependency] private CFTemporaryHpSystem _tempHp = default!;
     [Dependency] private Content.Shared.CF.Companions.CFThrallSystem _thralls = default!;
+    [Dependency] private Content.Shared.CF.Companions.CFEidolonSystem _eidolons = default!;
     [Dependency] private Robust.Shared.Serialization.Manager.ISerializationManager _serialization = default!;
 
     public override void Update(float frameTime)
@@ -786,6 +787,13 @@ public sealed partial class CFReactionSystem : EntitySystem
 
                 amount = Protect(target, target, attacker, known.Reaction, amount);
 
+                // Reactive Dismissal: the eidolon goes as the blow lands.
+                if (known.Reaction.Dismisses)
+                {
+                    var dismiss = new Content.Shared.CF.Companions.CFEidolonDismissEvent();
+                    RaiseLocalEvent(target, ref dismiss);
+                }
+
                 // Void Siphon: the temporary Hit Points come once the blow has landed, so they do not soak it up.
                 if (known.Reaction.TempHpLevel)
                 {
@@ -883,7 +891,7 @@ public sealed partial class CFReactionSystem : EntitySystem
     private int Protect(EntityUid owner, EntityUid victim, EntityUid attacker, CFReaction reaction, int amount)
     {
         var level = CompOrNull<CFCombatantComponent>(owner)?.Level ?? 1;
-        var resist = reaction.ResistFlat + (reaction.ResistLevel ? level : 0) + (reaction.ResistHalfLevel ? level / 2 : 0);
+        var resist = reaction.ResistFlat + (reaction.ResistLevel ? level : 0) + (reaction.ResistHalfLevel ? level / 2 : 0) + (reaction.ResistDoubleLevel ? 2 * level : 0);
         if (reaction.ResistAbility is { } ability)
             resist += Math.Max(0, CompOrNull<CFAbilityScoreComponent>(owner)?.GetModifier(ability) ?? 0);
         amount = Math.Max(0, amount - resist);
@@ -1371,9 +1379,44 @@ public sealed partial class CFReactionSystem : EntitySystem
             return;
         }
 
+        var attacker = args.Source;
+        var attackerStands = attacker != ent.Owner && !TerminatingOrDeleted(attacker) && _mobState.IsAlive(attacker) && _factions.CanHarm(ent, attacker);
         foreach (var known in Ordered(ent, ent.Comp))
         {
-            if (known.Reaction.Trigger != CFReactionTrigger.Damaged || !known.Reaction.EntersRage)
+            if (known.Reaction.Trigger != CFReactionTrigger.Damaged)
+                continue;
+
+            // Surprising Anatomy: an eidolon hits back at the adjacent enemy that hurt it.
+            if (known.Reaction.Strikes)
+            {
+                if (attackerStands && WithinFeet(ent, attacker, 5) && CanFire(ent, known) && TrySpend(ent, known))
+                {
+                    _strikes.ReactionStrike(ent, attacker);
+                    return;
+                }
+
+                continue;
+            }
+
+            // Dutiful Retaliation: the Summoner's eidolon strikes whoever hurt the Summoner, from up to 15 feet away.
+            if (known.Reaction.EidolonStrikes)
+            {
+                var eidolon = _eidolons.Manifested(ent);
+                if (attackerStands
+                    && WithinFeet(ent, attacker, 15)
+                    && eidolon is { } body
+                    && WithinFeet(ent, body, 15)
+                    && CanFire(ent, known)
+                    && TrySpend(ent, known))
+                {
+                    _strikes.ReactionStrike(body, attacker);
+                    return;
+                }
+
+                continue;
+            }
+
+            if (!known.Reaction.EntersRage)
                 continue;
 
             if (!options.CanRage || options.Raging || !CanFire(ent, known) || !TrySpend(ent, known))

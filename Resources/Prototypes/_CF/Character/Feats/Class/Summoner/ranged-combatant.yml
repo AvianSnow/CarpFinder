@@ -9,3 +9,11 @@
   traits:
     - "Evolution"
     - "Summoner"
+  choices:
+    - kind: DamageType
+      damageTypes: [ Acid, Bludgeoning, Cold, Electricity, Fire, Piercing, Slashing, Spirit, Vitality, Void ]
+  grants:
+    - !type:CFGrantEidolonEnergy
+      use: Ranged
+    - !type:CFGrantAction
+      action: CFActEidolonShot
