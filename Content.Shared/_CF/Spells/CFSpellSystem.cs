@@ -441,6 +441,7 @@ public sealed partial class CFSpellSystem : EntitySystem
             return false;
 
         _blood.Begin(caster, spell);
+        EntityManager.System<CFCurseboundSystem>().NoteSpell(caster, spell);
         if (hex)
         {
             if (TryComp(caster, out CFSpellbookComponent? hexBook))

@@ -49,6 +49,10 @@ public sealed partial class CFFocusSystem : EntitySystem
         if (TryComp(args.User, out CFSpellbookComponent? book) && book.FocusSpent > 0)
             return;
 
+        // An Oracle also Refocuses to ease its curse.
+        if (EntityManager.System<CFCurseboundSystem>().Value(args.User) > 0)
+            return;
+
         args.Cancelled = true;
         args.Reason = Loc.GetString("cf-focus-full");
     }
@@ -76,11 +80,18 @@ public sealed partial class CFFocusSystem : EntitySystem
     [SubscribeLocalEvent]
     private void OnRefocused(Entity<CFSpellbookComponent> ent, ref CFRefocusDoAfterEvent args)
     {
-        if (args.Cancelled || args.Handled || ent.Comp.FocusSpent <= 0)
+        if (args.Cancelled || args.Handled)
+            return;
+
+        var curses = EntityManager.System<CFCurseboundSystem>();
+        if (ent.Comp.FocusSpent <= 0 && curses.Value(ent) <= 0)
             return;
 
         args.Handled = true;
-        ent.Comp.FocusSpent--;
+        curses.Lower(ent);
+        if (ent.Comp.FocusSpent > 0)
+            ent.Comp.FocusSpent--;
+
         Dirty(ent);
         _popup.PopupEntity(Loc.GetString("cf-focus-done"), ent, ent);
     }

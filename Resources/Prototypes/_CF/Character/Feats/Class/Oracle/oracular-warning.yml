@@ -14,4 +14,6 @@
     - "Mental"
     - "Oracle"
   action: Free
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActOracularWarning

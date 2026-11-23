@@ -12,6 +12,7 @@ namespace Content.Shared.CF.Combat;
 /// </summary>
 public sealed partial class CFWeaponSystem : EntitySystem
 {
+    [Dependency] private Robust.Shared.Timing.IGameTiming _timing = default!;
     [Dependency] private IPrototypeManager _prototypes = default!;
 
     public CFWeaponTraits Traits(EntityUid weapon)
@@ -76,6 +77,14 @@ public sealed partial class CFWeaponSystem : EntitySystem
 
         if (group > rank)
             rank = group;
+
+        // Weapon Trance: a martial weapon is as good as a simple one.
+        if (data.Category == CFWeaponCategory.Martial && _timing.CurTime < combat.WeaponTranceUntil)
+        {
+            var simple = CFDefense.AttackRank(_prototypes, combat, "SimpleWeapons");
+            if (simple > rank)
+                rank = simple;
+        }
 
         // Alchemical bombs have a training of their own, which an Alchemist has without martial weapons.
         if (data.Group == CFWeaponGroup.Bomb)

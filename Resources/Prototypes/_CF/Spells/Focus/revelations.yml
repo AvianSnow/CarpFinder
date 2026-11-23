@@ -1,0 +1,334 @@
+# Oracle revelation spells (Player Core 2): the initial focus spell of each mystery. Incendiary Aura is not built.
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFAncestralTouch
+  name: Ancestral Touch
+  description: "A touch deals 2d4 mental damage, basic Will, 1d4 more per rank. On a failure the target is also frightened 1, or 2 on a critical failure. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: AncestralTouch
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 5
+    touch: true
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFCheck
+    defense: Will
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 2
+      die: 4
+      damageType: Mental
+      heightenDice: 1
+    failure:
+    - !type:CFApplyConditionEffect
+      condition: Frightened
+      value: 1
+      durationSeconds: 60
+    criticalFailure:
+    - !type:CFApplyConditionEffect
+      condition: Frightened
+      value: 2
+      durationSeconds: 60
+
+- type: cfSpell
+  id: AncestralTouch
+  name: Ancestral Touch
+  rank: 1
+  traits: [Emotion, Fear, Manipulate, Mental]
+  actionCost: One
+  summary: "2d4 mental damage with a Will save. On a failure the target is also frightened 1, or 2 on a critical failure."
+  defense: Will
+  heightened: "The damage increases by 1d4 per rank."
+
+- type: entity
+  parent: CFSpellInstant
+  id: CFWeaponTrance
+  name: Weapon Trance
+  description: "For a minute you are as good with martial weapons as you are with simple ones. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: WeaponTrance
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    filter: All
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFWeaponTranceEffect {}
+
+- type: cfSpell
+  id: WeaponTrance
+  name: Weapon Trance
+  rank: 1
+  traits: [Concentrate]
+  actionCost: One
+  summary: "For 1 minute, your proficiency with martial weapons is equal to your proficiency with simple weapons."
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFSoulSiphon
+  name: Soul Siphon
+  description: "A creature within 30 feet takes 1d4 void damage, basic Fortitude, 1d4 more per rank. On a failure it is drained 1, or 2 on a critical failure, and you gain 1d4 temporary Hit Points per rank. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: SoulSiphon
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFCheck
+    defense: Fortitude
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 4
+      damageType: Void
+      heightenDice: 1
+    failure:
+    - !type:CFApplyConditionEffect
+      condition: Drained
+      value: 1
+      durationSeconds: 60
+    - !type:CFTemporaryHpEffect
+      dice: 1
+      die: 4
+      heightenDice: 1
+      toUser: true
+    criticalFailure:
+    - !type:CFApplyConditionEffect
+      condition: Drained
+      value: 2
+      durationSeconds: 60
+    - !type:CFTemporaryHpEffect
+      dice: 2
+      die: 4
+      heightenDice: 2
+      toUser: true
+
+- type: cfSpell
+  id: SoulSiphon
+  name: Soul Siphon
+  rank: 1
+  traits: [Manipulate, Void]
+  actionCost: One
+  summary: "1d4 void damage with a Fortitude save. On a failure the target is drained, and you gain temporary Hit Points. They are rolled apart from the damage, where the rules give what the target lost."
+  defense: Fortitude
+  heightened: "The damage increases by 1d4 per rank."
+
+- type: entity
+  parent: CFSpellArea
+  id: CFSprayOfStars
+  name: Spray of Stars
+  description: "A 15-foot cone of 2d4 fire damage, basic Reflex, 1d4 more per rank. It dazzles: 6 seconds on a success, 18 on a failure, a minute on a critical failure. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 2
+  - type: CFSpell
+    spell: SprayOfStars
+    rank: 0
+    focus: true
+  - type: CFAreaFill
+    tile: CFFillMotes
+    tint: true
+  - type: CFAreaEffect
+    shape: Cone
+    sizeFeet: 15
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFCheck
+    defense: Reflex
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 2
+      die: 4
+      damageType: Fire
+      heightenDice: 1
+    success:
+    - !type:CFApplyConditionEffect
+      condition: Dazzled
+      durationSeconds: 6
+    failure:
+    - !type:CFApplyConditionEffect
+      condition: Dazzled
+      durationSeconds: 18
+    criticalFailure:
+    - !type:CFApplyConditionEffect
+      condition: Dazzled
+      durationSeconds: 60
+
+- type: cfSpell
+  id: SprayOfStars
+  name: Spray of Stars
+  rank: 1
+  traits: [Concentrate, Fire, Light, Manipulate]
+  actionCost: Two
+  summary: "2d4 fire damage in a 15-foot cone with a Reflex save, and the creatures are dazzled."
+  defense: Reflex
+  heightened: "The damage increases by 1d4 per rank."
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFLifeLink
+  name: Life Link
+  description: "An ally within 30 feet regains 1d4 Hit Points, 3d4 from level 5. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: LifeLink
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+    filter: Allies
+  - type: CFHeighten
+    baseRank: 1
+    interval: 2
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFHealEffect
+      dice: 1
+      die: 4
+      heightenDice: 2
+
+- type: cfSpell
+  id: LifeLink
+  name: Life Link
+  rank: 1
+  traits: [Healing, Manipulate, Vitality]
+  actionCost: One
+  summary: "The target recovers 1d4 Hit Points. Taking 3 of the damage it suffers each round on yourself is TBA."
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFBrainDrain
+  name: Brain Drain
+  description: "A creature within 30 feet takes 1d8 mental damage, basic Will, 1d8 more per rank. If it fails, you Recall Knowledge about it at no cost. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 2
+  - type: CFSpell
+    spell: BrainDrain
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFCheck
+    defense: Will
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 8
+      damageType: Mental
+      heightenDice: 1
+    failure:
+    - !type:CFRecallEffect
+    criticalFailure:
+    - !type:CFRecallEffect
+
+- type: cfSpell
+  id: BrainDrain
+  name: Brain Drain
+  rank: 1
+  traits: [Concentrate, Manipulate, Mental]
+  actionCost: Two
+  summary: "1d8 mental damage with a basic Will save. On a failure you Recall Knowledge, here about the target and with your own skill."
+  defense: basic Will
+  heightened: "The damage increases by 1d8 per rank."
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFTempestTouch
+  name: Tempest Touch
+  description: "A touch deals 1d4 bludgeoning and 1d4 cold damage, basic Fortitude, 1d4 more of each per rank. The target loses 5 feet of Speed for 6 seconds on a success, 10 on a failure. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: TempestTouch
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 5
+    touch: true
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFCheck
+    defense: Fortitude
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 4
+      damageType: Bludgeoning
+      heightenDice: 1
+    - !type:CFDamageEffect
+      dice: 1
+      die: 4
+      damageType: Cold
+      heightenDice: 1
+    success:
+    - !type:CFBonusEffect
+      stat: Speed
+      type: Circumstance
+      value: -5
+      durationSeconds: 6
+    failure:
+    - !type:CFBonusEffect
+      stat: Speed
+      type: Circumstance
+      value: -10
+      durationSeconds: 6
+    criticalFailure:
+    - !type:CFBonusEffect
+      stat: Speed
+      type: Circumstance
+      value: -10
+      durationSeconds: 6
+
+- type: cfSpell
+  id: TempestTouch
+  name: Tempest Touch
+  rank: 1
+  traits: [Cold, Manipulate, Water]
+  actionCost: One
+  summary: "1d4 bludgeoning and 1d4 cold damage with a Fortitude save, and a penalty to Speed."
+  defense: Fortitude
+  heightened: "Each damage increases by 1d4 per rank."

@@ -135,6 +135,10 @@ public sealed partial class CFCombatantComponent : Component
     [DataField, AutoNetworkedField]
     public int TemporaryHp;
 
+    /// <summary>Weapon Trance: until this time, martial weapons use the creature's rank with simple weapons. Server-only.</summary>
+    [DataField]
+    public TimeSpan WeaponTranceUntil;
+
     /// <summary>When <see cref="TemporaryHp"/> runs out. Zero means it lasts until spent or cleared.</summary>
     [DataField, AutoNetworkedField]
     public TimeSpan TemporaryHpUntil;

@@ -49,10 +49,10 @@
       description: "Level 1 cantrips and spell slots are on the spell sheet."
     - level: 1
       name: "Oracular Curse"
-      description: "Your curse and the cursebound condition: TBA"
+      description: "Your mystery gives you a cursebound ability and a curse. Each use of a cursebound ability raises your cursebound value by 1, to 2 at most, and your curse grows with it. Refocus lowers it by 1, and a long rest ends it."
     - level: 1
       name: "Revelation Spells"
-      description: "Focus spells from your mystery: TBA"
+      description: "Your mystery gives you its initial revelation spell, a focus spell."
     - level: 1
       name: "Spell Repertoire"
       description: "Level 1 cantrips and spell slots are on the spell sheet."

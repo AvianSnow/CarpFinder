@@ -32,6 +32,17 @@ public sealed partial class CFEffectActionComponent : Component
     [DataField]
     public bool NeedsBloodMagic;
 
+    /// <summary>
+    /// The cursebound trait: using it raises an Oracle's cursebound value by 1, and it cannot be used at the most.
+    /// See <c>CFCurseboundSystem</c>.
+    /// </summary>
+    [DataField]
+    public bool Cursebound;
+
+    /// <summary>Only within 6 seconds of casting a damaging spell that was not a cantrip (Foretell Harm).</summary>
+    [DataField]
+    public bool NeedsDamagingSpell;
+
     /// <summary>Only while raging: the rage trait.</summary>
     [DataField]
     public bool NeedsRaging;

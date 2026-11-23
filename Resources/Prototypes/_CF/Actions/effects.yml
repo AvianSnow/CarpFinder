@@ -55,11 +55,12 @@
   parent: CFActivityTarget
   id: CFActNudgeScales
   name: Nudge the Scales
-  description: Heal a creature within 30 feet for 2 Hit Points plus double your level.
+  description: Cursebound. Heal a creature within 30 feet for 2 Hit Points plus double your level.
   components:
   - type: TargetAction
     range: 6.25
   - type: CFEffectAction
+    cursebound: true
   - type: CFDegreeEffects
     effects:
     - !type:CFHealEffect
@@ -647,3 +648,61 @@
   - type: CFDegreeEffects
     landed:
     - !type:CFBleedOutEffect {}
+
+# Oracle: cursebound abilities. Each use raises the cursebound value by 1, and none can be used at the most.
+- type: entity
+  parent: CFActivityTarget
+  id: CFActWhispersOfWeakness
+  name: Whispers of Weakness
+  description: Cursebound. Recall Knowledge about a creature within 60 feet at no cost, and get +2 status to attack rolls for 6 seconds.
+  components:
+  - type: TargetAction
+    range: 12.25
+  - type: CFEffectAction
+    cursebound: true
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFRecallEffect
+    - !type:CFBonusEffect
+      stat: AttackRoll
+      value: 2
+      durationSeconds: 6
+      onUser: true
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActForetellHarm
+  name: Foretell Harm
+  description: Cursebound, free. Within 6 seconds of casting a damaging spell that is not a cantrip, a creature within 60 feet takes twice that spell's rank in damage of the same type.
+  components:
+  - type: TargetAction
+    range: 12.25
+  - type: CFRadialSlot
+    group: Free
+  - type: CFEffectAction
+    cursebound: true
+    needsDamagingSpell: true
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFForetellHarmEffect {}
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActOracularWarning
+  name: Oracular Warning
+  description: Cursebound, free. You and allies within 20 feet gain temporary Hit Points equal to half your level for a minute.
+  components:
+  - type: CFRadialSlot
+    group: Free
+  - type: CFEffectAction
+    cursebound: true
+  - type: CFAreaEffect
+    shape: Emanation
+    sizeFeet: 20
+    includeSelf: true
+    filter: Allies
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFTemporaryHpEffect
+      halfLevel: true
+      durationSeconds: 60

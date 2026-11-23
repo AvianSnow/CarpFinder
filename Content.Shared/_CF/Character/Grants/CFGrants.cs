@@ -1167,3 +1167,39 @@ public sealed partial class CFGrantBloodMagic : CFGrant
         blood.SharesWithAlly |= SharesWithAlly;
     }
 }
+
+/// <summary>
+/// An Oracle's curse, from its mystery: what the cursebound condition does at each value. See
+/// <c>CFCurseboundComponent</c> for the fields.
+/// </summary>
+public sealed partial class CFGrantCurse : CFGrant
+{
+    [DataField]
+    public List<Content.Shared.CF.Spells.CFCurseBonus> PerValue = new();
+
+    [DataField]
+    public List<Content.Shared.CF.Spells.CFCurseBonus> AtTwo = new();
+
+    [DataField]
+    public List<CFConditionKind> Conditions = new();
+
+    [DataField]
+    public List<ProtoId<CFDamageTypePrototype>> Weaknesses = new();
+
+    [DataField]
+    public ProtoId<CFDamageTypePrototype>? Persistent;
+
+    [DataField]
+    public bool LessHealing;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        var curse = entities.EnsureComponent<Content.Shared.CF.Spells.CFCurseboundComponent>(args.Mob);
+        curse.PerValue.AddRange(PerValue);
+        curse.AtTwo.AddRange(AtTwo);
+        curse.Conditions.AddRange(Conditions);
+        curse.Weaknesses.AddRange(Weaknesses);
+        curse.Persistent ??= Persistent;
+        curse.LessHealing |= LessHealing;
+    }
+}

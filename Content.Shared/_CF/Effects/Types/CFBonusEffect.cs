@@ -28,6 +28,10 @@ public sealed partial class CFBonusEffect : CFEffect
     [DataField]
     public ProtoId<CFTraitPrototype>? Trait;
 
+    /// <summary>The user gets the bonus, whoever the effect's target is (Whispers of Weakness).</summary>
+    [DataField]
+    public bool OnUser;
+
     /// <summary>
     /// The trait comes from the mode chosen on the source's <c>CFModeChoice</c>: mode 1 is the first entry (Blood Ward's
     /// choice of creature).
@@ -49,7 +53,7 @@ public sealed partial class CFBonusEffect : CFEffect
 
     public override void Apply(IEntityManager entities, CFEffectArgs args)
     {
-        if (args.Target is not { } target)
+        if ((OnUser ? args.User : args.Target) is not { } target)
             return;
 
         var value = Value + HeightenValue * args.HeightenSteps;

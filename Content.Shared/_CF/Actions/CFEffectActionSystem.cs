@@ -9,6 +9,7 @@ namespace Content.Shared.CF.Actions;
 /// <summary>Runs actions that only apply effects. See <see cref="CFEffectActionComponent"/>.</summary>
 public sealed partial class CFEffectActionSystem : EntitySystem
 {
+    [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private INetManager _net = default!;
     [Dependency] private CFEffectSystem _effects = default!;
     [Dependency] private SharedHandsSystem _hands = default!;
@@ -33,6 +34,21 @@ public sealed partial class CFEffectActionSystem : EntitySystem
         {
             args.Cancelled = true;
             args.Reason = Loc.GetString("cf-act-needs-blood-magic");
+            return;
+        }
+
+        var curses = EntityManager.System<Content.Shared.CF.Spells.CFCurseboundSystem>();
+        if (ent.Comp.Cursebound && !curses.CanRaise(args.User))
+        {
+            args.Cancelled = true;
+            args.Reason = Loc.GetString("cf-oracle-cursebound-max");
+            return;
+        }
+
+        if (ent.Comp.NeedsDamagingSpell && !curses.DamagingSpellRecent(args.User))
+        {
+            args.Cancelled = true;
+            args.Reason = Loc.GetString("cf-oracle-needs-spell");
             return;
         }
 
@@ -134,7 +150,15 @@ public sealed partial class CFEffectActionSystem : EntitySystem
         if (!_net.IsServer)
             return;
 
-        _effects.ResolveTarget(ent, args.Performer, args.Performer);
+        // An action with an area around its user reaches everyone in it (Oracular Warning).
+        if (HasComp<CFAreaEffectComponent>(ent))
+            _effects.ResolveArea(ent, args.Performer, _transform.GetMapCoordinates(args.Performer));
+        else
+            _effects.ResolveTarget(ent, args.Performer, args.Performer);
+
+        if (ent.Comp.Cursebound)
+            EntityManager.System<Content.Shared.CF.Spells.CFCurseboundSystem>().Raise(args.Performer);
+
         if (ent.Comp.Unstable)
             _inventor.RollUnstable(args.Performer);
     }
@@ -150,6 +174,9 @@ public sealed partial class CFEffectActionSystem : EntitySystem
             return;
 
         _effects.ResolveTarget(ent, args.Performer, args.Target);
+        if (ent.Comp.Cursebound)
+            EntityManager.System<Content.Shared.CF.Spells.CFCurseboundSystem>().Raise(args.Performer);
+
         if (ent.Comp.Unstable)
             _inventor.RollUnstable(args.Performer);
     }

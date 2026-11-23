@@ -10,6 +10,12 @@
   grants:
     - !type:CFGrantSpell
       spell: Guidance
+    - !type:CFGrantFocusSpell
+      spell: AncestralTouch
+    - !type:CFGrantFeat
+      feat: CFWhispersofWeakness
+    - !type:CFGrantCurse
+      conditions: [ Clumsy ]
 
 - type: cfClassChoice
   id: MysteryBattle
@@ -24,6 +30,15 @@
       spell: Shield
     - !type:CFGrantSpell
       spell: SureStrike
+    - !type:CFGrantFocusSpell
+      spell: WeaponTrance
+    - !type:CFGrantFeat
+      feat: CFOracularWarning
+    - !type:CFGrantCurse
+      atTwo:
+        - stat: Saves
+          value: -1
+          trait: Magical
 
 - type: cfClassChoice
   id: MysteryBones
@@ -36,6 +51,15 @@
   grants:
     - !type:CFGrantSpell
       spell: VoidWarp
+    - !type:CFGrantFocusSpell
+      spell: SoulSiphon
+    - !type:CFGrantFeat
+      feat: CFNudgetheScales
+    - !type:CFGrantCurse
+      weaknesses: [ Vitality, Void ]
+      atTwo:
+        - stat: Fortitude
+          value: -1
 
 - type: cfClassChoice
   id: MysteryCosmos
@@ -48,6 +72,15 @@
   grants:
     - !type:CFGrantSpell
       spell: Light
+    - !type:CFGrantFocusSpell
+      spell: SprayOfStars
+    - !type:CFGrantFeat
+      feat: CFOracularWarning
+    - !type:CFGrantCurse
+      conditions: [ Enfeebled ]
+      perValue:
+        - stat: ManeuverDc
+          value: -1
 
 - type: cfClassChoice
   id: MysteryFlames
@@ -62,6 +95,10 @@
       spell: Ignition
     - !type:CFGrantSpell
       spell: BreatheFire
+    - !type:CFGrantFeat
+      feat: CFForetellHarm
+    - !type:CFGrantCurse
+      persistent: Fire
 
 - type: cfClassChoice
   id: MysteryLife
@@ -76,6 +113,12 @@
       spell: VitalityLash
     - !type:CFGrantSpell
       spell: Soothe
+    - !type:CFGrantFocusSpell
+      spell: LifeLink
+    - !type:CFGrantFeat
+      feat: CFNudgetheScales
+    - !type:CFGrantCurse
+      lessHealing: true
 
 - type: cfClassChoice
   id: MysteryLore
@@ -88,6 +131,16 @@
   grants:
     - !type:CFGrantSpell
       spell: ReadAura
+    - !type:CFGrantFocusSpell
+      spell: BrainDrain
+    - !type:CFGrantFeat
+      feat: CFWhispersofWeakness
+    - !type:CFGrantCurse
+      perValue:
+        - stat: Perception
+          value: -1
+        - stat: Will
+          value: -1
 
 - type: cfClassChoice
   id: MysteryTempest
@@ -102,3 +155,9 @@
       spell: ElectricArc
     - !type:CFGrantSpell
       spell: Thunderstrike
+    - !type:CFGrantFocusSpell
+      spell: TempestTouch
+    - !type:CFGrantFeat
+      feat: CFForetellHarm
+    - !type:CFGrantCurse
+      weaknesses: [ Electricity ]

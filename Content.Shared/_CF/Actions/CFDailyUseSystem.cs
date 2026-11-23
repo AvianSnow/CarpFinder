@@ -28,6 +28,9 @@ public sealed partial class CFDailyUseSystem : EntitySystem
     /// <summary>Gives every daily action the creature has its uses back. A long rest calls this.</summary>
     public void Restore(EntityUid mob)
     {
+        // An Oracle's curse lets go.
+        EntityManager.System<Content.Shared.CF.Spells.CFCurseboundSystem>().Clear(mob);
+
         // An Alchemist's versatile vials are all made again.
         EntityManager.System<Content.Shared.CF.Alchemy.CFQuickAlchemySystem>().Refill(mob);
 
