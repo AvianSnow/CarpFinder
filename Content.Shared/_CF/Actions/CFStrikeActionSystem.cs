@@ -516,6 +516,7 @@ public sealed partial class CFStrikeActionSystem : EntitySystem
             Position = Transform(target).Coordinates,
             Degree = degree,
             Defense = CFDefenseType.ArmorClass,
+            Mode = CompOrNull<CFModeChoiceComponent>(ent)?.Chosen ?? 0,
         });
     }
 

@@ -10,4 +10,6 @@
     - "Flourish"
     - "Runesmith"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActFortifyingKnock

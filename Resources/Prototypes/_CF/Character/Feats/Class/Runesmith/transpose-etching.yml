@@ -10,4 +10,6 @@
     - "Manipulate"
     - "Runesmith"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActTransposeEtching

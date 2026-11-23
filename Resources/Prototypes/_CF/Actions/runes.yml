@@ -39,7 +39,7 @@
   parent: CFActivityTarget
   id: CFActTraceBaruiel
   name: "Trace Baruiel"
-  description: "1 action next to the target, 2 from up to 30 feet away. It lasts 12 seconds. Easing frightened: TBA. Invoke: TBA."
+  description: "1 action next to the target, 2 from up to 30 feet away. It lasts 12 seconds. Easing frightened: TBA. Invoke: allies within 10 feet of the bearer lower their frightened by 2."
   components:
   - type: TargetAction
     range: 6.5
@@ -47,6 +47,15 @@
     canTargetSelf: true
   - type: CFTraceRuneAction
     rune: Baruiel
+  - type: CFAreaEffect
+    shape: Emanation
+    sizeFeet: 10
+    filter: Allies
+    includeSelf: true
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFReduceFrightenedEffect
+      by: 2
 
 - type: entity
   parent: CFActivityTarget
@@ -129,7 +138,7 @@
   parent: CFActivityTarget
   id: CFActTraceLedria
   name: "Trace Ledria"
-  description: "1 action next to the target, 2 from up to 30 feet away. It lasts 12 seconds. +1 status to Deception, Diplomacy and Performance. Invoke: TBA."
+  description: "1 action next to the target, 2 from up to 30 feet away. It lasts 12 seconds. +1 status to Deception, Diplomacy and Performance. Invoke: allies within 30 feet of the bearer get +10 feet Speed for 3 seconds, standing in for a Step closer."
   components:
   - type: TargetAction
     range: 6.5
@@ -137,12 +146,24 @@
     canTargetSelf: true
   - type: CFTraceRuneAction
     rune: Ledria
+  - type: CFAreaEffect
+    shape: Emanation
+    sizeFeet: 30
+    filter: Allies
+    includeSelf: true
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFBonusEffect
+      stat: Speed
+      type: Status
+      value: 10
+      durationSeconds: 3
 
 - type: entity
   parent: CFActivityTarget
   id: CFActTraceLyskel
   name: "Trace Lyskel"
-  description: "1 action next to the target, 2 from up to 30 feet away. It lasts 12 seconds. -5 feet Speed. Clumsy from moving: TBA. Invoke: 1d4 cold, basic Fortitude. Difficult terrain: TBA."
+  description: "1 action next to the target, 2 from up to 30 feet away. It lasts 12 seconds. -5 feet Speed. Clumsy from moving: TBA. Invoke: 1d4 cold, basic Fortitude, and snow around the bearer for 6 seconds."
   components:
   - type: TargetAction
     range: 6.5
@@ -160,6 +181,10 @@
       die: 4
       damageType: Cold
       diceEveryLevels: 2
+    - !type:CFFillEffect
+      shape: Emanation
+      sizeFeet: 5
+      tile: CFFillSnowdrift
 
 - type: entity
   parent: CFActivityTarget
@@ -194,7 +219,7 @@
   parent: CFActivityTarget
   id: CFActTracePluuna
   name: "Trace Pluuna"
-  description: "1 action next to the target, 2 from up to 30 feet away. It lasts 12 seconds. Its light: TBA. Invoke: TBA, because dazzled does not exist yet."
+  description: "1 action next to the target, 2 from up to 30 feet away. It lasts 12 seconds. Its light: TBA. Invoke: enemies within 20 feet of the bearer roll Fortitude against your class DC or are dazzled for 6 seconds."
   components:
   - type: TargetAction
     range: 6.5
@@ -202,6 +227,24 @@
     canTargetSelf: true
   - type: CFTraceRuneAction
     rune: Pluuna
+  - type: CFAreaEffect
+    shape: Emanation
+    sizeFeet: 20
+    filter: Enemies
+  - type: CFCheck
+    defense: Fortitude
+    dcSource: Class
+  - type: CFDegreeEffects
+    failure:
+    - !type:CFApplyConditionEffect
+      condition: Dazzled
+      value: 1
+      durationSeconds: 6
+    criticalFailure:
+    - !type:CFApplyConditionEffect
+      condition: Dazzled
+      value: 1
+      durationSeconds: 6
 
 - type: entity
   parent: CFActivityTarget
@@ -313,7 +356,7 @@
   parent: CFActivityTarget
   id: CFActTraceZohk
   name: "Trace Zohk"
-  description: "1 action next to the target, 2 from up to 30 feet away. It lasts 12 seconds. Its Speed bonus: TBA. Invoke: TBA, because a teleport is not built."
+  description: "1 action next to the target, 2 from up to 30 feet away. It lasts 12 seconds. Its Speed bonus: TBA. Invoke: the bearer is called to your side. An enemy rolls Will against your class DC first."
   components:
   - type: TargetAction
     range: 6.5
@@ -321,3 +364,231 @@
     canTargetSelf: true
   - type: CFTraceRuneAction
     rune: Zohk
+  - type: CFCheck
+    defense: Will
+    dcSource: Class
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFTeleportToUserEffect
+
+# Feats. Each that traces a rune asks which on the wheel, and a rune the Runesmith does not know does nothing.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActEngravingStrike
+  name: Engraving Strike
+  description: A melee Strike. On a hit, the rune you chose is traced on the target. Costs 1 action. A flourish.
+  components:
+  - type: CFFlourish
+  - type: CFModeChoice
+    modes:
+    - { value: 1, name: cf-rune-atryl }
+    - { value: 2, name: cf-rune-baruiel }
+    - { value: 3, name: cf-rune-camonica }
+    - { value: 4, name: cf-rune-ledria }
+    - { value: 5, name: cf-rune-lyskel }
+    - { value: 6, name: cf-rune-pluuna }
+    - { value: 7, name: cf-rune-ranshu }
+    - { value: 8, name: cf-rune-rehgog }
+    - { value: 9, name: cf-rune-sertum }
+    - { value: 10, name: cf-rune-thullax }
+    - { value: 11, name: cf-rune-tilus }
+    - { value: 12, name: cf-rune-zohk }
+  - type: CFStrikeAction
+    effectsNeedDamage: false
+    onHit:
+    - !type:CFTraceRuneEffect
+      runes:
+        - Atryl
+        - Baruiel
+        - Camonica
+        - Ledria
+        - Lyskel
+        - Pluuna
+        - Ranshu
+        - Rehgog
+        - Sertum
+        - Thullax
+        - Tilus
+        - Zohk
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActPatternFlight
+  name: Pattern Flight
+  description: A ranged Strike. Hit or miss, the rune you chose is traced on the target. Costs 2 actions. A flourish.
+  components:
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFFlourish
+  - type: CFModeChoice
+    modes:
+    - { value: 1, name: cf-rune-atryl }
+    - { value: 2, name: cf-rune-baruiel }
+    - { value: 3, name: cf-rune-camonica }
+    - { value: 4, name: cf-rune-ledria }
+    - { value: 5, name: cf-rune-lyskel }
+    - { value: 6, name: cf-rune-pluuna }
+    - { value: 7, name: cf-rune-ranshu }
+    - { value: 8, name: cf-rune-rehgog }
+    - { value: 9, name: cf-rune-sertum }
+    - { value: 10, name: cf-rune-thullax }
+    - { value: 11, name: cf-rune-tilus }
+    - { value: 12, name: cf-rune-zohk }
+  - type: CFStrikeAction
+    ranged: true
+    effectsNeedDamage: false
+    onHit:
+    - !type:CFTraceRuneEffect
+      runes:
+        - Atryl
+        - Baruiel
+        - Camonica
+        - Ledria
+        - Lyskel
+        - Pluuna
+        - Ranshu
+        - Rehgog
+        - Sertum
+        - Thullax
+        - Tilus
+        - Zohk
+    onFailure:
+    - !type:CFTraceRuneEffect
+      runes:
+        - Atryl
+        - Baruiel
+        - Camonica
+        - Ledria
+        - Lyskel
+        - Pluuna
+        - Ranshu
+        - Rehgog
+        - Sertum
+        - Thullax
+        - Tilus
+        - Zohk
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActRemoteDetonation
+  name: Remote Detonation
+  description: A ranged Strike. On a hit, up to two of your runes on the target are invoked. Costs 1 action. A flourish.
+  components:
+  - type: CFFlourish
+  - type: CFStrikeAction
+    ranged: true
+    effectsNeedDamage: false
+    onHit:
+    - !type:CFInvokeRunesEffect
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActFortifyingKnock
+  name: Fortifying Knock
+  description: Raise your shield and trace the rune you chose on it. Costs 1 action. A flourish.
+  components:
+  - type: CFFlourish
+  - type: CFModeChoice
+    modes:
+    - { value: 1, name: cf-rune-holtrik }
+    - { value: 2, name: cf-rune-oljinex }
+  - type: CFEffectAction
+    raisesShield: true
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFTraceRuneEffect
+      onShield: true
+      runes:
+        - Holtrik
+        - Oljinex
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTerrifyingInvocation
+  name: Terrifying Invocation
+  description: Demoralize a creature within 30 feet and invoke your runes on it, together. Costs 1 action.
+  components:
+  - type: TargetAction
+    range: 6.5
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDemoralizeEffect
+    - !type:CFInvokeRunesEffect
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTransposeEtching
+  name: Transpose Etching
+  description: Your newest rune within 30 feet moves onto the creature or item you choose, within 30 feet. Costs 1 action.
+  components:
+  - type: TargetAction
+    range: 6.5
+  - type: EntityTargetAction
+    canTargetSelf: true
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFTransposeRuneEffect
+      feet: 30
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActArtistsAttendance
+  name: "Artist's Attendance"
+  description: Rush up to 50 feet to a creature and trace the rune you chose on it. Costs 2 actions. A flourish.
+  components:
+  - type: CFRadialSlot
+    actions: 2
+  - type: TargetAction
+    range: 10.25
+  - type: EntityTargetAction
+    canTargetSelf: false
+  - type: CFFlourish
+  - type: CFModeChoice
+    modes:
+    - { value: 1, name: cf-rune-atryl }
+    - { value: 2, name: cf-rune-baruiel }
+    - { value: 3, name: cf-rune-camonica }
+    - { value: 4, name: cf-rune-ledria }
+    - { value: 5, name: cf-rune-lyskel }
+    - { value: 6, name: cf-rune-pluuna }
+    - { value: 7, name: cf-rune-ranshu }
+    - { value: 8, name: cf-rune-rehgog }
+    - { value: 9, name: cf-rune-sertum }
+    - { value: 10, name: cf-rune-thullax }
+    - { value: 11, name: cf-rune-tilus }
+    - { value: 12, name: cf-rune-zohk }
+  - type: CFEffectAction
+    closesFeet: 50
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFTraceRuneEffect
+      runes:
+        - Atryl
+        - Baruiel
+        - Camonica
+        - Ledria
+        - Lyskel
+        - Pluuna
+        - Ranshu
+        - Rehgog
+        - Sertum
+        - Thullax
+        - Tilus
+        - Zohk
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActSongOfGloriousInvocation
+  name: Song of Glorious Invocation
+  description: One of your runes is invoked on each of up to three bearers within 30 feet, and each takes heart for a minute. Costs 1 action, once per 10 minutes.
+  components:
+  - type: Action
+    useDelay: 600
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFInvokeAllEffect
+      feet: 30
+      bearers: 3

@@ -10,4 +10,6 @@
     - "Runesmith"
   prerequisites:
     - "trained in Performance"
-  pendingAction: true
+  grants:
+    - !type:CFGrantRunesmithOption
+      option: RuneSinger

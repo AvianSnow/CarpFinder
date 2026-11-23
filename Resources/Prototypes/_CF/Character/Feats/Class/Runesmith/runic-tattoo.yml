@@ -8,3 +8,57 @@
   level: 2
   traits:
     - "Runesmith"
+  choices:
+    - kind: Named
+      options: [ TattooAtryl, TattooBaruiel, TattooCamonica, TattooEsvadir, TattooHoltrik, TattooLedria, TattooLyskel, TattooMarssyl, TattooOljinex, TattooPluuna, TattooRanshu, TattooRehgog, TattooSertum, TattooThullax, TattooTilus, TattooZohk ]
+  grants:
+    - !type:CFGrantChosen
+      options:
+        TattooAtryl:
+          - !type:CFGrantRunicTattoo
+            rune: Atryl
+        TattooBaruiel:
+          - !type:CFGrantRunicTattoo
+            rune: Baruiel
+        TattooCamonica:
+          - !type:CFGrantRunicTattoo
+            rune: Camonica
+        TattooEsvadir:
+          - !type:CFGrantRunicTattoo
+            rune: Esvadir
+        TattooHoltrik:
+          - !type:CFGrantRunicTattoo
+            rune: Holtrik
+        TattooLedria:
+          - !type:CFGrantRunicTattoo
+            rune: Ledria
+        TattooLyskel:
+          - !type:CFGrantRunicTattoo
+            rune: Lyskel
+        TattooMarssyl:
+          - !type:CFGrantRunicTattoo
+            rune: Marssyl
+        TattooOljinex:
+          - !type:CFGrantRunicTattoo
+            rune: Oljinex
+        TattooPluuna:
+          - !type:CFGrantRunicTattoo
+            rune: Pluuna
+        TattooRanshu:
+          - !type:CFGrantRunicTattoo
+            rune: Ranshu
+        TattooRehgog:
+          - !type:CFGrantRunicTattoo
+            rune: Rehgog
+        TattooSertum:
+          - !type:CFGrantRunicTattoo
+            rune: Sertum
+        TattooThullax:
+          - !type:CFGrantRunicTattoo
+            rune: Thullax
+        TattooTilus:
+          - !type:CFGrantRunicTattoo
+            rune: Tilus
+        TattooZohk:
+          - !type:CFGrantRunicTattoo
+            rune: Zohk

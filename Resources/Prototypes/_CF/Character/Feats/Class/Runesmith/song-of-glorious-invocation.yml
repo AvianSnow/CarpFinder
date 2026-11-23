@@ -17,4 +17,6 @@
   requiresFeats:
     - CFRuneSinger
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActSongOfGloriousInvocation

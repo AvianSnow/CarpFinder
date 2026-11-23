@@ -34,6 +34,7 @@ public sealed partial class CFLongRestSystem : EntitySystem
     [Dependency] private CFReactionSystem _reactions = default!;
     [Dependency] private CFDailyUseSystem _daily = default!;
     [Dependency] private CFDailyChoiceSystem _dailyChoices = default!;
+    [Dependency] private Content.Shared.CF.Combat.CFRuneSystem _runes = default!;
     [Dependency] private MobStateSystem _mobState = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private CFCharacterSpawnSystem _spawn = default!;
@@ -109,6 +110,7 @@ public sealed partial class CFLongRestSystem : EntitySystem
         _reactions.RestoreDaily(mob);
         _daily.Restore(mob);
         _dailyChoices.Apply(mob);
+        _runes.RestoreTattoo(mob);
 
         if (TryComp(mob, out CFSpellbookComponent? book))
         {

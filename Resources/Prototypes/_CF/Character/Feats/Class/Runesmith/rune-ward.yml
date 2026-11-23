@@ -9,4 +9,10 @@
   traits:
     - "Runesmith"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-rune-ward
+        trigger: SaveWouldFail
+        saveBonus: 1
+        trait: Magical

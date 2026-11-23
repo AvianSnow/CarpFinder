@@ -8,4 +8,11 @@
   level: 1
   traits:
     - "Runesmith"
-  pendingAction: true
+  grants:
+    - !type:CFGrantBonus
+      stat: Perception
+      type: Circumstance
+      value: 1
+      trait: Trap
+    - !type:CFGrantInventorOption
+      option: ReverseEngineer

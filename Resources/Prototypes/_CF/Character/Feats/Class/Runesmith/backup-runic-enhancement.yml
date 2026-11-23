@@ -10,3 +10,6 @@
     - "Runesmith"
   prerequisites:
     - "trained in Arcana, Nature, Occultism, or Religion"
+  grants:
+    - !type:CFGrantSpell
+      spell: Sigil
