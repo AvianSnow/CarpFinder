@@ -9,3 +9,6 @@
   traits:
     - "Exemplar"
     - "Ikon"
+  grants:
+    - !type:CFGrantExemplarOption
+      option: LeapTheFalls

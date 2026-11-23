@@ -1331,6 +1331,7 @@ public sealed partial class CFConditionSystem : EntitySystem
             case CFConditionKind.Deafened:
             case CFConditionKind.Fascinated:
             case CFConditionKind.HealingHalved:
+            case CFConditionKind.HealingBlocked:
                 ApplyValue(target, kind, value, seconds);
                 break;
         }
@@ -1436,6 +1437,7 @@ public sealed partial class CFConditionSystem : EntitySystem
             case CFConditionKind.Deafened:
             case CFConditionKind.Fascinated:
             case CFConditionKind.HealingHalved:
+            case CFConditionKind.HealingBlocked:
                 cond.Values.Remove(kind);
                 cond.ValueUntil.Remove(kind);
                 break;

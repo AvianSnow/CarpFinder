@@ -2,6 +2,7 @@ using Content.Shared.Actions;
 using Content.Shared.Actions.Components;
 using Content.Shared.CF.Actions;
 using Content.Shared.CF.Character;
+using Content.Shared.CF.Checks;
 using Content.Shared.CF.DamageTypes;
 using Content.Shared.CF.Effects;
 using Content.Shared.CF.Effects.Areas;
@@ -122,6 +123,28 @@ public enum CFEpithet : byte
     None,
     Brave,
     Radiant,
+
+    /// <summary>A free Feint at the creature just hit, or a Create a Diversion.</summary>
+    Cunning,
+
+    /// <summary>A free reload of the weapon in hand.</summary>
+    Deft,
+
+    /// <summary>An enemy within 30 feet is dazzled for 6 seconds, once per 10 minutes each.</summary>
+    Mournful,
+
+    /// <summary>An enemy within 30 feet is Taunted.</summary>
+    Proud,
+}
+
+/// <summary>Feats that change what the ikons do, set with <c>CFGrantExemplarOption</c>.</summary>
+public enum CFExemplarOption : byte
+{
+    /// <summary>A creature the empowered weapon ikon damages rolls Will or heals less for a minute.</summary>
+    RedGoldMortality,
+
+    /// <summary>With the spark in a body ikon, Leaps go 5 feet further.</summary>
+    LeapTheFalls,
 }
 
 /// <summary>An Exemplar: three ikons, and which one holds the spark.</summary>
@@ -140,6 +163,14 @@ public sealed partial class CFExemplarComponent : Component
 
     [DataField]
     public CFEpithet Epithet;
+
+    /// <summary>Red-Gold Mortality: see <see cref="CFExemplarOption.RedGoldMortality"/>.</summary>
+    [DataField]
+    public bool RedGoldMortality;
+
+    /// <summary>Leap the Falls: see <see cref="CFExemplarOption.LeapTheFalls"/>.</summary>
+    [DataField]
+    public bool LeapTheFalls;
 
     [DataField]
     public EntityUid LastHit;
@@ -172,6 +203,14 @@ public sealed partial class CFRadiantHealedComponent : Component
     public TimeSpan Until;
 }
 
+/// <summary>An enemy a Mournful Exemplar has dazzled, who cannot be dazzled that way again for 10 minutes.</summary>
+[RegisterComponent]
+public sealed partial class CFMournfulDazzledComponent : Component
+{
+    [DataField]
+    public TimeSpan Until;
+}
+
 /// <summary>An action that moves the spark into an ikon.</summary>
 [RegisterComponent]
 public sealed partial class CFShiftImmanenceActionComponent : Component
@@ -184,8 +223,21 @@ public sealed partial class CFShiftImmanenceActionComponent : Component
 [RegisterComponent]
 public sealed partial class CFIkonTranscendenceComponent : Component
 {
-    [DataField(required: true)]
-    public ProtoId<CFIkonPrototype> Ikon;
+    /// <summary>The one ikon this belongs to. A feat's transcendence names none, and says what kind of ikon it fits instead.</summary>
+    [DataField]
+    public ProtoId<CFIkonPrototype>? Ikon;
+
+    /// <summary>Any ikon at all (Follow the Threads of Fate).</summary>
+    [DataField]
+    public bool AnyIkon;
+
+    /// <summary>Any weapon ikon (Through the Needle's Eye).</summary>
+    [DataField]
+    public bool AnyWeapon;
+
+    /// <summary>Any melee weapon ikon (Steel on Steel).</summary>
+    [DataField]
+    public bool AnyMelee;
 
     /// <summary>The Exemplar must have just hit something with a Strike.</summary>
     [DataField]
@@ -254,6 +306,31 @@ public sealed partial class CFIkonSystem : EntitySystem
     [Dependency] private CFShieldSystem _shields = default!;
     [Dependency] private CFStrikeSystem _strikes = default!;
     [Dependency] private CFWeaponSystem _weapons = default!;
+    [Dependency] private CFConditionSystem _conditions = default!;
+    [Dependency] private CFTauntSystem _taunts = default!;
+    [Dependency] private CFReloadSystem _reload = default!;
+    [Dependency] private Content.Shared.CF.Detection.CFStealthSystem _stealth = default!;
+    [Dependency] private Content.Shared.Mobs.Systems.MobStateSystem _mobState = default!;
+
+    /// <summary>Leap the Falls: 5 feet more on a Leap while the spark is in a body ikon, one that is neither weapon nor shield.</summary>
+    public int LeapBonusFeet(EntityUid mob)
+    {
+        return TryComp(mob, out CFExemplarComponent? comp) && comp.LeapTheFalls && Empowered(mob, comp) is { IsWeapon: false, Shield: false } ? 5 : 0;
+    }
+
+    public void SetOption(EntityUid mob, CFExemplarOption option)
+    {
+        var comp = EnsureComp<CFExemplarComponent>(mob);
+        switch (option)
+        {
+            case CFExemplarOption.RedGoldMortality:
+                comp.RedGoldMortality = true;
+                break;
+            case CFExemplarOption.LeapTheFalls:
+                comp.LeapTheFalls = true;
+                break;
+        }
+    }
 
     public void Add(EntityUid mob, ProtoId<CFIkonPrototype> id)
     {
@@ -390,6 +467,21 @@ public sealed partial class CFIkonSystem : EntitySystem
 
         if (amount > 0)
             _effects.DealDamage(user, target, amount, comp.SparkType, false);
+
+        // Red-Gold Mortality: the save is rolled as the wound is marked, where the rules roll it as the creature is healed.
+        if (comp.RedGoldMortality && damage > 0 && TryComp(user, out CFCombatantComponent? combat))
+        {
+            var dc = CFCasting.ClassDc(_prototypes, combat, CompOrNull<CFAbilityScoreComponent>(user)).Dc;
+            switch (_conditions.RollDefense(target, CFDefenseType.Will, dc, out _))
+            {
+                case CFDegree.Failure:
+                    _conditions.ApplyCondition(target, CFConditionKind.HealingHalved, 2, 60f, user, dc);
+                    break;
+                case CFDegree.CriticalFailure:
+                    _conditions.ApplyCondition(target, CFConditionKind.HealingBlocked, 1, 60f, user, dc);
+                    break;
+            }
+        }
 
         if (ikon.PersistentPerDie > 0)
             _bonuses.AddPersistent(target, comp.SparkType, 0, 6, ikon.PersistentPerDie * dice, user);
@@ -531,7 +623,75 @@ public sealed partial class CFIkonSystem : EntitySystem
             case CFEpithet.Radiant:
                 InspireAlly(user);
                 break;
+            case CFEpithet.Cunning:
+                // A Feint at the creature just hit, if it is still in reach. Otherwise a Create a Diversion, for free.
+                if (RecentHit(comp) is { } hit && _transform.InRange((user, null), (hit, null), AdjacentTiles))
+                    _conditions.TryFeint(user, hit);
+                else
+                    _stealth.TryDiversion(user, free: true);
+
+                break;
+            case CFEpithet.Deft:
+                _reload.TryReload(user, prepaid: true);
+                break;
+            case CFEpithet.Mournful:
+                if (NearestEnemy(user, 30, enemy => CompOrNull<CFMournfulDazzledComponent>(enemy) is not { } dazzled || _timing.CurTime >= dazzled.Until) is { } mourned)
+                {
+                    EnsureComp<CFMournfulDazzledComponent>(mourned).Until = _timing.CurTime + TimeSpan.FromMinutes(10);
+                    _conditions.ApplyCondition(mourned, CFConditionKind.Dazzled, 1, (float) Round.TotalSeconds, user, 0);
+                }
+
+                break;
+            case CFEpithet.Proud:
+                // A boast is a Taunt: the Guardian's penalty for going at anyone but the Exemplar stands in for the rules' -1 and +1.
+                if (NearestEnemy(user, 30, _ => true) is { } proud)
+                    _taunts.Taunt(user, proud);
+
+                break;
         }
+    }
+
+    /// <summary>Adjacent: within a tile and a half, centre to centre.</summary>
+    private const float AdjacentTiles = 1.6f;
+
+    private EntityUid? RecentHit(CFExemplarComponent comp)
+    {
+        return comp.LastHitAt != TimeSpan.Zero
+               && _timing.CurTime - comp.LastHitAt <= HitStaysRecent
+               && !TerminatingOrDeleted(comp.LastHit)
+               && _mobState.IsAlive(comp.LastHit)
+            ? comp.LastHit
+            : null;
+    }
+
+    private EntityUid? NearestEnemy(EntityUid user, int feet, Func<EntityUid, bool> fits)
+    {
+        var center = _transform.GetMapCoordinates(user);
+        EntityUid? best = null;
+        var bestDistance = float.MaxValue;
+        foreach (var enemy in _effects.CollectArea(user, CFAreaShape.Emanation, feet, center, center, atPoint: true, includeCenter: true, selfAllowed: false, CFTargetFilter.Enemies))
+        {
+            if (!_mobState.IsAlive(enemy) || !fits(enemy))
+                continue;
+
+            var distance = (_transform.GetWorldPosition(enemy) - center.Position).LengthSquared();
+            if (distance >= bestDistance)
+                continue;
+
+            best = enemy;
+            bestDistance = distance;
+        }
+
+        return best;
+    }
+
+    /// <summary>Whether a transcendence belongs to the ikon that holds the spark.</summary>
+    private static bool Matches(CFIkonPrototype current, CFIkonTranscendenceComponent transcendence)
+    {
+        return transcendence.AnyIkon
+               || transcendence.AnyWeapon && current.IsWeapon
+               || transcendence.AnyMelee && current.Melee
+               || transcendence.Ikon is { } id && current.ID == id.Id;
     }
 
     private void InspireAlly(EntityUid user)
@@ -589,7 +749,7 @@ public sealed partial class CFIkonSystem : EntitySystem
             if (!TryComp(action, out CFIkonTranscendenceComponent? transcendence))
                 continue;
 
-            var enabled = ready && !spent && current!.ID == transcendence.Ikon.Id && (!transcendence.NeedsLastHit || recent);
+            var enabled = ready && !spent && Matches(current!, transcendence) && (!transcendence.NeedsLastHit || recent);
             if (action.Comp.Enabled != enabled)
                 _actions.SetEnabled(action.AsNullable(), enabled);
         }

@@ -15,4 +15,6 @@
   prerequisites:
     - "You are not sanctified with the holy or unholy trait"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActVowOfMortalDefiance

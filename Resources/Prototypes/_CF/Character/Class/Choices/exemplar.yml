@@ -921,6 +921,13 @@
   description: cf-class-choice-epithetcunning-desc
   trainedSkills:
     - Deception
+  features:
+    - level: 3
+      name: "The Cunning"
+      description: "After a transcendence, a free Feint at the creature you just hit, or a free Create a Diversion."
+      grants:
+        - !type:CFGrantEpithet
+          epithet: Cunning
 
 - type: cfClassChoice
   id: EpithetDeft
@@ -930,6 +937,13 @@
   description: cf-class-choice-epithetdeft-desc
   trainedSkills:
     - Thievery
+  features:
+    - level: 3
+      name: "The Deft"
+      description: "After a transcendence, the weapon in your hands is reloaded for free."
+      grants:
+        - !type:CFGrantEpithet
+          epithet: Deft
 
 - type: cfClassChoice
   id: EpithetMournful
@@ -939,6 +953,13 @@
   description: cf-class-choice-epithetmournful-desc
   trainedSkills:
     - Diplomacy
+  features:
+    - level: 3
+      name: "The Mournful"
+      description: "After a transcendence, the nearest enemy within 30 feet is dazzled for 6 seconds, once per 10 minutes each."
+      grants:
+        - !type:CFGrantEpithet
+          epithet: Mournful
 
 - type: cfClassChoice
   id: EpithetProud
@@ -948,6 +969,13 @@
   description: cf-class-choice-epithetproud-desc
   trainedSkills:
     - Intimidation
+  features:
+    - level: 3
+      name: "The Proud"
+      description: "After a transcendence, you boast at the nearest enemy within 30 feet: it is Taunted for 6 seconds."
+      grants:
+        - !type:CFGrantEpithet
+          epithet: Proud
 
 - type: cfClassChoice
   id: EpithetRadiant

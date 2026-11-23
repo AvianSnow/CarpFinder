@@ -9,4 +9,6 @@
   traits:
     - "Exemplar"
     - "Ikon"
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActTransBlindingOfTheNeedle

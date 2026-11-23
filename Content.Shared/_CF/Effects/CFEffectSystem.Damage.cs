@@ -175,8 +175,12 @@ public sealed partial class CFEffectSystem
         if (voidEnergy ? !HasComp<CFVoidHealingComponent>(target) : HasComp<CFVoidHealingComponent>(target) || CompOrNull<CFTraitComponent>(target)?.HasTrait("Construct") == true)
             return;
 
-        // Touch of Undeath: vitality heals only half.
-        if (!voidEnergy && _conditions.Value(target, CFConditionKind.HealingHalved) > 0)
+        // Red-Gold Mortality: the contradictory energies let nothing through.
+        if (_conditions.Value(target, CFConditionKind.HealingBlocked) > 0)
+            return;
+
+        // Touch of Undeath: vitality heals only half. Red-Gold Mortality halves healing of either kind.
+        if (!voidEnergy && _conditions.Value(target, CFConditionKind.HealingHalved) > 0 || voidEnergy && _conditions.Value(target, CFConditionKind.HealingHalved) > 1)
             amount = Math.Max(1, amount / 2);
 
         _dying.RestoreHitPoints(target, amount, user, voidEnergy);

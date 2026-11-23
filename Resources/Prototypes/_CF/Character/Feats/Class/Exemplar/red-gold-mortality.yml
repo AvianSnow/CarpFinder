@@ -10,3 +10,6 @@
     - "Exemplar"
     - "Ikon"
     - "Void"
+  grants:
+    - !type:CFGrantExemplarOption
+      option: RedGoldMortality

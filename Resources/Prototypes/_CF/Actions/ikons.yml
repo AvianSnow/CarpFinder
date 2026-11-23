@@ -313,7 +313,7 @@
   parent: CFActivityInstant
   id: CFActShiftFetchingBangles
   name: "Shift to Fetching Bangles"
-  description: "Moves your spark here, or back to your soul if it is here already. Its aura and its transcendence: TBA."
+  description: "Moves your spark here, or back to your soul if it is here already. Embrace of Destiny pulls an enemy to your side. The aura that holds enemies from leaving: TBA."
   components:
   - type: CFShiftImmanenceAction
     ikon: FetchingBangles
@@ -536,3 +536,101 @@
   components:
   - type: CFShiftImmanenceAction
     ikon: PeltOfTheBeastSonic
+
+# Transcendences feats give. Each fits a kind of ikon rather than one ikon.
+- type: entity
+  parent: CFActivityInstant
+  id: CFActTransRingingChallenge
+  name: "Ringing Challenge"
+  description: "Spark Transcendence with a melee weapon ikon, then the spark moves to your next ikon. A shock wave deals 1d4 spirit and 1d4 sonic damage to every creature within 15 feet, basic Fortitude against your class DC. A critical failure is deafened for a minute. Costs 2 actions."
+  components:
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFIkonTranscendence
+    anyMelee: true
+    area: true
+  - type: CFAreaEffect
+    shape: Emanation
+    sizeFeet: 15
+  - type: CFCheck
+    defense: Fortitude
+    basicSave: true
+    dcSource: Class
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 4
+      damageType: Spirit
+    - !type:CFDamageEffect
+      dice: 1
+      die: 4
+      damageType: Sonic
+    criticalFailure:
+    - !type:CFApplyConditionEffect
+      condition: Deafened
+      value: 1
+      durationSeconds: 60
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActTransBlindingOfTheNeedle
+  name: "Blinding of the Needle"
+  description: "Spark Transcendence with a weapon ikon, then the spark moves to your next ikon. A Strike. On a hit the target rolls Fortitude against your class DC or is blinded for 6 seconds. Costs 2 actions."
+  components:
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFIkonTranscendence
+    anyWeapon: true
+  - type: CFStrikeAction
+    onHit:
+    - !type:CFSaveOrEffect
+      defense: Fortitude
+      failure:
+      - !type:CFApplyConditionEffect
+        condition: Blinded
+        value: 1
+        durationSeconds: 6
+      criticalFailure:
+      - !type:CFApplyConditionEffect
+        condition: Blinded
+        value: 1
+        durationSeconds: 6
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActTransUnravelTheFuture
+  name: "Unravel the Future"
+  description: "Spark Transcendence with any ikon, then the spark moves to your next ikon. For a minute, the next save or skill check that a +1 would turn into a success gets it. Costs 1 action."
+  components:
+  - type: CFRadialSlot
+    actions: 1
+  - type: CFIkonTranscendence
+    anyIkon: true
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFNudgeFateEffect
+      durationSeconds: 60
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTransFetchingBangles
+  name: "Embrace of Destiny"
+  description: "Spark Transcendence, then the spark moves to your next ikon. An enemy within 20 feet rolls Will against your class DC or is pulled to your side. Costs 1 action."
+  components:
+  - type: CFRadialSlot
+    actions: 1
+  - type: TargetAction
+    range: 4.25
+  - type: CFIkonTranscendence
+    ikon: FetchingBangles
+  - type: CFEffectAction
+  - type: CFCheck
+    defense: Will
+    dcSource: Class
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFForcedMovementEffect
+      feet: 20
+      pull: true

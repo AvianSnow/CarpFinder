@@ -8,4 +8,15 @@
   level: 1
   traits:
     - "Exemplar"
-  pendingAction: true
+  choices:
+    - kind: Named
+      options: [ SoulHoly, SoulUnholy ]
+  grants:
+    - !type:CFGrantChosen
+      options:
+        SoulHoly:
+          - !type:CFGrantTrait
+            add: [ Holy ]
+        SoulUnholy:
+          - !type:CFGrantTrait
+            add: [ Unholy ]

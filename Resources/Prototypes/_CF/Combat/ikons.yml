@@ -125,6 +125,7 @@
   id: FetchingBangles
   name: cf-ikon-fetchingbangles
   shift: CFActShiftFetchingBangles
+  transcendence: CFActTransFetchingBangles
 
 - type: cfIkon
   id: HornOfPlenty

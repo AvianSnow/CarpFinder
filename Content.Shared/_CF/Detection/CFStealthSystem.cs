@@ -271,9 +271,9 @@ public sealed partial class CFStealthSystem : EntitySystem
     /// One action. A single Deception check against each nearby enemy's Perception DC, which is 4 higher for a
     /// minute after any attempt on it. Those it beats lose sight of the creature, and need no cover to do so.
     /// </summary>
-    public bool TryDiversion(EntityUid user)
+    public bool TryDiversion(EntityUid user, bool free = false)
     {
-        if (!_net.IsServer || !_actions.TrySpendActions(user, 1, stealthy: true))
+        if (!_net.IsServer || !free && !_actions.TrySpendActions(user, 1, stealthy: true))
             return false;
 
         _conditions.RollSkillAgainst(user, "Deception", CFAbility.Charisma, 0, out var total);

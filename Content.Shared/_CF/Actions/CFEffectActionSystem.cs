@@ -235,6 +235,13 @@ public sealed partial class CFEffectActionSystem : EntitySystem
         if (ent.Comp.RaisesShield && _shields.TryGetUsableShield(args.Performer, out var shield))
             _shields.SetRaised(shield, true);
 
+        // A target the action's CFTargeting rules out: a creature without the trait it asks for (Vow of Mortal Defiance).
+        if (!_effects.CanTarget(ent, args.Performer, args.Target))
+        {
+            EntityManager.System<Content.Shared.Popups.SharedPopupSystem>().PopupEntity(Loc.GetString("cf-act-cannot-target"), args.Performer, args.Performer);
+            return;
+        }
+
         if (ent.Comp.ClosesFeet > 0)
             Rush(args.Performer, args.Target, ent.Comp.ClosesFeet);
 

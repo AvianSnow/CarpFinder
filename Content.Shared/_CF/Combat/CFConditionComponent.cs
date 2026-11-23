@@ -232,6 +232,9 @@ public enum CFConditionKind : byte
     /// <summary>Vitality heals the creature only half as much (Touch of Undeath).</summary>
     HealingHalved,
 
+    /// <summary>Red-Gold Mortality's critical failure: the creature regains no Hit Points at all.</summary>
+    HealingBlocked,
+
     /// <summary>-1 to AC and saves.</summary>
     Fatigued,
 

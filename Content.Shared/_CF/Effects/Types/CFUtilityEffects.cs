@@ -87,7 +87,9 @@ public sealed partial class CFLeapEffect : CFEffect
 
     public override void Apply(IEntityManager entities, CFEffectArgs args)
     {
-        entities.System<Content.Shared.CF.Actions.CFActivitySystem>().LeapBy(args.User, Feet / CFMelee.FeetPerTile);
+        // Leap the Falls: an Exemplar with its spark in a body ikon jumps 5 feet further.
+        var feet = Feet + entities.System<CFIkonSystem>().LeapBonusFeet(args.User);
+        entities.System<Content.Shared.CF.Actions.CFActivitySystem>().LeapBy(args.User, feet / CFMelee.FeetPerTile);
     }
 }
 

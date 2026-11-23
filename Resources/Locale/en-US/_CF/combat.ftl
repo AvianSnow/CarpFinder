@@ -168,6 +168,7 @@ cf-innovation-weapon-name = {$weapon} innovation
 cf-act-needs-free-hand = You need a hand free.
 cf-act-needs-no-focus = You still have a Focus Point.
 cf-act-needs-thrall = You have no thrall near enough.
+cf-act-cannot-target = That cannot be the target.
 cf-act-needs-grabbed = You need a foe grabbed.
 cf-strike-action-needs-innovation = You need your weapon innovation in hand.
 cf-strike-action-needs-construct = Your construct has to be beside you.

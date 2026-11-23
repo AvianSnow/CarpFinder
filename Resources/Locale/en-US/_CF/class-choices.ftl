@@ -731,13 +731,13 @@ cf-class-choice-thirdpeltofthebeastsonic-desc = Sonic resistance of half your le
 cf-class-choice-epithetbrave = The Brave
 cf-class-choice-epithetbrave-desc = Trained in Athletics. From level 3: +10 feet Speed for 3 seconds after a transcendence, standing in for the free Stride.
 cf-class-choice-epithetcunning = The Cunning
-cf-class-choice-epithetcunning-desc = Trained in Deception. From level 3: A free Create a Diversion or Feint: TBA.
+cf-class-choice-epithetcunning-desc = Trained in Deception. From level 3: after a transcendence, a free Feint at the creature you just hit, or a free Create a Diversion.
 cf-class-choice-epithetdeft = The Deft
-cf-class-choice-epithetdeft-desc = Trained in Thievery. From level 3: Stealing and reloading for free: TBA.
+cf-class-choice-epithetdeft-desc = Trained in Thievery. From level 3: after a transcendence, the weapon in your hands is reloaded for free. Stealing: TBA.
 cf-class-choice-epithetmournful = The Mournful
-cf-class-choice-epithetmournful-desc = Trained in Diplomacy. From level 3: Dazzling an enemy: TBA.
+cf-class-choice-epithetmournful-desc = Trained in Diplomacy. From level 3: after a transcendence, the nearest enemy within 30 feet is dazzled for 6 seconds, once per 10 minutes each.
 cf-class-choice-epithetproud = The Proud
-cf-class-choice-epithetproud-desc = Trained in Intimidation. From level 3: Boasting to an enemy: TBA.
+cf-class-choice-epithetproud-desc = Trained in Intimidation. From level 3: after a transcendence, you boast at the nearest enemy within 30 feet, which Taunts it for 6 seconds, standing in for its -1 against anyone but you.
 cf-class-choice-epithetradiant = The Radiant
 cf-class-choice-epithetradiant-desc = Trained in Diplomacy. From level 3: After a transcendence, an ally within 30 feet regains 2 + double your level in Hit Points, once in 10 minutes each.
 

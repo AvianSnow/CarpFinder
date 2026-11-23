@@ -8,3 +8,8 @@
   level: 1
   traits:
     - "Exemplar"
+  choices:
+    - kind: DamageType
+      damageTypes: [ Slashing, Bludgeoning, Piercing, Cold, Electricity, Fire, Poison, Sonic, Vitality, Void ]
+  grants:
+    - !type:CFGrantSparkType
