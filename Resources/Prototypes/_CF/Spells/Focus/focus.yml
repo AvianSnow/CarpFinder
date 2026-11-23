@@ -172,11 +172,18 @@
   - type: CFHeighten
     baseRank: 1
     interval: 1
+  # The 2-action version is Mercy's: it also ends a condition.
+  - type: CFModeChoice
+    modes:
+    - { value: 1, name: cf-mode-touch-1, tooltip: cf-mode-lay-on-hands-1-desc, actions: 1 }
+    - { value: 2, name: cf-mode-touch-2, tooltip: cf-mode-lay-on-hands-2-desc, actions: 2, requires: Mercy }
   - type: CFDegreeEffects
     landed:
     - !type:CFHealEffect
       flat: 6
       heightenFlat: 6
+    - !type:CFMercyEffect
+      onlyMode: 2
   - type: EntityTargetAction
     canTargetSelf: true
 
@@ -200,6 +207,11 @@
   - type: CFHeighten
     baseRank: 1
     interval: 1
+  # The 2-action version is Cruelty's: it also enfeebles.
+  - type: CFModeChoice
+    modes:
+    - { value: 1, name: cf-mode-touch-1, tooltip: cf-mode-touch-of-the-void-1-desc, actions: 1 }
+    - { value: 2, name: cf-mode-touch-2, tooltip: cf-mode-touch-of-the-void-2-desc, actions: 2, requires: Cruelty }
   - type: CFCheck
     defense: Fortitude
   - type: CFDegreeEffects
@@ -215,12 +227,22 @@
       type: Status
       value: -2
       durationSeconds: 6
+    - !type:CFApplyConditionEffect
+      condition: Enfeebled
+      value: 1
+      durationSeconds: 60
+      onlyMode: 2
     criticalFailure:
     - !type:CFBonusEffect
       stat: ArmorClass
       type: Status
       value: -2
       durationSeconds: 6
+    - !type:CFApplyConditionEffect
+      condition: Enfeebled
+      value: 2
+      durationSeconds: 60
+      onlyMode: 2
 
 - type: cfSpell
   id: LayOnHands

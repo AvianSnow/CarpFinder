@@ -10,6 +10,13 @@
     - "Champion"
   prerequisites:
     - "redemption cause"
-  pendingAction: true
   requiresChoice:
     - CauseRedemption
+  grants:
+    - !type:CFGrantChangeReaction
+      name: cf-reaction-glimpse-of-redemption
+      replaceOnEnemy:
+        - !type:CFApplyConditionEffect
+          condition: Stupefied
+          value: 2
+          durationSeconds: 6

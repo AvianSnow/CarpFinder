@@ -430,6 +430,18 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public bool SapLife;
 
+    /// <summary>Touch of the Void can be cast with 2 actions to enfeeble (Cruelty). The mode menu reads it, so it is networked.</summary>
+    [DataField, AutoNetworkedField]
+    public bool Cruelty;
+
+    /// <summary>What a 2-action Lay on Hands can end (Mercy). Empty means the character has no Mercy. The mode menu reads it.</summary>
+    [DataField, AutoNetworkedField]
+    public List<CFConditionKind> MercyConditions = new();
+
+    /// <summary>A Champion's Blessed Shield: 3 more Hardness on a Shield Block, up to 8.</summary>
+    [DataField]
+    public bool BlessedShield;
+
     /// <summary>Heal and Harm's area can be a 60-foot cone (Directed Channel). The mode menu reads it, so it is networked.</summary>
     [DataField, AutoNetworkedField]
     public bool DirectedChannel;
@@ -578,6 +590,8 @@ public static class CFReactions
 /// <summary>The flags on <see cref="CFCombatOptionsComponent"/> that a <c>CFGrantOption</c> can set.</summary>
 public enum CFCombatOption : byte
 {
+    Cruelty,
+    BlessedShield,
     SneakAttack,
     CanRage,
     ReactiveStrike,

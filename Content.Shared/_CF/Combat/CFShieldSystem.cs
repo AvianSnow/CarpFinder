@@ -162,7 +162,11 @@ public sealed partial class CFShieldSystem : EntitySystem
         if (damage <= 0)
             return 0;
 
-        var blocked = Math.Min(damage, shield.Comp.Hardness + _emblazon.Bonus(user, shield));
+        // Blessed Shield is a minor reinforcing rune: 3 more Hardness, to 8 at most.
+        var blessed = CompOrNull<CFCombatOptionsComponent>(user)?.BlessedShield == true
+            ? Math.Clamp(8 - shield.Comp.Hardness, 0, 3)
+            : 0;
+        var blocked = Math.Min(damage, shield.Comp.Hardness + blessed + _emblazon.Bonus(user, shield));
         var through = damage - blocked;
         if (blocked > 0)
             _popup.PopupEntity(Loc.GetString("cf-act-shield-block", ("amount", blocked)), user);

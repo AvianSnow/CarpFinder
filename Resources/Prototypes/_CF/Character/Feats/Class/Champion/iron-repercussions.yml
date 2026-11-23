@@ -10,6 +10,15 @@
     - "Champion"
   prerequisites:
     - "obedience cause"
-  pendingAction: true
   requiresChoice:
     - CauseObedience
+  grants:
+    - !type:CFGrantChangeReaction
+      name: cf-reaction-iron-command
+      replaceOnEnemy:
+        - !type:CFDamageEffect
+          damageType: Mental
+          scaleByDegree: false
+          persistentDice: 1
+          persistentDie: 6
+          diceEveryLevels: 4

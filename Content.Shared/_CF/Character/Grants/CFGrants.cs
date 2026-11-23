@@ -1083,3 +1083,43 @@ public sealed partial class CFGrantFamiliarGift : CFGrant
         witch.Gifts.Add(Gift);
     }
 }
+
+/// <summary>
+/// Changes what a reaction the character already has does to the enemy that set it off, by the reaction's name: Brilliant
+/// Flash adds off-guard to Flash of Grandeur, Weight of Guilt replaces what Glimpse of Redemption does.
+/// </summary>
+public sealed partial class CFGrantChangeReaction : CFGrant
+{
+    [DataField(required: true)]
+    public LocId Name;
+
+    [DataField]
+    public List<CFEffect> AddOnEnemy = new();
+
+    [DataField]
+    public List<CFEffect> ReplaceOnEnemy = new();
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        entities.System<CFReactionSystem>().ChangeEffects(args.Mob, Name, AddOnEnemy, ReplaceOnEnemy);
+    }
+}
+
+/// <summary>Mercy: a 2-action Lay on Hands also ends one of these conditions on the target.</summary>
+public sealed partial class CFGrantMercy : CFGrant
+{
+    [DataField(required: true)]
+    public List<CFConditionKind> Conditions = new();
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        var options = entities.EnsureComponent<CFCombatOptionsComponent>(args.Mob);
+        foreach (var condition in Conditions)
+        {
+            if (!options.MercyConditions.Contains(condition))
+                options.MercyConditions.Add(condition);
+        }
+
+        entities.Dirty(args.Mob, options);
+    }
+}

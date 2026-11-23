@@ -71,6 +71,7 @@ public sealed partial class CFReactionSystem : EntitySystem
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private Content.Shared.CF.Terrain.CFTerrainSystem _terrain = default!;
     [Dependency] private CFTemporaryHpSystem _tempHp = default!;
+    [Dependency] private Robust.Shared.Serialization.Manager.ISerializationManager _serialization = default!;
 
     public override void Update(float frameTime)
     {
@@ -319,7 +320,10 @@ public sealed partial class CFReactionSystem : EntitySystem
             key += "+";
         }
 
-        comp.Known.Add(new CFKnownReaction { Reaction = reaction, Key = key });
+        // A copy: a feat can change one creature's reaction (Lucky Break, Brilliant Flash), and the one handed in belongs
+        // to a prototype that every character shares.
+        var own = _serialization.CreateCopy(reaction, notNullableOverride: true);
+        comp.Known.Add(new CFKnownReaction { Reaction = own, Key = key });
         AddEntry(uid, key, reaction.Name, level);
     }
 
@@ -1159,6 +1163,30 @@ public sealed partial class CFReactionSystem : EntitySystem
     }
 
     /// <summary>Changes a reaction the creature already has, by its name: Lucky Break widens Cat's Luck to more saves and to skills.</summary>
+    /// <summary>
+    /// Changes what a creature's reaction does to the enemy that set it off, by the reaction's name: more effects, or
+    /// other ones in their place (a Champion's cause feats).
+    /// </summary>
+    public void ChangeEffects(EntityUid uid, string name, IReadOnlyList<CFEffect> addOnEnemy, IReadOnlyList<CFEffect> replaceOnEnemy)
+    {
+        if (!TryComp(uid, out CFReactionsComponent? reactions))
+            return;
+
+        foreach (var known in reactions.Known)
+        {
+            if (known.Reaction.Name != name)
+                continue;
+
+            if (replaceOnEnemy.Count > 0)
+            {
+                known.Reaction.OnEnemy.Clear();
+                known.Reaction.OnEnemy.AddRange(replaceOnEnemy);
+            }
+
+            known.Reaction.OnEnemy.AddRange(addOnEnemy);
+        }
+    }
+
     public void Widen(EntityUid uid, string name, bool anySave, IReadOnlyList<string> skills, bool andSkillChecks)
     {
         if (!TryComp(uid, out CFReactionsComponent? reactions))

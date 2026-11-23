@@ -106,14 +106,23 @@ public enum CFModeRequirement : byte
 
     /// <summary>The Directed Channel feat: <c>CFCombatOptionsComponent.DirectedChannel</c>.</summary>
     DirectedChannel,
+
+    /// <summary>The Cruelty feat: a 2-action Touch of the Void.</summary>
+    Cruelty,
+
+    /// <summary>The Mercy feat: a 2-action Lay on Hands.</summary>
+    Mercy,
 }
 
 public static class CFModeRequirements
 {
     public static bool Met(IEntityManager entities, EntityUid user, CFModeOption mode)
     {
+        var options = entities.GetComponentOrNull<Content.Shared.CF.Combat.CFCombatOptionsComponent>(user);
         return mode.Requires switch
         {
+            CFModeRequirement.Cruelty => options?.Cruelty == true,
+            CFModeRequirement.Mercy => options is { MercyConditions.Count: > 0 },
             CFModeRequirement.DirectedChannel => entities.GetComponentOrNull<Content.Shared.CF.Combat.CFCombatOptionsComponent>(user)?.DirectedChannel == true,
             _ => true,
         };

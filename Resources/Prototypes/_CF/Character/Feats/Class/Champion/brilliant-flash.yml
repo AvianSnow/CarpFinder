@@ -10,6 +10,10 @@
     - "Champion"
   prerequisites:
     - "grandeur cause"
-  pendingAction: true
   requiresChoice:
     - CauseGrandeur
+  grants:
+    - !type:CFGrantChangeReaction
+      name: cf-reaction-flash-of-grandeur
+      addOnEnemy:
+        - !type:CFOffGuardEffect {}

@@ -20,6 +20,7 @@ cf-class-choice-edge-precision-desc = The first time you hit your prey each turn
 
 cf-class-feature-weapon-mastery = Fighter Weapon Mastery
 cf-class-feature-voice-of-nature = Voice of Nature
+cf-class-feature-blessing = Blessing of the Devoted
 cf-class-feature-signature-spells = Signature Spells
 
 cf-class-choice-muse = Muse
@@ -108,7 +109,7 @@ cf-class-choice-causeliberation-desc = Holy. Liberating Step: when an enemy dama
 cf-class-choice-causeobedience = Obedience
 cf-class-choice-causeobedience-desc = Unholy. Iron Command: when an enemy in your aura damages you, it takes 1d6 mental, 2d6 from level 5, and for 6 seconds your Strikes against it deal 1 more. Letting it kneel instead: TBA
 cf-class-choice-causeredemption = Redemption
-cf-class-choice-causeredemption-desc = Holy. Glimpse of Redemption: when an enemy damages an ally, both in your aura, the damage is 2 + your level lower and the enemy takes -2 to attack and damage for 6 seconds. Letting it repent, and the real enfeebled condition: TBA
+cf-class-choice-causeredemption-desc = Holy. Glimpse of Redemption: when an enemy damages an ally, both in your aura, the damage is 2 + your level lower and the enemy is enfeebled 2 for 6 seconds. Letting it repent instead: TBA
 
 cf-class-choice-devotion = Devotion Spell
 cf-class-choice-devotionlayonhands = Lay on Hands

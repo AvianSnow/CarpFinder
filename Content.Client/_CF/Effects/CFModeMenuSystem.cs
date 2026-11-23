@@ -49,10 +49,22 @@ public sealed partial class CFModeMenuSystem : EntitySystem
         }
 
         var options = new List<RadialMenuOptionBase>(choice.Modes.Count);
+        CFModeOption? only = null;
         foreach (var mode in choice.Modes)
         {
-            if (CFModeRequirements.Met(EntityManager, user, mode))
-                options.Add(Slice(action.Owner, mode, choice, begin));
+            if (!CFModeRequirements.Met(EntityManager, user, mode))
+                continue;
+
+            options.Add(Slice(action.Owner, mode, choice, begin));
+            only = mode;
+        }
+
+        // One mode on offer is no choice: a Lay on Hands without Mercy is cast straight away.
+        if (options.Count == 1 && only is { Immediate: false })
+        {
+            choice.Chosen = only.Value;
+            begin();
+            return true;
         }
 
         _menu?.Close();

@@ -56,7 +56,25 @@
           option: ShieldBlock
     - level: 3
       name: "Blessing of the Devoted"
-      description: "A boon from your deity, such as a blessed weapon or shield: TBA"
+      description: "Choose a boon. Blessed Armament: a critical hit with any weapon gets its critical specialization. Blessed Shield: your Shield Block stops 3 more damage, to 8 at most. Blessed Swiftness: +5 feet status bonus to Speed. The armament's property rune: TBA"
+      choiceTitle: cf-class-feature-blessing
+      choices:
+        - kind: Named
+          options: [ BlessedArmament, BlessedShield, BlessedSwiftness ]
+      grants:
+        - !type:CFGrantChosen
+          options:
+            BlessedArmament:
+              - !type:CFGrantCriticalSpecialization
+                specialization: {}
+            BlessedShield:
+              - !type:CFGrantOption
+                option: BlessedShield
+            BlessedSwiftness:
+              - !type:CFGrantBonus
+                stat: Speed
+                type: Status
+                value: 5
     - level: 5
       name: "Weapon Expertise"
       description: "Expert with simple weapons, martial weapons and unarmed attacks."

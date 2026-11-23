@@ -1256,6 +1256,22 @@ public sealed partial class CFConditionSystem : EntitySystem
         Dirty(target, cond);
     }
 
+    /// <summary>Whether the creature has one of the conditions <see cref="EndCondition"/> can end with a value or a flag.</summary>
+    public bool Has(EntityUid target, CFConditionKind kind)
+    {
+        if (!TryComp(target, out CFConditionComponent? cond))
+            return false;
+
+        return kind switch
+        {
+            CFConditionKind.Frightened => cond.Frightened > 0,
+            CFConditionKind.Stupefied => cond.StupefiedValue > 0,
+            CFConditionKind.Clumsy => cond.ClumsyValue > 0,
+            CFConditionKind.Blinded => cond.Blinded,
+            _ => cond.Values.GetValueOrDefault(kind) > 0,
+        };
+    }
+
     /// <summary>
     /// Ends a condition early, as a successful counteract does. False for one that cannot be ended this way yet: asleep,
     /// paralyzed, sickened and darkvision.

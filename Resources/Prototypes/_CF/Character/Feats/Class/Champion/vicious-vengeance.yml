@@ -13,3 +13,12 @@
     - "iniquity cause"
   requiresChoice:
     - CauseIniquity
+  grants:
+    - !type:CFGrantChangeReaction
+      name: cf-reaction-destructive-vengeance
+      addOnEnemy:
+        - !type:CFDamageEffect
+          damageType: Spirit
+          scaleByDegree: false
+          flat: 1
+          flatEveryLevels: 4

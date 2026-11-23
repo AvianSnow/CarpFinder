@@ -448,3 +448,18 @@
   - type: CFDegreeEffects
     effects:
     - !type:CFReduceFrightenedEffect
+
+# Champion: Desperate Prayer. The rules give it as a turn begins with no Focus Points: here it is used by hand.
+- type: entity
+  parent: CFActivityInstant
+  id: CFActDesperatePrayer
+  name: Desperate Prayer
+  description: You regain 1 Focus Point. Once a day.
+  components:
+  - type: CFRadialSlot
+    group: Free
+  - type: CFEffectAction
+  - type: CFDailyUses
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFRegainFocusEffect

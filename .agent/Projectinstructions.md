@@ -156,6 +156,8 @@ Class examples: `CFMySystem`, `CFMyServerSystem`, `CFMyClientSystem`, `CFExample
 | A hex | A spell in `Spells/Focus/hexes.yml` whose `cfSpell` has the `Hex` trait. `CFSpellSystem` allows one every 6 seconds and raises `CFHexCastEvent`. A hex cantrip has no `focus: true` and is given with `CFGrantSpell` |
 | What a Witch's familiar does when a hex is cast | `!type:CFGrantFamiliarGift` with a `gift` (`target`: `Ally`, `Enemy` or `Familiar`, `rangeFeet`, `effects`). `CFWitchSystem` runs it |
 | A bonus against a kind of creature chosen on the wheel | `modeTraits` on `!type:CFBonusEffect`, one trait per `CFModeChoice` mode (Blood Ward) |
+| A feat that changes what another option's reaction does | `!type:CFGrantChangeReaction` with the reaction's `name` and `addOnEnemy` or `replaceOnEnemy` (a Champion's cause feats). Each creature has its own copy of a reaction, so changing one is safe |
+| A spell mode only some characters get | `requires` on the `CFModeChoice` mode (`CFModeRequirement`: `DirectedChannel`, `Cruelty`, `Mercy`), and `onlyMode` on `CFApplyConditionEffect` for what only that mode does. One mode on offer opens no wheel |
 | A language from a class or a feat | `!type:CFGrantLanguage`. A `language` with `rarity: Rare` cannot be picked, as Wildsong |
 | A spell that only works on some creatures | `targetTraits` on `CFTargeting` (Heal Animal: `Animal`) |
 | Something that needs a morph or polymorph effect | `CFMorphs.IsMorphed`: a battle form or an animal Rage. `needsMorph`, `sameTarget` and `unarmedTypes` on a `CFStrikeAction`, `whileMorphed` on a `CFReaction` |

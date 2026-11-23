@@ -12,3 +12,18 @@
     - "lay on hands"
   requiresChoice:
     - DevotionLayOnHands
+  choices:
+    - kind: Named
+      options: [ MercyBody, MercyGrace, MercyMind ]
+  grants:
+    - !type:CFGrantChosen
+      options:
+        MercyBody:
+          - !type:CFGrantMercy
+            conditions: [ Blinded, Dazzled, Deafened, Enfeebled ]
+        MercyGrace:
+          - !type:CFGrantMercy
+            conditions: [ Clumsy ]
+        MercyMind:
+          - !type:CFGrantMercy
+            conditions: [ Frightened, Stupefied ]

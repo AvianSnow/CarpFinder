@@ -113,15 +113,9 @@
         resistFlat: 2
         resistLevel: true
         onEnemy:
-          - !type:CFBonusEffect
-            stat: AttackRoll
-            type: Status
-            value: -2
-            durationSeconds: 6
-          - !type:CFBonusEffect
-            stat: Damage
-            type: Status
-            value: -2
+          - !type:CFApplyConditionEffect
+            condition: Enfeebled
+            value: 2
             durationSeconds: 6
 
 - type: cfClassChoice

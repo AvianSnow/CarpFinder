@@ -184,25 +184,19 @@ public sealed class CFChampionCauseTest : GameTest
     }
 
     [Test]
-    public async Task RedemptionWeakensTheEnemy()
+    public async Task RedemptionEnfeeblesTheEnemy()
     {
         _map = await CFDevMap.Load(Pair, Footprint);
-        int attack = 0, damage = 0;
+        var enfeebled = 0;
         await Server.WaitPost(() =>
         {
             Champion("CauseRedemption");
             var foe = Spawn("CFCauseFoe", 1);
             Reactions.AnswerDamage(Spawn(x: 1), foe, 20, "Slashing");
-            var bonuses = SEntMan.System<CFBonusSystem>();
-            attack = bonuses.Total(foe, CFBonusStat.AttackRoll);
-            damage = bonuses.Total(foe, CFBonusStat.Damage);
+            enfeebled = SEntMan.System<CFConditionSystem>().Value(foe, CFConditionKind.Enfeebled);
         });
 
-        Assert.Multiple(() =>
-        {
-            Assert.That(attack, Is.EqualTo(-2));
-            Assert.That(damage, Is.EqualTo(-2));
-        });
+        Assert.That(enfeebled, Is.EqualTo(2));
     }
 
     /// <summary>Strength 40 makes the Escape certain, so one damaging hit is enough to see it.</summary>

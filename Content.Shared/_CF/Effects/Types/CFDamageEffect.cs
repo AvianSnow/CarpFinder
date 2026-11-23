@@ -42,6 +42,10 @@ public sealed partial class CFDamageEffect : CFEffect
     [DataField]
     public int DiceEveryLevels;
 
+    /// <summary>One more point of flat damage every this many levels of the user, from level 1. 0 means none.</summary>
+    [DataField]
+    public int FlatEveryLevels;
+
     /// <summary>False when this effect sits in a degree list and should always deal its full roll.</summary>
     [DataField]
     public bool ScaleByDegree = true;
@@ -83,6 +87,9 @@ public sealed partial class CFDamageEffect : CFEffect
             dice += ((entities.GetComponentOrNull<CFCombatantComponent>(args.User)?.Level ?? 1) - 1) / DiceEveryLevels;
 
         var flat = Flat + HeightenFlat * args.HeightenSteps + (AddAbilityModifier ? args.AbilityModifier : 0);
+        var userLevel = entities.GetComponentOrNull<CFCombatantComponent>(args.User)?.Level ?? 1;
+        if (FlatEveryLevels > 0)
+            flat += (userLevel - 1) / FlatEveryLevels;
 
         // An effect that only adds persistent damage (a flaming rune's critical) deals nothing up front.
         if (dice > 0 || flat > 0)
@@ -99,7 +106,7 @@ public sealed partial class CFDamageEffect : CFEffect
         entities.System<CFBonusSystem>().AddPersistent(
             target,
             PersistentType ?? DamageType,
-            PersistentDice * times,
+            (PersistentDice + (DiceEveryLevels > 0 ? (userLevel - 1) / DiceEveryLevels : 0)) * times,
             PersistentDie,
             PersistentFlat * times,
             args.User);

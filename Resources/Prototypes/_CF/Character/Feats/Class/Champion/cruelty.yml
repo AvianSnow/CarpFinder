@@ -10,6 +10,8 @@
     - "Champion"
   prerequisites:
     - "touch of the void"
-  pendingAction: true
   requiresChoice:
     - DevotionTouchOfTheVoid
+  grants:
+    - !type:CFGrantOption
+      option: Cruelty

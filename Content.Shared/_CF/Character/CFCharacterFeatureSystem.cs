@@ -395,6 +395,11 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
     /// <summary>The id a grant's source stores its option picks under: <c>heritage:X</c> and <c>feat:X</c> are <c>X</c>.</summary>
     public static string PickSource(string source)
     {
+        // A class feature's grants run as class:Fighter:3:Name, and its picks are kept as class:Fighter:Name.
+        var parts = source.Split(':');
+        if (parts.Length >= 4 && parts[0] == "class" && int.TryParse(parts[2], out _))
+            return $"class:{parts[1]}:{string.Join(':', parts[3..])}";
+
         foreach (var prefix in new[] { "heritage:", "feat:", "choice:", "ancestry:", "background:" })
         {
             if (source.StartsWith(prefix, StringComparison.Ordinal))
@@ -568,6 +573,12 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
                 break;
             case CFCombatOption.DirectedChannel:
                 options.DirectedChannel = true;
+                break;
+            case CFCombatOption.Cruelty:
+                options.Cruelty = true;
+                break;
+            case CFCombatOption.BlessedShield:
+                options.BlessedShield = true;
                 break;
             case CFCombatOption.VersatilePerformance:
                 options.VersatilePerformance = true;
