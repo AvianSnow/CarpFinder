@@ -872,9 +872,27 @@ public sealed partial class CFGrantSeek : CFGrant
     [DataField]
     public int ConcealedFlatDc;
 
+    /// <summary>Only creatures with one of these traits (Apparition Sense). A sense for every creature keeps no list.</summary>
+    [DataField]
+    public List<ProtoId<CFTraitPrototype>> Traits = new();
+
     public override void Apply(IEntityManager entities, CFGrantArgs args)
     {
-        var sense = entities.EnsureComponent<CFSeekSenseComponent>(args.Mob);
+        var had = entities.EnsureComponent<CFSeekSenseComponent>(args.Mob, out var sense);
+        if (!had)
+            sense.Traits = new List<ProtoId<CFTraitPrototype>>(Traits);
+        else if (Traits.Count == 0)
+            sense.Traits.Clear();
+        else if (sense.Traits.Count > 0)
+        {
+            // Two senses with limits cover both their kinds. One with none already covers everything.
+            foreach (var trait in Traits)
+            {
+                if (!sense.Traits.Contains(trait))
+                    sense.Traits.Add(trait);
+            }
+        }
+
         sense.SeekBonus = Math.Max(sense.SeekBonus, Bonus);
         sense.RangeFeet = Math.Max(sense.RangeFeet, RangeFeet);
         if (HiddenFlatDc > 0)

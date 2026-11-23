@@ -258,6 +258,10 @@ Class examples: `CFMySystem`, `CFMyServerSystem`, `CFMyClientSystem`, `CFExample
 | A reaction to damage of one type from anywhere, with temporary Hit Points after | `damageTypes`, `anyDistance` and `tempHpLevel` on a `WouldBeDamaged` reaction (Void Siphon) |
 | A spellshape that reads what the spell dealt | `CFSpellshapeSystem.NoteDamage`, which `CFDamageEffect` and `CFVitalEnergyEffect` call after `DealDamage` (Vampiric Spell) |
 | A grant that must run while a deleted entity still has its place | Handle `EntityTerminatingEvent`, not `ComponentShutdown`: the entity is detached to nullspace before its components shut down (`CFThrallSystem.OnTerminating`) |
+| A skill trained for a while by a spell | `!type:CFTemporarySkillEffect` (`skills`, `expertRank`, `masterRank`, `durationSeconds`), kept on `CFCombatant.TemporarySkills` (Traveling Workshop) |
+| A stance that adds a spell's rank to its damage and healing | `channeler: true` on `CFStance`, read by `CFEffectSystem.PotencyBonus` for apparition and vessel spells. Something that follows a cast from a slot in it is `CFAnimistSystem.NoteCast` |
+| A keener sense that only finds some creatures | `traits` on `!type:CFGrantSeek` (Apparition Sense: Undead and Spirit). `CFSeekSenses.Covers` says whether it works on a creature |
+| An Animist's vessel spell, or a spell an apparition teaches | `vessel` and `spells` on `!type:CFGrantApparition`. A feat that adds a spell to the apparition repertoire uses the same grant with `spells` alone (Walk the Wilds) |
 | An action where the user rolls a skill against a creature's defense DC (Goblin Song, Catfolk Dance) | `CFCheck` with `defense` and `skill`. The degree is the user's, so put the result in `success` and `criticalSuccess` |
 | An action that Demoralizes or Feints at its own range | A `CFActivityTarget` action with `CFActivity` `kind: Demoralize` or `Feint` and a `TargetAction` range |
 | One of several actions, by what the player picked for the option | `!type:CFGrantChosenAction` with an `actions` map from pick values to action ids, beside a `choices` entry |

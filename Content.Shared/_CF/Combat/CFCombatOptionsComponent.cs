@@ -695,6 +695,13 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public bool OverwhelmingHarm;
 
+    /// <summary>
+    /// Channeled Protection: a spell cast from a slot in Channeler's Stance gives the caster and allies beside it +1 status to
+    /// AC and Reflex for 6 seconds.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public bool ChanneledProtection;
+
     /// <summary>A success on a check to Climb is a critical success.</summary>
     [DataField, AutoNetworkedField]
     public bool ClimbSuccessCritical;
@@ -869,6 +876,7 @@ public enum CFCombatOption : byte
     MasteryOfLifeAndDeath,
     InvertHarm,
     OverwhelmingHarm,
+    ChanneledProtection,
 }
 
 public enum CFPointMark : byte

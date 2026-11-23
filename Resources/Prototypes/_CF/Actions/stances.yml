@@ -267,3 +267,13 @@
   description: Allies beside you have lesser cover, +1 circumstance to AC, while you stay in this stance.
   components:
   - type: CFStance
+
+# Animist. CFEffectSystem.PotencyBonus reads the stance.
+- type: entity
+  parent: CFActStanceBase
+  id: CFActChannelersStance
+  name: "Channeler's Stance"
+  description: While you stay in this stance, your apparition and vessel spells deal their rank more damage, and those that restore Hit Points heal their rank more.
+  components:
+  - type: CFStance
+    channeler: true

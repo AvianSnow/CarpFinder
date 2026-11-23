@@ -34,6 +34,7 @@ public sealed partial class CFSpellSystem : EntitySystem
     [Dependency] private CFVfxSystem _vfx = default!;
     [Dependency] private CFReactionSystem _reactions = default!;
     [Dependency] private CFBloodMagicSystem _blood = default!;
+    [Dependency] private CFAnimistSystem _animist = default!;
     [Dependency] private Robust.Shared.Prototypes.IPrototypeManager _prototypes = default!;
     [Dependency] private Content.Shared.Mobs.Systems.MobStateSystem _mobState = default!;
 
@@ -465,6 +466,7 @@ public sealed partial class CFSpellSystem : EntitySystem
 
         NoteBespell(caster, spell.Comp);
         _spellshapes.NoteCast(caster, spell.Comp);
+        _animist.NoteCast(caster, spell.Comp);
         return true;
     }
 

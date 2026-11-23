@@ -32,12 +32,23 @@ public sealed partial class CFEffectSystem
     /// <summary>What Sorcerous Potency adds to a spell cast from a slot: its rank. Cantrips and focus spells get nothing.</summary>
     public int PotencyBonus(CFEffectArgs args)
     {
-        return CompOrNull<CFCombatOptionsComponent>(args.User)?.SorcerousPotency == true
-               && TryComp(args.Source, out CFSpellComponent? spell)
-               && !spell.Focus
-               && spell.Rank > 0
-            ? spell.ResolvedRank
-            : 0;
+        if (!TryComp(args.Source, out CFSpellComponent? spell))
+            return 0;
+
+        if (CompOrNull<CFCombatOptionsComponent>(args.User)?.SorcerousPotency == true && !spell.Focus && spell.Rank > 0)
+            return spell.ResolvedRank;
+
+        // Channeler's Stance: an apparition spell or a vessel spell deals, or heals, its rank more. A vessel spell is a focus
+        // spell, so its rank is the one focus spells are heightened to.
+        if (_stances.Current(args.User) is { Channeler: true }
+            && (spell.Focus || CompOrNull<Content.Shared.CF.Character.CFSpellbookComponent>(args.User)?.ApparitionSpells.Contains(spell.Spell) == true))
+        {
+            return spell.ResolvedRank > 0
+                ? spell.ResolvedRank
+                : CFCasting.CantripRank(CompOrNull<CFCombatantComponent>(args.User)?.Level ?? 1);
+        }
+
+        return 0;
     }
 
     /// <summary>What the cast behind these effects is amped with, or null.</summary>

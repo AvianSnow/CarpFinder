@@ -76,6 +76,44 @@ public sealed partial class CFFormAttackEffect : CFEffect
     }
 }
 
+/// <summary>
+/// Trains the target in some skills for a while (Traveling Workshop). The rank grows with the spell's rank: trained, expert
+/// from <see cref="ExpertRank"/>, master from <see cref="MasterRank"/>. A rank the creature already beats changes nothing.
+/// </summary>
+public sealed partial class CFTemporarySkillEffect : CFEffect
+{
+    [DataField(required: true)]
+    public List<string> Skills = new();
+
+    [DataField]
+    public int ExpertRank = 3;
+
+    [DataField]
+    public int MasterRank = 5;
+
+    [DataField]
+    public float DurationSeconds = 60f;
+
+    public override void Apply(IEntityManager entities, CFEffectArgs args)
+    {
+        var target = args.Target ?? args.User;
+        if (!entities.TryGetComponent(target, out CFCombatantComponent? combat))
+            return;
+
+        var rank = args.Rank >= MasterRank ? CFProficiencyRank.Master
+            : args.Rank >= ExpertRank ? CFProficiencyRank.Expert
+            : CFProficiencyRank.Trained;
+        var expires = entities.System<CFApparitionSystem>().Now + TimeSpan.FromSeconds(DurationSeconds);
+        foreach (var skill in Skills)
+        {
+            combat.TemporarySkills.RemoveAll(lent => lent.Skill == skill);
+            combat.TemporarySkills.Add(new CFTemporarySkill { Skill = skill, Rank = rank, Expires = expires });
+        }
+
+        entities.Dirty(target, combat);
+    }
+}
+
 /// <summary>Gives back the target's reaction (Store Time).</summary>
 public sealed partial class CFRestoreReactionEffect : CFEffect
 {
@@ -215,6 +253,8 @@ public sealed partial class CFApparitionSystem : EntitySystem
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private CFCharacterFeatureSystem _features = default!;
 
+    public TimeSpan Now => _timing.CurTime;
+
     /// <summary>
     /// Adds an apparition's spells to the repertoire. The primary apparition's vessel spell is granted now, and a Focus Point with it.
     /// Any other apparition's waits until it becomes the primary one.
@@ -343,6 +383,13 @@ public sealed partial class CFApparitionSystem : EntitySystem
             return;
 
         var now = _timing.CurTime;
+        var lent = EntityQueryEnumerator<CFCombatantComponent>();
+        while (lent.MoveNext(out var uid, out var combat))
+        {
+            if (combat.TemporarySkills.Count > 0 && combat.TemporarySkills.RemoveAll(skill => now >= skill.Expires) > 0)
+                Dirty(uid, combat);
+        }
+
         var query = EntityQueryEnumerator<CFFormAttackComponent, CFCombatOptionsComponent>();
         while (query.MoveNext(out var uid, out var held, out var options))
         {

@@ -8,3 +8,7 @@
   level: 4
   traits:
     - "Animist"
+  grants:
+    - !type:CFGrantApparition
+      spells:
+        - AnimalForm

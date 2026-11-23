@@ -108,6 +108,10 @@ public sealed partial class CFCombatantComponent : Component
     [DataField, AutoNetworkedField]
     public List<string> SkillIncreases = new();
 
+    /// <summary>Ranks a spell lends for a while (Traveling Workshop). <c>CFApparitionSystem</c> drops them as they run out.</summary>
+    [DataField, AutoNetworkedField]
+    public List<CFTemporarySkill> TemporarySkills = new();
+
     /// <summary>
     /// Ranks raised by feats and class features, by proficiency id (<c>Fortitude</c>, <c>MartialWeapons</c>, <c>Sword</c>).
     /// A rank here only counts when it beats the class's own. Read through <c>CFDefense</c>.
@@ -152,4 +156,18 @@ public sealed partial class CFCombatantComponent : Component
 
     [DataField, AutoNetworkedField]
     public int Wounded;
+}
+
+/// <summary>A proficiency rank a spell lends for a while (Traveling Workshop). <c>CFTemporarySkillEffect</c> makes them.</summary>
+[DataDefinition, Serializable, Robust.Shared.Serialization.NetSerializable]
+public sealed partial class CFTemporarySkill
+{
+    [DataField]
+    public string Skill = string.Empty;
+
+    [DataField]
+    public Content.Shared.CF.Character.CFProficiencyRank Rank;
+
+    [DataField]
+    public TimeSpan Expires;
 }

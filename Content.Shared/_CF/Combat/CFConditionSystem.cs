@@ -539,8 +539,12 @@ public sealed partial class CFConditionSystem : EntitySystem
 
         // Keener senses (a Whisper Elf's hearing) make the check easier against a creature close enough.
         var sense = CompOrNull<CFSeekSenseComponent>(attacker);
-        if (sense != null && !_transform.InRange((attacker, null), (target, null), sense.RangeFeet / CFMelee.FeetPerTile))
+        if (sense != null
+            && (!CFSeekSenses.Covers(EntityManager, sense, target)
+                || !_transform.InRange((attacker, null), (target, null), sense.RangeFeet / CFMelee.FeetPerTile)))
+        {
             sense = null;
+        }
 
         if (!ignoreConcealed && TryComp(target, out CFConditionComponent? cond) && cond.Concealed)
             dc = Math.Max(dc, sense is { ConcealedFlatDc: > 0 } ? Math.Min(cond.FlatCheckDc, sense.ConcealedFlatDc) : cond.FlatCheckDc);

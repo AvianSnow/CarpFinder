@@ -9,3 +9,10 @@
   traits:
     - "Animist"
     - "Divine"
+  grants:
+    - !type:CFGrantSeek
+      bonus: 2
+      rangeFeet: 30
+      hiddenFlatDc: 5
+      concealedFlatDc: 3
+      traits: [ Undead, Spirit ]

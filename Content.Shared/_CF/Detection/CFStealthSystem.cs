@@ -361,6 +361,7 @@ public sealed partial class CFStealthSystem : EntitySystem
 
             // Keener senses: a circumstance bonus to find a creature close enough to hear or smell.
             var bonus = TryComp(user, out CFSeekSenseComponent? sense)
+                        && CFSeekSenses.Covers(EntityManager, sense, hider.Owner)
                         && _transform.InRange((user, null), (hider.Owner, null), sense.RangeFeet / CFAreaGrid.FeetPerTile)
                 ? sense.SeekBonus
                 : 0;

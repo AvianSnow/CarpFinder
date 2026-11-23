@@ -1331,6 +1331,63 @@
 
 - type: entity
   parent: CFSpellInstant
+  id: CFDarkenedForestForm
+  name: Darkened Forest Form
+  description: "The Stalker's vessel: you take another shape. A pest, which cannot attack, or from level 3 an ape, bear, bull, canine, cat or deer for a minute. You cannot cast spells or use a weapon in it. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+  - type: CFSpell
+    spell: DarkenedForestForm
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    filter: All
+  - type: CFModeChoice
+    modes:
+    - { value: 7, name: cf-battle-form-pest, immediate: true }
+    - { value: 1, name: cf-battle-form-ape, immediate: true }
+    - { value: 2, name: cf-battle-form-bear, immediate: true }
+    - { value: 3, name: cf-battle-form-bull, immediate: true }
+    - { value: 4, name: cf-battle-form-canine, immediate: true }
+    - { value: 5, name: cf-battle-form-cat, immediate: true }
+    - { value: 6, name: cf-battle-form-deer, immediate: true }
+  - type: CFBattleFormSpell
+    tiers:
+    - { rank: 3, baseArmorClass: 17, attackModifier: 14, damageBonus: 5, temporaryHp: 10 }
+    forms:
+    - { mode: 7, name: cf-battle-form-pest, noStrikes: true, baseArmorClass: 15, speedFeet: 20, durationSeconds: 60, physicalWeakness: 5, sprite: { sprite: Mobs/Animals/Rodents/mouse.rsi, state: mouse-0 } }
+    - { mode: 1, name: cf-battle-form-ape, minRank: 2, dice: 2, die: 6, damageType: Bludgeoning, speedFeet: 25, sprite: { sprite: Mobs/Animals/gorilla.rsi, state: crawling } }
+    - { mode: 2, name: cf-battle-form-bear, minRank: 2, dice: 2, die: 8, damageType: Piercing, speedFeet: 30, sprite: { sprite: Mobs/Animals/bear.rsi, state: bear } }
+    - { mode: 3, name: cf-battle-form-bull, minRank: 2, dice: 2, die: 8, damageType: Piercing, speedFeet: 30, sprite: { sprite: Mobs/Animals/Farm/cow.rsi, state: alive } }
+    - { mode: 4, name: cf-battle-form-canine, minRank: 2, dice: 2, die: 8, damageType: Piercing, speedFeet: 40, sprite: { sprite: Mobs/Pets/corgi.rsi, state: corgi } }
+    - { mode: 5, name: cf-battle-form-cat, minRank: 2, dice: 2, die: 6, damageType: Piercing, speedFeet: 40, sprite: { sprite: Mobs/Pets/cat.rsi, state: cat } }
+    - { mode: 6, name: cf-battle-form-deer, minRank: 2, dice: 2, die: 6, damageType: Piercing, speedFeet: 50, sprite: { sprite: Mobs/Animals/reindeer_buck.rsi, state: reindeer_buck } }
+
+- type: entity
+  parent: CFSpellInstant
+  id: CFTravelingWorkshop
+  name: Traveling Workshop
+  description: "The Crafter's vessel: for a minute you are trained in Crafting and Thievery, expert from level 5. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+  - type: CFSpell
+    spell: TravelingWorkshop
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    filter: All
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFTemporarySkillEffect
+      skills: [ Crafting, Thievery ]
+      durationSeconds: 60
+
+- type: entity
+  parent: CFSpellInstant
   id: CFCrownOfProphets
   name: Crown of Prophets
   description: "Your unarmed attack is a bite, 1d6 piercing, agile and finesse, for a minute. Costs a Focus Point."
@@ -1475,6 +1532,26 @@
   range: self
   targets: none
   summary: "You are concealed for a minute. The mirrors themselves, and glass shards: TBA."
+
+- type: cfSpell
+  id: DarkenedForestForm
+  name: Darkened Forest Form
+  rank: 1
+  traits: [Concentrate, Manipulate, Polymorph]
+  actionCost: Two
+  duration: 1 minute
+  summary: "You become a pest, or from rank 2 one of Animal Form's shapes, for a minute."
+  heightened: Rank 2 adds Animal Form's shapes. Rank 3 uses Animal Form's rank 3 numbers.
+
+- type: cfSpell
+  id: TravelingWorkshop
+  name: Traveling Workshop
+  rank: 1
+  traits: [Concentrate, Manipulate]
+  actionCost: Two
+  duration: 1 minute
+  summary: "You are trained in Crafting and Thievery for a minute. The tools it lends, and the day of work: TBA."
+  heightened: Expert from rank 3, master from rank 5.
 
 - type: cfSpell
   id: DevouringDarkForm

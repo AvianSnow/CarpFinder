@@ -12,6 +12,7 @@
   grants:
     - !type:CFGrantApparition
       primary: true
+      vessel: TravelingWorkshop
       spells:
         - Sigil
 
@@ -26,6 +27,7 @@
     - Lore
   grants:
     - !type:CFGrantApparition
+      vessel: TravelingWorkshop
       spells:
         - Sigil
 
@@ -354,6 +356,7 @@
   grants:
     - !type:CFGrantApparition
       primary: true
+      vessel: DarkenedForestForm
 
 - type: cfClassChoice
   id: SecondStalker
@@ -366,6 +369,7 @@
     - Lore
   grants:
     - !type:CFGrantApparition
+      vessel: DarkenedForestForm
 
 - type: cfClassChoice
   id: PrimarySteward

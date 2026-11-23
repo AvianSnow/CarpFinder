@@ -16,6 +16,9 @@
   slot: cf-class-choice-practice
   name: cf-class-choice-practicemedium
   description: cf-class-choice-practicemedium-desc
+  grants:
+    - !type:CFGrantFeat
+      feat: CFRelinquishControl
 
 - type: cfClassChoice
   id: PracticeSeer
@@ -29,6 +32,13 @@
       type: Status
       value: 1
       trait: Undead
+    - !type:CFGrantBonus
+      stat: ArmorClass
+      type: Status
+      value: 1
+      trait: Undead
+    - !type:CFGrantFeat
+      feat: CFApparitionSense
 
 - type: cfClassChoice
   id: PracticeShaman
@@ -36,3 +46,6 @@
   slot: cf-class-choice-practice
   name: cf-class-choice-practiceshaman
   description: cf-class-choice-practiceshaman-desc
+  grants:
+    - !type:CFGrantFeat
+      feat: CFSpiritFamiliarAnimist

@@ -1040,3 +1040,20 @@
         2: CFSpear
         3: CFDagger
         4: CFLongsword
+
+# Animist
+- type: entity
+  parent: CFActivityInstant
+  id: CFActRelinquishControl
+  name: Relinquish Control
+  description: Costs 1 action. Your apparition takes over for 6 seconds, for a +4 status bonus to saves against mental effects. The rules make it free and keep you to a few actions meanwhile.
+  components:
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFBonusEffect
+      stat: Saves
+      type: Status
+      value: 4
+      trait: Mental
+      durationSeconds: 6

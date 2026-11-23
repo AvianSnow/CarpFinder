@@ -15,4 +15,6 @@
   requiresFeats:
     - CFChannelersStance
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantOption
+      option: ChanneledProtection

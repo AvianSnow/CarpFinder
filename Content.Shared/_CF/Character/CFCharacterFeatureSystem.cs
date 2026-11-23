@@ -676,6 +676,9 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
             case CFCombatOption.OverwhelmingHarm:
                 options.OverwhelmingHarm = true;
                 break;
+            case CFCombatOption.ChanneledProtection:
+                options.ChanneledProtection = true;
+                break;
             case CFCombatOption.ViciousSwing:
                 options.ViciousSwing = true;
                 break;

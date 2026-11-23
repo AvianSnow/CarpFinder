@@ -1,4 +1,6 @@
+using Content.Shared.CF.Traits;
 using Robust.Shared.GameStates;
+using Robust.Shared.Prototypes;
 
 namespace Content.Shared.CF.Detection;
 
@@ -23,4 +25,17 @@ public sealed partial class CFSeekSenseComponent : Component
     /// <summary>The flat check DC to target a concealed creature in range. 0 keeps the usual 5.</summary>
     [DataField, AutoNetworkedField]
     public int ConcealedFlatDc;
+
+    /// <summary>When set, the sense only finds creatures with one of these traits (Apparition Sense: undead and spirits).</summary>
+    [DataField, AutoNetworkedField]
+    public List<ProtoId<CFTraitPrototype>> Traits = new();
+}
+
+public static class CFSeekSenses
+{
+    /// <summary>Whether the sense works on this creature at all: any creature, or one with a trait it is for.</summary>
+    public static bool Covers(IEntityManager entities, CFSeekSenseComponent sense, EntityUid target)
+    {
+        return sense.Traits.Count == 0 || entities.GetComponentOrNull<CFTraitComponent>(target)?.HasAny(sense.Traits) == true;
+    }
 }

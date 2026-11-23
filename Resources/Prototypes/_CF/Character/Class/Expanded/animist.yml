@@ -55,7 +55,7 @@
 
     - level: 1
       name: "Apparition Attunement"
-      description: "Choose two apparitions in the builder. Each teaches you a Lore and spells, and your primary one gives you its vessel spell. Changing primary when you Refocus: TBA"
+      description: "Choose two apparitions in the builder. Each teaches you a Lore and spells, and your primary one gives you its vessel spell. The rules let you change the primary one when you Refocus: here a Liturgist does it with Circle of Spirits, and anyone else keeps the one picked. TBA"
 
     - level: 3
       name: "Fortitude Expertise"

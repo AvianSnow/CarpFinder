@@ -495,6 +495,7 @@ public sealed partial class CFEffectSystem : EntitySystem
     [Dependency] private CFReactionSystem _reactions = default!;
     [Dependency] private CFVfxSystem _vfx = default!;
     [Dependency] private CFTemporaryHpSystem _tempHp = default!;
+    [Dependency] private CFStanceSystem _stances = default!;
 
     /// <summary>
     /// Rolls the source's check against one creature and runs its effect lists.

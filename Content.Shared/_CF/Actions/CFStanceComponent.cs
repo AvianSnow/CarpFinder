@@ -58,6 +58,13 @@ public sealed partial class CFStanceComponent : Component
     /// </summary>
     [DataField]
     public int FreeTerrainFeet;
+
+    /// <summary>
+    /// Channeler's Stance: an apparition or vessel spell deals its rank more damage, and one that restores Hit Points heals
+    /// its rank more. <c>CFEffectSystem.PotencyBonus</c> reads it.
+    /// </summary>
+    [DataField]
+    public bool Channeler;
 }
 
 [DataDefinition]

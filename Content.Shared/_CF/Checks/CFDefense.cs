@@ -141,7 +141,14 @@ public static class CFDefense
             prototypes.TryIndex(combat.BackgroundId, out background);
 
         var rank = CFSkills.GetSkillRank(cls, background, skill, combat.TrainedSkills);
-        return Best(combat, skill, CFSkills.RaiseRank(rank, combat.SkillIncreases.Count(id => id == skill)));
+        rank = Best(combat, skill, CFSkills.RaiseRank(rank, combat.SkillIncreases.Count(id => id == skill)));
+        foreach (var lent in combat.TemporarySkills)
+        {
+            if (lent.Skill == skill && lent.Rank > rank)
+                rank = lent.Rank;
+        }
+
+        return rank;
     }
 
     public static int SkillModifier(
