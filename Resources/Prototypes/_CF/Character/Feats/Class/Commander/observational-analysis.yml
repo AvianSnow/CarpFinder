@@ -13,4 +13,6 @@
   requiresFeats:
     - CFCombatAssessmentCommander
     - CFCombatAssessmentFighter
-  pendingAction: true
+  grants:
+    - !type:CFGrantOption
+      option: ObservationalAnalysis

@@ -30,6 +30,16 @@ public sealed partial class CFConditionComponent : Component
 
     public TimeSpan AidUntil;
 
+    /// <summary>Guiding Shot: the next creature other than <see cref="GuidedBy"/> to attack this one gets this bonus.</summary>
+    public int GuidedBonus;
+
+    public EntityUid? GuidedBy;
+
+    public TimeSpan GuidedUntil;
+
+    /// <summary>Protective Screen: until this time, the creature's spells and ranged attacks set off no reactions.</summary>
+    public TimeSpan ScreenedUntil;
+
     /// <summary>Creatures this one has tried to Recall Knowledge on.</summary>
     public HashSet<EntityUid> Recalled = new();
 

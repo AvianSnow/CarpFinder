@@ -789,6 +789,10 @@ public sealed partial class CFReactionSystem : EntitySystem
                     if (known.Reaction.RedirectPerRank > 0)
                         taken = Math.Min(amount, known.Reaction.RedirectPerRank * CFCasting.CantripRank(CompOrNull<CFCombatantComponent>(uid)?.Level ?? 1));
 
+                    // Defensive Swap: the two trade places as the blow lands.
+                    if (known.Reaction.SwapsPlaces)
+                        _transform.SwapPositions(uid, target);
+
                     _effects.DealDamage(attacker, uid, taken, damageType, critical: false);
                     return amount - taken;
                 }

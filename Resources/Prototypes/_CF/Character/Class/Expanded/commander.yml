@@ -65,10 +65,17 @@
           option: ShieldBlock
     - level: 1
       name: "Tactics"
-      description: "Choose three tactics in the builder. Your squad is you and your 2 + Intelligence nearest allies within 30 feet, and you need your banner. A folio of five and swapping tactics: TBA"
+      description: "Choose three tactics in the builder, and two more with Tactical Expansion. Your squad is you and your 2 + Intelligence nearest allies within 30 feet, and you need your banner. The rules keep a folio to prepare from each day: here what you pick is what you have."
     - level: 3
       name: "Warfare Expertise"
-      description: "Expert in Warfare Lore. Warfare Lore does not exist as a skill yet: TBA"
+      description: "Warfare Lore, trained at first and expert now. Lore is one skill here, so the name is what differs. Recall Knowledge and initiative with it: TBA"
+      grants:
+        - !type:CFGrantLore
+          lore: Warfare
+        - !type:CFGrantProficiency
+          proficiencies:
+            - Lore
+          rank: Expert
     - level: 5
       name: "Military Expertise"
       description: "Expert with simple weapons, martial weapons and unarmed attacks. A critical hit with a weapon you are an expert with gets its critical specialization."

@@ -9,4 +9,6 @@
   traits:
     - "Commander"
   action: Free
-  pendingAction: true
+  grants:
+    - !type:CFGrantOption
+      option: RapidAssessment

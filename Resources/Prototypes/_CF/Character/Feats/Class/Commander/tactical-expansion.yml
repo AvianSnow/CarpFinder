@@ -8,4 +8,40 @@
   level: 2
   traits:
     - "Commander"
-  pendingAction: true
+  choices:
+    - kind: Named
+      count: 2
+      options: [ PincerAttack, Reload, ShieldsUp, StrikeHard, Takedown, DefensiveRetreat, GatherToMe, DoubleTeam, CoordinatingManeuvers, EndIt, MountaineeringTraining, PassageOfLines, ProtectiveScreen ]
+  grants:
+    - !type:CFGrantChosenAction
+      slot: 0
+      actions:
+        PincerAttack: CFActTacticPincerAttack
+        Reload: CFActTacticReload
+        ShieldsUp: CFActTacticShieldsUp
+        StrikeHard: CFActTacticStrikeHard
+        Takedown: CFActTacticTakedown
+        DefensiveRetreat: CFActTacticDefensiveRetreat
+        GatherToMe: CFActTacticGatherToMe
+        DoubleTeam: CFActTacticDoubleTeam
+        CoordinatingManeuvers: CFActTacticCoordinatingManeuvers
+        EndIt: CFActTacticEndIt
+        MountaineeringTraining: CFActTacticMountaineeringTraining
+        PassageOfLines: CFActTacticPassageOfLines
+        ProtectiveScreen: CFActTacticProtectiveScreen
+    - !type:CFGrantChosenAction
+      slot: 1
+      actions:
+        PincerAttack: CFActTacticPincerAttack
+        Reload: CFActTacticReload
+        ShieldsUp: CFActTacticShieldsUp
+        StrikeHard: CFActTacticStrikeHard
+        Takedown: CFActTacticTakedown
+        DefensiveRetreat: CFActTacticDefensiveRetreat
+        GatherToMe: CFActTacticGatherToMe
+        DoubleTeam: CFActTacticDoubleTeam
+        CoordinatingManeuvers: CFActTacticCoordinatingManeuvers
+        EndIt: CFActTacticEndIt
+        MountaineeringTraining: CFActTacticMountaineeringTraining
+        PassageOfLines: CFActTacticPassageOfLines
+        ProtectiveScreen: CFActTacticProtectiveScreen

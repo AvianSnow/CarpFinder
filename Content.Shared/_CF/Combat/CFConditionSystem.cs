@@ -657,6 +657,38 @@ public sealed partial class CFConditionSystem : EntitySystem
         cond.AidUntil = _timing.CurTime + TimeSpan.FromSeconds(TurnSeconds);
     }
 
+    /// <summary>Guiding Shot: the next creature other than <paramref name="by"/> to attack <paramref name="target"/> gets the bonus.</summary>
+    public void SetGuidance(EntityUid target, EntityUid by, int bonus, float seconds)
+    {
+        var cond = Ensure(target);
+        cond.GuidedBonus = bonus;
+        cond.GuidedBy = by;
+        cond.GuidedUntil = _timing.CurTime + TimeSpan.FromSeconds(seconds);
+    }
+
+    /// <summary>The bonus an attacker gets against a guided target, used up by the first attacker that is not the guide.</summary>
+    public int TakeGuidance(EntityUid target, EntityUid attacker)
+    {
+        if (!TryComp(target, out CFConditionComponent? cond) || cond.GuidedBonus == 0 || cond.GuidedBy == attacker)
+            return 0;
+
+        var bonus = _timing.CurTime < cond.GuidedUntil ? cond.GuidedBonus : 0;
+        cond.GuidedBonus = 0;
+        cond.GuidedBy = null;
+        return bonus;
+    }
+
+    /// <summary>Protective Screen: for a while, the creature's spells and ranged attacks set off no reactions.</summary>
+    public void Screen(EntityUid target, float seconds)
+    {
+        Ensure(target).ScreenedUntil = _timing.CurTime + TimeSpan.FromSeconds(seconds);
+    }
+
+    public bool IsScreened(EntityUid uid)
+    {
+        return TryComp(uid, out CFConditionComponent? cond) && _timing.CurTime < cond.ScreenedUntil;
+    }
+
     /// <summary>Uses up any help waiting for this creature, and returns the bonus for this check.</summary>
     public int TakeAid(EntityUid uid)
     {

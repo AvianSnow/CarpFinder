@@ -66,7 +66,7 @@ public sealed partial class CFLadderCheckSystem : EntitySystem
             return true;
 
         var options = CompOrNull<CFCombatOptionsComponent>(climber);
-        if (options is { ClimbSpeed: true })
+        if (options is { ClimbSpeed: true } || options != null && _timing.CurTime < options.ClimbSpeedUntil)
             return true;
 
         if (ladder.Comp.NeedsFreeHands)

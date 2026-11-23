@@ -283,6 +283,6 @@ public sealed class CFTacticTest : GameTest
             }
         });
 
-        Assert.That(count, Is.EqualTo(21));
+        Assert.That(count, Is.EqualTo(42), "14 tactics in each of three slots.");
     }
 }

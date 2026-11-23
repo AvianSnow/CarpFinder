@@ -644,6 +644,34 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public bool ClimbSpeed;
 
+    /// <summary>A climb Speed until this time (Mountaineering Training).</summary>
+    [DataField, AutoNetworkedField]
+    public TimeSpan ClimbSpeedUntil;
+
+    /// <summary>When this creature last dropped an enemy to 0 Hit Points. End It! needs a recent one.</summary>
+    [DataField]
+    public TimeSpan LastDroppedEnemyAt;
+
+    /// <summary>Officer's Medical Training: Medicine checks use Intelligence when it is better.</summary>
+    [DataField, AutoNetworkedField]
+    public bool MedicineWithIntelligence;
+
+    /// <summary>Shielded Recovery: Battle Medicine with a shield in hand gives the patient +1 AC and Reflex for 6 seconds.</summary>
+    [DataField, AutoNetworkedField]
+    public bool ShieldedRecovery;
+
+    /// <summary>Armor Regiment Training: worn heavy armor counts 1 Bulk less.</summary>
+    [DataField, AutoNetworkedField]
+    public bool ArmorRegimentTraining;
+
+    /// <summary>Observational Analysis: +2 to a Recall Knowledge that is part of another action, as Combat Assessment's.</summary>
+    [DataField, AutoNetworkedField]
+    public bool ObservationalAnalysis;
+
+    /// <summary>Rapid Assessment: a free Recall Knowledge about the opponent as a fight begins.</summary>
+    [DataField, AutoNetworkedField]
+    public bool RapidAssessment;
+
     /// <summary>A success on a check to Climb is a critical success.</summary>
     [DataField, AutoNetworkedField]
     public bool ClimbSuccessCritical;
@@ -809,6 +837,11 @@ public enum CFCombatOption : byte
     SapLife,
     DirectedChannel,
     VersatilePerformance,
+    MedicineWithIntelligence,
+    ShieldedRecovery,
+    ArmorRegimentTraining,
+    ObservationalAnalysis,
+    RapidAssessment,
 }
 
 public enum CFPointMark : byte

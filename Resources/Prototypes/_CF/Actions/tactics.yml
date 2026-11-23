@@ -101,3 +101,123 @@
   components:
   - type: CFTacticAction
     easesFrightened: true
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTacticDoubleTeam
+  name: Double Team
+  description: The nearest squad member in reach of the enemy Shoves it, and if it lands in another member's reach, that one Strikes it. Costs 2 actions.
+  components:
+  - type: TargetAction
+    range: 6.25
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFTacticAction
+    doubleTeam: true
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTacticCoordinatingManeuvers
+  name: Coordinating Maneuvers
+  description: The nearest squad member in reach of the enemy Repositions it, 5 feet away from you, 10 on a critical success.
+  components:
+  - type: TargetAction
+    range: 6.25
+  - type: CFTacticAction
+    repositions: true
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActTacticEndIt
+  name: End It!
+  description: "Only when your side outnumbers the enemy and one of your squad dropped an enemy in the last 6 seconds. Every enemy within 10 feet of a squad member saves Will against your class DC: frightened 1 on a failure, frightened 2 on a critical failure. Costs 2 actions."
+  components:
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFTacticAction
+    endIt: true
+  - type: CFTrait
+    traits:
+    - Emotion
+    - Fear
+    - Mental
+  - type: CFCheck
+    defense: Will
+    dcSource: Class
+    basicSave: false
+  - type: CFDegreeEffects
+    failure:
+    - !type:CFApplyConditionEffect
+      condition: Frightened
+      value: 1
+    criticalFailure:
+    - !type:CFApplyConditionEffect
+      condition: Frightened
+      value: 2
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActTacticMountaineeringTraining
+  name: Mountaineering Training
+  description: Everyone in your squad has a climb Speed for 6 seconds, so a ladder with a check is climbed with none.
+  components:
+  - type: CFTacticAction
+    squadEffects:
+    - !type:CFClimbSpeedEffect
+      durationSeconds: 6
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActTacticPassageOfLines
+  name: Passage of Lines
+  description: Squad members standing beside each other trade places.
+  components:
+  - type: CFTacticAction
+    swapsPositions: true
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTacticProtectiveScreen
+  name: Protective Screen
+  description: A squad member's spells and ranged attacks set off no reactions for 6 seconds.
+  components:
+  - type: TargetAction
+    range: 6.25
+  - type: CFTacticAction
+    targetEffects:
+    - !type:CFScreenEffect
+      durationSeconds: 6
+
+# Banner feats
+- type: entity
+  parent: CFActivityInstant
+  id: CFActPlantBanner
+  name: Plant Banner
+  description: Set your held banner in the ground where you stand. Every 6 seconds, you and allies within 30 feet of it gain 4 temporary Hit Points, 4 more at level 4 and every 4 after. It still counts as your banner. Use it again beside the banner to take it back.
+  components:
+  - type: CFPlantBannerAction
+  - type: CFTrait
+    traits:
+    - Manipulate
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActBannerTwirl
+  name: Banner Twirl
+  description: You and allies beside you are concealed for 6 seconds.
+  components:
+  - type: CFNeedsBanner
+  - type: CFEffectAction
+  - type: CFTrait
+    traits:
+    - Manipulate
+  - type: CFAreaEffect
+    shape: Emanation
+    sizeFeet: 5
+    includeSelf: true
+    filter: Allies
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFApplyConditionEffect
+      condition: Concealed
+      durationSeconds: 6

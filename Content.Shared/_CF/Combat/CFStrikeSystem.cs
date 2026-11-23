@@ -394,7 +394,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
     /// </summary>
     public void ReactiveStrike(EntityUid actor)
     {
-        if (!_net.IsServer || _strikeDepth > 0)
+        if (!_net.IsServer || _strikeDepth > 0 || _conditions.IsScreened(actor))
             return;
 
         var origin = _transform.GetMapCoordinates(actor);
@@ -506,6 +506,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
             bonus -= _conditions.Value(user, CFConditionKind.Enfeebled);
 
         bonus += _conditions.CircumstanceAttackPenalty(user, target);
+        // Guiding Shot: the first ally to follow the shot has the way shown.
+        bonus += _conditions.TakeGuidance(target, user);
         if (weapon.Ranged)
             bonus += _bonuses.Total(user, CFBonusStat.RangedAttackRoll) - _conditions.Clumsy(user);
 

@@ -12,3 +12,6 @@
     - "Officer's Medical Training"
   requiresFeats:
     - CFOfficersMedicalTraining
+  grants:
+    - !type:CFGrantOption
+      option: ShieldedRecovery

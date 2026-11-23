@@ -9,4 +9,10 @@
   traits:
     - "Commander"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-defensive-swap
+        trigger: InterceptsDamage
+        swapsPlaces: true
+        rangeFeet: 5

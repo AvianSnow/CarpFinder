@@ -41,6 +41,7 @@ public sealed partial class CFFightSystem : EntitySystem
     [Dependency] private CFConditionSystem _conditions = default!;
     [Dependency] private CFArmorSystem _armor = default!;
     [Dependency] private CFGunslingerSystem _gunslinger = default!;
+    [Dependency] private Content.Shared.CF.Actions.CFManeuverSystem _maneuvers = default!;
 
     /// <summary>True if the creature has attacked or been attacked within <see cref="Quiet"/>.</summary>
     public bool IsFighting(EntityUid uid)
@@ -96,5 +97,9 @@ public sealed partial class CFFightSystem : EntitySystem
         // Surprise Attack: whoever has not acted yet is off-guard to the Rogue that starts the fight.
         if (ent.Comp.SurpriseAttack && args.Attacking && args.OpponentWasQuiet)
             _conditions.SetOffGuardTo(args.Opponent, ent, 6f);
+
+        // Rapid Assessment: a Commander sizes the opponent up at once.
+        if (ent.Comp.RapidAssessment)
+            _maneuvers.TryRecall(ent, args.Opponent, free: true);
     }
 }

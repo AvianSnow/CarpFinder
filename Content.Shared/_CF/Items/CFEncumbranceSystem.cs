@@ -90,9 +90,15 @@ public sealed partial class CFEncumbranceSystem : EntitySystem
     public int CarriedTenths(EntityUid uid)
     {
         var total = 0;
+        var regiment = CompOrNull<Content.Shared.CF.Combat.CFCombatOptionsComponent>(uid)?.ArmorRegimentTraining == true;
         foreach (var item in _inventory.GetHandOrInventoryEntities(uid))
         {
             var own = ItemTenths(item);
+
+            // Armor Regiment Training: heavy armor is 1 Bulk lighter.
+            if (regiment && TryComp(item, out Content.Shared.CF.Combat.CFArmorComponent? armor) && armor.Category == Content.Shared.CF.Combat.CFArmorCategory.Heavy)
+                own = Math.Max(0, own - 10);
+
             total += (IsHolstered(uid, item) ? HolsteredTenths(own) : own) + ContentsTenths(item);
         }
 

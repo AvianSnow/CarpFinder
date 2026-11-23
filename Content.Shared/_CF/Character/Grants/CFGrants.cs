@@ -18,6 +18,25 @@ using Robust.Shared.Prototypes;
 
 namespace Content.Shared.CF.Character.Grants;
 
+/// <summary>A Lore the character knows, trained: Warfare Lore for a Commander. Lore is one skill here, so the name is what differs.</summary>
+public sealed partial class CFGrantLore : CFGrant
+{
+    [DataField(required: true)]
+    public string Lore = string.Empty;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        var combat = entities.EnsureComponent<CFCombatantComponent>(args.Mob);
+        if (!combat.LoreNames.Contains(Lore))
+            combat.LoreNames.Add(Lore);
+
+        if (!combat.TrainedSkills.Contains("Lore"))
+            combat.TrainedSkills.Add("Lore");
+
+        entities.Dirty(args.Mob, combat);
+    }
+}
+
 /// <summary>Raises proficiency ranks. A rank the character already beats is left alone.</summary>
 public sealed partial class CFGrantProficiency : CFGrant
 {
@@ -940,10 +959,18 @@ public sealed partial class CFGrantChosenAction : CFGrant
     [DataField(required: true)]
     public Dictionary<string, EntProtoId> Actions = new();
 
+    /// <summary>Which of the option's picks to read, for an option with more than one (Tactical Expansion's two tactics).</summary>
+    [DataField]
+    public int Slot;
+
     public override void Apply(IEntityManager entities, CFGrantArgs args)
     {
         var features = entities.System<CFCharacterFeatureSystem>();
-        if (features.Pick(args.Mob, args.Source) is { } pick && Actions.TryGetValue(pick, out var action))
+        var pick = features.Pick(args.Mob, args.Source, Slot);
+        if (pick != null && pick.StartsWith(CFOptionChoices.NamedPrefix, StringComparison.Ordinal))
+            pick = pick[CFOptionChoices.NamedPrefix.Length..];
+
+        if (pick != null && Actions.TryGetValue(pick, out var action))
             features.GrantAction(args.Mob, action);
     }
 }

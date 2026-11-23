@@ -209,3 +209,204 @@
   grants:
     - !type:CFGrantAction
       action: CFActTacticGatherToMe
+
+- type: cfClassChoice
+  id: TacticFirstDoubleTeam
+  class: Commander
+  slot: cf-class-choice-tactic-first
+  name: cf-class-choice-tactic-first-doubleteam
+  description: cf-class-choice-tactic-first-doubleteam-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticDoubleTeam
+
+- type: cfClassChoice
+  id: TacticFirstCoordinatingManeuvers
+  class: Commander
+  slot: cf-class-choice-tactic-first
+  name: cf-class-choice-tactic-first-coordinatingmaneuvers
+  description: cf-class-choice-tactic-first-coordinatingmaneuvers-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticCoordinatingManeuvers
+
+- type: cfClassChoice
+  id: TacticFirstEndIt
+  class: Commander
+  slot: cf-class-choice-tactic-first
+  name: cf-class-choice-tactic-first-endit
+  description: cf-class-choice-tactic-first-endit-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticEndIt
+
+- type: cfClassChoice
+  id: TacticFirstMountaineeringTraining
+  class: Commander
+  slot: cf-class-choice-tactic-first
+  name: cf-class-choice-tactic-first-mountaineeringtraining
+  description: cf-class-choice-tactic-first-mountaineeringtraining-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticMountaineeringTraining
+
+- type: cfClassChoice
+  id: TacticFirstNavalTraining
+  class: Commander
+  slot: cf-class-choice-tactic-first
+  name: cf-class-choice-tactic-first-navaltraining
+  description: cf-class-choice-tactic-first-navaltraining-desc
+
+- type: cfClassChoice
+  id: TacticFirstPassageOfLines
+  class: Commander
+  slot: cf-class-choice-tactic-first
+  name: cf-class-choice-tactic-first-passageoflines
+  description: cf-class-choice-tactic-first-passageoflines-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticPassageOfLines
+
+- type: cfClassChoice
+  id: TacticFirstProtectiveScreen
+  class: Commander
+  slot: cf-class-choice-tactic-first
+  name: cf-class-choice-tactic-first-protectivescreen
+  description: cf-class-choice-tactic-first-protectivescreen-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticProtectiveScreen
+
+- type: cfClassChoice
+  id: TacticSecondDoubleTeam
+  class: Commander
+  slot: cf-class-choice-tactic-second
+  name: cf-class-choice-tactic-second-doubleteam
+  description: cf-class-choice-tactic-second-doubleteam-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticDoubleTeam
+
+- type: cfClassChoice
+  id: TacticSecondCoordinatingManeuvers
+  class: Commander
+  slot: cf-class-choice-tactic-second
+  name: cf-class-choice-tactic-second-coordinatingmaneuvers
+  description: cf-class-choice-tactic-second-coordinatingmaneuvers-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticCoordinatingManeuvers
+
+- type: cfClassChoice
+  id: TacticSecondEndIt
+  class: Commander
+  slot: cf-class-choice-tactic-second
+  name: cf-class-choice-tactic-second-endit
+  description: cf-class-choice-tactic-second-endit-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticEndIt
+
+- type: cfClassChoice
+  id: TacticSecondMountaineeringTraining
+  class: Commander
+  slot: cf-class-choice-tactic-second
+  name: cf-class-choice-tactic-second-mountaineeringtraining
+  description: cf-class-choice-tactic-second-mountaineeringtraining-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticMountaineeringTraining
+
+- type: cfClassChoice
+  id: TacticSecondNavalTraining
+  class: Commander
+  slot: cf-class-choice-tactic-second
+  name: cf-class-choice-tactic-second-navaltraining
+  description: cf-class-choice-tactic-second-navaltraining-desc
+
+- type: cfClassChoice
+  id: TacticSecondPassageOfLines
+  class: Commander
+  slot: cf-class-choice-tactic-second
+  name: cf-class-choice-tactic-second-passageoflines
+  description: cf-class-choice-tactic-second-passageoflines-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticPassageOfLines
+
+- type: cfClassChoice
+  id: TacticSecondProtectiveScreen
+  class: Commander
+  slot: cf-class-choice-tactic-second
+  name: cf-class-choice-tactic-second-protectivescreen
+  description: cf-class-choice-tactic-second-protectivescreen-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticProtectiveScreen
+
+- type: cfClassChoice
+  id: TacticThirdDoubleTeam
+  class: Commander
+  slot: cf-class-choice-tactic-third
+  name: cf-class-choice-tactic-third-doubleteam
+  description: cf-class-choice-tactic-third-doubleteam-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticDoubleTeam
+
+- type: cfClassChoice
+  id: TacticThirdCoordinatingManeuvers
+  class: Commander
+  slot: cf-class-choice-tactic-third
+  name: cf-class-choice-tactic-third-coordinatingmaneuvers
+  description: cf-class-choice-tactic-third-coordinatingmaneuvers-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticCoordinatingManeuvers
+
+- type: cfClassChoice
+  id: TacticThirdEndIt
+  class: Commander
+  slot: cf-class-choice-tactic-third
+  name: cf-class-choice-tactic-third-endit
+  description: cf-class-choice-tactic-third-endit-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticEndIt
+
+- type: cfClassChoice
+  id: TacticThirdMountaineeringTraining
+  class: Commander
+  slot: cf-class-choice-tactic-third
+  name: cf-class-choice-tactic-third-mountaineeringtraining
+  description: cf-class-choice-tactic-third-mountaineeringtraining-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticMountaineeringTraining
+
+- type: cfClassChoice
+  id: TacticThirdNavalTraining
+  class: Commander
+  slot: cf-class-choice-tactic-third
+  name: cf-class-choice-tactic-third-navaltraining
+  description: cf-class-choice-tactic-third-navaltraining-desc
+
+- type: cfClassChoice
+  id: TacticThirdPassageOfLines
+  class: Commander
+  slot: cf-class-choice-tactic-third
+  name: cf-class-choice-tactic-third-passageoflines
+  description: cf-class-choice-tactic-third-passageoflines-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticPassageOfLines
+
+- type: cfClassChoice
+  id: TacticThirdProtectiveScreen
+  class: Commander
+  slot: cf-class-choice-tactic-third
+  name: cf-class-choice-tactic-third-protectivescreen
+  description: cf-class-choice-tactic-third-protectivescreen-desc
+  grants:
+    - !type:CFGrantAction
+      action: CFActTacticProtectiveScreen

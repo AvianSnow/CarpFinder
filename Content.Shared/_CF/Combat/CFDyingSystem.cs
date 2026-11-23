@@ -161,6 +161,10 @@ public sealed partial class CFDyingSystem : EntitySystem
         bool fromCriticalHit,
         EntityUid? origin = null)
     {
+        // End It! asks whether the squad dropped an enemy lately.
+        if (origin is { } attacker && TryComp(attacker, out CFCombatOptionsComponent? attackerOptions))
+            attackerOptions.LastDroppedEnemyAt = _timing.CurTime;
+
         combatant.CurrentHp = 0;
         if (combatant.DiesAtZeroHp)
         {

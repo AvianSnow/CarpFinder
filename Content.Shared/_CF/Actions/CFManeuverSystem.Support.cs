@@ -129,6 +129,10 @@ public sealed partial class CFManeuverSystem
 
         // The Outwit edge: +2 circumstance to Recall Knowledge about the hunted prey.
         var bonus = style is { PreyOutwit: true } && style.Prey == target ? 2 : 0;
+
+        // Observational Analysis: +2 when the check comes with another action, as Combat Assessment's does.
+        if (free && style is { ObservationalAnalysis: true })
+            bonus = Math.Max(bonus, 2);
         var degree = RollRecall(user, CFCraftingRules.LevelDc(level) - bonus);
 
         // The Mastermind racket: an identified creature is off-guard to the Rogue for a while.

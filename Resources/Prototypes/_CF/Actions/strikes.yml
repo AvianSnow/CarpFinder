@@ -634,3 +634,23 @@
     unarmedOnly: true
     withConstruct: true
     closesFeet: 15
+
+# Commander
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActGuidingShot
+  name: Guiding Shot
+  description: A ranged Strike. If it hits, the next creature other than you to attack the target within 6 seconds gets +1 circumstance to the roll, +2 after a critical hit. A flourish.
+  components:
+  - type: TargetAction
+    range: 200
+  - type: CFFlourish
+  - type: CFStrikeAction
+    ranged: true
+    effectsNeedDamage: false
+    onHit:
+    - !type:CFGuideEffect
+      bonus: 1
+    onCritical:
+    - !type:CFGuideEffect
+      bonus: 2

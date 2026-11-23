@@ -322,6 +322,10 @@ public sealed partial class CFReaction
     [DataField]
     public int FocusPoints;
 
+    /// <summary>Defensive Swap: the owner trades places with the ally it saves, and takes the whole hit.</summary>
+    [DataField]
+    public bool SwapsPlaces;
+
     /// <summary>
     /// With <see cref="CFReactionTrigger.InterceptsDamage"/>: only this much damage per spell rank is taken in the ally's
     /// place, and the ally takes the rest (Protector's Sacrifice). 0 takes all of it.

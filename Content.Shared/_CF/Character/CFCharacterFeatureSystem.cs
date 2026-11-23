@@ -649,6 +649,21 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
             case CFCombatOption.VersatilePerformance:
                 options.VersatilePerformance = true;
                 break;
+            case CFCombatOption.MedicineWithIntelligence:
+                options.MedicineWithIntelligence = true;
+                break;
+            case CFCombatOption.ShieldedRecovery:
+                options.ShieldedRecovery = true;
+                break;
+            case CFCombatOption.ArmorRegimentTraining:
+                options.ArmorRegimentTraining = true;
+                break;
+            case CFCombatOption.ObservationalAnalysis:
+                options.ObservationalAnalysis = true;
+                break;
+            case CFCombatOption.RapidAssessment:
+                options.RapidAssessment = true;
+                break;
             case CFCombatOption.ViciousSwing:
                 options.ViciousSwing = true;
                 break;

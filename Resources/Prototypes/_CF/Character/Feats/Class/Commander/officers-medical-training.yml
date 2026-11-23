@@ -10,4 +10,8 @@
     - "Commander"
   trainedSkills:
     - Medicine
-  pendingAction: true
+  grants:
+    - !type:CFGrantOption
+      option: MedicineWithIntelligence
+    - !type:CFGrantFeat
+      feat: CFBattleMedicine

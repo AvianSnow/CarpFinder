@@ -88,6 +88,8 @@ public sealed partial class CFMedicineSystem : EntitySystem
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private CFActionPoolSystem _actions = default!;
     [Dependency] private CFConditionSystem _conditions = default!;
+    [Dependency] private CFShieldSystem _shields = default!;
+    [Dependency] private CFBonusSystem _bonuses = default!;
     [Dependency] private CFEffectSystem _effects = default!;
     [Dependency] private CFFactionSystem _factions = default!;
     [Dependency] private CFVfxSystem _vfx = default!;
@@ -317,7 +319,16 @@ public sealed partial class CFMedicineSystem : EntitySystem
 
         var degree = RollMedicine(user, dc);
         Comp(target).BattleMedicineUntil[user] = _timing.CurTime + BattleMedicineImmunity;
-        return ApplyResult(user, target, degree, bonus);
+        var healed = ApplyResult(user, target, degree, bonus);
+
+        // Shielded Recovery: a shield in the other hand covers the patient for a moment.
+        if (CompOrNull<CFCombatOptionsComponent>(user)?.ShieldedRecovery == true && _shields.TryGetUsableShield(user, out _))
+        {
+            _bonuses.AddBonus(target, CFBonusStat.ArmorClass, CFBonusType.Circumstance, 1, 6f);
+            _bonuses.AddBonus(target, CFBonusStat.Reflex, CFBonusType.Circumstance, 1, 6f);
+        }
+
+        return healed;
     }
 
     private bool ApplyResult(EntityUid user, EntityUid target, CFDegree degree, int bonus)
@@ -383,6 +394,14 @@ public sealed partial class CFMedicineSystem : EntitySystem
             > CFDefense.SkillModifier(_prototypes, combat, abilities, Skill, CFAbility.Wisdom, 0))
         {
             return _conditions.RollSkillAgainst(user, "Crafting", CFAbility.Intelligence, dc, out _);
+        }
+
+        // Officer's Medical Training: Intelligence in place of Wisdom, when it is the better of the two.
+        if (CompOrNull<CFCombatOptionsComponent>(user)?.MedicineWithIntelligence == true
+            && TryComp(user, out CFAbilityScoreComponent? scores)
+            && scores.GetModifier(CFAbility.Intelligence) > scores.GetModifier(CFAbility.Wisdom))
+        {
+            return _conditions.RollSkillAgainst(user, Skill, CFAbility.Intelligence, dc, out _);
         }
 
         return _conditions.RollSkillAgainst(user, Skill, CFAbility.Wisdom, dc, out _);
