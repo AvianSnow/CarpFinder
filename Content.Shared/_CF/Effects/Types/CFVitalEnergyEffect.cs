@@ -51,7 +51,7 @@ public sealed partial class CFVitalEnergyEffect : CFEffect
         var system = entities.System<CFEffectSystem>();
         var rolled = system.Roll(Dice + HeightenDice * args.HeightenSteps, system.SpellDie(args, Die), 0);
 
-        if (CFVitalEnergies.Heals(entities, target, Energy))
+        if (CFVitalEnergies.HealsFor(entities, args.User, target, Energy))
         {
             var mode = entities.GetComponentOrNull<CFModeChoiceComponent>(args.Source);
             // No mode picked is the ordinary 2-action cast, as a creature with no player makes it.
@@ -64,26 +64,30 @@ public sealed partial class CFVitalEnergyEffect : CFEffect
             if (entities.HasComponent<CFSpellComponent>(args.Source))
                 rolled += Math.Max(0, entities.System<CFBonusSystem>().Total(target, CFBonusStat.SpellHealing));
 
-            system.Heal(args.User, target, rolled, Energy == CFVitalEnergy.Void);
+            // Invert Harm: void heals a living ally, so it is given as the healing that reaches the living.
+            system.Heal(args.User, target, rolled, Energy == CFVitalEnergy.Void && !CFVitalEnergies.IsLiving(entities, target));
             if (!system.IsAreaUse(args.Source))
                 AfterSingleHeal(entities, args, target);
 
             return;
         }
 
-        if (!CFVitalEnergies.Harms(entities, target, Energy))
+        if (!CFVitalEnergies.HarmsFor(entities, args.User, target, Energy))
             return;
 
+        // Mastery of Life and Death: the energy that hurts this one, when the spell's own would not.
+        var energy = CFVitalEnergies.Harms(entities, target, Energy) ? Energy : CFVitalEnergies.Other(Energy);
         var multiplier = CFEffectSystem.DamageMultiplier(args);
         if (multiplier <= 0f)
         {
-            system.ShowMiss(target, Energy.ToString());
+            system.ShowMiss(target, energy.ToString());
             return;
         }
 
         rolled += system.DamageBonus(args.User) + system.PotencyBonus(args) + system.UnleashBonus(args);
         var amount = multiplier < 1f ? (int) (rolled * multiplier) : rolled * (int) multiplier;
-        system.DealDamage(args.User, target, amount, Energy.ToString(), multiplier >= 2f);
+        system.DealDamage(args.User, target, amount, energy.ToString(), multiplier >= 2f);
+        entities.System<CFSpellshapeSystem>().NoteDamage(args.User, args.Source, amount);
         AfterHarm(entities, args, target, amount);
     }
 
@@ -146,5 +150,41 @@ public static class CFVitalEnergies
     public static bool Harms(IEntityManager entities, EntityUid uid, CFVitalEnergy energy)
     {
         return energy == CFVitalEnergy.Vitality ? entities.HasComponent<CFVoidHealingComponent>(uid) : IsLiving(entities, uid);
+    }
+
+    public static CFVitalEnergy Other(CFVitalEnergy energy)
+    {
+        return energy == CFVitalEnergy.Vitality ? CFVitalEnergy.Void : CFVitalEnergy.Vitality;
+    }
+
+    /// <summary>
+    /// Whether <paramref name="user"/>'s spell of this energy heals <paramref name="target"/>. A Necromancer with Mastery of
+    /// Life and Death never heals an enemy, and one with Invert Harm heals living allies with Harm.
+    /// </summary>
+    public static bool HealsFor(IEntityManager entities, EntityUid user, EntityUid target, CFVitalEnergy energy)
+    {
+        var options = entities.GetComponentOrNull<CFCombatOptionsComponent>(user);
+        var enemy = user != target && entities.System<Content.Shared.CF.Factions.CFFactionSystem>().CanHarm(user, target);
+        if (options is { MasteryOfLifeAndDeath: true } && enemy)
+            return false;
+
+        if (options is { InvertHarm: true } && energy == CFVitalEnergy.Void && !enemy && IsLiving(entities, target))
+            return true;
+
+        return Heals(entities, target, energy);
+    }
+
+    /// <summary>Whether <paramref name="user"/>'s spell of this energy hurts <paramref name="target"/>. See <see cref="HealsFor"/>.</summary>
+    public static bool HarmsFor(IEntityManager entities, EntityUid user, EntityUid target, CFVitalEnergy energy)
+    {
+        var options = entities.GetComponentOrNull<CFCombatOptionsComponent>(user);
+        var enemy = user != target && entities.System<Content.Shared.CF.Factions.CFFactionSystem>().CanHarm(user, target);
+        if (options is { MasteryOfLifeAndDeath: true } && enemy)
+            return Harms(entities, target, energy) || Harms(entities, target, Other(energy));
+
+        if (options is { InvertHarm: true } && energy == CFVitalEnergy.Void && !enemy && IsLiving(entities, target))
+            return false;
+
+        return Harms(entities, target, energy);
     }
 }

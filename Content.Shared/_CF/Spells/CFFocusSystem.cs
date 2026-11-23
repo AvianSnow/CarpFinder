@@ -32,6 +32,8 @@ public sealed partial class CFFocusSystem : EntitySystem
     [Dependency] private INetManager _net = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private SharedDoAfterSystem _doAfter = default!;
+    [Dependency] private SharedTransformSystem _transform = default!;
+    [Dependency] private Content.Shared.CF.Companions.CFThrallSystem _thralls = default!;
 
     public static int Remaining(CFSpellbookComponent book)
     {
@@ -83,16 +85,33 @@ public sealed partial class CFFocusSystem : EntitySystem
         if (args.Cancelled || args.Handled)
             return;
 
+        if (Refocus(ent))
+            args.Handled = true;
+    }
+
+    /// <summary>The Refocus has run its minute. False if there was nothing to regain.</summary>
+    public bool Refocus(Entity<CFSpellbookComponent> ent)
+    {
         var curses = EntityManager.System<CFCurseboundSystem>();
         if (ent.Comp.FocusSpent <= 0 && curses.Value(ent) <= 0)
-            return;
+            return false;
 
-        args.Handled = true;
         curses.Lower(ent);
         if (ent.Comp.FocusSpent > 0)
             ent.Comp.FocusSpent--;
 
+        // A Necromancer with a thrall about destroys it, and regains a second point.
+        if (_net.IsServer
+            && ent.Comp.FocusSpent > 0
+            && HasComp<Content.Shared.CF.Companions.CFNecromancerComponent>(ent)
+            && _thralls.Nearest(ent, _transform.GetMapCoordinates(ent), 30) is { } thrall)
+        {
+            QueueDel(thrall);
+            ent.Comp.FocusSpent--;
+        }
+
         Dirty(ent);
         _popup.PopupEntity(Loc.GetString("cf-focus-done"), ent, ent);
+        return true;
     }
 }

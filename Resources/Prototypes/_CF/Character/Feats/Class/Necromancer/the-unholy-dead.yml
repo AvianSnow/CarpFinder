@@ -12,3 +12,9 @@
     - "Unholy"
   prerequisites:
     - "You aren't holy"
+  grants:
+    - !type:CFGrantTrait
+      add: [ Unholy ]
+    - !type:CFGrantThralls
+      trait: Unholy
+      spiritDamage: 1

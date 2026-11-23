@@ -117,6 +117,9 @@ public enum CFModeRequirement : byte
     BomberField,
     ToxicologistField,
     ChirurgeonField,
+
+    /// <summary>The Overwhelming Harm feat: a 60-foot 3-action Harm.</summary>
+    OverwhelmingHarm,
 }
 
 public static class CFModeRequirements
@@ -131,6 +134,7 @@ public static class CFModeRequirements
             CFModeRequirement.BomberField => options?.BomberField == true,
             CFModeRequirement.ToxicologistField => options?.ToxicologistField == true,
             CFModeRequirement.ChirurgeonField => options?.ChirurgeonField == true,
+            CFModeRequirement.OverwhelmingHarm => options?.OverwhelmingHarm == true,
             CFModeRequirement.DirectedChannel => entities.GetComponentOrNull<Content.Shared.CF.Combat.CFCombatOptionsComponent>(user)?.DirectedChannel == true,
             _ => true,
         };

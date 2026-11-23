@@ -11,3 +11,9 @@
     - "Necromancer"
   prerequisites:
     - "You aren't unholy"
+  grants:
+    - !type:CFGrantTrait
+      add: [ Holy ]
+    - !type:CFGrantThralls
+      trait: Holy
+      spiritDamage: 1

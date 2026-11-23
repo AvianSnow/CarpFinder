@@ -11,4 +11,12 @@
     - "Necromancer"
     - "Occult"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-void-siphon
+        trigger: WouldBeDamaged
+        damageTypes: [ Void ]
+        resistLevel: true
+        anyDistance: true
+        tempHpLevel: true

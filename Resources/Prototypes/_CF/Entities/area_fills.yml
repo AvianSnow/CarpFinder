@@ -115,3 +115,21 @@
   - type: CFDifficultTerrain
     cause: Snow
     magical: true
+
+# The Flesh fascination: what a destroyed thrall leaves is hard to cross for 10 minutes.
+- type: entity
+  id: CFFillFleshTerrain
+  name: dead flesh
+  description: What is left of a thrall. Hard to cross.
+  components:
+  - type: TimedDespawn
+    lifetime: 600
+  - type: Sprite
+    drawdepth: FloorObjects
+    sprite: Fluids/puddle.rsi
+    color: "#6e1a1a"
+    layers:
+    - state: splat5
+  - type: CFDifficultTerrain
+    cause: Creature
+    magical: true

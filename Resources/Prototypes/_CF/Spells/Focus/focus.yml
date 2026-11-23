@@ -850,6 +850,79 @@
         heightenDice: 1
 
 - type: entity
+  parent: CFSpellTarget
+  id: CFMuscleBarrier
+  name: Muscle Barrier
+  description: A thrall is split into layers of muscle that wrap round you or the nearest ally within 15 feet of it, for 10 temporary Hit Points and +1 status to Athletics for a minute. Costs a Focus Point.
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 2
+  - type: CFSpell
+    spell: MuscleBarrier
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+    filter: All
+  - type: EntityTargetAction
+    whitelist:
+      components:
+      - CFThrall
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFThrallBlastEffect
+      shape: Burst
+      sizeFeet: 15
+      filter: Allies
+      includesUser: true
+      maxTargets: 1
+      noCheck: true
+      effects:
+      - !type:CFTemporaryHpEffect
+        amount: 10
+        heightenAmount: 10
+        durationSeconds: 60
+      - !type:CFBonusEffect
+        stat: SkillChecks
+        skill: Athletics
+        type: Status
+        value: 1
+        durationSeconds: 60
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFSongOfTheSoul
+  name: Song of the Soul
+  description: A thrall becomes an instrument whose silent song one soul hears. The nearest hurt ally within 15 feet of it regains 1d8 Hit Points, and 1 more every 6 seconds while it stays within 15 feet of the thrall. The thrall survives. Costs a Focus Point.
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 2
+  - type: CFSpell
+    spell: SongOfTheSoul
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+    filter: All
+  - type: EntityTargetAction
+    whitelist:
+      components:
+      - CFThrall
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFSongOfTheSoulEffect
+
+- type: entity
   parent: CFSpellInstant
   id: CFCreateThrall
   name: Create Thrall
@@ -959,6 +1032,30 @@
   range: 30 feet
   targets: 1 of your thralls
   summary: "A thrall shatters: 2d10 piercing in a 30-foot cone, basic Reflex. Costs a Focus Point."
+
+- type: cfSpell
+  id: MuscleBarrier
+  name: Muscle Barrier
+  rank: 1
+  traits: [Concentrate, Manipulate]
+  actionCost: Two
+  range: 30 feet
+  targets: 1 of your thralls
+  duration: 1 minute
+  summary: A thrall wraps you or an ally within 15 feet of it in muscle, for 10 temporary Hit Points and +1 status to Athletics. Costs a Focus Point.
+  heightened: 10 more temporary Hit Points per rank.
+
+- type: cfSpell
+  id: SongOfTheSoul
+  name: Song of the Soul
+  rank: 1
+  traits: [Concentrate, Manipulate, Healing]
+  actionCost: Two
+  range: 30 feet
+  targets: 1 of your thralls
+  duration: 1 minute
+  summary: An ally within 15 feet of a thrall regains 1d8 Hit Points, and 1 more every 6 seconds while it stays near the thrall. Costs a Focus Point.
+  heightened: 1d8 more at once, and 1 more every 6 seconds, per rank.
 
 - type: cfSpell
   id: CreateThrall

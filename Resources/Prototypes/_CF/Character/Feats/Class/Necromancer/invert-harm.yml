@@ -10,3 +10,6 @@
     - "Necromancer"
   prerequisites:
     - "Mastery of Life and Death"
+  grants:
+    - !type:CFGrantOption
+      option: InvertHarm

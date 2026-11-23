@@ -30,16 +30,23 @@ public sealed partial class CFThrallServerSystem : EntitySystem
     [Dependency] private CFBonusSystem _bonuses = default!;
     [Dependency] private CFCompanionSystem _companions = default!;
     [Dependency] private CFSummonedSystem _summoned = default!;
+    [Dependency] private CFStrikeSystem _strikes = default!;
+    [Dependency] private CFEffectSystem _effects = default!;
+    [Dependency] private Content.Shared.CF.Factions.CFFactionSystem _factions = default!;
+
+    /// <summary>Adjacent, for Thrall Teamwork: within a tile and a half, centre to centre.</summary>
+    private const float AdjacentTiles = 1.6f;
 
     [SubscribeLocalEvent]
     private void OnCreate(Entity<CFNecromancerComponent> ent, ref CFCreateThrallsEvent args)
     {
-        var count = args.Count + ent.Comp.ExtraThralls;
-        var origin = Transform(ent).Coordinates;
+        // Inevitable Return raises one on the corpse, not beside the caster, and the count stands as it is.
+        var count = args.At == null ? args.Count + ent.Comp.ExtraThralls : args.Count;
+        var origin = args.At ?? Transform(ent).Coordinates;
         var level = CompOrNull<CFCombatantComponent>(ent)?.Level ?? 1;
         for (var i = 0; i < count; i++)
         {
-            var thrall = Spawn("CFThrall", origin.Offset(Offsets[i % Offsets.Length]));
+            var thrall = Spawn("CFThrall", args.At == null ? origin.Offset(Offsets[i % Offsets.Length]) : origin);
             _companions.Bind(ent, thrall);
 
             var comp = EnsureComp<CFThrallComponent>(thrall);
@@ -53,12 +60,60 @@ public sealed partial class CFThrallServerSystem : EntitySystem
                 if (!string.IsNullOrEmpty(ent.Comp.DamageType))
                     options.NaturalType = ent.Comp.DamageType;
 
+                // Mobile Thralls: a climb Speed for as long as it lasts.
+                if (ent.Comp.Climb)
+                    options.ClimbSpeedUntil = TimeSpan.MaxValue;
+
                 Dirty(thrall, options);
+            }
+
+            if (ent.Comp.Trait.Length > 0 && TryComp(thrall, out Content.Shared.CF.Traits.CFTraitComponent? traits))
+            {
+                traits.Traits.Add(ent.Comp.Trait);
+                Dirty(thrall, traits);
             }
 
             if (ent.Comp.ExtraSpeed != 0)
                 _bonuses.AddPermanentBonus(thrall, CFBonusStat.Speed, CFBonusType.Status, ent.Comp.ExtraSpeed);
         }
+
+        if (args.Teamwork && ent.Comp.Teamwork)
+            Teamwork(ent);
+    }
+
+    /// <summary>Thrall Teamwork: a free melee Strike at an enemy in the Reaper's reach that stands beside one of its thralls.</summary>
+    private void Teamwork(EntityUid reaper)
+    {
+        var position = _transform.GetWorldPosition(reaper);
+        var mapId = Transform(reaper).MapID;
+        var query = EntityQueryEnumerator<CFCombatantComponent, TransformComponent>();
+        while (query.MoveNext(out var uid, out var combat, out var xform))
+        {
+            if (uid == reaper || xform.MapID != mapId || combat.CurrentHp <= 0 || !_mobState.IsAlive(uid) || !_factions.CanHarm(reaper, uid))
+                continue;
+
+            var at = _transform.GetWorldPosition(xform);
+            if ((at - position).Length() > AdjacentTiles || !BesideThrall(reaper, at))
+                continue;
+
+            if (_strikes.TryMeleeWeapon(reaper, out var stats, out var weapon))
+                _strikes.PerformStrike(reaper, uid, stats, weapon, melee: true);
+
+            return;
+        }
+    }
+
+    private bool BesideThrall(EntityUid owner, Vector2 position)
+    {
+        var mapId = Transform(owner).MapID;
+        var query = EntityQueryEnumerator<CFThrallComponent, TransformComponent>();
+        while (query.MoveNext(out var uid, out var thrall, out var xform))
+        {
+            if (thrall.Necromancer == owner && xform.MapID == mapId && _mobState.IsAlive(uid) && (_transform.GetWorldPosition(xform) - position).Length() <= AdjacentTiles)
+                return true;
+        }
+
+        return false;
     }
 
     [SubscribeLocalEvent]
@@ -115,8 +170,8 @@ public sealed partial class CFThrallServerSystem : EntitySystem
     public override void Update(float frameTime)
     {
         var now = _timing.CurTime;
-        var query = EntityQueryEnumerator<CFThrallComponent>();
-        while (query.MoveNext(out var uid, out var thrall))
+        var query = EntityQueryEnumerator<CFThrallComponent, TransformComponent>();
+        while (query.MoveNext(out var uid, out var thrall, out var thrallXform))
         {
             // A dead thrall has already gone in a puff of smoke (CFSummonedSystem).
             if (now >= thrall.Expires)
@@ -130,6 +185,17 @@ public sealed partial class CFThrallServerSystem : EntitySystem
                 thrall.OrderUntil = TimeSpan.Zero;
                 thrall.ChargeDice = 0;
                 _companions.StopOrder(uid);
+            }
+
+            // Song of the Soul: fast healing for the one creature that hears it, while it stays close.
+            if (thrall.SongFor is { } listener && now >= thrall.NextSong)
+            {
+                thrall.NextSong = now + OrderLasts;
+                if (TerminatingOrDeleted(listener) || !_mobState.IsAlive(listener))
+                    thrall.SongFor = null;
+                else if (Transform(listener).MapID == thrallXform.MapID
+                         && (_transform.GetWorldPosition(listener) - _transform.GetWorldPosition(thrallXform)).Length() <= 15f / CFMelee.FeetPerTile + 0.5f)
+                    _effects.Heal(uid, listener, thrall.SongHealing);
             }
         }
     }

@@ -10,4 +10,12 @@
     - "Necromancer"
     - "Occult"
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-body-shield
+        trigger: AttackWouldHit
+        acBonus: 2
+        needsToSeeAttacker: true
+        needsThrallAdjacent: true
+        destroysThrall: true

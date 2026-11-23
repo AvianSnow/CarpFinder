@@ -618,14 +618,41 @@ public sealed partial class CFGrantThralls : CFGrant
     [DataField]
     public string DamageType = string.Empty;
 
+    /// <summary>Thrall Teamwork: a free melee Strike after Create Thrall on an enemy beside a thrall.</summary>
+    [DataField]
+    public bool Teamwork;
+
+    /// <summary>Mobile Thralls: the thralls have a climb Speed.</summary>
+    [DataField]
+    public bool Climb;
+
+    /// <summary>A trait every thrall gets (Holy, Unholy).</summary>
+    [DataField]
+    public string Trait = string.Empty;
+
+    /// <summary>Spirit damage added to every thrall's hit.</summary>
+    [DataField]
+    public int SpiritDamage;
+
+    /// <summary>The Flesh fascination: a destroyed thrall leaves difficult terrain for 10 minutes.</summary>
+    [DataField]
+    public bool LeavesTerrain;
+
     public override void Apply(IEntityManager entities, CFGrantArgs args)
     {
         var necromancer = entities.EnsureComponent<CFNecromancerComponent>(args.Mob);
         necromancer.ExtraThralls += Extra;
         necromancer.BloodReturns |= BloodReturns;
         necromancer.ExtraSpeed += ExtraSpeed;
+        necromancer.Teamwork |= Teamwork;
+        necromancer.Climb |= Climb;
+        necromancer.SpiritDamage += SpiritDamage;
+        necromancer.LeavesTerrain |= LeavesTerrain;
         if (DamageType.Length > 0)
             necromancer.DamageType = DamageType;
+
+        if (Trait.Length > 0)
+            necromancer.Trait = Trait;
     }
 }
 

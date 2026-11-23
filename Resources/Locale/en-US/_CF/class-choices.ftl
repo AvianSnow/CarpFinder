@@ -278,15 +278,15 @@ cf-class-choice-fascinationblood-desc = You know Blood Infusion, and regain 1 Hi
 cf-class-choice-fascinationbone = Bone
 cf-class-choice-fascinationbone-desc = You know Bone Spear, and your thralls have 5 feet more Speed.
 cf-class-choice-fascinationflesh = Flesh
-cf-class-choice-fascinationflesh-desc = You know Dead Weight. Its slowed, and difficult terrain from fallen thralls: TBA
+cf-class-choice-fascinationflesh-desc = You know Dead Weight, and a destroyed thrall leaves dead flesh where it fell, difficult terrain for 10 minutes. Dead Weight's slowed: TBA
 cf-class-choice-fascinationspirit = Spirit
-cf-class-choice-fascinationspirit-desc = You know Life Tap, and your thralls deal spirit damage. Drained: TBA
+cf-class-choice-fascinationspirit-desc = You know Life Tap, and your thralls deal spirit damage. The rules let you choose void instead with each Strike.
 
 cf-class-choice-fatal-method = Fatal Method
 cf-class-choice-methodpuppeteer = Puppeteer
-cf-class-choice-methodpuppeteer-desc = Create Thrall makes one more thrall. Consume Thrall: TBA
+cf-class-choice-methodpuppeteer-desc = Create Thrall makes one more thrall. Consume Thrall, free and once a day: with every Focus Point spent, a thrall within 30 feet is destroyed and you regain 1. The rules keep that point for grave spells.
 cf-class-choice-methodreaper = Reaper
-cf-class-choice-methodreaper-desc = Trained in martial weapons and medium armor. Thrall Teamwork: TBA
+cf-class-choice-methodreaper-desc = Trained in martial weapons and medium armor. Thrall Teamwork: after Create Thrall you make a free melee Strike at an enemy in your reach that stands beside one of your thralls.
 
 cf-class-choice-practice = Animistic Practice
 cf-class-choice-practiceliturgist = Liturgist

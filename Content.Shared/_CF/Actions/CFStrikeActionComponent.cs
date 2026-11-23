@@ -112,6 +112,10 @@ public sealed partial class CFStrikeActionComponent : Component
     [DataField]
     public bool DifferentTarget;
 
+    /// <summary>The Strike counts as two attacks for the multiple attack penalty (Draining Strike).</summary>
+    [DataField]
+    public bool CountsAsTwo;
+
     /// <summary>
     /// The user rushes up to this many feet toward the target before the Strike, which stands in for the Stride or Leap in
     /// actions such as Defensive Advance and Flying Kick. Give the action a <c>TargetAction</c> range to match.

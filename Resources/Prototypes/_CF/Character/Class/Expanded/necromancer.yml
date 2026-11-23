@@ -47,7 +47,7 @@
       description: "Choose a fatal method in the builder."
     - level: 1
       name: "Grave Spells"
-      description: "You know Create Thrall and Thrall Charge, can Command a Thrall, and know the Necrotic Bomb grave spell. Your fascination adds another. Regaining Focus by destroying a thrall: TBA"
+      description: "You know Create Thrall and Thrall Charge, can Command a Thrall, and know the Necrotic Bomb grave spell. Your fascination adds another. Refocus with a thrall within 30 feet destroys it and gives back 2 Focus Points."
       grants:
         - !type:CFGrantThralls {}
         - !type:CFGrantSpell
@@ -63,23 +63,47 @@
       description: "Choose a grim fascination in the builder. It gives you a grave spell and improves your thralls."
     - level: 1
       name: "Mastery of Life and Death"
-      description: "Swap void and vitality on your spells: TBA"
+      description: "A spell of yours that deals void or vitality damage deals whichever hurts each enemy, so Heal and Harm never heal an enemy. Healing is unchanged."
+      grants:
+        - !type:CFGrantOption
+          option: MasteryOfLifeAndDeath
     - level: 1
       name: "Necromancer Spellcasting"
       description: "Level 1 cantrips and spell slots are on the spell sheet."
     - level: 1
       name: "Undead Lore"
-      description: "Recall Knowledge about undead: TBA"
+      description: "Trained in Undead Lore. Lore is one skill here, so the name is what differs, and it is not kept to undead."
+      grants:
+        - !type:CFGrantLore
+          lore: Undead
     - level: 3
       name: "Inevitable Return"
-      description: "Reaction. A thrall rises from a fresh corpse near you. There is no trigger for a creature dying near you yet: TBA"
+      description: "Reaction, automatic. When an enemy within 30 feet dies, a thrall rises where it fell. Size is not checked."
+      grants:
+        - !type:CFGrantReaction
+          reaction:
+            name: cf-reaction-inevitable-return
+            trigger: CreatureDied
+            rangeFeet: 30
+            createsThrall: true
     - level: 3
       name: "Mental Wards"
-      description: "Expert in Will saves. Better results against undead minds: TBA"
+      description: "Expert in Will saves, and a success on a Will save against an undead creature's effect is a critical success. The rules keep that to mental and possession effects."
       grants:
         - !type:CFGrantProficiency
           proficiencies:
             - Will
+          rank: Expert
+        - !type:CFGrantSaveUpgrade
+          save: Will
+          trait: Undead
+    - level: 3
+      name: "Undead Lore Expertise"
+      description: "Expert in Undead Lore."
+      grants:
+        - !type:CFGrantProficiency
+          proficiencies:
+            - Lore
           rank: Expert
     - level: 5
       name: "Reflex Expertise"

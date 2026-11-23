@@ -347,6 +347,40 @@ public sealed partial class CFReaction
     /// </summary>
     [DataField]
     public bool TempHpFromDeath;
+
+    /// <summary>With <see cref="CFReactionTrigger.CreatureDied"/>: a thrall rises where the enemy fell (Inevitable Return).</summary>
+    [DataField]
+    public bool CreatesThrall;
+
+    /// <summary>The owner must have one of its thralls within 5 feet (Body Shield).</summary>
+    [DataField]
+    public bool NeedsThrallAdjacent;
+
+    /// <summary>A thrall within 5 feet of the owner is destroyed when the reaction fires (Body Shield).</summary>
+    [DataField]
+    public bool DestroysThrall;
+
+    /// <summary>
+    /// With <see cref="CFReactionTrigger.WouldBeDamaged"/>: the attacker need not be inside the owner's aura (Void Siphon),
+    /// where a Champion's cause asks for it.
+    /// </summary>
+    [DataField]
+    public bool AnyDistance;
+
+    /// <summary>
+    /// With <see cref="CFReactionTrigger.WouldBeDamaged"/>: once the damage has landed, temporary Hit Points equal to the
+    /// owner's level for 6 seconds (Void Siphon).
+    /// </summary>
+    [DataField]
+    public bool TempHpLevel;
+}
+
+/// <summary>Temporary Hit Points a reaction gives once the blow it answered has landed (Void Siphon).</summary>
+[RegisterComponent]
+public sealed partial class CFPendingTempHpComponent : Component
+{
+    [DataField]
+    public int Amount;
 }
 
 /// <summary>The reactions a creature has been granted, and how many daily uses it has spent.</summary>

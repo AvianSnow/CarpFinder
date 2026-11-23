@@ -878,6 +878,9 @@ public sealed partial class CFStrikeSystem : EntitySystem
             {
                 damageMod += _random.Next(1, 7);
             }
+
+            // The Hallowed Dead and The Unholy Dead: 1 more spirit damage, folded into the hit.
+            damageMod += CompOrNull<Content.Shared.CF.Companions.CFNecromancerComponent>(thrall.Necromancer)?.SpiritDamage ?? 0;
         }
 
         if (style is { ImplementEmpowerment: true } && _implements.Empowers(user))

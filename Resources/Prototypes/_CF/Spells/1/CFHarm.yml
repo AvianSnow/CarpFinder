@@ -25,6 +25,7 @@
     - { value: 2, name: cf-mode-harm-2, tooltip: cf-mode-harm-2-desc, actions: 2 }
     - { value: 3, name: cf-mode-harm-3, tooltip: cf-mode-harm-3-desc, actions: 3, immediate: true, areaShape: Emanation, areaFeet: 30 }
     - { value: 4, name: cf-mode-harm-cone, tooltip: cf-mode-harm-cone-desc, actions: 3, areaShape: Cone, areaFeet: 60, requires: DirectedChannel }
+    - { value: 5, name: cf-mode-harm-overwhelming, tooltip: cf-mode-harm-overwhelming-desc, actions: 3, immediate: true, areaShape: Emanation, areaFeet: 60, requires: OverwhelmingHarm }
   - type: CFCheck
     defense: Fortitude
     harmedBy: Void

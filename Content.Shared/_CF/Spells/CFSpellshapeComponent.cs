@@ -55,6 +55,24 @@ public sealed partial class CFSpellshapeComponent : Component
     /// <summary>The next Untamed Form is 2 ranks lower and lasts an hour (Form Control). <c>CFBattleFormSystem</c> reads it.</summary>
     [DataField]
     public bool FormControl;
+
+    /// <summary>
+    /// The caster gains temporary Hit Points for a minute equal to half the most damage the next spell deals one creature
+    /// (Vampiric Spell).
+    /// </summary>
+    [DataField]
+    public bool Vampiric;
+}
+
+/// <summary>The creature's last spell was cast with Vampiric Spell. <see cref="Most"/> is the most it has dealt one creature.</summary>
+[RegisterComponent]
+public sealed partial class CFVampiricPendingComponent : Component
+{
+    [DataField]
+    public TimeSpan Until;
+
+    [DataField]
+    public int Most;
 }
 
 /// <summary>The creature's last spell was cast with Snowdrift Spell and has not yet affected a creature.</summary>

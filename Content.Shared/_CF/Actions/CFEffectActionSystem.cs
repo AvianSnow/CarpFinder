@@ -19,10 +19,27 @@ public sealed partial class CFEffectActionSystem : EntitySystem
     [Dependency] private Content.Shared.Throwing.ThrowingSystem _throwing = default!;
     [Dependency] private Content.Shared.Mobs.Systems.MobStateSystem _mobState = default!;
     [Dependency] private Content.Shared.CF.Factions.CFFactionSystem _factions = default!;
+    [Dependency] private Content.Shared.CF.Companions.CFThrallSystem _thralls = default!;
 
     [SubscribeLocalEvent]
     private void OnAttempt(Entity<CFEffectActionComponent> ent, ref ActionAttemptEvent args)
     {
+        if (ent.Comp.NeedsNoFocus
+            && TryComp(args.User, out Content.Shared.CF.Character.CFSpellbookComponent? book)
+            && book.FocusSpent < book.FocusPoints)
+        {
+            args.Cancelled = true;
+            args.Reason = Loc.GetString("cf-act-needs-no-focus");
+            return;
+        }
+
+        if (ent.Comp.NeedsThrallFeet > 0 && _thralls.Nearest(args.User, _transform.GetMapCoordinates(args.User), ent.Comp.NeedsThrallFeet) == null)
+        {
+            args.Cancelled = true;
+            args.Reason = Loc.GetString("cf-act-needs-thrall");
+            return;
+        }
+
         if (ent.Comp.NeedsMediumOrHeavyArmor
             && !(_armor.TryGetWornArmor(args.User, out var armor)
                  && armor.Comp.Category is CFArmorCategory.Medium or CFArmorCategory.Heavy))

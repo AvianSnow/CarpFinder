@@ -32,6 +32,8 @@
   grants:
     - !type:CFGrantFocusSpell
       spell: DeadWeight
+    - !type:CFGrantThralls
+      leavesTerrain: true
 
 - type: cfClassChoice
   id: FascinationSpirit
@@ -54,6 +56,8 @@
   grants:
     - !type:CFGrantThralls
       extra: 1
+    - !type:CFGrantAction
+      action: CFActConsumeThrall
 
 - type: cfClassChoice
   id: MethodReaper
@@ -67,3 +71,5 @@
         - MartialWeapons
         - MediumArmor
       rank: Trained
+    - !type:CFGrantThralls
+      teamwork: true

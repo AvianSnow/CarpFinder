@@ -91,6 +91,16 @@ cf-mode-harm-3 = 3 actions: emanation
 cf-mode-harm-3-desc = Every creature within 30 feet of you, at once: 1d8 void damage to the living, 1d8 Hit Points to undead.
 cf-mode-harm-cone = 3 actions: 60-foot cone
 cf-mode-harm-cone-desc = Directed Channel. Click a creature to aim a 60-foot cone at it: 1d8 void damage to the living, 1d8 Hit Points to undead.
+cf-mode-harm-overwhelming = 3 actions: 60-foot emanation
+cf-mode-harm-overwhelming-desc = Overwhelming Harm. Every creature within 60 feet of you, at once: 1d8 void damage to the living, 1d8 Hit Points to undead.
+cf-mode-osteo-staff = Staff
+cf-mode-osteo-staff-desc = A +1 striking staff of bone.
+cf-mode-osteo-spear = Spear
+cf-mode-osteo-spear-desc = A +1 striking spear of bone.
+cf-mode-osteo-dagger = Dagger
+cf-mode-osteo-dagger-desc = A +1 striking dagger of bone.
+cf-mode-osteo-longsword = Longsword
+cf-mode-osteo-longsword-desc = A +1 striking longsword of bone. A Reaper is trained with it.
 
 # Resist Energy: the energy, picked from the action wheel.
 cf-mode-resist-acid = Acid

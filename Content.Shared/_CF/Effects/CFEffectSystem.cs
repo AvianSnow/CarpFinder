@@ -534,7 +534,7 @@ public sealed partial class CFEffectSystem : EntitySystem
         }
         else if (check != null
                  && check.Defense != CFDefenseType.None
-                 && (check.HarmedBy is not { } energy || CFVitalEnergies.Harms(EntityManager, target, energy)))
+                 && (check.HarmedBy is not { } energy || CFVitalEnergies.HarmsFor(EntityManager, user, target, energy)))
         {
             if (HasComp<CFSpellComponent>(source))
                 _vfx.Targeted(target, source);

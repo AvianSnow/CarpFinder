@@ -72,6 +72,14 @@ public sealed partial class CFEffectActionComponent : Component
     /// </summary>
     [DataField]
     public bool NeedsGrabbedFoe;
+
+    /// <summary>The user must have spent every Focus Point (Consume Thrall).</summary>
+    [DataField]
+    public bool NeedsNoFocus;
+
+    /// <summary>The user must have one of its thralls within this many feet. 0 asks for none.</summary>
+    [DataField]
+    public int NeedsThrallFeet;
 }
 
 public enum CFTwoHandedNeed : byte

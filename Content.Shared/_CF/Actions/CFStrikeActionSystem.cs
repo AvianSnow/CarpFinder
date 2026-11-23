@@ -329,6 +329,9 @@ public sealed partial class CFStrikeActionSystem : EntitySystem
         var second = FindSecond(user, target, action, stats);
         var fury = action.EndsRage ? _activities.RageRoundsLeft(user) : 0;
         var hit = _strikes.PerformStrike(user, target, stats, weapon, melee: true, attackPenalty: action.AttackBonus, extraDice: action.ExtraDice, bonusDamage: fury + action.BonusPerDie * (stats.DamageDice + action.ExtraDice), finisher: action.Finisher, resolved: Resolved);
+        if (action.CountsAsTwo)
+            _pool.CountAttack(user);
+
         if (action.EndsRage)
         {
             _activities.SetRaging(user, false);

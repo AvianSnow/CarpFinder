@@ -1000,3 +1000,43 @@
     effects:
     - !type:CFSpendEnemyReactionsEffect
       feet: 10
+
+# Necromancer
+- type: entity
+  parent: CFActivityInstant
+  id: CFActConsumeThrall
+  name: Consume Thrall
+  description: Free, once a day, with every Focus Point spent. A thrall within 30 feet is destroyed and you regain 1 Focus Point.
+  components:
+  - type: CFRadialSlot
+    group: Free
+    tab: Focus
+  - type: CFDailyUses
+  - type: CFEffectAction
+    needsNoFocus: true
+    needsThrallFeet: 30
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFConsumeThrallEffect
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActOsteoArmaments
+  name: Osteo Armaments
+  description: Costs 1 action. A +1 striking weapon of bone and sinew appears in your hand, for an hour. Using this again destroys the last one.
+  components:
+  - type: CFModeChoice
+    modes:
+    - { value: 1, name: cf-mode-osteo-staff, tooltip: cf-mode-osteo-staff-desc }
+    - { value: 2, name: cf-mode-osteo-spear, tooltip: cf-mode-osteo-spear-desc }
+    - { value: 3, name: cf-mode-osteo-dagger, tooltip: cf-mode-osteo-dagger-desc }
+    - { value: 4, name: cf-mode-osteo-longsword, tooltip: cf-mode-osteo-longsword-desc }
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFOsteoArmamentsEffect
+      weapons:
+        1: CFStaff
+        2: CFSpear
+        3: CFDagger
+        4: CFLongsword

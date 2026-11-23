@@ -680,6 +680,21 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public EntityUid? Charge;
 
+    /// <summary>
+    /// Mastery of Life and Death: a spell that deals void or vitality damage deals whichever of the two hurts each enemy, so
+    /// an enemy is never healed by Heal or Harm.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public bool MasteryOfLifeAndDeath;
+
+    /// <summary>Invert Harm: Harm heals living allies as though they were undead.</summary>
+    [DataField, AutoNetworkedField]
+    public bool InvertHarm;
+
+    /// <summary>Overwhelming Harm: the 3-action Harm can be a 60-foot emanation.</summary>
+    [DataField, AutoNetworkedField]
+    public bool OverwhelmingHarm;
+
     /// <summary>A success on a check to Climb is a critical success.</summary>
     [DataField, AutoNetworkedField]
     public bool ClimbSuccessCritical;
@@ -851,6 +866,9 @@ public enum CFCombatOption : byte
     ObservationalAnalysis,
     RapidAssessment,
     Bodyguard,
+    MasteryOfLifeAndDeath,
+    InvertHarm,
+    OverwhelmingHarm,
 }
 
 public enum CFPointMark : byte

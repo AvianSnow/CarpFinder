@@ -25,6 +25,7 @@ public sealed partial class CFSpellshapeSystem : EntitySystem
     [Dependency] private CFCharacterFeatureSystem _features = default!;
     [Dependency] private CFBonusSystem _bonuses = default!;
     [Dependency] private SharedMapSystem _map = default!;
+    [Dependency] private CFTemporaryHpSystem _tempHp = default!;
 
     public override void Update(float frameTime)
     {
@@ -109,6 +110,13 @@ public sealed partial class CFSpellshapeSystem : EntitySystem
             EnsureComp<CFSnowdriftPendingComponent>(user).Until = _timing.CurTime + SnowdriftWaits;
         }
 
+        if (Current(user) is { Vampiric: true })
+        {
+            var vampiric = EnsureComp<CFVampiricPendingComponent>(user);
+            vampiric.Until = _timing.CurTime + SnowdriftWaits;
+            vampiric.Most = 0;
+        }
+
         if (Current(user) is not { EnergyAblation: true } || !_prototypes.TryIndex(spell.Spell, out var proto))
             return;
 
@@ -160,6 +168,26 @@ public sealed partial class CFSpellshapeSystem : EntitySystem
                 SpawnAtPosition(SnowPrototype, _map.GridTileToLocal(gridUid, grid, tile));
             }
         }
+    }
+
+    /// <summary>
+    /// A spell of <paramref name="user"/> has dealt <paramref name="amount"/> to one creature. With Vampiric Spell, the caster
+    /// gains temporary Hit Points equal to half the most one creature has taken from it, for a minute.
+    /// </summary>
+    public void NoteDamage(EntityUid user, EntityUid source, int amount)
+    {
+        if (!_net.IsServer
+            || amount <= 0
+            || !HasComp<CFSpellComponent>(source)
+            || !TryComp(user, out CFVampiricPendingComponent? pending)
+            || _timing.CurTime > pending.Until
+            || amount <= pending.Most)
+        {
+            return;
+        }
+
+        pending.Most = amount;
+        _tempHp.Grant(user, amount / 2, 60f, "vampiric");
     }
 
     public bool IsDivineInfusion(EntityUid user)

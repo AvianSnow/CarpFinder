@@ -6,6 +6,7 @@ using Content.Shared.CF.Factions;
 using Content.Shared.Mobs.Components;
 using Robust.Shared.Map;
 using Robust.Shared.Network;
+using Robust.Shared.Prototypes;
 
 namespace Content.Shared.CF.Companions;
 
@@ -26,6 +27,17 @@ public sealed partial class CFThrallComponent : Component
     /// <summary>Extra d6s on the thrall's next hits, until <see cref="OrderUntil"/> (Thrall Charge).</summary>
     [DataField]
     public int ChargeDice;
+
+    /// <summary>Song of the Soul: the creature the thrall's silent song heals while it stays within 15 feet.</summary>
+    [DataField]
+    public EntityUid? SongFor;
+
+    /// <summary>What the song heals every 6 seconds.</summary>
+    [DataField]
+    public int SongHealing;
+
+    [DataField]
+    public TimeSpan NextSong;
 }
 
 /// <summary>An action that sends one thrall at the target. The server runs it.</summary>
@@ -53,11 +65,38 @@ public sealed partial class CFNecromancerComponent : Component
     /// <summary>Replaces a thrall's damage type. Empty keeps it.</summary>
     [DataField]
     public string DamageType = string.Empty;
+
+    /// <summary>Thrall Teamwork: a free melee Strike after Create Thrall on an enemy in reach beside a thrall.</summary>
+    [DataField]
+    public bool Teamwork;
+
+    /// <summary>Mobile Thralls: every thrall has a climb Speed.</summary>
+    [DataField]
+    public bool Climb;
+
+    /// <summary>A trait every thrall gets (Holy, Unholy). Empty gives none.</summary>
+    [DataField]
+    public string Trait = string.Empty;
+
+    /// <summary>Spirit damage added to every thrall's hit (The Hallowed Dead, The Unholy Dead).</summary>
+    [DataField]
+    public int SpiritDamage;
+
+    /// <summary>The Flesh fascination: a destroyed thrall leaves difficult terrain for 10 minutes.</summary>
+    [DataField]
+    public bool LeavesTerrain;
+
+    /// <summary>The bone weapon Osteo Armaments made last, which the next use destroys.</summary>
+    [DataField]
+    public EntityUid? BoneWeapon;
 }
 
-/// <summary>Raised on a caster to make thralls. Only the server can bind a companion, so the server answers it.</summary>
+/// <summary>
+/// Raised on a caster to make thralls. Only the server can bind a companion, so the server answers it. <paramref name="At"/>
+/// is where they rise, beside the caster when null, and <paramref name="Teamwork"/> allows the Reaper's free Strike.
+/// </summary>
 [ByRefEvent]
-public readonly record struct CFCreateThrallsEvent(int Count);
+public readonly record struct CFCreateThrallsEvent(int Count, EntityCoordinates? At = null, bool Teamwork = true);
 
 /// <summary>Raised on a caster to send a thrall at an enemy.</summary>
 [ByRefEvent]
@@ -128,6 +167,18 @@ public sealed partial class CFThrallBlastEffect : CFEffect
     [DataField]
     public bool Destroys = true;
 
+    /// <summary>Who the blast reaches. Muscle Barrier reaches allies.</summary>
+    [DataField]
+    public CFTargetFilter Filter = CFTargetFilter.Enemies;
+
+    /// <summary>The caster is a creature the blast can reach.</summary>
+    [DataField]
+    public bool IncludesUser;
+
+    /// <summary>Nobody rolls: <see cref="Effects"/> run on everyone reached, as a success.</summary>
+    [DataField]
+    public bool NoCheck;
+
     [DataField]
     public List<CFEffect> Effects = new();
 
@@ -188,14 +239,20 @@ public sealed partial class CFThrallSystem : EntitySystem
         var atPoint = blast.Shape is CFAreaShape.Burst or CFAreaShape.Square;
         var aim = atPoint ? origin : Aim(args.User, thrall, origin);
 
-        var found = _effects.CollectArea(args.User, blast.Shape, blast.SizeFeet, origin, aim, atPoint, includeCenter: true, selfAllowed: false, CFTargetFilter.Enemies, null, blast.MaxTargets);
+        var found = _effects.CollectArea(args.User, blast.Shape, blast.SizeFeet, origin, aim, atPoint, includeCenter: true, selfAllowed: blast.IncludesUser, blast.Filter, null, blast.MaxTargets);
         foreach (var creature in found)
         {
+            if (creature == thrall)
+                continue;
+
             var hit = _effects.BuildArgs(args.Source, args.User, creature, Transform(creature).Coordinates, null, out var stats);
             hit.Defense = blast.Defense;
             hit.BasicSave = blast.BasicSave;
-            hit.Degree = _conditions.RollDefense(creature, blast.Defense, stats.Dc, out _, args.Traits);
+            hit.Degree = blast.NoCheck ? CFDegree.Success : _conditions.RollDefense(creature, blast.Defense, stats.Dc, out _, args.Traits);
             _effects.Run(blast.Effects, hit);
+            if (blast.NoCheck)
+                continue;
+
             _effects.Run(hit.Degree switch
                 {
                     CFDegree.Success => blast.Success,
@@ -211,6 +268,50 @@ public sealed partial class CFThrallSystem : EntitySystem
     }
 
     private static readonly List<CFEffect> NoEffects = new();
+
+    private static readonly EntProtoId FleshTerrain = "CFFillFleshTerrain";
+
+    /// <summary>The living thrall of <paramref name="owner"/> nearest to <paramref name="origin"/> within <paramref name="feet"/>, or null.</summary>
+    public EntityUid? Nearest(EntityUid owner, MapCoordinates origin, int feet)
+    {
+        EntityUid? best = null;
+        var bestDistance = feet / CFMelee.FeetPerTile + 0.5f;
+        bestDistance *= bestDistance;
+        var query = EntityQueryEnumerator<CFThrallComponent, TransformComponent>();
+        while (query.MoveNext(out var uid, out var thrall, out var xform))
+        {
+            if (thrall.Necromancer != owner || xform.MapID != origin.MapId || TerminatingOrDeleted(uid))
+                continue;
+
+            if (CompOrNull<CFCombatantComponent>(uid) is { CurrentHp: <= 0 })
+                continue;
+
+            var distance = (_transform.GetWorldPosition(xform) - origin.Position).LengthSquared();
+            if (distance >= bestDistance)
+                continue;
+
+            best = uid;
+            bestDistance = distance;
+        }
+
+        return best;
+    }
+
+    /// <summary>A thrall is going. It is still where it stood, which a component shutdown is not.</summary>
+    [SubscribeLocalEvent]
+    private void OnTerminating(Entity<CFThrallComponent> ent, ref EntityTerminatingEvent args)
+    {
+        if (!_net.IsServer
+            || TerminatingOrDeleted(ent.Comp.Necromancer)
+            || CompOrNull<CFNecromancerComponent>(ent.Comp.Necromancer) is not { LeavesTerrain: true }
+            || Transform(ent).GridUid == null)
+        {
+            return;
+        }
+
+        // The Flesh fascination: what is left of the thrall is hard to cross.
+        SpawnAtPosition(FleshTerrain, Transform(ent).Coordinates);
+    }
 
     [SubscribeLocalEvent]
     private void OnShutdown(Entity<CFThrallComponent> ent, ref ComponentShutdown args)

@@ -10,4 +10,6 @@
     - "Necromancer"
   prerequisites:
     - "Mastery of Life and Death"
-  pendingAction: true
+  grants:
+    - !type:CFGrantOption
+      option: OverwhelmingHarm

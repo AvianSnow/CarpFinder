@@ -8,3 +8,21 @@
   level: 1
   traits:
     - "Necromancer"
+  choices:
+    - kind: Named
+      options: [ FascinationBlood, FascinationBone, FascinationFlesh, FascinationSpirit ]
+  grants:
+    - !type:CFGrantChosen
+      options:
+        FascinationBlood:
+          - !type:CFGrantFocusSpell
+            spell: BloodInfusion
+        FascinationBone:
+          - !type:CFGrantFocusSpell
+            spell: BoneSpear
+        FascinationFlesh:
+          - !type:CFGrantFocusSpell
+            spell: DeadWeight
+        FascinationSpirit:
+          - !type:CFGrantFocusSpell
+            spell: LifeTap

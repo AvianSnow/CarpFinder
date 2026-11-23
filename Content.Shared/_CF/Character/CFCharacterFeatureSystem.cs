@@ -667,6 +667,15 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
             case CFCombatOption.Bodyguard:
                 options.Bodyguard = true;
                 break;
+            case CFCombatOption.MasteryOfLifeAndDeath:
+                options.MasteryOfLifeAndDeath = true;
+                break;
+            case CFCombatOption.InvertHarm:
+                options.InvertHarm = true;
+                break;
+            case CFCombatOption.OverwhelmingHarm:
+                options.OverwhelmingHarm = true;
+                break;
             case CFCombatOption.ViciousSwing:
                 options.ViciousSwing = true;
                 break;

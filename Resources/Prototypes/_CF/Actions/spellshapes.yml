@@ -147,3 +147,13 @@
   - type: CFSpellshape
     amp: true
     ampVariant: HomingBeacon
+
+# Impossible Magic, Necromancer.
+- type: entity
+  parent: CFActSpellshapeBase
+  id: CFActVampiricSpell
+  name: Vampiric Spell
+  description: If your next spell deals damage, you gain temporary Hit Points for a minute equal to half the most it deals one creature. Lost if you spend an action on anything else first.
+  components:
+  - type: CFSpellshape
+    vampiric: true

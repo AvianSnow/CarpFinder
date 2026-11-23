@@ -673,3 +673,17 @@
     - !type:CFOffGuardEffect
       toUser: true
       durationSeconds: 6
+
+# Necromancer
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActDrainingStrike
+  name: Draining Strike
+  description: A melee Strike that counts as two attacks for the multiple attack penalty. On a hit, a thrall within 10 feet of you or the target is destroyed, the target takes 1d6 spirit damage more, and you regain that many Hit Points. Once every 6 seconds.
+  components:
+  - type: Action
+    useDelay: 6
+  - type: CFStrikeAction
+    countsAsTwo: true
+    onHit:
+    - !type:CFDrainThrallEffect

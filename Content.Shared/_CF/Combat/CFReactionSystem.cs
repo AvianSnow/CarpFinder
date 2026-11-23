@@ -71,6 +71,7 @@ public sealed partial class CFReactionSystem : EntitySystem
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private Content.Shared.CF.Terrain.CFTerrainSystem _terrain = default!;
     [Dependency] private CFTemporaryHpSystem _tempHp = default!;
+    [Dependency] private Content.Shared.CF.Companions.CFThrallSystem _thralls = default!;
     [Dependency] private Robust.Shared.Serialization.Manager.ISerializationManager _serialization = default!;
 
     public override void Update(float frameTime)
@@ -488,6 +489,10 @@ public sealed partial class CFReactionSystem : EntitySystem
             if (!TryImprove(target, target, candidate, d20, attackBonus, ref armorClass, ref degree))
                 continue;
 
+            // Body Shield: the thrall thrown in the way is destroyed.
+            if (candidate.Reaction.DestroysThrall && _thralls.Nearest(target, _transform.GetMapCoordinates(target), 5) is { } thrall)
+                QueueDel(thrall);
+
             return degree;
         }
 
@@ -766,14 +771,31 @@ public sealed partial class CFReactionSystem : EntitySystem
 
         amount = AnswerExploited(target, attacker, amount);
 
-        if (TryComp(target, out CFReactionsComponent? own) && _factions.CanHarm(target, attacker) && _auras.Contains(target, attacker))
+        if (TryComp(target, out CFReactionsComponent? own) && _factions.CanHarm(target, attacker))
         {
+            var inAura = _auras.Contains(target, attacker);
             foreach (var known in Ordered(target, own))
             {
-                if (known.Reaction.Trigger != CFReactionTrigger.WouldBeDamaged || !TrySpend(target, known))
+                if (known.Reaction.Trigger != CFReactionTrigger.WouldBeDamaged
+                    || !(inAura || known.Reaction.AnyDistance)
+                    || !CoversType(known.Reaction, damageType)
+                    || !TrySpend(target, known))
+                {
                     continue;
+                }
 
                 amount = Protect(target, target, attacker, known.Reaction, amount);
+
+                // Void Siphon: the temporary Hit Points come once the blow has landed, so they do not soak it up.
+                if (known.Reaction.TempHpLevel)
+                {
+                    var level = CompOrNull<CFCombatantComponent>(target)?.Level ?? 1;
+                    if (amount <= 0)
+                        _tempHp.Grant(target, level, 6f, "void-siphon");
+                    else
+                        EnsureComp<CFPendingTempHpComponent>(target).Amount = level;
+                }
+
                 break;
             }
         }
@@ -1068,9 +1090,17 @@ public sealed partial class CFReactionSystem : EntitySystem
                 var reaction = known.Reaction;
                 if (reaction.Trigger != CFReactionTrigger.CreatureDied
                     || (_transform.GetWorldPosition(uid) - _transform.GetWorldPosition(dead)).Length() > reaction.RangeFeet / CFMelee.FeetPerTile
+                    || reaction.CreatesThrall && !_factions.CanHarm(uid, dead)
                     || !TrySpend(uid, known))
                 {
                     continue;
+                }
+
+                // Inevitable Return: a thrall rises from the corpse.
+                if (reaction.CreatesThrall)
+                {
+                    var rise = new Content.Shared.CF.Companions.CFCreateThrallsEvent(1, Transform(dead).Coordinates, Teamwork: false);
+                    RaiseLocalEvent(uid, ref rise);
                 }
 
                 if (reaction.TempHpFromDeath)
@@ -1327,6 +1357,12 @@ public sealed partial class CFReactionSystem : EntitySystem
     [SubscribeLocalEvent]
     private void OnDamaged(Entity<CFReactionsComponent> ent, ref CFDamagedEvent args)
     {
+        if (_net.IsServer && TryComp(ent, out CFPendingTempHpComponent? pending))
+        {
+            _tempHp.Grant(ent, pending.Amount, 6f, "void-siphon");
+            RemComp(ent, pending);
+        }
+
         if (!_net.IsServer
             || !TryComp(ent, out CFCombatantComponent? combat)
             || combat.CurrentHp <= 0
@@ -1369,6 +1405,9 @@ public sealed partial class CFReactionSystem : EntitySystem
             return false;
 
         if (reaction.NeedsFreeHand && _hands.CountFreeHands(target) == 0)
+            return false;
+
+        if (reaction.NeedsThrallAdjacent && _thralls.Nearest(target, _transform.GetMapCoordinates(target), 5) == null)
             return false;
 
         return !reaction.NotOffGuard

@@ -110,6 +110,7 @@ public sealed partial class CFDamageEffect : CFEffect
             var rolled = system.Roll(dice, system.SpellDie(args, amp is { AmpDie: > 0 } ? amp.AmpDie : Die), flat + system.DamageBonus(args.User) + system.PotencyBonus(args) + system.UnleashBonus(args));
             var amount = multiplier < 1f ? (int) (rolled * multiplier) : rolled * (int) multiplier;
             system.DealDamage(args.User, target, amount, damageType, critical);
+            entities.System<Content.Shared.CF.Spells.CFSpellshapeSystem>().NoteDamage(args.User, args.Source, amount);
         }
 
         var persistentFlat = PersistentFlat;
