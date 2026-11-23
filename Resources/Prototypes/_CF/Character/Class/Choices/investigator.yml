@@ -21,6 +21,11 @@
         - Crafting
         - Occultism
         - Society
+  grants:
+    - !type:CFGrantFeat
+      feat: CFThatsOdd
+    - !type:CFGrantAction
+      action: CFActExpeditiousInspection
 
 - type: cfClassChoice
   id: MethodForensicMedicine
@@ -33,6 +38,8 @@
   grants:
     - !type:CFGrantOption
       option: BattleMedicine
+    - !type:CFGrantOption
+      option: ForensicMedicine
 
 - type: cfClassChoice
   id: MethodInterrogation
@@ -42,3 +49,6 @@
   description: cf-class-choice-methodinterrogation-desc
   trainedSkills:
     - Diplomacy
+  grants:
+    - !type:CFGrantAction
+      action: CFActPointedQuestion

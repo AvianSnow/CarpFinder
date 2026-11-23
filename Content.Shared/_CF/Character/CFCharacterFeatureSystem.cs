@@ -583,6 +583,18 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
             case CFCombatOption.FlyingBlade:
                 options.FlyingBlade = true;
                 break;
+            case CFCombatOption.TakedownExpert:
+                options.TakedownExpert = true;
+                break;
+            case CFCombatOption.SharedStratagem:
+                options.SharedStratagem = true;
+                break;
+            case CFCombatOption.KeenRecollection:
+                options.KeenRecollection = true;
+                break;
+            case CFCombatOption.ForensicMedicine:
+                options.ForensicMedicine = true;
+                break;
             case CFCombatOption.Cruelty:
                 options.Cruelty = true;
                 break;

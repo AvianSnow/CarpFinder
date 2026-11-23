@@ -7,6 +7,7 @@
   keyAbility: Intelligence
   hitPointsAbility: Constitution
   classDC: cf-class-investigator
+  bonusSkillFeats: [ 3, 5 ]
   proficiencies:
     perception:
       expert:
@@ -47,16 +48,19 @@
       description: "Pursue a Lead and Clue In need investigations, which do not exist: TBA"
     - level: 1
       name: "Strategic Strike"
-      description: "A Strike using your stored Devise a Stratagem roll deals 1d6 extra precision damage, or 2d6 from level 5. Using Intelligence for that attack: TBA"
+      description: "A Strike that uses your stored Devise a Stratagem roll adds Intelligence to the attack in place of Strength or Dexterity, when that is better, and deals 1d6 extra precision damage, or 2d6 from level 5. It has to be a ranged weapon, or an agile or finesse attack in melee or thrown."
       grants:
         - !type:CFGrantOption
           option: StrategicStrike
     - level: 3
       name: "Keen Recollection"
-      description: "Add your level to untrained checks to Recall Knowledge: TBA"
+      description: "A skill you are untrained in adds your level when you Recall Knowledge."
+      grants:
+        - !type:CFGrantOption
+          option: KeenRecollection
     - level: 3
       name: "Skillful Lessons"
-      description: "An extra skill feat at odd levels. The builder has no slots for them: TBA"
+      description: "An extra skill feat at levels 3 and 5. The rules limit it to Intelligence, Wisdom and Charisma skills and your methodology's skill: here any skill feat fits."
     - level: 5
       name: "Weapon Expertise"
       description: "Expert with simple weapons, martial weapons and unarmed attacks."

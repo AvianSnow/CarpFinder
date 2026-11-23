@@ -371,7 +371,11 @@ public sealed partial class CFManeuverSystem : EntitySystem
             CFPointMark.Exploit => opt.Exploited == target,
             _ => false,
         };
-        if (already || !_actions.TrySpendActions(ent, 1))
+        // Person of Interest: a stratagem against that one creature is free for a minute.
+        var free = opt.PointMark == CFPointMark.Stratagem
+                   && opt.PersonOfInterest == target
+                   && _timing.CurTime < opt.PersonOfInterestUntil;
+        if (already || !free && !_actions.TrySpendActions(ent, 1))
             return false;
 
         switch (opt.PointMark)

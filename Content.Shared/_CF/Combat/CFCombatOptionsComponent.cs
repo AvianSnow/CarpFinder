@@ -142,6 +142,29 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField]
     public bool ScalpelsPoint;
 
+    /// <summary>A stored Devise a Stratagem roll can use Intelligence with a one-handed weapon of the club group too (Takedown Expert).</summary>
+    [DataField]
+    public bool TakedownExpert;
+
+    /// <summary>A hit with a stored Devise a Stratagem roll leaves the target off-guard to the nearest ally (Shared Stratagem).</summary>
+    [DataField]
+    public bool SharedStratagem;
+
+    /// <summary>An untrained skill adds the creature's level to Recall Knowledge (Keen Recollection).</summary>
+    [DataField]
+    public bool KeenRecollection;
+
+    /// <summary>Battle Medicine restores the user's level more (Forensic Medicine).</summary>
+    [DataField]
+    public bool ForensicMedicine;
+
+    /// <summary>Person of Interest: Devise a Stratagem against this creature costs nothing until <see cref="PersonOfInterestUntil"/>.</summary>
+    [DataField]
+    public EntityUid? PersonOfInterest;
+
+    [DataField]
+    public TimeSpan PersonOfInterestUntil;
+
     /// <summary>+4 circumstance to AC against reactions set off by this creature's movement (Guarded Movement).</summary>
     [DataField]
     public bool GuardedMovement;
@@ -602,6 +625,10 @@ public static class CFReactions
 /// <summary>The flags on <see cref="CFCombatOptionsComponent"/> that a <c>CFGrantOption</c> can set.</summary>
 public enum CFCombatOption : byte
 {
+    TakedownExpert,
+    SharedStratagem,
+    KeenRecollection,
+    ForensicMedicine,
     PanacheDisarm,
     PanacheDiversion,
     FlyingBlade,

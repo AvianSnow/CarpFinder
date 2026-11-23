@@ -144,6 +144,8 @@ public sealed partial class CFManeuverSystem
     {
         var best = RecallSkills[0];
         var bestModifier = int.MinValue;
+        var bestKeen = 0;
+        var keenRecollection = CompOrNull<CFCombatOptionsComponent>(user)?.KeenRecollection == true;
         if (TryComp(user, out CFCombatantComponent? combat) && TryComp(user, out CFAbilityScoreComponent? abilities))
         {
             foreach (var option in RecallSkills)
@@ -152,15 +154,21 @@ public sealed partial class CFManeuverSystem
                 if (_implements.IsHolding(user, CFImplementKind.Tome))
                     modifier += 1;
 
-                if (modifier <= bestModifier)
+                // Keen Recollection: an untrained skill counts the Investigator's level.
+                var keen = keenRecollection && CFDefense.SkillRank(_prototypes, combat, option.Skill) < CFProficiencyRank.Trained
+                    ? combat.Level
+                    : 0;
+                if (modifier + keen <= bestModifier)
                     continue;
 
                 best = option;
-                bestModifier = modifier;
+                bestModifier = modifier + keen;
+                bestKeen = keen;
             }
         }
 
-        return _conditions.RollSkillAgainst(user, best.Skill, best.Ability, dc, out _);
+        // The roll works the modifier out again without it, so the level comes off the DC, which is the same thing.
+        return _conditions.RollSkillAgainst(user, best.Skill, best.Ability, dc - bestKeen, out _);
     }
 
     private string RecallText(EntityUid target, int level, CFDegree degree)

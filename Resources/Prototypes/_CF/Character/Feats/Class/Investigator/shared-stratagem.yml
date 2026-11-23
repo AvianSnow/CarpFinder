@@ -8,3 +8,6 @@
   level: 2
   traits:
     - "Investigator"
+  grants:
+    - !type:CFGrantOption
+      option: SharedStratagem

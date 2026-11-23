@@ -8,3 +8,6 @@
   level: 1
   traits:
     - "Investigator"
+  grants:
+    - !type:CFGrantOption
+      option: TakedownExpert

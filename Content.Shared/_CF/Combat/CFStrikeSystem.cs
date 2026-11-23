@@ -860,6 +860,9 @@ public sealed partial class CFStrikeSystem : EntitySystem
         var d20 = _random.Next(1, 21);
         var usedStratagem = false;
 
+        // Whether the stratagem's Strike is one that can use Intelligence, which Strategic Strike's damage also asks for.
+        var cleverStratagem = false;
+
         if (style != null && style.StratagemTarget == target && style.StratagemRoll > 0)
         {
             usedStratagem = true;
@@ -867,6 +870,17 @@ public sealed partial class CFStrikeSystem : EntitySystem
             style.StratagemRoll = 0;
             style.StratagemTarget = null;
             Dirty(user, style);
+
+            cleverStratagem = StratagemFits(style, rolled);
+            if (cleverStratagem && attackerCombat.PrintedAttack == null)
+            {
+                var used = rolled.Ranged
+                    ? attackerAbilities.GetModifier(CFAbility.Dexterity)
+                    : rolled.Finesse
+                        ? Math.Max(attackerAbilities.GetModifier(CFAbility.Strength), attackerAbilities.GetModifier(CFAbility.Dexterity))
+                        : attackerAbilities.GetModifier(CFAbility.Strength);
+                attackBonus += Math.Max(0, attackerAbilities.GetModifier(CFAbility.Intelligence) - used);
+            }
         }
         else if (_bonuses.TryConsumeFortune(user))
         {
@@ -896,7 +910,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
             {
                 var extra = bonusDamage;
                 if (!skipPrecision)
-                    extra += Precision(user, target, style, weapon, melee, unseen, isObject, finisher, usedStratagem);
+                    extra += Precision(user, target, style, weapon, melee, unseen, isObject, finisher, cleverStratagem);
 
                 if (weapon.Traits.Backstabber && !isObject
                     && (_flanking.IsOffGuardTo(target, user) || _conditions.IsOffGuardTo(target, user)))
@@ -1000,6 +1014,9 @@ public sealed partial class CFStrikeSystem : EntitySystem
             if (usedStratagem && style is { ScalpelsPoint: true } && rolled.DamageType is "Piercing" or "Slashing")
                 _bonuses.AddPersistent(target, "Bleed", 1, 6, 0, user);
         }
+
+        if (usedStratagem && hit && !isObject && style is { SharedStratagem: true })
+            ShareStratagem(user, target);
 
         if (criticalHit && damage > 0 && !isObject && style != null)
         {
@@ -1119,6 +1136,43 @@ public sealed partial class CFStrikeSystem : EntitySystem
         }
 
         return Math.Max(0, total);
+    }
+
+    /// <summary>
+    /// A Strike with a stored Devise a Stratagem roll can use Intelligence when it is ranged, or agile or finesse in melee
+    /// or thrown. Takedown Expert adds a one-handed weapon of the club group.
+    /// </summary>
+    public bool StratagemFits(CFCombatOptionsComponent style, CFStrikeWeaponStats weapon)
+    {
+        if (weapon.Agile || weapon.Finesse || weapon.Ranged && !weapon.ThrownStrike)
+            return true;
+
+        return style.TakedownExpert
+               && CompOrNull<CFWeaponComponent>(weapon.Item) is { Group: CFWeaponGroup.Club } club
+               && club.Hands != CFWeaponHands.Two;
+    }
+
+    /// <summary>Shared Stratagem: the target is off-guard to the user's nearest ally within 30 feet of it, for 6 seconds.</summary>
+    private void ShareStratagem(EntityUid user, EntityUid target)
+    {
+        var origin = _transform.GetMapCoordinates(target);
+        EntityUid? nearest = null;
+        var best = float.MaxValue;
+        foreach (var ally in _lookup.GetEntitiesInRange<CFCombatantComponent>(origin, 6f))
+        {
+            if (ally.Owner == user || ally.Owner == target || _factions.CanHarm(user, ally) || !_factions.CanHarm(ally, target))
+                continue;
+
+            var distance = (_transform.GetMapCoordinates(ally).Position - origin.Position).Length();
+            if (distance >= best)
+                continue;
+
+            best = distance;
+            nearest = ally;
+        }
+
+        if (nearest is { } friend)
+            _conditions.SetOffGuardTo(target, friend, 6f);
     }
 
     /// <summary>

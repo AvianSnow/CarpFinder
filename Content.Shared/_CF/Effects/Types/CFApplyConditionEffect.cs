@@ -69,3 +69,20 @@ public sealed partial class CFGainPanacheEffect : CFEffect
         entities.System<Content.Shared.CF.Combat.CFConditionSystem>().GainPanache(args.User);
     }
 }
+
+/// <summary>Person of Interest: for a minute, the user's Devise a Stratagem against the target costs no action.</summary>
+public sealed partial class CFPersonOfInterestEffect : CFEffect
+{
+    [DataField]
+    public float DurationSeconds = 60f;
+
+    public override void Apply(IEntityManager entities, CFEffectArgs args)
+    {
+        if (args.Target is not { } target)
+            return;
+
+        var options = entities.EnsureComponent<Content.Shared.CF.Combat.CFCombatOptionsComponent>(args.User);
+        options.PersonOfInterest = target;
+        options.PersonOfInterestUntil = IoCManager.Resolve<Robust.Shared.Timing.IGameTiming>().CurTime + TimeSpan.FromSeconds(DurationSeconds);
+    }
+}

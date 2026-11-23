@@ -135,11 +135,11 @@ cf-class-choice-methodology = Methodology
 cf-class-choice-methodalchemicalsciences = Alchemical Sciences
 cf-class-choice-methodalchemicalsciences-desc = Trained in Crafting. Versatile vials, and the feat and formulas: TBA
 cf-class-choice-methodempiricism = Empiricism
-cf-class-choice-methodempiricism-desc = Trained in an Intelligence skill of your choice. That's Odd and Expeditious Inspection: TBA
+cf-class-choice-methodempiricism-desc = Trained in an Intelligence skill of your choice. You have the That's Odd feat, and Expeditious Inspection: a free Recall Knowledge once every 10 minutes. Its free Seek or Sense Motive: TBA
 cf-class-choice-methodforensicmedicine = Forensic Medicine
-cf-class-choice-methodforensicmedicine-desc = Trained in Medicine, with Battle Medicine. Forensic Acumen: TBA
+cf-class-choice-methodforensicmedicine-desc = Trained in Medicine, with Battle Medicine, which restores your level more. Forensic Acumen: TBA
 cf-class-choice-methodinterrogation = Interrogation
-cf-class-choice-methodinterrogation-desc = Trained in Diplomacy. No Cause for Alarm and Pointed Question: TBA
+cf-class-choice-methodinterrogation-desc = Trained in Diplomacy. You have Pointed Question: a Diplomacy check against Will that leaves the creature off-guard to you for 6 seconds. No Cause for Alarm: TBA
 
 cf-class-choice-research-field = Research Field
 cf-class-choice-fieldbomber = Bomber

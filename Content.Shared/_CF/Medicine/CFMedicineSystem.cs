@@ -310,6 +310,11 @@ public sealed partial class CFMedicineSystem : EntitySystem
             return false;
 
         var (dc, bonus) = Dcs(user);
+
+        // Forensic Medicine: the Investigator's level more.
+        if (CompOrNull<CFCombatOptionsComponent>(user)?.ForensicMedicine == true)
+            bonus += CompOrNull<CFCombatantComponent>(user)?.Level ?? 0;
+
         var degree = _conditions.RollSkillAgainst(user, Skill, CFAbility.Wisdom, dc, out _);
         Comp(target).BattleMedicineUntil[user] = _timing.CurTime + BattleMedicineImmunity;
         return ApplyResult(user, target, degree, bonus);

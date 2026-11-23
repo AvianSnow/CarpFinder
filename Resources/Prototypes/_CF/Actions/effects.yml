@@ -570,3 +570,63 @@
       condition: Fascinated
       durationSeconds: 6
     - !type:CFGainPanacheEffect {}
+
+# Investigator.
+- type: entity
+  parent: CFActivityTarget
+  id: CFActExpeditiousInspection
+  name: Expeditious Inspection
+  description: Recall Knowledge about a creature within 30 feet at no cost. Once every 10 minutes.
+  components:
+  - type: TargetAction
+    range: 6.25
+  - type: Action
+    useDelay: 600
+  - type: CFRadialSlot
+    group: Free
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFRecallEffect
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActPointedQuestion
+  name: Pointed Question
+  description: Ask a creature within 30 feet a needling question, Diplomacy against its Will DC. On a success it is off-guard to you for 6 seconds.
+  components:
+  - type: TargetAction
+    range: 6.25
+  - type: CFEffectAction
+  - type: CFTrait
+    traits:
+    - Auditory
+    - Concentrate
+    - Linguistic
+    - Mental
+  - type: CFCheck
+    defense: Will
+    skill: Diplomacy
+    basicSave: false
+  - type: CFDegreeEffects
+    success:
+    - !type:CFOffGuardEffect
+      toUser: true
+    criticalSuccess:
+    - !type:CFOffGuardEffect
+      toUser: true
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActPersonOfInterest
+  name: Person of Interest
+  description: Pick a creature within 60 feet. For a minute, Devise a Stratagem against it costs no action. Once every 10 minutes.
+  components:
+  - type: TargetAction
+    range: 12.25
+  - type: Action
+    useDelay: 600
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFPersonOfInterestEffect {}
