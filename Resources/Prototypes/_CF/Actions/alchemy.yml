@@ -1,0 +1,87 @@
+# The Alchemist's actions. Quick Alchemy's charges are the versatile vials: 2 plus Intelligence (CFGrantVials), one
+# back every 5 minutes, all of them at a long rest.
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActQuickAlchemy
+  name: Quick Alchemy
+  description: Spend a versatile vial to make an alchemical item in your hand. It goes inert after 6 seconds. You have 2 vials plus your Intelligence modifier, and one comes back every 5 minutes.
+  components:
+  - type: CFVersatileVials
+  - type: LimitedCharges
+    maxCharges: 2
+  - type: AutoRecharge
+    rechargeDuration: 300
+  - type: CFModeChoice
+    modes:
+    - { value: 1, name: cf-mode-alchemy-elixir-of-life, actions: 1 }
+    - { value: 2, name: cf-mode-alchemy-alchemists-fire, actions: 1 }
+    - { value: 3, name: cf-mode-alchemy-bottled-lightning, actions: 1 }
+    - { value: 4, name: cf-mode-alchemy-antidote, actions: 1 }
+    - { value: 5, name: cf-mode-alchemy-cheetahs-elixir, actions: 1 }
+    - { value: 6, name: cf-mode-alchemy-darkvision-elixir, actions: 1 }
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFQuickAlchemyEffect
+      items:
+      - CFElixirOfLifeMinor
+      - CFAlchemistsFireLesser
+      - CFBottledLightningLesser
+      - CFAntidoteLesser
+      - CFCheetahsElixirLesser
+      - CFDarkvisionElixirLesser
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActQuickVial
+  name: Quick Vial
+  description: Make a versatile vial in your hand, at no cost. It is a bomb of 1d6 and 1 splash, 2d6 and 2 from level 4, and goes inert after 6 seconds. Your research field adds other kinds.
+  components:
+  - type: CFModeChoice
+    modes:
+    - { value: 1, name: cf-mode-vial-acid, actions: 1 }
+    - { value: 2, name: cf-mode-vial-cold, actions: 1, requires: BomberField }
+    - { value: 3, name: cf-mode-vial-electricity, actions: 1, requires: BomberField }
+    - { value: 4, name: cf-mode-vial-fire, actions: 1, requires: BomberField }
+    - { value: 5, name: cf-mode-vial-poison, actions: 1, requires: ToxicologistField }
+    - { value: 6, name: cf-mode-vial-healing, actions: 1, requires: ChirurgeonField }
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFQuickAlchemyEffect
+      vial: true
+      items:
+      - CFVersatileVialAcid
+      - CFVersatileVialCold
+      - CFVersatileVialElectricity
+      - CFVersatileVialFire
+      - CFVersatileVialPoison
+      - CFVersatileVialHealing
+
+# Quick Bomber: the vial is made and thrown in one action.
+- type: entity
+  parent: CFActivityTarget
+  id: CFActQuickBomber
+  name: Quick Bomber
+  description: Make an acid versatile vial and throw it at a creature within 60 feet, all for 1 action.
+  components:
+  - type: TargetAction
+    range: 12.25
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFQuickBombEffect
+      vial: CFVersatileVialAcid
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActImproviseAdmixture
+  name: Improvise Admixture
+  description: Once a day. A Crafting check gives you versatile vials back, up to your most. 3 on a critical success, 2 on a success, 1 on a failure.
+  components:
+  - type: CFEffectAction
+  - type: CFDailyUses
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFRegainVialsEffect {}

@@ -1,10 +1,13 @@
-# CarpFinder: Alchemist research fields, Player Core 2. Their benefits need versatile vials and Quick Alchemy.
+# CarpFinder: Alchemist research fields, Player Core 2. Each changes what Quick Vial can make (Actions/alchemy.yml).
 - type: cfClassChoice
   id: FieldBomber
   class: Alchemist
   slot: cf-class-choice-research-field
   name: cf-class-choice-fieldbomber
   description: cf-class-choice-fieldbomber-desc
+  grants:
+    - !type:CFGrantOption
+      option: BomberField
 
 - type: cfClassChoice
   id: FieldChirurgeon
@@ -12,6 +15,9 @@
   slot: cf-class-choice-research-field
   name: cf-class-choice-fieldchirurgeon
   description: cf-class-choice-fieldchirurgeon-desc
+  grants:
+    - !type:CFGrantOption
+      option: ChirurgeonField
 
 - type: cfClassChoice
   id: FieldMutagenist
@@ -26,3 +32,13 @@
   slot: cf-class-choice-research-field
   name: cf-class-choice-fieldtoxicologist
   description: cf-class-choice-fieldtoxicologist-desc
+  grants:
+    - !type:CFGrantOption
+      option: ToxicologistField
+  features:
+    - level: 5
+      name: Field Discovery
+      grants:
+        - !type:CFGrantResistance
+          damageType: Poison
+          halfLevel: true

@@ -81,7 +81,7 @@ public sealed class CFLocalizationTest : GameTest
         });
 
         Assert.That(name, Is.EqualTo("Quick Bomber"));
-        Assert.That(description, Does.Contain("Alchemical bombs"));
+        Assert.That(description, Does.Contain("versatile vial"));
     }
 
     /// <summary>Pets are matched on the feat's id. Its name is only a key, and searching that would quietly find nothing.</summary>

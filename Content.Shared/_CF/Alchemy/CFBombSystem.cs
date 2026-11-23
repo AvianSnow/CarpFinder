@@ -19,6 +19,7 @@ public sealed partial class CFBombSystem : EntitySystem
     private const float SplashRange = 1.2f;
 
     [Dependency] private CFBonusSystem _bonuses = default!;
+    [Dependency] private Content.Shared.CF.Factions.CFFactionSystem _factions = default!;
     [Dependency] private CFConditionSystem _conditions = default!;
     [Dependency] private CFEffectSystem _effects = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
@@ -60,12 +61,22 @@ public sealed partial class CFBombSystem : EntitySystem
     {
         var splashed = new HashSet<Entity<MobStateComponent>>();
         _lookup.GetEntitiesInRange(Transform(target).Coordinates, SplashRange, splashed);
+
+        // A Bomber keeps the splash off its allies, and from level 5 makes it at least its Intelligence modifier.
+        var bomber = CompOrNull<CFCombatOptionsComponent>(user)?.BomberField == true;
+        var amount = bomb.Comp.Splash;
+        if (bomber && (CompOrNull<CFCombatantComponent>(user)?.Level ?? 1) >= 5)
+            amount = Math.Max(amount, CompOrNull<Content.Shared.CF.Character.CFAbilityScoreComponent>(user)?.GetModifier(Content.Shared.CF.Preferences.CFAbility.Intelligence) ?? 0);
+
         foreach (var creature in splashed)
         {
             if (_mobState.IsDead(creature, creature.Comp))
                 continue;
 
-            _effects.DealDamage(user, creature, bomb.Comp.Splash, damageType, critical: false);
+            if (bomber && creature.Owner != target && (creature.Owner == user || !_factions.CanHarm(user, creature)))
+                continue;
+
+            _effects.DealDamage(user, creature, amount, damageType, critical: false);
         }
     }
 

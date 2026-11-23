@@ -34,17 +34,23 @@
   features:
     - level: 1
       name: "Alchemy"
-      description: "You start with two minor healing potions."
+      description: "You have versatile vials: 2 plus your Intelligence modifier. One comes back every 5 minutes, and all of them at a long rest. Quick Alchemy spends one to put an elixir of life, an alchemist's fire, a bottled lightning, an antidote, a cheetah's elixir or a darkvision elixir in your hand for 6 seconds. Quick Vial makes a versatile vial bomb at no cost. You have Alchemical Crafting, and start with two minor healing potions. Making infused items each day, and the formula book: TBA"
       grants:
+        - !type:CFGrantVials
+          action: CFActQuickAlchemy
+        - !type:CFGrantAction
+          action: CFActQuickVial
+        - !type:CFGrantFeat
+          feat: CFAlchemicalCrafting
         - !type:CFGrantItem
           item: CFHealingPotionMinor
           count: 2
     - level: 1
       name: "Research Field"
-      description: "Choose a research field in the builder. What each field does needs versatile vials and Quick Alchemy: TBA"
+      description: "Choose a research field in the builder. It changes what your versatile vials can be, and gives a benefit of its own."
     - level: 5
       name: "Field Discovery"
-      description: "A benefit from your research field: TBA"
+      description: "Bomber: a bomb's splash is at least your Intelligence modifier. Toxicologist: poison resistance equal to half your level. Chirurgeon and Mutagenist: TBA"
     - level: 5
       name: "Powerful Alchemy"
       description: "Infused items use your class DC. Infused items do not exist yet: TBA"

@@ -112,6 +112,11 @@ public enum CFModeRequirement : byte
 
     /// <summary>The Mercy feat: a 2-action Lay on Hands.</summary>
     Mercy,
+
+    /// <summary>An Alchemist's research field, for what a versatile vial can be.</summary>
+    BomberField,
+    ToxicologistField,
+    ChirurgeonField,
 }
 
 public static class CFModeRequirements
@@ -123,6 +128,9 @@ public static class CFModeRequirements
         {
             CFModeRequirement.Cruelty => options?.Cruelty == true,
             CFModeRequirement.Mercy => options is { MercyConditions.Count: > 0 },
+            CFModeRequirement.BomberField => options?.BomberField == true,
+            CFModeRequirement.ToxicologistField => options?.ToxicologistField == true,
+            CFModeRequirement.ChirurgeonField => options?.ChirurgeonField == true,
             CFModeRequirement.DirectedChannel => entities.GetComponentOrNull<Content.Shared.CF.Combat.CFCombatOptionsComponent>(user)?.DirectedChannel == true,
             _ => true,
         };

@@ -77,6 +77,14 @@ public sealed partial class CFWeaponSystem : EntitySystem
         if (group > rank)
             rank = group;
 
+        // Alchemical bombs have a training of their own, which an Alchemist has without martial weapons.
+        if (data.Group == CFWeaponGroup.Bomb)
+        {
+            var alchemical = CFDefense.AttackRank(_prototypes, combat, "AlchemicalWeapons");
+            if (alchemical >= CFProficiencyRank.Trained)
+                return alchemical > rank ? alchemical : rank;
+        }
+
         var counts = data.Category;
         if (MetaData(item).EntityPrototype is { } proto && combat.FamiliarWeapons.Contains(proto.ID))
         {

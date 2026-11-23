@@ -1,0 +1,178 @@
+# Versatile vials: what an Alchemist's Quick Vial makes. A bomb of 1d6 and 1 splash, or 2d6 and 2 from level 4
+# (CFQuickAlchemySystem sets the numbers from the maker's level). They cost nothing, are never sold, and go inert a
+# few seconds after they are made. Acid is the plain one. A research field adds the others.
+
+- type: entity
+  parent: CFBaseBomb
+  id: CFVersatileVialAcid
+  name: versatile vial (acid)
+  description: A vial of quick alchemy. Thrown, it deals 1d6 acid damage and splashes 1 acid damage over everyone within 5 feet. It goes inert within moments.
+  components:
+  - type: Sprite
+    layers:
+    - state: vial
+    - state: fill-6
+      color: "#7ad13a"
+  - type: CFWeapon
+    damageDice: 1
+    damageDie: 6
+    damageType: Acid
+    category: Martial
+    group: Bomb
+  - type: CFTrait
+    traits:
+    - Thrown20
+    - Splash
+    - Bomb
+    - Alchemical
+    - Consumable
+    - Infused
+  - type: CFBomb
+    splash: 1
+
+- type: entity
+  parent: CFBaseBomb
+  id: CFVersatileVialCold
+  name: versatile vial (cold)
+  description: A vial of quick alchemy. Thrown, it deals 1d6 cold damage and splashes 1 cold damage over everyone within 5 feet. It goes inert within moments.
+  components:
+  - type: Sprite
+    layers:
+    - state: vial
+    - state: fill-6
+      color: "#8fd8ff"
+  - type: CFWeapon
+    damageDice: 1
+    damageDie: 6
+    damageType: Cold
+    category: Martial
+    group: Bomb
+  - type: CFTrait
+    traits:
+    - Thrown20
+    - Splash
+    - Bomb
+    - Alchemical
+    - Consumable
+    - Infused
+  - type: CFBomb
+    splash: 1
+
+- type: entity
+  parent: CFBaseBomb
+  id: CFVersatileVialElectricity
+  name: versatile vial (electricity)
+  description: A vial of quick alchemy. Thrown, it deals 1d6 electricity damage and splashes 1 electricity damage over everyone within 5 feet. It goes inert within moments.
+  components:
+  - type: Sprite
+    layers:
+    - state: vial
+    - state: fill-6
+      color: "#f7e04a"
+  - type: CFWeapon
+    damageDice: 1
+    damageDie: 6
+    damageType: Electricity
+    category: Martial
+    group: Bomb
+  - type: CFTrait
+    traits:
+    - Thrown20
+    - Splash
+    - Bomb
+    - Alchemical
+    - Consumable
+    - Infused
+  - type: CFBomb
+    splash: 1
+
+- type: entity
+  parent: CFBaseBomb
+  id: CFVersatileVialFire
+  name: versatile vial (fire)
+  description: A vial of quick alchemy. Thrown, it deals 1d6 fire damage and splashes 1 fire damage over everyone within 5 feet. It goes inert within moments.
+  components:
+  - type: Sprite
+    layers:
+    - state: vial
+    - state: fill-6
+      color: "#ff6a1a"
+  - type: CFWeapon
+    damageDice: 1
+    damageDie: 6
+    damageType: Fire
+    category: Martial
+    group: Bomb
+  - type: CFTrait
+    traits:
+    - Thrown20
+    - Splash
+    - Bomb
+    - Alchemical
+    - Consumable
+    - Infused
+  - type: CFBomb
+    splash: 1
+
+- type: entity
+  parent: CFBaseBomb
+  id: CFVersatileVialPoison
+  name: versatile vial (poison)
+  description: A vial of quick alchemy. Thrown, it deals 1d6 poison damage and splashes 1 poison damage over everyone within 5 feet. It goes inert within moments.
+  components:
+  - type: Sprite
+    layers:
+    - state: vial
+    - state: fill-6
+      color: "#8a4fc7"
+  - type: CFWeapon
+    damageDice: 1
+    damageDie: 6
+    damageType: Poison
+    category: Martial
+    group: Bomb
+  - type: CFTrait
+    traits:
+    - Thrown20
+    - Splash
+    - Bomb
+    - Alchemical
+    - Consumable
+    - Infused
+  - type: CFBomb
+    splash: 1
+
+# The Chirurgeon's field vial: a drink, not a bomb.
+- type: entity
+  parent: CFBasePotion
+  id: CFVersatileVialHealing
+  name: versatile vial (healing)
+  description: A vial of quick alchemy. Drinking it restores 1d6 Hit Points. It goes inert within moments.
+  components:
+  - type: Sprite
+    layers:
+    - state: vial
+    - state: fill-6
+      color: "#e85a6a"
+  - type: Tag
+    tags:
+    - CFAlchemical
+    - CFConsumable
+    - CFHealing
+  - type: CFTrait
+    traits:
+    - Alchemical
+    - Consumable
+    - Elixir
+    - Healing
+    - Infused
+  - type: CFItem
+    level: 1
+  - type: CFAlchemicalItem
+    itemLevel: 1
+    priceGp: 0
+  - type: CFItemUse
+    uses: Heals
+  - type: CFHealConsumable
+    healDice: 1
+    healDie: 6

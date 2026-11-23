@@ -223,6 +223,10 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (!_weapons.TryStats(weapon, out var stats, thrown: true) || stats.RangeIncrementFeet <= 0)
             return;
 
+        // Far Lobber: a bomb's range increment is 30 feet.
+        if (weapon.Comp.Group == CFWeaponGroup.Bomb && CompOrNull<CFCombatOptionsComponent>(thrower)?.FarLobber == true)
+            stats = stats with { RangeIncrementFeet = Math.Max(stats.RangeIncrementFeet, 30) };
+
         // Only a living enemy stops it. It flies on past an ally or a body.
         if (!TryComp(args.Target, out MobStateComponent? mob)
             || _mobState.IsDead(args.Target, mob)

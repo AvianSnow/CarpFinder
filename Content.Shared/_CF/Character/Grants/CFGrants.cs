@@ -1123,3 +1123,19 @@ public sealed partial class CFGrantMercy : CFGrant
         entities.Dirty(args.Mob, options);
     }
 }
+
+/// <summary>
+/// An Alchemist's versatile vials: gives the Quick Alchemy action and sets its charges to 2 plus the Intelligence
+/// modifier. The action needs <c>CFVersatileVials</c>, <c>LimitedCharges</c> and <c>AutoRecharge</c>.
+/// </summary>
+public sealed partial class CFGrantVials : CFGrant
+{
+    [DataField(required: true)]
+    public EntProtoId Action;
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        entities.System<CFCharacterFeatureSystem>().GrantAction(args.Mob, Action);
+        entities.System<Content.Shared.CF.Alchemy.CFQuickAlchemySystem>().Refill(args.Mob);
+    }
+}

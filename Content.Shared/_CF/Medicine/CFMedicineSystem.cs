@@ -279,7 +279,7 @@ public sealed partial class CFMedicineSystem : EntitySystem
     public CFDegree TreatWounds(EntityUid user, EntityUid target)
     {
         var (dc, bonus) = Dcs(user);
-        var degree = _conditions.RollSkillAgainst(user, Skill, CFAbility.Wisdom, dc, out _);
+        var degree = RollMedicine(user, dc);
         Comp(target).TreatWoundsUntil = _timing.CurTime + TreatImmunity;
 
         if (!ApplyResult(user, target, degree, bonus))
@@ -315,7 +315,7 @@ public sealed partial class CFMedicineSystem : EntitySystem
         if (CompOrNull<CFCombatOptionsComponent>(user)?.ForensicMedicine == true)
             bonus += CompOrNull<CFCombatantComponent>(user)?.Level ?? 0;
 
-        var degree = _conditions.RollSkillAgainst(user, Skill, CFAbility.Wisdom, dc, out _);
+        var degree = RollMedicine(user, dc);
         Comp(target).BattleMedicineUntil[user] = _timing.CurTime + BattleMedicineImmunity;
         return ApplyResult(user, target, degree, bonus);
     }
@@ -367,10 +367,32 @@ public sealed partial class CFMedicineSystem : EntitySystem
         };
     }
 
+    /// <summary>Whether Crafting stands in for Medicine: the Chirurgeon research field.</summary>
+    private bool UsesCrafting(EntityUid user)
+    {
+        return CompOrNull<CFCombatOptionsComponent>(user)?.ChirurgeonField == true;
+    }
+
+    /// <summary>A Medicine check. A Chirurgeon rolls Crafting when that is the better modifier.</summary>
+    private CFDegree RollMedicine(EntityUid user, int dc)
+    {
+        if (UsesCrafting(user)
+            && TryComp(user, out CFCombatantComponent? combat)
+            && TryComp(user, out CFAbilityScoreComponent? abilities)
+            && CFDefense.SkillModifier(_prototypes, combat, abilities, "Crafting", CFAbility.Intelligence, 0)
+            > CFDefense.SkillModifier(_prototypes, combat, abilities, Skill, CFAbility.Wisdom, 0))
+        {
+            return _conditions.RollSkillAgainst(user, "Crafting", CFAbility.Intelligence, dc, out _);
+        }
+
+        return _conditions.RollSkillAgainst(user, Skill, CFAbility.Wisdom, dc, out _);
+    }
+
     private bool CanTreat(EntityUid user)
     {
         if (TryComp(user, out CFCombatantComponent? combat)
-            && CFDefense.SkillRank(_prototypes, combat, Skill) >= CFProficiencyRank.Trained)
+            && (CFDefense.SkillRank(_prototypes, combat, Skill) >= CFProficiencyRank.Trained
+                || UsesCrafting(user) && CFDefense.SkillRank(_prototypes, combat, "Crafting") >= CFProficiencyRank.Trained))
             return true;
 
         _popup.PopupEntity(Loc.GetString("cf-medicine-untrained"), user, user);

@@ -595,6 +595,21 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
             case CFCombatOption.ForensicMedicine:
                 options.ForensicMedicine = true;
                 break;
+            case CFCombatOption.BomberField:
+                options.BomberField = true;
+                break;
+            case CFCombatOption.ToxicologistField:
+                options.ToxicologistField = true;
+                break;
+            case CFCombatOption.ChirurgeonField:
+                options.ChirurgeonField = true;
+                break;
+            case CFCombatOption.FarLobber:
+                options.FarLobber = true;
+                break;
+            case CFCombatOption.EnduringAlchemy:
+                options.EnduringAlchemy = true;
+                break;
             case CFCombatOption.Cruelty:
                 options.Cruelty = true;
                 break;

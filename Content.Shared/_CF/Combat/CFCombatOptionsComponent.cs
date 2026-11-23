@@ -469,6 +469,26 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public bool Cruelty;
 
+    /// <summary>The Bomber research field: bombs do not splash allies, a vial can be cold, electricity or fire, and from level 5 the splash is at least the Intelligence modifier. The mode menu reads it.</summary>
+    [DataField, AutoNetworkedField]
+    public bool BomberField;
+
+    /// <summary>The Toxicologist research field: a vial can deal poison damage. The mode menu reads it.</summary>
+    [DataField, AutoNetworkedField]
+    public bool ToxicologistField;
+
+    /// <summary>The Chirurgeon research field: a vial can heal, and Crafting stands in for Medicine. The mode menu reads it.</summary>
+    [DataField, AutoNetworkedField]
+    public bool ChirurgeonField;
+
+    /// <summary>Bombs have a range increment of 30 feet (Far Lobber).</summary>
+    [DataField]
+    public bool FarLobber;
+
+    /// <summary>An elixir made with Quick Alchemy lasts twice as long before it goes inert (Enduring Alchemy).</summary>
+    [DataField]
+    public bool EnduringAlchemy;
+
     /// <summary>What a 2-action Lay on Hands can end (Mercy). Empty means the character has no Mercy. The mode menu reads it.</summary>
     [DataField, AutoNetworkedField]
     public List<CFConditionKind> MercyConditions = new();
@@ -625,6 +645,11 @@ public static class CFReactions
 /// <summary>The flags on <see cref="CFCombatOptionsComponent"/> that a <c>CFGrantOption</c> can set.</summary>
 public enum CFCombatOption : byte
 {
+    BomberField,
+    ToxicologistField,
+    ChirurgeonField,
+    FarLobber,
+    EnduringAlchemy,
     TakedownExpert,
     SharedStratagem,
     KeenRecollection,

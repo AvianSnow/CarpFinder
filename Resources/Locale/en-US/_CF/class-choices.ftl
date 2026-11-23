@@ -143,13 +143,13 @@ cf-class-choice-methodinterrogation-desc = Trained in Diplomacy. You have Pointe
 
 cf-class-choice-research-field = Research Field
 cf-class-choice-fieldbomber = Bomber
-cf-class-choice-fieldbomber-desc = You specialize in explosions. Its formulas, benefit and vials: TBA
+cf-class-choice-fieldbomber-desc = Your bombs never splash you or your allies, and Quick Vial can make cold, electricity or fire vials. From level 5 a bomb's splash is at least your Intelligence modifier. The two bomb formulas: TBA
 cf-class-choice-fieldchirurgeon = Chirurgeon
-cf-class-choice-fieldchirurgeon-desc = You heal others with alchemy. Its formulas, benefit and vials: TBA
+cf-class-choice-fieldchirurgeon-desc = Crafting stands in for Medicine, for Treat Wounds and Battle Medicine, and Quick Vial can make a healing vial that restores 1d6 Hit Points, 2d6 from level 4. The two elixir formulas: TBA
 cf-class-choice-fieldmutagenist = Mutagenist
-cf-class-choice-fieldmutagenist-desc = You study transformation. Its formulas, benefit and vials: TBA
+cf-class-choice-fieldmutagenist-desc = You study transformation. There are no mutagens yet: TBA
 cf-class-choice-fieldtoxicologist = Toxicologist
-cf-class-choice-fieldtoxicologist-desc = You work with poison. Its formulas, benefit and vials: TBA
+cf-class-choice-fieldtoxicologist-desc = Quick Vial can make a poison vial. From level 5 you have poison resistance equal to half your level. Injury poisons on a weapon: TBA
 
 cf-class-choice-bloodline = Bloodline
 cf-class-choice-bloodlineaberrant = Aberrant
