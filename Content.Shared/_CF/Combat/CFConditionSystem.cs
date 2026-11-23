@@ -152,6 +152,13 @@ public sealed partial class CFConditionSystem : EntitySystem
                 dirty = true;
             }
 
+            if (cond.TimedDarkvision && now >= cond.DarkvisionUntil)
+            {
+                cond.TimedDarkvision = false;
+                RemComp<NightVisionComponent>(uid);
+                dirty = true;
+            }
+
             if (cond.Blinded && now >= cond.BlindUntil)
             {
                 cond.Blinded = false;
@@ -388,8 +395,13 @@ public sealed partial class CFConditionSystem : EntitySystem
         _popup.PopupEntity(Loc.GetString("cf-cond-blinded"), target);
     }
 
-    public void ApplyDarkvision(EntityUid target)
+    /// <summary>
+    /// Darkvision, for <paramref name="seconds"/> when that is set. A creature that already sees in the dark keeps
+    /// its own sight when the time runs out.
+    /// </summary>
+    public void ApplyDarkvision(EntityUid target, float seconds = 0f)
     {
+        var had = HasComp<NightVisionComponent>(target);
         var vision = EnsureComp<NightVisionComponent>(target);
         vision.Enabled = true;
         vision.Prioritized = true;
@@ -397,6 +409,14 @@ public sealed partial class CFConditionSystem : EntitySystem
         vision.NoiseAmount = 0f;
         Dirty(target, vision);
         _popup.PopupEntity(Loc.GetString("cf-cond-darkvision"), target);
+
+        if (seconds <= 0f || had)
+            return;
+
+        var cond = Ensure(target);
+        cond.TimedDarkvision = true;
+        cond.DarkvisionUntil = _timing.CurTime + TimeSpan.FromSeconds(seconds);
+        Dirty(target, cond);
     }
 
     public void SetOffGuardAll(EntityUid target, float seconds)
@@ -1208,7 +1228,7 @@ public sealed partial class CFConditionSystem : EntitySystem
                 ApplyBlind(target, seconds);
                 break;
             case CFConditionKind.Darkvision:
-                ApplyDarkvision(target);
+                ApplyDarkvision(target, seconds);
                 break;
             case CFConditionKind.SpellShield:
                 GrantSpellShield(target, value);
@@ -1325,6 +1345,14 @@ public sealed partial class CFConditionSystem : EntitySystem
             case CFConditionKind.OffGuard:
                 cond.OffGuardAll = false;
                 cond.OffGuardAllUntil = TimeSpan.Zero;
+                break;
+            case CFConditionKind.Darkvision:
+                if (cond.TimedDarkvision)
+                {
+                    cond.TimedDarkvision = false;
+                    RemComp<NightVisionComponent>(target);
+                }
+
                 break;
             case CFConditionKind.Clumsy:
                 cond.ClumsyValue = 0;

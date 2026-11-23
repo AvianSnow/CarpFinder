@@ -15,15 +15,15 @@
     state: brown
   - type: Item
     size: Tiny
-  - type: SolutionContainerManager
-    solutions:
-      food:
-        maxVol: 6
-        reagents:
-        - ReagentId: Egg
-          Quantity: 6
-        - ReagentId: Protein
-          Quantity: 2
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 6
+      reagents:
+      - ReagentId: Egg
+        Quantity: 6
+      - ReagentId: Protein
+        Quantity: 2
   - type: DrawableSolution
     solution: food
   # egg fragile
@@ -78,13 +78,13 @@
     state: brown_shell
   - type: Item
     size: Tiny
-  - type: SolutionContainerManager
-    solutions:
-      food:
-        maxVol: 2
-        reagents:
-        - ReagentId: Egg
-          Quantity: 1
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 2
+      reagents:
+      - ReagentId: Egg
+        Quantity: 1
 
 - type: entity
   parent: CFFoodEggBase
@@ -115,12 +115,12 @@
   - type: CFItemPrice
     copper: 10
   - type: Edible
-  - type: SolutionContainerManager
-    solutions:
-      food:
-        maxVol: 6
-        reagents:
-        - ReagentId: EggCooked
-          Quantity: 6
-        - ReagentId: Protein
-          Quantity: 2
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 6
+      reagents:
+      - ReagentId: EggCooked
+        Quantity: 6
+      - ReagentId: Protein
+        Quantity: 2

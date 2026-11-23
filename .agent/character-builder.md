@@ -82,7 +82,7 @@
 
 `cfJobGroup` only fills the **character builder** job list. Round join needs:
 
-1. Job on the map's `StationJobs.availableJobs`. The round map is `CFDragonRunTest` (`Resources/Prototypes/_CF/Maps/dragonruntest.yml`), and `CFMapPool` there holds only it. `development.toml` sets `game.map`, `game.map_pool` and the `Greenshift` preset. Release builds and packaged servers do not load `development.toml`. A packaged server gets `Resources/ConfigPresets/server_config.toml`, which `Content.Packaging` copies beside the executable, so the same settings are repeated there. It must stay at that path: in `Build/` it is never packaged. Dev is still patched in `Resources/Prototypes/Maps/debug.yml` for `forcemap Dev`.
+1. Job on the map's `StationJobs.availableJobs`. The round map is `CFDragonDungeon` (`Resources/Prototypes/_CF/Maps/dragondungeon.yml`, two z-levels), and `CFMapPool` in `dragonruntest.yml` holds only it; `CFDragonRunTest` stays for `forcemap`. `development.toml` sets `game.map`, `game.map_pool` and the `Greenshift` preset. Release builds and packaged servers do not load `development.toml`. A packaged server gets `Resources/ConfigPresets/server_config.toml`, which `Content.Packaging` copies beside the executable, so the same settings are repeated there. It must stay at that path: in `Build/` it is never packaged. Dev is still patched in `Resources/Prototypes/Maps/debug.yml` for `forcemap Dev`.
 2. A real `department` listing those jobs — `Resources/Prototypes/_CF/Roles/departments.yml` (late-join GUI).
 3. Development preset: `Resources/ConfigPresets/Build/development.toml` must keep `ic.random_characters = false` or spawn replaces your profile (and wipes `CFBuild`).
 4. Set High priority on a CF job (e.g. Alpha), save, Ready / Join.

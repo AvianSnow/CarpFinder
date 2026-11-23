@@ -25,7 +25,7 @@ namespace Content.IntegrationTests.Tests.CF.Outdoors;
 [TestFixture]
 public sealed class CFMapAirTest : GameTest
 {
-    private static readonly ProtoId<GameMapPrototype> RoundMap = "CFDragonRunTest";
+    private static readonly ProtoId<GameMapPrototype> RoundMap = "CFDragonDungeon";
 
     public override PoolSettings PoolSettings => new() { Connected = false, Dirty = true };
 
@@ -97,7 +97,14 @@ public sealed class CFMapAirTest : GameTest
             foreach (var grid in grids)
             {
                 if (!SEntMan.TryGetComponent(grid, out GridAtmosphereComponent air))
+                {
+                    // A planet map is its own grid and breathes the map's air alone. Stock gives it no grid atmosphere,
+                    // so there is no tile for stale sky air to sit on.
+                    var map = SEntMan.GetComponent<TransformComponent>(grid).MapUid;
+                    if (SEntMan.TryGetComponent(map, out MapAtmosphereComponent mapAir) && !mapAir.Space)
+                        seen++;
                     continue;
+                }
 
                 foreach (var (indices, tile) in air.Tiles)
                 {

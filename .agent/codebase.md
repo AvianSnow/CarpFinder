@@ -27,7 +27,7 @@ Everything below is under `Content.Shared/_CF/`.
 |---|---|---|
 | `Actions/` | Action stamina, multiple attack penalty, radial activities, breath weapons, stances, flourishes, Shove, Disarm, Grapple, Escape, marks, standing | `CFActionPoolSystem`, `CFActivitySystem`, `CFStanceSystem`, `CFManeuverSystem` |
 | `Afflictions/` | Staged afflictions such as Alcohol. Poisons and diseases can use the same pieces. | `CFAfflictionSystem` |
-| `Alchemy/` | Drinkable and feedable potions | `CFAlchemicalItemSystem` |
+| `Alchemy/` | Potions, elixirs and bombs: drinking one runs its `CFDrinkEffects`, a thrown bomb breaks on its Strike and splashes (`CFBombSystem`), and the cauldron data. Brewing is server-side in `Content.Server/_CF/Alchemy/CFCauldronSystem`: a cauldron on a fire boils the ingredients of an Alchemy `craftingRecipe` and the brewer rolls Crafting. Ingredients and the wild plants they come from are CP14's. | `CFAlchemicalItemSystem`, `CFBombSystem`, `CFCauldronComponent` |
 | `Character/` | Prototypes for ancestry, class, feat, heritage, background, spell; skill and attribute math; `Grants/`, what an option gives a character | `CFAttributeMath`, `CFSkills`, `CFCharacterFeatureSystem` |
 | `Checks/` | Degrees of success, defenses, casting DCs | `CFDegrees`, `CFDefense`, `CFCasting` |
 | `Combat/` | Strikes, conditions, dying, flanking, armor, shields, weapons, runes | `CFStrikeSystem`, `CFConditionSystem` |
@@ -45,7 +45,7 @@ Everything below is under `Content.Shared/_CF/`.
 | `Locks/` | Keys, Pick a Lock, Force Open, on top of the stock `Lock` | `CFLockSystem` |
 | `Outdoors/` | The outdoor map component, temperature rules, weather effects. The logic is server-side. | `CFEnvironmentRules`, `CFOutdoorsWorldSystem` |
 | `Farming/` | Plant, seed and harvest data. The logic is server-side. | `CFFarmingSystem` |
-| `Cooking/` | The mortar, mixing flour into water, pots and pans that cook a dish from what is in them, serving it, and barrels that brew. A fire heats what is on it from `Content.Server/_CF/Temperature/CFFireHeaterSystem`. | `CFSharedCookerSystem`, `CFFermenterSystem`, `CFMortarSystem` |
+| `Cooking/` | The mortar, mixing flour into water, pots and pans that cook a dish from what is in them, serving it, and barrels that brew. A fire heats what is on it from `Content.Server/_CF/Temperature/CFFireHeaterSystem`; clicking the fire with food or a pot sets it on top (`CFCookingSurfaceSystem`), and an empty mug on a tap fills (`CFTapSystem`). | `CFSharedCookerSystem`, `CFFermenterSystem`, `CFMortarSystem` |
 | `Adventure/` | Site prototypes, encounter and treasure tables. Generation is server-side. | `CFEncounterRules`, `CFAdventureSiteSystem` |
 | `Languages/` | What a creature speaks and understands, and what it sounds like otherwise. Chat asks per listener, and a speaker always understands itself. The language menu is client-side, after Starlight's. | `CFLanguageSystem`, `CFLanguageRules` |
 | `Magic/` | Light, Detect Magic, Read Aura, and what counts as magical | `CFMagicSenseSystem` |
@@ -251,6 +251,7 @@ All edits carry `// CarpFinder` markers, so `grep -rn CarpFinder Content.Client 
 | Throwing | `Content.Server/Hands/Systems/HandsSystem.cs` | A thrown weapon's reach comes from its range increments, not the hand's 8 tiles |
 | Tiles | `Tiles/lava.yml`, `liquid_plasma.yml`, `chasm.yml`, `water.yml` | The `CFDangerousTile` marker. `chasm.yml` also has `CFChasmEdge`. `water.yml` gets `DrawableSolution` and `Edible`, so open water is drunk from and drawn into a bucket, and a tribe counts it as its water |
 | Chat | `Content.Server/Chat/Systems/ChatSystem.PrivateAPI.cs`, `ChatSystem.Utility.cs` | Each listener hears speech in a language they know, or nonsense |
+| Storage | `Content.Shared/Storage/StorageComponent.cs`, `Storage/EntitySystems/SharedStorageSystem.cs` | `StorageInteractUsingAttemptEvent` carries the user and the item, so a fire can set food on top instead of refusing it as fuel, and a pot can let a plate or a mug through to serve or pour |
 | Saved characters | `Content.Server/Database/DataNodeJsonExtensions.cs` | A JSON null is read as a real null, or a build with an unpicked boost fails to load |
 | Maps | `Maps/Test/dev_map.yml`, `Maps/Nonstations/meteor-arena.yml`, `dm01-entryway.yml` | `MapAtmosphere`, so mobs can breathe |
 
@@ -278,7 +279,8 @@ Radial actions are entities in `Resources/Prototypes/_CF/Actions/activities.yml`
 | `/Maps/Nonstations/meteor-arena.yml` | The arena all integration tests load, through `CFDevMap` |
 | `CFMobKoboldTrapper` | A GOAP leader that shoots, lays traps and draws a hammer when cornered. Set a spawner's `encounter` to `KoboldAmbush` for it and three warriors |
 | Any monster | Ghosts can take every monster above from the ghost role menu, through `CFMonsterGhostRole` |
-| `CFZLevelTest` | A two-level map (`forcemap CFZLevelTest`): stairs, a ladder and a hole down to a cellar, with the cellar listed in the station's `CFStationZLevels.mapsBelow` |
+| `CFDragonDungeon` | The round map: a two-level dungeon on z-levels (`Maps/_CF/Adventure/DragonDungeon/`, `Prototypes/_CF/Maps/dragondungeon.yml`). `cf_znetwork_gamemap_mapping CFDragonDungeon` opens the whole stack in the editor |
+| `CFZLevelTest` | A two-level map (`forcemap CFZLevelTest`): a hole (an empty tile) down to a cellar, and CrystallEdge's stone staircase (`CFZLevelStairsStone`) and wall ladder (`CFWoodenLadder`) climbing out of it, with the cellar listed in the station's `CFStationZLevels.mapsBelow` |
 | `CFEncounterSpawner` | Spawns an `encounter` when a player comes within `triggerFeet` (90). Edit it in VV as an aghost: `mobs` takes ids separated by commas, and `amount` is how many (`CFMobWolf` and 2 is two wolves; 0 is one of each typed mob). Left alone it is `SmallGroup`, four kobold warriors |
 | `CFEncounterSpawnerKoboldTribe` | Spawns the `KoboldTribe` encounter at once: five warriors and a trapper that live round the nearest fire, farm, store food and ask strangers for food. `/Maps/_CF/KoboldSocietyTest2.yml` has one. See `society.md` |
 | `CFEncounterSpawnerDragonLair` | The same, set to `DragonLair`: the juvenile horned dragon, which guards the spot it appears on. Dragon Run has one beside `CFBoneDragon` |

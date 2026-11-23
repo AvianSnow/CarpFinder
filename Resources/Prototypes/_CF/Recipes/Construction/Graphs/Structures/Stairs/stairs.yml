@@ -1,0 +1,369 @@
+# One graph for every staircase and roof ramp, after CrystallEdge's. Each shape (straight, corner, inner corner)
+# starts as a wooden frame of two planks, and is finished with a plank, two stones or two roof tiles hammered onto it. Prying a frame takes
+# it apart, and a hammer takes a finished staircase back to its frame.
+
+- type: constructionGraph
+  id: CFZLevelStairs
+  start: start
+  graph:
+    - node: start
+      edges:
+        - to: CFZLevelStairsFrame
+          completed:
+            - !type:SnapToGrid
+          steps:
+            - material: CFWoodenPlanks
+              amount: 2
+              doAfter: 2
+        - to: CFZLevelStairsFrameCorner
+          completed:
+            - !type:SnapToGrid
+          steps:
+            - material: CFWoodenPlanks
+              amount: 2
+              doAfter: 2
+        - to: CFZLevelStairsFrameCornerInner
+          completed:
+            - !type:SnapToGrid
+          steps:
+            - material: CFWoodenPlanks
+              amount: 2
+              doAfter: 2
+
+    # Frames
+
+    - node: CFZLevelStairsFrame
+      entity: CFZLevelStairsFrame
+      edges:
+        - to: start
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFWoodenPlanks1
+              amount: 2
+            - !type:DeleteEntity {}
+          steps:
+            - tool: Prying
+              doAfter: 2
+        - to: CFZLevelStairsWooden
+          steps:
+            - material: CFWoodenPlanks
+              amount: 1
+              doAfter: 1.5
+            - tool: CFHammering
+              doAfter: 1
+        - to: CFZLevelStairsStone
+          steps:
+            - material: CFStone
+              amount: 2
+              doAfter: 1.5
+            - tool: CFHammering
+              doAfter: 1
+        - to: CFZLevelStairsRoofRed
+          steps:
+            - material: CFFloorTileRoofRed
+              amount: 2
+              doAfter: 1.5
+            - tool: CFHammering
+              doAfter: 1
+        - to: CFZLevelStairsRoofGreen
+          steps:
+            - material: CFFloorTileRoofGreen
+              amount: 2
+              doAfter: 1.5
+            - tool: CFHammering
+              doAfter: 1
+        - to: CFZLevelStairsRoofBlue
+          steps:
+            - material: CFFloorTileRoofBlue
+              amount: 2
+              doAfter: 1.5
+            - tool: CFHammering
+              doAfter: 1
+
+    - node: CFZLevelStairsFrameCorner
+      entity: CFZLevelStairsFrameCorner
+      edges:
+        - to: start
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFWoodenPlanks1
+              amount: 2
+            - !type:DeleteEntity {}
+          steps:
+            - tool: Prying
+              doAfter: 2
+        - to: CFZLevelStairsWoodenCorner
+          steps:
+            - material: CFWoodenPlanks
+              amount: 1
+              doAfter: 1.5
+            - tool: CFHammering
+              doAfter: 1
+        - to: CFZLevelStairsStoneCorner
+          steps:
+            - material: CFStone
+              amount: 2
+              doAfter: 1.5
+            - tool: CFHammering
+              doAfter: 1
+        - to: CFZLevelStairsRoofRedCorner
+          steps:
+            - material: CFFloorTileRoofRed
+              amount: 2
+              doAfter: 1.5
+            - tool: CFHammering
+              doAfter: 1
+        - to: CFZLevelStairsRoofGreenCorner
+          steps:
+            - material: CFFloorTileRoofGreen
+              amount: 2
+              doAfter: 1.5
+            - tool: CFHammering
+              doAfter: 1
+        - to: CFZLevelStairsRoofBlueCorner
+          steps:
+            - material: CFFloorTileRoofBlue
+              amount: 2
+              doAfter: 1.5
+            - tool: CFHammering
+              doAfter: 1
+
+    - node: CFZLevelStairsFrameCornerInner
+      entity: CFZLevelStairsFrameCornerInner
+      edges:
+        - to: start
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFWoodenPlanks1
+              amount: 2
+            - !type:DeleteEntity {}
+          steps:
+            - tool: Prying
+              doAfter: 2
+        - to: CFZLevelStairsWoodenCornerInner
+          steps:
+            - material: CFWoodenPlanks
+              amount: 1
+              doAfter: 1.5
+            - tool: CFHammering
+              doAfter: 1
+        - to: CFZLevelStairsStoneCornerInner
+          steps:
+            - material: CFStone
+              amount: 2
+              doAfter: 1.5
+            - tool: CFHammering
+              doAfter: 1
+        - to: CFZLevelStairsRoofRedCornerInner
+          steps:
+            - material: CFFloorTileRoofRed
+              amount: 2
+              doAfter: 1.5
+            - tool: CFHammering
+              doAfter: 1
+        - to: CFZLevelStairsRoofGreenCornerInner
+          steps:
+            - material: CFFloorTileRoofGreen
+              amount: 2
+              doAfter: 1.5
+            - tool: CFHammering
+              doAfter: 1
+        - to: CFZLevelStairsRoofBlueCornerInner
+          steps:
+            - material: CFFloorTileRoofBlue
+              amount: 2
+              doAfter: 1.5
+            - tool: CFHammering
+              doAfter: 1
+
+    # Wooden stairs
+
+    - node: CFZLevelStairsWooden
+      entity: CFZLevelStairsWooden
+      edges:
+        - to: CFZLevelStairsFrame
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFWoodenPlanks1
+              amount: 1
+          steps:
+            - tool: CFHammering
+              doAfter: 3
+
+    - node: CFZLevelStairsWoodenCorner
+      entity: CFZLevelStairsWoodenCorner
+      edges:
+        - to: CFZLevelStairsFrameCorner
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFWoodenPlanks1
+              amount: 1
+          steps:
+            - tool: CFHammering
+              doAfter: 3
+
+    - node: CFZLevelStairsWoodenCornerInner
+      entity: CFZLevelStairsWoodenCornerInner
+      edges:
+        - to: CFZLevelStairsFrameCornerInner
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFWoodenPlanks1
+              amount: 1
+          steps:
+            - tool: CFHammering
+              doAfter: 3
+
+    # Stone stairs
+
+    - node: CFZLevelStairsStone
+      entity: CFZLevelStairsStone
+      edges:
+        - to: CFZLevelStairsFrame
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFStoneBlock1
+              amount: 2
+          steps:
+            - tool: CFHammering
+              doAfter: 2
+            - tool: Prying
+              doAfter: 2
+
+    - node: CFZLevelStairsStoneCorner
+      entity: CFZLevelStairsStoneCorner
+      edges:
+        - to: CFZLevelStairsFrameCorner
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFStoneBlock1
+              amount: 2
+          steps:
+            - tool: CFHammering
+              doAfter: 2
+            - tool: Prying
+              doAfter: 2
+
+    - node: CFZLevelStairsStoneCornerInner
+      entity: CFZLevelStairsStoneCornerInner
+      edges:
+        - to: CFZLevelStairsFrameCornerInner
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFStoneBlock1
+              amount: 2
+          steps:
+            - tool: CFHammering
+              doAfter: 2
+            - tool: Prying
+              doAfter: 2
+
+    # Roof ramps
+
+    - node: CFZLevelStairsRoofRed
+      entity: CFZLevelStairsRoofRed
+      edges:
+        - to: CFZLevelStairsFrame
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFFloorTileRoofRed
+              amount: 2
+          steps:
+            - tool: Prying
+              doAfter: 2
+
+    - node: CFZLevelStairsRoofRedCorner
+      entity: CFZLevelStairsRoofRedCorner
+      edges:
+        - to: CFZLevelStairsFrameCorner
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFFloorTileRoofRed
+              amount: 2
+          steps:
+            - tool: Prying
+              doAfter: 2
+
+    - node: CFZLevelStairsRoofRedCornerInner
+      entity: CFZLevelStairsRoofRedCornerInner
+      edges:
+        - to: CFZLevelStairsFrameCornerInner
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFFloorTileRoofRed
+              amount: 2
+          steps:
+            - tool: Prying
+              doAfter: 2
+
+    - node: CFZLevelStairsRoofGreen
+      entity: CFZLevelStairsRoofGreen
+      edges:
+        - to: CFZLevelStairsFrame
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFFloorTileRoofGreen
+              amount: 2
+          steps:
+            - tool: Prying
+              doAfter: 2
+
+    - node: CFZLevelStairsRoofGreenCorner
+      entity: CFZLevelStairsRoofGreenCorner
+      edges:
+        - to: CFZLevelStairsFrameCorner
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFFloorTileRoofGreen
+              amount: 2
+          steps:
+            - tool: Prying
+              doAfter: 2
+
+    - node: CFZLevelStairsRoofGreenCornerInner
+      entity: CFZLevelStairsRoofGreenCornerInner
+      edges:
+        - to: CFZLevelStairsFrameCornerInner
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFFloorTileRoofGreen
+              amount: 2
+          steps:
+            - tool: Prying
+              doAfter: 2
+
+    - node: CFZLevelStairsRoofBlue
+      entity: CFZLevelStairsRoofBlue
+      edges:
+        - to: CFZLevelStairsFrame
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFFloorTileRoofBlue
+              amount: 2
+          steps:
+            - tool: Prying
+              doAfter: 2
+
+    - node: CFZLevelStairsRoofBlueCorner
+      entity: CFZLevelStairsRoofBlueCorner
+      edges:
+        - to: CFZLevelStairsFrameCorner
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFFloorTileRoofBlue
+              amount: 2
+          steps:
+            - tool: Prying
+              doAfter: 2
+
+    - node: CFZLevelStairsRoofBlueCornerInner
+      entity: CFZLevelStairsRoofBlueCornerInner
+      edges:
+        - to: CFZLevelStairsFrameCornerInner
+          completed:
+            - !type:SpawnPrototype
+              prototype: CFFloorTileRoofBlue
+              amount: 2
+          steps:
+            - tool: Prying
+              doAfter: 2

@@ -19,10 +19,10 @@
     damage:
       types:
         Blunt: 0
-  - type: SolutionContainerManager
-    solutions:
-      mug:
-        maxVol: 10
+  - type: Solution
+    id: mug
+    solution:
+      maxVol: 10
   - type: MixableSolution
     solution: mug
   - type: FitsInDispenser
@@ -39,8 +39,6 @@
     solution: mug
   - type: SolutionItemStatus
     solution: mug
-  - type: TrashOnSolutionEmpty
-    solution: mug
   - type: UserInterface
     interfaces:
       enum.TransferAmountUiKey.Key:
@@ -50,14 +48,11 @@
   - type: Edible
     edible: Drink
     solution: mug
+    destroyOnEmpty: false # a mug is drunk from, not eaten
   - type: Appearance
-  - type: Injector
-    solutionName: mug
-    ignoreMobs: true
-    activeModeProtoId: CFPourDrawMode
-    allowedModes:
-    - CFPourDrawMode
-    - CFPourInjectMode
+  - type: SolutionTransfer
+    canChangeTransferAmount: true
+    transferAmount: 10
   - type: SolutionContainerVisuals
     maxFillLevels: 3
     fillBaseName: icon-

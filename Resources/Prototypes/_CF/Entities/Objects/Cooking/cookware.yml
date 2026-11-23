@@ -42,6 +42,7 @@
       - CFFoodHolder
       - FoodSequenceStartPoint
       - SolutionTransfer
+      - Injector
   - type: Temperature
   - type: DoAfter
   - type: AmbientSound

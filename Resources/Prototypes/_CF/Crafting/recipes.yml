@@ -263,3 +263,41 @@
   - !type:CFItemRequirement
     protoId: CFCotton
   result: CFString
+
+# CrystallEdge roof tiles, for a roof floor or a roof ramp on a stairs frame.
+
+- type: craftingRecipe
+  id: FloorTileRoofRed
+  tag: CFRecipeWorkbench
+  category: Building
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFStone
+    count: 1
+  result: CFFloorTileRoofRed
+  resultCount: 4
+
+- type: craftingRecipe
+  id: FloorTileRoofGreen
+  tag: CFRecipeWorkbench
+  category: Building
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFStone
+    count: 1
+  result: CFFloorTileRoofGreen
+  resultCount: 4
+
+- type: craftingRecipe
+  id: FloorTileRoofBlue
+  tag: CFRecipeWorkbench
+  category: Building
+  craftTime: 1
+  requirements:
+  - !type:CFStackRequirement
+    stack: CFStone
+    count: 1
+  result: CFFloorTileRoofBlue
+  resultCount: 4

@@ -1050,6 +1050,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
         RaiseNetworkEvent(
             new CFCombatNumberEvent(GetNetEntity(target), degree, damage, rolled.DamageType),
             Filter.Pvs(target));
+        var resolvedEvent = new CFStrikeResolvedEvent(user, target, degree, damage, melee);
+        RaiseLocalEvent(weaponUid, ref resolvedEvent);
         resolved?.Invoke(degree, damage);
         return hit;
     }

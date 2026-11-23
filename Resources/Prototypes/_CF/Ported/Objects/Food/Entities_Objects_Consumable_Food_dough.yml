@@ -18,15 +18,15 @@
   - type: Sprite
     sprite: _CP14/Objects/Consumable/Food/dough.rsi
     state: dough_large
-  - type: SolutionContainerManager
-    solutions:
-      food:
-        maxVol: 25
-        reagents:
-        - ReagentId: Nutriment
-          Quantity: 20
-        - ReagentId: UncookedAnimalProteins
-          Quantity: 2
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 25
+      reagents:
+      - ReagentId: Nutriment
+        Quantity: 20
+      - ReagentId: UncookedAnimalProteins
+        Quantity: 2
   - type: CFTemperatureTransformation
     entries:
     - temperatureRange: 400, 500
@@ -52,15 +52,15 @@
   - type: Sprite
     sprite: _CP14/Objects/Consumable/Food/dough.rsi
     state: bread_cooked
-  - type: SolutionContainerManager
-    solutions:
-      food:
-        maxVol: 30
-        reagents:
-        - ReagentId: Nutriment
-          Quantity: 20
-        - ReagentId: Protein
-          Quantity: 2
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 30
+      reagents:
+      - ReagentId: Nutriment
+        Quantity: 20
+      - ReagentId: Protein
+        Quantity: 2
   - type: CFTemperatureTransformation
     autoTransformOnCooked: false
     entries:
@@ -80,15 +80,15 @@
   - type: Sprite
     sprite: _CP14/Objects/Consumable/Food/dough.rsi
     state: bread_slice
-  - type: SolutionContainerManager
-    solutions:
-      food:
-        maxVol: 7 # 1/4 bread
-        reagents:
-        - ReagentId: Nutriment
-          Quantity: 5
-        - ReagentId: Protein
-          Quantity: 0.5
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 7 # 1/4 bread
+      reagents:
+      - ReagentId: Nutriment
+        Quantity: 5
+      - ReagentId: Protein
+        Quantity: 0.5
   - type: CFTemperatureTransformation
     autoTransformOnCooked: false
     entries:
@@ -115,15 +115,15 @@
   - type: Sprite
     sprite: _CP14/Objects/Consumable/Food/dough.rsi
     state: dough_medium
-  - type: SolutionContainerManager
-    solutions:
-      food:
-        maxVol: 7 # 1/4 large dough
-        reagents:
-        - ReagentId: Nutriment
-          Quantity: 5
-        - ReagentId: UncookedAnimalProteins
-          Quantity: 0.5
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 7 # 1/4 large dough
+      reagents:
+      - ReagentId: Nutriment
+        Quantity: 5
+      - ReagentId: UncookedAnimalProteins
+        Quantity: 0.5
   - type: CFTemperatureTransformation
     entries:
     - temperatureRange: 400, 500
@@ -143,15 +143,15 @@
   - type: Sprite
     sprite: _CP14/Objects/Consumable/Food/dough.rsi
     state: bun_cooked
-  - type: SolutionContainerManager
-    solutions:
-      food:
-        maxVol: 6 # 1/4 large dough
-        reagents:
-        - ReagentId: Nutriment
-          Quantity: 5.2
-        - ReagentId: Protein
-          Quantity: 0.5
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 6 # 1/4 large dough
+      reagents:
+      - ReagentId: Nutriment
+        Quantity: 5.2
+      - ReagentId: Protein
+        Quantity: 0.5
   - type: Butcherable
     butcherDelay: 1
     spawned:
@@ -192,16 +192,16 @@
     contentSeparator: ", "
   - type: Appearance
   - type: FoodMetamorphableByAdding
-  - type: SolutionContainerManager
-    solutions:
-      food:
-        maxVol: 4 # 1/2 bun
-        canReact: false
-        reagents:
-        - ReagentId: Nutriment
-          Quantity: 2.6
-        - ReagentId: Protein
-          Quantity: 0.25
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 4 # 1/2 bun
+      canReact: false
+      reagents:
+      - ReagentId: Nutriment
+        Quantity: 2.6
+      - ReagentId: Protein
+        Quantity: 0.25
   - type: CFTemperatureTransformation
     autoTransformOnCooked: false
     entries:
@@ -222,15 +222,15 @@
   - type: Sprite
     sprite: _CP14/Objects/Consumable/Food/dough.rsi
     state: bun_cooked_slice_top
-  - type: SolutionContainerManager
-    solutions:
-      food:
-        maxVol: 4 # 1/2 bun
-        reagents:
-        - ReagentId: Nutriment
-          Quantity: 2.6
-        - ReagentId: Protein
-          Quantity: 0.25
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 4 # 1/2 bun
+      reagents:
+      - ReagentId: Nutriment
+        Quantity: 2.6
+      - ReagentId: Protein
+        Quantity: 0.25
   - type: CFTemperatureTransformation
     autoTransformOnCooked: false
     entries:
@@ -251,15 +251,15 @@
     size: Normal
   - type: Sprite
     state: dough_medium_flat
-  - type: SolutionContainerManager
-    solutions:
-      food:
-        maxVol: 7 # 1/4 large dough
-        reagents:
-        - ReagentId: Nutriment
-          Quantity: 5
-        - ReagentId: UncookedAnimalProteins
-          Quantity: 0.5
+  - type: Solution
+    id: food
+    solution:
+      maxVol: 7 # 1/4 large dough
+      reagents:
+      - ReagentId: Nutriment
+        Quantity: 5
+      - ReagentId: UncookedAnimalProteins
+        Quantity: 0.5
   - type: CFTemperatureTransformation
     autoTransformOnCooked: false
     entries:

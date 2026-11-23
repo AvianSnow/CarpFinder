@@ -55,8 +55,8 @@
     - id: CFMobSkeletonguardRanged
       weight: 2
 
-# The only map players can play. game.map_pool points here.
+# The only map players can play. game.map_pool points here. Dragon Run stays for forcemap CFDragonRunTest.
 - type: gameMapPool
   id: CFMapPool
   maps:
-  - CFDragonRunTest
+  - CFDragonDungeon

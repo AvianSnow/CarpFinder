@@ -570,3 +570,32 @@
   - type: CFFormula
     recipes:
     - EtchOljinex
+
+# CrystallEdge roof tiles (Crafting/recipes.yml). Level 0, so the Building handbook teaches them too.
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFloorTileRoofRed
+  name: formula (red roof tile)
+  components:
+  - type: CFFormula
+    recipes:
+    - FloorTileRoofRed
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFloorTileRoofGreen
+  name: formula (green roof tile)
+  components:
+  - type: CFFormula
+    recipes:
+    - FloorTileRoofGreen
+
+- type: entity
+  parent: CFBaseFormula
+  id: CFFormulaFloorTileRoofBlue
+  name: formula (blue roof tile)
+  components:
+  - type: CFFormula
+    recipes:
+    - FloorTileRoofBlue

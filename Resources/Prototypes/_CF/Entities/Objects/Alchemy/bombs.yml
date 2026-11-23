@@ -1,0 +1,112 @@
+# Alchemical bombs brewed in a cauldron (Crafting/recipes_alchemy.yml). A bomb is a martial thrown weapon with a
+# 20-foot range increment: throw it at an enemy and it makes a ranged Strike, then breaks (CFBomb). Every creature
+# within 5 feet of the target takes the splash damage unless the throw was a critical failure. One throw is one bomb.
+# Numbers are the remaster items on Archives of Nethys. A swing with one in hand is not a bomb's business and does not
+# break it.
+
+- type: entity
+  abstract: true
+  parent: BaseItem
+  id: CFBaseBomb
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    sprite: Objects/Specific/Chemistry/vial.rsi
+    layers:
+    - state: vial
+    - state: fill-6
+      color: "#ff6a1a"
+  - type: Item
+    size: Tiny
+    sprite: Objects/Specific/Chemistry/vial.rsi
+  - type: MeleeWeapon
+    hidden: true
+    damage:
+      types:
+        Blunt: 0
+  - type: CFMeleeWeapon
+  - type: CFItem
+    level: 1
+  - type: CFBulk
+    bulk: 0.1
+  - type: LandAtCursor
+  - type: Tag
+    tags:
+    - CFAlchemical
+    - CFConsumable
+  - type: Clothing
+    quickEquip: false
+    sprite: Objects/Specific/Chemistry/vial.rsi
+    slots:
+    - belt
+    - back
+    - neck
+
+# Alchemist's Fire (Lesser) - Item 1, 3 gp. 1d8 fire damage, 1 persistent fire damage and 1 fire splash damage.
+# https://2e.aonprd.com/Equipment.aspx?ID=3287
+- type: entity
+  parent: CFBaseBomb
+  id: CFAlchemistsFireLesser
+  name: alchemist's fire (lesser)
+  description: A flask of volatile liquid that bursts into flame when it breaks. Thrown, it deals 1d8 fire damage, sets the target burning for 1 persistent fire damage, and splashes 1 fire damage over everyone within 5 feet.
+  components:
+  - type: CFWeapon
+    damageDice: 1
+    damageDie: 8
+    damageType: Fire
+    category: Martial
+    group: Bomb
+  - type: CFTrait
+    traits:
+    - Thrown20
+    - Splash
+    - Bomb
+    - Alchemical
+    - Consumable
+    - Fire
+  - type: CFBomb
+    splash: 1
+    persistent: 1
+    persistentType: Fire
+  - type: CFItemPrice
+    copper: 300
+
+# Bottled Lightning (Lesser) - Item 1, 3 gp. 1d6 electricity damage and 1 electricity splash damage. On a hit the
+# target is off-guard until the start of your next turn: 6 seconds here. https://2e.aonprd.com/Equipment.aspx?ID=3290
+- type: entity
+  parent: CFBaseBomb
+  id: CFBottledLightningLesser
+  name: bottled lightning (lesser)
+  description: A flask of crackling blue liquid. Thrown, it deals 1d6 electricity damage, leaves the target off-guard for a moment, and splashes 1 electricity damage over everyone within 5 feet.
+  components:
+  - type: Sprite
+    layers:
+    - state: vial
+    - state: fill-6
+      color: "#74c7ff"
+  - type: CFWeapon
+    damageDice: 1
+    damageDie: 6
+    damageType: Electricity
+    category: Martial
+    group: Bomb
+  - type: CFTrait
+    traits:
+    - Thrown20
+    - Splash
+    - Bomb
+    - Alchemical
+    - Consumable
+    - Electricity
+  - type: CFBomb
+    splash: 1
+    offGuardSeconds: 6
+  - type: CFItemPrice
+    copper: 300
+  - type: Clothing
+    quickEquip: false
+    sprite: Objects/Specific/Chemistry/vial.rsi
+    slots:
+    - belt
+    - back
+    - neck

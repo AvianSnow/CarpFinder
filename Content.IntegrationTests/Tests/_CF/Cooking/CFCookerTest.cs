@@ -5,6 +5,8 @@ using Content.Server.CF.Cooking;
 using Content.Server.CF.Temperature;
 using Content.Shared.CF.Cooking;
 using Content.Shared.Chemistry.EntitySystems;
+using Content.Shared.Hands.EntitySystems;
+using Content.Shared.Interaction;
 using Content.Shared.Placeable;
 using Content.Shared.Tag;
 using Content.Shared.Tools.Components;
@@ -25,6 +27,8 @@ namespace Content.IntegrationTests.Tests.CF.Cooking;
 [TestOf(typeof(CFCookerSystem))]
 [TestOf(typeof(CFFireHeaterSystem))]
 [TestOf(typeof(CFFermenterSystem))]
+[TestOf(typeof(CFCookingSurfaceSystem))]
+[TestOf(typeof(CFTapSystem))]
 public sealed class CFCookerTest : GameTest
 {
     private static readonly Box2i Footprint = new(-1, -1, 3, 1);
@@ -42,6 +46,25 @@ public sealed class CFCookerTest : GameTest
     private SharedSolutionContainerSystem Solutions => SEntMan.System<SharedSolutionContainerSystem>();
 
     private string Proto(EntityUid uid) => SEntMan.GetComponent<MetaDataComponent>(uid).EntityPrototype?.ID ?? string.Empty;
+
+    private SharedHandsSystem Hands => SEntMan.System<SharedHandsSystem>();
+
+    private SharedInteractionSystem Interaction => SEntMan.System<SharedInteractionSystem>();
+
+    /// <summary>A human at (0, 0) holding <paramref name="item"/>, in reach of whatever stands at (1, 0).</summary>
+    private EntityUid Holding(EntityUid item)
+    {
+        var hero = SEntMan.SpawnEntity("MobHuman", _map.Local(0, 0));
+        Assert.That(Hands.TryPickupAnyHand(hero, item, checkActionBlocker: false));
+        return hero;
+    }
+
+    /// <summary>Clicks <paramref name="target"/> with the held <paramref name="item"/>, as a player does.</summary>
+    private void Use(EntityUid user, EntityUid item, EntityUid target)
+    {
+        var done = Interaction.InteractUsing(user, item, target, SEntMan.GetComponent<TransformComponent>(target).Coordinates, checkCanInteract: false, checkCanUse: false);
+        Assert.That(done, "Something should have answered the click.");
+    }
 
     /// <summary>A burning bonfire with one thing set on it, after the placer has noticed it.</summary>
     private async Task<EntityUid> OnAFire(string item, Action<EntityUid> prepare = null)
@@ -92,6 +115,144 @@ public sealed class CFCookerTest : GameTest
         {
             Assert.That(SEntMan.Deleted(dough), "A minute on the fire should bake the dough.");
             Assert.That(Count("CFFoodBread"), Is.EqualTo(1));
+        });
+    }
+
+    [Test]
+    public async Task FoodUsedOnAFurnaceIsSetOnItAndFuelGoesIn()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint, avoidStructures: true);
+        EntityUid furnace = default;
+        EntityUid dough = default;
+        EntityUid hero = default;
+        await Server.WaitPost(() =>
+        {
+            furnace = SEntMan.SpawnEntity("CFFurnace", _map.Local(1, 0));
+            dough = SEntMan.SpawnEntity("CFFoodDoughLarge", _map.Local(0, 0));
+            hero = Holding(dough);
+            Use(hero, dough, furnace);
+            SEntMan.System<SharedPhysicsSystem>().WakeBody(dough);
+        });
+
+        await Pair.RunTicksSync(10);
+        await Server.WaitAssertion(() =>
+        {
+            var store = SEntMan.System<SharedContainerSystem>().GetContainer(furnace, "storagebase");
+            Assert.That(store.ContainedEntities, Does.Not.Contain(dough), "Dough is not fuel, so it must not go in with the wood.");
+            Assert.That(Hands.IsHolding(hero, dough), Is.False, "The dough should have left the hand.");
+            Assert.That(SEntMan.GetComponent<ItemPlacerComponent>(furnace).PlacedEntities, Does.Contain(dough), "The dough should sit on the furnace, where the fire heats it.");
+
+            var planks = SEntMan.SpawnEntity("CFWoodenPlanks1", _map.Local(0, 0));
+            Assert.That(Hands.TryPickupAnyHand(hero, planks, checkActionBlocker: false));
+            Use(hero, planks, furnace);
+            Assert.That(store.ContainedEntities, Does.Contain(planks), "Planks are fuel and go in.");
+        });
+    }
+
+    [Test]
+    public async Task AnEmptyMugFillsFromATapAndPoursIntoAPot()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint, avoidStructures: true);
+        EntityUid barrel = default;
+        EntityUid mug = default;
+        EntityUid hero = default;
+        await Server.WaitPost(() =>
+        {
+            barrel = SEntMan.SpawnEntity("CFCraneBarrelSmallDwarfBeer", _map.Local(1, 0));
+            mug = SEntMan.SpawnEntity("CFWoodenBeerMug", _map.Local(0, 0));
+            Assert.That(Solutions.TryGetSolution(mug, "mug", out _, out var empty), "The mug should have a solution to fill.");
+            Assert.That(empty!.Volume.Float(), Is.EqualTo(0f));
+            hero = Holding(mug);
+            Use(hero, mug, barrel);
+        });
+
+        await Pair.RunTicksSync(10);
+        await Server.WaitAssertion(() =>
+        {
+            Assert.That(Solutions.TryGetSolution(mug, "mug", out _, out var beer));
+            Assert.That(beer!.GetTotalPrototypeQuantity("CFDwarfBeer").Float(), Is.EqualTo(10f), $"An empty mug on the tap fills with beer. Mug: {SharedSolutionContainerSystem.ToPrettyString(beer)}");
+            Assert.That(Hands.IsHolding(hero, mug), "The mug stays in hand.");
+        });
+
+        EntityUid pot = default;
+        await Server.WaitPost(() =>
+        {
+            SEntMan.DeleteEntity(barrel);
+            pot = SEntMan.SpawnEntity("CFCookingPot", _map.Local(1, 0));
+            Use(hero, mug, pot);
+        });
+
+        await Pair.RunTicksSync(10);
+        await Server.WaitAssertion(() =>
+        {
+            Assert.That(SEntMan.System<SharedContainerSystem>().GetContainer(pot, "storagebase").ContainedEntities, Does.Not.Contain(mug), "A mug used on a pot pours, it does not go in.");
+            Assert.That(Solutions.TryGetSolution(pot, "cooker", out _, out var contents));
+            Assert.That(contents!.GetTotalPrototypeQuantity("CFDwarfBeer").Float(), Is.EqualTo(10f), "The beer should be in the pot.");
+            Assert.That(Hands.IsHolding(hero, mug), "The mug stays in hand.");
+        });
+    }
+
+    [Test]
+    public async Task DrinkingAMugEmptiesItAndKeepsTheMug()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        EntityUid hero = default;
+        EntityUid mug = default;
+        await Server.WaitPost(() =>
+        {
+            mug = SEntMan.SpawnEntity("CFWoodenBeerMug", _map.Local(0, 0));
+            Assert.That(Solutions.TryGetSolution(mug, "mug", out var soln, out _));
+            Assert.That(Solutions.TryAddReagent(soln!.Value, "CFDwarfBeer", 10, out _));
+            hero = Holding(mug);
+            Interaction.UseInHandInteraction(hero, mug, checkCanUse: false, checkCanInteract: false);
+        });
+
+        await Pair.RunTicksSync(Timing.TickRate * 3);
+        await Server.WaitAssertion(() =>
+        {
+            Assert.That(SEntMan.Deleted(mug), Is.False, "A mug is drunk from, not eaten.");
+            Assert.That(Solutions.TryGetSolution(mug, "mug", out _, out var left));
+            Assert.That(left!.Volume.Float(), Is.LessThan(10f), "A sip of the beer is gone.");
+            Interaction.UseInHandInteraction(hero, mug, checkCanUse: false, checkCanInteract: false);
+        });
+
+        await Pair.RunTicksSync(Timing.TickRate * 3);
+        await Server.WaitAssertion(() =>
+        {
+            Assert.That(SEntMan.Deleted(mug), Is.False, "Drinking the last of it keeps the mug too.");
+            Assert.That(Hands.IsHolding(hero, mug), "The empty mug stays in hand.");
+        });
+    }
+
+    /// <summary>The obsolete form left the mug, the well and every barrel with no usable solution.</summary>
+    [Test]
+    public async Task NoCFPrototypeUsesTheObsoleteSolutionForm()
+    {
+        await Server.WaitAssertion(() =>
+        {
+            var offenders = new List<string>();
+            foreach (var proto in Server.ProtoMan.EnumeratePrototypes<EntityPrototype>())
+            {
+                if (proto.ID.StartsWith("CF") && proto.Components.ContainsKey("SolutionContainerManager"))
+                    offenders.Add(proto.ID);
+            }
+
+            Assert.That(offenders, Is.Empty, "SolutionContainerManager is obsolete and leaves no usable solution: use Solution with an id.");
+        });
+    }
+
+    /// <summary>A child's reagent list replaces its parent's, so bread is not also dough.</summary>
+    [Test]
+    public async Task PortedFoodKeepsItsOwnReagents()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            var bread = SEntMan.SpawnEntity("CFFoodBread", _map.Local(0, 0));
+            Assert.That(Solutions.TryGetSolution(bread, "food", out _, out var food), "Bread should have its food solution.");
+            Assert.That(food!.GetTotalPrototypeQuantity("Nutriment").Float(), Is.EqualTo(20f));
+            Assert.That(food.GetTotalPrototypeQuantity("Protein").Float(), Is.EqualTo(2f));
+            Assert.That(food.GetTotalPrototypeQuantity("UncookedAnimalProteins").Float(), Is.EqualTo(0f), "The loaf's reagents replace the dough's, not add to them.");
         });
     }
 

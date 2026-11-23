@@ -31,6 +31,10 @@
     - Magical
     - Potion
     - Vitality
+  - type: CFItem
+    level: 1
+  - type: CFBulk
+    bulk: 0.1
   - type: CFAlchemicalItem
     itemLevel: 1
     priceGp: 4

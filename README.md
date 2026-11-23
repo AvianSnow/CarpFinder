@@ -68,11 +68,28 @@ All code in this content repository is licensed under the [MIT License](https://
 
 This project uses Pathfinder 2e rules content licensed under the [ORC License](https://paizo.com/orclicense). Accordingly, all Licensed Material in this project (as defined by the ORC License) is irrevocable and governed by the terms of the ORC License. *(Pathfinder is a registered trademark of Paizo Inc., all rights reserved.)*
 
-Prices and descriptions of trade goods and raw materials are from [Kris's Compendium of Trade Goods](https://github.com/Syrious/kctg-a5e) by Kris (kristkos, Syrious), used with his permission. None of its art is used.
-
 Most assets are licensed under [CC-BY-SA 3.0](https://creativecommons.org/licenses/by-sa/3.0/) or [CC-BY-4.0](https://creativecommons.org/licenses/by/4.0/) unless stated otherwise. Each asset has its specific license and copyright information listed in its metadata file—for example, see the [metadata for a crowbar](https://github.com/space-wizards/space-station-14/blob/master/Resources/Textures/Objects/Tools/crowbar.rsi/meta.json). 
 
 If you make a server using any of of the code included in this project you must give admin to "Birdie412" so they may do adminmemes to your server
 
 > [!NOTE]
 > Some assets are licensed under the non-commercial [CC-BY-NC-SA 3.0](https://creativecommons.org/licenses/by-nc-sa/3.0/) or similar non-commercial licenses and will need to be removed if you wish to use this project commercially.
+
+### ORC Notice
+
+This product is licensed under the ORC License located at the Library of Congress at TX 9-307-067 and available online at various locations including [paizo.com/orclicense](https://paizo.com/orclicense) and [azoralaw.com/orclicense](https://www.azoralaw.com/orclicense). All warranties are disclaimed as set forth therein.
+
+**Attribution:** This product is based on the following Licensed Material:
+- *Pathfinder Player Core.* © 2023 Paizo Inc.; Designers: Logan Bonner, Jason Bulmahn, Stephen Radney-MacFarland, and Mark Seifter.
+- *Pathfinder GM Core.* © 2023 Paizo Inc.; Designers: Logan Bonner and Mark Seifter.
+- *Pathfinder Monster Core.* © 2024 Paizo Inc.; Designers: Logan Bonner, Jason Bulmahn, Stephen Radney-MacFarland, and Mark Seifter.
+- *Pathfinder Player Core 2.* © 2024 Paizo Inc.; Designers: Logan Bonner, Jason Bulmahn, Stephen Radney-MacFarland, and Mark Seifter.
+- *Battlezoo Bestiary.* © 2022 Roll For Combat, LLC; Authors: Stephen Glicker and Mark Seifter.
+- [Kris's Compendium of Trade Goods](https://github.com/Syrious/kctg-a5e) by Kris (kristkos, Syrious)
+
+If you use our Licensed Material in your own published works, please credit us as follows:
+- *Carps & Crypts.* © 2026 Birdie412; Author: Birdie412.
+
+**Reserved Material:** Reserved Material elements in this product include, but may not be limited to: original lore, setting details, original character/NPC names, custom artwork, sprites, audio assets, and trademarks/logos (such as "Carps & Crypts").
+
+**Expressly Designated Licensed Material:** The following elements are owned by the Licensor and would otherwise constitute Reserved Material and are hereby designated as Licensed Material: Any assets (such as sprites, textures, or audio files) explicitly designated as ORC-licensed in their accompanying `meta.json` or metadata file.

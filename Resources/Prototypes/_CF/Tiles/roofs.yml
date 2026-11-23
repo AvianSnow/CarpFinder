@@ -1,0 +1,59 @@
+# CrystallEdge's roof tiles, laid as the floor of the level above a house: from below it is the ceiling, and the
+# roof ramps in Entities/Structures/Stairs/roofs.yml give it its slopes. Sprites by Omsoyk (Textures/_CE/Tiles).
+
+- type: tile
+  id: CFRoofRed
+  name: cf-tiles-roof-red
+  sprite: /Textures/_CE/Tiles/roof_red.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  footstepSounds:
+    collection: FootstepAsteroid
+  heatCapacity: 10000
+  weather: true
+  deconstructTools: [ Prying ]
+  itemDrop: CFFloorTileRoofRed
+
+- type: tile
+  id: CFRoofGreen
+  name: cf-tiles-roof-green
+  sprite: /Textures/_CE/Tiles/roof_green.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  footstepSounds:
+    collection: FootstepAsteroid
+  heatCapacity: 10000
+  weather: true
+  deconstructTools: [ Prying ]
+  itemDrop: CFFloorTileRoofGreen
+
+- type: tile
+  id: CFRoofBlue
+  name: cf-tiles-roof-blue
+  sprite: /Textures/_CE/Tiles/roof_blue.png
+  variants: 4
+  placementVariants:
+  - 1.0
+  - 1.0
+  - 1.0
+  - 1.0
+  baseTurf: CFFloorFoundation
+  isSubfloor: false
+  footstepSounds:
+    collection: FootstepAsteroid
+  heatCapacity: 10000
+  weather: true
+  deconstructTools: [ Prying ]
+  itemDrop: CFFloorTileRoofBlue

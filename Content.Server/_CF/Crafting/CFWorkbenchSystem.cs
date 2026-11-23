@@ -5,6 +5,7 @@ using Content.Shared.CF.Combat;
 using Content.Shared.CF.Crafting;
 using Content.Shared.CF.Items;
 using Content.Shared.CF.Preferences;
+using Content.Shared.CF.Traits;
 using Content.Shared.DoAfter;
 using Content.Shared.IdentityManagement;
 using Content.Shared.Interaction.Events;
@@ -35,6 +36,12 @@ public sealed partial class CFWorkbenchSystem : EntitySystem
     [Dependency] private CFConditionSystem _conditions = default!;
     [Dependency] private CFCraftingSystem _crafting = default!;
     [Dependency] private CFRuneSystem _runes = default!;
+    [Dependency] private CFCharacterFeatureSystem _features = default!;
+
+    private static readonly ProtoId<CFFeatPrototype> AlchemicalCrafting = "CFAlchemicalCrafting";
+    private static readonly ProtoId<CFFeatPrototype> MagicalCrafting = "CFMagicalCrafting";
+    private static readonly ProtoId<CFTraitPrototype> AlchemicalTrait = "Alchemical";
+    private static readonly ProtoId<CFTraitPrototype> MagicalTrait = "Magical";
 
     [SubscribeLocalEvent]
     private void OnFormulaUsed(Entity<CFFormulaComponent> ent, ref UseInHandEvent args)
@@ -107,10 +114,24 @@ public sealed partial class CFWorkbenchSystem : EntitySystem
         if (level > userLevel)
             return "cf-craft-blocked-level";
 
-        return rank < CFCraftingRules.RequiredRank(level) ? "cf-craft-blocked-rank" : null;
+        if (rank < CFCraftingRules.RequiredRank(level))
+            return "cf-craft-blocked-rank";
+
+        // Alchemical items and magic items each need their crafting feat (Alchemical Crafting, Magical Crafting).
+        if (recipe.Category == CFRecipeCategory.Alchemy
+            && _prototypes.Index(recipe.Result).TryComp(out CFTraitComponent? traits, Factory))
+        {
+            if (traits.HasTrait(AlchemicalTrait) && !_features.HasFeat(user, AlchemicalCrafting))
+                return "cf-craft-blocked-alchemical";
+
+            if (traits.HasTrait(MagicalTrait) && !_features.HasFeat(user, MagicalCrafting))
+                return "cf-craft-blocked-magical";
+        }
+
+        return null;
     }
 
-    private bool Knows(EntityUid user, CFCraftingRecipePrototype recipe)
+    public bool Knows(EntityUid user, CFCraftingRecipePrototype recipe)
     {
         return TryComp(user, out CFFormulaBookComponent? book) && book.Known.Contains(recipe.ID);
     }

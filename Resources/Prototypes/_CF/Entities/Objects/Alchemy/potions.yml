@@ -1,0 +1,313 @@
+# Elixirs and potions brewed in a cauldron (Crafting/recipes_alchemy.yml). Each is drunk in hand, or fed to another
+# (CFAlchemicalItem), and does what its CFDrinkEffects say. Numbers are the remaster items on Archives of Nethys.
+# The Healing Potion is in CFHealingPotion.yml.
+
+- type: entity
+  abstract: true
+  parent: BaseItem
+  id: CFBasePotion
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    sprite: Objects/Specific/Chemistry/vial.rsi
+    layers:
+    - state: vial
+    - state: fill-6
+      color: "#c41e3a"
+  - type: Item
+    size: Tiny
+    sprite: Objects/Specific/Chemistry/vial.rsi
+  - type: CFBulk
+    bulk: 0.1
+  - type: CFAlchemicalItem
+    consumable: true
+    bulk: L
+
+# Elixir of Life (Minor) - Item 1, 3 gp. 1d6 Hit Points and +1 item bonus to saves against diseases and poisons for
+# 10 minutes. https://2e.aonprd.com/Equipment.aspx?ID=3308
+- type: entity
+  parent: CFBasePotion
+  id: CFElixirOfLifeMinor
+  name: elixir of life (minor)
+  description: A warm, bitter draught. Drinking it restores 1d6 Hit Points and steadies the body against poison and disease for ten minutes.
+  components:
+  - type: Sprite
+    layers:
+    - state: vial
+    - state: fill-6
+      color: "#d8a24a"
+  - type: Tag
+    tags:
+    - CFAlchemical
+    - CFConsumable
+    - CFHealing
+  - type: CFTrait
+    traits:
+    - Alchemical
+    - Consumable
+    - Elixir
+    - Healing
+  - type: CFItem
+    level: 1
+  - type: CFAlchemicalItem
+    itemLevel: 1
+    priceGp: 3
+  - type: CFItemUse
+    uses: Heals
+  - type: CFHealConsumable
+    healDice: 1
+    healDie: 6
+  - type: CFDrinkEffects
+    effects:
+    - !type:CFBonusEffect
+      stat: Saves
+      type: Item
+      value: 1
+      trait: Poison
+      durationSeconds: 600
+    - !type:CFBonusEffect
+      stat: Saves
+      type: Item
+      value: 1
+      trait: Disease
+      durationSeconds: 600
+      popup: cf-alchemy-popup-fortified
+  - type: CFItemPrice
+    copper: 300
+
+# Cheetah's Elixir (Lesser) - Item 1, 3 gp. +5-foot status bonus to Speed for 1 minute.
+# https://2e.aonprd.com/Equipment.aspx?ID=3302
+- type: entity
+  parent: CFBasePotion
+  id: CFCheetahsElixirLesser
+  name: cheetah's elixir (lesser)
+  description: A thin yellow elixir that tastes of grass. For a minute after drinking it your legs move faster than they should.
+  components:
+  - type: Sprite
+    layers:
+    - state: vial
+    - state: fill-6
+      color: "#e0c23a"
+  - type: Tag
+    tags:
+    - CFAlchemical
+    - CFConsumable
+  - type: CFTrait
+    traits:
+    - Alchemical
+    - Consumable
+    - Elixir
+  - type: CFItem
+    level: 1
+  - type: CFAlchemicalItem
+    itemLevel: 1
+    priceGp: 3
+  - type: CFDrinkEffects
+    effects:
+    - !type:CFBonusEffect
+      stat: Speed
+      type: Status
+      value: 5
+      durationSeconds: 60
+      popup: cf-alchemy-popup-swift
+  - type: CFItemPrice
+    copper: 300
+
+# Antidote (Lesser) - Item 1, 3 gp. +2 item bonus to Fortitude saves against poisons for 6 hours.
+# https://2e.aonprd.com/Equipment.aspx?ID=3296
+- type: entity
+  parent: CFBasePotion
+  id: CFAntidoteLesser
+  name: antidote (lesser)
+  description: A sharp green draught. Drunk before the bite, it keeps a poison from taking hold for six hours.
+  components:
+  - type: Sprite
+    layers:
+    - state: vial
+    - state: fill-6
+      color: "#4fa36b"
+  - type: Tag
+    tags:
+    - CFAlchemical
+    - CFConsumable
+    - CFHealing
+  - type: CFTrait
+    traits:
+    - Alchemical
+    - Consumable
+    - Elixir
+    - Healing
+  - type: CFItem
+    level: 1
+  - type: CFAlchemicalItem
+    itemLevel: 1
+    priceGp: 3
+  - type: CFDrinkEffects
+    effects:
+    - !type:CFBonusEffect
+      stat: Fortitude
+      type: Item
+      value: 2
+      trait: Poison
+      durationSeconds: 21600
+      popup: cf-alchemy-popup-fortified
+  - type: CFItemPrice
+    copper: 300
+
+# Darkvision Elixir (Lesser) - Item 2, 6 gp. Darkvision for 10 minutes.
+# https://2e.aonprd.com/Equipment.aspx?ID=3305
+- type: entity
+  parent: CFBasePotion
+  id: CFDarkvisionElixirLesser
+  name: darkvision elixir (lesser)
+  description: An inky elixir that glimmers faintly. For ten minutes after drinking it you see in the dark as a cat does.
+  components:
+  - type: Sprite
+    layers:
+    - state: vial
+    - state: fill-6
+      color: "#3b2d6e"
+  - type: Tag
+    tags:
+    - CFAlchemical
+    - CFConsumable
+  - type: CFTrait
+    traits:
+    - Alchemical
+    - Consumable
+    - Elixir
+  - type: CFItem
+    level: 2
+  - type: CFAlchemicalItem
+    itemLevel: 2
+    priceGp: 6
+  - type: CFDrinkEffects
+    effects:
+    - !type:CFApplyConditionEffect
+      condition: Darkvision
+      durationSeconds: 600
+  - type: CFItemPrice
+    copper: 600
+
+# Gecko Potion - Item 1, 3 gp. For 5 minutes your fingertips grip: +1 item bonus to Climb and to Palm an Object, and
+# to your Reflex DC against Disarm. Here it is +1 to Athletics, which is what a climb rolls.
+# https://2e.aonprd.com/Equipment.aspx?ID=2942
+- type: entity
+  parent: CFBasePotion
+  id: CFGeckoPotion
+  name: gecko potion
+  description: A sticky green potion. For five minutes your fingers and toes cling to whatever they touch, which makes a climb easier.
+  components:
+  - type: Sprite
+    layers:
+    - state: vial
+    - state: fill-6
+      color: "#7fb34c"
+  - type: Tag
+    tags:
+    - CFConsumable
+    - CFMagical
+    - CFPotion
+  - type: CFTrait
+    traits:
+    - Consumable
+    - Magical
+    - Potion
+  - type: CFItem
+    level: 1
+  - type: CFAlchemicalItem
+    itemLevel: 1
+    priceGp: 3
+  - type: CFDrinkEffects
+    effects:
+    - !type:CFBonusEffect
+      stat: SkillChecks
+      type: Item
+      value: 1
+      skill: Athletics
+      durationSeconds: 300
+      popup: cf-alchemy-popup-grip
+  - type: CFItemPrice
+    copper: 300
+
+# Potion of Emergency Escape - Item 1, 3 gp. For 1 minute you flee from the enemies you know of, with a +40-foot
+# status bonus to your Speeds. Fleeing is stood in for by being unable to make hostile actions (as calm does).
+# https://2e.aonprd.com/Equipment.aspx?ID=3403
+- type: entity
+  parent: CFBasePotion
+  id: CFPotionOfEmergencyEscape
+  name: potion of emergency escape
+  description: A pale potion that fizzes when shaken. For a minute after drinking it you can only run, and run you do, far faster than before.
+  components:
+  - type: Sprite
+    layers:
+    - state: vial
+    - state: fill-6
+      color: "#c7f0ff"
+  - type: Tag
+    tags:
+    - CFConsumable
+    - CFMagical
+    - CFPotion
+  - type: CFTrait
+    traits:
+    - Consumable
+    - Magical
+    - Potion
+  - type: CFItem
+    level: 1
+  - type: CFAlchemicalItem
+    itemLevel: 1
+    priceGp: 3
+  - type: CFDrinkEffects
+    effects:
+    - !type:CFBonusEffect
+      stat: Speed
+      type: Status
+      value: 40
+      durationSeconds: 60
+      popup: cf-alchemy-popup-flee
+    - !type:CFApplyConditionEffect
+      condition: Calmed
+      durationSeconds: 60
+  - type: CFItemPrice
+    copper: 300
+
+# Invisibility Potion - Item 4, 20 gp, uncommon. The effects of a 2nd-rank invisibility spell: invisible for 10
+# minutes, until you use a hostile action. https://2e.aonprd.com/Equipment.aspx?ID=2944
+- type: entity
+  parent: CFBasePotion
+  id: CFInvisibilityPotion
+  name: invisibility potion
+  description: A potion as clear as water, and harder to see. Drink it and you are invisible for ten minutes, or until you attack.
+  components:
+  - type: Sprite
+    layers:
+    - state: vial
+    - state: fill-6
+      color: "#e8f4ff"
+  - type: Tag
+    tags:
+    - CFConsumable
+    - CFMagical
+    - CFPotion
+  - type: CFTrait
+    traits:
+    - Uncommon
+    - Consumable
+    - Illusion
+    - Magical
+    - Potion
+  - type: CFItem
+    level: 4
+    rarity: Uncommon
+  - type: CFAlchemicalItem
+    itemLevel: 4
+    priceGp: 20
+  - type: CFDrinkEffects
+    effects:
+    - !type:CFApplyConditionEffect
+      condition: Invisible
+      durationSeconds: 600
+  - type: CFItemPrice
+    copper: 2000

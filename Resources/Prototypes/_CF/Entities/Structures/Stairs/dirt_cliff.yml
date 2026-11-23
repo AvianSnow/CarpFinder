@@ -1,0 +1,54 @@
+# CrystallEdge's dirt cliff: a bank of earth that climbs like the stairs (see stairs.yml), for the slopes of an
+# island or a sunken garden. Mappers place it; it is not built, as in CrystallEdge. Dug through, it leaves dirt.
+# The sprite is CrystallEdge's, CC-BY-SA-4.0, in Textures/_CE.
+
+- type: entity
+  id: CFZLevelStairsDirtCliffBase
+  abstract: true
+  name: dirt cliff
+  description: A bank of earth, steep but climbable.
+  components:
+  - type: Sprite
+    sprite: _CE/Structures/Architecture/Stairs/dirt_cliff.rsi
+  - type: Damageable
+    damageModifierSet: CFRock
+  - type: Injurable
+    damageContainer: StructuralInorganic
+  - type: Destructible
+    thresholds:
+    - trigger:
+        !type:DamageTrigger
+        damage: 30
+      behaviors:
+      - !type:PlaySoundBehavior
+        sound:
+          path: /Audio/Effects/break_stone.ogg
+          params:
+            volume: -6
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFDirtBlock1:
+            min: 1
+            max: 2
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+
+- type: entity
+  parent:
+  - CFZLevelStairsBase
+  - CFZLevelStairsDirtCliffBase
+  id: CFZLevelStairsDirtCliff
+
+- type: entity
+  parent:
+  - CFZLevelStairsCornerBase
+  - CFZLevelStairsDirtCliffBase
+  id: CFZLevelStairsDirtCliffCorner
+  suffix: Corner
+
+- type: entity
+  parent:
+  - CFZLevelStairsCornerInnerBase
+  - CFZLevelStairsDirtCliffBase
+  id: CFZLevelStairsDirtCliffCornerInner
+  suffix: Inner Corner

@@ -1,3 +1,4 @@
+using System.Numerics;
 using Content.Shared.Actions.Events;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Checks;
@@ -10,6 +11,7 @@ using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Popups;
 using Content.Shared.Throwing;
+using Robust.Shared.Physics.Systems;
 using Robust.Shared.Network;
 using Robust.Shared.Random;
 using Robust.Shared.Timing;
@@ -45,6 +47,7 @@ public sealed partial class CFActivitySystem : EntitySystem
     [Dependency] private CFSpellSystem _spells = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private ThrowingSystem _throwing = default!;
+    [Dependency] private SharedPhysicsSystem _physics = default!;
     [Dependency] private CFTemporaryHpSystem _tempHp = default!;
     [Dependency] private CFAuraSystem _auras = default!;
     [Dependency] private Robust.Shared.Prototypes.IPrototypeManager _prototypes = default!;
@@ -476,7 +479,19 @@ public sealed partial class CFActivitySystem : EntitySystem
     {
         var xform = Transform(user);
         var landing = xform.Coordinates.Offset(xform.LocalRotation.ToWorldVec() * tiles);
+        EnsureComp<CFLeapingComponent>(user);
         _throwing.TryThrow(user, landing, LeapThrowSpeed, doSpin: false);
+    }
+
+    /// <summary>
+    /// A Leap covers its distance and no more: the creature stops where it lands, instead of sliding on at the
+    /// speed of the throw. Standing still there, whatever is under it is what it landed on, an opening included.
+    /// </summary>
+    [SubscribeLocalEvent]
+    private void OnLeapEnded(Entity<CFLeapingComponent> ent, ref StopThrowEvent args)
+    {
+        _physics.SetLinearVelocity(ent, Vector2.Zero);
+        RemComp<CFLeapingComponent>(ent);
     }
 
     /// <summary>

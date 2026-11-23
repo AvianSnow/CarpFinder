@@ -8,6 +8,7 @@ cf-brewing-fermenting = Something in it is fermenting.
 # Pot and pan cooking, from CP14.
 cf-cooking-examine = Here is [color=gold]{ $name }[/color]. Remaining: [color=gold]{ $count }u[/color]
 cf-cooking-popup-not-empty = First, empty { $name }!
+cf-cooking-surface-full = There is no room on { THE($surface) }.
 
 cf-meal-recipe-trash-name = inedible slop
 cf-meal-recipe-trash-desc = One glance makes you feel nauseous.

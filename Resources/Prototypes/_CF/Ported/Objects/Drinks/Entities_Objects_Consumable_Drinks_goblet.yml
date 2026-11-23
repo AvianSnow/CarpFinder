@@ -82,14 +82,7 @@
       - map: [ "enum.SolutionContainerLayers.Fill" ]
         state: bottomless-fill-2
         visible: false
-  - type: SolutionContainerManager
-    solutions:
-      mug:
-        maxVol: 1000
-  - type: Injector
-    solutionName: mug
-    ignoreMobs: true
-    activeModeProtoId: CFPourDrawMode
-    allowedModes:
-    - CFPourDrawMode
-    - CFPourInjectMode
+  - type: Solution
+    id: mug
+    solution:
+      maxVol: 1000

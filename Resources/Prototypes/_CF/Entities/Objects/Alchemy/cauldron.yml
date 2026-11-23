@@ -1,0 +1,83 @@
+# The cauldron, from CP14's Objects/Specific/Alchemy/tools.yml. CP14 only heated the liquid in it; here it brews:
+# put the ingredients of a potion in it (open it, or click it with them), pour in water, and set it on a fire. It
+# boils for the recipe's time, then whoever last put something in rolls Crafting against the item's DC, as at a
+# workbench. The recipes are the Alchemy craftingRecipes tagged CFRecipeCauldron (Crafting/recipes_alchemy.yml), and
+# the brewer must know the formula.
+
+- type: entity
+  parent: BaseStorageItem
+  id: CFCauldron
+  name: cauldron
+  description: A heavy iron cauldron. Put the makings of a potion in it with water and set it on a fire, and it brews for whoever knows the formula.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    sprite: _CP14/Objects/Specific/Alchemy/cauldron.rsi
+    layers:
+    - state: icon
+    - state: liq-1
+      map: ["enum.SolutionContainerLayers.Fill"]
+      visible: false
+  - type: Item
+    size: Ginormous
+  - type: MultiHandedItem
+  - type: ClothingSpeedModifier
+    walkModifier: 0.6
+    sprintModifier: 0.6
+  - type: HeldSpeedModifier
+  - type: Solution
+    id: cauldron
+    solution:
+      maxVol: 100
+  - type: Spillable
+    solution: cauldron
+  - type: DrainableSolution
+    solution: cauldron
+  - type: RefillableSolution
+    solution: cauldron
+  - type: DrawableSolution
+    solution: cauldron
+  - type: MixableSolution
+    solution: cauldron
+  - type: ExaminableSolution
+    solution: cauldron
+  - type: SolutionItemStatus
+    solution: cauldron
+  - type: Appearance
+  - type: SolutionContainerVisuals
+    maxFillLevels: 5
+    fillBaseName: liq-
+    inHandsMaxFillLevels: 5
+    inHandsFillBaseName: -fill
+  - type: Temperature
+  - type: DoAfter
+  - type: ContainerContainer
+    containers:
+      storagebase: !type:Container
+        ents: []
+  - type: Storage
+    maxItemSize: Normal
+    grid:
+    - 0,0,3,2
+    blacklist:
+      components:
+      - CFFoodHolder
+      - SolutionTransfer
+      - Injector
+      - MobState
+  - type: AmbientSound
+    enabled: false
+    volume: 5
+    range: 5
+    sound:
+      path: /Audio/_CP14/Ambience/pot_brewing.ogg
+  - type: CFCauldron
+  - type: CFWorkbench
+    recipeTags:
+    - CFRecipeCauldron
+  - type: CFItem
+    level: 0
+  - type: CFBulk
+    bulk: 2
+  - type: CFItemPrice
+    copper: 500 # a heavy iron pot: 5 gp, as a cooking pot's weight in iron

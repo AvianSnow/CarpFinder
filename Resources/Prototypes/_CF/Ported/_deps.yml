@@ -46,10 +46,10 @@
   id: CFBaseWeaponChemical
   categories: [ HideSpawnMenu, ForkFiltered ]
   components:
-  - type: SolutionContainerManager
-    solutions:
-      melee:
-        maxVol: 4
+  - type: Solution
+    id: melee
+    solution:
+      maxVol: 4
   - type: MeleeChemicalInjector
     solution: melee
   - type: RefillableSolution
@@ -119,10 +119,10 @@
     damage:
       types:
         Blunt: 0
-  - type: SolutionContainerManager
-    solutions:
-      vial:
-        maxVol: 1
+  - type: Solution
+    id: vial
+    solution:
+      maxVol: 1
   - type: MixableSolution
     solution: vial
   - type: FitsInDispenser
@@ -146,6 +146,7 @@
   - type: Edible
     edible: Drink
     solution: vial
+    destroyOnEmpty: false
   - type: Spillable
     solution: vial
   - type: Appearance
@@ -153,14 +154,8 @@
     damageModifierSet: Glass
   - type: Injurable
     damageContainer: Inorganic
-  - type: Injector
-    solutionName: vial
-    ignoreMobs: true
-    currentTransferAmount: 5
-    activeModeProtoId: CFPourDrawMode
-    allowedModes:
-    - CFPourDrawMode
-    - CFPourInjectMode
+  - type: SolutionTransfer
+    canChangeTransferAmount: true
   - type: Tag
     tags:
     - CFVial

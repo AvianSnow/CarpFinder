@@ -23,7 +23,7 @@ Measured on 23 November 2026, after difficult terrain (1.11), the Fighter, Rogue
 | Class feats             | 585   | 261, and 2 in part (11 of them only give a familiar's body, see 3.8)      | 394 in `feats-class.ftl`                                                                                                      |
 | Class features          | 181   | No placeholders                                                           | 41 in the class files                                                                                                         |
 | Subclass options        |       | Every class has its options                                               | 299 in `class-choices.ftl`. Runes repeat 6 times, ikons and tactics 3 times, implements twice, so about 150 different options |
-| General and skill feats | 131   | 13 in `general_feats.py`'s `WORKING`, and the scan agrees                 | Marked `(TBA)` in the builder. See "General and skill feats"                                                                  |
+| General and skill feats | 131   | 15 in `general_feats.py`'s `WORKING`, and the scan agrees (Alchemical and Magical Crafting gate brewing since 20 November 2026) | Marked `(TBA)` in the builder. See "General and skill feats"                                                                  |
 | Spells                  | 63    | All 63 have an action                                                     | None in `spells.ftl`                                                                                                          |
 | Focus spells            | 49    | The pipeline works                                                        | 13 in `focus.yml`, 5 in `hexes.yml`, 2 in `qi.yml`                                                                                               |
 | Deities                 | 7     | Skill, favored weapon, font, three domains each                           | None                                                                                                                          |
@@ -314,7 +314,7 @@ All 62 spells in the catalog have an action and an effect. What is left is spell
 
 `Feats/General/feats.yml` holds 131 feats through level 4 from Player Core, Player Core 2 and GM Core, with the site's one line summaries. `.agent/port-scripts/general_feats.py` rewrites that file from Archives of Nethys, so put fixes in the script. Of 74 feats backgrounds name, 65 match by name. 259 of 324 backgrounds grant one.
 
-- [ ] Effects for the rest. 13 work: Battle Medicine, Multilingual, Arcane Sense, Armor Proficiency, Canny Acumen, Diehard, Feather Step, Fleet, Hefty Hauler, Shield Block, Skill Training, Toughness and Weapon Proficiency. `general_feats.py` keeps them in `WORKING`. Tests: `CFGeneralFeatTest`.
+- [ ] Effects for the rest. 15 work: Battle Medicine, Multilingual, Arcane Sense, Armor Proficiency, Canny Acumen, Diehard, Feather Step, Fleet, Hefty Hauler, Shield Block, Skill Training, Toughness, Weapon Proficiency, and Alchemical Crafting and Magical Crafting, which brewing a potion asks for. `general_feats.py` keeps them in `WORKING`. Tests: `CFGeneralFeatTest`.
 - [ ] First the ones other options hand out (1.1, 2.2): Intimidating Glare, Group Coercion, Ride, Combat Climber, Terrain Stalker, Quick Squeeze, Specialty Crafting, Forager, Steady Balance, Untrained Improvisation, Adopted Ancestry, Assurance, Shameless Request, Quick Disguise, Lengthy Diversion, Snare Crafting, Impressive Performance, Titan Wrestler, Hobnobber, Alchemical Crafting, Cat Fall, Pet, Bon Mot, Dirty Trick, Fascinating Performance, Pickpocket.
 - [ ] Weapon Proficiency only gives martial weapons, not the advanced weapon a character already trained in martial would get. Toughness and Fleet do not show in the builder's preview.
 - [ ] 119 prerequisites are still text only: familiars, class features such as Spellstrike, an innovation, a focus pool, an age.
@@ -382,7 +382,7 @@ Gaps in the parts of Step 1 that are built. Take them when the system is next to
 - **Unfinished options are marked in the builder**, not hidden, so a player can see what is coming.
 - **Exploration and downtime options run on the world clock** where that works. Otherwise they keep their flavour text with the word `TBA` on its own, so `TBA` can be searched for later.
 - **Flying is over open sky, space tiles, chasms and holes**, and open sky is a fall into the void with a 2 second grace and Grab an Edge (2.7). Decided on 15 November 2026.
-- **Swimming and climbing are `TBA`.** Swimming will be ported from another fork, because SS14 has water entities. Climb speeds are not built, and `CFZLevelClimb` always rolls.
+- **Swimming and climbing are `TBA`.** Swimming will be ported from another fork, because SS14 has water entities. Climb Speeds (`CFGrantClimb` with `climbSpeed`) skip the check on a CrystallEdge ladder with a `dc` (`CFLadderCheck`); a ladder with none is a trivial climb and free.
 - **Z-levels are CrystallEdge's**, ported on 17 November 2026 with eshhhed's permission, which covers that code alone and asks for the credit "eshhhed". The CP14 stack of portal-linked maps is gone; our stairs, ladders and holes now sit on the CrystallEdge network, and fall damage is Player Core's. What landed and what was left out is in `zlevels.md`.
 - **Deities are our own pantheon**, not Golarion's named gods. Speaking to a god is stock SS14 prayer, which sends the message to the admins, so there is no religion system to build.
 - **Languages matter**, for roleplay: talk a goblin out of a fight in its own tongue. See "Languages" below.
@@ -393,7 +393,7 @@ What was left open when each of these was built. The finished parts are in `road
 
 ### Spell visuals
 
-- [ ] No bomb exists yet to use `CFFillEffect`. A lingering fill ends if its source is deleted, so a thrown bomb that should leave a zone with a save needs the zone to keep its own check and effects.
+- [ ] The two bombs (`CFBomb`) splash by lookup and draw nothing on the floor. A lingering fill ends if its source is deleted, so a bomb that should leave a zone with a save needs the zone to keep its own check and effects.
 
 - [ ] Heal and Harm's emanation and Directed Channel's cone draw nothing on the floor. A `CFAreaFill` on a mode is not supported yet.
 
@@ -497,11 +497,16 @@ The rule for what comes over, and how, is under Phase 3b in `roadmapold.md`: RPG
     - Brewing is ours, because CP14 only had drinks ready made: wheat, fruit or pumpkin used on a barrel with 10 water becomes wort, must or pumpkin mash, and that ferments into beer, wine or ale, 1 unit every 3 seconds (`CFFermenter`).
     - Fixed on the way: every barrel used `SolutionContainerManager` and held nothing, the water and beer barrels included.
     - Our changes from CP14: a pot is heated by degrees, not joules, and cooks while it gets `CFHeatedEvent`. A dish that is cut does not use stock's `ToolRefinable`, which other systems may not write to.
+    - Fixed on 20 November 2026, from play: clicking the furnace with dough said it was too big, because the fuel store took every click. Food, pots and mugs used on a fire are now set on top of it (`CFCookingSurface`), fuel still goes in, and a plate or a mug used on a pot serves or pours instead of being refused. The mug said "Too full to draw!" at a barrel and "This injector can only interact with containers!" on a drinker: its solution was in the obsolete form, so there was none, and CP14's injector-as-mug complains on mobs. Mugs, goblets, the bucket, the vials and the plushie are on stock `SolutionTransfer`, and an empty one fills from a tap barrel, a well or a pot (`CFTapSystem`). Tests: `CFCookerTest`. The cooking UI is CP14's: the furnace window is the fuel store, the pot window its ingredients, and nothing is picked by hand.
     - [ ] Not played yet: the look of a dish in the pot and on a plate (the client layers and displacement maps are untested), cooking and burning sounds, and how long a fire takes in play.
     - [ ] No apple tree, so wine needs stock fruit. Sandwiches (`foodSequenceElement`) are not ported. Bread on a fire never burns. A pot keeps cooking on a furnace as on a bonfire, with no difference between them.
     - [ ] Not ported: monster toxins (creatures row), smoking pipes and chromium jelly, wild plants.
-- [ ] Decide on CP14 alchemy.
-    - CP14 alchemy (magic essences, `Target Effects` reagents, 67 reactions, cauldron brewing): **open question.** PF2e alchemy is the Crafting skill and formulas, not mixing reagents, so this may be a new game system. Left out until decided.
+- [x] Decide on CP14 alchemy. Decided by the user on 20 November 2026: PF2e potions, brewed. CP14's reagent chemistry (magic essences, `Target Effects` reagents, precursor reactions, the solution cleaner, the mana glove) stays out. What landed (`CFAlchemyTest`):
+    - CP14's nine wild plants as they were, as gatherable structures (`Structures/Flora/wild.yml`) and ingredient items (`Objects/Alchemy/ingredients.yml`), each with a price: dayflin 30, sage 40, blue amanita 50, air lily 50, fly agaric 50, blood rose 60, silver needle 60, lumishroom 80, chromium slime 400 copper. The mushroom monsters that sometimes grew in their place were not ported.
+    - Ten remaster consumables with their Archives of Nethys numbers: Elixir of Life (minor), Cheetah's Elixir (lesser), Antidote (lesser), Darkvision Elixir (lesser), Alchemist's Fire (lesser), Bottled Lightning (lesser), Healing Potion (minor), Gecko Potion, Potion of Emergency Escape, Invisibility Potion. Each is a `craftingRecipe` brewed in the `CFCauldron` on a fire, with a formula, and its ingredients cost about half its price. The brewer rolls Crafting against the item's DC: a critical success brews one more, a failure keeps the ingredients for another boil, a critical failure ruins a tenth and spoils the water. Alchemical items need Alchemical Crafting and magic potions Magical Crafting, so those two general feats now do something.
+    - The Dragon Dungeon ground has 36 of the plants, placed on 20 November 2026 by a script over the map file (free grass for the flowers and sage, cave floor for the mushrooms and the silver needle, the bank of the water for the air lilies and chromium slime). They do not grow back, so a round has what it has. A plant spawner that regrows them is not built.
+    - Our changes from the rules: one brew makes one potion (the rules make four at a time), formulas and the check are the Craft activity without its days, Gecko Potion is +1 to Athletics rather than to Climb and Palm an Object alone, Emergency Escape stands in fleeing with calm (no hostile actions) beside its +40 Speed, a bomb's splash is dealt separately from its hit, and a bomb thrown at nobody is lost.
+    - Not done: the rest of CP14's potions (mana, stamina, blood, sleep) have no PF2e match and were dropped; higher-grade versions of each item; vials as a container the potion needs; a bomb used in melee neither breaks nor splashes; the cauldron shows no bubbling; the Alchemist class still has nothing of its own (Quick Alchemy, versatile vials).
 
 ## Step 4: Close the rules gaps
 
@@ -620,7 +625,7 @@ A kobold tribe that eats, drinks, farms, stores food, shares it, talks, and asks
 - [x] Fixed 16 November 2026, from play: a tribe sat hungry beside a full crate, because a loaf with no knife about or raw meat with no fire did not count as food after the bread chain came in. Anything edible as it is counts again. A hungry member that knows of no food also goes and looks in a chest nobody has checked for 90 seconds, in case a player filled it, and what it finds is what the tribe knows. Tests: `AHungryMemberTakesFoodOutOfTheCrate`, `AHungryMemberLooksInAChestItThinksIsEmpty`.
 - [ ] Sleeping in beds, and roles that change what a member does.
 - [ ] `CFGOAPFact` has no bit left: `MessNearby` took the last. The next tribe fact has to fold into a sensor or replace one.
-- [ ] Other `_CF` prototype files still use `SolutionContainerManager`. The well, the bucket and (17 November 2026) every barrel held nothing because of it, and were fixed. Check the rest.
+- [x] Other `_CF` prototype files still used `SolutionContainerManager`. All 80 blocks (every ported food, the mugs, goblets and bottles, the paper, the plushies, the mop, the pumpkin and ash) were converted on 20 November 2026, so bread has its nutriment again. `CFCookerTest.NoCFPrototypeUsesTheObsoleteSolutionForm` keeps it so. The port scripts would bring the form back: `produce.py` converts it, `finish.py` only for the well and the bucket.
 
 **Debug code to remove**
 
@@ -633,6 +638,8 @@ A kobold tribe that eats, drinks, farms, stores food, shares it, talks, and asks
 - The YAML linter (`dotnet run --project Content.YAMLLinter -c Tools`) reports 190 errors, seen on 17 November 2026 and not looked into. Most are guidebook entries that do not exist, stock ones and those named in `_CF/Guidebook/newplayer.yml`. `_CF/Entities/Effects/scent.yml` sets `icon` and `iconOn` on `Action`, which has no such fields. `CFMapAirTest.RoundMap` names an unknown prototype kind.
 
 - `CFGOAPSocietyTest.AHungryTribeHuntsAPigAndEatsIt` is unreliable. Measured on 17 November 2026, alone: it failed 1 run in 5 on commit `25f19f9ea9` and 6 in 12 with the familiar work on top, which touches nothing a tribe or a pig uses, so the difference may be chance. Which of its steps fails was not caught. Not looked into.
+
+- `ConstructionPrototypeTest.ConstructionComponentValid` (stock) fails: every `CFCraneBarrel*` entity names the node `CFWoodenBarrel`, which the `CFCraneBarrel` graph does not have. Seen on 19 November 2026 while adding the stair ramps, which pass it. Not looked into.
 
 - `MaterialArbitrageTest.NoMaterialArbitrage` (stock) fails inside `ConstructionGraphPrototype.Path`, which means a construction graph has a node it cannot reach. Found on 11 November 2026 and not looked into. It is not from butchering: the harvest change touches no construction.
 

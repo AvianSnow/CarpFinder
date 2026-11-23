@@ -1,0 +1,64 @@
+# CrystallEdge's wall ladder (https://github.com/crystallpunk-14/crystall-edge), with permission from eshhhed. It
+# hangs on the wall its rotation points at, north with none, and the tile straight above it on the level above
+# is left open. Walking into the wall climbs, standing still hangs on, and running slides down. Stepping into
+# the opening from above takes hold on the way down. The sprite is CrystallEdge's, CC-BY-SA-4.0, in Textures/_CE.
+#
+# CFLadderCheck is ours: with a dc, taking hold is a Player Core Climb (an Athletics check and an action). Left at
+# 0 the climb is trivial and free.
+
+- type: entity
+  id: CFBaseLadder
+  parent: CFBaseWallmount
+  abstract: true
+  categories: [ ForkFiltered ]
+  components:
+  - type: Sprite
+    drawdepth: Mobs
+    offset: 0, 0.6
+  - type: Physics
+    bodyType: Static
+    canCollide: true
+  # The grip zone is the wall side of the tile. In local space the wall is to the north.
+  - type: Fixtures
+    fixtures:
+      ladder:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.4,0.1,0.4,0.5"
+        hard: false
+        layer:
+        - SlipLayer
+  - type: CFLadder
+  - type: CFLadderCheck
+
+- type: entity
+  id: CFWoodenLadder
+  parent: CFBaseLadder
+  name: wooden ladder
+  description: A wooden ladder nailed to the wall. Walk into the wall to climb, stand still to hang on, run to slide down.
+  components:
+  - type: Sprite
+    sprite: _CE/Structures/Furniture/ladder.rsi
+    state: wooden
+  - type: Damageable
+    damageModifierSet: CFWood
+  - type: Injurable
+    damageContainer: Inorganic
+  - type: Destructible
+    thresholds:
+    - trigger: !type:DamageTrigger
+        damage: 25
+      behaviors:
+      - !type:DoActsBehavior
+        acts: [ "Destruction" ]
+      - !type:PlaySoundBehavior
+        sound:
+          collection: WoodDestroy
+      - !type:SpawnEntitiesBehavior
+        spawn:
+          CFWoodenPlanks1:
+            min: 1
+            max: 2
+  - type: Construction
+    graph: CFWoodenLadder
+    node: CFWoodenLadder

@@ -55,11 +55,17 @@
   id: CFWildSage
   parent: BaseItem
   name: sage
-  description: Sage flowers. A good medicinal herb.
+  description: Sage flowers. A good medicinal herb, and an alchemist's staple.
   categories: [ ForkFiltered ]
   components:
   - type: Item
     size: Tiny
+  - type: Tag
+    tags:
+    - CFAlchemicalHerbals
+    - CFWildSage
+  - type: CFItemPrice
+    copper: 40 # an alchemy ingredient: see Objects/Alchemy/ingredients.yml
   - type: Sprite
     sprite: _CP14/Objects/Flora/Wild/wild_sage.rsi
     layers:
