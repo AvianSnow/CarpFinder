@@ -12,3 +12,6 @@
     - "Qi Spells"
   requiresFeats:
     - CFQiSpells
+  grants:
+    - !type:CFGrantFocusSpell
+      spell: HarmonizeSelf

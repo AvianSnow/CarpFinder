@@ -72,6 +72,10 @@ public sealed partial class CFStanceBonus
     /// <summary>Negative for a penalty.</summary>
     [DataField(required: true)]
     public int Value;
+
+    /// <summary>With <see cref="CFBonusStat.SkillChecks"/>, the bonus only counts for this skill (Stumbling Stance's Feint).</summary>
+    [DataField]
+    public string? Skill;
 }
 
 [DataDefinition]

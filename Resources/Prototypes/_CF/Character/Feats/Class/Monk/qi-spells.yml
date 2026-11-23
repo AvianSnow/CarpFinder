@@ -8,3 +8,15 @@
   level: 1
   traits:
     - "Monk"
+  choices:
+    - kind: Named
+      options: [ QiInnerUpheaval, QiRush ]
+  grants:
+    - !type:CFGrantChosen
+      options:
+        QiInnerUpheaval:
+          - !type:CFGrantFocusSpell
+            spell: InnerUpheaval
+        QiRush:
+          - !type:CFGrantFocusSpell
+            spell: QiRush

@@ -165,7 +165,7 @@ public sealed partial class CFStanceSystem : EntitySystem
 
         foreach (var bonus in ent.Comp.Bonuses)
         {
-            _bonuses.AddPermanentBonus(user, bonus.Stat, bonus.Type, bonus.Value, source: BonusSource);
+            _bonuses.AddPermanentBonus(user, bonus.Stat, bonus.Type, bonus.Value, skill: bonus.Skill, source: BonusSource);
         }
 
         _armor.RefreshArmorClass(user);

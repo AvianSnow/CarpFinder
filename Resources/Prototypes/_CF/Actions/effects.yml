@@ -19,7 +19,7 @@
   parent: CFActivityInstant
   id: CFActTributaryCirculation
   name: Tributary Circulation
-  description: +2 circumstance bonus to Will saves for 6 seconds.
+  description: +2 circumstance bonus to Will saves and to saves against poison for 6 seconds.
   components:
   - type: CFEffectAction
   - type: CFDegreeEffects
@@ -28,6 +28,12 @@
       stat: Will
       type: Circumstance
       value: 2
+      durationSeconds: 6
+    - !type:CFBonusEffect
+      stat: Saves
+      type: Circumstance
+      value: 2
+      trait: Poison
       durationSeconds: 6
 
 - type: entity

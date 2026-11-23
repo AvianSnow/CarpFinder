@@ -34,6 +34,9 @@
     - stat: Speed
       type: Untyped
       value: -5
+    - stat: ManeuverDc
+      type: Circumstance
+      value: 2
     attack:
       die: 8
       damageType: Bludgeoning
@@ -126,6 +129,11 @@
   components:
   - type: CFStance
     onlyStanceStrikes: true
+    bonuses:
+    - stat: SkillChecks
+      type: Circumstance
+      value: 1
+      skill: Deception
     attack:
       die: 8
       damageType: Bludgeoning
@@ -162,6 +170,17 @@
   components:
   - type: CFStance
     requiresUnarmored: true
+    bonuses:
+    - stat: Maneuvers
+      type: Circumstance
+      value: 1
+    - stat: ManeuverDc
+      type: Circumstance
+      value: 2
+    - stat: SkillChecks
+      type: Circumstance
+      value: 1
+      skill: Deception
     attack:
       die: 6
       damageType: Slashing
@@ -180,6 +199,13 @@
   components:
   - type: CFStance
     requiresUnarmored: true
+    bonuses:
+    - stat: Maneuvers
+      type: Circumstance
+      value: 1
+    - stat: ManeuverDc
+      type: Circumstance
+      value: 2
     attack:
       die: 6
       damageType: Bludgeoning

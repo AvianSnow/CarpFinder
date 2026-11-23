@@ -1,0 +1,107 @@
+# Monk qi spells (Player Core 2). Focus spells from the Qi Spells and Harmonize Self feats.
+
+- type: entity
+  parent: CFSpellInstant
+  id: CFInnerUpheaval
+  name: Inner Upheaval
+  description: "For 3 seconds your melee Strikes have +1 status to attack rolls and deal 1d6 more force damage, 2d6 from level 9. Use it just before a Strike or a Flurry of Blows. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: InnerUpheaval
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    filter: All
+  - type: CFHeighten
+    baseRank: 1
+    interval: 4
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: AttackRoll
+      value: 1
+      durationSeconds: 3
+    - !type:CFInfuseStrikesEffect
+      damageType: Force
+      heightenDice: 1
+
+- type: cfSpell
+  id: InnerUpheaval
+  name: Inner Upheaval
+  rank: 1
+  traits: [Concentrate]
+  actionCost: One
+  summary: "Your next Strikes gain a +1 status bonus to attack rolls and deal 1d6 extra force damage. Choosing spirit, vitality or void instead is TBA."
+  heightened: "The extra damage increases by 1d6 every 4 ranks."
+
+- type: entity
+  parent: CFSpellInstant
+  id: CFQiRush
+  name: Qi Rush
+  description: "For 3 seconds you move 30 feet faster, and you are concealed for 6 seconds. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: QiRush
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    filter: All
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: Speed
+      value: 30
+      durationSeconds: 3
+    - !type:CFApplyConditionEffect
+      condition: Concealed
+      durationSeconds: 6
+
+- type: cfSpell
+  id: QiRush
+  name: Qi Rush
+  rank: 1
+  traits: [Concentrate]
+  actionCost: One
+  summary: "You move twice as one action, and are concealed until your next turn."
+
+- type: entity
+  parent: CFSpellInstant
+  id: CFHarmonizeSelf
+  name: Harmonize Self
+  description: "You regain 8 Hit Points, and 8 more at level 5. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: HarmonizeSelf
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    filter: All
+  - type: CFHeighten
+    baseRank: 2
+    interval: 1
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFHealEffect
+      flat: 8
+      heightenFlat: 8
+
+- type: cfSpell
+  id: HarmonizeSelf
+  name: Harmonize Self
+  rank: 2
+  traits: [Concentrate, Healing, Vitality]
+  actionCost: One
+  summary: "You regain 8 Hit Points. Curing a poison or disease instead is TBA."
+  heightened: "Healing increases by 8 per rank."

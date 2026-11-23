@@ -112,3 +112,36 @@ public sealed partial class CFDamageEffect : CFEffect
             args.User);
     }
 }
+
+/// <summary>
+/// For a moment, the user's melee Strikes deal extra dice of another damage type (Inner Upheaval). It uses the same
+/// fields as Divine Infusion, so the newer of the two counts.
+/// </summary>
+public sealed partial class CFInfuseStrikesEffect : CFEffect
+{
+    [DataField]
+    public int Dice = 1;
+
+    [DataField]
+    public int Die = 6;
+
+    /// <summary>One more die for each step the source is heightened.</summary>
+    [DataField]
+    public int HeightenDice;
+
+    [DataField(required: true)]
+    public ProtoId<CFDamageTypePrototype> DamageType;
+
+    [DataField]
+    public float DurationSeconds = 3f;
+
+    public override void Apply(IEntityManager entities, CFEffectArgs args)
+    {
+        var options = entities.EnsureComponent<Content.Shared.CF.Combat.CFCombatOptionsComponent>(args.User);
+        options.InfusionDice = Dice + HeightenDice * args.HeightenSteps;
+        options.InfusionDie = Die;
+        options.InfusionType = DamageType.Id;
+        options.InfusionUntil = IoCManager.Resolve<Robust.Shared.Timing.IGameTiming>().CurTime + TimeSpan.FromSeconds(DurationSeconds);
+        entities.Dirty(args.User, options);
+    }
+}
