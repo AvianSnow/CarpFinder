@@ -100,6 +100,9 @@
   name: Unbalancing Finisher
   description: A melee finisher that spends your panache. If it deals damage, the target is off-guard for 6 seconds.
   components:
+  # On the weapon, not the wheel: Z switches to it and Alt+Z performs it. See CFFinisherSystem.
+  - type: CFRadialSlot
+    wheel: false
   - type: CFStrikeAction
     finisher: true
     onHit:
@@ -321,6 +324,9 @@
   name: Impaling Finisher
   description: A finisher. Strike your target, and also an enemy standing straight behind it, at the same penalty. It counts as two attacks.
   components:
+  # On the weapon, not the wheel: Z switches to it and Alt+Z performs it. See CFFinisherSystem.
+  - type: CFRadialSlot
+    wheel: false
   - type: CFStrikeAction
     finisher: true
     second: BehindTarget
@@ -396,6 +402,9 @@
   name: Retreating Finisher
   description: A finisher. If it misses, you can walk out of reach in the next 2 seconds at no cost and without setting off a reaction.
   components:
+  # On the weapon, not the wheel: Z switches to it and Alt+Z performs it. See CFFinisherSystem.
+  - type: CFRadialSlot
+    wheel: false
   - type: CFStrikeAction
     finisher: true
     onFailure:

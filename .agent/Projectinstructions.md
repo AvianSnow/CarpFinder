@@ -217,7 +217,7 @@ Class examples: `CFMySystem`, `CFMyServerSystem`, `CFMyClientSystem`, `CFExample
 | An action that Demoralizes or Feints at its own range | A `CFActivityTarget` action with `CFActivity` `kind: Demoralize` or `Feint` and a `TargetAction` range |
 | One of several actions, by what the player picked for the option | `!type:CFGrantChosenAction` with an `actions` map from pick values to action ids, beside a `choices` entry |
 | An action that only applies effects | An action parented on `CFActivityInstant` or `CFActivityTarget` with `CFEffectAction` and `CFDegreeEffects` (`Resources/Prototypes/_CF/Actions/effects.yml`). Grant it with `CFGrantAction`. `unstable: true` makes it an Inventor's unstable action |
-| A Swashbuckler finisher | A Strike action with `finisher: true` on its `CFStrikeAction`. It needs panache and spends it |
+| A Swashbuckler finisher | A Strike action with `finisher: true` on its `CFStrikeAction`, and `wheel: false` on its `CFRadialSlot`. It needs panache and spends it. Finishers live on the weapon: Z on the held weapon switches to the next one its holder knows and Alt+Z performs it (`CFFinisherSystem`), so a new finisher needs nothing more than its action |
 | An action that is a Strike with something extra | An action parented on `CFActStrikeBase` with a `CFStrikeAction` (`Resources/Prototypes/_CF/Actions/strikes.yml`). Say what it needs (`press`, `twoHandedWeapon`, `needsFreeHand`, `groups`, ...) and put effects in `onHit`, `onCritical` and `onFailure`. A Shove is `!type:CFForcedMovementEffect`, a grab `!type:CFGrabEffect`, a Trip `!type:CFTripEffect` |
 | A spell that turns the caster into something else (a battle form, a polymorph) | `CFBattleFormSpell` on the spell's action, with a `CFModeChoice` mode per form (`Spells/2/CFAnimalForm.yml`). Every form needs a `sprite`: the client draws it in place of the body (`CFBattleFormVisualsSystem`), and the HUD shows the spell and shape, as "Animal Form: Cat". `CFBattleFormVisualsTest` fails a form without one. `tiers` are its numbers at higher ranks, and a form can set `minRank`, `noStrikes`, `durationSeconds` and `physicalWeakness`. `CFBattleFormSystem` gives the Dismiss Form action |
 | A focus spell | An action in `Resources/Prototypes/_CF/Spells/Focus/focus.yml` with `focus: true` on its `CFSpell` and rank 0, and a `cfSpell` with no traditions. Grant it with `CFGrantFocusSpell` |
@@ -271,7 +271,7 @@ changed inline 1-line edit // CarpFinder: reason for the edit
 
 Never add `// CarpFinder` comments for `using` blocks.
 
-**Do not edit upstream keybinds** (`Resources/keybinds.yml`, input contexts, the rebind menu). New inputs reuse existing keys. Alt+Z is reserved for Swashbucklers choosing a finisher.
+**Do not edit upstream keybinds** (`Resources/keybinds.yml`, input contexts, the rebind menu). New inputs reuse existing keys. Alt+Z performs a Swashbuckler's finisher, and Z on the held weapon chooses which.
 
 **Preferred overlay pattern:** keep stock Lobby/UI (and similar) files identical to upstream; put replacements in `_CF/` and exclude the stock compile/XAML entries from the project file. See `lobby-overlay.md`.
 

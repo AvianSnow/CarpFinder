@@ -826,6 +826,13 @@ public sealed partial class CFConditionSystem : EntitySystem
             GainPanache(user);
     }
 
+    /// <summary>Gives panache for a successful Disarm: to a style that gains it from maneuvers, or with Disarming Flair.</summary>
+    public void GainDisarmPanache(EntityUid user)
+    {
+        if (CompOrNull<CFCombatOptionsComponent>(user) is { } style && (style.PanacheManeuvers || style.PanacheDisarm))
+            GainPanache(user);
+    }
+
     /// <param name="overextending">
     /// An Overextending Feint: instead of off-guard, the target takes -2 circumstance to its next attack roll against the
     /// user, or to all of them for 6 seconds on a critical success.

@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Collections.Generic;
 using System.Numerics;
 using Content.IntegrationTests.Fixtures;
@@ -26,6 +27,8 @@ public sealed class CFSocialActionTest : GameTest
     private static readonly Box2i Footprint = new(-1, -1, 8, 2);
 
     public override PoolSettings PoolSettings => new() { Connected = false };
+
+    private static readonly ProtoId<Content.Shared.CF.Character.CFClassChoicePrototype> Wit = "StyleWit";
 
     [TestPrototypes]
     private const string Prototypes = @"
@@ -280,6 +283,77 @@ public sealed class CFSocialActionTest : GameTest
             Assert.That(Maneuvers.TryFinisher(hero));
             Assert.That(options.Panache, Is.False);
             Assert.That(Stamina(hero), Is.EqualTo(2f));
+        });
+    }
+
+    /// <summary>A Swashbuckler's finishers are on the weapon: using it switches which, and Alt+Z performs that one.</summary>
+    [Test]
+    public async Task TheWeaponChoosesTheFinisher()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            var finishers = SEntMan.System<Content.Shared.CF.Actions.CFFinisherSystem>();
+            var hero = Hero();
+            var options = Options(hero).Comp;
+            options.PanacheStyle = true;
+            var sword = SEntMan.SpawnEntity("CFLongsword", _map.Local(0, 0));
+            SEntMan.System<Content.Shared.Hands.EntitySystems.SharedHandsSystem>().TryPickupAnyHand(hero, sword);
+
+            Assert.That(finishers.Next(hero, sword), Is.False, "Only Confident Finisher: nothing to switch to.");
+            Assert.That(finishers.Selected(hero, sword).Id, Is.Null);
+
+            SEntMan.System<Content.Shared.CF.Character.CFCharacterFeatureSystem>().GrantAction(hero, "CFActUnbalancingFinisher");
+            Assert.That(finishers.Known(hero), Has.Count.EqualTo(2));
+            Assert.That(finishers.Next(hero, sword));
+            Assert.That(finishers.Selected(hero, sword).Id?.Id, Is.EqualTo("CFActUnbalancingFinisher"));
+
+            // Someone with no panache to spend holds the same sword: it is no finisher to them.
+            var other = Hero();
+            Assert.That(finishers.Known(other), Is.Empty);
+
+            var foe = Foe(1);
+            Assert.That(finishers.TryUse(hero), Is.False, "No panache.");
+            options.Panache = true;
+            var before = Stamina(hero);
+            Assert.That(finishers.TryUse(hero));
+            Assert.That(options.Panache, Is.False, "The finisher spends the panache.");
+            Assert.That(Stamina(hero), Is.EqualTo(before - 1f));
+            Assert.That(SEntMan.GetComponent<CFCombatantComponent>(foe).CurrentHp, Is.LessThanOrEqualTo(SEntMan.GetComponent<CFCombatantComponent>(foe).MaxHp));
+
+            Assert.That(finishers.Next(hero, sword));
+            Assert.That(finishers.Selected(hero, sword).Id, Is.Null, "And round again to Confident Finisher.");
+        });
+    }
+
+    [Test]
+    public async Task DisarmingFlairAndTheStylesGivePanache()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            var conditions = SEntMan.System<CFConditionSystem>();
+            var features = SEntMan.System<Content.Shared.CF.Character.CFCharacterFeatureSystem>();
+            var hero = Hero();
+            var options = Options(hero).Comp;
+            options.PanacheStyle = true;
+
+            conditions.GainDisarmPanache(hero);
+            Assert.That(options.Panache, Is.False, "A Disarm is nothing to a style without it.");
+            features.SetOption(hero, CFCombatOption.PanacheDisarm);
+            conditions.GainDisarmPanache(hero);
+            Assert.That(options.Panache, Is.True);
+
+            // The Wit's Bon Mot is an action it is given, and its success gives panache.
+            options.Panache = false;
+            features.Apply(hero, Server.ProtoMan.Index(Wit).Grants, "choice:StyleWit");
+            var hasBonMot = SEntMan.System<Content.Shared.Actions.SharedActionsSystem>().GetActions(hero)
+                .Any(action => SEntMan.GetComponent<MetaDataComponent>(action).EntityPrototype?.ID == "CFActBonMot");
+            Assert.That(hasBonMot);
+            SEntMan.System<CFEffectSystem>().Run(
+                new System.Collections.Generic.List<CFEffect> { new CFGainPanacheEffect() },
+                new CFEffectArgs { User = hero, Source = hero, Target = hero });
+            Assert.That(options.Panache, Is.True);
         });
     }
 

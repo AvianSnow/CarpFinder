@@ -66,6 +66,7 @@ public sealed partial class CFManeuverSystem : EntitySystem
     [Dependency] private CFImplementSystem _implements = default!;
     [Dependency] private CFFactionSystem _factions = default!;
     [Dependency] private CFWeaponSystem _weapons = default!;
+    [Dependency] private CFFinisherSystem _finishers = default!;
 
     private bool HasStats(EntityUid uid)
     {
@@ -178,11 +179,12 @@ public sealed partial class CFManeuverSystem : EntitySystem
             case CFDegree.CriticalSuccess:
                 if (_hands.TryGetActiveItem(target, out var item))
                     _hands.TryDrop(target, item.Value, checkActionBlocker: false);
+                _conditions.GainDisarmPanache(user);
                 _popup.PopupEntity(Loc.GetString("cf-act-disarm-drop"), target);
                 break;
             case CFDegree.Success:
                 _bonuses.AddBonus(target, CFBonusStat.AttackRoll, CFBonusType.Circumstance, -2, 6f);
-                _conditions.GainManeuverPanache(user);
+                _conditions.GainDisarmPanache(user);
                 _popup.PopupEntity(Loc.GetString("cf-act-disarm"), target);
                 break;
             case CFDegree.CriticalFailure:

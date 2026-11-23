@@ -60,3 +60,12 @@ public sealed partial class CFMercyEffect : CFEffect
         }
     }
 }
+
+/// <summary>The user gains panache, if it is a Swashbuckler: what a style's own action does on a success (Bon Mot, Dirty Trick).</summary>
+public sealed partial class CFGainPanacheEffect : CFEffect
+{
+    public override void Apply(IEntityManager entities, CFEffectArgs args)
+    {
+        entities.System<Content.Shared.CF.Combat.CFConditionSystem>().GainPanache(args.User);
+    }
+}

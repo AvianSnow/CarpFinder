@@ -84,11 +84,12 @@ public sealed partial class CFManeuverSystem
             || !style.Panache)
             return;
 
+        // The weapon says which finisher: see CFFinisherSystem.
         args.Verbs.Add(new AlternativeVerb
         {
-            Text = Loc.GetString("cf-act-finisher"),
+            Text = _finishers.Selected(user, ent).Name,
             Priority = FinisherVerbPriority,
-            Act = () => TryFinisher(user),
+            Act = () => _finishers.TryUse(user),
         });
     }
 
@@ -108,6 +109,16 @@ public sealed partial class CFManeuverSystem
 
         _activities.Finisher(user, target);
         return true;
+    }
+
+    /// <summary>The enemy a melee Strike from the held weapon would go at: the one in reach nearest to where the creature aims.</summary>
+    public bool TryAimedStrikeTarget(EntityUid user, out EntityUid target)
+    {
+        var reach = CFFlanking.DefaultReachFeet;
+        if (_hands.TryGetActiveItem(user, out var held))
+            reach = _weapons.ReachFeet(held.Value);
+
+        return TryAimedEnemy(user, reach + AimedStrikeSlackFeet, demoralizing: false, out target);
     }
 
     private bool TryAimedEnemy(EntityUid user, float feet, bool demoralizing, out EntityUid target)

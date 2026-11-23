@@ -119,17 +119,17 @@ cf-class-choice-devotiontouchofthevoid-desc = Harm a creature with a touch. It c
 
 cf-class-choice-style = Swashbuckler's Style
 cf-class-choice-stylebattledancer = Battledancer
-cf-class-choice-stylebattledancer-desc = Trained in Performance. Fascinating Performance, and panache from Perform: TBA
+cf-class-choice-stylebattledancer-desc = Trained in Performance. You have the Fascinating Performance action, and gain panache when it succeeds. With panache, +1 circumstance to Performance.
 cf-class-choice-stylebraggart = Braggart
-cf-class-choice-stylebraggart-desc = Trained in Intimidation. You gain panache from Demoralize.
+cf-class-choice-stylebraggart-desc = Trained in Intimidation. You gain panache from Demoralize. With panache, +1 circumstance to Intimidation.
 cf-class-choice-stylefencer = Fencer
-cf-class-choice-stylefencer-desc = Trained in Deception. You gain panache from Feint. From Create a Diversion: TBA
+cf-class-choice-stylefencer-desc = Trained in Deception. You gain panache from Feint and from Create a Diversion. With panache, +1 circumstance to Deception.
 cf-class-choice-stylegymnast = Gymnast
-cf-class-choice-stylegymnast-desc = Trained in Athletics. You gain panache from a successful Grapple, Shove or Disarm. From Reposition: TBA
+cf-class-choice-stylegymnast-desc = Trained in Athletics. You gain panache from a successful Grapple, Shove or Disarm. With panache, +1 circumstance to Athletics. From Reposition: TBA
 cf-class-choice-stylerascal = Rascal
-cf-class-choice-stylerascal-desc = Trained in Thievery. Dirty Trick, and panache from it: TBA
+cf-class-choice-stylerascal-desc = Trained in Thievery. You have the Dirty Trick action, and gain panache when it succeeds. With panache, +1 circumstance to Thievery.
 cf-class-choice-stylewit = Wit
-cf-class-choice-stylewit-desc = Trained in Diplomacy. Bon Mot, and panache from it: TBA
+cf-class-choice-stylewit-desc = Trained in Diplomacy. You have the Bon Mot action, and gain panache when it succeeds. With panache, +1 circumstance to Diplomacy.
 
 cf-class-choice-methodology = Methodology
 cf-class-choice-methodalchemicalsciences = Alchemical Sciences

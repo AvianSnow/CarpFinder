@@ -1091,7 +1091,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
         }
 
         // Precise Strike. A finisher has already spent the panache by the time it gets here.
-        if (melee && style.PanacheStyle && (weapon.Agile || weapon.Finesse))
+        if ((melee || style.FlyingBlade && weapon.ThrownStrike) && style.PanacheStyle && (weapon.Agile || weapon.Finesse))
             total += finisher ? _random.Next(1, 7) + _random.Next(1, 7) : 2;
 
         if (style.SlingerPrecision && !melee && CompOrNull<CFWeaponComponent>(weapon.Item) is { } gun)

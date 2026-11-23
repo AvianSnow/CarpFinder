@@ -298,6 +298,8 @@ public sealed partial class CFStealthSystem : EntitySystem
         {
             stealth.Active = true;
             stealth.RevealAt = now + DiversionTime;
+            if (CompOrNull<Content.Shared.CF.Combat.CFCombatOptionsComponent>(user)?.PanacheDiversion == true)
+                _conditions.GainPanache(user);
         }
 
         Dirty(user, stealth);

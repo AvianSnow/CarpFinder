@@ -10,3 +10,6 @@
     - "Swashbuckler"
   prerequisites:
     - "precise strike"
+  grants:
+    - !type:CFGrantOption
+      option: FlyingBlade

@@ -143,7 +143,8 @@ An area with `CFAreaFill` or `CFBreathGas` is drawn on its tiles. `ResolveArea` 
 | Sleep action while buckled to a bed | Long rest: full hit points, spell slots and focus. Refused with an enemy close by, and once per 15 minutes | `CFLongRestSystem` |
 | Speech bubble button on the top bar | The language menu: choose which language you speak (free). It has no key | `CFLanguageMenuUIController`, `CFLanguageSystem` |
 | Examine tab, information icon | Recall Knowledge (1 action) | `CFManeuverSystem.TryRecall` |
-| Alt+Z with a melee weapon, with panache | Confident Finisher at the enemy being aimed at (1 action) | `CFManeuverSystem.TryFinisher` |
+| Use in hand (Z), melee weapon, as a Swashbuckler who knows more than one finisher | The weapon is set to the next finisher (free). The hand status shows which. A shield still raises, and a weapon with `CFDamageMode` still changes type | `CFFinisherSystem.Next` |
+| Alt+Z with a melee weapon, with panache | The finisher the weapon is set to, at the enemy being aimed at. Confident Finisher until it is switched | `CFFinisherSystem.TryUse` |
 | Play a held instrument, as a Bard | Courageous Anthem for as long as the music lasts. 1 action to start it, nothing to keep it going. Closing the window does not stop the song while the instrument stays in hand | `CFAnthemSystem`, `CFInstrumentSystem` |
 | Radial wheel, HUD deck or hotbar | Activities, stances, spellshapes, Strike actions and spells | `CFActivitySystem`, `CFStanceSystem`, `CFSpellshapeSystem`, `CFStrikeActionSystem`, `CFSpellSystem` |
 | 1 to 0, and Shift with them, while the deck shows Basic, Class or Spells | Use that tab's first or second row | `CFHudDeck.TryKeyed` |
@@ -178,7 +179,7 @@ These replace stock's right-click for attackers with `CFCombatant` and `CFAbilit
 - The stock client only sends a disarm for unarmed swings. The one marked line in `Content.Client/Weapons/Melee/MeleeWeaponSystem.cs` adds whatever `CFWeaponSystem.ManeuverOnRightClick` allows. The server applies the same rule, so a client cannot maneuver with a weapon that does not qualify.
 - A `Disarm` weapon against an empty-handed target shows a popup and costs nothing. A `Shove` weapon always shoves. A weapon with both follows the empty hand rule.
 - `Sweep` wins. A sweep weapon keeps its wide swing and gives up the maneuver.
-- Keybinds are fixed: do not edit upstream keybinds. Z is use in hand. Alt+Z is reserved for Swashbucklers choosing a finisher, so there is no weapon mode switch.
+- Keybinds are fixed: do not edit upstream keybinds. Z is use in hand. Alt+Z is a Swashbuckler's finisher, and Z on the weapon chooses which, so there is no weapon mode switch.
 
 Trip has no action. Three successful shoves in a row knock the target prone (`CFConditionSystem.NoteShove`). This is a deliberate change from PF2e, to keep the HUD small. Shoves from anyone count, a miss neither counts nor resets, and each must land within 6 seconds of the last.
 

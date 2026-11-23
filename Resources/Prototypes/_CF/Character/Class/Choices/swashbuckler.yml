@@ -1,4 +1,5 @@
-# CarpFinder: Swashbuckler styles, Player Core 2. Perform, Dirty Trick and Bon Mot are not built, so every style also gets panache from Demoralize and Feint.
+# CarpFinder: Swashbuckler styles, Player Core 2. Every style also gets panache from Demoralize, Feint and Tumble Through.
+# Each has +1 circumstance to its skill while it has panache: the bonus to checks with the bravado trait.
 - type: cfClassChoice
   id: StyleBattledancer
   class: Swashbuckler
@@ -7,6 +8,15 @@
   description: cf-class-choice-stylebattledancer-desc
   trainedSkills:
     - Performance
+  grants:
+    - !type:CFGrantAction
+      action: CFActFascinatingPerformance
+    - !type:CFGrantWhile
+      while: Panache
+      stat: SkillChecks
+      type: Circumstance
+      value: 1
+      skill: Performance
 
 - type: cfClassChoice
   id: StyleBraggart
@@ -16,6 +26,13 @@
   description: cf-class-choice-stylebraggart-desc
   trainedSkills:
     - Intimidation
+  grants:
+    - !type:CFGrantWhile
+      while: Panache
+      stat: SkillChecks
+      type: Circumstance
+      value: 1
+      skill: Intimidation
 
 - type: cfClassChoice
   id: StyleFencer
@@ -25,6 +42,15 @@
   description: cf-class-choice-stylefencer-desc
   trainedSkills:
     - Deception
+  grants:
+    - !type:CFGrantOption
+      option: PanacheDiversion
+    - !type:CFGrantWhile
+      while: Panache
+      stat: SkillChecks
+      type: Circumstance
+      value: 1
+      skill: Deception
 
 - type: cfClassChoice
   id: StyleGymnast
@@ -37,6 +63,12 @@
   grants:
     - !type:CFGrantOption
       option: PanacheManeuvers
+    - !type:CFGrantWhile
+      while: Panache
+      stat: SkillChecks
+      type: Circumstance
+      value: 1
+      skill: Athletics
 
 - type: cfClassChoice
   id: StyleRascal
@@ -46,6 +78,15 @@
   description: cf-class-choice-stylerascal-desc
   trainedSkills:
     - Thievery
+  grants:
+    - !type:CFGrantAction
+      action: CFActDirtyTrick
+    - !type:CFGrantWhile
+      while: Panache
+      stat: SkillChecks
+      type: Circumstance
+      value: 1
+      skill: Thievery
 
 - type: cfClassChoice
   id: StyleWit
@@ -55,3 +96,12 @@
   description: cf-class-choice-stylewit-desc
   trainedSkills:
     - Diplomacy
+  grants:
+    - !type:CFGrantAction
+      action: CFActBonMot
+    - !type:CFGrantWhile
+      while: Panache
+      stat: SkillChecks
+      type: Circumstance
+      value: 1
+      skill: Diplomacy

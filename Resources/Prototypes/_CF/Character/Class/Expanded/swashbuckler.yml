@@ -33,7 +33,7 @@
   features:
     - level: 1
       name: "Confident Finisher"
-      description: "Confident Finisher is on your action wheel. It spends panache and adds 2d6 precision damage with an agile or finesse weapon. A miss still deals 2 precision damage."
+      description: "Finishers are on your weapon. Use the weapon in your hand (Z) to switch to the next finisher you know, and Alt+Z to perform the one it is set to at the enemy you aim at. Confident Finisher spends panache and adds 2d6 precision damage with an agile or finesse weapon. A miss still deals 2 precision damage. It is on your action wheel too."
     - level: 1
       name: "Panache"
       description: "A successful Demoralize, Feint or Tumble Through gives you panache, and so does the action of your style, where the game has it."
@@ -45,8 +45,14 @@
       description: "Melee Strikes with an agile or finesse weapon deal 2 extra precision damage, or 2d6 as part of a finisher."
     - level: 1
       name: "Stylish Combatant"
-      description: "+5 feet status bonus to Speed while you have panache. The +1 to bravado checks: TBA"
+      description: "While you have panache: +5 feet status bonus to Speed, and +1 circumstance to Acrobatics and to your style's skill."
       grants:
+        - !type:CFGrantWhile
+          while: Panache
+          stat: SkillChecks
+          type: Circumstance
+          value: 1
+          skill: Acrobatics
         - !type:CFGrantWhile
           while: Panache
           stat: Speed
@@ -77,8 +83,12 @@
       description: "An extra skill increase and skill feat for Acrobatics or your style skill. The builder has no slots for them: TBA"
     - level: 3
       name: "Vivacious Speed"
-      description: "+10 feet status bonus to Speed while you have panache. Half of it without panache: TBA"
+      description: "+10 feet status bonus to Speed while you have panache, and +5 feet without."
       grants:
+        - !type:CFGrantBonus
+          stat: Speed
+          type: Status
+          value: 5
         - !type:CFGrantWhile
           while: Panache
           stat: Speed

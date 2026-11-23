@@ -198,6 +198,18 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public bool PanacheManeuvers;
 
+    /// <summary>Panache from a successful Disarm, whatever the style (Disarming Flair).</summary>
+    [DataField]
+    public bool PanacheDisarm;
+
+    /// <summary>Panache from a successful Create a Diversion (the Fencer style).</summary>
+    [DataField]
+    public bool PanacheDiversion;
+
+    /// <summary>Precise Strike also counts for thrown weapon Strikes (Flying Blade).</summary>
+    [DataField]
+    public bool FlyingBlade;
+
     /// <summary>Who this creature's reaction marked for extra damage. Only the server reads these.</summary>
     [DataField]
     public EntityUid? MarkedTarget;
@@ -590,6 +602,9 @@ public static class CFReactions
 /// <summary>The flags on <see cref="CFCombatOptionsComponent"/> that a <c>CFGrantOption</c> can set.</summary>
 public enum CFCombatOption : byte
 {
+    PanacheDisarm,
+    PanacheDiversion,
+    FlyingBlade,
     Cruelty,
     BlessedShield,
     SneakAttack,

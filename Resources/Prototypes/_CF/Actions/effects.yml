@@ -469,3 +469,104 @@
   - type: CFDegreeEffects
     effects:
     - !type:CFRegainFocusEffect
+
+# Swashbuckler styles: the action each style gains panache from. Each is a skill check against one of the target's DCs.
+- type: entity
+  parent: CFActivityTarget
+  id: CFActBonMot
+  name: Bon Mot
+  description: A cutting remark at an enemy within 30 feet, Diplomacy against its Will DC. On a success it takes -2 status to Perception and Will saves for a minute, -3 on a critical success, and a Swashbuckler gains panache.
+  components:
+  - type: TargetAction
+    range: 6.25
+  - type: CFEffectAction
+  - type: CFTrait
+    traits:
+    - Auditory
+    - Concentrate
+    - Linguistic
+    - Mental
+  - type: CFCheck
+    defense: Will
+    skill: Diplomacy
+    basicSave: false
+  - type: CFDegreeEffects
+    success:
+    - !type:CFBonusEffect
+      stat: Perception
+      type: Status
+      value: -2
+      durationSeconds: 60
+    - !type:CFBonusEffect
+      stat: Will
+      type: Status
+      value: -2
+      durationSeconds: 60
+    - !type:CFGainPanacheEffect {}
+    criticalSuccess:
+    - !type:CFBonusEffect
+      stat: Perception
+      type: Status
+      value: -3
+      durationSeconds: 60
+    - !type:CFBonusEffect
+      stat: Will
+      type: Status
+      value: -3
+      durationSeconds: 60
+    - !type:CFGainPanacheEffect {}
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActDirtyTrick
+  name: Dirty Trick
+  description: A trick on an enemy in reach, Thievery against its Reflex DC. On a success it is clumsy 1 for 6 seconds, a minute on a critical success, and a Swashbuckler gains panache.
+  components:
+  - type: CFEffectAction
+  - type: CFTrait
+    traits:
+    - Attack
+    - Manipulate
+  - type: CFCheck
+    defense: Reflex
+    skill: Thievery
+    basicSave: false
+  - type: CFDegreeEffects
+    success:
+    - !type:CFApplyConditionEffect
+      condition: Clumsy
+      value: 1
+      durationSeconds: 6
+    - !type:CFGainPanacheEffect {}
+    criticalSuccess:
+    - !type:CFApplyConditionEffect
+      condition: Clumsy
+      value: 1
+      durationSeconds: 60
+    - !type:CFGainPanacheEffect {}
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActFascinatingPerformance
+  name: Fascinating Performance
+  description: Perform for an enemy within 30 feet, Performance against its Will DC. On a critical success it is fascinated for 6 seconds. On any success a Swashbuckler gains panache.
+  components:
+  - type: TargetAction
+    range: 6.25
+  - type: CFEffectAction
+  - type: CFTrait
+    traits:
+    - Concentrate
+    - Visual
+  - type: CFCheck
+    defense: Will
+    skill: Performance
+    basicSave: false
+  - type: CFDegreeEffects
+    success:
+    - !type:CFGainPanacheEffect {}
+    criticalSuccess:
+    - !type:CFApplyConditionEffect
+      condition: Fascinated
+      durationSeconds: 6
+    - !type:CFGainPanacheEffect {}

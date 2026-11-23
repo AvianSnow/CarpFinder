@@ -574,6 +574,15 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
             case CFCombatOption.DirectedChannel:
                 options.DirectedChannel = true;
                 break;
+            case CFCombatOption.PanacheDisarm:
+                options.PanacheDisarm = true;
+                break;
+            case CFCombatOption.PanacheDiversion:
+                options.PanacheDiversion = true;
+                break;
+            case CFCombatOption.FlyingBlade:
+                options.FlyingBlade = true;
+                break;
             case CFCombatOption.Cruelty:
                 options.Cruelty = true;
                 break;

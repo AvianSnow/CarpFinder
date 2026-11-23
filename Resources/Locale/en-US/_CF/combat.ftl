@@ -206,6 +206,9 @@ cf-medicine-harm = The treatment makes it worse.
 cf-act-reposition-fail = You cannot move them.
 cf-act-aid = Aid
 cf-act-finisher = Confident Finisher
+cf-finisher-confident = Confident Finisher
+cf-finisher-set = Finisher: {$finisher}
+cf-finisher-status = [color=#e0c060]{$finisher}[/color]
 guide-entry-cf-actions = Actions and controls
 cf-act-aid-success = You are ready to help.
 cf-act-aid-fail = You get in the way.
