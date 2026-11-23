@@ -86,3 +86,40 @@ public sealed partial class CFPersonOfInterestEffect : CFEffect
         options.PersonOfInterestUntil = IoCManager.Resolve<Robust.Shared.Timing.IGameTiming>().CurTime + TimeSpan.FromSeconds(DurationSeconds);
     }
 }
+
+/// <summary>
+/// The target rolls a save against the user's class DC, and the effects of its degree run on it. For something with no
+/// check of its own to hang effects on, such as a reaction's <c>onEnemy</c> list (a Thaumaturge's Ring Bell).
+/// </summary>
+public sealed partial class CFSaveOrEffect : CFEffect
+{
+    [DataField(required: true)]
+    public Content.Shared.CF.Checks.CFDefenseType Defense;
+
+    [DataField]
+    public List<CFEffect> Failure = new();
+
+    /// <summary>Runs on a critical failure. Empty means <see cref="Failure"/> runs then too.</summary>
+    [DataField]
+    public List<CFEffect> CriticalFailure = new();
+
+    public override void Apply(IEntityManager entities, CFEffectArgs args)
+    {
+        if (args.Target is not { } target)
+            return;
+
+        var stats = Content.Shared.CF.Checks.CFCasting.ClassDc(
+            IoCManager.Resolve<Robust.Shared.Prototypes.IPrototypeManager>(),
+            entities.GetComponentOrNull<Content.Shared.CF.Combat.CFCombatantComponent>(args.User),
+            entities.GetComponentOrNull<Content.Shared.CF.Character.CFAbilityScoreComponent>(args.User));
+        var degree = entities.System<Content.Shared.CF.Combat.CFConditionSystem>().RollDefense(target, Defense, stats.Dc, out _, args.Traits);
+        var effects = degree switch
+        {
+            Content.Shared.CF.Checks.CFDegree.CriticalFailure => CriticalFailure.Count > 0 ? CriticalFailure : Failure,
+            Content.Shared.CF.Checks.CFDegree.Failure => Failure,
+            _ => null,
+        };
+        if (effects != null)
+            entities.System<CFEffectSystem>().Run(effects, args);
+    }
+}

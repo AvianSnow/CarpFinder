@@ -706,3 +706,115 @@
     - !type:CFTemporaryHpEffect
       halfLevel: true
       durationSeconds: 60
+
+# Thaumaturge.
+- type: entity
+  parent: CFActivityTarget
+  id: CFActSipChalice
+  name: Sip from the Chalice
+  description: You or an adjacent ally gain temporary Hit Points equal to your level, 3 at least, for 6 seconds. Once every 6 seconds.
+  components:
+  - type: Action
+    useDelay: 6
+  - type: EntityTargetAction
+    canTargetSelf: true
+    whitelist:
+      components:
+      - MobState
+    event: !type:CFActivityTargetEvent
+  - type: CFNeedsImplement
+    kind: Chalice
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFTemporaryHpEffect
+      perLevel: 1
+      atLeast: 3
+      durationSeconds: 6
+
+- type: entity
+  parent: CFActFlingMagicBase
+  id: CFActFlingMagicBoostedFire
+  name: Fling Magic (boosted)
+  description: "The wand's stored energy: a creature within 60 feet takes 3d6 fire damage, basic Reflex against your class DC, and 1d6 more at levels 3 and 5. Costs 2 actions. Once every 12 seconds."
+  components:
+  - type: Action
+    useDelay: 12
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 3
+      die: 6
+      damageType: Fire
+      diceEveryLevels: 2
+
+- type: entity
+  parent: CFActFlingMagicBase
+  id: CFActFlingMagicBoostedCold
+  name: Fling Magic (boosted)
+  description: "The wand's stored energy: a creature within 60 feet takes 3d6 cold damage, basic Reflex against your class DC, and 1d6 more at levels 3 and 5. Costs 2 actions. Once every 12 seconds."
+  components:
+  - type: Action
+    useDelay: 12
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 3
+      die: 6
+      damageType: Cold
+      diceEveryLevels: 2
+
+- type: entity
+  parent: CFActFlingMagicBase
+  id: CFActFlingMagicBoostedElectricity
+  name: Fling Magic (boosted)
+  description: "The wand's stored energy: a creature within 60 feet takes 3d6 electricity damage, basic Reflex against your class DC, and 1d6 more at levels 3 and 5. Costs 2 actions. Once every 12 seconds."
+  components:
+  - type: Action
+    useDelay: 12
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 3
+      die: 6
+      damageType: Electricity
+      diceEveryLevels: 2
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActRootToLife
+  name: Root to Life
+  description: A dying creature beside you is stabilized.
+  components:
+  - type: EntityTargetAction
+    canTargetSelf: false
+    whitelist:
+      components:
+      - MobState
+    event: !type:CFActivityTargetEvent
+  - type: CFEffectAction
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFStabilizeEffect {}
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActDivineDisharmony
+  name: Divine Disharmony
+  description: Clashing holy symbols distract a creature within 60 feet, Intimidation against its Will DC. On a success it is off-guard to you for 6 seconds, 12 on a critical success.
+  components:
+  - type: TargetAction
+    range: 12.25
+  - type: CFEffectAction
+  - type: CFCheck
+    defense: Will
+    skill: Intimidation
+    basicSave: false
+  - type: CFDegreeEffects
+    success:
+    - !type:CFOffGuardEffect
+      toUser: true
+    criticalSuccess:
+    - !type:CFOffGuardEffect
+      toUser: true
+      durationSeconds: 12

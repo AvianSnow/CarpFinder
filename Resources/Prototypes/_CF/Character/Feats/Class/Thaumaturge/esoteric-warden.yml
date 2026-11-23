@@ -10,3 +10,6 @@
     - "Thaumaturge"
   prerequisites:
     - "Exploit Vulnerability"
+  grants:
+    - !type:CFGrantOption
+      option: EsotericWarden

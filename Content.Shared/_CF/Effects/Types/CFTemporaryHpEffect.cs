@@ -26,6 +26,10 @@ public sealed partial class CFTemporaryHpEffect : CFEffect
     [DataField]
     public bool ToUser;
 
+    /// <summary>The amount is never less than this (a Chalice's sip: the level, 3 at least).</summary>
+    [DataField]
+    public int AtLeast;
+
     /// <summary>Half the user's level more, rounded down (a Witch's Restored Spirit).</summary>
     [DataField]
     public bool HalfLevel;
@@ -50,6 +54,7 @@ public sealed partial class CFTemporaryHpEffect : CFEffect
         if (dice > 0)
             amount += entities.System<CFEffectSystem>().Roll(dice, Die, 0);
 
+        amount = Math.Max(amount, AtLeast);
         if (ToUser)
             target = args.User;
 

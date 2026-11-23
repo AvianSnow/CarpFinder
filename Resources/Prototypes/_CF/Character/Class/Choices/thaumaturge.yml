@@ -48,6 +48,25 @@
   grants:
     - !type:CFGrantItem
       item: CFImplementBell
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-ring-bell
+        trigger: ExploitedWouldDamage
+        implement: Bell
+        rangeFeet: 30
+        onEnemy:
+          - !type:CFSaveOrEffect
+            defense: Will
+            failure:
+              - !type:CFApplyConditionEffect
+                condition: Enfeebled
+                value: 1
+                durationSeconds: 6
+            criticalFailure:
+              - !type:CFApplyConditionEffect
+                condition: Enfeebled
+                value: 2
+                durationSeconds: 6
 
 - type: cfClassChoice
   id: SecondImplementBell
@@ -61,6 +80,25 @@
       grants:
         - !type:CFGrantItem
           item: CFImplementBell
+        - !type:CFGrantReaction
+          reaction:
+            name: cf-reaction-ring-bell
+            trigger: ExploitedWouldDamage
+            implement: Bell
+            rangeFeet: 30
+            onEnemy:
+              - !type:CFSaveOrEffect
+                defense: Will
+                failure:
+                  - !type:CFApplyConditionEffect
+                    condition: Enfeebled
+                    value: 1
+                    durationSeconds: 6
+                criticalFailure:
+                  - !type:CFApplyConditionEffect
+                    condition: Enfeebled
+                    value: 2
+                    durationSeconds: 6
 
 - type: cfClassChoice
   id: ImplementCenser
@@ -96,6 +134,8 @@
       item: CFImplementChalice
     - !type:CFGrantAction
       action: CFActDrainChalice
+    - !type:CFGrantAction
+      action: CFActSipChalice
 
 - type: cfClassChoice
   id: SecondImplementChalice
@@ -111,6 +151,8 @@
           item: CFImplementChalice
         - !type:CFGrantAction
           action: CFActDrainChalice
+        - !type:CFGrantAction
+          action: CFActSipChalice
 
 - type: cfClassChoice
   id: ImplementLantern
@@ -307,6 +349,10 @@
   grants:
     - !type:CFGrantItem
       item: CFImplementTome
+  choices:
+    - kind: Skill
+      count: 2
+      daily: true
 
 - type: cfClassChoice
   id: SecondImplementTome
@@ -332,6 +378,8 @@
       item: CFImplementWand
     - !type:CFGrantAction
       action: CFActFlingMagicFire
+    - !type:CFGrantAction
+      action: CFActFlingMagicBoostedFire
 
 - type: cfClassChoice
   id: SecondImplementWandFire
@@ -347,6 +395,8 @@
           item: CFImplementWand
         - !type:CFGrantAction
           action: CFActFlingMagicFire
+        - !type:CFGrantAction
+          action: CFActFlingMagicBoostedFire
 
 - type: cfClassChoice
   id: ImplementWandCold
@@ -359,6 +409,8 @@
       item: CFImplementWand
     - !type:CFGrantAction
       action: CFActFlingMagicCold
+    - !type:CFGrantAction
+      action: CFActFlingMagicBoostedCold
 
 - type: cfClassChoice
   id: SecondImplementWandCold
@@ -374,6 +426,8 @@
           item: CFImplementWand
         - !type:CFGrantAction
           action: CFActFlingMagicCold
+        - !type:CFGrantAction
+          action: CFActFlingMagicBoostedCold
 
 - type: cfClassChoice
   id: ImplementWandElectricity
@@ -386,6 +440,8 @@
       item: CFImplementWand
     - !type:CFGrantAction
       action: CFActFlingMagicElectricity
+    - !type:CFGrantAction
+      action: CFActFlingMagicBoostedElectricity
 
 - type: cfClassChoice
   id: SecondImplementWandElectricity
@@ -401,6 +457,8 @@
           item: CFImplementWand
         - !type:CFGrantAction
           action: CFActFlingMagicElectricity
+        - !type:CFGrantAction
+          action: CFActFlingMagicBoostedElectricity
 
 - type: cfClassChoice
   id: ImplementWeapon

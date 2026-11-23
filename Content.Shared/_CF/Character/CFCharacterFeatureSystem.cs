@@ -619,6 +619,15 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
             case CFCombatOption.BurningCascade:
                 options.BurningCascade = true;
                 break;
+            case CFCombatOption.EsotericWarden:
+                options.EsotericWarden = true;
+                break;
+            case CFCombatOption.DiverseLore:
+                options.DiverseLore = true;
+                break;
+            case CFCombatOption.EsotericLore:
+                options.EsotericLore = true;
+                break;
             case CFCombatOption.Cruelty:
                 options.Cruelty = true;
                 break;

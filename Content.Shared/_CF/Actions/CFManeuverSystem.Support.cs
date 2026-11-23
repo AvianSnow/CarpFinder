@@ -167,6 +167,17 @@ public sealed partial class CFManeuverSystem
             }
         }
 
+        // Esoteric Lore: a Thaumaturge's Charisma-based lore for any creature, when that is the better modifier.
+        if (CompOrNull<CFCombatOptionsComponent>(user)?.EsotericLore == true
+            && TryComp(user, out CFCombatantComponent? lorekeeper)
+            && TryComp(user, out CFAbilityScoreComponent? charm))
+        {
+            var rank = lorekeeper.Level >= 3 ? CFProficiencyRank.Expert : CFProficiencyRank.Trained;
+            var esoteric = charm.GetModifier(CFAbility.Charisma) + CFSkills.ProficiencyBonus(lorekeeper.Level, rank);
+            if (esoteric > bestModifier)
+                bestKeen += esoteric - bestModifier;
+        }
+
         // The roll works the modifier out again without it, so the level comes off the DC, which is the same thing.
         return _conditions.RollSkillAgainst(user, best.Skill, best.Ability, dc - bestKeen, out _);
     }

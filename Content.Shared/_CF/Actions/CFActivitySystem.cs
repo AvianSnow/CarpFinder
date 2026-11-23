@@ -365,6 +365,14 @@ public sealed partial class CFActivitySystem : EntitySystem
             opt.Exploited = target;
             _conditions.SetOffGuardTo(target, user, 60f);
             _popup.PopupEntity(Loc.GetString("cf-act-exploit"), user, user);
+            if (opt.EsotericWarden)
+            {
+                _bonuses.AddBonus(user, CFBonusStat.ArmorClass, CFBonusType.Status, 1, 6f);
+                _bonuses.AddBonus(user, CFBonusStat.Saves, CFBonusType.Status, 1, 6f);
+            }
+
+            if (opt.DiverseLore)
+                _maneuvers.TryRecall(user, target, free: true);
         }
 
         Dirty(user, opt);

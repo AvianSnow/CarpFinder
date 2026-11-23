@@ -469,6 +469,18 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public bool Cruelty;
 
+    /// <summary>Exploit Vulnerability also wards the Thaumaturge: +1 status to AC and saves for 6 seconds (Esoteric Warden).</summary>
+    [DataField]
+    public bool EsotericWarden;
+
+    /// <summary>Exploit Vulnerability comes with a free Recall Knowledge about the creature (Diverse Lore).</summary>
+    [DataField]
+    public bool DiverseLore;
+
+    /// <summary>Recall Knowledge can use Esoteric Lore: Charisma, trained, and expert from level 3.</summary>
+    [DataField]
+    public bool EsotericLore;
+
     /// <summary>The Inexorable Iron hybrid study: temporary Hit Points on entering Arcane Cascade with a two-handed weapon.</summary>
     [DataField]
     public bool InexorableIron;
@@ -657,6 +669,9 @@ public static class CFReactions
 /// <summary>The flags on <see cref="CFCombatOptionsComponent"/> that a <c>CFGrantOption</c> can set.</summary>
 public enum CFCombatOption : byte
 {
+    EsotericWarden,
+    DiverseLore,
+    EsotericLore,
     InexorableIron,
     LaughingShadow,
     BurningCascade,

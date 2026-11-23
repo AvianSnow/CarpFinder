@@ -99,6 +99,7 @@ cf-reaction-shed-tail = Shed Tail
 cf-reaction-strix-vengeance = Strix Vengeance
 cf-reaction-vomit-stomach = Vomit Stomach
 cf-reaction-creature-comforts = Creature Comforts
+cf-reaction-ring-bell = Ring Bell
 cf-reaction-no-escape = No Escape
 cf-reaction-reactive-pursuit = Reactive Pursuit
 cf-reaction-rapid-response = Rapid Response

@@ -37,7 +37,10 @@
   features:
     - level: 1
       name: "Esoteric Lore"
-      description: "Recall Knowledge about haunts, curses and strange creatures: TBA"
+      description: "When you Recall Knowledge about a creature you can use Esoteric Lore: Charisma, trained, and expert from level 3. Dubious Knowledge: TBA"
+      grants:
+        - !type:CFGrantOption
+          option: EsotericLore
     - level: 1
       name: "Exploit Vulnerability"
       description: "Point at an enemy to Exploit Vulnerability. The creature is off-guard to you and your Strikes deal 2 extra damage."
