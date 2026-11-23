@@ -59,6 +59,14 @@ public sealed partial class CFEffectActionComponent : Component
     [DataField]
     public bool NeedsFreeHand;
 
+    /// <summary>Rushes the user toward the target, up to this many feet, before the effects run (Flying Tackle).</summary>
+    [DataField]
+    public int ClosesFeet;
+
+    /// <summary>Raises a held shield first, at no extra cost (Shielded Attrition).</summary>
+    [DataField]
+    public bool RaisesShield;
+
     /// <summary>
     /// An instant action on the creature the user has grabbed, as Oil Fire douses a grabbed foe. It cannot be used without one.
     /// </summary>

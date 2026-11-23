@@ -664,6 +664,9 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
             case CFCombatOption.RapidAssessment:
                 options.RapidAssessment = true;
                 break;
+            case CFCombatOption.Bodyguard:
+                options.Bodyguard = true;
+                break;
             case CFCombatOption.ViciousSwing:
                 options.ViciousSwing = true;
                 break;

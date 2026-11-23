@@ -226,6 +226,14 @@ Class examples: `CFMySystem`, `CFMyServerSystem`, `CFMyClientSystem`, `CFExample
 | Something whose spells and ranged attacks set off no reactions for a while | `!type:CFScreenEffect`, `CFConditionSystem.IsScreened` |
 | A reaction that trades places with the ally it saves | `swapsPlaces` on an `InterceptsDamage` reaction |
 | A climb Speed for a while | `!type:CFClimbSpeedEffect`, `ClimbSpeedUntil` on `CFCombatOptions` |
+| An aura that only works in a stance, with a banner or in medium or heavy armor | `needs` on the aura effect: `Stance` (with `stance`), `HasBanner`, `MediumOrHeavyArmor` |
+| A reaction Strike that slows, or only in a stance | `slowsOnHit` and `whileStance` on an `EnemyLeftReach` reaction with `strikes` (Not So Fast) |
+| A reaction that rushes its owner to the ally it saves | `follows: true` on an `InterceptsDamage` reaction (Intercept Attack) |
+| An effect action that rushes at its target first, or raises the shield as it goes | `closesFeet` and `raisesShield` on `CFEffectAction` (Flying Tackle, Shielded Attrition) |
+| A Trip whose success is a critical success | `successIsCritical` on `!type:CFTripEffect` |
+| A save upgrade that only counts while the shield is raised | `whileShieldRaised` on `!type:CFGrantSaveUpgrade` (Shield Your Eyes) |
+| Making an enemy spend its reaction | `!type:CFSpendEnemyReactionsEffect` with `feet` |
+| An ally a Guardian has sworn to protect | `CFCombatOptions.Charge`, set by the Swear to protect verb (`CFTauntSystem.SwearToProtect`), and `Bodyguard` for the stronger Taunt |
 | Something that needs an Inventor's innovation | `CFInnovation` on the item or construct, `CFInventorSystem.IsUsing`, and `unstable: true` on a `CFStrikeAction` |
 | An Inventor's weapon innovation, or its construct's modification | `!type:CFGrantInnovationWeapon` on the modification (`traits`, `modes`, `dieStep`, `twoHand`, `traitPicks`) with a `Named` choice whose options are weapon ids; `CFInventorSystem.MakeWeapon` builds it, and `CFInventorComponent` on the Inventor remembers it. `!type:CFGrantConstructModification` (`speedFeet`, `darkvision`, `skills`), applied by `ApplyConstructModifications` when the construct spawns. A flag such as Built-In Tools or Reverse Engineer is `!type:CFGrantInventorOption`. `CoreType` is what the innovation explodes with, and `innovationCore: true` on a `CFDamageEffect` deals it |
 | A subclass option that only fits beside another (an armor modification and the armor innovation) | `requiresChoice` on the `cfClassChoice`. `CFClassChoices.Selected` drops one whose requirement is missing, and the builder hides it |

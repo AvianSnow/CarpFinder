@@ -42,6 +42,7 @@ public sealed partial class CFGOAPSightSensorSystem : EntitySystem
     [Dependency] private CFGOAPTacticsSystem _tactics = default!;
     [Dependency] private CFGOAPTribeSystem _tribes = default!;
     [Dependency] private CFStealthSystem _stealth = default!;
+    [Dependency] private Content.Shared.CF.Combat.CFTauntSystem _taunts = default!;
 
     [SubscribeLocalEvent]
     private void OnSense(ref CFGOAPSenseEvent args)
@@ -134,6 +135,11 @@ public sealed partial class CFGOAPSightSensorSystem : EntitySystem
 
             var distance = (_transform.GetMapCoordinates(mob).Position - here.Position).Length();
             var score = pointedAt ? PointedScore : _tactics.ScoreTarget(ent, mob, distance);
+
+            // A Guardian's Taunt draws the mob to the Guardian, as the rules say even a mindless creature is drawn.
+            if (!pointedAt && _taunts.IsTauntedBy(uid, mob))
+                score = PointedScore;
+
             if (score <= best || !_examine.InRangeUnOccluded(uid, mob, SightTiles))
                 continue;
 

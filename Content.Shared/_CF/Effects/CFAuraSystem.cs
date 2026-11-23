@@ -34,6 +34,7 @@ public sealed partial class CFAuraSystem : EntitySystem
     private static readonly ProtoId<CFTraitPrototype> Fear = "Fear";
 
     [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private CFArmorSystem _armor = default!;
     [Dependency] private INetManager _net = default!;
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private MobStateSystem _mobState = default!;
@@ -334,6 +335,7 @@ public sealed partial class CFAuraSystem : EntitySystem
             CFAuraNeeds.Immanence => _ikons.IsEmpowered(uid, effect.Ikon),
             CFAuraNeeds.Composition => aura.Composition == effect.Composition && _timing.CurTime < aura.CompositionUntil,
             CFAuraNeeds.Stance => CompOrNull<CFActiveStanceComponent>(uid)?.Stance?.Id == effect.Stance,
+            CFAuraNeeds.MediumOrHeavyArmor => _armor.TryGetWornArmor(uid, out var armor) && armor.Comp.Category is CFArmorCategory.Medium or CFArmorCategory.Heavy,
             _ => true,
         };
     }

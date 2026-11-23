@@ -252,6 +252,14 @@ public sealed partial class CFReaction
     [DataField]
     public bool Strikes;
 
+    /// <summary>With <see cref="Strikes"/>: a hit gives the creature -10 feet to its Speeds for 6 seconds (Not So Fast!).</summary>
+    [DataField]
+    public bool SlowsOnHit;
+
+    /// <summary>The owner has to be in this stance, by its action's id (Not So Fast! needs Hampering Stance).</summary>
+    [DataField]
+    public string? WhileStance;
+
     /// <summary>With a damage trigger, this much comes off the damage.</summary>
     [DataField]
     public int ResistFlat;

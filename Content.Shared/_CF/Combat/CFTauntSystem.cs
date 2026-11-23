@@ -1,6 +1,7 @@
 using Content.Shared.CF.Actions;
 using Content.Shared.CF.Factions;
 using Content.Shared.Popups;
+using Content.Shared.Verbs;
 using Robust.Shared.Network;
 using Robust.Shared.Timing;
 
@@ -94,7 +95,43 @@ public sealed partial class CFTauntSystem : EntitySystem
 
         taunted.IgnoredUntil = _timing.CurTime + TimeSpan.FromSeconds(Seconds);
         _conditions.SetOffGuardAll(attacker, Seconds);
-        return -1;
+
+        // Bodyguard: the Guardian's charge is harder still to go for.
+        return CompOrNull<CFCombatOptionsComponent>(taunted.Taunter)?.Charge == target ? -2 : -1;
+    }
+
+    /// <summary>Bodyguard: an ally can be sworn to. The rules choose the charge each day, and here it is a verb on the ally.</summary>
+    [SubscribeLocalEvent]
+    private void OnGetVerbs(Entity<CFCombatOptionsComponent> ent, ref GetVerbsEvent<Verb> args)
+    {
+        var user = args.User;
+        if (!args.CanAccess
+            || !args.CanInteract
+            || user == ent.Owner
+            || !TryComp(user, out CFCombatOptionsComponent? options)
+            || !options.Bodyguard
+            || options.Charge == ent.Owner
+            || _factions.CanHarm(user, ent))
+        {
+            return;
+        }
+
+        args.Verbs.Add(new Verb
+        {
+            Text = Loc.GetString("cf-act-swear-protect"),
+            Act = () => SwearToProtect(user, ent),
+        });
+    }
+
+    public void SwearToProtect(EntityUid guardian, EntityUid charge)
+    {
+        if (!TryComp(guardian, out CFCombatOptionsComponent? options))
+            return;
+
+        options.Charge = charge;
+        Dirty(guardian, options);
+        if (_net.IsServer)
+            _popup.PopupEntity(Loc.GetString("cf-act-sworn", ("ally", charge)), guardian, guardian);
     }
 
     [SubscribeLocalEvent]

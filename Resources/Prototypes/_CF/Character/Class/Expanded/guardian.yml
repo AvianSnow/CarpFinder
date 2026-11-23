@@ -41,12 +41,13 @@
           option: GuardianArmor
     - level: 1
       name: "Guardian's Techniques"
-      description: "Reaction, automatic. Intercept Attack: when an ally within 10 feet, or 15 if your taunted enemy hit them, would take physical damage, you take it instead. Stepping next to them, and Ever Ready: TBA"
+      description: "Reaction, automatic. Intercept Attack: when an ally within 10 feet, or 15 if your taunted enemy hit them, would take physical damage, you rush to their side and take it instead. Ever Ready comes at level 7."
       grants:
         - !type:CFGrantReaction
           reaction:
             name: cf-reaction-intercept-attack
             trigger: InterceptsDamage
+            follows: true
             damageTypes:
               - Bludgeoning
               - Piercing

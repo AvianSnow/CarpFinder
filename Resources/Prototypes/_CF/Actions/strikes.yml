@@ -654,3 +654,22 @@
     onCritical:
     - !type:CFGuideEffect
       bonus: 2
+
+# Guardian
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActShoulderCheck
+  name: Shoulder Check
+  description: A fist Strike with your armor, even with no hand free. On a hit the target is off-guard to your next melee attack for 3 seconds, on a critical hit to your melee attacks for 6 seconds.
+  components:
+  - type: CFStrikeAction
+    unarmedOnly: true
+    effectsNeedDamage: false
+    onHit:
+    - !type:CFOffGuardEffect
+      toUser: true
+      durationSeconds: 3
+    onCritical:
+    - !type:CFOffGuardEffect
+      toUser: true
+      durationSeconds: 6

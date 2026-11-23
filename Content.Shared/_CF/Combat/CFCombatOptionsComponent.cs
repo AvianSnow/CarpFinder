@@ -672,6 +672,14 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public bool RapidAssessment;
 
+    /// <summary>Bodyguard: a Taunt's penalty is -2 against the Guardian's charge.</summary>
+    [DataField, AutoNetworkedField]
+    public bool Bodyguard;
+
+    /// <summary>The ally a Bodyguard has sworn to protect.</summary>
+    [DataField, AutoNetworkedField]
+    public EntityUid? Charge;
+
     /// <summary>A success on a check to Climb is a critical success.</summary>
     [DataField, AutoNetworkedField]
     public bool ClimbSuccessCritical;
@@ -842,6 +850,7 @@ public enum CFCombatOption : byte
     ArmorRegimentTraining,
     ObservationalAnalysis,
     RapidAssessment,
+    Bodyguard,
 }
 
 public enum CFPointMark : byte

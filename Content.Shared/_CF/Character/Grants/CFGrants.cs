@@ -256,9 +256,13 @@ public sealed partial class CFGrantSaveUpgrade : CFGrant
     [DataField]
     public CFDegree From = CFDegree.Success;
 
+    /// <summary>Only while a shield is raised (Shield Your Eyes).</summary>
+    [DataField]
+    public bool WhileShieldRaised;
+
     public override void Apply(IEntityManager entities, CFGrantArgs args)
     {
-        entities.System<CFBonusSystem>().AddSaveUpgrade(args.Mob, Save, Trait, From);
+        entities.System<CFBonusSystem>().AddSaveUpgrade(args.Mob, Save, Trait, From, WhileShieldRaised);
     }
 }
 

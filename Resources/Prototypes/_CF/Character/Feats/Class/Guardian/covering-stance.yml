@@ -10,4 +10,15 @@
     - "Guardian"
     - "Stance"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActCoveringStance
+    - !type:CFGrantAura
+      effects:
+        - affects: Allies
+          needs: Stance
+          stance: CFActCoveringStance
+          sizeFeet: 5
+          stat: ArmorClass
+          type: Circumstance
+          value: 1

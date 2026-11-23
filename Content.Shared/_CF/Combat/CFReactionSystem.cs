@@ -222,12 +222,18 @@ public sealed partial class CFReactionSystem : EntitySystem
                 || !candidate.Reaction.Strikes
                 || candidate.Reaction.PreyOnly && options?.Prey != mover
                 || candidate.Reaction.ExploitOnly && options?.Exploited != mover
+                || candidate.Reaction.WhileStance != null && CompOrNull<Content.Shared.CF.Actions.CFActiveStanceComponent>(watcher)?.Stance?.Id != candidate.Reaction.WhileStance
                 || !TrySpend(watcher, candidate))
             {
                 continue;
             }
 
-            _strikes.ReactionStrike(watcher, mover, MovementGuard(mover));
+            var struck = _strikes.ReactionStrike(watcher, mover, MovementGuard(mover));
+
+            // Not So Fast!: the Strike's degree should set the slowing, which the system cannot read; a hit slows.
+            if (struck && candidate.Reaction.SlowsOnHit)
+                _bonuses.AddBonus(mover, CFBonusStat.Speed, CFBonusType.Circumstance, -10, 6f);
+
             return;
         }
     }
@@ -792,6 +798,10 @@ public sealed partial class CFReactionSystem : EntitySystem
                     // Defensive Swap: the two trade places as the blow lands.
                     if (known.Reaction.SwapsPlaces)
                         _transform.SwapPositions(uid, target);
+
+                    // Intercept Attack: the Guardian steps to the ally's side.
+                    if (known.Reaction.Follows)
+                        Rush(uid, target);
 
                     _effects.DealDamage(attacker, uid, taken, damageType, critical: false);
                     return amount - taken;

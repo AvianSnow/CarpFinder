@@ -13,4 +13,11 @@
   requiresFeats:
     - CFHamperingStance
   action: Reaction
-  pendingAction: true
+  grants:
+    - !type:CFGrantReaction
+      reaction:
+        name: cf-reaction-not-so-fast
+        trigger: EnemyLeftReach
+        strikes: true
+        slowsOnHit: true
+        whileStance: CFActHamperingStance

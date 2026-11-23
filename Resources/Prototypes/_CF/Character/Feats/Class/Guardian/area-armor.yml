@@ -8,3 +8,12 @@
   level: 4
   traits:
     - "Guardian"
+  grants:
+    - !type:CFGrantAura
+      effects:
+        - affects: Allies
+          needs: MediumOrHeavyArmor
+          sizeFeet: 5
+          stat: Reflex
+          type: Circumstance
+          value: 1

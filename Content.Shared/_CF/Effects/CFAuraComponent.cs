@@ -33,6 +33,9 @@ public enum CFAuraNeeds : byte
 
     /// <summary>The owner is in the stance named by <see cref="CFAuraEffect.Stance"/>.</summary>
     Stance,
+
+    /// <summary>The owner wears medium or heavy armor (Area Armor).</summary>
+    MediumOrHeavyArmor,
 }
 
 /// <summary>One thing an aura does to the creatures inside it. See <see cref="CFAuraSystem"/>.</summary>

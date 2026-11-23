@@ -122,13 +122,21 @@ public sealed partial class CFGrabEffect : CFEffect
 /// </summary>
 public sealed partial class CFTripEffect : CFEffect
 {
+    /// <summary>A success counts as a critical success (Flying Tackle).</summary>
+    [DataField]
+    public bool SuccessIsCritical;
+
     public override void Apply(IEntityManager entities, CFEffectArgs args)
     {
         if (args.Target is not { } target || target == args.User)
             return;
 
         var conditions = entities.System<CFConditionSystem>();
-        switch (conditions.RollSkill(args.User, target, "Athletics", Content.Shared.CF.Preferences.CFAbility.Strength, Content.Shared.CF.Checks.CFDefenseType.Reflex, attackTrait: true))
+        var degree = conditions.RollSkill(args.User, target, "Athletics", Content.Shared.CF.Preferences.CFAbility.Strength, Content.Shared.CF.Checks.CFDefenseType.Reflex, attackTrait: true);
+        if (SuccessIsCritical && degree == Content.Shared.CF.Checks.CFDegree.Success)
+            degree = Content.Shared.CF.Checks.CFDegree.CriticalSuccess;
+
+        switch (degree)
         {
             case Content.Shared.CF.Checks.CFDegree.CriticalSuccess:
                 conditions.KnockProne(target);

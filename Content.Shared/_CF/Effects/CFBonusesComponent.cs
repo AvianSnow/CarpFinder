@@ -83,6 +83,10 @@ public sealed partial class CFSaveUpgrade
 
     [DataField]
     public CFDegree From = CFDegree.Success;
+
+    /// <summary>Only while the creature has a shield raised (Shield Your Eyes).</summary>
+    [DataField]
+    public bool WhileShieldRaised;
 }
 
 /// <summary>Where a lasting equipment bonus comes from, so re-equipping replaces it instead of adding another.</summary>

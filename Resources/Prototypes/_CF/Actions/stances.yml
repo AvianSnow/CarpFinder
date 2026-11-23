@@ -258,3 +258,12 @@
   description: The ground within 5 feet of you is difficult terrain for your enemies while you stay in this stance.
   components:
   - type: CFStance
+
+# Guardian. Covering Stance's cover is an aura on the feat.
+- type: entity
+  parent: CFActStanceBase
+  id: CFActCoveringStance
+  name: Covering Stance
+  description: Allies beside you have lesser cover, +1 circumstance to AC, while you stay in this stance.
+  components:
+  - type: CFStance

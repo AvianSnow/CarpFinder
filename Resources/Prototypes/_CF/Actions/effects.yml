@@ -451,16 +451,13 @@
   parent: CFActivityInstant
   id: CFActRaiseHaft
   name: Raise Haft
-  description: With a melee weapon in both hands, +1 circumstance bonus to AC for 6 seconds.
+  description: With a melee weapon in both hands, +1 circumstance bonus to AC for 6 seconds, or +2 with a weapon that has the parry trait.
   components:
   - type: CFEffectAction
     needsTwoHanded: Melee
   - type: CFDegreeEffects
     effects:
-    - !type:CFBonusEffect
-      stat: ArmorClass
-      type: Circumstance
-      value: 1
+    - !type:CFRaiseHaftEffect
       durationSeconds: 6
 
 - type: entity
@@ -971,3 +968,35 @@
   - type: CFTrait
     traits:
     - Manipulate
+
+# Guardian
+- type: entity
+  parent: CFActivityTarget
+  id: CFActFlyingTackle
+  name: Flying Tackle
+  description: Rush up to 25 feet at an enemy and Trip it. A success on the Athletics check is a critical success. Costs 2 actions. A flourish.
+  components:
+  - type: TargetAction
+    range: 6.5
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFFlourish
+  - type: CFEffectAction
+    closesFeet: 25
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFTripEffect
+      successIsCritical: true
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActShieldedAttrition
+  name: Shielded Attrition
+  description: "Raise your shield and draw every enemy within 10 feet: each spends its reaction, so none is left for your allies."
+  components:
+  - type: CFEffectAction
+    raisesShield: true
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFSpendEnemyReactionsEffect
+      feet: 10

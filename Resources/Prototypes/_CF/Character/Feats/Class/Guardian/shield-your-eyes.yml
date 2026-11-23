@@ -21,3 +21,11 @@
       type: Circumstance
       value: 2
       trait: Light
+    - !type:CFGrantSaveUpgrade
+      trait: Visual
+      from: CriticalFailure
+      whileShieldRaised: true
+    - !type:CFGrantSaveUpgrade
+      trait: Light
+      from: CriticalFailure
+      whileShieldRaised: true

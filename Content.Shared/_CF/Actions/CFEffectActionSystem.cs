@@ -15,6 +15,8 @@ public sealed partial class CFEffectActionSystem : EntitySystem
     [Dependency] private SharedHandsSystem _hands = default!;
     [Dependency] private CFArmorSystem _armor = default!;
     [Dependency] private CFInventorSystem _inventor = default!;
+    [Dependency] private CFShieldSystem _shields = default!;
+    [Dependency] private Content.Shared.Throwing.ThrowingSystem _throwing = default!;
     [Dependency] private Content.Shared.Mobs.Systems.MobStateSystem _mobState = default!;
     [Dependency] private Content.Shared.CF.Factions.CFFactionSystem _factions = default!;
 
@@ -126,6 +128,24 @@ public sealed partial class CFEffectActionSystem : EntitySystem
         args.Reason = Loc.GetString("cf-act-needs-two-weapons");
     }
 
+    /// <summary>Rushes the user toward the target, up to this many feet, stopping one tile short, as a Strike action closes.</summary>
+    private void Rush(EntityUid mover, EntityUid target, int feet)
+    {
+        var from = _transform.GetWorldPosition(mover);
+        var gap = _transform.GetWorldPosition(target) - from;
+        var distance = gap.Length();
+        if (distance < 0.01f)
+            return;
+
+        var tiles = Math.Min(feet / CFMelee.FeetPerTile, distance - 1f);
+        if (tiles <= 0.1f)
+            return;
+
+        _throwing.TryThrow(mover, Transform(mover).Coordinates.Offset(gap / distance * tiles), RushSpeed, doSpin: false);
+    }
+
+    private const float RushSpeed = 10f;
+
     private bool HoldsTwoHanded(EntityUid user, CFTwoHandedNeed need)
     {
         foreach (var held in _hands.EnumerateHeld(user))
@@ -164,6 +184,9 @@ public sealed partial class CFEffectActionSystem : EntitySystem
         if (!_net.IsServer)
             return;
 
+        if (ent.Comp.RaisesShield && _shields.TryGetUsableShield(args.Performer, out var shield))
+            _shields.SetRaised(shield, true);
+
         // An action with an area around its user reaches everyone in it (Oracular Warning).
         if (HasComp<CFAreaEffectComponent>(ent))
             _effects.ResolveArea(ent, args.Performer, _transform.GetMapCoordinates(args.Performer));
@@ -191,6 +214,12 @@ public sealed partial class CFEffectActionSystem : EntitySystem
         args.Handled = true;
         if (!_net.IsServer)
             return;
+
+        if (ent.Comp.RaisesShield && _shields.TryGetUsableShield(args.Performer, out var shield))
+            _shields.SetRaised(shield, true);
+
+        if (ent.Comp.ClosesFeet > 0)
+            Rush(args.Performer, args.Target, ent.Comp.ClosesFeet);
 
         _effects.ResolveTarget(ent, args.Performer, args.Target);
         if (ent.Comp.Cursebound)

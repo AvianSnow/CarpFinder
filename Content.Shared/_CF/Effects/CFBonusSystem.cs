@@ -28,6 +28,7 @@ public sealed partial class CFBonusSystem : EntitySystem
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private CFActionPoolSystem _actions = default!;
     [Dependency] private CFArmorSystem _armor = default!;
+    [Dependency] private CFShieldSystem _shields = default!;
     [Dependency] private CFInventorSystem _inventor = default!;
     [Dependency] private CFEffectSystem _effects = default!;
     [Dependency] private MovementSpeedModifierSystem _speed = default!;
@@ -309,9 +310,9 @@ public sealed partial class CFBonusSystem : EntitySystem
     }
 
     /// <summary>From now on this result of a matching save is a degree better.</summary>
-    public void AddSaveUpgrade(EntityUid uid, CFDefenseType? save, ProtoId<CFTraitPrototype>? trait, CFDegree from)
+    public void AddSaveUpgrade(EntityUid uid, CFDefenseType? save, ProtoId<CFTraitPrototype>? trait, CFDegree from, bool whileShieldRaised = false)
     {
-        EnsureComp<CFBonusesComponent>(uid).SaveUpgrades.Add(new CFSaveUpgrade { Save = save, Trait = trait, From = from });
+        EnsureComp<CFBonusesComponent>(uid).SaveUpgrades.Add(new CFSaveUpgrade { Save = save, Trait = trait, From = from, WhileShieldRaised = whileShieldRaised });
     }
 
     /// <summary>The save's degree after any upgrade. However many match, a result only improves once.</summary>
@@ -330,6 +331,9 @@ public sealed partial class CFBonusSystem : EntitySystem
                 continue;
 
             if (upgrade.Trait is { } trait && traits?.Contains(trait) != true)
+                continue;
+
+            if (upgrade.WhileShieldRaised && !_shields.TryGetRaisedShield(uid, out _))
                 continue;
 
             return CFDegrees.Improve(degree);
