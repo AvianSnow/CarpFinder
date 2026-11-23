@@ -310,3 +310,14 @@ cf-weapon-group-spear = Spear critical
 cf-weapon-group-sword = Sword critical
 cf-composition-start = {$name} begins.
 cf-reaction-loremasters-etude = Loremaster's Etude
+cf-reload-needs-hand = You need your other hand empty to load that.
+cf-strike-action-needs-two-guns = You need a loaded one-handed firearm or crossbow in each hand.
+cf-strike-action-needs-bomb = You need an alchemical bomb on you.
+cf-gun-misfire = Misfire!
+cf-gun-jammed = Your weapon is jammed.
+cf-gun-jam-cleared = You clear the jam.
+cf-gun-jammed-examine = It is [color=red]jammed[/color]. Pulling the trigger or reloading clears it, for 1 action.
+cf-gun-instant-backup = Instant Backup!
+cf-gun-needs-firearm = You need a loaded firearm in hand.
+cf-gun-needs-one-handed = You need a loaded one-handed firearm or crossbow in hand.
+cf-gun-too-far = That is beyond your weapon's first range increment.

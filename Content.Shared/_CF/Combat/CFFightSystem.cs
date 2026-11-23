@@ -40,6 +40,7 @@ public sealed partial class CFFightSystem : EntitySystem
     [Dependency] private CFActivitySystem _activities = default!;
     [Dependency] private CFConditionSystem _conditions = default!;
     [Dependency] private CFArmorSystem _armor = default!;
+    [Dependency] private CFGunslingerSystem _gunslinger = default!;
 
     /// <summary>True if the creature has attacked or been attacked within <see cref="Quiet"/>.</summary>
     public bool IsFighting(EntityUid uid)
@@ -88,6 +89,9 @@ public sealed partial class CFFightSystem : EntitySystem
         {
             _activities.SetRaging(ent, true);
         }
+
+        // A Gunslinger's initial deed.
+        _gunslinger.StartFight(ent);
 
         // Surprise Attack: whoever has not acted yet is off-guard to the Rogue that starts the fight.
         if (ent.Comp.SurpriseAttack && args.Attacking && args.OpponentWasQuiet)

@@ -35,7 +35,7 @@
   features:
     - level: 1
       name: "Gunslinger's Way"
-      description: "Choose a way in the builder. It trains a skill and gives you a slinger's reload. Initial deeds need initiative: TBA"
+      description: "Choose a way in the builder. It trains a skill, gives you a slinger's reload, and an initial deed that happens by itself as a fight begins."
     - level: 1
       name: "Slinger's Precision"
       description: "Expert with crossbows and firearms. Your crossbow Strikes deal 2 extra precision damage, and your firearm Strikes 1d4. Reload is on your action wheel."

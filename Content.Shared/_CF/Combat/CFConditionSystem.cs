@@ -445,7 +445,7 @@ public sealed partial class CFConditionSystem : EntitySystem
             return true;
 
         var now = _timing.CurTime;
-        return melee
+        return (melee || cond.FeintedRanged.Contains(attacker))
                && (now < cond.FeintedAllUntil
                    || cond.FeintedUntil.TryGetValue(attacker, out var until) && now < until);
     }
@@ -456,8 +456,11 @@ public sealed partial class CFConditionSystem : EntitySystem
     /// </summary>
     public void NoteAttackRoll(EntityUid attacker, EntityUid target, bool melee)
     {
-        if (melee && TryComp(target, out CFConditionComponent? targetCond) && targetCond.FeintedOnce.Remove(attacker))
+        if (TryComp(target, out CFConditionComponent? targetCond)
+            && (melee || targetCond.FeintedRanged.Contains(attacker))
+            && targetCond.FeintedOnce.Remove(attacker))
         {
+            targetCond.FeintedRanged.Remove(attacker);
             targetCond.FeintedUntil.Remove(attacker);
             _bonuses.RemoveBonusesFrom(target, FeintSource(attacker));
         }
@@ -883,6 +886,24 @@ public sealed partial class CFConditionSystem : EntitySystem
         return true;
     }
 
+    /// <summary>The Feint <paramref name="user"/> has just landed on <paramref name="target"/> counts for ranged attacks too (Pistol Twirl).</summary>
+    public void FeintAlsoRanged(EntityUid user, EntityUid target)
+    {
+        var cond = Ensure(target);
+        cond.FeintedRanged.Add(user);
+        Dirty(target, cond);
+    }
+
+    /// <summary>The target is off-guard to the user's next melee attack within 6 seconds, as after a Feint (Sword and Pistol).</summary>
+    public void OffGuardToNextMelee(EntityUid user, EntityUid target)
+    {
+        var cond = Ensure(target);
+        cond.FeintedRanged.Remove(user);
+        cond.FeintedUntil[user] = _timing.CurTime + TimeSpan.FromSeconds(TurnSeconds);
+        cond.FeintedOnce.Add(user);
+        Dirty(target, cond);
+    }
+
     /// <summary>
     /// A Feint landed. A success leaves the target off-guard to the user's next melee attack within 6 seconds, and a
     /// critical success to all of them for 6 seconds. A Scoundrel gets more: 6 seconds on a success, every creature's melee
@@ -900,6 +921,7 @@ public sealed partial class CFConditionSystem : EntitySystem
                 cond.FeintedAllUntil = until;
         }
 
+        cond.FeintedRanged.Remove(user);
         cond.FeintedUntil[user] = until;
         if (critical || scoundrel)
             cond.FeintedOnce.Remove(user);

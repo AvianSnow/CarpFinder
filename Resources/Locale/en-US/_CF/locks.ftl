@@ -15,3 +15,4 @@ cf-lock-roll-failure = { $name }: rolled { $skill } { $total } — Failed
 cf-lock-examine-broken = The lock has been [color=red]forced[/color].
 cf-lock-examine-tampered = The lock has [color=yellow]scratches[/color] from being picked.
 cf-lock-examine-toolkit-broken = It is [color=red]broken[/color].
+cf-lock-blast = a shot at the lock

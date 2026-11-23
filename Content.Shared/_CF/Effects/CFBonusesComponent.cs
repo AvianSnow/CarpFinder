@@ -128,6 +128,9 @@ public enum CFBonusStat : byte
 
     /// <summary>Extra Hit Points each time a spell heals this creature (Healer's Blessing).</summary>
     SpellHealing,
+
+    /// <summary>Attack rolls of ranged Strikes only, on top of <see cref="AttackRoll"/> (Cover Fire).</summary>
+    RangedAttackRoll,
 }
 
 /// <summary>Bonuses of the same type do not stack: the highest bonus and the worst penalty of each type apply.</summary>

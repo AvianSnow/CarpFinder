@@ -256,8 +256,10 @@
   parent: ClothingBeltQuiver
   id: CFFirearmRoundPouchFilled
   name: round pouch
-  description: A pouch of rounds for a firearm.
+  description: A pouch of ten rounds for a firearm.
   components:
+  - type: CFItemPrice
+    copper: 10
   - type: Storage
     whitelist:
       tags:

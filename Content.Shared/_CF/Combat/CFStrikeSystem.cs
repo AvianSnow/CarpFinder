@@ -367,6 +367,20 @@ public sealed partial class CFStrikeSystem : EntitySystem
     }
 
     /// <summary>
+    /// The whole modifier of an attack roll with this ranged weapon against something that is not a creature, such as a
+    /// lock, with the multiple attack penalty in it. The attack is counted.
+    /// </summary>
+    public int RangedAttackModifier(EntityUid user, EntityUid target, CFStrikeWeaponStats weapon)
+    {
+        if (!TryComp(user, out CFCombatantComponent? combat) || !TryComp(user, out CFAbilityScoreComponent? abilities))
+            return 0;
+
+        var map = _actions.MapPenalty(user, weapon.Agile);
+        _actions.CountAttack(user);
+        return map + StandingAttackBonus(user, target, combat, abilities, weapon, GetDistanceFeet(user, target), false);
+    }
+
+    /// <summary>
     /// A creature with Reactive Strike answers a manipulate action or a ranged Strike made in its reach.
     /// </summary>
     public void ReactiveStrike(EntityUid actor)
@@ -484,7 +498,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
 
         bonus += _conditions.CircumstanceAttackPenalty(user, target);
         if (weapon.Ranged)
-            bonus -= _conditions.Clumsy(user);
+            bonus += _bonuses.Total(user, CFBonusStat.RangedAttackRoll) - _conditions.Clumsy(user);
 
         // Item bonuses do not stack: weapon potency or a spell's item bonus, whichever is higher.
         var otherItem = _bonuses.TotalOfType(user, CFBonusStat.AttackRoll, CFBonusType.Item);
@@ -741,6 +755,10 @@ public sealed partial class CFStrikeSystem : EntitySystem
             weapon = weapon with { RangeIncrementFeet = weapon.RangeIncrementFeet * 2 };
 
         if (weapon.ThrownStrike && style is { StrongArm: true })
+            weapon = weapon with { RangeIncrementFeet = weapon.RangeIncrementFeet + 10 };
+
+        // Crossbow Crack Shot: every shot here follows a reload, so the longer increment always counts.
+        if (weapon.Ranged && style is { CrossbowCrackShot: true } && CompOrNull<CFWeaponComponent>(weaponUid)?.Group == CFWeaponGroup.Crossbow)
             weapon = weapon with { RangeIncrementFeet = weapon.RangeIncrementFeet + 10 };
         if (weapon.Ranged && _stances.Current(user) is { PointBlank: true })
         {

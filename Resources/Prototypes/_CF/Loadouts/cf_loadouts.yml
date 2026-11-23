@@ -183,6 +183,47 @@
     - CFHeavyCrossbow
 
 - type: loadout
+  id: CFLoadoutFlintlockPistol
+  inhand:
+    - CFFlintlockPistol
+
+- type: loadout
+  id: CFLoadoutHandCannon
+  inhand:
+    - CFHandCannon
+
+- type: loadout
+  id: CFLoadoutFlintlockMusket
+  inhand:
+    - CFFlintlockMusket
+
+- type: loadout
+  id: CFLoadoutBlunderbuss
+  inhand:
+    - CFBlunderbuss
+
+- type: loadout
+  id: CFLoadoutArquebus
+  inhand:
+    - CFArquebus
+
+# Ammunition. Each is a full container: buy more copies for more.
+- type: loadout
+  id: CFLoadoutRoundPouch
+  inhand:
+    - CFFirearmRoundPouchFilled
+
+- type: loadout
+  id: CFLoadoutQuiver
+  inhand:
+    - CFQuiverFilled
+
+- type: loadout
+  id: CFLoadoutBoltCase
+  inhand:
+    - CFBoltCaseFilled
+
+- type: loadout
   id: CFLoadoutDart
   inhand:
     - CFDart
@@ -252,6 +293,14 @@
     - CFLoadoutCrossbow
     - CFLoadoutHeavyCrossbow
     - CFLoadoutDart
+    - CFLoadoutFlintlockPistol
+    - CFLoadoutHandCannon
+    - CFLoadoutFlintlockMusket
+    - CFLoadoutBlunderbuss
+    - CFLoadoutArquebus
+    - CFLoadoutRoundPouch
+    - CFLoadoutQuiver
+    - CFLoadoutBoltCase
 
 - type: loadoutGroup
   id: CFDefenseArmor

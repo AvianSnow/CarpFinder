@@ -41,6 +41,10 @@ public sealed partial class CFLockComponent : Component
     /// <summary>Creatures that jammed it with a critical failure. They take −2 on later attempts to Force Open it.</summary>
     [DataField]
     public HashSet<EntityUid> JammedBy = new();
+
+    /// <summary>A failed Blast Lock has mangled it: Pick a Lock and Blast Lock take this much off, 2 or 4.</summary>
+    [DataField, AutoNetworkedField]
+    public int BlastPenalty;
 }
 
 /// <summary>Opens and closes every <see cref="CFLockComponent"/> with the same <see cref="KeyId"/>.</summary>

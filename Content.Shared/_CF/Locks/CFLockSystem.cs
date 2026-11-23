@@ -17,6 +17,7 @@ using Content.Shared.Storage.Components;
 using Content.Shared.Verbs;
 using Robust.Shared.Network;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Random;
 
 namespace Content.Shared.CF.Locks;
 
@@ -42,6 +43,7 @@ public sealed partial class CFLockSystem : EntitySystem
     /// <summary>Circumstance penalty after jamming it with a critical failure.</summary>
     public const int JammedPenalty = -2;
 
+    [Dependency] private IRobustRandom _random = default!;
     [Dependency] private INetManager _net = default!;
     [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private LockSystem _lock = default!;
@@ -194,7 +196,7 @@ public sealed partial class CFLockSystem : EntitySystem
         if (!_actions.TrySpendActions(user, PickActions))
             return false;
 
-        var degree = _conditions.RollSkillAgainst(user, Thievery, CFAbility.Dexterity, ent.Comp.Dc, out var total);
+        var degree = _conditions.RollSkillAgainst(user, Thievery, CFAbility.Dexterity, ent.Comp.Dc, out var total, itemBonus: -ent.Comp.BlastPenalty);
         PopupRoll(user, Thievery, total, degree);
 
         // A critical success leaves no trace of itself, though earlier marks stay.
@@ -232,6 +234,45 @@ public sealed partial class CFLockSystem : EntitySystem
         }
 
         return false;
+    }
+
+    /// <summary>
+    /// Blast Lock: an attack roll with a firearm against the lock's DC. Successes add up as picking does, and a miss
+    /// makes the lock harder to pick or blast. The caller pays for the action and the round.
+    /// </summary>
+    public bool TryBlast(Entity<CFLockComponent> ent, EntityUid user, int modifier)
+    {
+        if (!_net.IsServer || TerminatingOrDeleted(ent) || !_lock.IsLocked(ent.Owner))
+            return false;
+
+        var d20 = _random.Next(1, 21);
+        modifier -= ent.Comp.BlastPenalty;
+        var total = d20 + modifier;
+        var degree = CFDegrees.DegreeOfSuccess(d20, modifier, ent.Comp.Dc);
+        PopupRoll(user, Loc.GetString("cf-lock-blast"), total, degree);
+        switch (degree)
+        {
+            case CFDegree.CriticalSuccess:
+                ent.Comp.Successes += 2;
+                break;
+            case CFDegree.Success:
+                ent.Comp.Successes += 1;
+                break;
+            case CFDegree.Failure:
+                ent.Comp.BlastPenalty = Math.Max(ent.Comp.BlastPenalty, 2);
+                break;
+            case CFDegree.CriticalFailure:
+                ent.Comp.BlastPenalty = 4;
+                break;
+        }
+
+        ent.Comp.Tampered = true;
+        Dirty(ent);
+        if (ent.Comp.Successes < ent.Comp.SuccessesNeeded)
+            return false;
+
+        Open(ent, user);
+        return true;
     }
 
     /// <summary>

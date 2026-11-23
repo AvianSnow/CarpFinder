@@ -142,6 +142,38 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField]
     public bool ScalpelsPoint;
 
+    /// <summary>What a Gunslinger's way does as a fight begins.</summary>
+    [DataField]
+    public CFInitialDeed InitialDeed;
+
+    /// <summary>One Shot, One Kill: the next firearm or crossbow Strike that hits deals 1d6 more.</summary>
+    [DataField]
+    public bool OneShotReady;
+
+    /// <summary>Energy Shot: this many more firearm or crossbow Strikes deal 1 fire damage per weapon die.</summary>
+    [DataField]
+    public int EnergyShots;
+
+    /// <summary>When a jammed firearm misfires, drop it and draw another weapon as a reaction (Instant Backup).</summary>
+    [DataField]
+    public bool InstantBackup;
+
+    /// <summary>A crossbow reaches 10 feet further per increment, and once every 6 seconds deals 1 more per weapon die (Crossbow Crack Shot).</summary>
+    [DataField]
+    public bool CrossbowCrackShot;
+
+    /// <summary>When Crossbow Crack Shot's extra damage is next ready.</summary>
+    [DataField]
+    public TimeSpan CrackShotAt;
+
+    /// <summary>A hit with a one-handed firearm or crossbow on an enemy in reach leaves it off-guard to the next melee attack (Sword and Pistol).</summary>
+    [DataField]
+    public bool SwordAndPistol;
+
+    /// <summary>A one-handed ranged weapon can be loaded with a one-handed weapon in the other hand (Dual-Weapon Reload).</summary>
+    [DataField]
+    public bool DualWeaponReload;
+
     /// <summary>A stored Devise a Stratagem roll can use Intelligence with a one-handed weapon of the club group too (Takedown Expert).</summary>
     [DataField]
     public bool TakedownExpert;
@@ -680,6 +712,10 @@ public enum CFCombatOption : byte
     ChirurgeonField,
     FarLobber,
     EnduringAlchemy,
+    InstantBackup,
+    CrossbowCrackShot,
+    SwordAndPistol,
+    DualWeaponReload,
     TakedownExpert,
     SharedStratagem,
     KeenRecollection,

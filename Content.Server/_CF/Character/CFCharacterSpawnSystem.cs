@@ -40,6 +40,9 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
     };
 
     [Dependency] private IPrototypeManager _prototypes = default!;
+    [Dependency] private EntityLookupSystem _lookup = default!;
+
+    private readonly HashSet<Entity<Content.Shared.Item.ItemComponent>> _dropped = new();
     [Dependency] private InventorySystem _inventory = default!;
     [Dependency] private CFFactionSystem _factions = default!;
     [Dependency] private CFActionPoolSystem _actionPool = default!;
@@ -171,8 +174,27 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         return first;
     }
 
+    /// <summary>
+    /// Stock puts a bought item in a hand and leaves it at the character's feet when both are full, which is where a third
+    /// weapon or a pouch of rounds ended up. By now the backpack is on, so what lies there goes into it.
+    /// </summary>
+    private void PickUpBought(EntityUid mob)
+    {
+        _dropped.Clear();
+        _lookup.GetEntitiesInRange(Transform(mob).Coordinates, 0.2f, _dropped, LookupFlags.Uncontained | LookupFlags.Dynamic | LookupFlags.Sundries);
+        foreach (var item in _dropped)
+        {
+            // Only what this spawn made: someone else's dropped sword on the arrival tile stays theirs.
+            if (HasComp<CFItemPriceComponent>(item)
+                && MetaData(item).CreationTick == MetaData(mob).CreationTick
+                && Transform(item).ParentUid == Transform(mob).ParentUid)
+                _shop.Give(mob, item);
+        }
+    }
+
     private void GrantPurse(EntityUid mob, Content.Shared.Preferences.HumanoidCharacterProfile profile, string? jobId)
     {
+        PickUpBought(mob);
         var copies = CFCoins.AffordableCopies(profile, jobId, _prototypes, out var left);
         foreach (var (item, count) in copies)
         {

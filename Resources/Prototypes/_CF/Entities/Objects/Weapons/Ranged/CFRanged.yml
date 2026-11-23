@@ -201,6 +201,8 @@
   name: bolt case
   description: A case of crossbow bolts.
   components:
+  - type: CFItemPrice
+    copper: 10
   - type: Storage
     whitelist:
       tags:

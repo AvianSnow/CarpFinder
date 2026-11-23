@@ -10,6 +10,8 @@
   grants:
     - !type:CFGrantAction
       action: CFActReloadingStrike
+    - !type:CFGrantInitialDeed
+      deed: IntoTheFray
 
 - type: cfClassChoice
   id: WayPistolero
@@ -25,6 +27,8 @@
   grants:
     - !type:CFGrantAction
       action: CFActRaconteursReload
+    - !type:CFGrantInitialDeed
+      deed: TenPaces
 
 - type: cfClassChoice
   id: WaySniper
@@ -37,6 +41,8 @@
   grants:
     - !type:CFGrantAction
       action: CFActCoveredReload
+    - !type:CFGrantInitialDeed
+      deed: OneShotOneKill
 
 - type: cfClassChoice
   id: WaySpellshot
@@ -44,6 +50,13 @@
   slot: cf-class-choice-way
   name: cf-class-choice-wayspellshot
   description: cf-class-choice-wayspellshot-desc
+  trainedSkills:
+    - Arcana
+  grants:
+    - !type:CFGrantInitialDeed
+      deed: EnergyShot
+    - !type:CFGrantAction
+      action: CFActThoughtfulReload
 
 - type: cfClassChoice
   id: WayTriggerbrand
@@ -65,3 +78,5 @@
   grants:
     - !type:CFGrantAction
       action: CFActClearAPath
+    - !type:CFGrantInitialDeed
+      deed: LivingFortification

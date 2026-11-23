@@ -166,7 +166,7 @@
   parent: CFActStrikeBase
   id: CFActReloadingStrike
   name: Reloading Strike
-  description: An unarmed Strike, and your held firearm is loaded. The next shot does not pay for a reload.
+  description: A Strike with the one-handed melee weapon in your other hand, or your fist, and your held firearm or crossbow is loaded. The next shot does not pay for a reload.
   components:
   - type: CFStrikeAction
     unarmedOnly: true

@@ -10,3 +10,6 @@
     - "Gunslinger"
   prerequisites:
     - "Gunslinger or Dual-Weapon Warrior Dedication"
+  grants:
+    - !type:CFGrantOption
+      option: DualWeaponReload

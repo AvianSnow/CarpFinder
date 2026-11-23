@@ -58,6 +58,21 @@ public sealed partial class CFStrikeActionComponent : Component
     [DataField]
     public bool Reloads;
 
+    /// <summary>A ranged Strike that loads the weapon first, so it works with an empty one (Risky Reload).</summary>
+    [DataField]
+    public bool ReloadsFirst;
+
+    /// <summary>A ranged Strike that misses jams the firearm (Risky Reload, Alchemical Shot).</summary>
+    [DataField]
+    public bool Misfires;
+
+    /// <summary>
+    /// A ranged Strike that pours a carried alchemical bomb over the round. The bomb is used up, the Strike deals the
+    /// bomb's damage type, a hit adds 1d6 persistent damage of it, and a miss deals 1d6 of it to the user (Alchemical Shot).
+    /// </summary>
+    [DataField]
+    public bool UsesBomb;
+
     /// <summary>An unstable action: needs the innovation in use, and risks it breaking down.</summary>
     [DataField]
     public bool Unstable;

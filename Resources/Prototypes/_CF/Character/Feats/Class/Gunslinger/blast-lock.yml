@@ -10,4 +10,6 @@
     - "Attack"
     - "Gunslinger"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActBlastLock

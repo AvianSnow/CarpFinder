@@ -41,9 +41,14 @@ public sealed partial class CFReloadSystem : EntitySystem
     [Dependency] private ItemSlotsSystem _slots = default!;
     [Dependency] private EntityWhitelistSystem _whitelist = default!;
     [Dependency] private CFManeuverSystem _maneuvers = default!;
+    [Dependency] private CFGunslingerSystem _gunslinger = default!;
 
     /// <summary>Loads the held weapon if it is empty. With <paramref name="prepaid"/>, its next shot does not pay for a reload.</summary>
-    public bool TryReload(EntityUid user, bool prepaid)
+    /// <param name="needsHand">
+    /// A one-handed weapon is loaded with the other hand, so that hand has to be empty, or holding the round. Reloading
+    /// Strike does without, and so does Dual-Weapon Reload with a one-handed weapon there.
+    /// </param>
+    public bool TryReload(EntityUid user, bool prepaid, bool needsHand = true)
     {
         if (!TryHeld(user, out var gun, out var ranged) || !_slots.TryGetSlot(gun, Slot, out var slot))
         {
@@ -51,10 +56,20 @@ public sealed partial class CFReloadSystem : EntitySystem
             return false;
         }
 
+        // A jam is cleared first, for 1 action.
+        if (!_gunslinger.TryClear(gun, user))
+            return false;
+
         if (slot.HasItem)
         {
             Prepay(gun, ranged, prepaid);
             return true;
+        }
+
+        if (needsHand && !HandFree(user, gun, slot))
+        {
+            _popup.PopupEntity(Loc.GetString("cf-reload-needs-hand"), user, user);
+            return false;
         }
 
         if (!TryFindRound(user, slot, out var round) || !_slots.TryInsert(gun, slot, round, user))
@@ -64,6 +79,27 @@ public sealed partial class CFReloadSystem : EntitySystem
         }
 
         Prepay(gun, ranged, prepaid);
+        return true;
+    }
+
+    /// <summary>Whether the user has a hand to load this weapon with. A two-handed one lends one of its own.</summary>
+    private bool HandFree(EntityUid user, EntityUid gun, ItemSlot slot)
+    {
+        if (CompOrNull<CFWeaponComponent>(gun)?.Hands != CFWeaponHands.One)
+            return true;
+
+        var dual = CompOrNull<CFCombatOptionsComponent>(user)?.DualWeaponReload == true;
+        foreach (var held in _hands.EnumerateHeld(user))
+        {
+            if (held == gun || Fits(held, slot))
+                continue;
+
+            if (dual && TryComp(held, out CFWeaponComponent? other) && other.Hands == CFWeaponHands.One)
+                continue;
+
+            return false;
+        }
+
         return true;
     }
 

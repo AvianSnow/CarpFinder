@@ -26,6 +26,8 @@ public sealed partial class CFStrikeActionSystem : EntitySystem
     [Dependency] private CFTauntSystem _taunts = default!;
     [Dependency] private CFInventorSystem _inventor = default!;
     [Dependency] private CFReloadSystem _reload = default!;
+    [Dependency] private CFGunslingerSystem _gunslinger = default!;
+    [Dependency] private CFBonusSystem _bonuses = default!;
     [Dependency] private CFActivitySystem _activities = default!;
     [Dependency] private CFActionPoolSystem _pool = default!;
     [Dependency] private CFShieldSystem _shields = default!;
@@ -107,10 +109,24 @@ public sealed partial class CFStrikeActionSystem : EntitySystem
             if (!TryHeldRanged(user, out _, out var bow))
                 return "cf-strike-action-needs-ranged";
 
-            var count = new GetAmmoCountEvent();
-            RaiseLocalEvent(bow, ref count);
-            if (count.Count <= 0)
-                return "cf-strike-action-needs-ammo";
+            if (action.Groups.Count > 0 && (!TryComp(bow, out CFWeaponComponent? shooter) || !action.Groups.Contains(shooter.Group)))
+                return "cf-strike-action-needs-group";
+
+            // Risky Reload clears a jam and loads as part of itself.
+            if (!action.ReloadsFirst)
+            {
+                if (_gunslinger.IsJammed(bow))
+                    return "cf-gun-jammed";
+
+                if (!Loaded(bow))
+                    return "cf-strike-action-needs-ammo";
+            }
+
+            if (action.TwoWeapons && OtherShooter(user, bow) == null)
+                return "cf-strike-action-needs-two-guns";
+
+            if (action.UsesBomb && CarriedBomb(user) == null)
+                return "cf-strike-action-needs-bomb";
 
             var feet = (_transform.GetWorldPosition(user) - _transform.GetWorldPosition(target)).Length();
             return _interaction.InRangeUnobstructed(user, target, feet + 1f) ? null : "cf-strike-action-no-line";
@@ -218,9 +234,46 @@ public sealed partial class CFStrikeActionSystem : EntitySystem
             if (!TryHeldRanged(user, out var shot, out var bow))
                 return;
 
+            if (action.ReloadsFirst && (!_reload.TryReload(user, prepaid: false) || !Loaded(bow)))
+                return;
+
+            string? bombType = null;
+            if (action.UsesBomb && CarriedBomb(user) is { } bomb)
+            {
+                bombType = CompOrNull<CFWeaponComponent>(bomb)?.DamageType ?? shot.DamageType;
+                shot = shot with { DamageType = bombType };
+                Del(bomb);
+            }
+
+            // A shot that misses can jam the gun, and one soaked in a bomb burns whoever it hits, or the shooter.
+            void Shot(CFDegree degree, int damage)
+            {
+                var landed = degree is CFDegree.Success or CFDegree.CriticalSuccess;
+                if (bombType != null)
+                {
+                    if (landed && damage > 0)
+                        _bonuses.AddPersistent(target, bombType, 1, 6, 0, user);
+                    else if (!landed)
+                        _effects.DealDamage(user, user, _effects.Roll(1, 6, 0), bombType, critical: false);
+                }
+
+                if (action.Misfires && !landed)
+                    _gunslinger.Jam(bow, user);
+
+                Resolved(degree, damage);
+            }
+
             var shotMap = _pool.MapPenalty(user, shot.Agile);
             SpendArrow(user, bow);
-            _strikes.PerformStrike(user, target, shot, bow, melee: false, attackPenalty: action.AttackBonus, resolved: Resolved, ignoreConcealed: action.IgnoresConcealed);
+            var landedFirst = _strikes.PerformStrike(user, target, shot, bow, melee: false, attackPenalty: action.AttackBonus, resolved: Shot, ignoreConcealed: action.IgnoresConcealed);
+
+            // Paired Shots: the weapon in the other hand fires at the same target and the same penalty.
+            if (action.TwoWeapons && OtherShooter(user, bow) is { } paired && _weapons.TryStats(paired, out var pairedShot))
+            {
+                SpendArrow(user, paired);
+                _strikes.PerformStrike(user, target, pairedShot, paired, melee: false, attackPenalty: action.AttackBonus, fixedMap: shotMap, skipPrecision: landedFirst, resolved: Resolved);
+                return;
+            }
 
             // A second shot needs a second arrow nocked, at the same target or at someone else.
             var next = action.Twice ? target : FindSecond(user, target, action);
@@ -237,7 +290,13 @@ public sealed partial class CFStrikeActionSystem : EntitySystem
 
         CFStrikeWeaponStats stats;
         EntityUid weapon;
-        if (action.UnarmedOnly)
+        if (action.UnarmedOnly && action.Reloads && OffHandBlade(user) is { } blade && _weapons.TryStats(blade, out var bladeStats))
+        {
+            // Reloading Strike: the melee weapon in the other hand, when there is one.
+            stats = bladeStats;
+            weapon = blade;
+        }
+        else if (action.UnarmedOnly)
         {
             stats = _strikes.UnarmedStats(user);
             weapon = user;
@@ -286,7 +345,7 @@ public sealed partial class CFStrikeActionSystem : EntitySystem
             _taunts.Taunt(user, target);
 
         if (action.Reloads)
-            _reload.TryReload(user, prepaid: true);
+            _reload.TryReload(user, prepaid: true, needsHand: false);
 
         if (action.RechargesSpellstrike)
             _activities.RechargeSpellstrike(user);
@@ -438,6 +497,63 @@ public sealed partial class CFStrikeActionSystem : EntitySystem
 
         weapon = held.Value;
         return true;
+    }
+
+    /// <summary>A one-handed melee weapon held beside a ranged one.</summary>
+    private EntityUid? OffHandBlade(EntityUid user)
+    {
+        foreach (var held in _hands.EnumerateHeld(user))
+        {
+            if (HasComp<CFMeleeWeaponComponent>(held)
+                && !HasComp<CFRangedWeaponComponent>(held)
+                && !HasComp<CFShieldComponent>(held)
+                && CompOrNull<CFWeaponComponent>(held)?.Hands == CFWeaponHands.One)
+            {
+                return held;
+            }
+        }
+
+        return null;
+    }
+
+    private bool Loaded(EntityUid bow)
+    {
+        var count = new GetAmmoCountEvent();
+        RaiseLocalEvent(bow, ref count);
+        return count.Count > 0;
+    }
+
+    /// <summary>A loaded one-handed ranged weapon in another hand than <paramref name="bow"/>, when that is one-handed too.</summary>
+    private EntityUid? OtherShooter(EntityUid user, EntityUid bow)
+    {
+        if (CompOrNull<CFWeaponComponent>(bow)?.Hands != CFWeaponHands.One)
+            return null;
+
+        foreach (var held in _hands.EnumerateHeld(user))
+        {
+            if (held != bow
+                && HasComp<CFRangedWeaponComponent>(held)
+                && CompOrNull<CFWeaponComponent>(held)?.Hands == CFWeaponHands.One
+                && !_gunslinger.IsJammed(held)
+                && Loaded(held))
+            {
+                return held;
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>An alchemical bomb in a hand or worn.</summary>
+    private EntityUid? CarriedBomb(EntityUid user)
+    {
+        foreach (var item in _inventory.GetHandOrInventoryEntities(user))
+        {
+            if (HasComp<Content.Shared.CF.Alchemy.CFBombComponent>(item))
+                return item;
+        }
+
+        return null;
     }
 
     private void SpendArrow(EntityUid user, EntityUid bow)

@@ -1,0 +1,143 @@
+# What a Gunslinger does with a firearm or crossbow beyond a plain shot. CFGunslingerSystem runs the CFGunAction ones.
+
+# Risky Reload: load and fire for one action. A miss jams the firearm.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActRiskyReload
+  name: Risky Reload
+  description: "Load your firearm and Strike with it, all for 1 action. If the Strike misses, the firearm misfires and jams: 1 action clears it. A flourish."
+  components:
+  - type: TargetAction
+    range: 200
+  - type: CFTrait
+    traits:
+    - Flourish
+  - type: CFFlourish
+  - type: CFStrikeAction
+    ranged: true
+    reloadsFirst: true
+    misfires: true
+    groups: [ Firearm ]
+
+# Cover Fire: the target ducks, which makes it harder to hit and spoils its own aim.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActCoverFire
+  name: Cover Fire
+  description: A firearm or crossbow Strike that makes the target duck. It takes -2 to hit, and hit or miss the target takes -2 to its ranged attack rolls for 6 seconds. Once every 6 seconds.
+  components:
+  - type: Action
+    useDelay: 6
+  - type: TargetAction
+    range: 200
+  - type: CFStrikeAction
+    ranged: true
+    attackBonus: -2
+    effectsNeedDamage: false
+    groups: [ Firearm, Crossbow ]
+    onHit:
+    - !type:CFBonusEffect
+      stat: RangedAttackRoll
+      type: Circumstance
+      value: -2
+      durationSeconds: 6
+    onFailure:
+    - !type:CFBonusEffect
+      stat: RangedAttackRoll
+      type: Circumstance
+      value: -2
+      durationSeconds: 6
+
+# Paired Shots: both one-handed guns at one target, at the same penalty.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActPairedShots
+  name: Paired Shots
+  description: Fire a loaded one-handed firearm or crossbow from each hand at one target. Both Strikes use the same multiple attack penalty. Costs 2 actions.
+  components:
+  - type: TargetAction
+    range: 200
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFStrikeAction
+    ranged: true
+    twoWeapons: true
+    groups: [ Firearm, Crossbow ]
+
+# Alchemical Shot: a bomb poured over the round.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActAlchemicalShot
+  name: Alchemical Shot
+  description: Pour a bomb you carry over your round and Strike. The bomb is used up, the Strike deals the bomb's kind of damage, and a hit adds 1d6 persistent damage of that kind. On a miss you take 1d6 of it and a firearm jams. Costs 2 actions.
+  components:
+  - type: TargetAction
+    range: 200
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFStrikeAction
+    ranged: true
+    usesBomb: true
+    misfires: true
+    groups: [ Firearm, Crossbow ]
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActPistolTwirl
+  name: Pistol Twirl
+  description: Feint at an enemy within the first range increment of your loaded one-handed firearm or crossbow. A success leaves it off-guard to your next attack, ranged or melee.
+  components:
+  - type: TargetAction
+    range: 12.5
+  - type: CFGunAction
+    kind: PistolTwirl
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActWarningShot
+  name: Warning Shot
+  description: Fire your loaded firearm into the air to Demoralize an enemy as far as the shot carries. It uses up the round.
+  components:
+  - type: TargetAction
+    range: 30
+  - type: CFGunAction
+    kind: WarningShot
+
+- type: entity
+  parent: CFActivityTarget
+  id: CFActBlastLock
+  name: Blast Lock
+  description: Shoot a lock within 10 feet with your loaded firearm. It is an attack roll against the lock's DC, and successes count as they do for picking it. A miss makes the lock harder to pick or blast.
+  components:
+  - type: TargetAction
+    range: 2.5
+  - type: EntityTargetAction
+    whitelist:
+      components:
+      - CFLock
+  - type: CFGunAction
+    kind: BlastLock
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActBlackPowderBoost
+  name: Black Powder Boost
+  description: Fire your loaded firearm as you Leap, and go 10 feet further. It uses up the round.
+  components:
+  - type: CFGunAction
+    kind: BlackPowderBoost
+
+# Thoughtful Reload: the Spellshot's reload.
+- type: entity
+  parent: CFActivityTarget
+  id: CFActThoughtfulReload
+  name: Thoughtful Reload
+  description: Recall Knowledge about an enemy and load your weapon. The next shot does not pay for a reload.
+  components:
+  - type: TargetAction
+    range: 12.5
+  - type: CFRadialSlot
+    group: Free
+    actions: 0
+  - type: CFReloadAction
+    then: RecallKnowledge

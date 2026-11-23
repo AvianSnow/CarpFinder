@@ -234,17 +234,17 @@ cf-class-choice-implement = First Implement
 
 cf-class-choice-way = Gunslinger's Way
 cf-class-choice-waydrifter = Way of the Drifter
-cf-class-choice-waydrifter-desc = Trained in Acrobatics. Reloading Strike: an unarmed Strike, and your firearm is loaded. Using a melee weapon in your other hand, and its deed: TBA
+cf-class-choice-waydrifter-desc = Trained in Acrobatics. Reloading Strike: a Strike with the one-handed melee weapon in your other hand, or your fist, and your firearm or crossbow is loaded with no hand free. Into the Fray: as a fight begins you draw a one-handed firearm or crossbow and a one-handed melee weapon from your belt, back or neck. Its free Stride: TBA
 cf-class-choice-waypistolero = Way of the Pistolero
-cf-class-choice-waypistolero-desc = Trained in Deception or Intimidation, your choice. Raconteur's Reload: Demoralize and load. Create a Diversion instead, and its deed: TBA
+cf-class-choice-waypistolero-desc = Trained in Deception or Intimidation, your choice. Raconteur's Reload: Demoralize and load. Ten Paces: as a fight begins you draw a one-handed firearm or crossbow, and for 3 seconds a Step costs nothing. Create a Diversion with the reload, and the bonus to initiative: TBA
 cf-class-choice-waysniper = Way of the Sniper
-cf-class-choice-waysniper-desc = Trained in Stealth. Covered Reload: Hide and load. Take Cover instead, and its deed: TBA
+cf-class-choice-waysniper-desc = Trained in Stealth. Covered Reload: Hide and load. One Shot, One Kill: as a fight begins you draw a firearm or crossbow, and your first Strike with one that hits deals 1d6 more. Take Cover with the reload: TBA
 cf-class-choice-wayspellshot = Way of the Spellshot
-cf-class-choice-wayspellshot-desc = Magic through a gun: TBA
+cf-class-choice-wayspellshot-desc = Trained in Arcana. Thoughtful Reload: Recall Knowledge about an enemy and load. Energy Shot: as a fight begins you draw a firearm or crossbow, and your first three Strikes with one deal 1 fire damage per weapon die. Choosing acid, cold or electricity instead: TBA
 cf-class-choice-waytriggerbrand = Way of the Triggerbrand
 cf-class-choice-waytriggerbrand-desc = Trained in Thievery. Combination weapons do not exist yet: TBA
 cf-class-choice-wayvanguard = Way of the Vanguard
-cf-class-choice-wayvanguard-desc = Trained in Athletics. Clear a Path: Shove and load. Its deed: TBA
+cf-class-choice-wayvanguard-desc = Trained in Athletics. Clear a Path: Shove and load. Living Fortification: as a fight begins you draw a firearm or crossbow and hold it as a guard, +1 AC for 6 seconds.
 
 cf-class-choice-innovation = Innovation
 

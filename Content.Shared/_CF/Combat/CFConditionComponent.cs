@@ -100,6 +100,10 @@ public sealed partial class CFConditionComponent : Component
     /// <summary>Of <see cref="FeintedUntil"/>, the Feints that end with that creature's next melee attack.</summary>
     public HashSet<EntityUid> FeintedOnce = new();
 
+    /// <summary>Whose Feint also counts for their ranged attacks (Pistol Twirl).</summary>
+    [DataField]
+    public HashSet<EntityUid> FeintedRanged = new();
+
     /// <summary>Off-guard to every melee attack until this time (a Scoundrel's critical Feint).</summary>
     public TimeSpan FeintedAllUntil;
 

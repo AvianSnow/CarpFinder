@@ -583,6 +583,18 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
             case CFCombatOption.FlyingBlade:
                 options.FlyingBlade = true;
                 break;
+            case CFCombatOption.InstantBackup:
+                options.InstantBackup = true;
+                break;
+            case CFCombatOption.CrossbowCrackShot:
+                options.CrossbowCrackShot = true;
+                break;
+            case CFCombatOption.SwordAndPistol:
+                options.SwordAndPistol = true;
+                break;
+            case CFCombatOption.DualWeaponReload:
+                options.DualWeaponReload = true;
+                break;
             case CFCombatOption.TakedownExpert:
                 options.TakedownExpert = true;
                 break;

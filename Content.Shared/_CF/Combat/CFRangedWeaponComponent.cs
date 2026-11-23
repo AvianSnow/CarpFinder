@@ -20,4 +20,8 @@ public sealed partial class CFRangedWeaponComponent : Component
     /// <summary>A slinger's reload has already paid for the next shot's reload.</summary>
     [DataField, AutoNetworkedField]
     public bool ReloadPrepaid;
+
+    /// <summary>A misfire has jammed it. It cannot be loaded or fired until the jam is cleared, which takes 1 action.</summary>
+    [DataField, AutoNetworkedField]
+    public bool Jammed;
 }

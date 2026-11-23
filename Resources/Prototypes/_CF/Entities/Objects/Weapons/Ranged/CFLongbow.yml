@@ -99,8 +99,10 @@
   parent: ClothingBeltQuiver
   id: CFQuiverFilled
   name: quiver
-  description: A quiver packed with arrows for a longbow.
+  description: A quiver packed with arrows for a longbow or shortbow.
   components:
+    - type: CFItemPrice
+      copper: 10
     - type: EntityTableContainerFill
       containers:
         storagebase: !type:AllSelector
