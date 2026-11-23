@@ -235,6 +235,20 @@ public sealed partial class CFConditionSystem : EntitySystem
         return TryComp(uid, out CFConditionComponent? cond) ? cond.Frightened : 0;
     }
 
+    /// <summary>Records that the creature has just cast a spell.</summary>
+    public void NoteCast(EntityUid caster)
+    {
+        Ensure(caster).LastCastAt = _timing.CurTime;
+    }
+
+    /// <summary>Whether the creature cast a spell in the last hour.</summary>
+    public bool CastRecently(EntityUid uid)
+    {
+        return TryComp(uid, out CFConditionComponent? cond)
+               && cond.LastCastAt is { } at
+               && _timing.CurTime - at <= TimeSpan.FromHours(1);
+    }
+
     public void NudgeFate(EntityUid target, float seconds)
     {
         Ensure(target).NudgedUntil = _timing.CurTime + TimeSpan.FromSeconds(seconds);
@@ -506,6 +520,14 @@ public sealed partial class CFConditionSystem : EntitySystem
 
         if (_stealth.IsUnseenBy(target, attacker))
             dc = Math.Max(dc, sense is { HiddenFlatDc: > 0 } ? sense.HiddenFlatDc : HiddenFlatCheck);
+
+        // Supernatural Senses: a raging Barbarian smells out what it cannot see.
+        if (CompOrNull<CFCombatOptionsComponent>(attacker) is { Raging: true, RageKeenSenses: true }
+            && (blind == null || !blind.Blinded)
+            && Value(attacker, CFConditionKind.Dazzled) <= 0)
+        {
+            dc = Math.Min(dc, _stealth.IsUnseenBy(target, attacker) ? 9 : 3);
+        }
 
         if (dc <= 0)
             return true;
@@ -992,7 +1014,19 @@ public sealed partial class CFConditionSystem : EntitySystem
     public int Clumsy(EntityUid uid)
     {
         var timed = TryComp(uid, out CFConditionComponent? cond) ? cond.ClumsyValue : 0;
-        return Math.Max(timed, _encumbrance.IsEncumbered(uid) ? 1 : 0);
+        return Math.Max(timed, _encumbrance.IsEncumbered(uid) || HoldsOversized(uid) ? 1 : 0);
+    }
+
+    /// <summary>Whether the creature has a weapon built for a larger creature in hand, which makes it clumsy 1.</summary>
+    public bool HoldsOversized(EntityUid uid)
+    {
+        foreach (var held in _hands.EnumerateHeld(uid))
+        {
+            if (HasComp<CFOversizedWeaponComponent>(held))
+                return true;
+        }
+
+        return false;
     }
 
     /// <summary>

@@ -795,8 +795,25 @@ public sealed partial class CFStrikeSystem : EntitySystem
         if (melee)
             damageMod -= _conditions.Value(user, CFConditionKind.Enfeebled);
 
+        // Rage's extra damage. An instinct can make it larger against some targets, or deal it as a type of its own.
+        var typedRage = 0;
         if (style is { Raging: true } && (melee || style.RagingThrower && weapon.ThrownStrike))
-            damageMod += rolled.Agile ? style.RageDamage / 2 : style.RageDamage;
+        {
+            var rage = style.RageDamage;
+            if (style.RageOversizedDamage > 0 && rolled.Item is { } wielded && HasComp<CFOversizedWeaponComponent>(wielded))
+                rage = style.RageOversizedDamage;
+
+            if (style.RageCasterDamage > rage && _conditions.CastRecently(target))
+                rage = style.RageCasterDamage;
+
+            if (rolled.Agile)
+                rage /= 2;
+
+            if (style.RageDamageType.Length > 0)
+                typedRage = rage;
+            else
+                damageMod += rage;
+        }
 
         damageMod += _bonuses.Total(user, CFBonusStat.Damage, melee ? CFBonusStat.MeleeDamage : null);
 
@@ -916,6 +933,9 @@ public sealed partial class CFStrikeSystem : EntitySystem
                     ApplyBespell(user, target, style, criticalHit, isObject);
                     if (melee)
                         ApplyInfusion(user, target, style, criticalHit, isObject);
+
+                    if (typedRage > 0 && style != null && !isObject)
+                        _effects.DealDamage(user, target, criticalHit ? typedRage * 2 : typedRage, style.RageDamageType, critical: false);
                 }
 
                 if (!isObject && defender.CurrentHp <= 0)

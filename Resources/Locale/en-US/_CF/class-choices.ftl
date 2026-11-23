@@ -82,17 +82,17 @@ cf-class-choice-patron-wilding-steward-desc = Primal magic. Trained in Nature. T
 
 cf-class-choice-instinct = Instinct
 cf-class-choice-instinctanimal = Animal
-cf-class-choice-instinctanimal-desc = While raging, your unarmed attacks are 1d10 piercing jaws. Choosing the animal, and not being able to hold weapons: TBA
+cf-class-choice-instinctanimal-desc = Choose an animal. While raging, your unarmed attack is its 1d10 attack: bludgeoning for the ape and the frog, piercing for the rest. The animal's second attack, its grapple, shove or trip trait, and not being able to use weapons while raging: TBA
 cf-class-choice-instinctdragon = Dragon
-cf-class-choice-instinctdragon-desc = Rage adds 4 damage instead of 2. Changing that damage to your dragon's breath type: TBA
+cf-class-choice-instinctdragon-desc = Choose a dragon. Rage adds 4 damage instead of 2, dealt as that dragon's breath type: bludgeoning, poison, fire, spirit, force or mental. It is always that type, where the rules let you choose each Rage.
 cf-class-choice-instinctfury = Fury
-cf-class-choice-instinctfury-desc = Rage adds 3 damage instead of 2. The extra level 1 feat: TBA
+cf-class-choice-instinctfury-desc = Rage adds 3 damage instead of 2, and you choose one more level 1 barbarian feat.
 cf-class-choice-instinctgiant = Giant
-cf-class-choice-instinctgiant-desc = Oversized weapons and the extra damage they deal: TBA
+cf-class-choice-instinctgiant-desc = Choose a greatsword, a longsword or a warhammer built for a larger creature: it is in your backpack. Raging with it adds 6 damage instead of 2. Whoever holds an oversized weapon is clumsy 1. Its greater Bulk: TBA
 cf-class-choice-instinctspirit = Spirit
-cf-class-choice-instinctspirit-desc = Rage adds 3 damage instead of 2. Changing that damage to spirit: TBA
+cf-class-choice-instinctspirit-desc = Rage adds 3 damage instead of 2, dealt as spirit damage. It is always spirit, where the rules let you choose each Rage. Ghost touch: TBA
 cf-class-choice-instinctsuperstition = Superstition
-cf-class-choice-instinctsuperstition-desc = Rage adds 3 damage instead of 2, and you have +2 status to saves against magic while raging. The extra damage against casters: TBA
+cf-class-choice-instinctsuperstition-desc = Rage adds 3 damage instead of 2, or 4 against a creature that cast a spell in the last hour. You have +2 status to saves against magic while raging. When a Rage gives temporary Hit Points you regain as many Hit Points, once per 10 minutes. The anathema against magic, and being frightened by accepting a spell: TBA
 
 cf-class-choice-cause = Cause
 cf-class-choice-causedesecration = Desecration

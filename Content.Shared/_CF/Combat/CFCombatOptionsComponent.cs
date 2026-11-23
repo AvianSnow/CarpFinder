@@ -257,6 +257,48 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public string RageAttackType = string.Empty;
 
+    /// <summary>
+    /// Rage's extra damage is dealt as this type, apart from the weapon's own (a Dragon instinct's breath type, Spirit
+    /// instinct's spirit). Empty means it is part of the weapon's damage.
+    /// </summary>
+    [DataField, AutoNetworkedField]
+    public string RageDamageType = string.Empty;
+
+    /// <summary>What Rage adds against a creature that cast a spell in the last hour, in place of <see cref="RageDamage"/> (Superstition). 0 means no change.</summary>
+    [DataField, AutoNetworkedField]
+    public int RageCasterDamage;
+
+    /// <summary>What Rage adds with an oversized weapon, in place of <see cref="RageDamage"/> (Giant). 0 means no change.</summary>
+    [DataField, AutoNetworkedField]
+    public int RageOversizedDamage;
+
+    /// <summary>Entering a Rage also restores Hit Points equal to the temporary ones it gives, once per 10 minutes (Superstition).</summary>
+    [DataField]
+    public bool RageHeals;
+
+    [DataField]
+    public TimeSpan RageHealReadyAt;
+
+    /// <summary>Darkvision while raging (Acute Vision).</summary>
+    [DataField]
+    public bool RageDarkvision;
+
+    /// <summary>Scent while raging (Acute Scent).</summary>
+    [DataField]
+    public bool RageScent;
+
+    /// <summary>What a Rage switched on, to switch it off again when it ends.</summary>
+    [DataField]
+    public bool RageGaveVision, RageGaveScent;
+
+    /// <summary>While raging, the flat check against a concealed target is DC 3 and against a hidden one DC 9 (Supernatural Senses).</summary>
+    [DataField, AutoNetworkedField]
+    public bool RageKeenSenses;
+
+    /// <summary>While raging, the Bulk limits are this much higher (Adrenaline Rush).</summary>
+    [DataField, AutoNetworkedField]
+    public int RageBulk;
+
     /// <summary>Thrown weapon Strikes also get the damage from Rage.</summary>
     [DataField, AutoNetworkedField]
     public bool RagingThrower;

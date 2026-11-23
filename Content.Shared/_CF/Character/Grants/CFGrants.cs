@@ -174,9 +174,51 @@ public sealed partial class CFGrantRage : CFGrant
     [DataField]
     public string AttackType = string.Empty;
 
+    /// <summary>Rage's extra damage is of this type, dealt apart from the weapon's (Dragon, Spirit).</summary>
+    [DataField]
+    public string DamageType = string.Empty;
+
+    /// <summary>What Rage adds against a creature that cast a spell in the last hour (Superstition).</summary>
+    [DataField]
+    public int CasterDamage;
+
+    /// <summary>What Rage adds with an oversized weapon (Giant).</summary>
+    [DataField]
+    public int OversizedDamage;
+
+    /// <summary>Entering a Rage restores Hit Points equal to its temporary ones, once per 10 minutes (Superstition).</summary>
+    [DataField]
+    public bool Heals;
+
+    [DataField]
+    public bool Darkvision;
+
+    [DataField]
+    public bool Scent;
+
+    /// <summary>Flat checks of DC 3 against concealed and DC 9 against hidden targets while raging (Supernatural Senses).</summary>
+    [DataField]
+    public bool KeenSenses;
+
+    /// <summary>More Bulk while raging (Adrenaline Rush).</summary>
+    [DataField]
+    public int Bulk;
+
     public override void Apply(IEntityManager entities, CFGrantArgs args)
     {
         entities.System<CFCharacterFeatureSystem>().SetRage(args.Mob, Damage, AttackDie, AttackType);
+        var options = entities.EnsureComponent<CFCombatOptionsComponent>(args.Mob);
+        if (DamageType.Length > 0)
+            options.RageDamageType = DamageType;
+
+        options.RageCasterDamage = Math.Max(options.RageCasterDamage, CasterDamage);
+        options.RageOversizedDamage = Math.Max(options.RageOversizedDamage, OversizedDamage);
+        options.RageHeals |= Heals;
+        options.RageDarkvision |= Darkvision;
+        options.RageScent |= Scent;
+        options.RageKeenSenses |= KeenSenses;
+        options.RageBulk = Math.Max(options.RageBulk, Bulk);
+        entities.Dirty(args.Mob, options);
     }
 }
 
@@ -569,6 +611,13 @@ public sealed partial class CFGrantItem : CFGrant
     [DataField]
     public int Count = 1;
 
+    /// <summary>
+    /// The item is built for a larger creature: a Giant instinct's weapon. It gets <c>CFOversizedWeapon</c>, which makes
+    /// whoever holds it clumsy 1.
+    /// </summary>
+    [DataField]
+    public bool Oversized;
+
     /// <summary>Goes in the backpack, else on the ground at the character's feet.</summary>
     public override void Apply(IEntityManager entities, CFGrantArgs args)
     {
@@ -578,6 +627,13 @@ public sealed partial class CFGrantItem : CFGrant
         for (var i = 0; i < Count; i++)
         {
             var item = entities.SpawnAtPosition(Item, coordinates);
+            if (Oversized)
+            {
+                entities.EnsureComponent<Content.Shared.CF.Combat.CFOversizedWeaponComponent>(item);
+                var meta = entities.GetComponent<MetaDataComponent>(item);
+                entities.System<MetaDataSystem>().SetEntityName(item, Loc.GetString("cf-oversized-name", ("name", meta.EntityName)), meta);
+            }
+
             if (inventory.TryGetSlotEntity(args.Mob, "back", out var bag)
                 && entities.TryGetComponent(bag, out StorageComponent? store)
                 && storage.CanInsert(bag.Value, item, out _, store))

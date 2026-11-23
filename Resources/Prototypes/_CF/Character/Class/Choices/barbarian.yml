@@ -5,10 +5,52 @@
   slot: cf-class-choice-instinct
   name: cf-class-choice-instinctanimal
   description: cf-class-choice-instinctanimal-desc
+  choices:
+    - kind: Named
+      options: [ AnimalApe, AnimalBear, AnimalBull, AnimalCat, AnimalDeer, AnimalFrog, AnimalShark, AnimalSnake, AnimalWolf ]
   grants:
+    # Jaws, until an animal is picked.
     - !type:CFGrantRage
       attackDie: 10
       attackType: Piercing
+    - !type:CFGrantChosen
+      options:
+        AnimalApe:
+          - !type:CFGrantRage
+            attackDie: 10
+            attackType: Bludgeoning
+        AnimalBear:
+          - !type:CFGrantRage
+            attackDie: 10
+            attackType: Piercing
+        AnimalBull:
+          - !type:CFGrantRage
+            attackDie: 10
+            attackType: Piercing
+        AnimalCat:
+          - !type:CFGrantRage
+            attackDie: 10
+            attackType: Piercing
+        AnimalDeer:
+          - !type:CFGrantRage
+            attackDie: 10
+            attackType: Piercing
+        AnimalFrog:
+          - !type:CFGrantRage
+            attackDie: 10
+            attackType: Bludgeoning
+        AnimalShark:
+          - !type:CFGrantRage
+            attackDie: 10
+            attackType: Piercing
+        AnimalSnake:
+          - !type:CFGrantRage
+            attackDie: 10
+            attackType: Piercing
+        AnimalWolf:
+          - !type:CFGrantRage
+            attackDie: 10
+            attackType: Piercing
 
 - type: cfClassChoice
   id: InstinctDragon
@@ -16,9 +58,38 @@
   slot: cf-class-choice-instinct
   name: cf-class-choice-instinctdragon
   description: cf-class-choice-instinctdragon-desc
+  choices:
+    - kind: Named
+      options: [ DragonAdamantine, DragonConspirator, DragonDiabolic, DragonEmpyreal, DragonFortune, DragonHorned, DragonMirage, DragonOmen ]
   grants:
     - !type:CFGrantRage
       damage: 4
+    - !type:CFGrantChosen
+      options:
+        DragonAdamantine:
+          - !type:CFGrantRage
+            damageType: Bludgeoning
+        DragonConspirator:
+          - !type:CFGrantRage
+            damageType: Poison
+        DragonDiabolic:
+          - !type:CFGrantRage
+            damageType: Fire
+        DragonEmpyreal:
+          - !type:CFGrantRage
+            damageType: Spirit
+        DragonFortune:
+          - !type:CFGrantRage
+            damageType: Force
+        DragonHorned:
+          - !type:CFGrantRage
+            damageType: Poison
+        DragonMirage:
+          - !type:CFGrantRage
+            damageType: Mental
+        DragonOmen:
+          - !type:CFGrantRage
+            damageType: Mental
 
 - type: cfClassChoice
   id: InstinctFury
@@ -26,6 +97,10 @@
   slot: cf-class-choice-instinct
   name: cf-class-choice-instinctfury
   description: cf-class-choice-instinctfury-desc
+  choices:
+    - kind: Feat
+      featSlot: ClassFeat
+      featLevel: 1
   grants:
     - !type:CFGrantRage
       damage: 3
@@ -36,6 +111,26 @@
   slot: cf-class-choice-instinct
   name: cf-class-choice-instinctgiant
   description: cf-class-choice-instinctgiant-desc
+  choices:
+    - kind: Named
+      options: [ GiantGreatsword, GiantLongsword, GiantWarhammer ]
+  grants:
+    - !type:CFGrantRage
+      oversizedDamage: 6
+    - !type:CFGrantChosen
+      options:
+        GiantGreatsword:
+          - !type:CFGrantItem
+            item: CFGreatsword
+            oversized: true
+        GiantLongsword:
+          - !type:CFGrantItem
+            item: CFLongsword
+            oversized: true
+        GiantWarhammer:
+          - !type:CFGrantItem
+            item: CFWarhammer
+            oversized: true
 
 - type: cfClassChoice
   id: InstinctSpirit
@@ -46,6 +141,7 @@
   grants:
     - !type:CFGrantRage
       damage: 3
+      damageType: Spirit
 
 - type: cfClassChoice
   id: InstinctSuperstition
@@ -56,6 +152,8 @@
   grants:
     - !type:CFGrantRage
       damage: 3
+      casterDamage: 4
+      heals: true
     - !type:CFGrantWhile
       while: Raging
       stat: Saves

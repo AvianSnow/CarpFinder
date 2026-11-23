@@ -191,7 +191,8 @@ Class examples: `CFMySystem`, `CFMyServerSystem`, `CFMyClientSystem`, `CFExample
 | An option where the player picks a cantrip or skill | A `choices` list on the `cfFeat`, `cfHeritage` or `cfClassChoice`. Read answers through `CFOptionChoices`, not `CFBuild.OptionPicks` directly |
 | A pick the player can change each day | `daily: true` on the `choices` entry. The sheet's Daily tab plans it, and `CFDailyChoiceSystem.Apply` swaps it in at a long rest. A new kind of pick needs a line in its `TakeBack` |
 | A bonus that only counts while raging, with panache, or unarmored | `!type:CFGrantWhile`, run by `CFWhileBonusSystem` |
-| What a Barbarian instinct does to Rage | `!type:CFGrantRage` (`damage`, `attackDie`, `attackType`) |
+| What a Barbarian instinct or feat does to Rage | `!type:CFGrantRage` (`damage`, `attackDie`, `attackType`, `damageType` for damage of its own type, `casterDamage`, `oversizedDamage`, `heals`, `darkvision`, `scent`, `keenSenses`, `bulk`). An action with the rage trait sets `needsRaging` on `CFEffectAction` |
+| A weapon built for a larger creature | `oversized: true` on `!type:CFGrantItem` gives it `CFOversizedWeapon`: whoever holds it is clumsy 1 |
 | An aura, or something an aura does | `!type:CFGrantAura` with a list of `effects`. `CFAuraSystem` runs them. Do not add a physics sensor for one. An aura is a circle of `CFAuraSystem.Radius` around where its owner stands, not tiles, and the client draws that same circle. An effect can set its own `sizeFeet` and `includeSelf` |
 | Taunting an enemy | An action with `CFTauntAction` (`Resources/Prototypes/_CF/Actions/taunts.yml`), or `tauntsTarget: true` on a `CFStrikeAction`. `CFTauntSystem` runs it |
 | A weapon whose damage type can be switched | `CFDamageMode` with a `types` list. Use in hand cycles it for 1 action, and the hand status shows it. `CFWeaponSystem.TryStats` reads it |

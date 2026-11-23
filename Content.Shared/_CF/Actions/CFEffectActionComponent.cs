@@ -28,6 +28,10 @@ public sealed partial class CFEffectActionComponent : Component
     [DataField]
     public bool NeedsWeaponAndFreeHand;
 
+    /// <summary>Only while raging: the rage trait.</summary>
+    [DataField]
+    public bool NeedsRaging;
+
     /// <summary>The target has to be a dead enemy, as Absorb Strength needs a corpse.</summary>
     [DataField]
     public bool NeedsDeadEnemy;

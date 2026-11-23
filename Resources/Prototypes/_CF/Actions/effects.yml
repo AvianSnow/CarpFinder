@@ -435,3 +435,16 @@
   - type: CFDegreeEffects
     effects:
     - !type:CFDrainBondedItemEffect
+
+# Barbarian: Shake It Off. The rage trait: only while raging.
+- type: entity
+  parent: CFActivityInstant
+  id: CFActShakeItOff
+  name: Shake It Off
+  description: While raging, lower your frightened value by 1.
+  components:
+  - type: CFEffectAction
+    needsRaging: true
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFReduceFrightenedEffect

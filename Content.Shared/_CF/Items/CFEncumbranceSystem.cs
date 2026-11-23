@@ -160,6 +160,13 @@ public sealed partial class CFEncumbranceSystem : EntitySystem
     public int Strength(EntityUid uid)
     {
         var strength = TryComp(uid, out CFAbilityScoreComponent? abilities) ? abilities.GetModifier(CFAbility.Strength) : 0;
-        return CompOrNull<CFCombatOptionsComponent>(uid)?.HeftyHauler == true ? strength + 2 : strength;
+        if (!TryComp(uid, out CFCombatOptionsComponent? options))
+            return strength;
+
+        if (options.HeftyHauler)
+            strength += 2;
+
+        // Adrenaline Rush: more while raging.
+        return options.Raging ? strength + options.RageBulk : strength;
     }
 }

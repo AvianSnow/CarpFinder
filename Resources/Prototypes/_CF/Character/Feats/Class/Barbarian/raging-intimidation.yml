@@ -8,4 +8,6 @@
   level: 1
   traits:
     - "Barbarian"
-  pendingAction: true
+  grants:
+    - !type:CFGrantFeat
+      feat: CFIntimidatingGlare

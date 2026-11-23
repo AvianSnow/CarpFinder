@@ -11,3 +11,6 @@
     - "Rage"
   prerequisites:
     - "Acute Scent or scent"
+  grants:
+    - !type:CFGrantRage
+      keenSenses: true

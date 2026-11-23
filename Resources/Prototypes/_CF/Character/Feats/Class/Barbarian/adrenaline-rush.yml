@@ -16,3 +16,5 @@
       type: Status
       value: 1
       skill: Athletics
+    - !type:CFGrantRage
+      bulk: 2

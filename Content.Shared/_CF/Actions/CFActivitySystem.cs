@@ -50,6 +50,8 @@ public sealed partial class CFActivitySystem : EntitySystem
     [Dependency] private Robust.Shared.Prototypes.IPrototypeManager _prototypes = default!;
     [Dependency] private CFEffectSystem _effects = default!;
     [Dependency] private MobStateSystem _mobState = default!;
+    [Dependency] private CFDyingSystem _dying = default!;
+    [Dependency] private Content.Shared.CF.Character.CFCharacterFeatureSystem _features = default!;
 
     [SubscribeLocalEvent]
     private void OnSpellAttempt(Entity<CFSpellComponent> spell, ref ActionAttemptEvent args)
@@ -268,6 +270,39 @@ public sealed partial class CFActivitySystem : EntitySystem
     /// minute unless the creature has Second Wind. They last until the Rage ends, which it does after
     /// <see cref="RageLasts"/> or when the creature drops.
     /// </summary>
+    /// <summary>Acute Vision and Acute Scent: senses a Rage brings and takes away again. One the creature has anyway is left alone.</summary>
+    private void RageSenses(EntityUid user, CFCombatOptionsComponent opt, bool raging)
+    {
+        if (!_net.IsServer)
+            return;
+
+        if (raging)
+        {
+            if (opt.RageDarkvision && CompOrNull<CFSensesComponent>(user)?.Darkvision != true)
+            {
+                _features.SetRageVision(user, true);
+                opt.RageGaveVision = true;
+            }
+
+            if (opt.RageScent && !HasComp<Content.Shared.CF.Scent.CFSmellerComponent>(user))
+            {
+                EnsureComp<Content.Shared.CF.Scent.CFSmellerComponent>(user);
+                opt.RageGaveScent = true;
+            }
+
+            return;
+        }
+
+        if (opt.RageGaveVision)
+            _features.SetRageVision(user, false);
+
+        if (opt.RageGaveScent)
+            RemCompDeferred<Content.Shared.CF.Scent.CFSmellerComponent>(user);
+
+        opt.RageGaveVision = false;
+        opt.RageGaveScent = false;
+    }
+
     public void SetRaging(EntityUid user, bool raging)
     {
         var opt = EnsureComp<CFCombatOptionsComponent>(user);
@@ -287,10 +322,20 @@ public sealed partial class CFActivitySystem : EntitySystem
                 var constitution = CompOrNull<CFAbilityScoreComponent>(user)?.GetModifier(CFAbility.Constitution) ?? 0;
                 _tempHp.Grant(user, level + constitution, 0f, RageSource);
                 opt.RageTempHpReadyAt = now + RageTempHpWait;
+
+                // Superstition: the same amount in real Hit Points, once per 10 minutes.
+                if (opt.RageHeals && now >= opt.RageHealReadyAt)
+                {
+                    _dying.RestoreHitPoints(user, level + constitution);
+                    opt.RageHealReadyAt = now + TimeSpan.FromMinutes(10);
+                }
             }
+
+            RageSenses(user, opt, true);
         }
         else
         {
+            RageSenses(user, opt, false);
             if (CompOrNull<CFRagingComponent>(user)?.Tiring == true)
                 Fatigue(user);
 

@@ -206,6 +206,17 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
         Dirty(mob, senses);
     }
 
+    /// <summary>Darkvision for as long as a Rage lasts. Ending it puts back low-light vision, or none.</summary>
+    public void SetRageVision(EntityUid mob, bool on)
+    {
+        if (on)
+            SetVision(mob, DarkvisionColor);
+        else if (CompOrNull<CFSensesComponent>(mob)?.LowLightVision == true)
+            SetVision(mob, LowLightColor);
+        else
+            RemComp<NightVisionComponent>(mob);
+    }
+
     private void SetVision(EntityUid mob, Color color)
     {
         var vision = EnsureComp<NightVisionComponent>(mob);

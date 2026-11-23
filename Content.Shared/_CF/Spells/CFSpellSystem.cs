@@ -403,6 +403,7 @@ public sealed partial class CFSpellSystem : EntitySystem
     private void FinishCast(EntityUid caster)
     {
         _conditions.NoteAttack(caster);
+        _conditions.NoteCast(caster);
         if (!_spellshapes.IsSubtle(caster))
             _strikes.ReactiveStrike(caster);
 

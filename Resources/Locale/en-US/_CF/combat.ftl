@@ -170,6 +170,7 @@ cf-strike-action-needs-morph = You need an attack from a battle form or an anima
 cf-strike-action-needs-unarmed-type = Your unarmed attack deals the wrong kind of damage for that.
 cf-verdant-grow = Grow into {$weapon}
 cf-verdant-return = Return to seed
+cf-oversized-name = oversized {$name}
 cf-strike-action-needs-two-handed = You need a two-handed melee weapon.
 cf-strike-action-needs-free-hand = You need a one-handed melee weapon and a free hand.
 cf-spell-no-focus = You have no Focus Points left.

@@ -29,6 +29,13 @@ public sealed partial class CFEffectActionSystem : EntitySystem
             return;
         }
 
+        if (ent.Comp.NeedsRaging && CompOrNull<Content.Shared.CF.Combat.CFCombatOptionsComponent>(args.User)?.Raging != true)
+        {
+            args.Cancelled = true;
+            args.Reason = Loc.GetString("cf-strike-action-needs-rage");
+            return;
+        }
+
         if (ent.Comp.NeedsDeadEnemy
             && (args.Target is not { } corpse || !_mobState.IsDead(corpse) || !_factions.CanHarm(args.User, corpse)))
         {
