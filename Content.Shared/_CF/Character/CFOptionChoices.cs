@@ -18,6 +18,15 @@ public static class CFOptionChoices
     /// <summary>Marks an answer as a signature spell, because a plain spell id means a cantrip to learn.</summary>
     public const string SignaturePrefix = "signature:";
 
+    /// <summary>Marks an answer to a <see cref="CFOptionChoiceKind.Named"/> choice, so it is never read as a skill or anything else.</summary>
+    public const string NamedPrefix = "pick:";
+
+    /// <summary>The locale id of a named answer's name: <c>pick:LessonLife</c> is <c>cf-pick-lessonlife</c>.</summary>
+    public static string NamedLabel(string value)
+    {
+        return "cf-pick-" + value[NamedPrefix.Length..].ToLowerInvariant();
+    }
+
     /// <summary>Everything the build has to pick for what it has by <paramref name="level"/>.</summary>
     public static List<CFOptionSlot> Slots(
         IPrototypeManager prototypes,
@@ -143,6 +152,9 @@ public static class CFOptionChoices
 
             return known;
         }
+
+        if (choice.Kind == CFOptionChoiceKind.Named)
+            return choice.Options.Select(option => NamedPrefix + option).ToList();
 
         if (choice.Kind == CFOptionChoiceKind.WeaponGroup)
             return Enum.GetNames<CFWeaponGroup>().ToList();

@@ -409,11 +409,45 @@ public sealed partial class CFSpellSystem : EntitySystem
         _spellshapes.Consume(caster);
     }
 
+    /// <summary>One hex a turn, and a turn is 6 seconds.</summary>
+    private static readonly TimeSpan HexWait = TimeSpan.FromSeconds(6);
+
+    /// <summary>A hex is a spell with the Hex trait on its <c>cfSpell</c>.</summary>
+    public bool IsHex(CFSpellComponent spell)
+    {
+        return _prototypes.TryIndex(spell.Spell, out var proto) && proto.Traits.Contains("Hex");
+    }
+
+    /// <summary>Whether the creature can cast a hex now: it has not cast one in the last 6 seconds.</summary>
+    public bool HexReady(EntityUid caster)
+    {
+        return !TryComp(caster, out CFSpellbookComponent? book) || _timing.CurTime >= book.HexReadyAt;
+    }
+
     /// <summary>Pays for the cast and shows it, unless the spell is being cast subtly.</summary>
     private bool TrySpendCast(EntityUid caster, Entity<CFSpellComponent> spell)
     {
+        var hex = IsHex(spell.Comp);
+        if (hex && !HexReady(caster))
+        {
+            _popup.PopupEntity(Loc.GetString("cf-hex-one-a-turn"), caster, caster);
+            return false;
+        }
+
         if (!TrySpend(caster, spell.Comp))
             return false;
+
+        if (hex)
+        {
+            if (TryComp(caster, out CFSpellbookComponent? hexBook))
+            {
+                hexBook.HexReadyAt = _timing.CurTime + HexWait;
+                Dirty(caster, hexBook);
+            }
+
+            var cast = new CFHexCastEvent(spell);
+            RaiseLocalEvent(caster, ref cast);
+        }
 
         if (!_spellshapes.IsSubtle(caster))
         {
@@ -544,6 +578,9 @@ public sealed partial class CFSpellSystem : EntitySystem
     {
         // A battle form cannot cast.
         if (HasComp<CFBattleFormComponent>(caster))
+            return false;
+
+        if (!HexReady(caster) && IsHex(spell))
             return false;
 
         // A running spell that can be moved stays usable, to move it.

@@ -40,10 +40,13 @@
   features:
     - level: 1
       name: "Familiar (Witch)"
-      description: "Your patron's familiar. Pick it on the Pet tab. It follows you and does not fight. Its familiar abilities and your patron's gift: TBA"
+      description: "Your patron's familiar. Pick it on the Pet tab. It follows you and does not fight. Your patron's gift works through it each time you cast a hex. Its familiar abilities: TBA"
     - level: 1
       name: "Hexes"
-      description: "Hex spells: TBA"
+      description: "Your patron gives you a hex cantrip, which costs nothing. You can cast one hex every 6 seconds. You have 1 Focus Point for the hexes that lessons teach. The phase familiar hex: TBA"
+      grants:
+        - !type:CFGrantFocusPoints
+          count: 1
     - level: 1
       name: "Patron"
       description: "Choose yours with the Patron button."

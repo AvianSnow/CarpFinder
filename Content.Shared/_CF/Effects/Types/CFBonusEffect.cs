@@ -28,6 +28,13 @@ public sealed partial class CFBonusEffect : CFEffect
     [DataField]
     public ProtoId<CFTraitPrototype>? Trait;
 
+    /// <summary>
+    /// The trait comes from the mode chosen on the source's <c>CFModeChoice</c>: mode 1 is the first entry (Blood Ward's
+    /// choice of creature).
+    /// </summary>
+    [DataField]
+    public List<ProtoId<CFTraitPrototype>> ModeTraits = new();
+
     /// <summary>When set with <see cref="CFBonusStat.SkillChecks"/>, the bonus only counts for this skill.</summary>
     [DataField]
     public ProtoId<CFAbilitySkillPrototype>? Skill;
@@ -46,8 +53,17 @@ public sealed partial class CFBonusEffect : CFEffect
             return;
 
         var value = Value + HeightenValue * args.HeightenSteps;
+        var trait = Trait;
+        if (ModeTraits.Count > 0
+            && entities.TryGetComponent(args.Source, out CFModeChoiceComponent? mode)
+            && mode.Chosen >= 1
+            && mode.Chosen <= ModeTraits.Count)
+        {
+            trait = ModeTraits[mode.Chosen - 1];
+        }
+
         var source = entities.System<CFCounteractSystem>().Note(args, target, DurationSeconds, bonus: true);
-        entities.System<CFBonusSystem>().AddBonus(target, Stat, Type, value, DurationSeconds, Trait, Skill?.Id, source);
+        entities.System<CFBonusSystem>().AddBonus(target, Stat, Type, value, DurationSeconds, trait, Skill?.Id, source);
         if (Popup != null)
             entities.System<SharedPopupSystem>().PopupEntity(Loc.GetString(Popup), target);
     }

@@ -68,16 +68,19 @@ public sealed partial class CFHurledWeaponEffect : CFEffect
     }
 }
 
-/// <summary>The target takes a circumstance penalty to attack rolls against the user for 6 seconds (Charming Push).</summary>
+/// <summary>The target takes a penalty to attack rolls against the user for 6 seconds (Charming Push), or longer (Wilding Word).</summary>
 public sealed partial class CFOverextendEffect : CFEffect
 {
     [DataField]
     public int Penalty = 2;
 
+    [DataField]
+    public float DurationSeconds = 6f;
+
     public override void Apply(IEntityManager entities, CFEffectArgs args)
     {
         if (args.Target is { } target && target != args.User)
-            entities.System<CFConditionSystem>().Overextend(target, args.User, once: false, Penalty);
+            entities.System<CFConditionSystem>().Overextend(target, args.User, once: false, Penalty, DurationSeconds);
     }
 }
 

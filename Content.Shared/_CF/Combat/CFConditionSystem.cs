@@ -235,6 +235,35 @@ public sealed partial class CFConditionSystem : EntitySystem
         return TryComp(uid, out CFConditionComponent? cond) ? cond.Frightened : 0;
     }
 
+    public void NudgeFate(EntityUid target, float seconds)
+    {
+        Ensure(target).NudgedUntil = _timing.CurTime + TimeSpan.FromSeconds(seconds);
+    }
+
+    /// <summary>
+    /// Nudge Fate's +1 status bonus, if the creature has it and it would turn this result into a better one. It is used
+    /// up when it does. A creature that already has a status bonus that large gains nothing.
+    /// </summary>
+    public CFDegree TryNudge(EntityUid uid, CFBonusStat stat, int d20, int modifier, int dc, ref int total, CFDegree degree)
+    {
+        if (!TryComp(uid, out CFConditionComponent? cond)
+            || _timing.CurTime >= cond.NudgedUntil
+            || degree.IsSuccess()
+            || _bonuses.TotalOfType(uid, stat, CFBonusType.Status) >= 1)
+        {
+            return degree;
+        }
+
+        var nudged = CFDegrees.DegreeOfSuccess(d20, modifier + 1, dc);
+        if (nudged <= degree)
+            return degree;
+
+        cond.NudgedUntil = TimeSpan.Zero;
+        total += 1;
+        _popup.PopupEntity(Loc.GetString("cf-hex-nudge-fate"), uid);
+        return nudged;
+    }
+
     public void ApplyFrightened(EntityUid target, int value)
     {
         if (CompOrNull<CFCombatOptionsComponent>(target)?.Bravery == true && --value <= 0)
@@ -860,10 +889,10 @@ public sealed partial class CFConditionSystem : EntitySystem
 
     /// <summary>The attacker takes -2 circumstance to attack rolls against <paramref name="against"/>, once or for 6 seconds.</summary>
     /// <param name="penalty">How much, as a positive number. 2 for Overextending Feint, 1 for Charming Push.</param>
-    public void Overextend(EntityUid attacker, EntityUid against, bool once, int penalty = 2)
+    public void Overextend(EntityUid attacker, EntityUid against, bool once, int penalty = 2, float seconds = TurnSeconds)
     {
         var cond = Ensure(attacker);
-        cond.OverextendedUntil[against] = _timing.CurTime + TimeSpan.FromSeconds(TurnSeconds);
+        cond.OverextendedUntil[against] = _timing.CurTime + TimeSpan.FromSeconds(seconds);
         if (penalty == 2)
             cond.OverextendedPenalty.Remove(against);
         else

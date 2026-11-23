@@ -5,6 +5,20 @@
   slot: cf-class-choice-patron
   name: cf-class-choice-patron-faiths-flamekeeper
   description: cf-class-choice-patron-faiths-flamekeeper-desc
+  tradition: Divine
+  trainedSkills:
+  - Religion
+  grants:
+  - !type:CFGrantSpell
+    spell: StokeTheHeart
+  - !type:CFGrantFamiliarGift
+    gift:
+      target: Ally
+      effects:
+      - !type:CFTemporaryHpEffect
+        amount: 2
+        halfLevel: true
+        durationSeconds: 6
 
 - type: cfClassChoice
   id: PatronInscribedOne
@@ -12,6 +26,12 @@
   slot: cf-class-choice-patron
   name: cf-class-choice-patron-inscribed-one
   description: cf-class-choice-patron-inscribed-one-desc
+  tradition: Arcane
+  trainedSkills:
+  - Arcana
+  grants:
+  - !type:CFGrantSpell
+    spell: DiscernSecrets
 
 - type: cfClassChoice
   id: PatronResentment
@@ -19,6 +39,12 @@
   slot: cf-class-choice-patron
   name: cf-class-choice-patron-resentment
   description: cf-class-choice-patron-resentment-desc
+  tradition: Occult
+  trainedSkills:
+  - Occultism
+  grants:
+  - !type:CFGrantSpell
+    spell: EvilEye
 
 - type: cfClassChoice
   id: PatronSilenceInSnow
@@ -26,6 +52,21 @@
   slot: cf-class-choice-patron
   name: cf-class-choice-patron-silence-in-snow
   description: cf-class-choice-patron-silence-in-snow-desc
+  tradition: Primal
+  trainedSkills:
+  - Nature
+  grants:
+  - !type:CFGrantSpell
+    spell: ClingingIce
+  - !type:CFGrantFamiliarGift
+    gift:
+      target: Familiar
+      effects:
+      - !type:CFFillEffect
+        shape: Burst
+        sizeFeet: 5
+        tile: CFFillSnowdrift
+        lingerSeconds: 6
 
 - type: cfClassChoice
   id: PatronSpinnerOfThreads
@@ -33,6 +74,20 @@
   slot: cf-class-choice-patron
   name: cf-class-choice-patron-spinner-of-threads
   description: cf-class-choice-patron-spinner-of-threads-desc
+  tradition: Occult
+  trainedSkills:
+  - Occultism
+  grants:
+  - !type:CFGrantSpell
+    spell: NudgeFate
+  - !type:CFGrantFamiliarGift
+    gift:
+      target: Enemy
+      effects:
+      - !type:CFBonusEffect
+        stat: ArmorClass
+        value: -1
+        durationSeconds: 6
 
 - type: cfClassChoice
   id: PatronStarlessShadow
@@ -40,6 +95,12 @@
   slot: cf-class-choice-patron
   name: cf-class-choice-patron-starless-shadow
   description: cf-class-choice-patron-starless-shadow-desc
+  tradition: Occult
+  trainedSkills:
+  - Occultism
+  grants:
+  - !type:CFGrantSpell
+    spell: ShroudOfNight
 
 - type: cfClassChoice
   id: PatronWildingSteward
@@ -47,4 +108,10 @@
   slot: cf-class-choice-patron
   name: cf-class-choice-patron-wilding-steward
   description: cf-class-choice-patron-wilding-steward-desc
+  tradition: Primal
+  trainedSkills:
+  - Nature
+  grants:
+  - !type:CFGrantSpell
+    spell: WildingWord
 

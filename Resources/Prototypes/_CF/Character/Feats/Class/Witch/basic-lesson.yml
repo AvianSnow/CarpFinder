@@ -8,4 +8,18 @@
   level: 2
   traits:
     - "Witch"
-  pendingAction: true
+  choices:
+    - kind: Named
+      options: [ LessonLife, LessonProtection, LessonDreams ]
+  grants:
+    - !type:CFGrantChosen
+      options:
+        LessonLife:
+          - !type:CFGrantFocusSpell
+            spell: LifeBoost
+        LessonProtection:
+          - !type:CFGrantFocusSpell
+            spell: BloodWard
+        LessonDreams:
+          - !type:CFGrantFocusSpell
+            spell: VeilOfDreams

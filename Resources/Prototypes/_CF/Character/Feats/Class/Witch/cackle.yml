@@ -8,3 +8,6 @@
   level: 1
   traits:
     - "Witch"
+  grants:
+    - !type:CFGrantFocusPoints
+      count: 1

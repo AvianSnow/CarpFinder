@@ -66,19 +66,19 @@ cf-class-choice-school-unified-theory-desc = No curriculum. You know Hand of the
 
 cf-class-choice-patron = Patron
 cf-class-choice-patron-faiths-flamekeeper = Faith's Flamekeeper
-cf-class-choice-patron-faiths-flamekeeper-desc = The patron's tradition, hex cantrip and familiar gift: TBA
+cf-class-choice-patron-faiths-flamekeeper-desc = Divine magic. Trained in Religion. The stoke the heart hex cantrip. Each time you cast a hex, the most hurt of you and your allies within 15 feet of your familiar gains temporary Hit Points equal to 2 plus half your level for 6 seconds. Your familiar learning command: TBA
 cf-class-choice-patron-inscribed-one = The Inscribed One
-cf-class-choice-patron-inscribed-one-desc = The patron's tradition, hex cantrip and familiar gift: TBA
+cf-class-choice-patron-inscribed-one-desc = Arcane magic. Trained in Arcana. The discern secrets hex cantrip. Your familiar giving flanking when you cast a hex, and learning runic weapon: TBA
 cf-class-choice-patron-resentment = The Resentment
-cf-class-choice-patron-resentment-desc = The patron's tradition, hex cantrip and familiar gift: TBA
+cf-class-choice-patron-resentment-desc = Occult magic. Trained in Occultism. The evil eye hex cantrip. Your familiar prolonging a condition when you cast a hex, and learning enfeeble: TBA
 cf-class-choice-patron-silence-in-snow = Silence in Snow
-cf-class-choice-patron-silence-in-snow-desc = The patron's tradition, hex cantrip and familiar gift: TBA
+cf-class-choice-patron-silence-in-snow-desc = Primal magic. Trained in Nature. The clinging ice hex cantrip. Each time you cast a hex, ice forms around your familiar: difficult terrain for 6 seconds. Your familiar learning gust of wind: TBA
 cf-class-choice-patron-spinner-of-threads = Spinner of Threads
-cf-class-choice-patron-spinner-of-threads-desc = The patron's tradition, hex cantrip and familiar gift: TBA
+cf-class-choice-patron-spinner-of-threads-desc = Occult magic. Trained in Occultism. The nudge fate hex cantrip. Each time you cast a hex, the enemy nearest your familiar within 15 feet takes -1 status to AC for 6 seconds. Choosing +1 AC for an ally instead, and your familiar learning sure strike: TBA
 cf-class-choice-patron-starless-shadow = Starless Shadow
-cf-class-choice-patron-starless-shadow-desc = The patron's tradition, hex cantrip and familiar gift: TBA
+cf-class-choice-patron-starless-shadow-desc = Occult magic. Trained in Occultism. The shroud of night hex cantrip. Your familiar frightening an enemy it is hidden from when you cast a hex, and learning fear: TBA
 cf-class-choice-patron-wilding-steward = Wilding Steward
-cf-class-choice-patron-wilding-steward-desc = The patron's tradition, hex cantrip and familiar gift: TBA
+cf-class-choice-patron-wilding-steward-desc = Primal magic. Trained in Nature. The wilding word hex cantrip. Your familiar's keen senses when you cast a hex, and learning summon animal: TBA
 
 cf-class-choice-instinct = Instinct
 cf-class-choice-instinctanimal = Animal

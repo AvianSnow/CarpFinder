@@ -8,4 +8,24 @@
   level: 1
   traits:
     - "Witch"
-  pendingAction: true
+  choices:
+    - kind: Named
+      options: [ ArmamentNails, ArmamentTeeth, ArmamentHair ]
+  grants:
+    - !type:CFGrantChosen
+      options:
+        ArmamentNails:
+          - !type:CFGrantUnarmedAttack
+            die: 6
+            damageType: Slashing
+            agile: true
+        ArmamentTeeth:
+          - !type:CFGrantUnarmedAttack
+            die: 8
+            damageType: Piercing
+        ArmamentHair:
+          - !type:CFGrantUnarmedAttack
+            die: 4
+            damageType: Bludgeoning
+            agile: true
+            finesse: true

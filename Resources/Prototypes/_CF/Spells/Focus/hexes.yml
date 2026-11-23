@@ -1,0 +1,473 @@
+# Witch hexes (Player Core). A hex is a spell whose cfSpell has the Hex trait: CFSpellSystem lets a caster cast one every
+# 6 seconds, and CFWitchSystem runs the familiar's gift when one is cast. Hex cantrips cost nothing. The rules sustain most
+# of these for up to a minute: here each simply lasts its minute.
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFStokeTheHeart
+  name: Stoke the Heart
+  description: "A hex cantrip. A creature within 30 feet gets +2 status to damage rolls for a minute, and 1 more at levels 5 and 9. One hex every 6 seconds."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: StokeTheHeart
+    rank: 0
+  - type: CFTargeting
+    rangeFeet: 30
+    filter: Allies
+  - type: CFHeighten
+    baseRank: 1
+    interval: 2
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: Damage
+      value: 2
+      heightenValue: 1
+      durationSeconds: 60
+  - type: EntityTargetAction
+    canTargetSelf: true
+
+- type: cfSpell
+  id: StokeTheHeart
+  name: Stoke the Heart
+  rank: 1
+  traits: [Cantrip, Concentrate, Emotion, Hex]
+  actionCost: One
+  range: 30 feet
+  targets: 1 creature
+  duration: 1 minute
+  summary: "The target gains a +2 status bonus to damage rolls."
+  heightened: "The bonus increases by 1 every 2 ranks."
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFDiscernSecrets
+  name: Discern Secrets
+  description: "A hex cantrip. A creature within 30 feet gets +1 status to Perception and skill checks for a minute. One hex every 6 seconds."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: DiscernSecrets
+    rank: 0
+  - type: CFTargeting
+    rangeFeet: 30
+    filter: Allies
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: Perception
+      value: 1
+      durationSeconds: 60
+    - !type:CFBonusEffect
+      stat: SkillChecks
+      value: 1
+      durationSeconds: 60
+  - type: EntityTargetAction
+    canTargetSelf: true
+
+- type: cfSpell
+  id: DiscernSecrets
+  name: Discern Secrets
+  rank: 1
+  traits: [Cantrip, Hex, Manipulate]
+  actionCost: One
+  range: 30 feet
+  targets: 1 creature
+  duration: 1 minute
+  summary: "The target gains a +1 status bonus to Perception and skill checks. The free Recall Knowledge, Seek or Sense Motive is TBA."
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFEvilEye
+  name: Evil Eye
+  description: "A hex cantrip. A creature within 30 feet rolls Will: sickened 1 for a minute on a failure, sickened 2 on a critical failure. One hex every 6 seconds."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: EvilEye
+    rank: 0
+  - type: CFTargeting
+    rangeFeet: 30
+    filter: Enemies
+  - type: CFCheck
+    defense: Will
+    basicSave: false
+  - type: CFDegreeEffects
+    failure:
+    - !type:CFApplyConditionEffect
+      condition: Sickened
+      value: 1
+      durationSeconds: 60
+    criticalFailure:
+    - !type:CFApplyConditionEffect
+      condition: Sickened
+      value: 2
+      durationSeconds: 60
+
+- type: cfSpell
+  id: EvilEye
+  name: Evil Eye
+  rank: 1
+  traits: [Cantrip, Curse, Hex, Manipulate]
+  actionCost: One
+  range: 30 feet
+  targets: 1 creature
+  duration: 1 minute
+  summary: "The target is sickened 1 on a failed Will save, or sickened 2 on a critical failure."
+  defense: Will
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFClingingIce
+  name: Clinging Ice
+  description: "A hex cantrip. 1d4 cold to a creature within 30 feet, basic Reflex. On a failure it also loses 5 feet of Speed for a minute, 10 on a critical failure. One hex every 6 seconds."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: ClingingIce
+    rank: 0
+  - type: CFTargeting
+    rangeFeet: 30
+    filter: Enemies
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFCheck
+    defense: Reflex
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 4
+      damageType: Cold
+      heightenDice: 1
+    failure:
+    - !type:CFBonusEffect
+      stat: Speed
+      type: Circumstance
+      value: -5
+      durationSeconds: 60
+    criticalFailure:
+    - !type:CFBonusEffect
+      stat: Speed
+      type: Circumstance
+      value: -10
+      durationSeconds: 60
+
+- type: cfSpell
+  id: ClingingIce
+  name: Clinging Ice
+  rank: 1
+  traits: [Cantrip, Cold, Hex, Manipulate]
+  actionCost: One
+  range: 30 feet
+  targets: 1 creature
+  duration: 1 minute
+  summary: "1d4 cold damage. On a failure the target also takes a -5-foot circumstance penalty to Speed, or -10 on a critical failure."
+  defense: basic Reflex
+  heightened: "Damage increases by 1d4 per rank."
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFNudgeFate
+  name: Nudge Fate
+  description: "A hex cantrip. For a minute, the next saving throw or skill check a creature within 30 feet would fail by 1 gets +1 status, once. One hex every 6 seconds."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: NudgeFate
+    rank: 0
+  - type: CFTargeting
+    rangeFeet: 30
+    filter: Allies
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFNudgeFateEffect {}
+  - type: EntityTargetAction
+    canTargetSelf: true
+
+- type: cfSpell
+  id: NudgeFate
+  name: Nudge Fate
+  rank: 1
+  traits: [Cantrip, Concentrate, Hex]
+  actionCost: One
+  range: 30 feet
+  targets: 1 creature
+  duration: 1 minute
+  summary: "When the target fails a save or skill check that a +1 status bonus would improve, it gets that bonus, and the spell ends. Attack rolls are TBA."
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFShroudOfNight
+  name: Shroud of Night
+  description: "A hex cantrip. A creature within 30 feet rolls Will. On a failure it is dazzled for a minute: everything is concealed to it. One hex every 6 seconds."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: ShroudOfNight
+    rank: 0
+  - type: CFTargeting
+    rangeFeet: 30
+    filter: Enemies
+  - type: CFCheck
+    defense: Will
+    basicSave: false
+  - type: CFDegreeEffects
+    failure:
+    - !type:CFApplyConditionEffect
+      condition: Dazzled
+      durationSeconds: 60
+    criticalFailure:
+    - !type:CFApplyConditionEffect
+      condition: Dazzled
+      durationSeconds: 60
+
+- type: cfSpell
+  id: ShroudOfNight
+  name: Shroud of Night
+  rank: 1
+  traits: [Cantrip, Darkness, Hex, Manipulate]
+  actionCost: One
+  range: 30 feet
+  targets: 1 creature
+  duration: 1 minute
+  summary: "On a failed Will save, all creatures are concealed to the target. Dimming the light it sees is TBA."
+  defense: Will
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFWildingWord
+  name: Wilding Word
+  description: "A hex cantrip. A creature within 30 feet rolls Will. Unless it critically succeeds it takes -2 to attack rolls against you for a minute. One hex every 6 seconds."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: WildingWord
+    rank: 0
+  - type: CFTargeting
+    rangeFeet: 30
+    filter: Enemies
+  - type: CFCheck
+    defense: Will
+    basicSave: false
+  - type: CFDegreeEffects
+    success:
+    - !type:CFOverextendEffect
+      durationSeconds: 60
+    failure:
+    - !type:CFOverextendEffect
+      durationSeconds: 60
+    criticalFailure:
+    - !type:CFOverextendEffect
+      durationSeconds: 60
+
+- type: cfSpell
+  id: WildingWord
+  name: Wilding Word
+  rank: 1
+  traits: [Cantrip, Hex, Mental]
+  actionCost: One
+  range: 30 feet
+  targets: 1 creature
+  duration: 1 minute
+  summary: "Unless it critically succeeds at a Will save, the target takes a -2 penalty to attack rolls against you. Becoming sickened when it damages you is TBA."
+  defense: Will
+
+# Lesson hexes: focus spells from the Basic Lesson feat.
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFLifeBoost
+  name: Life Boost
+  description: "A hex. You or an ally within 30 feet regains 2 Hit Points every 6 seconds for 24 seconds, 2 more per rank. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: LifeBoost
+    rank: 0
+    focus: true
+    sustained: true
+    sustainSeconds: 24
+  - type: CFTargeting
+    rangeFeet: 30
+    filter: Allies
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFHealEffect
+      flat: 2
+      heightenFlat: 2
+  - type: EntityTargetAction
+    canTargetSelf: true
+
+- type: cfSpell
+  id: LifeBoost
+  name: Life Boost
+  rank: 1
+  traits: [Healing, Hex, Manipulate, Vitality]
+  actionCost: One
+  range: 30 feet
+  targets: 1 creature
+  duration: 4 rounds
+  summary: "The target gains fast healing 2."
+  heightened: "The fast healing increases by 2 per rank."
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFBloodWard
+  name: Blood Ward
+  description: "A hex. Pick a kind of creature. You or an ally within 30 feet gets +1 status to AC and saves against that kind for a minute. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: BloodWard
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+    filter: Allies
+  - type: CFModeChoice
+    modes:
+    - { value: 1, name: cf-mode-ward-aberration, tooltip: cf-mode-ward-desc, actions: 1 }
+    - { value: 2, name: cf-mode-ward-animal, tooltip: cf-mode-ward-desc, actions: 1 }
+    - { value: 3, name: cf-mode-ward-beast, tooltip: cf-mode-ward-desc, actions: 1 }
+    - { value: 4, name: cf-mode-ward-celestial, tooltip: cf-mode-ward-desc, actions: 1 }
+    - { value: 5, name: cf-mode-ward-construct, tooltip: cf-mode-ward-desc, actions: 1 }
+    - { value: 6, name: cf-mode-ward-dragon, tooltip: cf-mode-ward-desc, actions: 1 }
+    - { value: 7, name: cf-mode-ward-elemental, tooltip: cf-mode-ward-desc, actions: 1 }
+    - { value: 8, name: cf-mode-ward-fey, tooltip: cf-mode-ward-desc, actions: 1 }
+    - { value: 9, name: cf-mode-ward-fiend, tooltip: cf-mode-ward-desc, actions: 1 }
+    - { value: 10, name: cf-mode-ward-fungus, tooltip: cf-mode-ward-desc, actions: 1 }
+    - { value: 11, name: cf-mode-ward-monitor, tooltip: cf-mode-ward-desc, actions: 1 }
+    - { value: 12, name: cf-mode-ward-ooze, tooltip: cf-mode-ward-desc, actions: 1 }
+    - { value: 13, name: cf-mode-ward-plant, tooltip: cf-mode-ward-desc, actions: 1 }
+    - { value: 14, name: cf-mode-ward-undead, tooltip: cf-mode-ward-desc, actions: 1 }
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFBonusEffect
+      stat: ArmorClass
+      value: 1
+      durationSeconds: 60
+      modeTraits: [ Aberration, Animal, Beast, Celestial, Construct, Dragon, Elemental, Fey, Fiend, Fungus, Monitor, Ooze, Plant, Undead ]
+    - !type:CFBonusEffect
+      stat: Saves
+      value: 1
+      durationSeconds: 60
+      modeTraits: [ Aberration, Animal, Beast, Celestial, Construct, Dragon, Elemental, Fey, Fiend, Fungus, Monitor, Ooze, Plant, Undead ]
+  - type: EntityTargetAction
+    canTargetSelf: true
+
+- type: cfSpell
+  id: BloodWard
+  name: Blood Ward
+  rank: 1
+  traits: [Hex, Manipulate]
+  actionCost: One
+  range: 30 feet
+  targets: 1 creature
+  duration: 1 minute
+  summary: "The target gains a +1 status bonus to AC and saves against creatures with a trait you choose."
+
+- type: entity
+  parent: CFSpellTarget
+  id: CFVeilOfDreams
+  name: Veil of Dreams
+  description: "A hex. A creature within 30 feet rolls Will. Unless it critically succeeds it takes -1 status to Perception, attack rolls and Will saves for a minute. Costs a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+    actions: 1
+  - type: CFSpell
+    spell: VeilOfDreams
+    rank: 0
+    focus: true
+  - type: CFTargeting
+    rangeFeet: 30
+    filter: Enemies
+  - type: CFCheck
+    defense: Will
+    basicSave: false
+  - type: CFDegreeEffects
+    success:
+    - !type:CFBonusEffect
+      stat: Perception
+      value: -1
+      durationSeconds: 60
+    - !type:CFBonusEffect
+      stat: AttackRoll
+      value: -1
+      durationSeconds: 60
+    - !type:CFBonusEffect
+      stat: Will
+      value: -1
+      durationSeconds: 60
+    failure:
+    - !type:CFBonusEffect
+      stat: Perception
+      value: -1
+      durationSeconds: 60
+    - !type:CFBonusEffect
+      stat: AttackRoll
+      value: -1
+      durationSeconds: 60
+    - !type:CFBonusEffect
+      stat: Will
+      value: -1
+      durationSeconds: 60
+    criticalFailure:
+    - !type:CFBonusEffect
+      stat: Perception
+      value: -1
+      durationSeconds: 60
+    - !type:CFBonusEffect
+      stat: AttackRoll
+      value: -1
+      durationSeconds: 60
+    - !type:CFBonusEffect
+      stat: Will
+      value: -1
+      durationSeconds: 60
+
+- type: cfSpell
+  id: VeilOfDreams
+  name: Veil of Dreams
+  rank: 1
+  traits: [Hex, Manipulate, Mental]
+  actionCost: One
+  range: 30 feet
+  targets: 1 creature
+  duration: 1 minute
+  summary: "Unless it critically succeeds at a Will save, the target takes a -1 status penalty to Perception, attack rolls and Will saves. Disrupted concentrate actions are TBA."
+  defense: Will

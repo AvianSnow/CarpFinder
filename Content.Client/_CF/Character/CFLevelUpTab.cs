@@ -447,6 +447,9 @@ public sealed partial class CFLevelUpTab : BoxContainer
         if (value.StartsWith(CFOptionChoices.SignaturePrefix, StringComparison.Ordinal))
             value = value[CFOptionChoices.SignaturePrefix.Length..];
 
+        if (value.StartsWith(CFOptionChoices.NamedPrefix, StringComparison.Ordinal))
+            return Loc.GetString(CFOptionChoices.NamedLabel(value));
+
         if (_prototypes.TryIndex<CFSpellPrototype>(value, out var spell))
             return spell.Name;
 

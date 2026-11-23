@@ -85,6 +85,10 @@ public sealed partial class CFConditionComponent : Component
     /// <summary>Creatures that Feinted this one: their melee attacks find it off-guard until the time.</summary>
     public Dictionary<EntityUid, TimeSpan> FeintedUntil = new();
 
+    /// <summary>Nudge Fate: until this time, the next save or skill check a +1 would improve gets it. Server-only.</summary>
+    [DataField]
+    public TimeSpan NudgedUntil;
+
     /// <summary>Of <see cref="FeintedUntil"/>, the Feints that end with that creature's next melee attack.</summary>
     public HashSet<EntityUid> FeintedOnce = new();
 

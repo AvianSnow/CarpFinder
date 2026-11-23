@@ -286,6 +286,10 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
                 continue;
             }
 
+            // Read by the grant that asked for it, such as CFGrantChosen.
+            if (pick.Value.StartsWith(CFOptionChoices.NamedPrefix, StringComparison.Ordinal))
+                continue;
+
             if (_prototypes.HasIndex<CFSpellPrototype>(pick.Value))
             {
                 GrantSpell(mob, pick.Value);

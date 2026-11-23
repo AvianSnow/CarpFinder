@@ -33,6 +33,10 @@ public sealed partial class CFSpellbookComponent : Component
     [DataField, AutoNetworkedField]
     public TimeSpan DrainUntil;
 
+    /// <summary>A Witch casts one hex a turn: no hex can be cast before this time.</summary>
+    [DataField, AutoNetworkedField]
+    public TimeSpan HexReadyAt;
+
     /// <summary>A prepared caster spends a charge of the exact spell. Anyone else spends a slot of the rank.</summary>
     [DataField, AutoNetworkedField]
     public bool Prepared;

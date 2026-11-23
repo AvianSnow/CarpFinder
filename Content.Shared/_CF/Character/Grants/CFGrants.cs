@@ -984,3 +984,46 @@ public sealed partial class CFGrantLanguage : CFGrant
         entities.Dirty(args.Mob, languages);
     }
 }
+
+/// <summary>
+/// More grants, by what the player picked for a <c>Named</c> choice: a Witch's lesson gives its hex, an armament its attack.
+/// Keys are the choice's <c>options</c>. Nothing happens until a pick is made.
+/// </summary>
+public sealed partial class CFGrantChosen : CFGrant
+{
+    [DataField(required: true)]
+    public Dictionary<string, List<CFGrant>> Options = new();
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        var features = entities.System<CFCharacterFeatureSystem>();
+        if (features.Pick(args.Mob, args.Source) is not { } pick
+            || !pick.StartsWith(CFOptionChoices.NamedPrefix, StringComparison.Ordinal))
+        {
+            return;
+        }
+
+        var name = pick[CFOptionChoices.NamedPrefix.Length..];
+        if (Options.TryGetValue(name, out var grants))
+        {
+            // A source of its own: the option's own source has already run, and Apply runs each source once.
+            features.Apply(args.Mob, grants, $"{args.Source}:pick:{name}");
+        }
+    }
+}
+
+/// <summary>
+/// A Witch's familiar gift: each time the Witch casts a hex, these effects run on a creature near the familiar, or where
+/// the familiar stands. See <c>CFWitchSystem</c>.
+/// </summary>
+public sealed partial class CFGrantFamiliarGift : CFGrant
+{
+    [DataField(required: true)]
+    public Content.Shared.CF.Spells.CFFamiliarGift Gift = new();
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        var witch = entities.EnsureComponent<Content.Shared.CF.Spells.CFWitchComponent>(args.Mob);
+        witch.Gifts.Add(Gift);
+    }
+}

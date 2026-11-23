@@ -34,6 +34,12 @@ public enum CFOptionChoiceKind : byte
     /// deity's, and <see cref="CFOptionChoice.AnyDomain"/> offers them all.
     /// </summary>
     Domain,
+
+    /// <summary>
+    /// One of <see cref="CFOptionChoice.Options"/>, a plain list of names (a Witch's lesson or armament). A grant such as
+    /// <c>CFGrantChosen</c> reads the pick. Each needs a <c>cf-pick-*</c> name in the locale.
+    /// </summary>
+    Named,
 }
 
 /// <summary>
@@ -96,6 +102,10 @@ public sealed partial class CFOptionChoice
     /// </summary>
     [DataField]
     public bool JoinsSubclass;
+
+    /// <summary>What a <see cref="CFOptionChoiceKind.Named"/> choice can be answered with.</summary>
+    [DataField]
+    public List<string> Options = new();
 
     /// <summary>A <see cref="CFOptionChoiceKind.Domain"/> choice offers every domain, not only the deity's (Splinter Faith).</summary>
     [DataField]

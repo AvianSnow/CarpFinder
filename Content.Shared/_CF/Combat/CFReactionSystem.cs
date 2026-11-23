@@ -928,6 +928,8 @@ public sealed partial class CFReactionSystem : EntitySystem
         if (defense is not (CFDefenseType.Fortitude or CFDefenseType.Reflex or CFDefenseType.Will))
             return degree;
 
+        degree = _conditions.TryNudge(uid, CFBonusStat.Saves, d20, modifier, dc, ref total, degree);
+
         // An ally's reaction can still help a creature that has none of its own.
         if (!TryComp(uid, out CFReactionsComponent? reactions))
             return AnswerAllySave(uid, degree, traits);
@@ -1095,6 +1097,7 @@ public sealed partial class CFReactionSystem : EntitySystem
         ref int total,
         CFDegree degree)
     {
+        degree = _conditions.TryNudge(uid, CFBonusStat.SkillChecks, d20, modifier, dc, ref total, degree);
         if (degree == CFDegree.CriticalSuccess || !TryComp(uid, out CFReactionsComponent? reactions))
             return degree;
 

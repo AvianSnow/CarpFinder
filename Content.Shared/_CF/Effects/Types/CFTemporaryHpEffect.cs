@@ -12,6 +12,10 @@ public sealed partial class CFTemporaryHpEffect : CFEffect
     [DataField]
     public int PerLevel;
 
+    /// <summary>Half the user's level more, rounded down (a Witch's Restored Spirit).</summary>
+    [DataField]
+    public bool HalfLevel;
+
     [DataField]
     public float DurationSeconds = 60f;
 
@@ -27,7 +31,7 @@ public sealed partial class CFTemporaryHpEffect : CFEffect
     {
         var target = args.Target ?? args.User;
         var level = entities.GetComponentOrNull<CFCombatantComponent>(args.User)?.Level ?? 1;
-        var amount = Amount + HeightenAmount * args.HeightenSteps + PerLevel * level;
+        var amount = Amount + HeightenAmount * args.HeightenSteps + PerLevel * level + (HalfLevel ? level / 2 : 0);
         if (FromTargetLevel)
         {
             amount += entities.GetComponentOrNull<CFCombatantComponent>(target)?.Level ?? 0;

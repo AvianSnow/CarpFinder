@@ -152,6 +152,10 @@ Class examples: `CFMySystem`, `CFMyServerSystem`, `CFMyClientSystem`, `CFExample
 | An option that gives an animal companion, a familiar or a construct companion | `!type:CFGrantPet` with `kind`. `CFPetMath.BuildGrants` reads it, and the server spawns the body with the character |
 | Something about a deity's favored weapon | `favored: true` on the deity's `CFGrantWeaponFamiliarity`, read from `CFCombatant.FavoredWeapons`. Who follows whom is `CFEmblazonSystem.DeityOf` |
 | A feat that joins another subclass option (Order Explorer) | `joinsSubclass: true` on a `Feat` choice: it offers the feats of options the build lacks, and `CFClassChoices.Joined` then counts the build as having that option. `feats` on a `Feat` choice limits it to a list. A spell by that pick is `!type:CFGrantChosenFocusSpell` with `pickOf` |
+| A choice from a plain list of names, and what each gives | `kind: Named` with `options` in `choices`, a `cf-pick-<name>` line in the locale, and `!type:CFGrantChosen` with the grants of each option (Basic Lesson, Witch's Armaments). Read a pick with `CFOptionChoices.NamedPrefix` in mind: it is stored as `pick:Name` |
+| A hex | A spell in `Spells/Focus/hexes.yml` whose `cfSpell` has the `Hex` trait. `CFSpellSystem` allows one every 6 seconds and raises `CFHexCastEvent`. A hex cantrip has no `focus: true` and is given with `CFGrantSpell` |
+| What a Witch's familiar does when a hex is cast | `!type:CFGrantFamiliarGift` with a `gift` (`target`: `Ally`, `Enemy` or `Familiar`, `rangeFeet`, `effects`). `CFWitchSystem` runs it |
+| A bonus against a kind of creature chosen on the wheel | `modeTraits` on `!type:CFBonusEffect`, one trait per `CFModeChoice` mode (Blood Ward) |
 | A language from a class or a feat | `!type:CFGrantLanguage`. A `language` with `rarity: Rare` cannot be picked, as Wildsong |
 | A spell that only works on some creatures | `targetTraits` on `CFTargeting` (Heal Animal: `Animal`) |
 | Something that needs a morph or polymorph effect | `CFMorphs.IsMorphed`: a battle form or an animal Rage. `needsMorph`, `sameTarget` and `unarmedTypes` on a `CFStrikeAction`, `whileMorphed` on a `CFReaction` |

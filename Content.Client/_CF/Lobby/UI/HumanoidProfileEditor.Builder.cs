@@ -257,6 +257,9 @@ public sealed partial class HumanoidProfileEditor
         if (value.StartsWith(CFOptionChoices.SignaturePrefix, StringComparison.Ordinal))
             value = value[CFOptionChoices.SignaturePrefix.Length..];
 
+        if (value.StartsWith(CFOptionChoices.NamedPrefix, StringComparison.Ordinal))
+            return Loc.GetString(CFOptionChoices.NamedLabel(value));
+
         if (_prototypeManager.TryIndex<CFSpellPrototype>(value, out var spell))
             return spell.Name;
 
@@ -328,6 +331,7 @@ public sealed partial class HumanoidProfileEditor
                     CFOptionChoiceKind.DamageType => "cf-character-builder-option-damage-type",
                     CFOptionChoiceKind.Terrain => "cf-character-builder-option-terrain",
                     CFOptionChoiceKind.Domain => "cf-character-builder-option-domain",
+                    CFOptionChoiceKind.Named => "cf-character-builder-option-named",
                     _ => "cf-character-builder-option-skill",
                 }),
                 Allowed = allowed,

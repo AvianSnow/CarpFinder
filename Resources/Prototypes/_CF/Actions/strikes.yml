@@ -476,3 +476,30 @@
       condition: Stupefied
       value: 3
       durationSeconds: 6
+
+# Witch: a Strike with a witch's armament that opens the target to hexes.
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActSympatheticStrike
+  name: Sympathetic Strike
+  description: An unarmed Strike with your witch's armament. On a hit the target takes -1 circumstance to saves against hexes for 6 seconds, or -2 on a critical hit. Once every 6 seconds.
+  components:
+  - type: Action
+    useDelay: 6
+  - type: CFStrikeAction
+    unarmedOnly: true
+    effectsNeedDamage: false
+    onHit:
+    - !type:CFBonusEffect
+      stat: Saves
+      type: Circumstance
+      value: -1
+      trait: Hex
+      durationSeconds: 6
+    onCritical:
+    - !type:CFBonusEffect
+      stat: Saves
+      type: Circumstance
+      value: -2
+      trait: Hex
+      durationSeconds: 6
