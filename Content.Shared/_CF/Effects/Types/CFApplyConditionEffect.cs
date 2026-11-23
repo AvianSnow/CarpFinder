@@ -19,9 +19,13 @@ public sealed partial class CFApplyConditionEffect : CFEffect
     [DataField]
     public byte OnlyMode;
 
+    /// <summary>Only in these modes. Empty means every mode. For more than one mode, where <see cref="OnlyMode"/> takes one.</summary>
+    [DataField]
+    public List<byte> OnlyModes = new();
+
     public override void Apply(IEntityManager entities, CFEffectArgs args)
     {
-        if (OnlyMode != 0 && entities.GetComponentOrNull<CFModeChoiceComponent>(args.Source)?.Chosen != OnlyMode)
+        if (!args.ModeFits(OnlyModes) || OnlyMode != 0 && entities.GetComponentOrNull<CFModeChoiceComponent>(args.Source)?.Chosen != OnlyMode)
             return;
 
         if (args.Target is not { } target)

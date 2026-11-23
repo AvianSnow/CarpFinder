@@ -27,6 +27,10 @@ public sealed partial class CFDamageEffect : CFEffect
     [DataField]
     public bool InnovationCore;
 
+    /// <summary>Only for these modes of the source's <c>CFModeChoice</c>. Empty means every mode (Kinetic Ram's push by action count).</summary>
+    [DataField]
+    public List<byte> OnlyModes = new();
+
     /// <summary>Adds the user's spellcasting (or key) ability modifier.</summary>
     [DataField]
     public bool AddAbilityModifier;
@@ -74,11 +78,11 @@ public sealed partial class CFDamageEffect : CFEffect
 
     public override void Apply(IEntityManager entities, CFEffectArgs args)
     {
-        if (args.Target is not { } target)
+        if (args.Target is not { } target || !args.ModeFits(OnlyModes))
             return;
 
         var system = entities.System<CFEffectSystem>();
-        var damageType = InnovationCore ? entities.System<Content.Shared.CF.Actions.CFInventorSystem>().CoreType(args.User) : DamageType;
+        var damageType = args.DamageTypeOverride ?? (InnovationCore ? entities.System<Content.Shared.CF.Actions.CFInventorSystem>().CoreType(args.User) : DamageType);
         var multiplier = ScaleByDegree ? CFEffectSystem.DamageMultiplier(args) : 1f;
         if (multiplier <= 0f)
         {

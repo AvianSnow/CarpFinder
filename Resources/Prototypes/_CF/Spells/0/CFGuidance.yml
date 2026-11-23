@@ -14,6 +14,24 @@
   - type: CFSpell
     spell: Guidance
     rank: 0
+  # The Infinite Eye's amp is a reaction that saves a failed check. Here the amped spell guides every roll for 6 seconds.
+  - type: CFPsiCantrip
+    ampEffects:
+    - !type:CFBonusEffect
+      stat: Saves
+      type: Status
+      value: 1
+      durationSeconds: 6
+    - !type:CFBonusEffect
+      stat: SkillChecks
+      type: Status
+      value: 1
+      durationSeconds: 6
+    - !type:CFBonusEffect
+      stat: Perception
+      type: Status
+      value: 1
+      durationSeconds: 6
   - type: CFTargeting
     rangeFeet: 30
     filter: All

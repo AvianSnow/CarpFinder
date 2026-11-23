@@ -90,6 +90,12 @@ public sealed partial class CFSpellshapeSystem : EntitySystem
         return Current(user) is { Amp: true };
     }
 
+    /// <summary>Which amp the armed Amp action gives. Normal when none is armed.</summary>
+    public CFAmpVariant CurrentAmpVariant(EntityUid user)
+    {
+        return Current(user) is { Amp: true } shape ? shape.AmpVariant : CFAmpVariant.Normal;
+    }
+
     private static readonly string[] Energies = { "Acid", "Cold", "Electricity", "Fire", "Force", "Sonic", "Vitality", "Void" };
 
     /// <summary>A spell is being cast. A spellshape that answers the spell itself, such as Energy Ablation, does so here.</summary>

@@ -568,6 +568,8 @@ public sealed partial class CFEffectSystem : EntitySystem
                 args);
         }
 
+        // A feat's amp in place of the cantrip's own (Mental Balm, Homing Beacon).
+        _psi.ApplyFeatAmp(source, user, target, landed);
         return landed;
     }
 
@@ -606,6 +608,8 @@ public sealed partial class CFEffectSystem : EntitySystem
             HeightenSteps = steps,
             Dc = stats.Dc,
             AbilityModifier = stats.AbilityModifier,
+            DamageTypeOverride = _psi.EnergyOverride(source),
+            Mode = CompOrNull<CFModeChoiceComponent>(source)?.Chosen ?? 0,
         };
     }
 

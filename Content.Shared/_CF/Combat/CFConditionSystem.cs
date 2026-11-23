@@ -346,8 +346,12 @@ public sealed partial class CFConditionSystem : EntitySystem
         _popup.PopupEntity(Loc.GetString("cf-cond-immobilized"), target);
     }
 
-    public void ApplyConcealed(EntityUid target, int flatDc, bool breaks, float seconds)
+    /// <param name="beaconed">Homing Beacon's own concealment, the one thing a beaconed creature can have.</param>
+    public void ApplyConcealed(EntityUid target, int flatDc, bool breaks, float seconds, bool beaconed = false)
     {
+        if (!beaconed && EntityManager.System<Content.Shared.CF.Spells.CFPsiSystem>().IsBeaconed(target))
+            return;
+
         var cond = Ensure(target);
         cond.Concealed = true;
         cond.FlatCheckDc = Math.Max(cond.FlatCheckDc, flatDc);

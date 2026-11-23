@@ -120,3 +120,30 @@
   components:
   - type: CFSpellshape
     divineInfusion: true
+
+# A Psychic's feat amps: armed in place of the usual Amp, and spent the same way.
+- type: entity
+  parent: CFActSpellshapeBase
+  id: CFActAmpMentalBalm
+  name: "Amp: Mental Balm"
+  description: Your next psi cantrip on yourself or an ally is amped with soothing waves instead of its own amp. Each ally it reaches gets +2 status to Will saves against emotion effects for a minute, and stops being frightened or stupefied. Spends a Focus Point.
+  components:
+  - type: CFRadialSlot
+    group: Free
+    actions: 0
+  - type: CFSpellshape
+    amp: true
+    ampVariant: MentalBalm
+
+- type: entity
+  parent: CFActSpellshapeBase
+  id: CFActAmpHomingBeacon
+  name: "Amp: Homing Beacon"
+  description: "Your next psi cantrip is amped with a beacon instead of its own amp. An enemy it hits or that fails its save is seen: invisible becomes only concealed, concealed becomes plain, and it cannot hide again for a minute. Spends a Focus Point."
+  components:
+  - type: CFRadialSlot
+    group: Free
+    actions: 0
+  - type: CFSpellshape
+    amp: true
+    ampVariant: HomingBeacon

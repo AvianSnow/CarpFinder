@@ -216,7 +216,7 @@
   parent: CFActivityTarget
   id: CFActRestoreTheMind
   name: Restore the Mind
-  description: While Unleashed, an ally within 30 feet regains 2 Hit Points plus double your level. Once every 10 minutes.
+  description: While Unleashed, an ally within 30 feet regains 2 Hit Points plus double your level, and has +1 status to saves against mental effects for 12 seconds. Once every 10 minutes.
   components:
   - type: Action
     useDelay: 600
@@ -229,6 +229,50 @@
     - !type:CFHealEffect
       flat: 2
       perLevel: 2
+    - !type:CFBonusEffect
+      stat: Saves
+      type: Status
+      value: 1
+      trait: Mental
+      durationSeconds: 12
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActRecallTheTeachings
+  name: Recall the Teachings
+  description: While Unleashed, an Occultism check against DC 15 that Aids every ally within 30 feet at once, +1 to their attack rolls and skill checks for 6 seconds, +2 on a critical success, -1 on a critical failure.
+  components:
+  - type: CFNeedsUnleashed
+  - type: CFRecallTeachingsAction
+  - type: CFTrait
+    traits:
+    - Occult
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActViolentUnleash
+  name: Violent Unleash
+  description: Right after you Unleash your Psyche, a shock wave batters every creature within 20 feet for 2d6 force damage, basic Reflex, and 1d6 more at level 5 and every 2 levels after.
+  components:
+  - type: CFNeedsUnleashed
+    withinSeconds: 3
+  - type: CFEffectAction
+  - type: CFTrait
+    traits:
+    - Occult
+  - type: CFAreaEffect
+    shape: Emanation
+    sizeFeet: 20
+  - type: CFCheck
+    defense: Reflex
+    dcSource: Class
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 6
+      damageType: Force
+      diceEveryLevels: 2
 
 - type: entity
   parent: CFActivityInstant

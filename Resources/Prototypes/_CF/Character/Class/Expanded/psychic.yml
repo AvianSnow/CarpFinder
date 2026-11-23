@@ -45,7 +45,7 @@
       description: "Choose a conscious mind in the builder. It teaches your psi cantrips and sometimes a rank 1 spell."
     - level: 1
       name: "Psi Cantrips and Amps"
-      description: "You have 2 Focus Points, and Amp is on your action wheel: it makes your next psi cantrip stronger and spends a Focus Point. Which cantrips you have comes from your conscious mind. Amps from feats: TBA"
+      description: "You have 2 Focus Points, and Amp is on your action wheel: it makes your next psi cantrip stronger and spends a Focus Point. Which cantrips you have comes from your conscious mind. A feat's amp, such as Mental Balm, is its own Amp action, armed in place of the usual one."
       grants:
         - !type:CFGrantFocusPoints
           count: 2

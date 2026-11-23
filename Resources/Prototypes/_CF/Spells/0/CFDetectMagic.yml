@@ -14,6 +14,16 @@
   - type: CFSpell
     spell: DetectMagic
     rank: 0
+  # The Infinite Eye's amp: +1 status to saves against magic for 3 rounds. The rules give it against the magic found.
+  - type: CFPsiCantrip
+    ampEffects:
+    - !type:CFBonusEffect
+      stat: Saves
+      type: Status
+      value: 1
+      trait: Magical
+      durationSeconds: 18
+      onUser: true
   - type: CFTargeting
     filter: All
   - type: CFDegreeEffects

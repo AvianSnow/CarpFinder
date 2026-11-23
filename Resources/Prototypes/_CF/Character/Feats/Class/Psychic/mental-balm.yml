@@ -11,4 +11,6 @@
     - "Emotion"
     - "Mental"
     - "Psychic"
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActAmpMentalBalm

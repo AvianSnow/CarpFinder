@@ -14,6 +14,10 @@
   - type: CFSpell
     spell: Figment
     rank: 0
+  # The Tangible Dream's amp: the illusion unsettles the enemy beside it, which is off-guard for 6 seconds.
+  - type: CFPsiCantrip
+    ampEffects:
+    - !type:CFFigmentFlankEffect
   - type: CFTargeting
     delivery: Point
     rangeFeet: 30

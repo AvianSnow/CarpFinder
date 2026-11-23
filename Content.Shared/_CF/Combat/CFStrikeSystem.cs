@@ -68,6 +68,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
     [Dependency] private CFAuraSystem _auras = default!;
     [Dependency] private CFImplementSystem _implements = default!;
     [Dependency] private CFInventorSystem _inventor = default!;
+    [Dependency] private Content.Shared.CF.Spells.CFPsiSystem _psi = default!;
     [Dependency] private CFIkonSystem _ikons = default!;
     [Dependency] private CFRuneSystem _runes = default!;
     [Dependency] private CFTauntSystem _taunts = default!;
@@ -343,6 +344,9 @@ public sealed partial class CFStrikeSystem : EntitySystem
         var map = fixedMap ?? _actions.MapPenalty(user, weapon.Agile);
         if (countMap)
             _actions.CountAttack(user);
+
+        // A Forbidden Thought against Striking goes off now. The Strike still happens.
+        _psi.CheckLock(user, Content.Shared.CF.Spells.CFForbiddenAction.Strike);
 
         _strikeDepth++;
         try
@@ -1310,10 +1314,17 @@ public sealed partial class CFStrikeSystem : EntitySystem
     /// <summary>Bespell Strikes and the like: the first hit after a spell deals one more die, doubled on a critical hit.</summary>
     private void ApplyBespell(EntityUid user, EntityUid target, CFCombatOptionsComponent? style, bool critical, bool isObject)
     {
-        if (style == null || isObject || style.BespellDie <= 0 || _timing.CurTime >= style.BespellUntil)
+        if (style == null || isObject || style.BespellDie <= 0)
             return;
 
-        style.BespellUntil = TimeSpan.Zero;
+        // Psi Strikes: while the Psyche is Unleashed, every Strike has it, not only the next.
+        var unleashed = style.BespellCantrips && HasComp<Content.Shared.CF.Spells.CFUnleashedComponent>(user);
+        if (!unleashed && _timing.CurTime >= style.BespellUntil)
+            return;
+
+        if (!unleashed)
+            style.BespellUntil = TimeSpan.Zero;
+
         var amount = _random.Next(1, style.BespellDie + 1);
         _effects.DealDamage(user, target, critical ? amount * 2 : amount, style.BespellType, critical: false);
     }

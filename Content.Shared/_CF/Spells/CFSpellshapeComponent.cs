@@ -23,6 +23,10 @@ public sealed partial class CFSpellshapeComponent : Component
     [DataField]
     public bool Amp;
 
+    /// <summary>With <see cref="Amp"/>, which amp: the cantrip's own, or a feat's in its place (Mental Balm, Homing Beacon).</summary>
+    [DataField]
+    public CFAmpVariant AmpVariant = CFAmpVariant.Normal;
+
     /// <summary>Makes a burst, cone or line with no duration bigger (Widen Spell).</summary>
     [DataField]
     public bool Widens;

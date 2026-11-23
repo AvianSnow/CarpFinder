@@ -172,6 +172,17 @@ cf-tactic-signal = {$name}!
 cf-psi-cannot-unleash = You need to have just cast a spell, and your mind needs to have settled.
 cf-psi-unleashed = Psyche unleashed!
 cf-psi-needs-unleashed = Your Psyche has to be Unleashed.
+cf-psi-needs-just-unleashed = It has to follow Unleashing your Psyche at once.
+cf-psi-mental-balm = Soothing waves settle the mind.
+cf-psi-homing-beacon = A beacon lights up the mind: nothing hides it.
+cf-psi-oscillate-fire = Energy added: the spell burns.
+cf-psi-oscillate-cold = Energy removed: the spell freezes.
+cf-psi-forbidden-strike = A thought is forbidden: Striking.
+cf-psi-forbidden-cast = A thought is forbidden: casting.
+cf-psi-forbidden-triggered = The forbidden thought bites!
+cf-psi-teachings = A lesson comes to mind for everyone near.
+cf-psi-teachings-wrong = The wrong lesson comes to mind.
+cf-psi-teachings-nothing = No lesson fits.
 cf-implement-needed = You need your implement in hand.
 cf-damage-mode-status = Damage: [color={$color}]{$type}[/color]
 cf-damage-mode-changed = Now dealing {$type}.

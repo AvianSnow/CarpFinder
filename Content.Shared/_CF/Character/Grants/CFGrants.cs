@@ -256,9 +256,13 @@ public sealed partial class CFGrantResistance : CFGrant
     [DataField]
     public bool HalfLevel;
 
+    /// <summary>The whole level while the creature's Psyche is Unleashed (Mental Buffer).</summary>
+    [DataField]
+    public bool LevelWhileUnleashed;
+
     public override void Apply(IEntityManager entities, CFGrantArgs args)
     {
-        entities.System<CFBonusSystem>().AddPermanentResistance(args.Mob, DamageType, Amount, HalfLevel);
+        entities.System<CFBonusSystem>().AddPermanentResistance(args.Mob, DamageType, Amount, HalfLevel, LevelWhileUnleashed);
     }
 }
 

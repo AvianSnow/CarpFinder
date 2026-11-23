@@ -1,0 +1,54 @@
+- type: entity
+  parent: CFSpellTarget
+  id: CFKineticRam
+  name: Kinetic Ram
+  description: "Pick 1, 2 or 3 actions. A creature that fails its Fortitude save is pushed 10 feet, 20 on a critical failure. 1: one creature within 15 feet. 2: one within 30 feet, pushed twice as far, prone with 1d6 bludgeoning on a critical failure. 3: every creature within 5 feet of you."
+  components:
+  - type: Sprite
+    sprite: Objects/Magic/magicactions.rsi
+    layers:
+    - state: spell_default
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 1
+    actions: 1
+  - type: CFSpell
+    spell: KineticRam
+    rank: 1
+  - type: CFTargeting
+    rangeFeet: 30
+  - type: CFModeChoice
+    modes:
+    - { value: 1, name: cf-mode-kinetic-ram-1, tooltip: cf-mode-kinetic-ram-1-desc, actions: 1, rangeFeet: 15 }
+    - { value: 2, name: cf-mode-kinetic-ram-2, tooltip: cf-mode-kinetic-ram-2-desc, actions: 2, rangeFeet: 30 }
+    - { value: 3, name: cf-mode-kinetic-ram-3, tooltip: cf-mode-kinetic-ram-3-desc, actions: 3, immediate: true, areaShape: Emanation, areaFeet: 5 }
+  - type: CFCheck
+    defense: Fortitude
+    basicSave: false
+  - type: CFDegreeEffects
+    failure:
+    - !type:CFForcedMovementEffect
+      feet: 10
+      onlyModes: [ 1, 3 ]
+    - !type:CFForcedMovementEffect
+      feet: 20
+      onlyModes: [ 2 ]
+    criticalFailure:
+    - !type:CFForcedMovementEffect
+      feet: 20
+      onlyModes: [ 1, 3 ]
+    - !type:CFForcedMovementEffect
+      feet: 40
+      onlyModes: [ 2 ]
+    - !type:CFApplyConditionEffect
+      condition: Prone
+      durationSeconds: 3
+      onlyModes: [ 2 ]
+    - !type:CFDamageEffect
+      dice: 1
+      die: 6
+      damageType: Bludgeoning
+      scaleByDegree: false
+      onlyModes: [ 2 ]
+  - type: CFHeighten
+    baseRank: 1

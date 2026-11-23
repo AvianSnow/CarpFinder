@@ -31,6 +31,10 @@ public sealed partial class CFActiveResistance
     [DataField]
     public bool HalfLevel;
 
+    /// <summary>The whole level instead, while the creature's Psyche is Unleashed (Mental Buffer).</summary>
+    [DataField]
+    public bool LevelWhileUnleashed;
+
     /// <summary>Zero means it never ends: a creature's printed resistances and immunities, and character options.</summary>
     [DataField]
     public TimeSpan Expires;

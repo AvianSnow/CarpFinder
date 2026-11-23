@@ -14,6 +14,17 @@
   - type: CFSpell
     spell: Shield
     rank: 0
+  # The Tangible Dream's amp: three layers that last a minute. Here the shield lasts a minute and blocks 15 at once.
+  - type: CFPsiCantrip
+    ampEffects:
+    - !type:CFBonusEffect
+      stat: ArmorClass
+      type: Circumstance
+      value: 1
+      durationSeconds: 60
+    - !type:CFApplyConditionEffect
+      condition: SpellShield
+      value: 15
   - type: CFTargeting
     filter: All
   - type: CFDegreeEffects

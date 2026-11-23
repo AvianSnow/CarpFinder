@@ -41,9 +41,13 @@ public sealed partial class CFForcedMovementEffect : CFEffect
     [DataField]
     public bool Pull;
 
+    /// <summary>Only for these modes of the source's <c>CFModeChoice</c>. Empty means every mode.</summary>
+    [DataField]
+    public List<byte> OnlyModes = new();
+
     public override void Apply(IEntityManager entities, CFEffectArgs args)
     {
-        if (args.Target is { } target && target != args.User)
+        if (args.Target is { } target && target != args.User && args.ModeFits(OnlyModes))
             entities.System<CFConditionSystem>().Push(args.User, target, Feet, Pull);
     }
 }

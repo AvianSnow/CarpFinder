@@ -61,4 +61,16 @@ public sealed record CFEffectArgs
 
     /// <summary>The user's spellcasting or key ability modifier, for effects that add it.</summary>
     public int AbilityModifier;
+
+    /// <summary>The damage type this cast deals in place of its effects' own, as the Oscillating Wave swaps fire and cold. Null keeps them.</summary>
+    public ProtoId<Content.Shared.CF.DamageTypes.CFDamageTypePrototype>? DamageTypeOverride;
+
+    /// <summary>The mode chosen on the source, or 0. Effects with <c>onlyModes</c> read it.</summary>
+    public byte Mode;
+
+    /// <summary>Whether an effect runs for the chosen mode.</summary>
+    public bool ModeFits(List<byte> onlyModes)
+    {
+        return onlyModes.Count == 0 || onlyModes.Contains(Mode);
+    }
 }

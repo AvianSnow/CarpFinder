@@ -956,3 +956,33 @@
   failure: Paralyzed for 1 round.
   criticalFailure: Paralyzed for 4 rounds, with a new save at the end of each of its turns.
   heightened: At 7th rank you can target up to 10 creatures.
+
+- type: cfSpell
+  id: WarpStep
+  name: Warp Step
+  rank: 0
+  traditions: [Arcane, Occult]
+  traits: [Cantrip, Concentrate, Manipulate]
+  actionCost: One
+  components: Somatic, verbal
+  range: Self
+  duration: 6 seconds
+  summary: +5 feet status bonus to your Speed for 6 seconds. Amped, +10 feet. The rules spend 2 actions and Stride twice; here the striding is your own.
+  heightened: The amp's teleport at 4th rank is TBA.
+
+- type: cfSpell
+  id: KineticRam
+  name: Kinetic Ram
+  rank: 1
+  traditions: [Arcane, Occult]
+  traits: [Concentrate, Force]
+  actionCost: One
+  components: Somatic
+  range: 15 or 30 feet
+  targets: 1 creature, or every creature within 5 feet
+  defense: Fortitude
+  summary: "Pick 1, 2 or 3 actions. A creature that fails its Fortitude save is pushed 10 feet, 20 on a critical failure. 1 action: one creature within 15 feet. 2 actions: one within 30 feet, pushed twice as far, and knocked prone with 1d6 bludgeoning on a critical failure. 3 actions: every creature within 5 feet of you."
+  criticalSuccess: Unaffected.
+  success: Unaffected.
+  failure: Pushed 10 feet, or 20 with 2 actions.
+  criticalFailure: Pushed 20 feet, or 40 with 2 actions, and then also prone with 1d6 bludgeoning.

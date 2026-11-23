@@ -345,6 +345,32 @@
 
 - type: entity
   parent: CFSpellTarget
+  id: CFForbiddenThought
+  name: Forbidden Thought
+  description: A lock on a creature's mind within 30 feet, against Striking or against casting a spell, picked on the wheel. The first time it tries that within 6 seconds it takes 2d6 mental damage, basic Will. Amped, a failed save also stuns it 1.
+  components:
+  - type: CFRadialSlot
+    group: Spell
+    spellRank: 0
+  - type: CFSpell
+    spell: ForbiddenThought
+    rank: 0
+  - type: CFPsiCantrip
+  - type: CFModeChoice
+    modes:
+    - { value: 1, name: cf-mode-forbidden-strike, tooltip: cf-mode-forbidden-strike-desc }
+    - { value: 2, name: cf-mode-forbidden-cast, tooltip: cf-mode-forbidden-cast-desc }
+  - type: CFTargeting
+    rangeFeet: 30
+  - type: CFHeighten
+    baseRank: 1
+    interval: 1
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFForbiddenThoughtEffect
+
+- type: entity
+  parent: CFSpellTarget
   id: CFImaginaryWeapon
   name: Imaginary Weapon
   description: A weapon of force. A melee spell attack for 2d6 force damage. Amped, it strikes two creatures.
@@ -497,6 +523,18 @@
   defense: basic Fortitude
   summary: Creatures take 1d6 bludgeoning. Amped, they also take 1d6 slashing. The rules give two such bursts. The second is TBA.
   heightened: Damage increases by 1d6 per 2 ranks.
+
+- type: cfSpell
+  id: ForbiddenThought
+  name: Forbidden Thought
+  rank: 0
+  traits: [Cantrip, Concentrate, Manipulate, Mental]
+  actionCost: Two
+  range: 30 feet
+  targets: 1 creature
+  defense: Will
+  summary: A lock against Striking or casting. The first time the target tries it within 6 seconds, 2d6 mental damage with a basic Will save. Amped, a failed save also stuns 1. The minute of immunity after is TBA.
+  heightened: Damage increases by 1d6 per rank.
 
 - type: cfSpell
   id: ThermalStasis

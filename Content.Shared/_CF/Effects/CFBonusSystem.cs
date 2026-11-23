@@ -442,7 +442,7 @@ public sealed partial class CFBonusSystem : EntitySystem
     }
 
     /// <summary>A resistance from a character option. <paramref name="halfLevel"/> grows with the creature.</summary>
-    public void AddPermanentResistance(EntityUid uid, ProtoId<CFDamageTypePrototype> type, int amount, bool halfLevel)
+    public void AddPermanentResistance(EntityUid uid, ProtoId<CFDamageTypePrototype> type, int amount, bool halfLevel, bool levelWhileUnleashed = false)
     {
         if (amount <= 0 && !halfLevel)
             return;
@@ -452,6 +452,7 @@ public sealed partial class CFBonusSystem : EntitySystem
             DamageType = type,
             Amount = amount,
             HalfLevel = halfLevel,
+            LevelWhileUnleashed = levelWhileUnleashed,
         });
     }
 
@@ -474,8 +475,12 @@ public sealed partial class CFBonusSystem : EntitySystem
                     continue;
 
                 var amount = entry.Amount;
+                var level = CompOrNull<CFCombatantComponent>(target)?.Level ?? 1;
                 if (entry.HalfLevel)
-                    amount = Math.Max(amount, Math.Max(1, (CompOrNull<CFCombatantComponent>(target)?.Level ?? 1) / 2));
+                    amount = Math.Max(amount, Math.Max(1, level / 2));
+
+                if (entry.LevelWhileUnleashed && HasComp<Content.Shared.CF.Spells.CFUnleashedComponent>(target))
+                    amount = Math.Max(amount, level);
 
                 if (entry.Weakness)
                     weak = Math.Max(weak, amount);

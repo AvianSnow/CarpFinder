@@ -12,3 +12,4 @@
     - !type:CFGrantResistance
       damageType: Mental
       halfLevel: true
+      levelWhileUnleashed: true
