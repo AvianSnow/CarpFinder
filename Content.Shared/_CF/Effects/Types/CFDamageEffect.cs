@@ -23,6 +23,10 @@ public sealed partial class CFDamageEffect : CFEffect
     [DataField(required: true)]
     public ProtoId<CFDamageTypePrototype> DamageType = CFDamageTypes.Bludgeoning;
 
+    /// <summary>The damage is of the user's innovation core instead: fire, or what Variable Core chose (Explode).</summary>
+    [DataField]
+    public bool InnovationCore;
+
     /// <summary>Adds the user's spellcasting (or key) ability modifier.</summary>
     [DataField]
     public bool AddAbilityModifier;
@@ -60,6 +64,10 @@ public sealed partial class CFDamageEffect : CFEffect
     [DataField]
     public int PersistentFlat;
 
+    /// <summary>Flat persistent damage of this much of the user's level, at least 1: 0.5 for half the level (Oil Fire).</summary>
+    [DataField]
+    public float PersistentFlatPerLevel;
+
     /// <summary>Persistent damage type. Defaults to <see cref="DamageType"/>.</summary>
     [DataField]
     public ProtoId<CFDamageTypePrototype>? PersistentType;
@@ -70,10 +78,11 @@ public sealed partial class CFDamageEffect : CFEffect
             return;
 
         var system = entities.System<CFEffectSystem>();
+        var damageType = InnovationCore ? entities.System<Content.Shared.CF.Actions.CFInventorSystem>().CoreType(args.User) : DamageType;
         var multiplier = ScaleByDegree ? CFEffectSystem.DamageMultiplier(args) : 1f;
         if (multiplier <= 0f)
         {
-            system.ShowMiss(target, DamageType);
+            system.ShowMiss(target, damageType);
             return;
         }
 
@@ -96,19 +105,23 @@ public sealed partial class CFDamageEffect : CFEffect
         {
             var rolled = system.Roll(dice, system.SpellDie(args, amp is { AmpDie: > 0 } ? amp.AmpDie : Die), flat + system.DamageBonus(args.User) + system.PotencyBonus(args) + system.UnleashBonus(args));
             var amount = multiplier < 1f ? (int) (rolled * multiplier) : rolled * (int) multiplier;
-            system.DealDamage(args.User, target, amount, DamageType, critical);
+            system.DealDamage(args.User, target, amount, damageType, critical);
         }
 
-        if (PersistentDice <= 0 && PersistentFlat <= 0)
+        var persistentFlat = PersistentFlat;
+        if (PersistentFlatPerLevel > 0f)
+            persistentFlat += Math.Max(1, (int) (userLevel * PersistentFlatPerLevel));
+
+        if (PersistentDice <= 0 && persistentFlat <= 0)
             return;
 
         var times = critical ? 2 : 1;
         entities.System<CFBonusSystem>().AddPersistent(
             target,
-            PersistentType ?? DamageType,
+            PersistentType ?? damageType,
             (PersistentDice + (DiceEveryLevels > 0 ? (userLevel - 1) / DiceEveryLevels : 0)) * times,
             PersistentDie,
-            PersistentFlat * times,
+            persistentFlat * times,
             args.User);
     }
 }

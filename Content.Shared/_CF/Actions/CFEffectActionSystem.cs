@@ -88,6 +88,20 @@ public sealed partial class CFEffectActionSystem : EntitySystem
             return;
         }
 
+        if (ent.Comp.NeedsFreeHand && _hands.CountFreeHands(args.User) == 0)
+        {
+            args.Cancelled = true;
+            args.Reason = Loc.GetString("cf-act-needs-free-hand");
+            return;
+        }
+
+        if (ent.Comp.NeedsGrabbedFoe && EntityManager.System<CFConditionSystem>().Grabbing(args.User) == null)
+        {
+            args.Cancelled = true;
+            args.Reason = Loc.GetString("cf-act-needs-grabbed");
+            return;
+        }
+
         if (ent.Comp.NeedsBothHandsFree && _hands.CountFreeHands(args.User) < 2)
         {
             args.Cancelled = true;
@@ -153,6 +167,11 @@ public sealed partial class CFEffectActionSystem : EntitySystem
         // An action with an area around its user reaches everyone in it (Oracular Warning).
         if (HasComp<CFAreaEffectComponent>(ent))
             _effects.ResolveArea(ent, args.Performer, _transform.GetMapCoordinates(args.Performer));
+        else if (ent.Comp.NeedsGrabbedFoe)
+        {
+            if (EntityManager.System<CFConditionSystem>().Grabbing(args.Performer) is { } grabbed)
+                _effects.ResolveTarget(ent, args.Performer, grabbed);
+        }
         else
             _effects.ResolveTarget(ent, args.Performer, args.Performer);
 

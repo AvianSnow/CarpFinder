@@ -26,7 +26,20 @@ public static class CFClassChoices
                 result.Add(choice);
         }
 
+        // A modification picked for one innovation goes when the innovation changes, whichever was picked first.
+        var dropped = true;
+        while (dropped)
+        {
+            dropped = result.RemoveAll(choice => !Fits(choice, result)) > 0;
+        }
+
         return result;
+    }
+
+    /// <summary>Whether an option's own requirement is met by the options beside it.</summary>
+    public static bool Fits(CFClassChoicePrototype choice, List<CFClassChoicePrototype> others)
+    {
+        return choice.RequiresChoice.Count == 0 || choice.RequiresChoice.Any(id => others.Exists(other => other.ID == id.Id));
     }
 
     private static bool SameGroup(CFClassChoicePrototype a, CFClassChoicePrototype b)

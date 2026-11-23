@@ -1158,14 +1158,14 @@ public sealed partial class HumanoidProfileEditor
         _prdUrl = ClassPrd;
         ReleaseBuilderSlots();
 
-        var selected = CFClassChoices.Selected(_prototypeManager, Profile.CFBuild)
-            .FirstOrDefault(choice => choice.Slot == slot)?.ID;
+        var all = CFClassChoices.Selected(_prototypeManager, Profile.CFBuild);
+        var selected = all.FirstOrDefault(choice => choice.Slot == slot)?.ID;
         _pendingId = selected;
 
         var labels = SkillLabelMap();
         var options = new List<Pf2eListEntry>();
         foreach (var choice in _prototypeManager.EnumeratePrototypes<CFClassChoicePrototype>()
-                     .Where(choice => choice.Class == classId && choice.Slot == slot)
+                     .Where(choice => choice.Class == classId && choice.Slot == slot && CFClassChoices.Fits(choice, all))
                      .OrderBy(choice => Loc.GetString(choice.Name), StringComparer.CurrentCultureIgnoreCase))
         {
             options.Add(new Pf2eListEntry

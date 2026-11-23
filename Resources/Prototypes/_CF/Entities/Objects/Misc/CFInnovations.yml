@@ -1,4 +1,5 @@
-# An Inventor's innovations. A construct is in Companions/constructs.yml.
+# An Inventor's innovations. A weapon innovation is built in code from the base weapon the player picked
+# (CFGrantInnovationWeapon). A construct is in Companions/constructs.yml.
 
 - type: entity
   parent: CFBreastplate
@@ -34,85 +35,19 @@
   - type: CFBulk
     bulk: 1
 
+# A construct folded up by Collapse Construct. CFInventorServerSystem makes and unfolds it.
 - type: entity
-  parent: CFLongsword
-  id: CFInnovationWeaponModular
-  name: modular innovation
-  description: An impossible-looking weapon of gears and mechanisms. It is your innovation.
+  parent: BaseItem
+  id: CFCollapsedConstruct
+  name: collapsed construct
+  description: A construct companion folded into a case of cogs and plates. Its Inventor can unfold it in a moment.
   components:
-  - type: CFInnovation
-  - type: CFTrait
-    traits:
-    - VersatileP
-  - type: CFDamageMode
-    types:
-    - Bludgeoning
-    - Piercing
-    - Slashing
-
-- type: entity
-  parent: CFLongsword
-  id: CFInnovationWeaponEntangling
-  name: entangling innovation
-  description: An impossible-looking weapon of gears and mechanisms. It is your innovation.
-  components:
-  - type: CFInnovation
-  - type: CFTrait
-    traits:
-    - Disarm
-    - Grapple
-    - Trip
-    - VersatileP
-
-- type: entity
-  parent: CFLongsword
-  id: CFInnovationWeaponHefty
-  name: hefty innovation
-  description: An impossible-looking weapon of gears and mechanisms. It is your innovation.
-  components:
-  - type: CFInnovation
-  - type: CFTrait
-    traits:
-    - Shove
-    - VersatileB
-    - VersatileP
-
-- type: entity
-  parent: CFLongsword
-  id: CFInnovationWeaponHampering
-  name: hampering innovation
-  description: An impossible-looking weapon of gears and mechanisms. It is your innovation.
-  components:
-  - type: CFInnovation
-  - type: CFTrait
-    traits:
-    - Hampering
-    - Trip
-    - VersatileP
-
-- type: entity
-  parent: CFLongsword
-  id: CFInnovationWeaponWeighted
-  name: weighted innovation
-  description: An impossible-looking weapon of gears and mechanisms. It is your innovation.
-  components:
-  - type: CFInnovation
-  - type: CFTrait
-    traits:
-    - TwoHandD10
-    - VersatileB
-    - VersatileP
-
-- type: entity
-  parent: CFLongsword
-  id: CFInnovationWeaponPacifying
-  name: pacifying innovation
-  description: An impossible-looking weapon of gears and mechanisms. It is your innovation.
-  components:
-  - type: CFInnovation
-  - type: CFTrait
-    traits:
-    - Disarm
-    - Hampering
-    - Nonlethal
-    - VersatileP
+  - type: CFCollapsedConstruct
+  - type: Sprite
+    sprite: Objects/Tools/Toolboxes/toolbox_yellow.rsi
+    state: icon
+  - type: Item
+    size: Large
+    sprite: Objects/Tools/Toolboxes/toolbox_yellow.rsi
+  - type: CFBulk
+    bulk: 2

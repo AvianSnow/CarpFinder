@@ -682,6 +682,14 @@ public sealed partial class CFConditionSystem : EntitySystem
                && pullable.Puller == user;
     }
 
+    /// <summary>The creature this one holds in a grab, or null. A plain pull of a friend is not a grab.</summary>
+    public EntityUid? Grabbing(EntityUid user)
+    {
+        return TryComp(user, out PullerComponent? puller) && puller.Pulling is { Valid: true } pulled && IsGrabbing(user, pulled)
+            ? pulled
+            : null;
+    }
+
     public int PerceptionModifier(EntityUid uid)
     {
         return CFDefense.PerceptionModifier(

@@ -9,3 +9,6 @@
   traits:
     - "Inventor"
     - "Modification"
+  grants:
+    - !type:CFGrantInventorOption
+      option: BuiltInTools

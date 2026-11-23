@@ -10,3 +10,6 @@
     - "Inventor"
   prerequisites:
     - "construct companion"
+  grants:
+    - !type:CFGrantInventorOption
+      option: AdvancedConstruct

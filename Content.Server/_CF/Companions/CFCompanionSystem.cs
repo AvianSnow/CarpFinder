@@ -247,7 +247,9 @@ public sealed partial class CFCompanionSystem : EntitySystem
             if (companion.Summoner != owner || !_prototypes.TryIndex<CFPetPrototype>(companion.PetId, out var pet))
                 continue;
 
-            var build = new CFCharacterBuildData { Level = ownerCombat.Level, PetBarding = companion.Barding };
+            var build = CompOrNull<Content.Shared.CF.Character.CFExperienceComponent>(owner)?.Build?.Clone() ?? new CFCharacterBuildData();
+            build.Level = ownerCombat.Level;
+            build.PetBarding = companion.Barding;
             var block = CFPetMath.Present(pet, build, null);
             var gained = block.HitPoints - combat.MaxHp;
 

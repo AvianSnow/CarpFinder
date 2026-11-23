@@ -82,6 +82,11 @@ public sealed partial class CFStrikeSystem : EntitySystem
     /// <summary>Unconscious / dying creatures are off-guard (−4 AC status, simplified).</summary>
     private const int DownedAcPenalty = 4;
 
+    /// <summary>How long a hampering weapon's hit slows the target: until the attacker's next turn.</summary>
+    private const float HamperedSeconds = 6f;
+
+    private static readonly ProtoId<CFDamageTypePrototype> Bleed = "Bleed";
+
     /// <summary>Only has to outlast the Strike that gives the attacker away.</summary>
     private const float UnseenOffGuardSeconds = 1f;
 
@@ -952,6 +957,10 @@ public sealed partial class CFStrikeSystem : EntitySystem
                 if (!isObject)
                     damage = _reactions.AnswerDamage(target, user, damage, rolled.DamageType);
 
+                // Razing: an object takes twice the weapon's dice on top, before its Hardness.
+                if (isObject && rolled.Traits.Razing)
+                    damage += 2 * rolled.DamageDice;
+
                 if (isObject && hardness > 0)
                     damage = Math.Max(0, damage - hardness);
 
@@ -969,6 +978,16 @@ public sealed partial class CFStrikeSystem : EntitySystem
                     ApplyBespell(user, target, style, criticalHit, isObject);
                     if (melee)
                         ApplyInfusion(user, target, style, criticalHit, isObject);
+
+                    if (!isObject)
+                    {
+                        if (rolled.Traits.Tearing)
+                            _bonuses.AddPersistent(target, Bleed, 0, 6, 1, user);
+
+                        // Hampering: the rules take an Interact after the hit for this. Here the hit does it.
+                        if (rolled.Traits.Hampering)
+                            _bonuses.AddBonus(target, CFBonusStat.Speed, CFBonusType.Circumstance, -10, HamperedSeconds);
+                    }
 
                     if (typedRage > 0 && style != null && !isObject)
                         _effects.DealDamage(user, target, criticalHit ? typedRage * 2 : typedRage, style.RageDamageType, critical: false);

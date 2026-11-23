@@ -43,6 +43,7 @@ public sealed partial class CFHazardSystem : EntitySystem
     [Dependency] private CFBonusSystem _bonuses = default!;
     [Dependency] private CFEffectSystem _effects = default!;
     [Dependency] private CFActionPoolSystem _actions = default!;
+    [Dependency] private CFInventorSystem _inventor = default!;
 
     [SubscribeLocalEvent]
     private void OnMapInit(Entity<CFHazardComponent> ent, ref MapInitEvent args)
@@ -225,9 +226,11 @@ public sealed partial class CFHazardSystem : EntitySystem
         if (!_actions.TrySpendActions(user, hazard.Comp.DisarmActions))
             return;
 
-        var degree = _conditions.RollSkillAgainst(user, option.Skill, option.Ability, option.Dc, out var total);
+        // Reverse Engineer lets an Inventor use Crafting in place of Thievery.
+        var (skill, ability) = option.Skill == "Thievery" ? _inventor.ThieverySkill(user) : (option.Skill, option.Ability);
+        var degree = _conditions.RollSkillAgainst(user, skill, ability, option.Dc, out var total);
         var success = degree.IsSuccess();
-        PopupRoll(user, option.Skill, total, success);
+        PopupRoll(user, skill, total, success);
 
         if (!success)
         {

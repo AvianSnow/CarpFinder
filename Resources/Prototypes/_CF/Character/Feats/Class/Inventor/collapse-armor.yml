@@ -13,7 +13,9 @@
   prerequisites:
     - "armor innovation"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActCollapseArmor
   requiresChoice:
     - InnovationArmor
     - InnovationArmorSubterfuge

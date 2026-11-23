@@ -51,6 +51,8 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
     [Dependency] private MetaDataSystem _meta = default!;
     [Dependency] private CFArmorSystem _armor = default!;
     [Dependency] private CFCharacterFeatureSystem _features = default!;
+    [Dependency] private CFInventorSystem _inventor = default!;
+    [Dependency] private Content.Shared.Mobs.Systems.MobStateSystem _mobState = default!;
     [Dependency] private Content.Server.CF.Shop.CFShopSystem _shop = default!;
     [Dependency] private Content.Server.CF.Shop.CFCoinSystem _coins = default!;
 
@@ -86,9 +88,10 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
     public void EnsureCompanion(EntityUid mob, CFCharacterBuildData build, int level)
     {
         var query = EntityQueryEnumerator<CFCompanionComponent>();
-        while (query.MoveNext(out _, out var existing))
+        while (query.MoveNext(out var uid, out var existing))
         {
-            if (existing.Summoner == mob && !string.IsNullOrEmpty(existing.PetId))
+            // A dead one is gone: a long rest rebuilds a construct or brings a new familiar.
+            if (existing.Summoner == mob && !string.IsNullOrEmpty(existing.PetId) && !_mobState.IsDead(uid))
                 return;
         }
 
@@ -147,6 +150,11 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         combat.MaxHp = block.HitPoints;
         combat.CurrentHp = block.HitPoints;
         Dirty(companion, combat);
+
+        // A construct innovation takes its Inventor's modifications.
+        if (pet.Kind == CFPetKind.Construct)
+            _inventor.ApplyConstructModifications(mob, companion);
+
         _companions.ComeAlong(companion);
 
         foreach (var gearId in build.PetGear)

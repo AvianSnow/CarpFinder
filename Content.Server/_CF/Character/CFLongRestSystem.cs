@@ -36,6 +36,7 @@ public sealed partial class CFLongRestSystem : EntitySystem
     [Dependency] private CFDailyChoiceSystem _dailyChoices = default!;
     [Dependency] private MobStateSystem _mobState = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private CFCharacterSpawnSystem _spawn = default!;
 
     private readonly HashSet<Entity<MobStateComponent>> _nearby = new();
 
@@ -125,6 +126,10 @@ public sealed partial class CFLongRestSystem : EntitySystem
             book.FocusSpent = 0;
             Dirty(mob, book);
         }
+
+        // Rebuilding a destroyed innovation takes a day in the rules. Here the night does it, for every kind of pet.
+        if (TryComp(mob, out CFExperienceComponent? xp) && xp.Build != null && TryComp(mob, out CFCombatantComponent? combat))
+            _spawn.EnsureCompanion(mob, xp.Build, combat.Level);
 
         _popup.PopupEntity(Loc.GetString("cf-long-rest"), mob, mob);
     }

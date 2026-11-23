@@ -52,6 +52,7 @@ public sealed partial class CFLockSystem : EntitySystem
     [Dependency] private InventorySystem _inventory = default!;
     [Dependency] private CFConditionSystem _conditions = default!;
     [Dependency] private CFActionPoolSystem _actions = default!;
+    [Dependency] private Content.Shared.CF.Actions.CFInventorSystem _inventor = default!;
 
     [SubscribeLocalEvent]
     private void OnLockToggleAttempt(Entity<CFLockComponent> ent, ref LockToggleAttemptEvent args)
@@ -181,13 +182,15 @@ public sealed partial class CFLockSystem : EntitySystem
         if (!_net.IsServer || TerminatingOrDeleted(ent) || !_lock.IsLocked(ent.Owner))
             return false;
 
-        if (!IsTrained(user, Thievery))
+        // Reverse Engineer lets an Inventor use Crafting here instead.
+        var (skill, ability) = _inventor.ThieverySkill(user);
+        if (!IsTrained(user, skill))
         {
             _popup.PopupEntity(Loc.GetString("cf-lock-pick-untrained"), ent, user);
             return false;
         }
 
-        if (FindToolkit(user) is not { } toolkit)
+        if ((FindToolkit(user) ?? _inventor.BuiltInToolkit(user)) is not { } toolkit)
         {
             _popup.PopupEntity(Loc.GetString("cf-lock-pick-no-toolkit"), ent, user);
             return false;
@@ -196,8 +199,8 @@ public sealed partial class CFLockSystem : EntitySystem
         if (!_actions.TrySpendActions(user, PickActions))
             return false;
 
-        var degree = _conditions.RollSkillAgainst(user, Thievery, CFAbility.Dexterity, ent.Comp.Dc, out var total, itemBonus: -ent.Comp.BlastPenalty);
-        PopupRoll(user, Thievery, total, degree);
+        var degree = _conditions.RollSkillAgainst(user, skill, ability, ent.Comp.Dc, out var total, itemBonus: -ent.Comp.BlastPenalty);
+        PopupRoll(user, skill, total, degree);
 
         // A critical success leaves no trace of itself, though earlier marks stay.
         ent.Comp.Tampered |= degree is CFDegree.Success or CFDegree.CriticalFailure;

@@ -98,6 +98,15 @@ public sealed partial class CFStrikeActionSystem : EntitySystem
         if (action.Unstable && !_inventor.CanUseUnstable(user))
             return "cf-inventor-unstable-cannot";
 
+        if (action.InnovationWeapon
+            && (!_hands.TryGetActiveItem(user, out var innovation) || !HasComp<CFInnovationComponent>(innovation.Value) || !HasComp<CFWeaponComponent>(innovation.Value)))
+        {
+            return "cf-strike-action-needs-innovation";
+        }
+
+        if (action.WithConstruct && _inventor.ConstructInReach(user) == null)
+            return "cf-strike-action-needs-construct";
+
         if (action.DifferentTarget && CompOrNull<CFActionPoolComponent>(user)?.LastStrikeTarget == target)
             return "cf-strike-action-needs-another";
 
@@ -338,6 +347,12 @@ public sealed partial class CFStrikeActionSystem : EntitySystem
         if (action.Twice)
             _strikes.PerformStrike(user, target, stats, weapon, melee: true, attackPenalty: action.AttackBonus - (stats.Agile ? 0 : 2), skipPrecision: hit, resolved: Resolved);
 
+        if (action.WithConstruct && _inventor.ConstructInReach(user) is { } construct)
+        {
+            Rush(construct, target, action.ClosesFeet);
+            _strikes.PerformStrike(construct, target, _strikes.UnarmedStats(construct), construct, melee: true);
+        }
+
         if (action.Unstable)
             _inventor.RollUnstable(user);
 
@@ -377,27 +392,40 @@ public sealed partial class CFStrikeActionSystem : EntitySystem
         if (action.ClosesFeet <= 0 && action.StepsBackFeet <= 0)
             return;
 
-        var from = _transform.GetWorldPosition(user);
+        if (action.StepsBackFeet > 0)
+        {
+            var from = _transform.GetWorldPosition(user);
+            var gap = _transform.GetWorldPosition(target) - from;
+            var distance = gap.Length();
+            if (distance < 0.01f)
+                return;
+
+            var direction = gap / distance;
+            _throwing.TryThrow(user, Transform(user).Coordinates.Offset(direction * (-action.StepsBackFeet / CFMelee.FeetPerTile)), RushSpeed, doSpin: false);
+            return;
+        }
+
+        Rush(user, target, action.ClosesFeet);
+    }
+
+    /// <summary>Rushes a creature toward the target, up to this many feet, stopping one tile short of it.</summary>
+    private void Rush(EntityUid mover, EntityUid target, int feet)
+    {
+        if (feet <= 0)
+            return;
+
+        var from = _transform.GetWorldPosition(mover);
         var gap = _transform.GetWorldPosition(target) - from;
         var distance = gap.Length();
         if (distance < 0.01f)
             return;
 
         var direction = gap / distance;
-        float tiles;
-        if (action.StepsBackFeet > 0)
-        {
-            tiles = -action.StepsBackFeet / CFMelee.FeetPerTile;
-        }
-        else
-        {
-            // Stop one tile short, beside the target.
-            tiles = Math.Min(action.ClosesFeet / CFMelee.FeetPerTile, distance - 1f);
-            if (tiles <= 0.1f)
-                return;
-        }
+        var tiles = Math.Min(feet / CFMelee.FeetPerTile, distance - 1f);
+        if (tiles <= 0.1f)
+            return;
 
-        _throwing.TryThrow(user, Transform(user).Coordinates.Offset(direction * tiles), RushSpeed, doSpin: false);
+        _throwing.TryThrow(mover, Transform(mover).Coordinates.Offset(direction * tiles), RushSpeed, doSpin: false);
     }
 
     /// <summary>The enemy an action's second Strike goes at, or null when there is none to be had.</summary>

@@ -606,3 +606,31 @@
     focusPoints: 1
     rechargesSpellstrike: true
     closesFeet: 25
+
+# Inventor
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActWukongExtension
+  name: Wukong Extension
+  description: Your weapon innovation extends like a battering ram. A melee Strike with it at a creature up to 30 feet away. An unstable action.
+  components:
+  - type: TargetAction
+    range: 6.5
+  - type: CFStrikeAction
+    innovationWeapon: true
+    unstable: true
+
+- type: entity
+  parent: CFActStrikeBase
+  id: CFActDuoDragonKick
+  name: Duo Dragon Kick
+  description: With your construct innovation beside you, you both leap at a creature within 15 feet and each make an unarmed Strike. Costs 2 actions.
+  components:
+  - type: TargetAction
+    range: 4.5
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFStrikeAction
+    unarmedOnly: true
+    withConstruct: true
+    closesFeet: 15

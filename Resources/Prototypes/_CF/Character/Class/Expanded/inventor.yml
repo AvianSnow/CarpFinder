@@ -41,7 +41,7 @@
           action: CFActExplode
     - level: 1
       name: "Innovation"
-      description: "Choose an innovation and a modification in the builder. You start with it. Rebuilding one that is destroyed: TBA"
+      description: "Choose an innovation and a modification in the builder. You start with it. A weapon innovation is built on the weapon you pick. A construct innovation shares your Overdrive, and the blast of a critical failure. A destroyed construct is rebuilt at your next long rest, where the rules take a day and a Crafting check."
     - level: 1
       name: "Overdrive"
       description: "Overdrive is on your action wheel. A Crafting check: your Strikes deal half your Intelligence more for a minute, or all of it on a critical success. A critical failure burns you."

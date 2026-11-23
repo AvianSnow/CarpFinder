@@ -14,7 +14,9 @@
   prerequisites:
     - "armor innovation"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActOilFire
   requiresChoice:
     - InnovationArmor
     - InnovationArmorSubterfuge

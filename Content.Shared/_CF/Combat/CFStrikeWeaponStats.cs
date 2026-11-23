@@ -71,6 +71,15 @@ public sealed record CFWeaponTraits
     /// <summary>The radius in feet of the splash on a hit. 0 means none.</summary>
     public int Scatter { get; init; }
 
+    /// <summary>A hit gives the target -10 feet to its Speeds for a moment.</summary>
+    public bool Hampering { get; init; }
+
+    /// <summary>An object hit takes twice the weapon's damage dice more.</summary>
+    public bool Razing { get; init; }
+
+    /// <summary>A creature hit takes 1 persistent bleed damage.</summary>
+    public bool Tearing { get; init; }
+
     /// <summary>Die size when wielded in two hands.</summary>
     public int TwoHand { get; init; }
 
@@ -117,6 +126,9 @@ public sealed record CFWeaponTraits
                 CFTraitRule.Concussive => result with { Concussive = true },
                 CFTraitRule.Kickback => result with { Kickback = true },
                 CFTraitRule.Scatter => result with { Scatter = Math.Max(result.Scatter, trait.Value) },
+                CFTraitRule.Hampering => result with { Hampering = true },
+                CFTraitRule.Razing => result with { Razing = true },
+                CFTraitRule.Tearing => result with { Tearing = true },
                 CFTraitRule.TwoHand => result with { TwoHand = Math.Max(result.TwoHand, trait.Value) },
                 _ => result,
             };

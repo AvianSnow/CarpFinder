@@ -64,13 +64,23 @@ public static class CFPetMath
     {
         var level = Math.Max(1, build.Level);
         var barding = pet.Kind == CFPetKind.Companion ? BardingOf(build.PetBarding) : BardingOf("");
-        var dexCap = Math.Min(pet.Dexterity, barding.DexCap);
+
+        // An advanced construct: Strength, Dexterity, Constitution and Wisdom one higher, two damage dice, expert saves.
+        var advanced = IsAdvancedConstruct(pet, build);
+        var step = advanced ? 1 : 0;
+        var saveRank = advanced ? Expert : Trained;
+        var strength = pet.Strength + step;
+        var dexterity = pet.Dexterity + step;
+        var constitution = pet.Constitution + step;
+        var wisdom = pet.Wisdom + step;
+
+        var dexCap = Math.Min(dexterity, barding.DexCap);
         var item = Math.Min(MaxArmorItemBonus, Math.Max(0, barding.Bonus));
         var armor = 10 + level + dexCap + Trained + item;
-        var fort = level + pet.Constitution + Trained;
-        var reflex = level + pet.Dexterity + Trained;
-        var will = level + pet.Wisdom + Trained;
-        var perception = level + pet.Wisdom + Trained;
+        var fort = level + constitution + saveRank;
+        var reflex = level + dexterity + saveRank;
+        var will = level + wisdom + saveRank;
+        var perception = level + wisdom + saveRank;
         if (pet.UsesMaster && master != null)
         {
             armor = master.ArmorClass + barding.Bonus;
@@ -78,16 +88,16 @@ public static class CFPetMath
             reflex = master.Reflex;
             will = master.Will;
             var trained = MasterTrainedPerception(master.Class);
-            var wisdom = master.Modifiers.TryGetValue(CFAbility.Wisdom, out var wis) ? wis : 0;
-            perception = master.Level + wisdom + (trained ? Trained : 0);
+            var masterWisdom = master.Modifiers.TryGetValue(CFAbility.Wisdom, out var wis) ? wis : 0;
+            perception = master.Level + masterWisdom + (trained ? Trained : 0);
         }
 
-        var hp = pet.ScaleHitPoints ? YoungHitPoints(pet, level) : pet.HitPoints;
+        var hp = pet.ScaleHitPoints ? pet.HitPoints + (6 + constitution) * level : pet.HitPoints;
 
         var strikes = new List<CFPetStrike>();
         foreach (var attack in pet.Attacks)
         {
-            var ability = attack.Finesse ? Math.Max(pet.Strength, pet.Dexterity) : pet.Strength;
+            var ability = attack.Finesse ? Math.Max(strength, dexterity) : strength;
             var tags = new List<string>();
             if (attack.Agile)
                 tags.Add("Agile");
@@ -103,24 +113,32 @@ public static class CFPetMath
                 tags.Add(label);
             }
 
-            var damageBonus = pet.Strength;
+            var damageBonus = strength;
             var bonus = damageBonus > 0 ? "+" + damageBonus : damageBonus < 0 ? damageBonus.ToString() : "";
+            var dice = advanced ? Math.Max(2, attack.Dice) : attack.Dice;
             strikes.Add(new CFPetStrike(
                 attack.Name,
                 level + ability + Trained,
-                $"{attack.Dice}d{attack.Die}{bonus} {attack.Damage}",
+                $"{dice}d{attack.Die}{bonus} {attack.Damage}",
                 tags));
         }
 
         var skills = new List<CFPetSkillLine>();
         if (pet.Kind is CFPetKind.Companion or CFPetKind.Construct)
         {
-            AddTrainedSkill(skills, pet, level, "Acrobatics", CFAbility.Dexterity);
-            AddTrainedSkill(skills, pet, level, "Athletics", CFAbility.Strength);
+            AddTrainedSkill(skills, pet, level, "Acrobatics", CFAbility.Dexterity, step);
+            AddTrainedSkill(skills, pet, level, "Athletics", CFAbility.Strength, step);
+        }
+
+        if (advanced)
+        {
+            AddTrainedSkill(skills, pet, level, "Intimidation", CFAbility.Charisma, step);
+            AddTrainedSkill(skills, pet, level, "Stealth", CFAbility.Dexterity, step);
+            AddTrainedSkill(skills, pet, level, "Survival", CFAbility.Wisdom, step);
         }
 
         foreach (var skill in pet.Skills)
-            AddTrainedSkill(skills, pet, level, skill.Name, skill.Ability);
+            AddTrainedSkill(skills, pet, level, skill.Name, skill.Ability, step);
 
         var speed = new List<string>();
         foreach (var entry in pet.Speeds)
@@ -157,6 +175,15 @@ public static class CFPetMath
         return pet.HitPoints + (6 + pet.Constitution) * Math.Max(1, level);
     }
 
+    /// <summary>A construct is advanced once its Inventor has Advanced Construct Companion, a level 4 feat, at level 4 or above.</summary>
+    public static bool IsAdvancedConstruct(CFPetPrototype pet, CFCharacterBuildData build)
+    {
+        return pet.Kind == CFPetKind.Construct && build.Level >= 4 && build.ClassFeatLevel4?.Id == AdvancedConstructFeat;
+    }
+
+    public const string AdvancedConstructFeat = "CFAdvancedConstructCompanion";
+    public const int Expert = 4;
+
     public static CFPetBarding BardingOf(string id)
     {
         return id switch
@@ -180,7 +207,8 @@ public static class CFPetMath
         CFPetPrototype pet,
         int level,
         string name,
-        CFAbility ability)
+        CFAbility ability,
+        int step = 0)
     {
         foreach (var existing in skills)
         {
@@ -190,11 +218,11 @@ public static class CFPetMath
 
         var mod = ability switch
         {
-            CFAbility.Strength => pet.Strength,
-            CFAbility.Dexterity => pet.Dexterity,
-            CFAbility.Constitution => pet.Constitution,
+            CFAbility.Strength => pet.Strength + step,
+            CFAbility.Dexterity => pet.Dexterity + step,
+            CFAbility.Constitution => pet.Constitution + step,
             CFAbility.Intelligence => pet.Intelligence,
-            CFAbility.Wisdom => pet.Wisdom,
+            CFAbility.Wisdom => pet.Wisdom + step,
             _ => pet.Charisma,
         };
         skills.Add(new CFPetSkillLine(name, level + mod + Trained));

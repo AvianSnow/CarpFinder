@@ -67,6 +67,15 @@ public enum CFTraitRule : byte
     Kickback,
     Scatter,
 
+    /// <summary>A hit slows the target: -10 feet for a moment. The rules ask an Interact for it; here it is part of the hit.</summary>
+    Hampering,
+
+    /// <summary>An object hit takes twice the weapon's damage dice more.</summary>
+    Razing,
+
+    /// <summary>A creature hit takes 1 persistent bleed damage.</summary>
+    Tearing,
+
     // Armor
     Bulwark,
     Comfort,

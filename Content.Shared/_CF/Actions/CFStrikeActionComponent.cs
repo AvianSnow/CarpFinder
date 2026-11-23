@@ -77,6 +77,17 @@ public sealed partial class CFStrikeActionComponent : Component
     [DataField]
     public bool Unstable;
 
+    /// <summary>The weapon in the active hand has to be the user's weapon innovation (Wukong Extension).</summary>
+    [DataField]
+    public bool InnovationWeapon;
+
+    /// <summary>
+    /// The user's construct innovation has to stand beside them. After the user's Strike it rushes the target and makes an
+    /// unarmed Strike of its own (Duo Dragon Kick). The rules add the two hits before resistances: here each stands alone.
+    /// </summary>
+    [DataField]
+    public bool WithConstruct;
+
     /// <summary>Added to the attack roll.</summary>
     [DataField]
     public int AttackBonus;

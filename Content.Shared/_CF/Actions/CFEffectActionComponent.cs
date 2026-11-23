@@ -54,6 +54,16 @@ public sealed partial class CFEffectActionComponent : Component
     /// <summary>An Inventor's unstable action: it needs the innovation in use and working, and may stop it afterwards.</summary>
     [DataField]
     public bool Unstable;
+
+    /// <summary>Needs a hand free, as Tamper does.</summary>
+    [DataField]
+    public bool NeedsFreeHand;
+
+    /// <summary>
+    /// An instant action on the creature the user has grabbed, as Oil Fire douses a grabbed foe. It cannot be used without one.
+    /// </summary>
+    [DataField]
+    public bool NeedsGrabbedFoe;
 }
 
 public enum CFTwoHandedNeed : byte

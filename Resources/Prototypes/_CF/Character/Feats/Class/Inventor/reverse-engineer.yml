@@ -10,4 +10,6 @@
     - "Inventor"
   prerequisites:
     - "trained in Crafting"
-  pendingAction: true
+  grants:
+    - !type:CFGrantInventorOption
+      option: ReverseEngineer

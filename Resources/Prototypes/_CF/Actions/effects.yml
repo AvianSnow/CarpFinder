@@ -261,6 +261,7 @@
       dice: 2
       die: 6
       damageType: Fire
+      innovationCore: true
       diceFromLevel: true
 
 # Given by a battle form while it lasts. See CFBattleFormSystem.
@@ -818,3 +819,111 @@
     - !type:CFOffGuardEffect
       toUser: true
       durationSeconds: 12
+
+# Inventor feats. CFInventorSystem runs the ones with a component of their own.
+- type: entity
+  parent: CFActivityTarget
+  id: CFActTamper
+  name: Tamper
+  description: With a free hand, Crafting against the Reflex DC of an enemy in reach. Its held weapon takes -2 to attack and damage rolls, or with no weapon its armor leaves it off-guard and 10 feet slower. 6 seconds, a minute on a critical success. A critical failure burns you for your level.
+  components:
+  - type: CFTamperAction
+  - type: CFEffectAction
+    needsFreeHand: true
+  - type: CFTrait
+    traits:
+    - Manipulate
+  - type: CFCheck
+    defense: Reflex
+    skill: Crafting
+    basicSave: false
+  - type: CFDegreeEffects
+    criticalSuccess:
+    - !type:CFTamperEffect
+      durationSeconds: 60
+    success:
+    - !type:CFTamperEffect
+      durationSeconds: 6
+    criticalFailure:
+    - !type:CFTamperEffect
+      backfire: true
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActCollapseArmor
+  name: Collapse Armor
+  description: Your armor innovation comes off into your hand at once, or a collapsed one you hold unfolds onto you.
+  components:
+  - type: CFCollapseArmorAction
+  - type: CFTrait
+    traits:
+    - Manipulate
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActCollapseConstruct
+  name: Collapse Construct
+  description: Your construct innovation, beside you, folds into a case you carry. Use it again with the case to unfold it, with the Hit Points it had.
+  components:
+  - type: CFCollapseConstructAction
+  - type: CFTrait
+    traits:
+    - Manipulate
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActHaphazardRepair
+  name: Haphazard Repair
+  description: Repair your construct innovation, beside you, in a moment. Crafting against the DC of your level restores 10 Hit Points and 5 more per rank of Crafting, or 10 more per rank on a critical success. A critical failure deals 2d6 to it. An unstable action.
+  components:
+  - type: CFHaphazardRepairAction
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActOilFire
+  name: Oil Fire
+  description: Douse the foe you have grabbed in oil from your gauntlets and light it. Reflex against your class DC. It slips free on a success and takes 1 persistent fire damage, half your level on a failure, your level on a critical failure. An unstable action.
+  components:
+  - type: CFEffectAction
+    unstable: true
+    needsGrabbedFoe: true
+  - type: CFTrait
+    traits:
+    - Fire
+    - Manipulate
+  - type: CFCheck
+    defense: Reflex
+    dcSource: Class
+    basicSave: false
+  - type: CFDegreeEffects
+    criticalSuccess:
+    - !type:CFReleaseGrabEffect {}
+    success:
+    - !type:CFReleaseGrabEffect {}
+    - !type:CFDamageEffect
+      damageType: Fire
+      scaleByDegree: false
+      persistentFlat: 1
+    failure:
+    - !type:CFDamageEffect
+      damageType: Fire
+      scaleByDegree: false
+      persistentFlatPerLevel: 0.5
+    criticalFailure:
+    - !type:CFDamageEffect
+      damageType: Fire
+      scaleByDegree: false
+      persistentFlatPerLevel: 1
+
+- type: entity
+  parent: CFActivityInstant
+  id: CFActSwitchConfiguration
+  name: Switch Configuration
+  description: Your held weapon innovation becomes its other form, with the same modification. Costs 2 actions.
+  components:
+  - type: CFRadialSlot
+    actions: 2
+  - type: CFSwitchConfigurationAction
+  - type: CFTrait
+    traits:
+    - Manipulate

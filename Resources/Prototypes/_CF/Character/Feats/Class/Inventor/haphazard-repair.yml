@@ -10,4 +10,8 @@
     - "Inventor"
     - "Unstable"
   action: Action
-  pendingAction: true
+  requiresChoice:
+    - InnovationConstruct
+  grants:
+    - !type:CFGrantAction
+      action: CFActHaphazardRepair

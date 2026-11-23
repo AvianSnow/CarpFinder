@@ -14,3 +14,10 @@
     - "weapon innovation"
   requiresChoice:
     - InnovationWeapon
+  choices:
+    - kind: Named
+      options: [ CFLongsword, CFDagger, CFRapier, CFScimitar, CFGreatsword, CFBattleAxe, CFWarhammer, CFFlail, CFWarFlail, CFSpear, CFHatchet, CFSickle, CFLightHammer, CFPick, CFStaff, CFShortbow, CFLongbow, CFCrossbow, CFHeavyCrossbow, CFSling, CFFlintlockPistol, CFFlintlockMusket, CFArquebus, CFBlunderbuss, CFHandCannon ]
+  grants:
+    - !type:CFGrantSecondConfiguration
+    - !type:CFGrantAction
+      action: CFActSwitchConfiguration

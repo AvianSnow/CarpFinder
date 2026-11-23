@@ -9,3 +9,8 @@
   traits:
     - "Inventor"
     - "Modification"
+  choices:
+    - kind: DamageType
+      damageTypes: [ Acid, Cold, Electricity ]
+  grants:
+    - !type:CFGrantVariableCore

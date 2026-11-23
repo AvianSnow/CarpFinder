@@ -53,6 +53,13 @@ public sealed partial class CFClassChoicePrototype : IPrototype
     [DataField]
     public string Group = string.Empty;
 
+    /// <summary>
+    /// The build must have one of these options as well, or this one is dropped: an armor modification needs an armor innovation.
+    /// The builder only offers it then. See <see cref="CFClassChoices.Selected"/>.
+    /// </summary>
+    [DataField]
+    public List<ProtoId<CFClassChoicePrototype>> RequiresChoice = new();
+
     /// <summary>What this gives at level 1. See <see cref="CFGrant"/>.</summary>
     [DataField]
     public List<CFGrant> Grants = new();

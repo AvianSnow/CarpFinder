@@ -13,6 +13,8 @@
   prerequisites:
     - "construct innovation"
   action: Action
-  pendingAction: true
+  grants:
+    - !type:CFGrantAction
+      action: CFActCollapseConstruct
   requiresChoice:
     - InnovationConstruct

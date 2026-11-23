@@ -17,7 +17,7 @@ namespace Content.Shared.CF.Combat;
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class CFDamageModeComponent : Component
 {
-    [DataField(required: true)]
+    [DataField(required: true), AutoNetworkedField]
     public List<ProtoId<CFDamageTypePrototype>> Types = new();
 
     [DataField, AutoNetworkedField]

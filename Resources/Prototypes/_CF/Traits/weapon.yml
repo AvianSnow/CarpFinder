@@ -571,7 +571,8 @@
   id: Razing
   name: Razing
   category: Weapon
-  summary: "Damage from this weapon ignores an amount of Hardness."
+  rule: Razing
+  summary: "An object you hit takes twice this weapon's damage dice more."
 
 - type: cfTrait
   id: Tethered
@@ -638,7 +639,8 @@
   id: Hampering
   name: Hampering
   category: Weapon
-  summary: "A hit with this weapon can slow the target's movement."
+  rule: Hampering
+  summary: "A hit gives the target -10 feet to its Speeds for 6 seconds."
 
 - type: cfTrait
   id: Injection
@@ -674,4 +676,5 @@
   id: Tearing
   name: Tearing
   category: Weapon
-  summary: "On a hit, this weapon leaves the target bleeding."
+  rule: Tearing
+  summary: "A creature you hit takes 1 persistent bleed damage."

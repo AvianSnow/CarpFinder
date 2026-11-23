@@ -1,4 +1,8 @@
-# CarpFinder: Inventor innovations, and the modification for one. A character picks one of each.
+# CarpFinder: Inventor innovations, and the modification for one. A character picks one of each. A modification needs the
+# innovation it fits (requiresChoice), so the builder only offers the right ones.
+#
+# A weapon innovation is built from a base weapon the player picks (a Named choice of weapon prototype ids) with the
+# modification's traits on it: CFGrantInnovationWeapon. Advanced Design has no base, because no advanced weapon exists yet.
 
 - type: cfClassChoice
   id: InnovationArmor
@@ -34,12 +38,15 @@
   name: cf-class-choice-innovationweapon
   description: cf-class-choice-innovationweapon-desc
 
+# Armor modifications
+
 - type: cfClassChoice
   id: ModArmorHarmonicOscillator
   class: Inventor
   slot: cf-class-choice-modification
   name: cf-class-choice-modarmorharmonicoscillator
   description: cf-class-choice-modarmorharmonicoscillator-desc
+  requiresChoice: [ InnovationArmor, InnovationArmorSubterfuge ]
   grants:
     - !type:CFGrantInnovationResistance
       resistance:
@@ -54,6 +61,7 @@
   slot: cf-class-choice-modification
   name: cf-class-choice-modarmormetallicreactance
   description: cf-class-choice-modarmormetallicreactance-desc
+  requiresChoice: [ InnovationArmor, InnovationArmorSubterfuge ]
   grants:
     - !type:CFGrantInnovationResistance
       resistance:
@@ -68,6 +76,7 @@
   slot: cf-class-choice-modification
   name: cf-class-choice-modarmorotherworldlyprotection
   description: cf-class-choice-modarmorotherworldlyprotection-desc
+  requiresChoice: [ InnovationArmor, InnovationArmorSubterfuge ]
   grants:
     - !type:CFGrantInnovationResistance
       resistance:
@@ -82,6 +91,7 @@
   slot: cf-class-choice-modification
   name: cf-class-choice-modarmorphlogistonicregulator
   description: cf-class-choice-modarmorphlogistonicregulator-desc
+  requiresChoice: [ InnovationArmor, InnovationArmorSubterfuge ]
   grants:
     - !type:CFGrantInnovationResistance
       resistance:
@@ -96,6 +106,7 @@
   slot: cf-class-choice-modification
   name: cf-class-choice-modarmorspeedboosters
   description: cf-class-choice-modarmorspeedboosters-desc
+  requiresChoice: [ InnovationArmor, InnovationArmorSubterfuge ]
   grants:
     - !type:CFGrantWhile
       while: WearingInnovation
@@ -114,6 +125,7 @@
   slot: cf-class-choice-modification
   name: cf-class-choice-modarmormuscularexoskeleton
   description: cf-class-choice-modarmormuscularexoskeleton-desc
+  requiresChoice: [ InnovationArmor ]
   grants:
     - !type:CFGrantWhile
       while: Overdriven
@@ -128,6 +140,7 @@
   slot: cf-class-choice-modification
   name: cf-class-choice-modarmorsubtledampeners
   description: cf-class-choice-modarmorsubtledampeners-desc
+  requiresChoice: [ InnovationArmorSubterfuge ]
   grants:
     - !type:CFGrantWhile
       while: Overdriven
@@ -136,15 +149,55 @@
       value: 1
       skill: Stealth
 
+# Weapon modifications. The pick is the base weapon.
+
 - type: cfClassChoice
   id: ModWeaponModularHead
   class: Inventor
   slot: cf-class-choice-modification
   name: cf-class-choice-modweaponmodularhead
   description: cf-class-choice-modweaponmodularhead-desc
+  requiresChoice: [ InnovationWeapon ]
+  choices:
+    - kind: Named
+      options: [ CFLongsword, CFDagger, CFRapier, CFScimitar, CFGreatsword, CFBattleAxe, CFWarhammer, CFFlail, CFWarFlail, CFSpear, CFHatchet, CFSickle, CFLightHammer, CFPick, CFStaff, CFShortbow, CFLongbow, CFCrossbow, CFHeavyCrossbow, CFSling, CFFlintlockPistol, CFFlintlockMusket, CFArquebus, CFBlunderbuss, CFHandCannon ]
   grants:
-    - !type:CFGrantItem
-      item: CFInnovationWeaponModular
+    - !type:CFGrantInnovationWeapon
+      traits: [ Modular ]
+      modes: [ Bludgeoning, Piercing, Slashing ]
+
+- type: cfClassChoice
+  id: ModWeaponSegmentedFrame
+  class: Inventor
+  slot: cf-class-choice-modification
+  name: cf-class-choice-modweaponsegmentedframe
+  description: cf-class-choice-modweaponsegmentedframe-desc
+  requiresChoice: [ InnovationWeapon ]
+  choices:
+    - kind: Named
+      options: [ CFLongsword, CFDagger, CFRapier, CFScimitar, CFGreatsword, CFBattleAxe, CFWarhammer, CFFlail, CFWarFlail, CFSpear, CFHatchet, CFSickle, CFLightHammer, CFPick, CFStaff, CFShortbow, CFLongbow, CFCrossbow, CFHeavyCrossbow, CFSling, CFFlintlockPistol, CFFlintlockMusket, CFArquebus, CFBlunderbuss, CFHandCannon ]
+  grants:
+    - !type:CFGrantInnovationWeapon
+      traits: [ Modular, Concealable ]
+      modes: [ Bludgeoning, Piercing, Slashing ]
+
+- type: cfClassChoice
+  id: ModWeaponComplexSimplicity
+  class: Inventor
+  slot: cf-class-choice-modification
+  name: cf-class-choice-modweaponcomplexsimplicity
+  description: cf-class-choice-modweaponcomplexsimplicity-desc
+  requiresChoice: [ InnovationWeapon ]
+  choices:
+    - kind: Named
+      options: [ CFDagger, CFSpear, CFSickle, CFStaff, CFCrossbow, CFHeavyCrossbow, CFSling, CFFlintlockPistol, CFFlintlockMusket, CFHandCannon ]
+    - kind: Named
+      count: 2
+      options: [ VersatileB, VersatileP, VersatileS, Razing ]
+  grants:
+    - !type:CFGrantInnovationWeapon
+      dieStep: true
+      traitPicks: 2
 
 - type: cfClassChoice
   id: ModWeaponEntanglingForm
@@ -152,9 +205,13 @@
   slot: cf-class-choice-modification
   name: cf-class-choice-modweaponentanglingform
   description: cf-class-choice-modweaponentanglingform-desc
+  requiresChoice: [ InnovationWeapon ]
+  choices:
+    - kind: Named
+      options: [ CFLongsword, CFDagger, CFRapier, CFScimitar, CFGreatsword, CFBattleAxe, CFWarhammer, CFFlail, CFWarFlail, CFSpear, CFHatchet, CFSickle, CFLightHammer, CFPick, CFStaff ]
   grants:
-    - !type:CFGrantItem
-      item: CFInnovationWeaponEntangling
+    - !type:CFGrantInnovationWeapon
+      traits: [ Disarm, Grapple, Trip ]
 
 - type: cfClassChoice
   id: ModWeaponHeftyComposition
@@ -162,9 +219,13 @@
   slot: cf-class-choice-modification
   name: cf-class-choice-modweaponheftycomposition
   description: cf-class-choice-modweaponheftycomposition-desc
+  requiresChoice: [ InnovationWeapon ]
+  choices:
+    - kind: Named
+      options: [ CFLongsword, CFDagger, CFRapier, CFScimitar, CFGreatsword, CFBattleAxe, CFWarhammer, CFFlail, CFWarFlail, CFSpear, CFHatchet, CFSickle, CFLightHammer, CFPick, CFStaff ]
   grants:
-    - !type:CFGrantItem
-      item: CFInnovationWeaponHefty
+    - !type:CFGrantInnovationWeapon
+      traits: [ Shove, Razing, VersatileB ]
 
 - type: cfClassChoice
   id: ModWeaponHamperingSpikes
@@ -172,9 +233,27 @@
   slot: cf-class-choice-modification
   name: cf-class-choice-modweaponhamperingspikes
   description: cf-class-choice-modweaponhamperingspikes-desc
+  requiresChoice: [ InnovationWeapon ]
+  choices:
+    - kind: Named
+      options: [ CFLongsword, CFDagger, CFRapier, CFScimitar, CFGreatsword, CFBattleAxe, CFWarhammer, CFFlail, CFWarFlail, CFSpear, CFHatchet, CFSickle, CFLightHammer, CFPick, CFStaff ]
   grants:
-    - !type:CFGrantItem
-      item: CFInnovationWeaponHampering
+    - !type:CFGrantInnovationWeapon
+      traits: [ Hampering, Trip, VersatileP ]
+
+- type: cfClassChoice
+  id: ModWeaponRazorProngs
+  class: Inventor
+  slot: cf-class-choice-modification
+  name: cf-class-choice-modweaponrazorprongs
+  description: cf-class-choice-modweaponrazorprongs-desc
+  requiresChoice: [ InnovationWeapon ]
+  choices:
+    - kind: Named
+      options: [ CFLongsword, CFDagger, CFRapier, CFScimitar, CFGreatsword, CFBattleAxe, CFWarhammer, CFFlail, CFWarFlail, CFSpear, CFHatchet, CFSickle, CFLightHammer, CFPick, CFStaff ]
+  grants:
+    - !type:CFGrantInnovationWeapon
+      traits: [ Tearing, Trip, VersatileS ]
 
 - type: cfClassChoice
   id: ModWeaponDynamicWeighting
@@ -182,9 +261,14 @@
   slot: cf-class-choice-modification
   name: cf-class-choice-modweapondynamicweighting
   description: cf-class-choice-modweapondynamicweighting-desc
+  requiresChoice: [ InnovationWeapon ]
+  choices:
+    - kind: Named
+      options: [ CFLongsword, CFRapier, CFScimitar, CFBattleAxe, CFWarhammer, CFFlail, CFSpear, CFPick ]
   grants:
-    - !type:CFGrantItem
-      item: CFInnovationWeaponWeighted
+    - !type:CFGrantInnovationWeapon
+      twoHand: true
+      traits: [ VersatileB ]
 
 - type: cfClassChoice
   id: ModWeaponPacificationTools
@@ -192,6 +276,91 @@
   slot: cf-class-choice-modification
   name: cf-class-choice-modweaponpacificationtools
   description: cf-class-choice-modweaponpacificationtools-desc
+  requiresChoice: [ InnovationWeapon ]
+  choices:
+    - kind: Named
+      options: [ CFLongsword, CFDagger, CFRapier, CFScimitar, CFGreatsword, CFBattleAxe, CFWarhammer, CFFlail, CFWarFlail, CFSpear, CFHatchet, CFSickle, CFLightHammer, CFPick, CFStaff ]
   grants:
-    - !type:CFGrantItem
-      item: CFInnovationWeaponPacifying
+    - !type:CFGrantInnovationWeapon
+      traits: [ Disarm, Hampering, Nonlethal ]
+
+- type: cfClassChoice
+  id: ModWeaponBluntShot
+  class: Inventor
+  slot: cf-class-choice-modification
+  name: cf-class-choice-modweaponbluntshot
+  description: cf-class-choice-modweaponbluntshot-desc
+  requiresChoice: [ InnovationWeapon ]
+  choices:
+    - kind: Named
+      options: [ CFShortbow, CFLongbow, CFCrossbow, CFHeavyCrossbow, CFSling, CFFlintlockPistol, CFFlintlockMusket, CFArquebus, CFBlunderbuss, CFHandCannon ]
+  grants:
+    - !type:CFGrantInnovationWeapon
+      traits: [ Concussive, RangedTrip ]
+
+# Construct modifications. CFInventorSystem.ApplyConstructModifications puts them on the construct when it spawns.
+
+- type: cfClassChoice
+  id: ModConstructAcceleratedMobility
+  class: Inventor
+  slot: cf-class-choice-modification
+  name: cf-class-choice-modconstructacceleratedmobility
+  description: cf-class-choice-modconstructacceleratedmobility-desc
+  requiresChoice: [ InnovationConstruct ]
+  grants:
+    - !type:CFGrantConstructModification
+      speedFeet: 40
+
+- type: cfClassChoice
+  id: ModConstructSensoryArray
+  class: Inventor
+  slot: cf-class-choice-modification
+  name: cf-class-choice-modconstructsensoryarray
+  description: cf-class-choice-modconstructsensoryarray-desc
+  requiresChoice: [ InnovationConstruct ]
+  grants:
+    - !type:CFGrantConstructModification
+      darkvision: true
+
+- type: cfClassChoice
+  id: ModConstructWonderGears
+  class: Inventor
+  slot: cf-class-choice-modification
+  name: cf-class-choice-modconstructwondergears
+  description: cf-class-choice-modconstructwondergears-desc
+  requiresChoice: [ InnovationConstruct ]
+  grants:
+    - !type:CFGrantConstructModification
+      skills: [ Intimidation, Stealth, Survival ]
+
+- type: cfClassChoice
+  id: ModConstructAmphibiousConstruction
+  class: Inventor
+  slot: cf-class-choice-modification
+  name: cf-class-choice-modconstructamphibiousconstruction
+  description: cf-class-choice-modconstructamphibiousconstruction-desc
+  requiresChoice: [ InnovationConstruct ]
+
+- type: cfClassChoice
+  id: ModConstructIncreasedSize
+  class: Inventor
+  slot: cf-class-choice-modification
+  name: cf-class-choice-modconstructincreasedsize
+  description: cf-class-choice-modconstructincreasedsize-desc
+  requiresChoice: [ InnovationConstruct ]
+
+- type: cfClassChoice
+  id: ModConstructManualDexterity
+  class: Inventor
+  slot: cf-class-choice-modification
+  name: cf-class-choice-modconstructmanualdexterity
+  description: cf-class-choice-modconstructmanualdexterity-desc
+  requiresChoice: [ InnovationConstruct ]
+
+- type: cfClassChoice
+  id: ModConstructProjectileLauncher
+  class: Inventor
+  slot: cf-class-choice-modification
+  name: cf-class-choice-modconstructprojectilelauncher
+  description: cf-class-choice-modconstructprojectilelauncher-desc
+  requiresChoice: [ InnovationConstruct ]
