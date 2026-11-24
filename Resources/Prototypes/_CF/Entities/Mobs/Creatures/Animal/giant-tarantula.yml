@@ -1,0 +1,119 @@
+# Giant Tarantula. Creature 6, Large, Animal. Monster Core p. 320. Recall Knowledge DC 22.
+# Fangs with giant tarantula venom (Afflictions/monsters.yml), a leg with 10 feet of reach and Knockdown, and
+# Hair Barrage (CFActHairBarrage in Actions/breath.yml). The rules put no recharge on Hair Barrage: here it has
+# one round, or the AI would do nothing else. Not in: its climb Speed.
+- type: entity
+  parent: [CFBaseCreature]
+  id: CFMobGiantTarantula
+  name: giant tarantula
+  description: A spider the size of a cottage, bristling with hair it can throw.
+  components:
+    - type: GhostRole
+      name: cf-ghost-giant-tarantula-name
+      description: cf-ghost-giant-tarantula-desc
+    - type: Sprite
+      drawdepth: Mobs
+      scale: 1.8, 1.8
+      sprite: Mobs/Animals/Spiders/tarantulaspider.rsi
+      layers:
+        - map: ["enum.DamageStateVisualLayers.Base", "movement"]
+          state: idle
+    - type: SpriteMovement
+      movementLayers:
+        movement:
+          state: moving
+      noMovementLayers:
+        movement:
+          state: idle
+    - type: DamageStateVisuals
+      states:
+        Alive:
+          Base: idle
+        Critical:
+          Base: dead
+        Dead:
+          Base: dead
+    - type: MovementSpeedModifier
+      baseWalkSpeed: 3
+      baseSprintSpeed: 5.4
+    - type: CFSenses
+      darkvision: true
+    - type: NightVision
+      enabled: true
+      prioritized: true
+      noiseAmount: 0
+      lightingColor: "#9BB6FF30"
+    - type: CFGOAP
+      tactics: Beast
+    - type: IgnoreSpiderWeb
+    - type: ActionGrant
+      actions:
+        - CFActHairBarrage
+    - type: CFCombatant
+      level: 6
+      armorClass: 21
+      speedFeet: 30
+      maxHp: 135
+      currentHp: 135
+      printedFortitude: 15
+      printedReflex: 13
+      printedWill: 10
+      printedPerception: 14
+      printedAttack: 17
+      printedDamage: 8
+      trainedSkills:
+        - Acrobatics
+        - Athletics
+        - Stealth
+      printedSkills:
+        Acrobatics: 9
+        Athletics: 16
+        Stealth: 11
+    - type: CFAbilityScore
+      abilityModifiers:
+        Strength: 6
+        Dexterity: 1
+        Constitution: 5
+        Intelligence: -5
+        Wisdom: 2
+        Charisma: -4
+    # Each Strike with its own printed numbers. With no player in the body the AI picks (CFMonsterAttackSystem).
+    - type: CFMonsterAttacks
+      attacks:
+      - name: fangs
+        attack: 17
+        dice: 2
+        die: 8
+        bonus: 8
+        damageType: Piercing
+        onHit:
+        - !type:CFExposeAfflictionEffect
+          affliction: GiantTarantulaVenom
+      - name: leg
+        attack: 17
+        dice: 1
+        die: 12
+        bonus: 8
+        damageType: Bludgeoning
+        traits: [ Reach ]
+        followUp: Knockdown
+    - type: CFCombatOptions
+      naturalDice: 2
+      naturalDie: 8
+      naturalType: Piercing
+      naturalAgile: false
+      naturalFinesse: false
+    - type: CFTrait
+      traits:
+        - Animal
+    - type: MobThresholds
+      thresholds:
+        0: Alive
+        134: Critical
+        135: Dead
+    # Monster parts: what a harvest gives, sharing the monster's parts value (CFHarvestSystem).
+    - type: CFHarvestable
+      parts:
+        - id: FoodMeatSpider
+          amount: 3
+          maxAmount: 5

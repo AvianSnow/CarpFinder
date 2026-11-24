@@ -9,3 +9,4 @@ cf-affliction-alcohol-3 = Your hands are clumsy and your thoughts are slow.
 cf-affliction-alcohol-4 = Your stomach turns and you can hardly stay steady.
 cf-affliction-alcohol-5 = You can barely stand or think.
 cf-affliction-alcohol-6 = Everything goes dark.
+cf-affliction-zombie-rot = The rot spreads under your skin.

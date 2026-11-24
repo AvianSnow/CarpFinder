@@ -1,0 +1,116 @@
+# Zombie Shambler. Creature -1, Medium, Mindless Undead Unholy Zombie. Monster Core p. 356. Recall Knowledge DC 13.
+# Fist with Grab, slowed 1 for good (CFInnateConditions), weakness to slashing and vitality, void healing.
+# Not in yet: Zombie Bite, the jaws Strike it makes on a creature it has grabbed.
+# The sprite is CP14's zombie, one front view for every direction, and it has no lying state.
+- type: entity
+  parent: [CFBaseCreature]
+  id: CFMobZombieShambler
+  name: zombie shambler
+  description: A corpse that walks, slowly, toward the nearest living thing.
+  components:
+    - type: GhostRole
+      name: cf-ghost-zombie-shambler-name
+      description: cf-ghost-zombie-shambler-desc
+    - type: Sprite
+      drawdepth: Mobs
+      layers:
+        - map: ["enum.DamageStateVisualLayers.Base"]
+          sprite: _CP14/Mobs/Species/Zombie/parts.rsi
+          state: full
+    - type: DamageStateVisuals
+      states:
+        Alive:
+          Base: full
+        Critical:
+          Base: full
+        Dead:
+          Base: full
+    - type: MovementSpeedModifier
+      baseWalkSpeed: 2.5
+      baseSprintSpeed: 4.5
+    - type: CFSenses
+      darkvision: true
+    - type: NightVision
+      enabled: true
+      prioritized: true
+      noiseAmount: 0
+      lightingColor: "#9BB6FF30"
+    - type: CFLanguages
+      known: [ Mindless ]
+    - type: CFGOAP
+      tactics: Mindless
+    - type: CFInnateConditions
+      conditions:
+        Slowed: 1
+    - type: CFVoidHealing
+    - type: CFResistances
+      entries:
+      - damageType: Slashing
+        amount: 5
+        weakness: true
+      - damageType: Vitality
+        amount: 5
+        weakness: true
+      - damageType: Bleed
+        amount: 9999
+      - damageType: Mental
+        amount: 9999
+      - damageType: Poison
+        amount: 9999
+      - damageType: Void
+        amount: 9999
+    # Immunities: bleed, death effects, disease, mental, paralyzed, poison, unconscious.
+    - type: CFConditionImmunity
+      conditions: [ Asleep, Paralyzed, Calmed, Charmed, Frightened, Confused, Controlled, Fleeing ]
+      traits: [ Mental, Death, Disease, Poison ]
+    - type: CFCombatant
+      level: -1
+      armorClass: 12
+      speedFeet: 25
+      maxHp: 20
+      currentHp: 20
+      printedFortitude: 6
+      printedReflex: 0
+      printedWill: 2
+      printedPerception: 0
+      printedAttack: 7
+      printedDamage: 3
+      trainedSkills:
+        - Athletics
+      printedSkills:
+        Athletics: 7
+    - type: CFAbilityScore
+      abilityModifiers:
+        Strength: 3
+        Dexterity: -2
+        Constitution: 2
+        Intelligence: -5
+        Wisdom: 0
+        Charisma: -2
+    # Each Strike with its own printed numbers. With no player in the body the AI picks (CFMonsterAttackSystem).
+    - type: CFMonsterAttacks
+      attacks:
+      - name: fist
+        attack: 7
+        dice: 1
+        die: 6
+        bonus: 3
+        damageType: Bludgeoning
+        followUp: Grab
+    - type: CFCombatOptions
+      naturalDice: 1
+      naturalDie: 6
+      naturalType: Bludgeoning
+      naturalAgile: false
+      naturalFinesse: false
+    - type: CFTrait
+      traits:
+        - Mindless
+        - Undead
+        - Unholy
+        - Zombie
+    - type: MobThresholds
+      thresholds:
+        0: Alive
+        19: Critical
+        20: Dead

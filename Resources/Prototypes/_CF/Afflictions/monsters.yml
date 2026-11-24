@@ -81,3 +81,167 @@
       condition: Slowed
       value: 1
       durationSeconds: 21600
+
+# Viper Venom (poison). Saving Throw DC 16 Fortitude; Maximum Duration 4 rounds; Stage 1 1d8 poison damage (1 round).
+- type: cfAffliction
+  id: ViperVenom
+  dc: 16
+  traits: [ Poison ]
+  maxSeconds: 24
+  exposureCooldownSeconds: 1
+  stages:
+  - seconds: 6
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 8
+      damageType: Poison
+      scaleByDegree: false
+
+# Giant Viper Venom (poison). DC 17 Fortitude; Maximum Duration 6 rounds; Stage 1 1d6 poison damage (1 round); Stage 2 1d6 poison damage and drained 1.
+- type: cfAffliction
+  id: GiantViperVenom
+  dc: 17
+  traits: [ Poison ]
+  maxSeconds: 36
+  exposureCooldownSeconds: 1
+  stages:
+  - seconds: 6
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 6
+      damageType: Poison
+      scaleByDegree: false
+  - seconds: 6
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 6
+      damageType: Poison
+      scaleByDegree: false
+    - !type:CFApplyConditionEffect
+      condition: Drained
+      value: 1
+      durationSeconds: 6
+
+# Monitor Lizard Venom (poison). DC 17 Fortitude; Maximum Duration 6 rounds; Stage 1 enfeebled 1 (1 round); Stage 2 1d6 poison damage and enfeebled 2 (1 round).
+- type: cfAffliction
+  id: MonitorLizardVenom
+  dc: 17
+  traits: [ Poison ]
+  maxSeconds: 36
+  exposureCooldownSeconds: 1
+  stages:
+  - seconds: 6
+    effects:
+    - !type:CFApplyConditionEffect
+      condition: Enfeebled
+      value: 1
+      durationSeconds: 6
+  - seconds: 6
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 6
+      damageType: Poison
+      scaleByDegree: false
+    - !type:CFApplyConditionEffect
+      condition: Enfeebled
+      value: 2
+      durationSeconds: 6
+
+# Giant Tarantula Venom (poison). DC 23 Fortitude; Maximum Duration 8 rounds; Stage 1 1d10 poison (1 round); Stage 2 1d12 poison, clumsy 1 and off-guard; Stage 3 2d6 poison, clumsy 2 and off-guard; Stage 4 2d6 poison and paralyzed.
+- type: cfAffliction
+  id: GiantTarantulaVenom
+  dc: 23
+  traits: [ Poison ]
+  maxSeconds: 48
+  exposureCooldownSeconds: 1
+  stages:
+  - seconds: 6
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 10
+      damageType: Poison
+      scaleByDegree: false
+  - seconds: 6
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 12
+      damageType: Poison
+      scaleByDegree: false
+    - !type:CFApplyConditionEffect
+      condition: Clumsy
+      value: 1
+      durationSeconds: 6
+    - !type:CFApplyConditionEffect
+      condition: OffGuard
+      durationSeconds: 6
+  - seconds: 6
+    effects:
+    - !type:CFDamageEffect
+      dice: 2
+      die: 6
+      damageType: Poison
+      scaleByDegree: false
+    - !type:CFApplyConditionEffect
+      condition: Clumsy
+      value: 2
+      durationSeconds: 6
+    - !type:CFApplyConditionEffect
+      condition: OffGuard
+      durationSeconds: 6
+  - seconds: 6
+    effects:
+    - !type:CFDamageEffect
+      dice: 2
+      die: 6
+      damageType: Poison
+      scaleByDegree: false
+    - !type:CFApplyConditionEffect
+      condition: Paralyzed
+      durationSeconds: 6
+
+# Zombie Rot (disease), from the plague zombie. Saving Throw DC 18 Fortitude. Stage 1 carrier with no ill effect (1 day),
+# stages 2 to 4 1d6 void damage (1 day each). Left out: stage 5, dead and rising as a plague zombie, and that the damage
+# cannot be healed until the disease is cured. A day on the world clock is a whole round, as with putrid plague.
+- type: cfAffliction
+  id: ZombieRot
+  dc: 18
+  traits: [ Disease ]
+  exposureCooldownSeconds: 60
+  stages:
+  - worldMinutes: 1440
+  - worldMinutes: 1440
+    effects:
+    - !type:CFPopupEffect
+      text: cf-affliction-zombie-rot
+      userOnly: true
+    - !type:CFDamageEffect
+      dice: 1
+      die: 6
+      damageType: Void
+      scaleByDegree: false
+  - worldMinutes: 1440
+    effects:
+    - !type:CFPopupEffect
+      text: cf-affliction-zombie-rot
+      userOnly: true
+    - !type:CFDamageEffect
+      dice: 1
+      die: 6
+      damageType: Void
+      scaleByDegree: false
+  - worldMinutes: 1440
+    effects:
+    - !type:CFPopupEffect
+      text: cf-affliction-zombie-rot
+      userOnly: true
+    - !type:CFDamageEffect
+      dice: 1
+      die: 6
+      damageType: Void
+      scaleByDegree: false

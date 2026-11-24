@@ -1,0 +1,123 @@
+# Bone hound. The numbers are the Skeletal Horse's: Creature 2, Large, Mindless Skeleton Undead Unholy. Monster Core p. 312.
+# There is no skeletal hound in Monster Core, and this is the nearest undead animal for CP14's bone hound sprite.
+# Its hoof Strike is called a bite here. Not in: Gallop, and Undead Steed.
+- type: entity
+  parent: [CFBaseCreature]
+  id: CFMobBoneHound
+  name: bone hound
+  description: The skeleton of a great hound, still running down whatever its master once set it on.
+  components:
+    - type: GhostRole
+      name: cf-ghost-bone-hound-name
+      description: cf-ghost-bone-hound-desc
+    - type: Sprite
+      drawdepth: Mobs
+      layers:
+        - map: ["enum.DamageStateVisualLayers.Base"]
+          sprite: _CP14/Mobs/Monster/bone_hound.rsi
+          state: live
+    - type: DamageStateVisuals
+      states:
+        Alive:
+          Base: live
+        Critical:
+          Base: dead
+        Dead:
+          Base: dead
+    - type: MovementSpeedModifier
+      baseWalkSpeed: 4
+      baseSprintSpeed: 7.2
+    - type: CFSenses
+      darkvision: true
+    - type: NightVision
+      enabled: true
+      prioritized: true
+      noiseAmount: 0
+      lightingColor: "#9BB6FF30"
+    - type: CFLanguages
+      known: [ Mindless ]
+    - type: CFGOAP
+      tactics: Mindless
+    - type: CFVoidHealing
+    - type: CFResistances
+      entries:
+      - damageType: Cold
+        amount: 5
+      - damageType: Electricity
+        amount: 5
+      - damageType: Fire
+        amount: 5
+      - damageType: Piercing
+        amount: 5
+      - damageType: Slashing
+        amount: 5
+      - damageType: Bleed
+        amount: 9999
+      - damageType: Mental
+        amount: 9999
+      - damageType: Poison
+        amount: 9999
+      - damageType: Void
+        amount: 9999
+    # Immunities: bleed, death effects, disease, mental, paralyzed, poison, unconscious.
+    - type: CFConditionImmunity
+      conditions: [ Asleep, Paralyzed, Calmed, Charmed, Frightened, Confused, Controlled, Fleeing ]
+      traits: [ Mental, Death, Disease, Poison ]
+    - type: CFCombatant
+      level: 2
+      armorClass: 16
+      speedFeet: 40
+      maxHp: 33
+      currentHp: 33
+      printedFortitude: 6
+      printedReflex: 9
+      printedWill: 8
+      printedPerception: 8
+      printedAttack: 9
+      printedDamage: 5
+      trainedSkills:
+        - Acrobatics
+        - Athletics
+      printedSkills:
+        Acrobatics: 7
+        Athletics: 9
+    - type: CFAbilityScore
+      abilityModifiers:
+        Strength: 5
+        Dexterity: 3
+        Constitution: 2
+        Intelligence: -5
+        Wisdom: 2
+        Charisma: 0
+    # Each Strike with its own printed numbers. With no player in the body the AI picks (CFMonsterAttackSystem).
+    - type: CFMonsterAttacks
+      attacks:
+      - name: bite
+        attack: 9
+        dice: 1
+        die: 8
+        bonus: 5
+        damageType: Bludgeoning
+    - type: CFCombatOptions
+      naturalDice: 1
+      naturalDie: 8
+      naturalType: Bludgeoning
+      naturalAgile: false
+      naturalFinesse: false
+    - type: CFTrait
+      traits:
+        - Mindless
+        - Skeleton
+        - Undead
+        - Unholy
+    - type: MobThresholds
+      thresholds:
+        0: Alive
+        32: Critical
+        33: Dead
+    # Monster parts: what a harvest gives, sharing the monster's parts value (CFHarvestSystem).
+    - type: CFHarvestable
+      parts:
+        - id: CFBone1
+          amount: 2
+          maxAmount: 4

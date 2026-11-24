@@ -297,6 +297,8 @@ Radial actions are entities in `Resources/Prototypes/_CF/Actions/activities.yml`
 | `CFMobWolf` | On the stock corgi sprite, with Pack Attack. Set a spawner's `encounter` to `WolfPack` for four that flank |
 | `CFMobHobgoblinSoldierMelee`, `CFMobHobgoblinSoldierRanged` | Hobgoblin Soldiers on the same body: longsword and shield, or shortbow with the longsword as a sidearm. In `Humanoid/hobgoblin-soldier.yml` |
 | `CFMobGoblinWarriorMelee`, `CFMobGoblinWarriorRanged` | Goblin Warriors on the `_CE` goblin body, with a dogslicer and a shortbow, in `Entities/Mobs/Creatures/Humanoid/goblin-warrior.yml` |
+| `CFMobZombieShambler`, `CFMobPlagueZombie`, `CFMobGhoulStalker`, `CFMobSkeletalChampion`, `CFMobBoneHound`, `CFMobShadow` | Undead, in `Entities/Mobs/Creatures/Undead/`. Encounters `ZombiePack`, `GhoulAndItsDead`, `SkeletalPatrol` |
+| `CFMobGiantBat`, `CFMobViper`, `CFMobGiantViper`, `CFMobGiantMonitorLizard`, `CFMobDireWolf`, `CFMobGiantTarantula` | Beasts, in `Entities/Mobs/Creatures/Animal/`. Encounters `DireWolfPack`, `ViperNest`. The tarantula is level 6 |
 | `Objects/Weapons/`, `Clothing/CFArmors.yml` | Weapons, shields and armor. Bases are in `Objects/Weapons/_base.yml` |
 | `/Maps/Nonstations/meteor-arena.yml` | The arena all integration tests load, through `CFDevMap` |
 | `CFMobKoboldTrapper` | A GOAP leader that shoots, lays traps and draws a hammer when cornered. Set a spawner's `encounter` to `KoboldAmbush` for it and three warriors |

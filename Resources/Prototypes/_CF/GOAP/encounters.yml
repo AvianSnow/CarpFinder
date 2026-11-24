@@ -203,3 +203,61 @@
   id: WaitHidden
   step: Wait
   gives: [ Waited ]
+
+# Six shamblers. Mindless, so nobody runs and nobody flanks: they come straight on and grab.
+- type: encounter
+  id: ZombiePack
+  mobs:
+  - CFMobZombieShambler
+  count: 6
+  routAt: 0
+
+# A ghoul and the dead it keeps: two plague zombies and two shamblers. The ghoul is last, so it stands behind them.
+- type: encounter
+  id: GhoulAndItsDead
+  mobs:
+  - CFMobPlagueZombie
+  - CFMobZombieShambler
+  - CFMobPlagueZombie
+  - CFMobZombieShambler
+  - CFMobGhoulStalker
+  count: 5
+  routAt: 0
+
+# A skeletal champion with two guards and a bone hound.
+- type: encounter
+  id: SkeletalPatrol
+  mobs:
+  - CFMobSkeletalChampion
+  - CFMobSkeletonguardMelee
+  - CFMobSkeletonguardRanged
+  - CFMobBoneHound
+  count: 4
+  routAt: 0
+
+# A dire wolf leading three wolves. They flank as a wolf pack does, and the last one runs.
+- type: encounter
+  id: DireWolfPack
+  mobs:
+  - CFMobDireWolf
+  - CFMobWolf
+  - CFMobWolf
+  - CFMobWolf
+  count: 4
+  routAt: 0.25
+  goals:
+  - RunAway
+  actions:
+  - TakeFlank
+  - StrikeFlanked
+
+# A nest of vipers.
+- type: encounter
+  id: ViperNest
+  mobs:
+  - CFMobGiantViper
+  - CFMobViper
+  - CFMobViper
+  - CFMobViper
+  count: 4
+  routAt: 0

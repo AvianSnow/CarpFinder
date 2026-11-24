@@ -1,0 +1,117 @@
+# Shadow. Creature 4, Medium, Incorporeal Undead Unholy. Monster Core p. 296. Recall Knowledge DC 19.
+# Shadow hand deals void damage and leaves its target enfeebled 1 for a minute, which stands in for Steal Shadow:
+# the rules make that a second action, let it stack to enfeebled 4, and pull a shadow spawn free at 3.
+# It resists all damage by 5 except force, spirit and vitality (CFResistances all). The doubled resistance to
+# non-magical damage, light vulnerability, Slink in Shadows, shadow spawn, and its fly Speed are not in.
+# The sprite is Crystall Edge's shadow eater, which has no dead state.
+- type: entity
+  parent: [CFBaseCreature]
+  id: CFMobShadow
+  name: shadow
+  description: A patch of darkness shaped like a person, reaching for the shadow at your feet.
+  components:
+    - type: GhostRole
+      name: cf-ghost-shadow-name
+      description: cf-ghost-shadow-desc
+    - type: Sprite
+      drawdepth: Mobs
+      layers:
+        - map: ["enum.DamageStateVisualLayers.Base"]
+          sprite: _CE/Mobs/shadow_eater.rsi
+          state: live
+    - type: DamageStateVisuals
+      states:
+        Alive:
+          Base: live
+        Critical:
+          Base: live
+        Dead:
+          Base: live
+    - type: MovementSpeedModifier
+      baseWalkSpeed: 3
+      baseSprintSpeed: 5.4
+    - type: CFSenses
+      darkvision: true
+    - type: NightVision
+      enabled: true
+      prioritized: true
+      noiseAmount: 0
+      lightingColor: "#9BB6FF30"
+    - type: CFLanguages
+      known: [ Mindless ]
+    - type: CFGOAP
+      tactics: Beast
+    - type: CFVoidHealing
+    - type: CFResistances
+      entries:
+      - all: true
+        except: [ Force, Spirit, Vitality ]
+        amount: 5
+      - damageType: Bleed
+        amount: 9999
+      - damageType: Poison
+        amount: 9999
+      - damageType: Void
+        amount: 9999
+    # Immunities: bleed, death effects, disease, paralyzed, poison, precision, unconscious.
+    - type: CFConditionImmunity
+      conditions: [ Asleep, Paralyzed ]
+      traits: [ Death, Disease, Poison ]
+      precision: true
+    - type: CFCombatant
+      level: 4
+      armorClass: 20
+      speedFeet: 30
+      maxHp: 40
+      currentHp: 40
+      printedFortitude: 8
+      printedReflex: 14
+      printedWill: 12
+      printedPerception: 10
+      printedAttack: 15
+      printedDamage: 3
+      trainedSkills:
+        - Acrobatics
+        - Stealth
+      printedSkills:
+        Acrobatics: 10
+        Stealth: 14
+    - type: CFAbilityScore
+      abilityModifiers:
+        Strength: -5
+        Dexterity: 4
+        Constitution: 0
+        Intelligence: -2
+        Wisdom: 2
+        Charisma: 3
+    # Each Strike with its own printed numbers. With no player in the body the AI picks (CFMonsterAttackSystem).
+    - type: CFMonsterAttacks
+      attacks:
+      - name: shadow hand
+        attack: 15
+        dice: 2
+        die: 6
+        bonus: 3
+        damageType: Void
+        traits: [ Finesse ]
+        onHit:
+        - !type:CFApplyConditionEffect
+          condition: Enfeebled
+          value: 1
+          durationSeconds: 60
+    - type: CFCombatOptions
+      naturalDice: 2
+      naturalDie: 6
+      naturalType: Void
+      naturalAgile: false
+      naturalFinesse: true
+    - type: CFTrait
+      traits:
+        - Incorporeal
+        - Undead
+        - Unholy
+    - type: MobThresholds
+      thresholds:
+        0: Alive
+        39: Critical
+        40: Dead

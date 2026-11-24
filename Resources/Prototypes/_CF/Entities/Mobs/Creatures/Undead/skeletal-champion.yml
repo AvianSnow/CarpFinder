@@ -1,0 +1,93 @@
+- type: startingGear
+  id: CFSkeletalChampionGear
+  inhand:
+  - CFLongsword
+
+# Skeletal Champion. Creature 2, Medium, Skeleton Undead Unholy. Monster Core p. 312. Recall Knowledge DC 16.
+# On the skeleton guard's stock body, with a longsword. Disarmed, it uses its claw, the natural attack below.
+# It is not mindless, so mental effects work on it, and it speaks Common; Necril is not a language in the game.
+# Not in: the lance, which it would use mounted.
+- type: entity
+  parent: CFMobSkeletonguardBase
+  id: CFMobSkeletalChampion
+  name: skeletal champion
+  description: A dead knight in the rags of its livery, who has not forgotten how to use a sword.
+  components:
+  - type: GhostRole
+    name: cf-ghost-skeletal-champion-name
+    description: cf-ghost-skeletal-champion-desc
+  - type: Loadout
+    prototypes: [ CFSkeletalChampionGear ]
+  - type: CFLanguages
+    known: [ Common ]
+  - type: CFCombatant
+    level: 2
+    armorClass: 19
+    speedFeet: 25
+    maxHp: 25
+    currentHp: 25
+    printedFortitude: 5
+    printedReflex: 10
+    printedWill: 6
+    printedPerception: 8
+    printedAttack: 10
+    printedDamage: 4
+    strikeAdjustment: 0
+    trainedSkills:
+    - Acrobatics
+    - Athletics
+    - Intimidation
+    printedSkills:
+      Acrobatics: 8
+      Athletics: 8
+      Intimidation: 7
+  - type: CFAbilityScore
+    abilityModifiers:
+      Strength: 4
+      Dexterity: 4
+      Constitution: 1
+      Intelligence: -1
+      Wisdom: 2
+      Charisma: 1
+  # The claw, 1d6+4 slashing, agile.
+  - type: CFCombatOptions
+    naturalDice: 1
+    naturalDie: 6
+    naturalType: Slashing
+    naturalAgile: true
+    naturalFinesse: false
+  - type: CFTrait
+    traits:
+    - Skeleton
+    - Undead
+    - Unholy
+  - type: CFGOAP
+    tactics: Beast
+  # Bleed and poison are immunities. Void is what void healing says about void damage. Mental is not one: it has a mind.
+  - type: CFResistances
+    entries:
+    - damageType: Cold
+      amount: 5
+    - damageType: Electricity
+      amount: 5
+    - damageType: Fire
+      amount: 5
+    - damageType: Piercing
+      amount: 5
+    - damageType: Slashing
+      amount: 5
+    - damageType: Bleed
+      amount: 9999
+    - damageType: Poison
+      amount: 9999
+    - damageType: Void
+      amount: 9999
+  # Immunities: bleed, death effects, disease, paralyzed, poison, unconscious.
+  - type: CFConditionImmunity
+    conditions: [ Asleep, Paralyzed ]
+    traits: [ Death, Disease, Poison ]
+  - type: MobThresholds
+    thresholds:
+      0: Alive
+      24: Critical
+      25: Dead

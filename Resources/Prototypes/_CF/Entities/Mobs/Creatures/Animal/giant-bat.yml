@@ -1,0 +1,107 @@
+# Giant Bat. Creature 2, Large, Animal. Monster Core p. 40. Recall Knowledge DC 16.
+# Fangs and wing. Its echolocation is written as an imprecise sense of 40 feet, where the rules make it precise.
+# Not in: its fly Speed of 30 feet. It walks at its land Speed of 15.
+- type: entity
+  parent: [CFBaseCreature]
+  id: CFMobGiantBat
+  name: giant bat
+  description: A bat with the wingspan of a cart, that hunts by the echo of its own cry.
+  components:
+    - type: GhostRole
+      name: cf-ghost-giant-bat-name
+      description: cf-ghost-giant-bat-desc
+    - type: Sprite
+      drawdepth: Mobs
+      scale: 1.6, 1.6
+      layers:
+        - map: ["enum.DamageStateVisualLayers.Base"]
+          sprite: Mobs/Animals/bat.rsi
+          state: bat
+    - type: DamageStateVisuals
+      states:
+        Alive:
+          Base: bat
+        Critical:
+          Base: dead
+        Dead:
+          Base: dead
+    - type: MovementSpeedModifier
+      baseWalkSpeed: 1.5
+      baseSprintSpeed: 2.7
+    - type: CFSenses
+      lowLightVision: true
+      impreciseFeet: 40
+    - type: NightVision
+      enabled: true
+      prioritized: true
+      noiseAmount: 0
+      lightingColor: "#9BB6FF18"
+    - type: CFGOAP
+      tactics: Beast
+    - type: CFCombatant
+      level: 2
+      armorClass: 18
+      speedFeet: 15
+      maxHp: 30
+      currentHp: 30
+      printedFortitude: 9
+      printedReflex: 8
+      printedWill: 7
+      printedPerception: 11
+      printedAttack: 9
+      printedDamage: 4
+      trainedSkills:
+        - Acrobatics
+        - Athletics
+        - Stealth
+      printedSkills:
+        Acrobatics: 8
+        Athletics: 8
+        Stealth: 8
+    - type: CFAbilityScore
+      abilityModifiers:
+        Strength: 4
+        Dexterity: 2
+        Constitution: 3
+        Intelligence: -4
+        Wisdom: 3
+        Charisma: -2
+    # Each Strike with its own printed numbers. With no player in the body the AI picks (CFMonsterAttackSystem).
+    - type: CFMonsterAttacks
+      attacks:
+      - name: fangs
+        attack: 9
+        dice: 1
+        die: 10
+        bonus: 4
+        damageType: Piercing
+      - name: wing
+        attack: 9
+        dice: 1
+        die: 6
+        bonus: 4
+        damageType: Slashing
+        traits: [ Agile ]
+    - type: CFCombatOptions
+      naturalDice: 1
+      naturalDie: 10
+      naturalType: Piercing
+      naturalAgile: false
+      naturalFinesse: false
+    - type: CFTrait
+      traits:
+        - Animal
+    - type: MobThresholds
+      thresholds:
+        0: Alive
+        29: Critical
+        30: Dead
+    # Monster parts: what a harvest gives, sharing the monster's parts value (CFHarvestSystem).
+    - type: CFHarvestable
+      parts:
+        - id: CFFoodMeatMonster
+          amount: 1
+          maxAmount: 2
+        - id: CFLeather1
+          amount: 1
+          maxAmount: 2

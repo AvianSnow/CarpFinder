@@ -104,3 +104,29 @@
       dice: 5
       die: 6
       damageType: Poison
+
+# Giant Tarantula, Monster Core. Hair Barrage: a 15-foot cone of spiky hairs, 4d6 piercing, DC 25 basic Reflex, 2 actions.
+# The rules give it no recharge. Here it has one round, or a tarantula with no player would do nothing else.
+- type: entity
+  parent: CFActBreathBase
+  id: CFActHairBarrage
+  name: Hair Barrage
+  description: A 15-foot cone of spiky hairs. 4d6 piercing, DC 25 basic Reflex. 2 actions, then a round before the next.
+  components:
+  - type: CFBreathWeapon
+    rechargeDice: 1
+    rechargeDie: 1
+  - type: CFAreaEffect
+    shape: Cone
+    sizeFeet: 15
+  - type: CFCheck
+    defense: Reflex
+    basicSave: true
+    dcSource: Fixed
+    fixedDc: 25
+  - type: CFDegreeEffects
+    effects:
+    - !type:CFDamageEffect
+      dice: 4
+      die: 6
+      damageType: Piercing

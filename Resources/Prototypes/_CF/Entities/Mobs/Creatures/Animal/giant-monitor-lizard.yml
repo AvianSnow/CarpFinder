@@ -1,0 +1,105 @@
+# Giant Monitor Lizard. Creature 2, Medium, Animal. Monster Core p. 224. Recall Knowledge DC 16.
+# Jaws with Grab and monitor lizard venom (Afflictions/monsters.yml).
+# Not in: Lurching Charge, and its swim Speed.
+- type: entity
+  parent: [CFBaseCreature]
+  id: CFMobGiantMonitorLizard
+  name: giant monitor lizard
+  description: A heavy lizard the length of a horse, with a slow walk and a fast bite.
+  components:
+    - type: GhostRole
+      name: cf-ghost-giant-monitor-lizard-name
+      description: cf-ghost-giant-monitor-lizard-desc
+    - type: Sprite
+      drawdepth: Mobs
+      scale: 1.6, 1.6
+      layers:
+        - map: ["enum.DamageStateVisualLayers.Base"]
+          sprite: Mobs/Animals/lizard.rsi
+          state: lizard
+    - type: DamageStateVisuals
+      states:
+        Alive:
+          Base: lizard
+        Critical:
+          Base: dead
+        Dead:
+          Base: dead
+    - type: MovementSpeedModifier
+      baseWalkSpeed: 3
+      baseSprintSpeed: 5.4
+    - type: CFSenses
+      lowLightVision: true
+      impreciseFeet: 30
+    - type: CFSmeller
+    - type: NightVision
+      enabled: true
+      prioritized: true
+      noiseAmount: 0
+      lightingColor: "#9BB6FF18"
+    - type: CFGOAP
+      tactics: Beast
+    - type: CFCombatant
+      level: 2
+      armorClass: 16
+      speedFeet: 30
+      maxHp: 36
+      currentHp: 36
+      printedFortitude: 9
+      printedReflex: 8
+      printedWill: 5
+      printedPerception: 7
+      printedAttack: 11
+      printedDamage: 3
+      trainedSkills:
+        - Acrobatics
+        - Athletics
+        - Stealth
+      printedSkills:
+        Acrobatics: 6
+        Athletics: 9
+        Stealth: 6
+    - type: CFAbilityScore
+      abilityModifiers:
+        Strength: 3
+        Dexterity: 2
+        Constitution: 3
+        Intelligence: -4
+        Wisdom: 1
+        Charisma: -2
+    # Each Strike with its own printed numbers. With no player in the body the AI picks (CFMonsterAttackSystem).
+    - type: CFMonsterAttacks
+      attacks:
+      - name: jaws
+        attack: 11
+        dice: 1
+        die: 10
+        bonus: 3
+        damageType: Piercing
+        followUp: Grab
+        onHit:
+        - !type:CFExposeAfflictionEffect
+          affliction: MonitorLizardVenom
+    - type: CFCombatOptions
+      naturalDice: 1
+      naturalDie: 10
+      naturalType: Piercing
+      naturalAgile: false
+      naturalFinesse: false
+    - type: CFTrait
+      traits:
+        - Animal
+    - type: MobThresholds
+      thresholds:
+        0: Alive
+        35: Critical
+        36: Dead
+    # Monster parts: what a harvest gives, sharing the monster's parts value (CFHarvestSystem).
+    - type: CFHarvestable
+      parts:
+        - id: CFFoodMeatMonster
+          amount: 1
+          maxAmount: 2
+        - id: CFLeather1
+          amount: 1
+          maxAmount: 2
