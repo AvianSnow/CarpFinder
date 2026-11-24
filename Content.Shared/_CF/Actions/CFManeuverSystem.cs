@@ -283,7 +283,8 @@ public sealed partial class CFManeuverSystem : EntitySystem
     [SubscribeLocalEvent]
     private void OnMoveInput(Entity<CFConditionComponent> ent, ref MoveInputEvent args)
     {
-        if (_net.IsServer && ent.Comp.Grabbed && args.HasDirectionalMovement)
+        // On a leash a creature may move: it tries to Escape when it pulls against the leash (CFMonsterShotSystem).
+        if (_net.IsServer && ent.Comp.Grabbed && args.HasDirectionalMovement && !HasComp<CFTetheredComponent>(ent))
             TryEscape(ent);
     }
 
@@ -324,7 +325,9 @@ public sealed partial class CFManeuverSystem : EntitySystem
 
         ent.Comp.NextEscape = now + EscapeInterval;
         // A web or the like has a DC of its own. A creature is escaped from against its Athletics DC.
-        var escapeDc = CompOrNull<CFStickyHoldComponent>(grabber)?.EscapeDc ?? 10 + AthleticsModifier(grabber);
+        var escapeDc = CompOrNull<CFTetheredComponent>(ent)?.EscapeDc
+                       ?? CompOrNull<CFStickyHoldComponent>(grabber)?.EscapeDc
+                       ?? 10 + AthleticsModifier(grabber);
         var degree = CFDefense.Roll(_random, EscapeModifier(ent), escapeDc);
         if (!degree.IsSuccess())
         {

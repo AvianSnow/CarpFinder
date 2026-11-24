@@ -1,3 +1,4 @@
+using System.Numerics;
 using Content.Shared.Actions;
 using Content.Shared.Actions.Components;
 using Content.Shared.CF.Actions;
@@ -6,6 +7,9 @@ using Content.Shared.Mobs.Systems;
 using Content.Shared.Popups;
 using Robust.Shared.GameStates;
 using Robust.Shared.Network;
+using Robust.Shared.Physics.Components;
+using Robust.Shared.Physics.Systems;
+using Robust.Shared.Player;
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared.CF.Combat;
@@ -50,6 +54,39 @@ public sealed partial class CFStickyHoldComponent : Component
 }
 
 /// <summary>
+/// On a creature held on a leash, as by a frog's tongue: grabbed, so off-guard, but free to move as long as it stays
+/// within <see cref="ReachFeet"/> of what holds it. Pulling against the leash is how a player tries to Escape.
+/// </summary>
+[RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
+public sealed partial class CFTetheredComponent : Component
+{
+    [DataField, AutoNetworkedField]
+    public int ReachFeet = 15;
+
+    [DataField]
+    public int EscapeDc = 15;
+}
+
+/// <summary>
+/// The user takes hold of the target on a leash (Tongue Grab): it is grabbed by the user without being immobilized,
+/// and cannot get farther than <see cref="ReachFeet"/> away until it Escapes against <see cref="EscapeDc"/>.
+/// </summary>
+public sealed partial class CFTetherEffect : CFEffect
+{
+    [DataField]
+    public int ReachFeet = 15;
+
+    [DataField(required: true)]
+    public int EscapeDc;
+
+    public override void Apply(IEntityManager entities, CFEffectArgs args)
+    {
+        if (args.Target is { } target && target != args.User)
+            entities.System<CFMonsterShotSystem>().Tether(target, args.User, ReachFeet, EscapeDc);
+    }
+}
+
+/// <summary>
 /// Sticks the target where it stands until it Escapes: immobilized, and held by a spawned <see cref="Holder"/>, such
 /// as a web. A critical hit does the same; the rules give a web no more for one.
 /// </summary>
@@ -78,6 +115,8 @@ public sealed partial class CFMonsterShotSystem : EntitySystem
     [Dependency] private CFActionPoolSystem _pool = default!;
     [Dependency] private CFConditionSystem _conditions = default!;
     [Dependency] private CFEffectSystem _effects = default!;
+    [Dependency] private CFManeuverSystem _maneuvers = default!;
+    [Dependency] private SharedPhysicsSystem _physics = default!;
 
     [SubscribeLocalEvent]
     private void OnShot(Entity<CFMonsterShotComponent> ent, ref CFMonsterShotEvent args)
@@ -169,6 +208,73 @@ public sealed partial class CFMonsterShotSystem : EntitySystem
         // A reaction can slip a grab as it lands.
         if (CompOrNull<CFConditionComponent>(target)?.Grabber != uid)
             QueueDel(uid);
+    }
+
+    /// <summary>Holds the target on a leash to the holder. A creature already held by something is left as it is.</summary>
+    public void Tether(EntityUid target, EntityUid holder, int reachFeet, int escapeDc)
+    {
+        if (!_net.IsServer || !_mobState.IsAlive(target) || CompOrNull<CFConditionComponent>(target)?.Grabbed == true)
+            return;
+
+        var tether = EnsureComp<CFTetheredComponent>(target);
+        tether.ReachFeet = reachFeet;
+        tether.EscapeDc = escapeDc;
+        Dirty(target, tether);
+        _conditions.ApplyGrabbed(target, holder);
+
+        // A reaction can slip a grab as it lands.
+        if (!TryComp(target, out CFConditionComponent? cond) || cond.Grabber != holder)
+        {
+            RemComp<CFTetheredComponent>(target);
+            return;
+        }
+
+        // Grabbed, but not held in place.
+        cond.Immobilized = false;
+        Dirty(target, cond);
+    }
+
+    /// <summary>
+    /// Keeps a tethered creature within reach of what holds it. A player who pulls against the leash tries to Escape,
+    /// for an action, at most once a second; whoever is still held is drawn back inside.
+    /// </summary>
+    public override void Update(float frameTime)
+    {
+        base.Update(frameTime);
+        if (!_net.IsServer)
+            return;
+
+        var query = EntityQueryEnumerator<CFTetheredComponent, CFConditionComponent>();
+        while (query.MoveNext(out var uid, out var tether, out var cond))
+        {
+            if (!cond.Grabbed || cond.Grabber is not { } holder || TerminatingOrDeleted(holder) || !_mobState.IsAlive(holder))
+            {
+                _conditions.ReleaseGrab(uid);
+                RemCompDeferred<CFTetheredComponent>(uid);
+                continue;
+            }
+
+            var from = _transform.GetMapCoordinates(holder);
+            var at = _transform.GetMapCoordinates(uid);
+            if (from.MapId != at.MapId)
+            {
+                _conditions.ReleaseGrab(uid);
+                continue;
+            }
+
+            var reach = tether.ReachFeet / CFMelee.FeetPerTile;
+            var offset = at.Position - from.Position;
+            var distance = offset.Length();
+            if (distance <= reach)
+                continue;
+
+            if (HasComp<ActorComponent>(uid) && _maneuvers.TryEscape((uid, cond)))
+                continue;
+
+            _transform.SetWorldPosition(uid, from.Position + offset / distance * reach);
+            if (TryComp(uid, out PhysicsComponent? body))
+                _physics.SetLinearVelocity(uid, Vector2.Zero, body: body);
+        }
     }
 
     /// <summary>The holder is destroyed, burnt or cleared away: what it held is free.</summary>

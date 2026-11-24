@@ -5,6 +5,7 @@ using Content.Shared.CF.Traits;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Popups;
 using Content.Shared.Verbs;
+using Content.Shared.Weapons.Melee;
 using Robust.Shared.GameStates;
 using Robust.Shared.Network;
 using Robust.Shared.Player;
@@ -58,6 +59,13 @@ public sealed partial class CFMonsterAttack
     [DataField]
     public List<ProtoId<CFTraitPrototype>> Traits = new();
 
+    /// <summary>
+    /// How far this attack reaches, in feet, for one longer than its traits say: a tail's 15. Zero uses the
+    /// <c>Reach</c> trait's 10, or 5 without it.
+    /// </summary>
+    [DataField]
+    public int ReachFeet;
+
     [DataField]
     public CFFollowUp FollowUp;
 
@@ -85,6 +93,12 @@ public sealed partial class CFMonsterAttacksComponent : Component
     /// <summary>The attack the next Strike is made with.</summary>
     [DataField, AutoNetworkedField]
     public int Current;
+
+    /// <summary>Who the creature is fighting, as the AI last said. The pick keeps to attacks that reach it. Server-only.</summary>
+    public EntityUid? Target;
+
+    /// <summary>The body's own swing range, kept so an attack with reach can lengthen it and a short one put it back.</summary>
+    public float BaseRange = -1f;
 }
 
 public sealed partial class CFMonsterAttackSystem : EntitySystem
@@ -93,6 +107,7 @@ public sealed partial class CFMonsterAttackSystem : EntitySystem
     [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private MobStateSystem _mobState = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
+    [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private CFActionPoolSystem _actions = default!;
     [Dependency] private CFEffectSystem _effects = default!;
     [Dependency] private CFManeuverSystem _maneuvers = default!;
@@ -123,17 +138,45 @@ public sealed partial class CFMonsterAttackSystem : EntitySystem
         return true;
     }
 
+    /// <summary>How far an attack reaches, in feet: its own number, else its Reach trait's, else 5.</summary>
+    public int ReachFeet(CFMonsterAttack attack)
+    {
+        if (attack.ReachFeet > 0)
+            return attack.ReachFeet;
+
+        var reach = CFWeaponTraits.From(_prototypes, attack.Traits).Reach;
+        return Math.Max(CFFlanking.DefaultReachFeet, reach);
+    }
+
     /// <summary>
     /// The attack with the best bonus once the multiple attack penalty is counted, the first listed on a tie. That is
-    /// the main attack with no penalty, and an agile one after it.
+    /// the main attack with no penalty, and an agile one after it. With a target, only attacks that reach it count,
+    /// so a tail lashes out at what the jaws cannot get to. If nothing reaches, the pick is as if there were no target.
     /// </summary>
-    public int Best(Entity<CFMonsterAttacksComponent> ent)
+    public int Best(Entity<CFMonsterAttacksComponent> ent, EntityUid? target = null)
     {
-        var best = 0;
+        if (target is { } aimed && !TerminatingOrDeleted(aimed))
+        {
+            var from = _transform.GetWorldPosition(ent);
+            var to = _transform.GetWorldPosition(aimed);
+            var reaching = BestOf(ent, attack => CFFlanking.InReach(from, to, ReachFeet(attack)));
+            if (reaching >= 0)
+                return reaching;
+        }
+
+        return Math.Max(0, BestOf(ent, _ => true));
+    }
+
+    private int BestOf(Entity<CFMonsterAttacksComponent> ent, Func<CFMonsterAttack, bool> fits)
+    {
+        var best = -1;
         var bestBonus = int.MinValue;
         for (var i = 0; i < ent.Comp.Attacks.Count; i++)
         {
             var attack = ent.Comp.Attacks[i];
+            if (!fits(attack))
+                continue;
+
             var agile = attack.Traits.Contains("Agile");
             var bonus = attack.Attack + _actions.MapPenalty(ent, agile);
             if (bonus <= bestBonus)
@@ -149,18 +192,54 @@ public sealed partial class CFMonsterAttackSystem : EntitySystem
     public void Select(Entity<CFMonsterAttacksComponent> ent, int index)
     {
         index = Math.Clamp(index, 0, Math.Max(0, ent.Comp.Attacks.Count - 1));
-        if (ent.Comp.Current == index)
+        if (ent.Comp.Current != index)
+        {
+            ent.Comp.Current = index;
+            Dirty(ent);
+        }
+
+        SetSwingRange(ent);
+    }
+
+    /// <summary>
+    /// The body swings as far as the chosen attack reaches. Stock melee, which CF turns into Strikes, goes by the
+    /// body's swing range, for a player's click and the AI alike.
+    /// </summary>
+    private void SetSwingRange(Entity<CFMonsterAttacksComponent> ent)
+    {
+        if (!_net.IsServer || !TryComp(ent, out MeleeWeaponComponent? melee) || ent.Comp.Attacks.Count == 0)
             return;
 
-        ent.Comp.Current = index;
-        Dirty(ent);
+        if (ent.Comp.BaseRange < 0f)
+            ent.Comp.BaseRange = melee.Range;
+
+        var reach = ReachFeet(ent.Comp.Attacks[Math.Clamp(ent.Comp.Current, 0, ent.Comp.Attacks.Count - 1)]);
+        var range = reach > CFFlanking.DefaultReachFeet
+            ? Math.Max(ent.Comp.BaseRange, CFFlanking.Ss14SwingRange(reach))
+            : ent.Comp.BaseRange;
+
+        if (MathF.Abs(melee.Range - range) < 0.01f)
+            return;
+
+        melee.Range = range;
+        Dirty(ent.Owner, melee);
+    }
+
+    /// <summary>The AI says who it is fighting, and the creature takes the best attack that reaches them.</summary>
+    public void PickFor(Entity<CFMonsterAttacksComponent?> ent, EntityUid? target)
+    {
+        if (!_net.IsServer || !Resolve(ent, ref ent.Comp, false) || HasComp<ActorComponent>(ent))
+            return;
+
+        ent.Comp.Target = target;
+        Select((ent.Owner, ent.Comp), Best((ent.Owner, ent.Comp), target));
     }
 
     /// <summary>With no player in the body, the creature takes its best attack for the next Strike.</summary>
     private void Repick(Entity<CFMonsterAttacksComponent> ent)
     {
         if (_net.IsServer && !HasComp<ActorComponent>(ent))
-            Select(ent, Best(ent));
+            Select(ent, Best(ent, ent.Comp.Target));
     }
 
     [SubscribeLocalEvent]

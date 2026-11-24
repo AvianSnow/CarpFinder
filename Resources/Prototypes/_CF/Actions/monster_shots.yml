@@ -92,3 +92,24 @@
   - type: CFStickyHold
   - type: TimedDespawn
     lifetime: 300
+
+# Giant frog, Monster Core 2: Melee tongue +8 (reach 15 feet), Effect tongue grab. Tongue Grab: a creature hit by the
+# tongue is grabbed by the frog. It is not immobilized, but it cannot move beyond the reach of the tongue. The DC to
+# Escape is 16. Not in: severing the tongue with a slashing Strike against AC 13.
+# A Strike with long reach and no damage is the same kind of action as a ranged attack, with nothing that flies.
+- type: entity
+  parent: CFActMonsterShotBase
+  id: CFActTongue
+  name: Tongue
+  description: Lashes a creature within 15 feet with a sticky tongue. On a hit it is grabbed and cannot get farther than 15 feet away until it Escapes (DC 16).
+  components:
+  - type: CFTargeting
+    delivery: Creature
+    rangeFeet: 15
+  - type: CFCheck
+    fixedDc: 18
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFTetherEffect
+      reachFeet: 15
+      escapeDc: 16

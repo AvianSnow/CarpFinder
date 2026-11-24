@@ -177,7 +177,7 @@ public sealed partial class CFConditionSystem : EntitySystem
             if (cond.Grabbed
                 && (cond.Grabber is not { } grabber
                     || !Exists(grabber)
-                    || !HasComp<CFStickyHoldComponent>(grabber) && !InMelee(grabber, uid)
+                    || !HasComp<CFStickyHoldComponent>(grabber) && !HasComp<CFTetheredComponent>(uid) && !InMelee(grabber, uid)
                     || cond.GrabbedUntil != TimeSpan.Zero && now >= cond.GrabbedUntil))
             {
                 ReleaseGrab(uid);
@@ -197,7 +197,12 @@ public sealed partial class CFConditionSystem : EntitySystem
     [SubscribeLocalEvent]
     private void OnMove(Entity<CFConditionComponent> ent, ref RefreshMovementSpeedModifiersEvent args)
     {
-        if (ent.Comp.Immobilized || ent.Comp.Grabbed || ent.Comp.Values.ContainsKey(CFConditionKind.Restrained))
+        // A creature held on a leash (a frog's tongue) is grabbed and can still move, as far as the leash lets it.
+        var held = ent.Comp.Immobilized || ent.Comp.Grabbed;
+        if (held && !ent.Comp.Values.ContainsKey(CFConditionKind.Restrained) && HasComp<CFTetheredComponent>(ent))
+            return;
+
+        if (held || ent.Comp.Values.ContainsKey(CFConditionKind.Restrained))
             args.ModifySpeed(0f);
     }
 
@@ -337,6 +342,7 @@ public sealed partial class CFConditionSystem : EntitySystem
         cond.Grabbed = false;
         cond.Grabber = null;
         cond.Immobilized = false;
+        RemComp<CFTetheredComponent>(target);
 
         // A critical Grapple restrains for as long as the grab holds.
         if (cond.Values.Remove(CFConditionKind.Restrained))

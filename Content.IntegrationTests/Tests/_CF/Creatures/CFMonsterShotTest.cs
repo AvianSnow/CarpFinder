@@ -41,6 +41,40 @@ public sealed class CFMonsterShotTest : GameTest
       holder: CFWebTrap
       escapeDc: 70
 
+# A tongue: 15 feet, at once, no damage, and a leash nobody gets off by themselves.
+- type: entity
+  parent: CFActMonsterShotBase
+  id: CFMonsterShotTestTongue
+  components:
+  - type: CFTargeting
+    delivery: Creature
+    rangeFeet: 15
+  - type: CFCheck
+    fixedDc: 70
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFTetherEffect
+      reachFeet: 15
+      escapeDc: 70
+
+- type: entity
+  parent: MobHuman
+  id: CFMonsterShotTestFrog
+  components:
+  - type: CFCombatant
+    level: 1
+    armorClass: 10
+    maxHp: 200
+    currentHp: 200
+    thinkingTimer: 0
+  - type: CFAbilityScore
+  - type: CFCombatOptions
+  - type: CFFaction
+    faction: Monster
+  - type: ActionGrant
+    actions:
+    - CFMonsterShotTestTongue
+
 - type: entity
   parent: MobHuman
   id: CFMonsterShotTestSpinner
@@ -151,6 +185,51 @@ public sealed class CFMonsterShotTest : GameTest
             Assert.That(Shots.TryGetReady(spinner, out var shot));
             Assert.That(Shots.Worthwhile(spinner, shot, near), Is.False, "Within reach its fangs are better.");
             Assert.That(Shots.Worthwhile(spinner, shot, far), Is.False, "Thirty-five feet is past the web's 30.");
+        });
+    }
+
+    [Test]
+    public async Task ATongueHoldsOnALeashWithoutPinning()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint, avoidStructures: true);
+        var frog = default(EntityUid);
+        var prey = default(EntityUid);
+        await Server.WaitAssertion(() =>
+        {
+            frog = SEntMan.SpawnEntity("CFMonsterShotTestFrog", _map.Local(0, 0));
+            prey = SEntMan.SpawnEntity("CFMonsterShotTestPrey", _map.Local(2, 0));
+        });
+
+        await Pair.RunTicksSync(5);
+        await Server.WaitAssertion(() =>
+        {
+            Assert.That(Shots.TryGetReady(frog, out var tongue));
+            Assert.That(Shots.Worthwhile(frog, tongue, prey), "Ten feet away is out of its jaws' reach and inside the tongue's.");
+            Assert.That(Shots.TryShoot(frog, tongue, prey));
+
+            var cond = SEntMan.GetComponent<CFConditionComponent>(prey);
+            Assert.Multiple(() =>
+            {
+                Assert.That(cond.Grabbed && cond.Grabber == frog, "The frog has it.");
+                Assert.That(SEntMan.HasComponent<CFTetheredComponent>(prey));
+                Assert.That(Conditions.IsOffGuardTo(prey, frog), "Grabbed is off-guard.");
+                Assert.That(SEntMan.GetComponent<MovementSpeedModifierComponent>(prey).CurrentWalkSpeed, Is.GreaterThan(0f), "But it can still move.");
+                Assert.That(SEntMan.GetComponent<CFCombatantComponent>(prey).CurrentHp, Is.EqualTo(200), "The tongue deals no damage.");
+            });
+
+            // Dragged six tiles off, twice the leash.
+            SEntMan.System<SharedTransformSystem>().SetCoordinates(prey, _map.Local(6, 0));
+        });
+
+        await Pair.RunTicksSync(10);
+        await Server.WaitAssertion(() =>
+        {
+            var xform = SEntMan.System<SharedTransformSystem>();
+            var apart = (xform.GetWorldPosition(prey) - xform.GetWorldPosition(frog)).Length();
+            Assert.That(apart, Is.LessThanOrEqualTo(3.05f), "The leash is 15 feet: three tiles.");
+
+            Conditions.ReleaseGrab(prey);
+            Assert.That(SEntMan.HasComponent<CFTetheredComponent>(prey), Is.False, "Free of the grab is free of the leash.");
         });
     }
 }

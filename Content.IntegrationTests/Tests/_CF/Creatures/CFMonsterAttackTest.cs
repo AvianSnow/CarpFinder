@@ -55,6 +55,11 @@ public sealed class CFMonsterAttackTest : GameTest
       bonus: 2
       damageType: Slashing
       traits: [ Agile ]
+    - name: tail
+      attack: 50
+      die: 8
+      damageType: Bludgeoning
+      traits: [ Reach ]
   - type: CFResistances
     entries:
     - all: true
@@ -116,6 +121,33 @@ public sealed class CFMonsterAttackTest : GameTest
             Attacks.Select((beast, comp), 1);
             var claw = strikes.UnarmedStats(beast);
             Assert.That(claw.Agile && claw.DamageDie == 6 && claw.DamageType == "Slashing");
+        });
+    }
+
+    [Test]
+    public async Task AnAttackWithReachIsUsedOnWhatTheOthersCannotGetTo()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            var beast = Spawn("CFMonsterAttackTestBeast", 0);
+            var near = Spawn("CFMonsterAttackTestPrey", 1);
+            var far = Spawn("CFMonsterAttackTestPrey", 2);
+            var comp = SEntMan.GetComponent<CFMonsterAttacksComponent>(beast);
+            var melee = SEntMan.GetComponent<Content.Shared.Weapons.Melee.MeleeWeaponComponent>(beast);
+            var shortRange = melee.Range;
+
+            Assert.That(Attacks.ReachFeet(comp.Attacks[2]), Is.EqualTo(10), "The Reach trait is 10 feet.");
+            Assert.That(Attacks.Best((beast, comp), near), Is.Zero, "Beside it, the jaws are the better attack.");
+            Assert.That(Attacks.Best((beast, comp), far), Is.EqualTo(2), "Ten feet away only the tail reaches.");
+
+            Attacks.PickFor(beast, far);
+            Assert.That(comp.Current, Is.EqualTo(2));
+            Assert.That(melee.Range, Is.GreaterThan(shortRange), "The body swings as far as the tail reaches.");
+
+            Attacks.PickFor(beast, near);
+            Assert.That(comp.Current, Is.Zero);
+            Assert.That(melee.Range, Is.EqualTo(shortRange).Within(0.01f), "And no farther with the jaws.");
         });
     }
 

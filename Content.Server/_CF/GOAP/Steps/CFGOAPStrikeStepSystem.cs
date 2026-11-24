@@ -11,6 +11,7 @@ namespace Content.Server.CF.GOAP.Steps;
 public sealed partial class CFGOAPStrikeStepSystem : CFGOAPStepSystem
 {
     [Dependency] private SharedCombatModeSystem _combatMode = default!;
+    [Dependency] private Content.Shared.CF.Combat.CFMonsterAttackSystem _attacks = default!;
 
     protected override CFGOAPStep Kind => CFGOAPStep.Strike;
 
@@ -19,9 +20,18 @@ public sealed partial class CFGOAPStrikeStepSystem : CFGOAPStepSystem
         if (ent.Comp.Target is not { } target)
             return;
 
+        // A creature with several attacks takes the best one that reaches this target.
+        _attacks.PickFor(ent.Owner, target);
         _combatMode.SetInCombatMode(ent, true);
         EnsureComp<NPCMeleeCombatComponent>(ent).Target = target;
         Steering.Engage(ent, target);
+    }
+
+    public override bool Run(Entity<CFGOAPComponent> ent, CFGOAPActionPrototype action)
+    {
+        // The target moves in and out of reach of a tail or a tongue, so the choice is looked at again as it fights.
+        _attacks.PickFor(ent.Owner, ent.Comp.Target);
+        return false;
     }
 
     public override void End(Entity<CFGOAPComponent> ent, CFGOAPActionPrototype action)

@@ -1,4 +1,4 @@
-# Giant frog. Creature 1, Medium. Monster Core 2 p. 158. Jaws only. Grab and the tongue are not in yet.
+# Giant frog. Creature 1, Medium. Monster Core 2 p. 158. Jaws, and the tongue with its Tongue Grab (CFActTongue in Actions/monster_shots.yml). Severing the tongue and Sticky Feet are not in yet.
 - type: entity
   parent: CFBaseCreature
   id: CFMobGiantFrog
@@ -30,6 +30,10 @@
         - Animal
     - type: CFGOAP
       tactics: Beast
+    # Its tongue: reach 15 feet, no damage, and whatever it hits is held on that leash.
+    - type: ActionGrant
+      actions:
+        - CFActTongue
     - type: CFSenses
       lowLightVision: true
     - type: CFCombatant
