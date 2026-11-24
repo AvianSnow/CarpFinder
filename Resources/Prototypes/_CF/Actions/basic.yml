@@ -145,3 +145,15 @@
     - texture: Interface/Actions/eyeopen.png
   - type: CFBasicAction
     action: Seek
+
+- type: entity
+  parent: CFActBasicInstant
+  id: CFActTakeCover
+  name: Take Cover
+  description: Press yourself behind the cover you have, for greater cover, or hunker down while prone against ranged attacks. It lasts until you leave the spot or attack.
+  components:
+  - type: Sprite
+    layers:
+    - texture: Interface/Actions/rooting.png
+  - type: CFBasicAction
+    action: TakeCover

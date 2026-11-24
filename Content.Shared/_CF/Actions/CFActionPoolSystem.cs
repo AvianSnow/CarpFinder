@@ -30,6 +30,7 @@ public sealed partial class CFActionPoolSystem : EntitySystem
     private static readonly TimeSpan ThinkingLapse = TimeSpan.FromSeconds(0.5);
 
     [Dependency] private CFShieldSystem _shields = default!;
+    [Dependency] private Content.Shared.CF.Cover.CFCoverSystem _cover = default!;
     [Dependency] private CFStealthSystem _stealth = default!;
     [Dependency] private CFWeaponSystem _weapons = default!;
 
@@ -147,6 +148,7 @@ public sealed partial class CFActionPoolSystem : EntitySystem
     public void CountAttack(EntityUid uid, CFActionPoolComponent? pool = null)
     {
         _shields.EndCover(uid);
+        _cover.EndCover(uid);
         if (!_net.IsServer || !Resolve(uid, ref pool, false))
             return;
 

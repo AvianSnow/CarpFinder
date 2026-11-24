@@ -36,6 +36,7 @@ public sealed partial class CFCharacterSpawnSystem : EntitySystem
         "CFActAid",
         "CFActRecall",
         "CFActHide",
+        "CFActTakeCover",
         "CFActSeek",
     };
 

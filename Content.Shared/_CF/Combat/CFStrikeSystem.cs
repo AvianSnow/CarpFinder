@@ -57,6 +57,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
     [Dependency] private CFFactionSystem _factions = default!;
     [Dependency] private CFActionPoolSystem _actions = default!;
     [Dependency] private CFConditionSystem _conditions = default!;
+    [Dependency] private Content.Shared.CF.Cover.CFCoverSystem _cover = default!;
+    [Dependency] private Content.Shared.CF.Lighting.CFLightSystem _light = default!;
     [Dependency] private CFBonusSystem _bonuses = default!;
     [Dependency] private CFWeaponSystem _weapons = default!;
     [Dependency] private CFShieldSystem _shields = default!;
@@ -526,7 +528,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
         bool melee,
         bool unseen,
         bool isObject,
-        bool alreadyDown)
+        bool alreadyDown,
+        bool ignoreLesserCover = false)
     {
         // Downed creatures already take a larger AC penalty. Off-guard does not stack with itself.
         var acPenalty = 0;
@@ -537,7 +540,10 @@ public sealed partial class CFStrikeSystem : EntitySystem
         else if (!isObject && IsOffGuardForStrike(user, target, melee, unseen))
             acPenalty = CFFlanking.OffGuardAcPenalty;
 
-        return defender.ArmorClass - acPenalty + _conditions.ArmorClassModifier(target) + OutwitBonus(user, target)
+        // Cover: a wall's corner, or another creature in the way.
+        var cover = isObject || alreadyDown ? 0 : _cover.AcBonus(target, user, !melee, ignoreLesserCover);
+
+        return defender.ArmorClass - acPenalty + cover + _conditions.ArmorClassModifier(target) + OutwitBonus(user, target)
                + _bonuses.AgainstSource(target, CFBonusStat.ArmorClass, user);
     }
 
@@ -730,7 +736,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
         _conditions.NoteAttack(user);
 
         // A creature that cannot see its attacker is off-guard to this attack. Then everyone sees the attacker.
-        var unseen = !isObject && _stealth.IsUnseenBy(user, target);
+        var unseen = !isObject && (_stealth.IsUnseenBy(user, target) || _light.Obscured(user, target) == Content.Shared.CF.Lighting.CFObscured.Hidden);
         if (unseen)
             _conditions.SetOffGuardTo(target, user, UnseenOffGuardSeconds);
 
@@ -803,7 +809,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
             return false;
         }
 
-        var targetAc = ArmorClassAgainst(user, target, defender, melee, unseen, isObject, alreadyDown);
+        var targetAc = ArmorClassAgainst(user, target, defender, melee, unseen, isObject, alreadyDown, ignoreConcealed);
         _conditions.NoteAttackRoll(user, target, melee);
 
         var rolled = weapon with { DamageType = ChooseDamageType(target, weapon) };

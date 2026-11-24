@@ -9,6 +9,7 @@ using Content.Shared.CF.Actions;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Detection;
+using Content.Shared.CF.Lighting;
 using Content.Shared.CF.Effects;
 using Content.Shared.CF.Items;
 using Content.Shared.CF.Preferences;
@@ -59,6 +60,7 @@ public sealed partial class CFConditionSystem : EntitySystem
     [Dependency] private CFShieldSystem _shields = default!;
     [Dependency] private CFEncumbranceSystem _encumbrance = default!;
     [Dependency] private CFStealthSystem _stealth = default!;
+    [Dependency] private CFLightSystem _light = default!;
     [Dependency] private Content.Shared.Hands.EntitySystems.SharedHandsSystem _hands = default!;
     [Dependency] private CFWeaponSystem _weapons = default!;
 
@@ -66,6 +68,9 @@ public sealed partial class CFConditionSystem : EntitySystem
 
     /// <summary>The flat check to affect a hidden creature.</summary>
     public const int HiddenFlatCheck = 11;
+
+    /// <summary>The flat check to target a concealed creature.</summary>
+    public const int ConcealedFlatCheck = 5;
 
     public override void Update(float frameTime)
     {
@@ -549,7 +554,13 @@ public sealed partial class CFConditionSystem : EntitySystem
         if (!ignoreConcealed && TryComp(target, out CFConditionComponent? cond) && cond.Concealed)
             dc = Math.Max(dc, sense is { ConcealedFlatDc: > 0 } ? Math.Min(cond.FlatCheckDc, sense.ConcealedFlatDc) : cond.FlatCheckDc);
 
-        if (_stealth.IsUnseenBy(target, attacker))
+        // Dim light conceals from eyes with no low-light vision, and darkness hides from eyes with no darkvision.
+        var obscured = _light.Obscured(target, attacker);
+        if (obscured == CFObscured.Concealed && !ignoreConcealed)
+            dc = Math.Max(dc, sense is { ConcealedFlatDc: > 0 } ? Math.Min(ConcealedFlatCheck, sense.ConcealedFlatDc) : ConcealedFlatCheck);
+
+        var unseen = obscured == CFObscured.Hidden || _stealth.IsUnseenBy(target, attacker);
+        if (unseen)
             dc = Math.Max(dc, sense is { HiddenFlatDc: > 0 } ? sense.HiddenFlatDc : HiddenFlatCheck);
 
         // Supernatural Senses: a raging Barbarian smells out what it cannot see.
@@ -557,7 +568,7 @@ public sealed partial class CFConditionSystem : EntitySystem
             && (blind == null || !blind.Blinded)
             && Value(attacker, CFConditionKind.Dazzled) <= 0)
         {
-            dc = Math.Min(dc, _stealth.IsUnseenBy(target, attacker) ? 9 : 3);
+            dc = Math.Min(dc, unseen ? 9 : 3);
         }
 
         if (dc <= 0)

@@ -60,6 +60,8 @@ cf-hud-status-perception = Perception
 cf-hud-status-skills = Skills
 cf-hud-status-speed = Speed
 cf-hud-status-map = MAP
+cf-hud-status-dim-light = Dim light
+cf-hud-status-darkness = Darkness
 
 cf-hud-ac = AC
 cf-hud-ac-tooltip = Armor Class { $ac }.

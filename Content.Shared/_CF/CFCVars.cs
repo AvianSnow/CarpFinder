@@ -18,6 +18,13 @@ public sealed partial class CFCVars : CVars
         CVarDef.Create("cf.goap_sleep", true, CVar.SERVERONLY);
 
     /// <summary>
+    /// Light counts: dim light conceals from eyes with no low-light vision, and darkness hides from eyes with no
+    /// darkvision. Off, everywhere is bright. Integration tests turn it off, because their maps were not lit for it.
+    /// </summary>
+    public static readonly CVarDef<bool> LightRules =
+        CVarDef.Create("cf.light_rules", true, CVar.SERVER | CVar.REPLICATED);
+
+    /// <summary>
     /// A tribe's leader asks a local language model what the tribe should do. Off, or with the model out of reach, the
     /// built-in rules decide, so a tribe works either way. See <c>.agent/society.md</c>.
     /// </summary>

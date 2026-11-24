@@ -407,6 +407,34 @@ public sealed partial class CFGrantSense : CFGrant
 }
 
 /// <summary>
+/// The body sheds light. A light with <see cref="DimOnly"/> never counts as bright light for
+/// <see cref="Content.Shared.CF.Lighting.CFLightSystem"/>, however close.
+/// </summary>
+public sealed partial class CFGrantLight : CFGrant
+{
+    /// <summary>How far the light reaches. The inner half is bright unless <see cref="DimOnly"/>.</summary>
+    [DataField(required: true)]
+    public int RadiusFeet;
+
+    [DataField]
+    public bool DimOnly;
+
+    [DataField]
+    public Color Color = Color.FromHex("#FFE9B0");
+
+    public override void Apply(IEntityManager entities, CFGrantArgs args)
+    {
+        var lights = entities.System<SharedPointLightSystem>();
+        var light = lights.EnsureLight(args.Mob);
+        lights.SetRadius(args.Mob, Math.Max(1f, RadiusFeet / 5f), light);
+        lights.SetEnergy(args.Mob, DimOnly ? Content.Shared.CF.Lighting.CFLightSystem.DimOnlyEnergy : 1.5f, light);
+        lights.SetColor(args.Mob, Color, light);
+        lights.SetCastShadows(args.Mob, true, light);
+        lights.SetEnabled(args.Mob, true, light);
+    }
+}
+
+/// <summary>
 /// A spell from outside the character's slots. It needs a spell action entity. A cantrip is at will, and so is a ranked
 /// spell on a creature with no slots of that rank, because daily uses and focus points do not exist yet (roadmap 1f).
 /// </summary>

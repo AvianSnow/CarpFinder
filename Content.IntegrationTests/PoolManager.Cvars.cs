@@ -23,6 +23,7 @@ public static partial class PoolManager
         (CCVars.GameRoleWhitelist.Name,       "false"),
         (Content.Shared.CF.CFCVars.RequireCompleteCharacter.Name, "false"), // CarpFinder: stock tests join with a default profile
         (Content.Shared.CF.CFCVars.GoapSleep.Name, "false"), // CarpFinder: test heroes have no player in them
+        (Content.Shared.CF.CFCVars.LightRules.Name, "false"), // CarpFinder: test maps were not lit with the rules in mind
         (CCVars.GridFill.Name,                "false"),
         (CCVars.PreloadGrids.Name,            "false"),
         (CCVars.ArrivalsShuttles.Name,        "false"),

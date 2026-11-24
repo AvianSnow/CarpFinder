@@ -30,7 +30,7 @@ public sealed class CFHudDeckTest : GameTest
 
     private static readonly string[] Basic =
     {
-        "CFActManeuver", "CFActGrapple", "CFActTumble", "CFActDemoralize", "CFActFeint", "CFActAid", "CFActRecall", "CFActHide", "CFActSeek",
+        "CFActManeuver", "CFActGrapple", "CFActTumble", "CFActDemoralize", "CFActFeint", "CFActAid", "CFActRecall", "CFActHide", "CFActTakeCover", "CFActSeek",
     };
 
     private static readonly Box2i Footprint = new(-1, -1, 2, 2);

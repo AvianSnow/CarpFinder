@@ -32,6 +32,8 @@
         - Ooze
     - type: CFGOAP
       tactics: Mindless
+    - type: CFSenses
+      darkvision: true
     - type: CFCombatant
       level: 1
       armorClass: 8

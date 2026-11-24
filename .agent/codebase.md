@@ -31,6 +31,7 @@ Everything below is under `Content.Shared/_CF/`.
 | `Character/` | Prototypes for ancestry, class, feat, heritage, background, spell; skill and attribute math; `Grants/`, what an option gives a character | `CFAttributeMath`, `CFSkills`, `CFCharacterFeatureSystem` |
 | `Checks/` | Degrees of success, defenses, casting DCs | `CFDegrees`, `CFDefense`, `CFCasting` |
 | `Combat/` | Strikes, conditions, dying, flanking, armor, shields, weapons, runes | `CFStrikeSystem`, `CFConditionSystem` |
+| `Cover/` | Cover from walls (three sight lines: a corner is +2, a whole wall +4) and from a creature in the way (+1), for Strikes, spell attacks, Reflex saves against areas and Stealth. Take Cover | `CFCoverSystem` |
 | `Companions/` | Pet data and math. The AI is server-side. | `CFPetMath` |
 | `DamageTypes/` | `cfDamageType` and its link to SS14 damage | `CFDamageTypes` |
 | `Effects/` | Target, roll a check, apply effects. Bonuses and resistances. | `CFEffectSystem`, `CFBonusSystem` |
@@ -42,6 +43,7 @@ Everything below is under `Content.Shared/_CF/`.
 | `GOAP/` | The AI every CF monster thinks with: facts, steps, and goals, actions and personalities as prototypes. The logic is server-side in `Content.Server/_CF/GOAP/`. See `goap.md`. Tribes are in its `Society/` folder: see `society.md`. | `CFGOAPSystem`, `CFGOAPPlanner` |
 | `Harvest/` | Harvesting a dead monster for priced parts with a survival knife and a Survival check (Battlezoo Bestiary's values) | `CFHarvestSystem`, `CFHarvestRules` |
 | `Medicine/` | Healer's toolkit, Treat Wounds, Battle Medicine | `CFMedicineSystem` |
+| `Lighting/` | How bright a place is: bright, dim or dark, from the map's ambient light or sun, roofs, and point lights with a clear line. Dim light conceals and darkness hides from eyes without the sense for it. Worked out on demand and kept half a second. `cf.light_rules` turns it off, as integration tests do | `CFLightSystem` |
 | `Locks/` | Keys, Pick a Lock, Force Open, on top of the stock `Lock` | `CFLockSystem` |
 | `Outdoors/` | The outdoor map component, temperature rules, weather effects. The logic is server-side. | `CFEnvironmentRules`, `CFOutdoorsWorldSystem` |
 | `Farming/` | Plant, seed and harvest data. The logic is server-side. | `CFFarmingSystem` |
@@ -140,6 +142,7 @@ An area with `CFAreaFill` or `CFBreathGas` is drawn on its tiles. `ResolveArea` 
 | Use a healer's toolkit in hand, combat mode, feat | Battle Medicine on the nearest hurt ally (1 action) | `CFMedicineSystem` |
 | Right-click a verdant seed in hand, or the weapon grown from it | Grow it into a staff, spear or sling, or return it to seed (1 action) | `CFVerdantSeedSystem` |
 | Throw a healing potion | It breaks. On a living creature it heals them. Otherwise it leaves a puddle that heals whoever lies prone in it or drinks it (alt-click), once, within 5 minutes | `CFSmashPotionSystem` |
+| Take Cover on the Common tab | Cover from a wall becomes greater cover, and a prone creature gets greater cover against ranged attacks (1 action). It ends on leaving the spot or on an attack roll | `CFCoverSystem.TryTakeCover` |
 | Aid verb on an ally | Aid (1 action) | `CFManeuverSystem.TryAid` |
 | Sleep button on the alerts panel, the column on the right with the temperature and pressure icons, shown while buckled to a bed | Long rest: full hit points, spell slots and focus. Refused with an enemy close by, and once per 15 minutes. Asleep, the button is Wake. The stock Sleep and Wake actions are kept off the hotbar | `CFRestAlertSystem`, `CFLongRestSystem` |
 | Look up button on the same panel, shown when there is a level above | The level above is drawn where its floor is open or transparent. Click again to look back down. Ghosts, which have no alerts panel, keep the `CFActionToggleLookUp` action | `CFSharedZLevelsSystem.RefreshLookAlert` |
@@ -150,7 +153,7 @@ An area with `CFAreaFill` or `CFBreathGas` is drawn on its tiles. `ResolveArea` 
 | Play a held instrument, as a Bard | Courageous Anthem for as long as the music lasts. 1 action to start it, nothing to keep it going. Closing the window does not stop the song while the instrument stays in hand | `CFAnthemSystem`, `CFInstrumentSystem` |
 | Radial wheel, HUD deck or hotbar | Activities, stances, spellshapes, Strike actions and spells | `CFActivitySystem`, `CFStanceSystem`, `CFSpellshapeSystem`, `CFStrikeActionSystem`, `CFSpellSystem` |
 | 1 to 0, and Shift with them, while the deck shows Basic, Class or Spells | Use that tab's first or second row | `CFHudDeck.TryKeyed` |
-| HUD deck, Common tab | Shove or Disarm, Grapple, Tumble Through, Demoralize, Feint, Aid, Recall Knowledge, Hide, Seek, Leap | `CFBasicActionComponent`, `CFManeuverSystem.TryUse` |
+| HUD deck, Common tab | Shove or Disarm, Grapple, Tumble Through, Demoralize, Feint, Aid, Recall Knowledge, Hide, Take Cover, Seek, Leap | `CFBasicActionComponent`, `CFManeuverSystem.TryUse` |
 | Sheet, Daily tab | Plan what a pick that changes each day becomes at the next long rest | `CFDailyChoicesTab`, `CFDailyChoiceSystem` |
 | Sheet, Spell Preparation | Plan what a prepared caster prepares at the next long rest | `CFSpellPreparationSystem` |
 | Reactions | Not on the wheel. They fire by themselves, and only when that would change the outcome. With several that could, the first in the character's order wins. The character window's Reactions tab reorders them | `CFReactionSystem`, `CFReactionOrderComponent`, `CFReactionsTab` |

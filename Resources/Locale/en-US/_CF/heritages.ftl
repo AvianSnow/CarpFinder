@@ -211,7 +211,7 @@ cf-heritage-windweb-tripkee = Windweb Tripkee
 cf-heritage-windweb-tripkee-desc = With one hand free, you take no damage from falling.
 
 cf-heritage-ancient-scale-azarketi = Ancient Scale Azarketi
-cf-heritage-ancient-scale-azarketi-desc = You can see in darkness. The light your skin gives off: TBA
+cf-heritage-ancient-scale-azarketi-desc = You can see in darkness, and glowing spots on your skin shed dim light for 10 feet. Turning them off: TBA
 cf-heritage-benthic-azarketi = Benthic Azarketi
 cf-heritage-benthic-azarketi-desc = Cold resistance equal to half your level, and environmental cold is one step less severe. Depth pressure: TBA
 cf-heritage-inured-azarketi = Inured Azarketi
@@ -239,7 +239,7 @@ cf-heritage-warrior-android = Warrior Android
 cf-heritage-warrior-android-desc = You are trained in all simple and martial weapons.
 
 cf-heritage-bright-fetchling = Bright Fetchling
-cf-heritage-bright-fetchling-desc = You can shed light, and glare is less likely to blind you. TBA
+cf-heritage-bright-fetchling-desc = You shed dim light within 5 feet. Turning it off, and the light cantrips it gives: TBA
 cf-heritage-deep-fetchling = Deep Fetchling
 cf-heritage-deep-fetchling-desc = Your darkvision reaches farther, and darkness helps you hide. TBA
 cf-heritage-liminal-fetchling = Liminal Fetchling
@@ -274,7 +274,7 @@ cf-heritage-draxie-desc = You can speak mind to mind with a creature you are tou
 cf-heritage-grig = Grig
 cf-heritage-grig-desc = A bonus to High Jump and Long Jump, and the ghost sound cantrip: TBA
 cf-heritage-luminous-sprite = Luminous Sprite
-cf-heritage-luminous-sprite-desc = You can shed dim light. Your spark deals fire damage. TBA
+cf-heritage-luminous-sprite-desc = You shed light as a torch: bright for 20 feet and dim for 20 more. Putting it out, and a spark that deals fire damage: TBA
 cf-heritage-melixie = Melixie
 cf-heritage-melixie-desc = You can ask questions of insects and similar animals, and many of them start friendly. Your spark deals poison damage. TBA
 cf-heritage-nyktera = Nyktera

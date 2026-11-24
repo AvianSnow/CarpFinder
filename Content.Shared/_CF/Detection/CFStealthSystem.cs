@@ -3,9 +3,11 @@ using Content.Shared.CF.Actions;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Checks;
 using Content.Shared.CF.Combat;
+using Content.Shared.CF.Cover;
 using Content.Shared.CF.Effects.Areas;
 using Content.Shared.CF.Factions;
 using Content.Shared.CF.Hazards;
+using Content.Shared.CF.Lighting;
 using Content.Shared.CF.Preferences;
 using Content.Shared.Chat;
 using Content.Shared.Chat.Prototypes;
@@ -43,14 +45,7 @@ public sealed partial class CFStealthSystem : EntitySystem
     /// <summary>Added to Perception DCs against another diversion from the same creature.</summary>
     private const int DiversionDcBonus = 4;
 
-    private const int CoverBonusStandard = 2;
     private const int CoverBonusGreater = 4;
-
-    /// <summary>How far to each side of a creature the outer sight lines reach. Mobs have a 0.35 radius.</summary>
-    private const float CoverSpread = 0.3f;
-
-    /// <summary>What stops a sight line. Mobs are on none of these, so they give no cover.</summary>
-    private const int CoverMask = (int) (CollisionGroup.Impassable | CollisionGroup.HighImpassable | CollisionGroup.MidImpassable);
 
     private static readonly TimeSpan ShotRevealDelay = TimeSpan.FromSeconds(1);
 
@@ -58,8 +53,6 @@ public sealed partial class CFStealthSystem : EntitySystem
 
     /// <summary>A diversion lasts until the end of the creature's next turn, unless it Hides or Sneaks.</summary>
     private static readonly TimeSpan DiversionTime = TimeSpan.FromSeconds(6);
-
-    private static readonly float[] CoverOffsets = { 0f, 1f, -1f };
 
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private INetManager _net = default!;
@@ -72,6 +65,8 @@ public sealed partial class CFStealthSystem : EntitySystem
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private CFActionPoolSystem _actions = default!;
     [Dependency] private CFConditionSystem _conditions = default!;
+    [Dependency] private CFCoverSystem _cover = default!;
+    [Dependency] private CFLightSystem _light = default!;
     [Dependency] private CFFactionSystem _factions = default!;
     [Dependency] private CFHazardSystem _hazards = default!;
 
@@ -142,45 +137,10 @@ public sealed partial class CFStealthSystem : EntitySystem
         return Detection(creature, observer) != CFDetection.Observed;
     }
 
-    /// <summary>
-    /// How much a sight line from the observer is blocked: none, cover, or greater cover. Three lines are drawn
-    /// to the creature's center and sides, so a corner gives cover and a whole wall gives greater cover.
-    /// </summary>
+    /// <summary>The bonus to Stealth from cover against this observer: none, cover, or greater cover.</summary>
     public int CoverBonus(EntityUid creature, EntityUid observer)
     {
-        var from = _transform.GetMapCoordinates(observer);
-        var to = _transform.GetMapCoordinates(creature);
-        if (from.MapId != to.MapId)
-            return CoverBonusGreater;
-
-        var line = to.Position - from.Position;
-        var length = line.Length();
-        if (length <= 0f)
-            return 0;
-
-        var side = new Vector2(-line.Y, line.X) / length * CoverSpread;
-        var blocked = 0;
-        foreach (var offset in CoverOffsets)
-        {
-            if (LineBlocked(from, to.Position + side * offset, creature, observer))
-                blocked++;
-        }
-
-        return blocked == 0 ? 0 : blocked == CoverOffsets.Length ? CoverBonusGreater : CoverBonusStandard;
-    }
-
-    private bool LineBlocked(MapCoordinates from, Vector2 to, EntityUid creature, EntityUid observer)
-    {
-        var line = to - from.Position;
-        var length = line.Length();
-        if (length <= 0f)
-            return false;
-
-        var ray = new CollisionRay(from.Position, line / length, CoverMask);
-        foreach (var _ in _physics.IntersectRayWithPredicate(from.MapId, ray, length, uid => uid == creature || uid == observer))
-            return true;
-
-        return false;
+        return _cover.StealthBonus(creature, observer);
     }
 
     /// <summary>
@@ -209,7 +169,7 @@ public sealed partial class CFStealthSystem : EntitySystem
             }
 
             var cover = fixedCover ?? CoverBonus(user, enemy);
-            var beaten = (cover > 0 || IsConcealed(user)) && RollStealth(user, enemy, cover).IsSuccess();
+            var beaten = (cover > 0 || IsConcealed(user, enemy)) && RollStealth(user, enemy, cover).IsSuccess();
             stealth.Detection[enemy] = beaten ? CFDetection.Hidden : CFDetection.Observed;
             if (beaten)
                 hiddenFrom++;
@@ -248,7 +208,7 @@ public sealed partial class CFStealthSystem : EntitySystem
                 continue;
 
             var cover = CoverBonus(user, enemy);
-            stealth.Detection[enemy] = cover > 0 || IsConcealed(user)
+            stealth.Detection[enemy] = cover > 0 || IsConcealed(user, enemy)
                 ? AfterSneak(RollStealth(user, enemy, cover), before, IsInvisible(user))
                 : CFDetection.Observed;
         }
@@ -482,9 +442,11 @@ public sealed partial class CFStealthSystem : EntitySystem
             itemBonus: Math.Max(cover, _conditions.OutwitBonus(user, observer)));
     }
 
-    private bool IsConcealed(EntityUid uid)
+    /// <summary>Concealed by a condition, or by dim light or darkness the observer cannot see in.</summary>
+    private bool IsConcealed(EntityUid uid, EntityUid observer)
     {
-        return TryComp(uid, out CFConditionComponent? cond) && cond.Concealed;
+        return TryComp(uid, out CFConditionComponent? cond) && cond.Concealed
+               || _light.Obscured(uid, observer) != CFObscured.None;
     }
 
     private bool IsInvisible(EntityUid uid)

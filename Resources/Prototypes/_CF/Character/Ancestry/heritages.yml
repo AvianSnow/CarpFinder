@@ -1013,6 +1013,11 @@
   description: cf-heritage-ancient-scale-azarketi-desc
   ancestries: [Azarketi]
   darkvision: true
+  grants:
+    - !type:CFGrantLight
+      radiusFeet: 10
+      dimOnly: true
+      color: "#9FE8E0"
 
 - type: cfHeritage
   id: BenthicAzarketi
@@ -1128,6 +1133,10 @@
   name: cf-heritage-bright-fetchling
   description: cf-heritage-bright-fetchling-desc
   ancestries: [Fetchling]
+  grants:
+    - !type:CFGrantLight
+      radiusFeet: 5
+      dimOnly: true
 
 - type: cfHeritage
   id: DeepFetchling
@@ -1256,6 +1265,9 @@
   name: cf-heritage-luminous-sprite
   description: cf-heritage-luminous-sprite-desc
   ancestries: [Sprite]
+  grants:
+    - !type:CFGrantLight
+      radiusFeet: 40
 
 - type: cfHeritage
   id: Melixie

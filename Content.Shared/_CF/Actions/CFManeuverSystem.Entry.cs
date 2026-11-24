@@ -25,6 +25,7 @@ public enum CFBasicAction : byte
     /// <summary>Shove or Disarm, whichever a right-click on this target would do.</summary>
     Maneuver,
     Grapple,
+    TakeCover,
 }
 
 /// <summary>An action button for a basic action. It pays through <see cref="CFManeuverSystem.TryUse"/>.</summary>
@@ -41,6 +42,8 @@ public sealed partial class CFBasicActionComponent : Component
 /// </summary>
 public sealed partial class CFManeuverSystem
 {
+    [Dependency] private Content.Shared.CF.Cover.CFCoverSystem _cover = default!;
+
     /// <summary>Whether the action could work now. Nothing is spent or rolled.</summary>
     public bool CanUse(EntityUid user, CFBasicAction action, EntityUid? target = null)
     {
@@ -51,6 +54,8 @@ public sealed partial class CFManeuverSystem
         {
             case CFBasicAction.Hide:
                 return true;
+            case CFBasicAction.TakeCover:
+                return _cover.CanTakeCover(user);
             case CFBasicAction.Sneak:
                 return TryComp(user, out CFStealthComponent? stealth) && stealth.Active;
             case CFBasicAction.Seek:
@@ -94,6 +99,8 @@ public sealed partial class CFManeuverSystem
         {
             case CFBasicAction.Hide:
                 return _stealth.TryHide(user);
+            case CFBasicAction.TakeCover:
+                return _cover.TryTakeCover(user);
             case CFBasicAction.Sneak:
                 return _stealth.TrySneak(user);
             case CFBasicAction.Seek:
@@ -149,7 +156,7 @@ public sealed partial class CFManeuverSystem
         // Asked first, because TryUse also returns false for a roll that failed.
         if (!CanUse(user, action, target))
         {
-            _popup.PopupEntity(Loc.GetString("cf-act-cannot"), user, user);
+            _popup.PopupEntity(Loc.GetString(action == CFBasicAction.TakeCover ? "cf-cover-nothing" : "cf-act-cannot"), user, user);
             return;
         }
 

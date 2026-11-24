@@ -273,9 +273,10 @@ public sealed partial class CFEffectSystem : EntitySystem
             area.Whitelist,
             area.MaxTargets);
 
+        var start = area.StartsAtPoint() ? aim : origin;
         foreach (var target in targets)
         {
-            ResolveTarget(source, user, target);
+            ResolveTarget(source, user, target, start);
         }
 
         if (targets.Count == 0)
@@ -307,7 +308,7 @@ public sealed partial class CFEffectSystem : EntitySystem
 
         foreach (var target in targets)
         {
-            ResolveTarget(source, user, target);
+            ResolveTarget(source, user, target, origin);
         }
 
         if (targets.Count == 0)
@@ -488,6 +489,7 @@ public sealed partial class CFEffectSystem : EntitySystem
     private const float TouchFeet = 7.5f;
 
     [Dependency] private CFAuraSystem _auras = default!;
+    [Dependency] private Content.Shared.CF.Cover.CFCoverSystem _cover = default!;
     [Dependency] private CFBreathGasSystem _gas = default!;
     [Dependency] private CFAreaFillSystem _fills = default!;
     [Dependency] private CFPsiSystem _psi = default!;
@@ -501,7 +503,8 @@ public sealed partial class CFEffectSystem : EntitySystem
     /// Rolls the source's check against one creature and runs its effect lists.
     /// Concealment and blindness force a flat check first. Returns true when the check landed.
     /// </summary>
-    public bool ResolveTarget(EntityUid source, EntityUid user, EntityUid target)
+    /// <param name="areaOrigin">Where the area this is part of starts. Cover from there adds to a Reflex save.</param>
+    public bool ResolveTarget(EntityUid source, EntityUid user, EntityUid target, MapCoordinates? areaOrigin = null)
     {
         if (user != target && !_conditions.PassFlatCheck(user, target))
             return false;
@@ -540,7 +543,12 @@ public sealed partial class CFEffectSystem : EntitySystem
             if (HasComp<CFSpellComponent>(source))
                 _vfx.Targeted(target, source);
 
-            args.Degree = _conditions.RollDefense(target, check.Defense, stats.Dc + taunted, out _, args.Traits);
+            // Cover from where an area starts is a bonus to Reflex, which is the same as a lower DC.
+            var cover = check.Defense == CFDefenseType.Reflex && areaOrigin is { } start && user != target
+                ? _cover.ReflexBonus(target, start)
+                : 0;
+
+            args.Degree = _conditions.RollDefense(target, check.Defense, stats.Dc + taunted - cover, out _, args.Traits);
             landed = !args.Degree.IsSuccess();
 
             // Emotional Push: a failed save against the caster's emotion spell leaves the enemy open to it.
@@ -671,6 +679,7 @@ public sealed partial class CFEffectSystem : EntitySystem
             armorClass = defender.ArmorClass;
 
         armorClass += _conditions.ArmorClassModifier(target);
+        armorClass += _cover.AcBonus(target, user, ranged: true);
         armorClass += _bonuses.AgainstSource(target, CFBonusStat.ArmorClass, user);
         armorClass -= check.TargetAcPenalty;
 

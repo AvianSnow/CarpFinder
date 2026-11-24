@@ -436,6 +436,77 @@ Gaps in the parts of Step 1 that are built. Take them when the system is next to
 - **Deities are our own pantheon**, not Golarion's named gods. Speaking to a god is stock SS14 prayer, which sends the message to the admins, so there is no religion system to build.
 - **Languages matter**, for roleplay: talk a goblin out of a fight in its own tongue. See "Languages" below.
 
+## Step 1b: Rule systems Pathfinder has and we do not
+
+Step 1 lists options that say `TBA`. This is the other view: whole parts of the Pathfinder 2e Remaster that are absent, from a check of the roadmap and the code on 24 November 2026. An item already listed elsewhere points at its number.
+
+Order: cover and light first (A2, A1), because every Strike and every Stealth check reads them. Then conditions, immunities and afflictions (A8, A7, A6); Trip, the jumps and skill actions with the general and skill feats on them (B); monster abilities and more creatures (F); swimming and flying (A3, A4); spells and magic items (D, E); the level cap last (C), because everything else has to hold up at higher levels first. Size, Hero Points and mounts fit wherever the systems they touch are next open.
+
+### A. Rule systems missing outright
+
+- [ ] **A1 Light and darkness.** Built on 24 November 2026 (`CFLightTest`), not played yet. `CFLightSystem` (`Content.Shared/_CF/Lighting/`) says whether a place is bright, dim or dark: the map's ambient light, or its sun by time of day, except under a roof, and every point light with a clear line, bright for the inner half of its radius and dim beyond. A creature in dim light is concealed (DC 5) from eyes with no low-light vision or darkvision, and one in darkness is hidden (DC 11) from eyes with no darkvision, attacks them as an unseen attacker, and can Hide and Sneak with no cover. The HUD's condition row says "Dim light" or "Darkness" for where the player stands. `cf.light_rules` turns it all off, and integration tests run with it off.
+    - Every monster has the senses Archives of Nethys prints, on `CFSenses`, and a thrall has darkvision. The sewer ooze's motion sense is written as darkvision.
+    - Bright Fetchling (dim, 5 feet), Ancient Scale Azarketi (dim, 10 feet) and Luminous Sprite (as a torch) shed light through `!type:CFGrantLight`. None can put it out yet.
+    - Our changes from the rules: night outdoors is dim light, never darkness. A light's bright half and dim half come from the radius the lamp was given in YAML, not from the item's printed feet. Darkness does not go into `CFStealthSystem.Detection`, so aim assist, reactions and the AI's sight still find a creature in the dark: GOAP mobs attack into darkness and roll the flat check.
+    - Left out: an animal companion and an eidolon without the Expanded Senses feat have no senses of their own. A creature with low-light vision that drinks a Darkvision Elixir gets nothing from it (`ApplyDarkvision` only notes one for a creature with no night vision at all). Helping an ally who stands in the dark rolls the flat check too, touch included. Light does not pass between z-levels. Shadow Blending, Shroud of Night's dimmer light and the darkness half of 1.9 still say `TBA`. The `Light` influence layer for the AI (Step 5, 6c) can read `LevelAt` and is not built.
+    - [ ] Play it in the Dragon Dungeon: whether the lower level is dark where it should be, and whether stock lamps' radii feel right as bright and dim.
+- [ ] **A2 Cover.** Built on 24 November 2026 (`CFCoverTest`), not played yet. `CFCoverSystem` (`Content.Shared/_CF/Cover/`) took over the three sight lines Hide and Sneak used: a corner is standard cover, a whole wall greater cover, and a living creature on the line between attacker and target is lesser cover. Strikes and spell attacks add +1, +2 or +4 circumstance to AC, which does not add to a raised shield. A Reflex save against an area gets +2 or +4 from where the area starts. Take Cover is a basic action on the Common tab.
+    - Our changes from the rules: cover is three sight lines per attack, not grid corners. Take Cover ends on leaving the spot or on an attack roll, where the rules end it on any move, and with no cover and not prone it is refused, where the rules give standard cover beside a suitable feature. A Strike that ignores concealment (Hunter's Aim) also ignores lesser cover: that is from the Ranger note in 4 and has not been checked against Player Core.
+    - Left out: areas drawn with `CFAreaFill` or `CFBreathGas` give no Reflex bonus, since they already stop at walls. Objects get no cover. Tables and other low things count as walls do. GOAP does not look for cover or Take Cover. No sign on the HUD that cover counted.
+    - [ ] Options that name cover and still say `TBA`: Phalanx Formation, River Carving Mountains, Take Cover in forest for Woodland Elf and Woodstalker Lizardfolk, the Take Cover half of the Gunslinger's reloads, cover's Reflex and Stealth bonus for the tower shield's Take Cover.
+- [ ] **A3 Swimming and water** (1.3, 3.22). No swim Speed, breathing water or underwater rules. To be ported.
+- [ ] **A4 Flying** (2.7). No fly Speed or `Flying` trait.
+- [ ] **A5 Size.** Stored and unused: no reach, no space, no limit on Shove, Grapple or Trip, no bigger body.
+- [ ] **A6 Afflictions** (1.17). `CFAfflictionSystem` only runs Alcohol. No poisons, diseases or curses, no Treat Poison or Treat Disease.
+- [ ] **A7 Immunities and weaknesses on monsters.** No immunity to critical hits or precision, and few weaknesses for Recall Knowledge to tell.
+- [ ] **A8 Conditions.** Confused, controlled, fleeing, restrained, slowed, quickened, petrified, stunned with a duration, and retching to end sickened.
+- [ ] **A9 Hero Points.**
+- [ ] **A10 Mounts** (3.9).
+
+### B. Actions everyone has
+
+- [ ] Trip as an action. High Jump and Long Jump.
+- [ ] Skill actions (1.16, 3.19, 3.20): Balance, Squeeze, Steal, Palm an Object, Sense Motive, Lie, Make an Impression, Request, Coerce, Gather Information, Impersonate, Perform, Command an Animal, Track, Cover Tracks, Subsist, Repair, Identify Magic, Learn a Spell, Decipher Writing, Earn Income.
+- [ ] Decide for each, since most mean nothing in real time: Ready, Delay, Point Out, Avert Gaze, Arrest a Fall.
+- Maneuvers and the multiple attack penalty are under Step 4.
+
+### C. Character building
+
+- [ ] Levels 6 to 20. The cap is 5, so spells stop at rank 3 and master and legendary ranks do not exist.
+- [ ] Archetypes and multiclass dedications.
+- [ ] Kineticist, the one class left out.
+- [ ] Rarity and access (2.3), and retraining.
+- General and skill feats, ancestry feats, heritages and lineage feats are under Step 1.
+
+### D. Magic
+
+- [ ] The catalog has 65 spells of several hundred through rank 3 (5.5 lists the ones options name).
+- [ ] Shapes the pipeline cannot do: walls, teleports, illusions an NPC reacts to. Auras that follow the caster and line of effect are 5.3 and 5.13.
+- [ ] Rituals. Identifying magic and learning a spell into a spellbook.
+- Scrolls, wands, staves and talismans are 3.18. Innate spells per day are 5.8, counteracting 5.9.
+
+### E. Items
+
+- [ ] Worn and held magic items, and investing with its limit of 10. Only runes exist.
+- [ ] Precious materials (cold iron, silver, adamantine) and the weaknesses they set off.
+- [ ] More alchemy: mutagens, poisons, alchemical tools, higher grades, an Alchemist's daily infused items.
+- [ ] Weapons that are missing: khopesh, mambele, advanced weapons, anything with the monk trait, combination and capacity firearms.
+- [ ] Adventuring gear with rules: rope, climbing kit, crowbar, caltrops.
+- [ ] Treasure by level. Snares are 2.9.
+
+### F. Monsters
+
+- [ ] 15 creatures, each with one Strike and almost no abilities: Grab, Knockdown, venom, auras (Step 3, creatures row).
+- [ ] Monsters that cast spells (`goap-weights.md`).
+- [ ] Elite and weak adjustments, and an encounter budget by party level.
+- [ ] Swarms and troops. Complex hazards and haunts are under Later.
+
+### G. Modes of play
+
+- [ ] Exploration activities. Seek and trap noticing already run by themselves, so decide what is left of Search, Scout, Avoid Notice and Defend.
+- [ ] Downtime: Earn Income, crafting over days, retraining.
+- [ ] NPC attitudes and the influence rules. The kobold tribe's parley is the only piece.
+
 ## Loose ends from finished work
 
 What was left open when each of these was built. The finished parts are in `roadmapold.md` under the same names.
@@ -685,6 +756,8 @@ A kobold tribe that eats, drinks, farms, stores food, shares it, talks, and asks
 - Fixed on 15 November 2026: a Debug server stopped at round start in `AtmosphereSystem.ShuntTileVolume`. The Dragon Run map held 63 floor tiles saved with the sky's unchanging air, from flooring over open sky in the editor, and a wall stood on one. See "Air is not worked out while a map is paused" in `ss14rules.md`. Tests: `CFMapAirTest`. Starlight was checked for a fix and has none: its atmos is older and has no `ShuntTileVolume`.
 
 - The YAML linter (`dotnet run --project Content.YAMLLinter -c Tools`) reports 190 errors, seen on 17 November 2026 and not looked into. Most are guidebook entries that do not exist, stock ones and those named in `_CF/Guidebook/newplayer.yml`. `_CF/Entities/Effects/scent.yml` sets `icon` and `iconOn` on `Action`, which has no such fields. `CFMapAirTest.RoundMap` names an unknown prototype kind.
+
+- `CFCriticalSpecializationTest.ACriticalStrikeAppliesIt` fails about 1 run in 20: with +40 against AC 12 it expects every Strike to be a critical hit, and a natural 1 makes it a plain success. Seen on 24 November 2026 in a run of 463, and it passed 6 times alone. Not fixed.
 
 - `CFGOAPSocietyTest.AHungryTribeHuntsAPigAndEatsIt` is unreliable. Measured on 17 November 2026, alone: it failed 1 run in 5 on commit `25f19f9ea9` and 6 in 12 with the familiar work on top, which touches nothing a tribe or a pig uses, so the difference may be chance. Which of its steps fails was not caught. Not looked into.
 

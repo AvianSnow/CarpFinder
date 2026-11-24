@@ -231,6 +231,17 @@ public sealed partial class CFHudUiController : UIController
         if (cond is { Sanctuary: true })
             Add("sanctuary", true);
 
+        // Where the player stands: enemies without the eyes for it see them worse there.
+        switch (EntityManager.System<Content.Shared.CF.Lighting.CFLightSystem>().LevelAt(player))
+        {
+            case Content.Shared.CF.Lighting.CFLightLevel.Dim:
+                Add("dim-light", true);
+                break;
+            case Content.Shared.CF.Lighting.CFLightLevel.Darkness:
+                Add("darkness", true);
+                break;
+        }
+
         AddBonus(statuses, player, cond, "attack", CFBonusStat.AttackRoll);
         AddBonus(statuses, player, cond, "damage", CFBonusStat.Damage, CFBonusStat.MeleeDamage);
         AddBonus(statuses, player, cond, "saves", CFBonusStat.Saves);

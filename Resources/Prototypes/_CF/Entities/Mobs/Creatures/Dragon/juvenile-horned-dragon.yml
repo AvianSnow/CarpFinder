@@ -76,6 +76,9 @@
         - GoHome
         - Wander
         - PutOutFire
+    - type: CFSenses
+      darkvision: true
+      impreciseFeet: 60
     - type: CFCombatant
       level: 4
       armorClass: 20

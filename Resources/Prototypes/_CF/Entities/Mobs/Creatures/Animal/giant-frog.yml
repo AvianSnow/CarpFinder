@@ -30,6 +30,8 @@
         - Animal
     - type: CFGOAP
       tactics: Beast
+    - type: CFSenses
+      lowLightVision: true
     - type: CFCombatant
       level: 1
       armorClass: 15

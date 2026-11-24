@@ -60,6 +60,8 @@
     prioritized: true
     noiseAmount: 0
     lightingColor: "#9BB6FF30"
+  - type: CFSenses
+    darkvision: true
   - type: CFCombatant
     level: -1
     armorClass: 16
