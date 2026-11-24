@@ -1,0 +1,32 @@
+- type: entity
+  name: sarcophagus
+  id: CFSarcophagus
+  parent:
+  - BaseStructure
+  description: A stone sarcophagus. It is a coffin, but it is made of stone.
+  categories: [ ForkFiltered ]
+  components:
+  - type: Physics
+    bodyType: Static
+  - type: Fixtures
+    fixtures:
+      fix1:
+        shape:
+          !type:PhysShapeAabb
+          bounds: "-0.28,-0.58,0.28,0.58"
+        density: 190
+        mask:
+        - TableMask
+        layer:
+        - TableLayer
+  - type: Sprite
+    sprite: _CF/Structures/sarcophagus.rsi
+    state: whole
+    noRot: true
+  - type: PlaceableSurface
+    placeCentered: true
+  - type: Transform
+    anchored: true
+  - type: Anchorable
+  - type: Rotatable
+    rotateWhileAnchored: true

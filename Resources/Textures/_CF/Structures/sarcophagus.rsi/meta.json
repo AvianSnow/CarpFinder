@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "license": "License for Everyone, read the public-license.txt",
+  "copyright": "Artwork created by Szadi art https://szadiart.itch.io/rogue-fantasy-catacombs",
+  "size": {
+    "x": 48,
+    "y": 48
+    },
+    "states":[
+    {
+      "name": "whole",
+      "directions": 4
+    }
+  ]
+}
