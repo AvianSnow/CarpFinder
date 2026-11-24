@@ -1,6 +1,6 @@
 # Hunting spider, the common giant spider. Creature 1, Medium, Animal. Monster Core p. 320. Recall Knowledge DC 15.
 # The body is the stock tarantula's. It leaves out stock's Spider component, which would spawn stock webs.
-# Hunting spider venom is on CFStrikeRider. Not in yet: the web Strike and Web Trap, web sense, Spring Upon Prey, Descend on a Web, and the climb Speed.
+# Hunting spider venom is on CFStrikeRider. The web Strike and Web Trap are the CFActWebShot action. Not in yet: web sense, Spring Upon Prey, Descend on a Web, and the climb Speed.
 - type: entity
   parent: [CFBaseCreature]
   id: CFMobHuntingSpider
@@ -44,6 +44,10 @@
       tactics: Beast
     - type: CFSenses
       darkvision: true
+    # Its web: a ranged attack with no damage that sticks what it hits (Actions/monster_shots.yml).
+    - type: ActionGrant
+      actions:
+        - CFActWebShot
     # Hunting spider venom on its fangs.
     - type: CFStrikeRider
       onHit:

@@ -173,17 +173,15 @@ public sealed partial class CFConditionSystem : EntitySystem
                 dirty = true;
             }
 
+            // A grab ends when the grabber is gone or out of reach, or its time is up. A web holds wherever it is.
             if (cond.Grabbed
                 && (cond.Grabber is not { } grabber
                     || !Exists(grabber)
-                    || !InMelee(grabber, uid)
+                    || !HasComp<CFStickyHoldComponent>(grabber) && !InMelee(grabber, uid)
                     || cond.GrabbedUntil != TimeSpan.Zero && now >= cond.GrabbedUntil))
             {
-                cond.Grabbed = false;
-                cond.Grabber = null;
-                cond.Immobilized = false;
+                ReleaseGrab(uid);
                 dirty = true;
-                _speed.RefreshMovementSpeedModifiers(uid);
             }
 
             DropExpired(cond.OffGuardUntil, cond.OffGuardTo, now);
@@ -328,6 +326,14 @@ public sealed partial class CFConditionSystem : EntitySystem
         if (!TryComp(target, out CFConditionComponent? cond) || !cond.Grabbed)
             return;
 
+        // A web that held it is torn, and goes.
+        if (cond.Grabber is { } was && TryComp(was, out CFStickyHoldComponent? sticky) && sticky.Held == target)
+        {
+            sticky.Held = null;
+            if (_net.IsServer)
+                QueueDel(was);
+        }
+
         cond.Grabbed = false;
         cond.Grabber = null;
         cond.Immobilized = false;
@@ -453,7 +459,9 @@ public sealed partial class CFConditionSystem : EntitySystem
         if (!TryComp(target, out CFConditionComponent? cond))
             return false;
 
-        if (cond.Grabbed
+        // Held by a web or the like is immobilized, not off-guard as a grab leaves a creature.
+        var grabbed = cond.Grabbed && (cond.Grabber is not { } holder || !HasComp<CFStickyHoldComponent>(holder));
+        if (grabbed
             || cond.OffGuardAll
             || cond.Blinded
             || cond.OffGuardTo.Contains(attacker)

@@ -1,0 +1,94 @@
+# Ranged attacks of monsters, as actions. CFMonsterShot marks one. The rest is the effect pipeline: CFTargeting for the
+# range and the flying projectile, CFCheck for the attack roll (dcSource: Fixed, and the attack bonus is fixedDc less
+# 10), CFDegreeEffects for what a hit does, which may be no damage at all. Give one to a monster with ActionGrant.
+# A player in the body clicks it and then a creature. The AI uses it through its Breathe step.
+
+- type: entity
+  abstract: true
+  parent: BaseAction
+  id: CFActMonsterShotBase
+  categories: [ HideSpawnMenu ]
+  components:
+  - type: Action
+    useDelay: 0.6
+    itemIconStyle: BigAction
+    raiseOnAction: true
+  - type: TargetAction
+    range: -1
+    checkCanAccess: false
+    targetingIndicator: true
+  - type: EntityTargetAction
+    canTargetSelf: false
+    whitelist:
+      components:
+      - MobState
+    event: !type:CFMonsterShotEvent
+  - type: Sprite
+    sprite: Objects/Magic/magicactions.rsi
+    layers:
+    - state: spell_default
+  - type: CFRadialSlot
+    group: Action
+    actions: 1
+  - type: CFTargeting
+    delivery: Projectile
+  - type: CFProjectileDelivery
+  - type: CFCheck
+    defense: ArmorClass
+    dcSource: Fixed
+  - type: CFMonsterShot
+
+# Hunting spider, Monster Core: Ranged web +7 (range increment 30 feet), Effect web trap. Web Trap: a creature hit is
+# immobilized and stuck to the nearest surface until it Escapes (DC 17).
+# The range is two increments with no penalty for the second.
+- type: entity
+  parent: CFActMonsterShotBase
+  id: CFActWebShot
+  name: Web
+  description: Throws a web at a creature within 60 feet. On a hit it is stuck where it stands until it Escapes (DC 17).
+  components:
+  - type: Sprite
+    sprite: Structures/floor_web.rsi
+    layers:
+    - state: full
+  - type: CFTargeting
+    rangeFeet: 60
+  - type: CFProjectileDelivery
+    boltPrototype: CFWebBolt
+    speed: 12
+  - type: CFCheck
+    fixedDc: 17
+  - type: CFDegreeEffects
+    landed:
+    - !type:CFStickEffect
+      holder: CFWebTrap
+      escapeDc: 17
+
+- type: entity
+  parent: CFSpellBolt
+  id: CFWebBolt
+  categories: [ HideSpawnMenu ]
+  name: flying web
+  components:
+  - type: Sprite
+    sprite: Structures/floor_web.rsi
+    scale: 0.5, 0.5
+    layers:
+    - state: full
+
+# What the web leaves on the creature it hit. It holds it until it Escapes, then goes. Burning or breaking it frees
+# the creature too.
+- type: entity
+  id: CFWebTrap
+  name: web
+  description: Sticky strands holding something fast.
+  components:
+  - type: Sprite
+    sprite: Structures/floor_web.rsi
+    drawdepth: WallMountedItems
+    layers:
+    - state: full
+  - type: Clickable
+  - type: CFStickyHold
+  - type: TimedDespawn
+    lifetime: 300

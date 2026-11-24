@@ -397,5 +397,6 @@ cf-gun-too-far = That is beyond your weapon's first range increment.
 
 cf-monster-attack-switch = Attack with { $attack }
 cf-monster-attack-now = You ready your { $attack }.
+cf-monster-shot-out-of-range = Too far away.
 cf-monster-elite = elite { $name }
 cf-monster-weak = weak { $name }

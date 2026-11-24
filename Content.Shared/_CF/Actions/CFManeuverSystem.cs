@@ -323,7 +323,9 @@ public sealed partial class CFManeuverSystem : EntitySystem
         }
 
         ent.Comp.NextEscape = now + EscapeInterval;
-        var degree = CFDefense.Roll(_random, EscapeModifier(ent), 10 + AthleticsModifier(grabber));
+        // A web or the like has a DC of its own. A creature is escaped from against its Athletics DC.
+        var escapeDc = CompOrNull<CFStickyHoldComponent>(grabber)?.EscapeDc ?? 10 + AthleticsModifier(grabber);
+        var degree = CFDefense.Roll(_random, EscapeModifier(ent), escapeDc);
         if (!degree.IsSuccess())
         {
             if (degree == CFDegree.CriticalFailure)

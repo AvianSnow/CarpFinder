@@ -11,6 +11,7 @@ public sealed partial class CFGOAPBreatheStepSystem : CFGOAPStepSystem
 {
     [Dependency] private SharedTransformSystem _transform = default!;
     [Dependency] private CFBreathWeaponSystem _breath = default!;
+    [Dependency] private Content.Shared.CF.Combat.CFMonsterShotSystem _shots = default!;
 
     protected override CFGOAPStep Kind => CFGOAPStep.Breathe;
 
@@ -21,12 +22,20 @@ public sealed partial class CFGOAPBreatheStepSystem : CFGOAPStepSystem
 
     public override bool Run(Entity<CFGOAPComponent> ent, CFGOAPActionPrototype action)
     {
-        if (ent.Comp.Target is not { } target
-            || TerminatingOrDeleted(target)
-            || !_breath.TryGetBreath(ent, out var breath))
+        if (ent.Comp.Target is not { } target || TerminatingOrDeleted(target))
             return true;
 
-        _breath.TryBreathe(ent, breath.Value, _transform.GetMapCoordinates(target));
+        if (_breath.TryGetBreath(ent, out var breath)
+            && _breath.IsReady(ent, breath.Value)
+            && _breath.TryBreathe(ent, breath.Value, _transform.GetMapCoordinates(target)))
+        {
+            return true;
+        }
+
+        // No breath to let loose: a ranged attack of its own, such as a web.
+        if (_shots.TryGetReady(ent, out var shot) && _shots.Worthwhile(ent, shot, target))
+            _shots.TryShoot(ent, shot, target);
+
         return true;
     }
 }

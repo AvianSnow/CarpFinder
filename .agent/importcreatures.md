@@ -60,6 +60,8 @@ The role needs no AI work. Stock HTN sleeps while a player is in the body and wa
 | Ranged attack | `CFCombatant` `strikeAdjustment` | Ranged ignores `printedAttack`. Set this to the book's bonus minus Dex minus (level + 2) |
 | More than one melee Strike, or a Strike with Grab, Knockdown or Push | `CFMonsterAttacks` `attacks`: each has `name`, `attack` (the printed bonus), `dice`, `die`, `bonus`, `damageType`, `traits` (`Agile`, `Finesse`, `Reach`, `DeadlyD8`...), `followUp` (`Grab`, `Knockdown`, `Push`; `followUpFree` for the improved kind) and `onHit` effects | These numbers replace `printedAttack` and `printedDamage` for that attack. List the main attack first: the AI uses it with no multiple attack penalty and the best of the rest after. A follow-up costs the monster 1 action after a hit. See `CFMobGrizzlyBear` |
 | Extra damage or a condition on a hit | `onHit` on the attack, or `CFStrikeRider` for a creature with `natural*` fields | `!type:CFDamageEffect` with `scaleByDegree: false` for "plus 1d4 acid". See `CFMobSewerOoze` |
+| A ranged attack of its own, with or without damage (a web, a spit, a thrown rock) | An action parented on `CFActMonsterShotBase` in `Actions/monster_shots.yml`, given with `ActionGrant`. `CFTargeting` `rangeFeet`, `CFCheck` `fixedDc` (the printed attack bonus plus 10), `CFProjectileDelivery` `boltPrototype` for what flies, and `CFDegreeEffects` `landed` for what a hit does | The AI uses it through its Breathe step on a target in range and not within `minFeet` of `CFMonsterShot`. There is no range increment penalty: give it about two increments of range. See `CFActWebShot` |
+| Stuck until it Escapes (Web Trap) | `!type:CFStickEffect` with `holder` (the entity left on the creature, `CFWebTrap`) and `escapeDc` | The creature is immobilized, not off-guard, and Escape rolls against that DC |
 | Natural attack | `CFCombatOptions` `naturalDice`, `naturalDie`, `naturalType`, `naturalAgile`, `naturalFinesse` | Also what a disarmed creature uses |
 | Weapons | A `startingGear` with `inhand`, and `Loadout` on the mob | The item supplies dice, type and traits. Use the `CF` weapon, and do not copy its stats to the mob. With a weapon and a shield, list the weapon first, so it is in the active hand that swings |
 | Shield | `CFWoodenShield` and so on in `inhand`, and `shieldBlock: true` on `CFCombatOptions` | The brain raises it on seeing an enemy and keeps it up. The printed "AC x (y with shield raised)" is then right with `armorClass` at x |
@@ -110,7 +112,6 @@ Every monster has a GOAP brain from its base, so there is no root task to pick.
 
 ## Not supported yet
 
-- A ranged natural attack (a spider's web, a spit): `CFMonsterAttacks` is melee only.
-- A Strike that deals no damage, such as a frog's tongue.
+- A melee Strike that deals no damage, such as a frog's tongue with its reach of 15 feet. A ranged one is an action (`CFActMonsterShotBase`).
 - Size: a Large creature has a Medium body.
 - A creature's own Recall Knowledge skill: it uses the character's best knowledge skill, not "Undead (Religion)".
