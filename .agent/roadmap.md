@@ -520,7 +520,14 @@ Order: cover and light first (A2, A1), because every Strike and every Stealth ch
 
 ### F. Monsters
 
-- [ ] 15 creatures, each with one Strike and almost no abilities: Grab, Knockdown, venom, auras (Step 3, creatures row).
+- [ ] Monsters, planned with the user on 24 November 2026 in four chunks: shared abilities, then undead and beasts, then the monstrous ones on CP14 and Crystall Edge sprites, then humanoid foes with casters.
+    - [x] Chunk 1, shared abilities, built on 24 November 2026 (`CFMonsterAttackTest`), not played yet. `CFMonsterAttacks` gives a monster several melee Strikes with their own printed numbers; with no player in the body `CFMonsterAttackSystem` uses the first with no multiple attack penalty and the best of the rest after, and a player switches from its own right-click menu. An attack can list Grab, Knockdown or Push, which the monster spends an action on after a hit (`CFManeuverSystem.FollowUp`), and effects of its own on a hit. Also: resistance to all damage with exceptions, fast healing that some damage types stop, conditions a creature has by nature, and elite and weak (`CFAdjustment`, and `adjustment` on a `CFEncounterSpawner`).
+    - Upgraded with them: the wolf's Knockdown, the grizzly bear's claw and Grab, the velociraptor's talon, the sewer ooze's extra acid, and the dragon's claw, tail and horn.
+    - Our changes from the rules: a Grab from a follow-up holds 6 seconds, the monster's next turn, with no need to keep hold. A player in a monster's body gets no automatic follow-up and uses the usual inputs. Elite and weak do not change fixed DCs.
+    - Left out: a ranged natural attack and a Strike with no damage (the spider's web, the frog's tongue), Mauler, charges and rushes, regeneration's "cannot die while active".
+    - [ ] Chunk 2: zombie shambler, plague zombie, ghoul, skeletal champion, a skeletal beast, shadow, giant bat, vipers, giant centipede, giant monitor lizard, black bear, dire wolf, another spider.
+    - [ ] Chunk 3: hydra, werewolf, ore crab, the mole, fungus creatures, slimes, and the other CP14 monster sprites, each on the nearest Monster Core stat block.
+    - [ ] Chunk 4: orcs, goblin commando, hobgoblin archer, kobold scout, bandits, and the casters (goblin pyro, war chanter, kobold cavern mage), which need a `Cast` step for the AI.
 - [ ] Monsters that cast spells (`goap-weights.md`).
 - [ ] Elite and weak adjustments, and an encounter budget by party level.
 - [ ] Swarms and troops. Complex hazards and haunts are under Later.
@@ -782,6 +789,8 @@ A kobold tribe that eats, drinks, farms, stores food, shares it, talks, and asks
 
 - `CFCriticalSpecializationTest.ACriticalStrikeAppliesIt` fails about 1 run in 20: with +40 against AC 12 it expects every Strike to be a critical hit, and a natural 1 makes it a plain success. Seen on 24 November 2026 in a run of 463, and it passed 6 times alone. Not fixed.
 
+- `CFSummonerTest.RangedCombatantShootsFromAfar` fails now and then: it makes one ranged Strike and expects damage, and a single roll can miss. Seen once in a run of 423 on 24 November 2026, and it passed 7 times alone. Not fixed.
+
 - `CFGOAPSocietyTest.AHungryTribeHuntsAPigAndEatsIt` is unreliable. Measured on 17 November 2026, alone: it failed 1 run in 5 on commit `25f19f9ea9` and 6 in 12 with the familiar work on top, which touches nothing a tribe or a pig uses, so the difference may be chance. Which of its steps fails was not caught. Not looked into.
 
 - `ConstructionPrototypeTest.ConstructionComponentValid` (stock) fails: every `CFCraneBarrel*` entity names the node `CFWoodenBarrel`, which the `CFCraneBarrel` graph does not have. Seen on 19 November 2026 while adding the stair ramps, which pass it. Not looked into.
@@ -789,7 +798,7 @@ A kobold tribe that eats, drinks, farms, stores food, shares it, talks, and asks
 - `MaterialArbitrageTest.NoMaterialArbitrage` (stock) fails inside `ConstructionGraphPrototype.Path`, which means a construction graph has a node it cannot reach. Found on 11 November 2026 and not looked into. It is not from butchering: the harvest change touches no construction.
 
 - `CFGOAPObstacleTest.PatienceDependsOnThePersonality` fails about half the time, measured on 9 November 2026 on the commit before the HUD (7 of 15) and with the HUD (8 of 16). After 7 seconds the default mob should be working on the locked door, but its `Obstacle` is another entity created later in the test, or null. What that entity is has not been looked at. The decision log is printed when the test fails. It is the same setup as the locked door notes in `ai-testing.md`, which may or may not be the same cause.
-- `CFGOAPEncounterTest.ItChoosesToFlankThenRunsThenHides` sometimes shows as `Skipped` in a full CF run and passes on its own. It runs no game ticks, so the cause is not movement. The failure message is lost, so the cause is unknown.
+- `CFGOAPEncounterTest.ItChoosesToFlankThenRunsThenHides` is unreliable, alone as well as in a full run: 1 failure in 2 runs alone on 24 November 2026. The message, caught that day: the plan starts with `Close` where the test expects `TakeFlank`. It runs no game ticks, so the cause is in the planner's choice between the two, not in movement. Not looked into further.
 - `CFEconomyTest.ShopTabFollowsAccess` fails: `SetShopVisible(false)` leaves the Shop tab visible. Found on 10 November 2026 and not looked into. It is client UI, not the AI.
 - `RainWatersExposedCrops` is unreliable, not just in a full run. On 6 November 2026 it showed as `Skipped` in two full runs, then failed once and passed once on its own. The failure message was not captured, so the cause is unknown. It only touches weather and plants, not the AI.
 - `CFProneTest.NpcWithNoRoomKeepsTryingToStand` fails now and then. The same error also hit `NpcStandsOnceItHasAnAction`: an NPC's stand-up attempt adds a `StatusEffectContainerComponent` to a mob that is already being deleted, and the assert surfaces in the next test's setup. Left alone on purpose. It only affects stock NPCs now. GOAP NPCs are the only ones planned to crawl away, and that is not built.

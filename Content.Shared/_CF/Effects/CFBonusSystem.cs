@@ -475,8 +475,21 @@ public sealed partial class CFBonusSystem : EntitySystem
         {
             foreach (var entry in comp.Entries)
             {
-                if (!CFDamageTypes.Same(_prototypes, entry.DamageType, damageType))
+                if (entry.All)
+                {
+                    var excepted = false;
+                    foreach (var except in entry.Except)
+                    {
+                        excepted |= CFDamageTypes.Same(_prototypes, except, damageType);
+                    }
+
+                    if (excepted)
+                        continue;
+                }
+                else if (!CFDamageTypes.Same(_prototypes, entry.DamageType, damageType))
+                {
                     continue;
+                }
 
                 var amount = entry.Amount;
                 var level = CompOrNull<CFCombatantComponent>(target)?.Level ?? 1;

@@ -1,4 +1,4 @@
-# Sewer ooze. Creature 1, Medium. Monster Core p. 256. The extra 1d4 acid, Filth Wave, and immunity to critical hits and precision are not in yet.
+# Sewer ooze. Creature 1, Medium. Monster Core p. 256. The extra 1d4 acid is on its pseudopod (CFMonsterAttacks), and it is immune to critical hits and precision. Filth Wave is not in yet.
 - type: entity
   parent: CFBaseCreature
   id: CFMobSewerOoze
@@ -54,6 +54,21 @@
         Intelligence: -5
         Wisdom: 0
         Charisma: -5
+    # Each Strike with its own printed numbers. With no player in the body the AI picks (CFMonsterAttackSystem).
+    - type: CFMonsterAttacks
+      attacks:
+      - name: pseudopod
+        attack: 9
+        dice: 1
+        die: 6
+        bonus: 1
+        damageType: Bludgeoning
+        onHit:
+        - !type:CFDamageEffect
+          dice: 1
+          die: 4
+          damageType: Acid
+          scaleByDegree: false
     - type: CFCombatOptions
       naturalDice: 1
       naturalDie: 6

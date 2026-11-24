@@ -1,8 +1,8 @@
 # Juvenile Horned Dragon. Creature 4, Medium, Amphibious Dragon. Beginner Box Adventure (on Demiplane; Archives of Nethys
 # only has the young, adult and ancient horned dragons of Monster Core). Recall Knowledge DC 19.
 # The stat block lists no languages. These are the horned dragon family's from Monster Core, so a party can talk to it.
-# It has one Strike, its jaws. The poison on the jaws is not in, nor are claw +14 (2d6+4 slashing, agile), tail +12
-# (1d8+4 bludgeoning, reach 10 feet) and horn +12 (1d12+4 bludgeoning).
+# Its Strikes are on CFMonsterAttacks: jaws +14 (2d8+4 piercing), claw +14 (2d6+4 slashing, agile), tail +12
+# (1d8+4 bludgeoning, reach 10 feet) and horn +12 (1d12+4 bludgeoning). The poison on the jaws is not in.
 # Poison Breath (CFActPoisonBreath in Actions/breath.yml) and Draconic Momentum are in. The breath is a toxic cloud that
 # spreads over the cone in about 2 seconds; anyone standing where it has thickened rolls, once, and it fades after.
 # Not in yet: Draconic Frenzy, the Twisting Tail reaction, and its fly 30 feet and swim 20 feet Speeds.
@@ -123,6 +123,35 @@
         Intelligence: 1
         Wisdom: 1
         Charisma: 3
+    # Each Strike with its own printed numbers. With no player in the body the AI picks (CFMonsterAttackSystem).
+    - type: CFMonsterAttacks
+      attacks:
+      - name: jaws
+        attack: 14
+        dice: 2
+        die: 8
+        bonus: 4
+        damageType: Piercing
+      - name: claw
+        attack: 14
+        dice: 2
+        die: 6
+        bonus: 4
+        damageType: Slashing
+        traits: [ Agile ]
+      - name: tail
+        attack: 12
+        dice: 1
+        die: 8
+        bonus: 4
+        damageType: Bludgeoning
+        traits: [ Reach ]
+      - name: horn
+        attack: 12
+        dice: 1
+        die: 12
+        bonus: 4
+        damageType: Bludgeoning
     - type: CFCombatOptions
       naturalDice: 2
       naturalDie: 8

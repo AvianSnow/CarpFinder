@@ -34,6 +34,10 @@ public sealed partial class CFGOAPEncounterSpawnerComponent : Component
     [DataField, ViewVariables(VVAccess.ReadWrite)]
     public float TriggerFeet = 90f;
 
+    /// <summary>Makes everything it spawns elite or weak (Monster Core's adjustments).</summary>
+    [DataField, ViewVariables(VVAccess.ReadWrite)]
+    public Content.Shared.CF.Combat.CFAdjustmentKind Adjustment;
+
     /// <summary>
     /// It spawns as soon as the map runs, without waiting for a player to come near. For a group that has a life of
     /// its own, such as a tribe.

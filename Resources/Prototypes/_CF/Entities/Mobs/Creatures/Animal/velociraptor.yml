@@ -1,4 +1,4 @@
-# Velociraptor. Creature 1, Small. Monster Core p. 96. Jaws only. Pack Attack is in. Talon and Leaping Charge are not in yet.
+# Velociraptor. Creature 1, Small. Monster Core p. 96. Jaws and talon (CFMonsterAttacks), and Pack Attack. Leaping Charge is not in yet.
 - type: entity
   parent: CFBaseCreature
   id: CFMobVelociraptor
@@ -53,6 +53,23 @@
         Intelligence: -4
         Wisdom: 1
         Charisma: 1
+    # Each Strike with its own printed numbers. With no player in the body the AI picks (CFMonsterAttackSystem).
+    - type: CFMonsterAttacks
+      attacks:
+      - name: jaws
+        attack: 8
+        dice: 1
+        die: 6
+        bonus: 3
+        damageType: Piercing
+        traits: [ Finesse ]
+      - name: talon
+        attack: 8
+        dice: 1
+        die: 4
+        bonus: 3
+        damageType: Slashing
+        traits: [ Agile, Finesse ]
     - type: CFCombatOptions
       naturalDice: 1
       naturalDie: 6

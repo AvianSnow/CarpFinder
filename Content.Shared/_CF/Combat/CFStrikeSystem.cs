@@ -434,6 +434,11 @@ public sealed partial class CFStrikeSystem : EntitySystem
     public CFStrikeWeaponStats UnarmedStats(EntityUid user)
     {
         var proficiency = CFWeaponCategory.Unarmed.Proficiency();
+
+        // A monster with a list of attacks Strikes with the one it has chosen.
+        if (EntityManager.System<CFMonsterAttackSystem>().TryStats(user, proficiency, out var monster))
+            return monster;
+
         TryComp(user, out CFCombatOptionsComponent? opt);
         if (_stances.Current(user)?.Attack is { } stance)
         {
@@ -994,7 +999,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
                     defender.CurrentHp = Math.Max(0, defender.CurrentHp - damage);
                     Dirty(target, defender);
                     MirrorToSs14(user, target, defender, damage, rolled.DamageType, isObject);
-                    RaiseDamaged(target, user, damage);
+                    RaiseDamaged(target, user, damage, rolled.DamageType);
                     ApplyTailToxin(user, target, style, rolled.DamageType, rolled.Traits.Unarmed, isObject, rolled.Item != null);
                     ApplySparkFist(user, target, style, rolled, isObject);
                     ApplyBespell(user, target, style, criticalHit, isObject);
@@ -1472,9 +1477,9 @@ public sealed partial class CFStrikeSystem : EntitySystem
         return CFMelee.TilesToFeet(tiles);
     }
 
-    private void RaiseDamaged(EntityUid target, EntityUid source, int amount)
+    private void RaiseDamaged(EntityUid target, EntityUid source, int amount, string? damageType = null)
     {
-        var ev = new CFDamagedEvent(source, amount);
+        var ev = new CFDamagedEvent(source, amount, damageType);
         RaiseLocalEvent(target, ref ev);
     }
 

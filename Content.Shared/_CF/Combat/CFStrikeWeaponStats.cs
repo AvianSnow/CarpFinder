@@ -25,6 +25,12 @@ public readonly record struct CFStrikeWeaponStats(
 {
     public bool Agile => Traits.Agile;
     public bool Finesse => Traits.Finesse;
+
+    /// <summary>This attack's own printed bonus, which wins over the creature's <c>printedAttack</c> (CFMonsterAttacks).</summary>
+    public int? PrintedAttack { get; init; }
+
+    /// <summary>This attack's own printed flat damage, which wins over the creature's <c>printedDamage</c>.</summary>
+    public int? PrintedDamage { get; init; }
 }
 
 /// <summary>

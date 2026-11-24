@@ -394,3 +394,8 @@ cf-gun-instant-backup = Instant Backup!
 cf-gun-needs-firearm = You need a loaded firearm in hand.
 cf-gun-needs-one-handed = You need a loaded one-handed firearm or crossbow in hand.
 cf-gun-too-far = That is beyond your weapon's first range increment.
+
+cf-monster-attack-switch = Attack with { $attack }
+cf-monster-attack-now = You ready your { $attack }.
+cf-monster-elite = elite { $name }
+cf-monster-weak = weak { $name }

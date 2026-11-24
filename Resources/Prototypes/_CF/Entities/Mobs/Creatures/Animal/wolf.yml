@@ -2,7 +2,7 @@
 # The body is the stock corgi's sprite, drawn a quarter larger so it reads as Medium. Place a pack with the WolfPack
 # encounter.
 # Pack Attack is in (packAttackDie). Low-light vision and scent 30 feet (imprecise) are on CFSenses.
-# Not in yet: Knockdown, the 1 action Trip after a jaws hit, because Trip is not an action in CF.
+# Knockdown is in: after a jaws hit the wolf spends an action to Trip (followUp on CFMonsterAttacks).
 - type: entity
   parent: [CFBaseCreature]
   id: CFMobWolf
@@ -72,6 +72,16 @@
         Wisdom: 2
         Charisma: -2
     # Jaws, 1d6+2 piercing.
+    # Each Strike with its own printed numbers. With no player in the body the AI picks (CFMonsterAttackSystem).
+    - type: CFMonsterAttacks
+      attacks:
+      - name: jaws
+        attack: 9
+        dice: 1
+        die: 6
+        bonus: 2
+        damageType: Piercing
+        followUp: Knockdown
     - type: CFCombatOptions
       naturalDice: 1
       naturalDie: 6

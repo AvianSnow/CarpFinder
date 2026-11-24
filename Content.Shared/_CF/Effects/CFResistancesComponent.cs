@@ -23,6 +23,13 @@ public sealed partial class CFActiveResistance
     [DataField]
     public int Amount;
 
+    /// <summary>Every damage type but those in <see cref="Except"/>, as an incorporeal creature resists. <see cref="DamageType"/> is ignored.</summary>
+    [DataField]
+    public bool All;
+
+    [DataField]
+    public List<ProtoId<CFDamageTypePrototype>> Except = new();
+
     /// <summary>True for a weakness: the amount is added to damage of that type.</summary>
     [DataField]
     public bool Weakness;

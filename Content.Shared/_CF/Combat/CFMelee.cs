@@ -102,7 +102,7 @@ public static class CFMelee
         else
             ability = abilities.GetModifier(CFAbility.Strength);
 
-        var bonus = !weapon.Ranged && combatant.PrintedAttack is { } printed
+        var bonus = !weapon.Ranged && (weapon.PrintedAttack ?? combatant.PrintedAttack) is { } printed
             ? printed
             : ability + proficiency + combatant.StrikeAdjustment;
         if (weapon.Improvised)
@@ -125,7 +125,7 @@ public static class CFMelee
         CFCombatantComponent? combatant = null,
         bool finesseDexterity = false)
     {
-        if (!weapon.Ranged && combatant?.PrintedDamage is { } printed)
+        if (!weapon.Ranged && (weapon.PrintedDamage ?? combatant?.PrintedDamage) is { } printed)
             return printed;
 
         var str = abilities.GetModifier(CFAbility.Strength);

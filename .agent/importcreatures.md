@@ -58,6 +58,8 @@ The role needs no AI work. Stock HTN sleeps while a player is in the body and wa
 | Speed | `CFCombatant` `speedFeet`, and `MovementSpeedModifier` | Walk is feet / 10, sprint is walk x 1.8: 25 feet is 2.5 and 4.5 |
 | Melee attack and damage | `CFCombatant` `printedAttack`, `printedDamage` | These replace abilities and proficiency for every melee Strike, weapon or natural, so a creature has one melee number |
 | Ranged attack | `CFCombatant` `strikeAdjustment` | Ranged ignores `printedAttack`. Set this to the book's bonus minus Dex minus (level + 2) |
+| More than one melee Strike, or a Strike with Grab, Knockdown or Push | `CFMonsterAttacks` `attacks`: each has `name`, `attack` (the printed bonus), `dice`, `die`, `bonus`, `damageType`, `traits` (`Agile`, `Finesse`, `Reach`, `DeadlyD8`...), `followUp` (`Grab`, `Knockdown`, `Push`; `followUpFree` for the improved kind) and `onHit` effects | These numbers replace `printedAttack` and `printedDamage` for that attack. List the main attack first: the AI uses it with no multiple attack penalty and the best of the rest after. A follow-up costs the monster 1 action after a hit. See `CFMobGrizzlyBear` |
+| Extra damage or a condition on a hit | `onHit` on the attack, or `CFStrikeRider` for a creature with `natural*` fields | `!type:CFDamageEffect` with `scaleByDegree: false` for "plus 1d4 acid". See `CFMobSewerOoze` |
 | Natural attack | `CFCombatOptions` `naturalDice`, `naturalDie`, `naturalType`, `naturalAgile`, `naturalFinesse` | Also what a disarmed creature uses |
 | Weapons | A `startingGear` with `inhand`, and `Loadout` on the mob | The item supplies dice, type and traits. Use the `CF` weapon, and do not copy its stats to the mob. With a weapon and a shield, list the weapon first, so it is in the active hand that swings |
 | Shield | `CFWoodenShield` and so on in `inhand`, and `shieldBlock: true` on `CFCombatOptions` | The brain raises it on seeing an enemy and keeps it up. The printed "AC x (y with shield raised)" is then right with `armorClass` at x |
@@ -71,7 +73,11 @@ The role needs no AI work. Stock HTN sleeps while a player is in the body and wa
 | Immunity to a kind of effect: mental, poison, disease, death effects, sleep, visual | `CFConditionImmunity` `traits` | Any effect with one of the traits does nothing, and an affliction with one never takes hold. Add the damage type to `CFResistances` as well |
 | Immunity to critical hits, to precision | `CFConditionImmunity` `criticalHits: true`, `precision: true` | A critical hit deals a hit's damage |
 | A poison or disease on its Strike | `CFStrikeRider` with `!type:CFExposeAfflictionEffect`, and a `cfAffliction` in `Afflictions/monsters.yml` | Stages printed in rounds use `seconds` (a round is 6), `maxSeconds` is the maximum duration |
-| Void healing | `CFVoidHealing`, and `Void` at 9999 in `CFResistances` | |
+| Void healing | `CFVoidHealing`, and `Void` at 9999 in `CFResistances` | Harm and void heal it, and Heal and vitality hurt it |
+| Resistance to all damage | A `CFResistances` entry with `all: true`, `amount`, and `except` for the types that get through | For incorporeal creatures: `except: [ Force ]` |
+| Fast healing, regeneration | `CFFastHealing` `perPulse`, every 6 seconds. `deactivatedBy` is a list of damage types that stop it for 6 seconds | Regeneration's "cannot die while it is active" is not built |
+| A condition it always has | `CFInnateConditions` `conditions`, such as `Slowed: 1` for a zombie | Only conditions kept by value: slowed, quickened, enfeebled, fatigued and the like |
+| Elite or weak | `CFAdjustment` `kind`, or `adjustment` on a `CFEncounterSpawner` | +2 or -2 on AC, attacks, damage, saves, Perception and skills, a level, and Hit Points by level. Fixed DCs, such as a breath weapon's, are not adjusted |
 | Traits | `CFTrait` `traits` | Always its creature type, from `Traits/creature-type.yml`, plus what the stat block lists. Check each id exists under `Prototypes/_CF/Traits` |
 | Darkvision | `NightVision`, copied from an existing creature | |
 | Low-light vision | `CFSenses` with `lowLightVision: true`, and `NightVision` with `lightingColor: "#9BB6FF18"` | See `CFMobWolf` |
@@ -99,12 +105,12 @@ Every monster has a GOAP brain from its base, so there is no root task to pick.
 
 - A low-HP mob dies on its bar from any stock damage CF does not catch, while its CF HP is full. A skeleton guard's bar is 4. Check `TemperatureDamage`: stock skeletons also take Blunt from heat, which `CFStockHeatSystem` ignores because it only catches plain Heat. Check breathing too: a creature that has no business needing air should not have `MobRespirator`.
 - Keep live tests off the arena's lava. A mob that wanders into it at 4 HP dies, and the test then fails for a reason that has nothing to do with the AI. If a mob dies on the arena, log its fire stacks before blaming anything else.
-- A stat block's `printedAttack` applies to everything melee, so a creature with two melee attack bonuses cannot have both yet.
-- Special abilities wait for an AI that can use them. List them as not in.
+- A test that parents a real monster to pin its numbers must set its own `CFMonsterAttacks` too, or it inherits the monster's real attacks and follow-ups (`CFWolfTest`).
+- Abilities that need the AI to choose a moment (charges, rushes, webs, auras it switches on) are still not in. List them as not in.
 
 ## Not supported yet
 
-- Void effects that heal undead, such as harm.
-- More than one natural attack.
+- A ranged natural attack (a spider's web, a spit): `CFMonsterAttacks` is melee only.
+- A Strike that deals no damage, such as a frog's tongue.
 - Size: a Large creature has a Medium body.
 - A creature's own Recall Knowledge skill: it uses the character's best knowledge skill, not "Undead (Religion)".

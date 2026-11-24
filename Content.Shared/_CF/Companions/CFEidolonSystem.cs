@@ -126,20 +126,6 @@ public sealed partial class CFEidolonBodyComponent : Component
     public EntityUid Summoner;
 }
 
-/// <summary>Regains Hit Points every 6 seconds for a while (Lifelink Surge).</summary>
-[RegisterComponent]
-public sealed partial class CFFastHealingComponent : Component
-{
-    [DataField]
-    public int PerPulse;
-
-    [DataField]
-    public TimeSpan Until;
-
-    [DataField]
-    public TimeSpan Next;
-}
-
 /// <summary>Gives the target fast healing: <see cref="Amount"/> every 6 seconds, one more <see cref="HeightenAmount"/> per rank.</summary>
 public sealed partial class CFFastHealingEffect : CFEffect
 {
@@ -348,20 +334,5 @@ public sealed partial class CFEidolonSystem : EntitySystem
             return;
 
         var now = _timing.CurTime;
-        var query = EntityQueryEnumerator<CFFastHealingComponent>();
-        while (query.MoveNext(out var uid, out var healing))
-        {
-            if (now >= healing.Until)
-            {
-                RemCompDeferred<CFFastHealingComponent>(uid);
-                continue;
-            }
-
-            if (now < healing.Next)
-                continue;
-
-            healing.Next = now + Pulse;
-            _effects.Heal(uid, uid, healing.PerPulse);
-        }
     }
 }

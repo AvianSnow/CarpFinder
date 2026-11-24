@@ -638,7 +638,7 @@ public readonly record struct CFCombatantRevivedEvent;
 /// damage events never say who did it.
 /// </summary>
 [ByRefEvent]
-public readonly record struct CFDamagedEvent(EntityUid Source, int Amount);
+public readonly record struct CFDamagedEvent(EntityUid Source, int Amount, string? DamageType = null);
 
 /// <summary>Raised on a monster when <see cref="Killer"/> brings it to 0 HP. The server awards XP for it.</summary>
 [ByRefEvent]

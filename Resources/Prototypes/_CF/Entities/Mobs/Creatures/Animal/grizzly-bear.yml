@@ -1,4 +1,4 @@
-# Grizzly bear. Creature 3, Large. Monster Core p. 41. Jaws only. Claw, Grab, Mauler and Rush are not in yet.
+# Grizzly bear. Creature 3, Large. Monster Core p. 41. Jaws, and a claw that Grabs (CFMonsterAttacks). Mauler and Rush are not in yet.
 - type: entity
   parent: [CFBaseCreature]
   id: CFMobGrizzlyBear
@@ -53,6 +53,23 @@
         Intelligence: -4
         Wisdom: 1
         Charisma: -2
+    # Each Strike with its own printed numbers. With no player in the body the AI picks (CFMonsterAttackSystem).
+    - type: CFMonsterAttacks
+      attacks:
+      - name: jaws
+        attack: 11
+        dice: 2
+        die: 8
+        bonus: 4
+        damageType: Piercing
+      - name: claw
+        attack: 11
+        dice: 1
+        die: 10
+        bonus: 4
+        damageType: Slashing
+        traits: [ Agile ]
+        followUp: Grab
     - type: CFCombatOptions
       naturalDice: 2
       naturalDie: 8

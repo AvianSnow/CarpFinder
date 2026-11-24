@@ -140,7 +140,7 @@ public sealed partial class CFEffectSystem
         {
             combat.CurrentHp = Math.Max(0, combat.CurrentHp - amount);
             Dirty(target, combat);
-            var damaged = new CFDamagedEvent(user, amount);
+            var damaged = new CFDamagedEvent(user, amount, damageType);
             RaiseLocalEvent(target, ref damaged);
         }
 

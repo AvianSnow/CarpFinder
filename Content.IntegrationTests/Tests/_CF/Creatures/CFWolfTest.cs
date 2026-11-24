@@ -56,6 +56,13 @@ public sealed class CFWolfTest : GameTest
     naturalDie: 1
     naturalType: Piercing
     packAttackDie: 4
+  # The wolf's own list would bring its real jaws and Knockdown, which this test must not depend on.
+  - type: CFMonsterAttacks
+    attacks:
+    - name: jaws
+      attack: 30
+      die: 1
+      damageType: Piercing
 ";
 
     private CFDevMap _map = default!;

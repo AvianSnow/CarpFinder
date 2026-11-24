@@ -114,6 +114,49 @@ public sealed partial class CFManeuverSystem
 
     #endregion
 
+    #region Monster follow-ups
+
+    /// <summary>
+    /// Monster Core's Grab, Knockdown and Push: after a Strike that lists one lands, the monster Grapples, Trips or
+    /// Shoves with that body part for 1 action, or none for the improved version. It needs no free hand. A Grab holds
+    /// for 6 seconds, the monster's next turn, and a critical success restrains.
+    /// </summary>
+    public bool FollowUp(EntityUid user, EntityUid target, CFFollowUp kind, bool free)
+    {
+        if (!_net.IsServer || kind == CFFollowUp.None || !_mobState.IsAlive(target))
+            return false;
+
+        if (kind == CFFollowUp.Knockdown && _conditions.IsProne(target)
+            || kind == CFFollowUp.Grab && CompOrNull<CFConditionComponent>(target)?.Grabbed == true)
+        {
+            return false;
+        }
+
+        if (!free && !_actions.TrySpendActions(user, 1))
+            return false;
+
+        switch (kind)
+        {
+            case CFFollowUp.Knockdown:
+                return Trip(user, target);
+            case CFFollowUp.Push:
+                Shove(user, target);
+                return true;
+            default:
+                var degree = _conditions.RollSkill(user, target, "Athletics", CFAbility.Strength, CFDefenseType.Fortitude, attackTrait: true);
+                if (!degree.IsSuccess())
+                    return false;
+
+                _conditions.ApplyGrabbed(target, user, 6f);
+                if (degree == CFDegree.CriticalSuccess && CompOrNull<CFConditionComponent>(target)?.Grabbed == true)
+                    _conditions.ApplyCondition(target, CFConditionKind.Restrained, 1, 6f, user, 0);
+
+                return true;
+        }
+    }
+
+    #endregion
+
     #region Jumps
 
     /// <summary>A jump costs 2 actions, or 1 with Quick Jump.</summary>

@@ -180,6 +180,7 @@ public sealed partial class CFGOAPEncounterSystem : EntitySystem
         for (var i = 0; i < count; i++)
         {
             var mob = Spawn(mobs[i % mobs.Count], SpawnPoint(ent, i, count));
+            EntityManager.System<Content.Shared.CF.Combat.CFAdjustmentSystem>().Adjust(mob, ent.Comp.Adjustment);
             Enlist(ent, mob, encounter);
         }
 
