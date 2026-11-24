@@ -105,7 +105,8 @@
       amount: 9999
     - damageType: Void
       amount: 9999
-  # Mental covers Frightened, Charmed and Calmed. Unconscious covers Asleep.
+  # Immunities: bleed, death effects, disease, mental, paralyzed, poison, unconscious.
+  # Mental covers Frightened, Charmed, Calmed, Confused, Controlled and Fleeing. Unconscious covers Asleep.
   - type: CFConditionImmunity
     conditions:
     - Asleep
@@ -113,6 +114,10 @@
     - Charmed
     - Frightened
     - Paralyzed
+    - Confused
+    - Controlled
+    - Fleeing
+    traits: [ Mental, Death, Disease, Poison ]
   - type: MobThresholds
     thresholds:
       0: Alive

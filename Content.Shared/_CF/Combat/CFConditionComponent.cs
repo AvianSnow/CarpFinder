@@ -94,6 +94,13 @@ public sealed partial class CFConditionComponent : Component
 
     public EntityUid? Charmer;
 
+    /// <summary>Who a controlled creature fights for. Networked, because who can harm whom is predicted.</summary>
+    [DataField, AutoNetworkedField]
+    public EntityUid? Controller;
+
+    /// <summary>What a fleeing creature runs from. Server-only.</summary>
+    public EntityUid? FleeingFrom;
+
     public HashSet<EntityUid> OffGuardTo = new();
 
     /// <summary>Creatures that Feinted this one: their melee attacks find it off-guard until the time.</summary>
@@ -246,4 +253,35 @@ public enum CFConditionKind : byte
 
     /// <summary>Not kept: the creature loses that many actions at once.</summary>
     Stunned,
+
+    /// <summary>
+    /// Off-guard, no reactions, and everyone is an enemy: a monster attacks whoever is nearest, and a player's
+    /// melee Strike lands on a random creature in reach. Each time it is damaged, a DC 11 flat check ends it.
+    /// </summary>
+    Confused,
+
+    /// <summary>The creature fights for whoever controls it (<see cref="CFConditionComponent.Controller"/>).</summary>
+    Controlled,
+
+    /// <summary>The creature can only move: no Strikes, spells or activities. A monster runs from the source.</summary>
+    Fleeing,
+
+    /// <summary>Immobilized and off-guard, and it cannot Strike, cast or use activities. A critical Grapple gives it.</summary>
+    Restrained,
+
+    /// <summary>Value is the slowed value: that many fewer actions.</summary>
+    Slowed,
+
+    /// <summary>One more action.</summary>
+    Quickened,
+
+    /// <summary>A poison is running its stages. Set by <c>CFAfflictionSystem</c>; the value is the stage.</summary>
+    Poisoned,
+
+    /// <summary>A disease is running its stages. Set by <c>CFAfflictionSystem</c>; the value is the stage.</summary>
+    Diseased,
 }
+
+/// <summary>Raised on a creature that has just become fleeing. The AI runs from <see cref="Source"/>.</summary>
+[ByRefEvent]
+public readonly record struct CFFleeingEvent(EntityUid Source, float Seconds);

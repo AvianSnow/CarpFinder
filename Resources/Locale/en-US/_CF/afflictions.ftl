@@ -1,4 +1,8 @@
 cf-affliction-recovered = You feel like yourself again.
+cf-affliction-poisoned = Poison burns in your veins.
+cf-affliction-diseased = Something foul has got into the wound.
+cf-affliction-putrid-plague-2 = Your stomach turns and your skin runs hot.
+cf-affliction-putrid-plague-3 = The fever drags at your limbs.
 cf-affliction-alcohol-1 = A warm, fearless glow spreads through you.
 cf-affliction-alcohol-2 = The world has gone pleasantly soft at the edges.
 cf-affliction-alcohol-3 = Your hands are clumsy and your thoughts are slow.

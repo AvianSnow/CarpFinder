@@ -123,6 +123,7 @@ public sealed partial class CFConditionSystem : EntitySystem
                     {
                         cond.ValueUntil.Remove(kind);
                         cond.Values.Remove(kind);
+                        ValueEnded(uid, cond, kind);
                     }
 
                     dirty = true;
@@ -202,7 +203,7 @@ public sealed partial class CFConditionSystem : EntitySystem
     [SubscribeLocalEvent]
     private void OnMove(Entity<CFConditionComponent> ent, ref RefreshMovementSpeedModifiersEvent args)
     {
-        if (ent.Comp.Immobilized || ent.Comp.Grabbed)
+        if (ent.Comp.Immobilized || ent.Comp.Grabbed || ent.Comp.Values.ContainsKey(CFConditionKind.Restrained))
             args.ModifySpeed(0f);
     }
 
@@ -221,7 +222,8 @@ public sealed partial class CFConditionSystem : EntitySystem
         if (!TryComp(uid, out CFCombatOptionsComponent? opt))
             return;
 
-        opt.ReactionSpent = 0;
+        // A confused creature has no reactions.
+        opt.ReactionSpent = Value(uid, CFConditionKind.Confused) > 0 ? CFReactions.Granted : 0;
         opt.PreyHitThisTurn = false;
         Dirty(uid, opt);
     }
@@ -333,6 +335,11 @@ public sealed partial class CFConditionSystem : EntitySystem
         cond.Grabbed = false;
         cond.Grabber = null;
         cond.Immobilized = false;
+
+        // A critical Grapple restrains for as long as the grab holds.
+        if (cond.Values.Remove(CFConditionKind.Restrained))
+            cond.ValueUntil.Remove(CFConditionKind.Restrained);
+
         Dirty(target, cond);
         _speed.RefreshMovementSpeedModifiers(target);
 
@@ -450,8 +457,15 @@ public sealed partial class CFConditionSystem : EntitySystem
         if (!TryComp(target, out CFConditionComponent? cond))
             return false;
 
-        if (cond.Grabbed || cond.OffGuardAll || cond.Blinded || cond.OffGuardTo.Contains(attacker))
+        if (cond.Grabbed
+            || cond.OffGuardAll
+            || cond.Blinded
+            || cond.OffGuardTo.Contains(attacker)
+            || cond.Values.ContainsKey(CFConditionKind.Restrained)
+            || cond.Values.ContainsKey(CFConditionKind.Confused))
+        {
             return true;
+        }
 
         var now = _timing.CurTime;
         return (melee || cond.FeintedRanged.Contains(attacker))
@@ -781,6 +795,110 @@ public sealed partial class CFConditionSystem : EntitySystem
     public bool IsImmune(EntityUid target, CFConditionKind kind)
     {
         return TryComp(target, out CFConditionImmunityComponent? immunity) && immunity.Conditions.Contains(kind);
+    }
+
+    /// <summary>Whether the creature is immune to effects with any of these traits (mental, poison, disease, death...).</summary>
+    public bool IsImmuneToTraits(EntityUid target, IEnumerable<ProtoId<CFTraitPrototype>>? traits)
+    {
+        if (traits == null || !TryComp(target, out CFConditionImmunityComponent? immunity) || immunity.Traits.Count == 0)
+            return false;
+
+        foreach (var trait in traits)
+        {
+            if (immunity.Traits.Contains(trait))
+                return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>A critical hit on this creature deals the damage of a hit.</summary>
+    public bool ImmuneToCriticalHits(EntityUid target)
+    {
+        return CompOrNull<CFConditionImmunityComponent>(target)?.CriticalHits == true;
+    }
+
+    /// <summary>Precision damage is not dealt to this creature.</summary>
+    public bool ImmuneToPrecision(EntityUid target)
+    {
+        return CompOrNull<CFConditionImmunityComponent>(target)?.Precision == true;
+    }
+
+    /// <summary>
+    /// Calmed, restrained or fleeing: the creature cannot Strike or use an activity. <see cref="CannotCast"/> is the
+    /// same question for spells, which calm leaves alone.
+    /// </summary>
+    public bool CannotActHostile(EntityUid uid)
+    {
+        return TryComp(uid, out CFConditionComponent? cond)
+               && (cond.Calmed
+                   || cond.Values.ContainsKey(CFConditionKind.Restrained)
+                   || cond.Values.ContainsKey(CFConditionKind.Fleeing));
+    }
+
+    /// <summary>Restrained or fleeing: the creature cannot cast.</summary>
+    public bool CannotCast(EntityUid uid)
+    {
+        return TryComp(uid, out CFConditionComponent? cond)
+               && (cond.Values.ContainsKey(CFConditionKind.Restrained) || cond.Values.ContainsKey(CFConditionKind.Fleeing));
+    }
+
+    public bool IsConfused(EntityUid uid)
+    {
+        return Value(uid, CFConditionKind.Confused) > 0;
+    }
+
+    /// <summary>
+    /// How many actions the creature holds: 3, less its slowed value, one more when quickened, and never above an
+    /// action cap from <see cref="CFBonusSystem.SetActionCap"/>.
+    /// </summary>
+    public void RefreshMaxActions(EntityUid uid)
+    {
+        if (!HasComp<CFActionPoolComponent>(uid))
+            return;
+
+        var max = 3 - Value(uid, CFConditionKind.Slowed) + (Value(uid, CFConditionKind.Quickened) > 0 ? 1 : 0);
+        if (CompOrNull<CFBonusesComponent>(uid) is { ActionCap: not 0 } capped)
+            max = capped.ActionCap > 3 ? Math.Max(max, capped.ActionCap) : Math.Min(max, capped.ActionCap);
+
+        _actions.SetMaxActions(uid, Math.Max(0, max));
+    }
+
+    /// <summary>What has to be put back when one of the conditions in <see cref="CFConditionComponent.Values"/> ends.</summary>
+    private void ValueEnded(EntityUid uid, CFConditionComponent cond, CFConditionKind kind)
+    {
+        switch (kind)
+        {
+            case CFConditionKind.Slowed:
+            case CFConditionKind.Quickened:
+                RefreshMaxActions(uid);
+                break;
+            case CFConditionKind.Restrained:
+                _speed.RefreshMovementSpeedModifiers(uid);
+                break;
+            case CFConditionKind.Controlled:
+                cond.Controller = null;
+                break;
+            case CFConditionKind.Fleeing:
+                cond.FleeingFrom = null;
+                break;
+        }
+    }
+
+    /// <summary>Each time a confused creature is damaged, a DC 11 flat check ends the confusion.</summary>
+    [SubscribeLocalEvent]
+    private void OnConfusedDamaged(Entity<CFConditionComponent> ent, ref CFDamagedEvent args)
+    {
+        if (!_net.IsServer
+            || args.Amount <= 0
+            || !ent.Comp.Values.ContainsKey(CFConditionKind.Confused)
+            || _random.Next(1, 21) < HiddenFlatCheck)
+        {
+            return;
+        }
+
+        EndCondition(ent, CFConditionKind.Confused);
+        _popup.PopupEntity(Loc.GetString("cf-cond-confused-over"), ent, ent);
     }
 
     /// <summary>What Demoralize would roll against. Nothing is rolled or changed.</summary>
@@ -1343,15 +1461,88 @@ public sealed partial class CFConditionSystem : EntitySystem
             case CFConditionKind.Fascinated:
             case CFConditionKind.HealingHalved:
             case CFConditionKind.HealingBlocked:
+            case CFConditionKind.Poisoned:
+            case CFConditionKind.Diseased:
                 ApplyValue(target, kind, value, seconds);
                 break;
+            case CFConditionKind.Slowed:
+            case CFConditionKind.Quickened:
+                ApplyValue(target, kind, value, seconds);
+                RefreshMaxActions(target);
+                Announce(target, kind);
+                break;
+            case CFConditionKind.Restrained:
+                ApplyValue(target, kind, value, seconds);
+                _speed.RefreshMovementSpeedModifiers(target);
+                Announce(target, kind);
+                break;
+            case CFConditionKind.Confused:
+                ApplyValue(target, kind, value, seconds);
+                if (TryComp(target, out CFCombatOptionsComponent? confusedOptions))
+                {
+                    confusedOptions.ReactionSpent = CFReactions.Granted;
+                    Dirty(target, confusedOptions);
+                }
+
+                Announce(target, kind);
+                break;
+            case CFConditionKind.Fleeing:
+                ApplyValue(target, kind, value, seconds);
+                Ensure(target).FleeingFrom = source;
+                var fleeing = new CFFleeingEvent(source, seconds);
+                RaiseLocalEvent(target, ref fleeing);
+                Announce(target, kind);
+                break;
+            case CFConditionKind.Controlled:
+                // Nobody controls itself, and a controller that is itself controlled passes nothing on.
+                if (source == target || !source.IsValid())
+                    break;
+
+                ApplyValue(target, kind, value, seconds);
+                var controlled = Ensure(target);
+                controlled.Controller = source;
+                Dirty(target, controlled);
+                Announce(target, kind);
+                break;
         }
+    }
+
+    private void Announce(EntityUid target, CFConditionKind kind)
+    {
+        if (_net.IsServer)
+            _popup.PopupEntity(Loc.GetString($"cf-cond-{kind.ToString().ToLowerInvariant()}"), target);
     }
 
     /// <summary>The value of one of the conditions kept in <see cref="CFConditionComponent.Values"/>, or 0 without it.</summary>
     public int Value(EntityUid uid, CFConditionKind kind)
     {
         return TryComp(uid, out CFConditionComponent? cond) && cond.Values.TryGetValue(kind, out var value) ? value : 0;
+    }
+
+    /// <summary>
+    /// Sets one of the conditions in <see cref="CFConditionComponent.Values"/> to exactly this value with no end, or
+    /// removes it at 0. For a condition another system keeps, as afflictions keep Poisoned and Diseased.
+    /// </summary>
+    public void SetMarker(EntityUid target, CFConditionKind kind, int value)
+    {
+        if (value <= 0)
+        {
+            if (TryComp(target, out CFConditionComponent? had) && had.Values.Remove(kind))
+            {
+                had.ValueUntil.Remove(kind);
+                Dirty(target, had);
+            }
+
+            return;
+        }
+
+        var cond = EnsureComp<CFConditionComponent>(target);
+        if (cond.Values.GetValueOrDefault(kind) == value)
+            return;
+
+        cond.Values[kind] = value;
+        cond.ValueUntil.Remove(kind);
+        Dirty(target, cond);
     }
 
     private void ApplyValue(EntityUid target, CFConditionKind kind, int value, float seconds)
@@ -1449,8 +1640,17 @@ public sealed partial class CFConditionSystem : EntitySystem
             case CFConditionKind.Fascinated:
             case CFConditionKind.HealingHalved:
             case CFConditionKind.HealingBlocked:
+            case CFConditionKind.Confused:
+            case CFConditionKind.Controlled:
+            case CFConditionKind.Fleeing:
+            case CFConditionKind.Restrained:
+            case CFConditionKind.Slowed:
+            case CFConditionKind.Quickened:
+            case CFConditionKind.Poisoned:
+            case CFConditionKind.Diseased:
                 cond.Values.Remove(kind);
                 cond.ValueUntil.Remove(kind);
+                ValueEnded(target, cond, kind);
                 break;
             case CFConditionKind.Stupefied:
                 cond.StupefiedValue = 0;

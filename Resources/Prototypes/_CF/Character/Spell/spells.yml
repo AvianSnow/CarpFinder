@@ -891,7 +891,7 @@
   name: Slow
   rank: 3
   traditions: [Arcane, Occult, Primal]
-  traits: [Concentrate, Incapacitation, Manipulate]
+  traits: [Concentrate, Manipulate]
   actionCost: Two
   components: Somatic, verbal
   range: 30 feet

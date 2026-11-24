@@ -512,6 +512,13 @@ public sealed partial class CFEffectSystem : EntitySystem
         var check = CompOrNull<CFCheckComponent>(source);
         var args = BuildArgs(source, user, target, Transform(target).Coordinates, check, out var stats);
 
+        // Immune to what this is: a mental effect on a skeleton, poison on a dragon.
+        if (user != target && _conditions.IsImmuneToTraits(target, args.Traits))
+        {
+            _popup.PopupEntity(Loc.GetString("cf-cond-immune"), target);
+            return false;
+        }
+
         // A Sorcerer's blood magic goes to the first enemy its bloodline spell reaches.
         EntityManager.System<Content.Shared.CF.Spells.CFBloodMagicSystem>().NoteTarget(user, source, target);
 
@@ -526,6 +533,11 @@ public sealed partial class CFEffectSystem : EntitySystem
         if (check != null && check.Defense == CFDefenseType.ArmorClass)
         {
             args.Degree = RollAttack(user, target, check, stats.AttackBonus + taunted);
+
+            // Immune to critical hits: the damage of a hit, and here the hit's effects too.
+            if (args.Degree == CFDegree.CriticalSuccess && _conditions.ImmuneToCriticalHits(target))
+                args.Degree = CFDegree.Success;
+
             landed = args.Degree.IsSuccess();
             _auras.NoteAttacked(target, user);
         }

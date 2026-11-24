@@ -26,7 +26,7 @@ Everything below is under `Content.Shared/_CF/`.
 | Folder | Holds | Start at |
 |---|---|---|
 | `Actions/` | Action stamina, multiple attack penalty, radial activities, breath weapons, stances, flourishes, Shove, Disarm, Grapple, Escape, marks, standing | `CFActionPoolSystem`, `CFActivitySystem`, `CFStanceSystem`, `CFManeuverSystem` |
-| `Afflictions/` | Staged afflictions such as Alcohol. Poisons and diseases can use the same pieces. | `CFAfflictionSystem` |
+| `Afflictions/` | Staged afflictions: Alcohol, and the poisons and diseases monsters carry (`Afflictions/monsters.yml`). A save on exposure, then stages in rounds or world minutes, a maximum duration, and the Poisoned and Diseased conditions the HUD shows while one runs. `Expose`, `Has`, `Cure` | `CFAfflictionSystem` |
 | `Alchemy/` | Potions, elixirs and bombs: drinking one runs its `CFDrinkEffects`, a thrown bomb breaks on its Strike and splashes (`CFBombSystem`), and the cauldron data. Brewing is server-side in `Content.Server/_CF/Alchemy/CFCauldronSystem`: a cauldron on a fire boils the ingredients of an Alchemy `craftingRecipe` and the brewer rolls Crafting. Ingredients and the wild plants they come from are CP14's. | `CFAlchemicalItemSystem`, `CFBombSystem`, `CFCauldronComponent` |
 | `Character/` | Prototypes for ancestry, class, feat, heritage, background, spell; skill and attribute math; `Grants/`, what an option gives a character | `CFAttributeMath`, `CFSkills`, `CFCharacterFeatureSystem` |
 | `Checks/` | Degrees of success, defenses, casting DCs | `CFDegrees`, `CFDefense`, `CFCasting` |
@@ -218,7 +218,6 @@ Rangers, Thaumaturges, and Investigators mark with the stock point gesture, thro
 ## Known gaps in maneuvers
 
 - Shove, Disarm, Grapple, and Escape do not count toward MAP.
-- A critical success on Grapple grabs but does not restrain.
 - The `Trip` weapon trait does nothing now that Trip is not an action.
 - Shove's optional Stride after the target is not automatic. The player walks after them.
 - PF2e lets you drop a shove or disarm weapon on a critical failure to take a plain failure instead. The critical failure always applies here.

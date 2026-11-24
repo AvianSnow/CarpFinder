@@ -65,6 +65,12 @@
         0: Alive
         39: Critical
         40: Dead
+    # Immunities: acid, bleed, critical hits, mental, precision, unconscious, visual. Acid and bleed are below.
+    - type: CFConditionImmunity
+      conditions: [ Asleep, Calmed, Charmed, Frightened, Confused, Controlled, Fleeing ]
+      traits: [ Mental, Visual ]
+      criticalHits: true
+      precision: true
     - type: CFResistances
       entries:
         - damageType: Acid

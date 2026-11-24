@@ -243,6 +243,10 @@ public sealed partial class CFManeuverSystem : EntitySystem
         if (CompOrNull<CFConditionComponent>(target)?.Grabbed != true)
             return false;
 
+        // A critical success restrains for as long as the grab holds. Releasing the grab ends it.
+        if (degree == CFDegree.CriticalSuccess)
+            _conditions.ApplyCondition(target, CFConditionKind.Restrained, 1, 600f, user, 0);
+
         _conditions.GainManeuverPanache(user);
         if (CompOrNull<CFCombatOptionsComponent>(user)?.CrushingGrab == true
             && TryComp(user, out CFAbilityScoreComponent? abilities))

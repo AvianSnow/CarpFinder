@@ -382,7 +382,7 @@ public sealed partial class CFBonusSystem : EntitySystem
         var comp = EnsureComp<CFBonusesComponent>(uid);
         comp.ActionCap = cap;
         comp.ActionCapUntil = _timing.CurTime + TimeSpan.FromSeconds(Math.Max(1f, seconds));
-        _actions.SetMaxActions(uid, cap);
+        EntityManager.System<CFConditionSystem>().RefreshMaxActions(uid);
     }
 
     private void ExpireBonuses(TimeSpan now)
@@ -401,7 +401,7 @@ public sealed partial class CFBonusSystem : EntitySystem
             if (comp.ActionCap != 0 && comp.ActionCapUntil <= now)
             {
                 comp.ActionCap = 0;
-                _actions.SetMaxActions(uid, 3);
+                EntityManager.System<CFConditionSystem>().RefreshMaxActions(uid);
             }
         }
     }

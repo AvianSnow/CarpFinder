@@ -136,9 +136,12 @@
       entries:
         - damageType: Poison
           amount: 9999
+    # Immunities: paralyzed, poison, sleep.
     - type: CFConditionImmunity
       conditions:
         - Asleep
+        - Paralyzed
+      traits: [ Poison, Sleep ]
     - type: MobThresholds
       thresholds:
         0: Alive

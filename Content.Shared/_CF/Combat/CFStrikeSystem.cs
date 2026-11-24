@@ -700,6 +700,10 @@ public sealed partial class CFStrikeSystem : EntitySystem
         Action<CFDegree, int>? resolved = null,
         bool ignoreConcealed = false)
     {
+        // A confused creature's melee Strike lands on whoever is in reach, friend or foe.
+        if (melee && _net.IsServer && _conditions.IsConfused(user))
+            target = ConfusedTarget(user, target, weapon.Traits.Reach);
+
         if (!_factions.CanHarm(user, target))
             return false;
 
@@ -713,7 +717,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
 
         _fights.NoteAttack(user, target);
 
-        if (_conditions.IsCalmed(user) || _conditions.IsCharmedAgainst(user, target))
+        if (_conditions.CannotActHostile(user) || _conditions.IsCharmedAgainst(user, target))
         {
             _popup.PopupEntity(Loc.GetString("cf-cond-cannot-harm"), user, user);
             return false;
@@ -952,7 +956,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
             else
             {
                 var extra = bonusDamage;
-                if (!skipPrecision)
+                if (!skipPrecision && !_conditions.ImmuneToPrecision(target))
                     extra += Precision(user, target, style, weapon, melee, unseen, isObject, finisher, cleverStratagem);
 
                 if (weapon.Traits.Backstabber && !isObject
@@ -962,7 +966,9 @@ public sealed partial class CFStrikeSystem : EntitySystem
                 if (style is { PackAttackDie: > 0 } && !isObject && _flanking.AlliesThreatening(target, user) >= 2)
                     extra += _random.Next(1, style.PackAttackDie + 1);
 
-                damage = CFMelee.RollStrikeDamage(_random, rolled, damageMod, criticalHit, extra);
+                // A creature immune to critical hits takes a hit's damage. The rest of the critical hit still happens.
+                var doubled = criticalHit && !_conditions.ImmuneToCriticalHits(target);
+                damage = CFMelee.RollStrikeDamage(_random, rolled, damageMod, doubled, extra);
                 damage = rolled.Traits.Concussive
                     ? Math.Max(_bonuses.ModifyDamage(target, "Piercing", damage), _bonuses.ModifyDamage(target, "Bludgeoning", damage))
                     : _bonuses.ModifyDamage(target, rolled.DamageType, damage);
@@ -1108,10 +1114,32 @@ public sealed partial class CFStrikeSystem : EntitySystem
         RaiseNetworkEvent(
             new CFCombatNumberEvent(GetNetEntity(target), degree, damage, rolled.DamageType),
             Filter.Pvs(target));
+        // What a creature's Strike carries besides damage: a spider's venom, a rat's plague.
+        if (hit && damage > 0 && !isObject && TryComp(user, out CFStrikeRiderComponent? rider) && (melee || !rider.MeleeOnly))
+            _effects.Run(rider.OnHit, new CFEffectArgs { User = user, Source = user, Target = target, Position = Transform(target).Coordinates });
+
         var resolvedEvent = new CFStrikeResolvedEvent(user, target, degree, damage, melee);
         RaiseLocalEvent(weaponUid, ref resolvedEvent);
         resolved?.Invoke(degree, damage);
         return hit;
+    }
+
+    /// <summary>A random living creature in reach of a confused attacker, the one it meant included.</summary>
+    private EntityUid ConfusedTarget(EntityUid user, EntityUid meant, int reachFeet)
+    {
+        var here = _transform.GetWorldPosition(user);
+        var inReach = new List<EntityUid>();
+        foreach (var mob in _lookup.GetEntitiesInRange<MobStateComponent>(_transform.GetMapCoordinates(user), reachFeet / CFMelee.FeetPerTile + 1f))
+        {
+            if (mob.Owner != user
+                && _mobState.IsAlive(mob)
+                && CFFlanking.InReach(here, _transform.GetWorldPosition(mob), Math.Max(reachFeet, CFFlanking.DefaultReachFeet)))
+            {
+                inReach.Add(mob);
+            }
+        }
+
+        return inReach.Count == 0 ? meant : inReach[_random.Next(inReach.Count)];
     }
 
     /// <summary>

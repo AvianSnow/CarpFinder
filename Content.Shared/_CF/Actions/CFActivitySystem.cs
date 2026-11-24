@@ -173,7 +173,7 @@ public sealed partial class CFActivitySystem : EntitySystem
         if (!_net.IsServer)
             return;
 
-        if (_conditions.IsCalmed(args.Performer))
+        if (_conditions.CannotActHostile(args.Performer))
         {
             _popup.PopupEntity(Loc.GetString("cf-cond-calmed"), args.Performer, args.Performer);
             return;

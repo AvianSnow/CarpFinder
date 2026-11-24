@@ -20,11 +20,18 @@
     defense: Will
     basicSave: false
   - type: CFDegreeEffects
-    failure:
+    success:
     - !type:CFApplyConditionEffect
       condition: Frightened
       value: 1
-    criticalFailure:
+    failure:
     - !type:CFApplyConditionEffect
       condition: Frightened
       value: 2
+    criticalFailure:
+    - !type:CFApplyConditionEffect
+      condition: Frightened
+      value: 3
+    - !type:CFApplyConditionEffect
+      condition: Fleeing
+      durationSeconds: 6

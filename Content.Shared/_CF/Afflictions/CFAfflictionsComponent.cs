@@ -30,4 +30,8 @@ public sealed partial class CFActiveAffliction
 
     [DataField]
     public TimeSpan NextExposure;
+
+    /// <summary>When the affliction's maximum duration runs out. Zero is never.</summary>
+    [DataField]
+    public TimeSpan EndsAt;
 }

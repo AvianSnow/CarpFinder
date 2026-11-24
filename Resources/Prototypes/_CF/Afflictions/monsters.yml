@@ -1,0 +1,83 @@
+# Poisons and diseases monsters carry, with Monster Core's numbers. A creature delivers one through CFStrikeRider.
+# A stage printed in rounds uses seconds (a round is 6). One printed in hours or days uses worldMinutes.
+
+# Hunting Spider Venom (poison). Saving Throw DC 16 Fortitude; Maximum Duration 6 rounds.
+- type: cfAffliction
+  id: HuntingSpiderVenom
+  dc: 16
+  traits: [ Poison ]
+  maxSeconds: 36
+  exposureCooldownSeconds: 1
+  stages:
+  - seconds: 6
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 4
+      damageType: Poison
+      scaleByDegree: false
+    - !type:CFApplyConditionEffect
+      condition: OffGuard
+      durationSeconds: 6
+  - seconds: 6
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 6
+      damageType: Poison
+      scaleByDegree: false
+    - !type:CFApplyConditionEffect
+      condition: Clumsy
+      value: 1
+      durationSeconds: 6
+    - !type:CFApplyConditionEffect
+      condition: OffGuard
+      durationSeconds: 6
+  - seconds: 6
+    effects:
+    - !type:CFDamageEffect
+      dice: 1
+      die: 6
+      damageType: Poison
+      scaleByDegree: false
+    - !type:CFApplyConditionEffect
+      condition: Clumsy
+      value: 2
+      durationSeconds: 6
+    - !type:CFApplyConditionEffect
+      condition: OffGuard
+      durationSeconds: 6
+
+# Putrid Plague (disease), from the giant rat. Saving Throw DC 14 Fortitude. Stage 1 carrier with no ill effect
+# (1d4 hours, here 2 and a half), stage 2 sickened 1 (1 day), stage 3 sickened 1 and slowed 1 (1 day).
+# Left out: stage 4 (unconscious for a day) and stage 5 (dead), so the track stops at stage 3.
+# A day on the world clock is 21600 real seconds, which is what the conditions last.
+- type: cfAffliction
+  id: PutridPlague
+  dc: 14
+  traits: [ Disease ]
+  exposureCooldownSeconds: 60
+  stages:
+  - worldMinutes: 150
+  - worldMinutes: 1440
+    effects:
+    - !type:CFPopupEffect
+      text: cf-affliction-putrid-plague-2
+      userOnly: true
+    - !type:CFApplyConditionEffect
+      condition: Sickened
+      value: 1
+      durationSeconds: 21600
+  - worldMinutes: 1440
+    effects:
+    - !type:CFPopupEffect
+      text: cf-affliction-putrid-plague-3
+      userOnly: true
+    - !type:CFApplyConditionEffect
+      condition: Sickened
+      value: 1
+      durationSeconds: 21600
+    - !type:CFApplyConditionEffect
+      condition: Slowed
+      value: 1
+      durationSeconds: 21600

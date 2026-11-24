@@ -431,6 +431,13 @@ public sealed partial class CFSpellSystem : EntitySystem
     /// <summary>Pays for the cast and shows it, unless the spell is being cast subtly.</summary>
     private bool TrySpendCast(EntityUid caster, Entity<CFSpellComponent> spell)
     {
+        // Restrained or fleeing: no casting.
+        if (_conditions.CannotCast(caster))
+        {
+            _popup.PopupEntity(Loc.GetString("cf-cond-cannot-cast"), caster, caster);
+            return false;
+        }
+
         var hex = IsHex(spell.Comp);
         if (hex && !HexReady(caster))
         {

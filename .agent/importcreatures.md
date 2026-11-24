@@ -67,7 +67,10 @@ The role needs no AI work. Stock HTN sleeps while a player is in the body and wa
 | Ammunition | `CFArrowSupply` `arrows` | Leave out the arrow already on the bow, so 20 arrows is `arrows: 19`. Set `ammo: CFBolt` for a crossbow |
 | Resistances, weaknesses | `CFResistances` `entries` | `weakness: true` for a weakness |
 | Immunity to a damage type | `CFResistances` with `amount: 9999` | Bleed, Mental, Poison, and so on |
-| Immunity to a condition | `CFConditionImmunity` `conditions` | Mental means `Frightened`, `Charmed`, `Calmed`. Unconscious means `Asleep` |
+| Immunity to a condition | `CFConditionImmunity` `conditions` | Mental means `Frightened`, `Charmed`, `Calmed`, `Confused`, `Controlled`, `Fleeing`. Unconscious means `Asleep` |
+| Immunity to a kind of effect: mental, poison, disease, death effects, sleep, visual | `CFConditionImmunity` `traits` | Any effect with one of the traits does nothing, and an affliction with one never takes hold. Add the damage type to `CFResistances` as well |
+| Immunity to critical hits, to precision | `CFConditionImmunity` `criticalHits: true`, `precision: true` | A critical hit deals a hit's damage |
+| A poison or disease on its Strike | `CFStrikeRider` with `!type:CFExposeAfflictionEffect`, and a `cfAffliction` in `Afflictions/monsters.yml` | Stages printed in rounds use `seconds` (a round is 6), `maxSeconds` is the maximum duration |
 | Void healing | `CFVoidHealing`, and `Void` at 9999 in `CFResistances` | |
 | Traits | `CFTrait` `traits` | Always its creature type, from `Traits/creature-type.yml`, plus what the stat block lists. Check each id exists under `Prototypes/_CF/Traits` |
 | Darkvision | `NightVision`, copied from an existing creature | |
@@ -101,7 +104,6 @@ Every monster has a GOAP brain from its base, so there is no root task to pick.
 
 ## Not supported yet
 
-- Immunity to death effects, disease and poison afflictions, critical hits, and precision.
 - Void effects that heal undead, such as harm.
 - More than one natural attack.
 - Size: a Large creature has a Medium body.

@@ -42,6 +42,8 @@ public sealed partial class CFAfflictionSystem : EntitySystem
         {
             if (_mobState.IsDead(uid))
             {
+                comp.Active.Clear();
+                RefreshMarkers(uid, comp);
                 RemCompDeferred<CFAfflictionsComponent>(uid);
                 continue;
             }
@@ -49,9 +51,16 @@ public sealed partial class CFAfflictionSystem : EntitySystem
             for (var i = comp.Active.Count - 1; i >= 0; i--)
             {
                 var active = comp.Active[i];
-                if (now >= active.NextTick && !Tick(uid, active, now))
+                var over = active.EndsAt > TimeSpan.Zero && now >= active.EndsAt;
+                if (over)
+                    _popup.PopupEntity(Loc.GetString("cf-affliction-recovered"), uid, uid);
+
+                if (over || now >= active.NextTick && !Tick(uid, active, now))
                     comp.Active.RemoveAt(i);
             }
+
+            // Cheap: it writes nothing unless the worst stage changed.
+            RefreshMarkers(uid, comp);
 
             if (comp.Active.Count == 0)
                 RemCompDeferred<CFAfflictionsComponent>(uid);
@@ -70,6 +79,10 @@ public sealed partial class CFAfflictionSystem : EntitySystem
     public void Expose(EntityUid uid, ProtoId<CFAfflictionPrototype> id)
     {
         if (!_net.IsServer || !_prototypes.Resolve(id, out var proto) || _mobState.IsDead(uid))
+            return;
+
+        // Immune to poison, or to disease: it never takes hold.
+        if (_conditions.IsImmuneToTraits(uid, proto.Traits))
             return;
 
         var comp = EnsureComp<CFAfflictionsComponent>(uid);
@@ -93,9 +106,11 @@ public sealed partial class CFAfflictionSystem : EntitySystem
             {
                 Id = id,
                 PendingStage = raise,
-                NextTick = now + WorldTime(proto.OnsetWorldMinutes),
+                NextTick = now + (proto.OnsetSeconds > 0f ? TimeSpan.FromSeconds(proto.OnsetSeconds) : WorldTime(proto.OnsetWorldMinutes)),
                 NextExposure = cooldown,
+                EndsAt = proto.MaxSeconds > 0f ? now + TimeSpan.FromSeconds(proto.MaxSeconds) : TimeSpan.Zero,
             });
+            _popup.PopupEntity(Loc.GetString(Marker(proto) == CFConditionKind.Diseased ? "cf-affliction-diseased" : "cf-affliction-poisoned"), uid, uid);
             return;
         }
 
@@ -147,11 +162,75 @@ public sealed partial class CFAfflictionSystem : EntitySystem
         active.Stage = stage;
 
         var data = proto.Stages[stage - 1];
-        active.NextTick = _timing.CurTime + WorldTime(data.WorldMinutes);
-        _effects.Run(data.Effects, new CFEffectArgs { User = uid, Source = uid, Target = uid, Dc = proto.Dc });
+        active.NextTick = _timing.CurTime + (data.Seconds > 0f ? TimeSpan.FromSeconds(data.Seconds) : WorldTime(data.WorldMinutes));
+        _effects.Run(data.Effects, new CFEffectArgs { User = uid, Source = uid, Target = uid, Position = Transform(uid).Coordinates, Dc = proto.Dc, Traits = proto.Traits });
 
         // A stage with no time on it is the end of the track, such as death.
-        return data.WorldMinutes > 0f;
+        return data.Seconds > 0f || data.WorldMinutes > 0f;
+    }
+
+    /// <summary>Whether a poison (or a disease) is running on the creature, onset included.</summary>
+    public bool Has(EntityUid uid, CFConditionKind marker)
+    {
+        if (!TryComp(uid, out CFAfflictionsComponent? comp))
+            return false;
+
+        foreach (var active in comp.Active)
+        {
+            if (_prototypes.Resolve(active.Id, out var proto) && Marker(proto) == marker)
+                return true;
+        }
+
+        return false;
+    }
+
+    /// <summary>Ends every poison (or every disease) on the creature, as a cure does. Returns how many ended.</summary>
+    public int Cure(EntityUid uid, CFConditionKind marker)
+    {
+        if (!TryComp(uid, out CFAfflictionsComponent? comp))
+            return 0;
+
+        var cured = comp.Active.RemoveAll(active => _prototypes.Resolve(active.Id, out var proto) && Marker(proto) == marker);
+        if (cured > 0)
+            RefreshMarkers(uid, comp);
+
+        return cured;
+    }
+
+    /// <summary>Poisoned or diseased, by the affliction's trait. Anything else, such as drink, has no marker.</summary>
+    private static CFConditionKind? Marker(CFAfflictionPrototype proto)
+    {
+        if (proto.Traits.Contains("Poison"))
+            return CFConditionKind.Poisoned;
+
+        return proto.Traits.Contains("Disease") ? CFConditionKind.Diseased : null;
+    }
+
+    /// <summary>Keeps the Poisoned and Diseased conditions, which the HUD shows, at the worst stage running.</summary>
+    private void RefreshMarkers(EntityUid uid, CFAfflictionsComponent comp)
+    {
+        var poison = 0;
+        var disease = 0;
+        foreach (var active in comp.Active)
+        {
+            if (!_prototypes.Resolve(active.Id, out var proto))
+                continue;
+
+            // An onset counts as stage 1 for the marker: the creature knows it has been bitten.
+            var stage = Math.Max(1, active.Stage);
+            switch (Marker(proto))
+            {
+                case CFConditionKind.Poisoned:
+                    poison = Math.Max(poison, stage);
+                    break;
+                case CFConditionKind.Diseased:
+                    disease = Math.Max(disease, stage);
+                    break;
+            }
+        }
+
+        _conditions.SetMarker(uid, CFConditionKind.Poisoned, poison);
+        _conditions.SetMarker(uid, CFConditionKind.Diseased, disease);
     }
 
     private TimeSpan WorldTime(float worldMinutes)
@@ -175,6 +254,32 @@ public sealed partial class CFAfflictionSystem : EntitySystem
         }
 
         return null;
+    }
+}
+
+/// <summary>Exposes the target to an affliction, which rolls its save: a venomous bite, a tainted drink.</summary>
+public sealed partial class CFExposeAfflictionEffect : CFEffect
+{
+    [DataField(required: true)]
+    public ProtoId<CFAfflictionPrototype> Affliction;
+
+    public override void Apply(IEntityManager entities, CFEffectArgs args)
+    {
+        if (args.Target is { } target)
+            entities.System<CFAfflictionSystem>().Expose(target, Affliction);
+    }
+}
+
+/// <summary>Ends every poison or every disease on the target (<c>kind</c>: Poisoned or Diseased).</summary>
+public sealed partial class CFCureAfflictionEffect : CFEffect
+{
+    [DataField(required: true)]
+    public CFConditionKind Kind;
+
+    public override void Apply(IEntityManager entities, CFEffectArgs args)
+    {
+        if (args.Target is { } target)
+            entities.System<CFAfflictionSystem>().Cure(target, Kind);
     }
 }
 

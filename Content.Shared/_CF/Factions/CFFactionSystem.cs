@@ -97,6 +97,16 @@ public sealed partial class CFFactionSystem : EntitySystem
         if (attacker == target)
             return false;
 
+        // A confused creature has no allies.
+        if (TryComp(attacker, out CFConditionComponent? confused) && confused.Values.ContainsKey(CFConditionKind.Confused))
+            return true;
+
+        // A controlled creature stands where its controller stands.
+        attacker = Side(attacker);
+        target = Side(target);
+        if (attacker == target)
+            return false;
+
         if (TryPvp(attacker, target, out var both))
             return both;
 
@@ -104,6 +114,17 @@ public sealed partial class CFFactionSystem : EntitySystem
             return true;
 
         return GetAlliance(attacker, target) != CFAlliance.Party;
+    }
+
+    /// <summary>Whose side a creature is on: its controller's while it is controlled, otherwise its own.</summary>
+    public EntityUid Side(EntityUid uid)
+    {
+        return TryComp(uid, out CFConditionComponent? cond)
+               && cond.Controller is { } controller
+               && cond.Values.ContainsKey(CFConditionKind.Controlled)
+               && !TerminatingOrDeleted(controller)
+            ? controller
+            : uid;
     }
 
     /// <summary>
@@ -170,6 +191,14 @@ public sealed partial class CFFactionSystem : EntitySystem
 
     public CFAlliance GetAlliance(EntityUid a, EntityUid b)
     {
+        if (a != b)
+        {
+            a = Side(a);
+            b = Side(b);
+            if (a == b)
+                return CFAlliance.Party;
+        }
+
         if (a != b && TryPvp(a, b, out var both) && both)
             return CFAlliance.Opposition;
 

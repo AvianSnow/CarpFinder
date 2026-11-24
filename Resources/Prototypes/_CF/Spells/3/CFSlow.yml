@@ -2,7 +2,7 @@
   parent: CFSpellTarget
   id: CFSlow
   name: Slow
-  description: On a failed Fortitude save the target can hold only 2 actions.
+  description: A Fortitude save. On a success the target is slowed 1 for 6 seconds, on a failure for a minute, and on a critical failure slowed 2 for a minute.
   components:
   - type: Sprite
     sprite: Objects/Magic/magicactions.rsi
@@ -20,7 +20,18 @@
     defense: Fortitude
     basicSave: false
   - type: CFDegreeEffects
-    landed:
-    - !type:CFActionCapEffect
-      cap: 2
+    success:
+    - !type:CFApplyConditionEffect
+      condition: Slowed
+      value: 1
+      durationSeconds: 6
+    failure:
+    - !type:CFApplyConditionEffect
+      condition: Slowed
+      value: 1
+      durationSeconds: 60
+    criticalFailure:
+    - !type:CFApplyConditionEffect
+      condition: Slowed
+      value: 2
       durationSeconds: 60

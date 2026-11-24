@@ -19,8 +19,8 @@
     filter: All
   - type: CFDegreeEffects
     landed:
-    - !type:CFActionCapEffect
-      cap: 4
+    - !type:CFApplyConditionEffect
+      condition: Quickened
       durationSeconds: 60
   - type: EntityTargetAction
     canTargetSelf: true

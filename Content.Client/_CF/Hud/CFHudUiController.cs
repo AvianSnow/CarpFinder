@@ -193,9 +193,10 @@ public sealed partial class CFHudUiController : UIController
         {
             foreach (var (kind, value) in cond.Values)
             {
-                // Only enfeebled, drained and doomed have a value worth showing.
-                var valued = kind is CFConditionKind.Enfeebled or CFConditionKind.Drained or CFConditionKind.Doomed;
-                Add(kind.ToString().ToLowerInvariant(), false, valued ? value : 0);
+                // Only these have a value worth showing. Poisoned and diseased show their stage.
+                var valued = kind is CFConditionKind.Enfeebled or CFConditionKind.Drained or CFConditionKind.Doomed
+                    or CFConditionKind.Slowed or CFConditionKind.Poisoned or CFConditionKind.Diseased;
+                Add(kind.ToString().ToLowerInvariant(), kind == CFConditionKind.Quickened, valued ? value : 0);
             }
         }
         if (cond is { Grabbed: true })
@@ -211,7 +212,11 @@ public sealed partial class CFHudUiController : UIController
         if (EntityManager.System<CFEncumbranceSystem>().IsEncumbered(player))
             Add("encumbered", false);
 
-        if (EntityManager.TryGetComponent(player, out CFActionPoolComponent? pool) && pool.MaxActions != 3)
+        // The slowed and quickened conditions name themselves above. This is for an action cap with no condition behind it.
+        if (EntityManager.TryGetComponent(player, out CFActionPoolComponent? pool)
+            && pool.MaxActions != 3
+            && cond?.Values.ContainsKey(CFConditionKind.Slowed) != true
+            && cond?.Values.ContainsKey(CFConditionKind.Quickened) != true)
             Add(pool.MaxActions > 3 ? "quickened" : "slowed", pool.MaxActions > 3);
 
         if (EntityManager.System<CFShieldSystem>().RaisedBonus(player) > 0)
