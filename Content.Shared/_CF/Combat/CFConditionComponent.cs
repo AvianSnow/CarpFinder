@@ -70,12 +70,6 @@ public sealed partial class CFConditionComponent : Component
     [DataField, AutoNetworkedField]
     public bool Blinded;
 
-    [DataField, AutoNetworkedField]
-    public int Shoves;
-
-    [DataField]
-    public TimeSpan LastShove;
-
     /// <summary>When the next Escape attempt can happen.</summary>
     [DataField]
     public TimeSpan NextEscape;

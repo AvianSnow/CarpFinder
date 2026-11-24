@@ -290,6 +290,9 @@ Class examples: `CFMySystem`, `CFMyServerSystem`, `CFMyClientSystem`, `CFExample
 | What a creature is immune to | `CFConditionImmunity`: `conditions`, `traits` (effects with the trait do nothing), `criticalHits`, `precision`. `CFConditionSystem.IsImmune`, `IsImmuneToTraits`, `ImmuneToCriticalHits`, `ImmuneToPrecision`. Immunity to a damage type stays a `CFResistances` entry of 9999 |
 | A condition | `CFConditionSystem.ApplyCondition` with a `CFConditionKind`. Enfeebled, drained, doomed, dazzled, fatigued, deafened and fascinated are read with `CFConditionSystem.Value`. Stunned takes actions at once |
 | An action or reaction that moves its user | `closesFeet` or `stepsBackFeet` on a `CFStrikeAction`, `follows: true` on a `CFReaction`, `!type:CFLeapEffect`, and `!type:CFFreeStepEffect` for leaving reach without cost |
+| A skill action reached by right-click (Steal, Perform, Subsist, Track, Cover Tracks, Treat Poison, Treat Disease, Repair) | A verb in `Content.Server/_CF/Actions/CFSkillActionSystem.cs`, on `GetVerbsEvent<InteractionVerb>`: `CFCombatant` and `CFShield` are the two it listens on, and `Verb`, `AlternativeVerb` and `ExamineVerb` on `CFCombatant` are already taken by other systems. A feat that changes one is a `CFCombatOption` flag read there (`Pickpocket`, `Forager`, `QuickRepair`) |
+| Trip, High Jump or Long Jump from code | `CFManeuverSystem.CanUse` and `TryUse` with `CFBasicAction.Trip`, `HighJump`, `LongJump`. `!type:CFTripEffect` inside an effect list |
+| A general or skill feat that should work | An entry in `WORKING` in `.agent/port-scripts/general_feats.py`, and what it does here in `NOTES`, then run the script. Never edit `Feats/General/feats.yml` or `feats-general.ftl` by hand |
 | A reaction | A `CFGrantReaction` with a `CFReaction` (trigger, requirements, what it does). `CFReactionSystem` runs it and spends the creature's one reaction. Add a trigger there rather than a new flag on `CFCombatOptionsComponent`. Its place in the order comes from the level of what granted it (`CFCharacterFeatureSystem.SourceLevel`). A feat that improves another feat's reaction uses `!type:CFGrantWidenReaction` with the reaction's `name` |
 | A reroll or a bonus on a failed skill check | A reaction on `SkillCheckWouldFail` (`rerolls`, `resultOfProficiency`, `criticalFailureIsFailure`, `skills`, `needsTrained`), or `andSkillChecks` on a `SaveWouldFail` one. Skill rolls go through `CFReactionSystem.AnswerSkillCheck` |
 | Actions for code with no player | `CFManeuverSystem.CanUse` and `TryUse` with a `CFBasicAction`, `CFStrikeSystem.TryFeatStrike` |
@@ -339,7 +342,7 @@ changed inline 1-line edit // CarpFinder: reason for the edit
 
 Never add `// CarpFinder` comments for `using` blocks.
 
-**Do not edit upstream keybinds** (`Resources/keybinds.yml`, input contexts, the rebind menu). New inputs reuse existing keys. Alt+Z performs a Swashbuckler's finisher, and Z on the held weapon chooses which.
+**Inputs.** Changed by the user on 24 November 2026: CarpFinder may have keys of its own. An action used in a fight that has no stock input gets a key function in `CFKeyFunctions` (see "Keys of our own" in `codebase.md` for the five places it is wired), not a button on the HUD. Anything aimed at a creature or an item outside a fight is a right-click verb (`CFSkillActionSystem`). Do not rebind or remove a stock key. Alt+Z performs a Swashbuckler's finisher, and Z on the held weapon chooses which.
 
 **Preferred overlay pattern:** keep stock Lobby/UI (and similar) files identical to upstream; put replacements in `_CF/` and exclude the stock compile/XAML entries from the project file. See `lobby-overlay.md`.
 

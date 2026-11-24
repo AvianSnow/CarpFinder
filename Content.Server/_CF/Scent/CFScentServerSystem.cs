@@ -72,6 +72,10 @@ public sealed partial class CFScentServerSystem : CFSharedScentSystem
             if (xform.GridUid == null)
                 continue;
 
+            // Cover Tracks: nothing is left to follow.
+            if (CompOrNull<Content.Shared.CF.Actions.CFSkillActionsComponent>(uid)?.CoveringTracks == true)
+                continue;
+
             Emit((uid, scent, xform), scentId);
         }
     }

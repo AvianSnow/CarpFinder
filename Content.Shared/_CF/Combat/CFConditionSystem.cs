@@ -33,15 +33,11 @@ namespace Content.Shared.CF.Combat;
 /// </summary>
 public sealed partial class CFConditionSystem : EntitySystem
 {
-    private const int ShovesToProne = 3;
-
     /// <summary>What a creature resists when someone Demoralizes it.</summary>
     private static readonly HashSet<ProtoId<CFTraitPrototype>> DemoralizeTraits = new() { "Emotion", "Fear", "Mental" };
 
     /// <summary>What a creature resists when someone Feints it.</summary>
     private static readonly HashSet<ProtoId<CFTraitPrototype>> FeintTraits = new() { "Mental" };
-
-    private static readonly TimeSpan ShoveWindow = TimeSpan.FromSeconds(6);
 
     [Dependency] private PullingSystem _pulling = default!;
     [Dependency] private CFReactionSystem _reactions = default!;
@@ -640,20 +636,6 @@ public sealed partial class CFConditionSystem : EntitySystem
         return Math.Min(0, -2 - other);
     }
 
-    /// <summary>Three successful shoves in a row knock the target prone, each within 6 seconds of the last.</summary>
-    public void NoteShove(EntityUid target)
-    {
-        var cond = Ensure(target);
-        var now = _timing.CurTime;
-        cond.Shoves = now - cond.LastShove <= ShoveWindow ? cond.Shoves + 1 : 1;
-        cond.LastShove = now;
-        if (cond.Shoves < ShovesToProne)
-            return;
-
-        cond.Shoves = 0;
-        KnockProne(target);
-    }
-
     /// <summary>
     /// Uses a shield spell's hardness once, then the spell's block is gone.
     /// Returns the damage that remains.
@@ -910,6 +892,19 @@ public sealed partial class CFConditionSystem : EntitySystem
         return TryComp(user, out CFCombatOptionsComponent? style) && style.PreyOutwit && style.Prey == target ? 2 : 0;
     }
 
+    /// <summary>
+    /// Demoralize is at -4 against a creature that does not understand the language the user is speaking, unless
+    /// the user has Intimidating Glare. A creature with no languages of its own, such as an animal, is not counted.
+    /// </summary>
+    public int DemoralizeLanguagePenalty(EntityUid user, EntityUid target)
+    {
+        if (CompOrNull<CFCombatOptionsComponent>(user)?.IntimidatingGlare == true)
+            return 0;
+
+        var languages = EntityManager.System<Content.Shared.CF.Languages.CFLanguageSystem>();
+        return languages.TryGetSpoken(user, out var spoken) && !languages.Understands(target, spoken.ID) ? 4 : 0;
+    }
+
     public bool TryGetDemoralizeCheck(EntityUid user, EntityUid target, out int skill, out int dc, int circumstance = 0)
     {
         skill = 0;
@@ -925,7 +920,7 @@ public sealed partial class CFConditionSystem : EntitySystem
             abilities,
             "Intimidation",
             CFAbility.Charisma,
-            Math.Max(circumstance, OutwitBonus(user, target)) + SkillBonus(user, "Intimidation"),
+            Math.Max(circumstance, OutwitBonus(user, target)) + SkillBonus(user, "Intimidation") - DemoralizeLanguagePenalty(user, target),
             Frightened(user));
 
         // Versatile Performance: a performance frightens as well as a threat.

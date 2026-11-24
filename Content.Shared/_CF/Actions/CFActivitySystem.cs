@@ -476,7 +476,11 @@ public sealed partial class CFActivitySystem : EntitySystem
         if (tiles == 0)
             return;
 
-        if (CompOrNull<CFCombatOptionsComponent>(user)?.DancingLeaf == true)
+        var options = CompOrNull<CFCombatOptionsComponent>(user);
+        if (options?.DancingLeaf == true)
+            tiles++;
+
+        if (options?.PowerfulLeap == true)
             tiles++;
 
         LeapBy(user, tiles);

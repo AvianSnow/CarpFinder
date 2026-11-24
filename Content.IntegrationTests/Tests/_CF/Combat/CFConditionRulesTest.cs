@@ -182,7 +182,7 @@ public sealed class CFConditionRulesTest : GameTest
         {
             var hero = Spawn("CFConditionRulesTestHero", 0);
             var immune = Spawn("CFConditionRulesTestImmune", 1);
-            SEntMan.GetComponent<CFAbilityScoreComponent>(immune).AbilityModifiers[CFAbility.Constitution] = -Extreme;
+            SEntMan.GetComponent<CFCombatantComponent>(immune).PrintedFortitude = -Extreme;
 
             Conditions.ApplyCondition(immune, CFConditionKind.Confused, 1, 60f, hero, 0);
             Assert.Multiple(() =>
@@ -209,8 +209,8 @@ public sealed class CFConditionRulesTest : GameTest
         {
             hero = Spawn("CFConditionRulesTestHero", 0);
 
-            // A Fortitude so low that every save fails.
-            SEntMan.GetComponent<CFAbilityScoreComponent>(hero).AbilityModifiers[CFAbility.Constitution] = -Extreme;
+            // A Fortitude so low that every save fails. A creature with no class saves with its printed number.
+            SEntMan.GetComponent<CFCombatantComponent>(hero).PrintedFortitude = -Extreme;
             Afflictions.Expose(hero, "HuntingSpiderVenom");
             Assert.That(Afflictions.Stage(hero, "HuntingSpiderVenom"), Is.Zero, "It has taken hold.");
             Assert.That(Afflictions.Has(hero, CFConditionKind.Poisoned));

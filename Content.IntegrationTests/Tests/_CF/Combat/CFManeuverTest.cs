@@ -119,24 +119,6 @@ public sealed class CFManeuverTest : GameTest
     }
 
     [Test]
-    public async Task ThreeShovesKnockProne()
-    {
-        _map = await CFDevMap.Load(Pair, Footprint);
-        await Server.WaitAssertion(() =>
-        {
-            var foe = Mob("CFManeuverFoe", 1);
-            for (var i = 0; i < 2; i++)
-            {
-                Conditions.NoteShove(foe);
-                Assert.That(Conditions.IsProne(foe), Is.False);
-            }
-
-            Conditions.NoteShove(foe);
-            Assert.That(Conditions.IsProne(foe));
-        });
-    }
-
-    [Test]
     public async Task CriticalFailureOnAShoveDropsTheShover()
     {
         _map = await CFDevMap.Load(Pair, Footprint);
@@ -304,5 +286,75 @@ public sealed class CFManeuverTest : GameTest
         pool.NpcRegenSeconds = 1000f;
         Conditions.KnockProne(mob);
         return mob;
+    }
+
+    /// <summary>Trip is Athletics against Reflex: with +60 it always lands, and with -60 the tripper falls instead.</summary>
+    [Test]
+    public async Task TripKnocksProneAndACriticalFailureDropsTheTripper()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            var hero = Mob("CFManeuverHero", 0, Extreme);
+            var foe = Mob("CFManeuverFoe", 1);
+            Assert.That(Maneuvers.CanUse(hero, CFBasicAction.Trip, foe));
+            Assert.That(Maneuvers.TryUse(hero, CFBasicAction.Trip, foe));
+            Assert.That(Conditions.IsProne(foe));
+            Assert.That(SEntMan.GetComponent<CFActionPoolComponent>(hero).Stamina, Is.EqualTo(2f), "Trip is 1 action.");
+            Assert.That(Maneuvers.CanUse(hero, CFBasicAction.Trip, foe), Is.False, "It is already down.");
+
+            var weak = Mob("CFManeuverHero", 3, -Extreme);
+            var other = Mob("CFManeuverFoe", 4);
+            Assert.That(Maneuvers.TryUse(weak, CFBasicAction.Trip, other), Is.False);
+            Assert.That(Conditions.IsProne(weak), "A critical failure puts the tripper on the ground.");
+            Assert.That(Conditions.IsProne(other), Is.False);
+        });
+    }
+
+    [Test]
+    public async Task AShoveNoLongerKnocksProne()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        await Server.WaitAssertion(() =>
+        {
+            var hero = Mob("CFManeuverHero", 0, Extreme);
+            var foe = Mob("CFManeuverFoe", 1);
+            for (var i = 0; i < 4; i++)
+            {
+                Rest(hero);
+                Maneuvers.TryManeuver(hero, foe);
+            }
+
+            Assert.That(Conditions.IsProne(foe), Is.False, "Prone comes from Trip now, not from three Shoves.");
+        });
+    }
+
+    /// <summary>A Long Jump goes as far as the roll, up to Speed, and costs 2 actions, or 1 with Quick Jump.</summary>
+    [Test]
+    public async Task ALongJumpCarriesFartherThanALeap()
+    {
+        _map = await CFDevMap.Load(Pair, Footprint);
+        var hero = default(EntityUid);
+        var start = 0f;
+        await Server.WaitAssertion(() =>
+        {
+            hero = Mob("CFManeuverHero", 0, Extreme);
+            SEntMan.GetComponent<TransformComponent>(hero).LocalRotation = Angle.FromDegrees(90);
+            start = SEntMan.System<SharedTransformSystem>().GetWorldPosition(hero).X;
+            Assert.That(Maneuvers.JumpActions(hero), Is.EqualTo(2));
+            Assert.That(Maneuvers.TryUse(hero, CFBasicAction.LongJump));
+            Assert.That(SEntMan.GetComponent<CFActionPoolComponent>(hero).Stamina, Is.EqualTo(1f));
+
+            SEntMan.System<Content.Shared.CF.Character.CFCharacterFeatureSystem>().SetOption(hero, CFCombatOption.QuickJump);
+            Assert.That(Maneuvers.JumpActions(hero), Is.EqualTo(1));
+        });
+
+        await Pair.RunTicksSync(90);
+        await Server.WaitAssertion(() =>
+        {
+            // Speed 25 by default: a Leap is 10 feet (2 tiles), and a Long Jump with +60 reaches the full 25 (5 tiles).
+            var moved = MathF.Abs(SEntMan.System<SharedTransformSystem>().GetWorldPosition(hero).X - start);
+            Assert.That(moved, Is.GreaterThan(3.5f));
+        });
     }
 }

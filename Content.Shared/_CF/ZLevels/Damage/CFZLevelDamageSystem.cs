@@ -122,13 +122,18 @@ public sealed partial class CFZLevelDamageSystem : EntitySystem
     {
         return TryComp(creature, out CFSafeFallComponent? safe)
                && !safe.HalfDistance
+               && safe.FeetLess == 0
                && (!safe.NeedsFreeHand || _hands.CountFreeHands(creature) > 0);
     }
 
     /// <summary>The distance a fall counts as for damage: half for a creature that falls well.</summary>
     public int FallFeet(EntityUid creature, int feet)
     {
-        return TryComp(creature, out CFSafeFallComponent? safe) && safe.HalfDistance ? feet / 2 : feet;
+        if (!TryComp(creature, out CFSafeFallComponent? safe))
+            return feet;
+
+        feet = Math.Max(0, feet - safe.FeetLess);
+        return safe.HalfDistance ? feet / 2 : feet;
     }
 }
 

@@ -26,6 +26,9 @@ public enum CFBasicAction : byte
     Maneuver,
     Grapple,
     TakeCover,
+    Trip,
+    HighJump,
+    LongJump,
 }
 
 /// <summary>An action button for a basic action. It pays through <see cref="CFManeuverSystem.TryUse"/>.</summary>
@@ -56,6 +59,9 @@ public sealed partial class CFManeuverSystem
                 return true;
             case CFBasicAction.TakeCover:
                 return _cover.CanTakeCover(user);
+            case CFBasicAction.HighJump:
+            case CFBasicAction.LongJump:
+                return CanJump(user);
             case CFBasicAction.Sneak:
                 return TryComp(user, out CFStealthComponent? stealth) && stealth.Active;
             case CFBasicAction.Seek:
@@ -85,6 +91,7 @@ public sealed partial class CFManeuverSystem
             CFBasicAction.Grapple => IsEnemy(user, other)
                                      && InReach(user, other, CFFlanking.DefaultReachFeet)
                                      && _hands.CountFreeHands(user) > 0,
+            CFBasicAction.Trip => IsEnemy(user, other) && CanTrip(user, other),
             _ => false,
         };
     }
@@ -101,6 +108,10 @@ public sealed partial class CFManeuverSystem
                 return _stealth.TryHide(user);
             case CFBasicAction.TakeCover:
                 return _cover.TryTakeCover(user);
+            case CFBasicAction.HighJump:
+                return TryHighJump(user);
+            case CFBasicAction.LongJump:
+                return TryLongJump(user);
             case CFBasicAction.Sneak:
                 return _stealth.TrySneak(user);
             case CFBasicAction.Seek:
@@ -124,6 +135,7 @@ public sealed partial class CFManeuverSystem
             CFBasicAction.RecallKnowledge => TryRecall(user, other)?.IsSuccess() ?? false,
             CFBasicAction.Maneuver => TryManeuver(user, other) != CFManeuver.None,
             CFBasicAction.Grapple => _pulling.TryStartPull(user, other),
+            CFBasicAction.Trip => TryTrip(user, other),
             _ => false,
         };
     }

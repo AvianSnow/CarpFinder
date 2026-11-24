@@ -11,4 +11,8 @@ public sealed partial class CFSafeFallComponent : Component
     /// <summary>Falls still hurt, but count as half their distance (Unbreakable Goblin).</summary>
     [DataField]
     public bool HalfDistance;
+
+    /// <summary>Falls still hurt, but count as this many feet shorter (Cat Fall: 10, which is one level).</summary>
+    [DataField]
+    public int FeetLess;
 }

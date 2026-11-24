@@ -282,7 +282,9 @@ public sealed partial class CFMedicineSystem : EntitySystem
     {
         var (dc, bonus) = Dcs(user);
         var degree = RollMedicine(user, dc);
-        Comp(target).TreatWoundsUntil = _timing.CurTime + TreatImmunity;
+        // Continual Recovery: 10 minutes in place of an hour, which is a sixth of the wait here too.
+        var wait = CompOrNull<CFCombatOptionsComponent>(user)?.ContinualRecovery == true ? TreatImmunity / 6 : TreatImmunity;
+        Comp(target).TreatWoundsUntil = _timing.CurTime + wait;
 
         if (!ApplyResult(user, target, degree, bonus))
             return degree;
@@ -385,8 +387,18 @@ public sealed partial class CFMedicineSystem : EntitySystem
     }
 
     /// <summary>A Medicine check. A Chirurgeon rolls Crafting when that is the better modifier.</summary>
-    private CFDegree RollMedicine(EntityUid user, int dc)
+    public CFDegree RollMedicine(EntityUid user, int dc)
     {
+        // Natural Medicine: Nature, when it is the better of the two.
+        if (CompOrNull<CFCombatOptionsComponent>(user)?.NaturalMedicine == true
+            && TryComp(user, out CFCombatantComponent? natural)
+            && TryComp(user, out CFAbilityScoreComponent? naturalScores)
+            && CFDefense.SkillModifier(_prototypes, natural, naturalScores, "Nature", CFAbility.Wisdom, 0)
+            > CFDefense.SkillModifier(_prototypes, natural, naturalScores, Skill, CFAbility.Wisdom, 0))
+        {
+            return _conditions.RollSkillAgainst(user, "Nature", CFAbility.Wisdom, dc, out _);
+        }
+
         if (UsesCrafting(user)
             && TryComp(user, out CFCombatantComponent? combat)
             && TryComp(user, out CFAbilityScoreComponent? abilities)
@@ -411,7 +423,9 @@ public sealed partial class CFMedicineSystem : EntitySystem
     {
         if (TryComp(user, out CFCombatantComponent? combat)
             && (CFDefense.SkillRank(_prototypes, combat, Skill) >= CFProficiencyRank.Trained
-                || UsesCrafting(user) && CFDefense.SkillRank(_prototypes, combat, "Crafting") >= CFProficiencyRank.Trained))
+                || UsesCrafting(user) && CFDefense.SkillRank(_prototypes, combat, "Crafting") >= CFProficiencyRank.Trained
+                || CompOrNull<CFCombatOptionsComponent>(user)?.NaturalMedicine == true
+                && CFDefense.SkillRank(_prototypes, combat, "Nature") >= CFProficiencyRank.Trained))
             return true;
 
         _popup.PopupEntity(Loc.GetString("cf-medicine-untrained"), user, user);

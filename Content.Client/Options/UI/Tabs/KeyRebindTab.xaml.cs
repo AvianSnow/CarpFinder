@@ -263,6 +263,13 @@ namespace Content.Client.Options.UI.Tabs
             AddButton(ContentKeyFunctions.ShuttleRotateRight);
             AddButton(ContentKeyFunctions.ShuttleBrake);
 
+            // CarpFinder: keys for actions that have no button
+            AddHeader("ui-options-header-cf");
+            AddButton(Content.Shared.CF.Input.CFKeyFunctions.CFTrip);
+            AddButton(Content.Shared.CF.Input.CFKeyFunctions.CFLongJump);
+            AddButton(Content.Shared.CF.Input.CFKeyFunctions.CFHighJump);
+            // CarpFinder end
+
             AddHeader("ui-options-header-map-editor");
             AddButton(EngineKeyFunctions.EditorPlaceObject);
             AddButton(EngineKeyFunctions.EditorCancelPlace);

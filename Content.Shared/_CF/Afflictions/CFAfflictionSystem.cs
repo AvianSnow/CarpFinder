@@ -137,7 +137,10 @@ public sealed partial class CFAfflictionSystem : EntitySystem
 
         // Strong-Blooded Dwarf: a successful save against a poison lowers its stage by one more.
         var strong = proto.Traits.Contains("Poison") && CompOrNull<CFCombatOptionsComponent>(uid) is { StrongBlooded: true } ? 1 : 0;
-        var change = _conditions.RollDefense(uid, proto.Defense, proto.Dc, out _, proto.Traits) switch
+        // A bonus to the save is the same as a lower DC. Treatment is used up by the save it helps.
+        var treated = active.TreatBonus;
+        active.TreatBonus = 0;
+        var change = _conditions.RollDefense(uid, proto.Defense, proto.Dc - treated, out _, proto.Traits) switch
         {
             CFDegree.CriticalSuccess => -2 - strong,
             CFDegree.Success => -1 - strong,
@@ -195,6 +198,35 @@ public sealed partial class CFAfflictionSystem : EntitySystem
             RefreshMarkers(uid, comp);
 
         return cured;
+    }
+
+    /// <summary>The hardest save among the creature's poisons, or its diseases: what Treat Poison and Treat Disease roll against.</summary>
+    public int? HighestDc(EntityUid uid, CFConditionKind marker)
+    {
+        if (!TryComp(uid, out CFAfflictionsComponent? comp))
+            return null;
+
+        int? dc = null;
+        foreach (var active in comp.Active)
+        {
+            if (_prototypes.Resolve(active.Id, out var proto) && Marker(proto) == marker)
+                dc = Math.Max(dc ?? 0, proto.Dc);
+        }
+
+        return dc;
+    }
+
+    /// <summary>Sets the bonus the next save against each poison, or each disease, gets from treatment.</summary>
+    public void Treat(EntityUid uid, CFConditionKind marker, int bonus)
+    {
+        if (!TryComp(uid, out CFAfflictionsComponent? comp))
+            return;
+
+        foreach (var active in comp.Active)
+        {
+            if (_prototypes.Resolve(active.Id, out var proto) && Marker(proto) == marker)
+                active.TreatBonus = bonus;
+        }
     }
 
     /// <summary>Poisoned or diseased, by the affliction's trait. Anything else, such as drink, has no marker.</summary>

@@ -647,3 +647,15 @@ binds:
   type: State
   key: MouseRight
   canFocus: true
+# CarpFinder: actions with a key of their own and no button (CFKeyFunctions)
+- function: CfTrip
+  type: State
+  key: L
+- function: CfLongJump
+  type: State
+  key: J
+- function: CfHighJump
+  type: State
+  key: J
+  mod1: Shift
+# CarpFinder end

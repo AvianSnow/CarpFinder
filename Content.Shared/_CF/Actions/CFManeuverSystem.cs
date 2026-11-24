@@ -32,6 +32,7 @@ public enum CFManeuver : byte
     None,
     Shove,
     Disarm,
+    Trip,
 }
 
 /// <summary>
@@ -96,7 +97,11 @@ public sealed partial class CFManeuverSystem : EntitySystem
         if (traits.Shove)
             return CFManeuver.Shove;
 
-        return traits.Disarm && targetHolds ? CFManeuver.Disarm : CFManeuver.None;
+        if (traits.Disarm && targetHolds)
+            return CFManeuver.Disarm;
+
+        // A weapon made for it trips with a right-click when it has nothing else to do there.
+        return traits.Trip && !_conditions.IsProne(target) ? CFManeuver.Trip : CFManeuver.None;
     }
 
     /// <summary>Takes over stock's right-click before it rolls its own chance to disarm.</summary>
@@ -135,6 +140,8 @@ public sealed partial class CFManeuverSystem : EntitySystem
 
         if (maneuver == CFManeuver.Shove)
             Shove(user, target);
+        else if (maneuver == CFManeuver.Trip)
+            Trip(user, target);
         else
             Disarm(user, target);
 
@@ -167,7 +174,6 @@ public sealed partial class CFManeuverSystem : EntitySystem
         }
 
         _popup.PopupEntity(Loc.GetString("cf-act-shove"), target);
-        _conditions.NoteShove(target);
     }
 
     private void Disarm(EntityUid user, EntityUid target)

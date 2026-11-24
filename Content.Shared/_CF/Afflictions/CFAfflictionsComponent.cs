@@ -31,6 +31,10 @@ public sealed partial class CFActiveAffliction
     [DataField]
     public TimeSpan NextExposure;
 
+    /// <summary>Treat Poison or Treat Disease: a circumstance bonus, or penalty, to the next save. Then it is gone.</summary>
+    [DataField]
+    public int TreatBonus;
+
     /// <summary>When the affliction's maximum duration runs out. Zero is never.</summary>
     [DataField]
     public TimeSpan EndsAt;

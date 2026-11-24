@@ -142,6 +142,13 @@ An area with `CFAreaFill` or `CFBreathGas` is drawn on its tiles. `ResolveArea` 
 | Use a healer's toolkit in hand, combat mode, feat | Battle Medicine on the nearest hurt ally (1 action) | `CFMedicineSystem` |
 | Right-click a verdant seed in hand, or the weapon grown from it | Grow it into a staff, spear or sling, or return it to seed (1 action) | `CFVerdantSeedSystem` |
 | Throw a healing potion | It breaks. On a living creature it heals them. Otherwise it leaves a puddle that heals whoever lies prone in it or drinks it (alt-click), once, within 5 minutes | `CFSmashPotionSystem` |
+| L (Trip key) | Trip the enemy being aimed at (1 action). A free hand, or a held weapon with the trip trait | `CFManeuverSystem.TryTrip` |
+| Combat mode, right-click, weapon with the `Trip` trait and no `Shove`, `Disarm` or `Sweep` | Trip | `CFManeuverSystem.Decide` |
+| J, Shift+J | Long Jump, High Jump the way the creature faces (2 actions, 1 with Quick Jump) | `CFManeuverSystem.TryLongJump`, `TryHighJump` |
+| Right-click yourself: Perform, Forage, Look for tracks, Cover your tracks | Perform (1 action), Subsist (12 seconds, once per 15 minutes), Track (3 seconds, shows scent trails for a minute), Cover Tracks (half Speed, no trail) | `CFSkillActionSystem` (server) |
+| Right-click a creature you could harm: Steal | Thievery against Perception DC at -5, taking what is in a pocket (1 action) | `CFSkillActionSystem.TrySteal` |
+| Right-click a poisoned or diseased creature, toolkit in hand | Treat Poison (1 action) or Treat Disease (12 seconds): a bonus to its next save | `CFSkillActionSystem.Treat` |
+| Right-click a damaged shield: Repair | Crafting against the item's DC, 12 seconds | `CFSkillActionSystem.Repair` |
 | Take Cover on the Common tab | Cover from a wall becomes greater cover, and a prone creature gets greater cover against ranged attacks (1 action). It ends on leaving the spot or on an attack roll | `CFCoverSystem.TryTakeCover` |
 | Aid verb on an ally | Aid (1 action) | `CFManeuverSystem.TryAid` |
 | Sleep button on the alerts panel, the column on the right with the temperature and pressure icons, shown while buckled to a bed | Long rest: full hit points, spell slots and focus. Refused with an enemy close by, and once per 15 minutes. Asleep, the button is Wake. The stock Sleep and Wake actions are kept off the hotbar | `CFRestAlertSystem`, `CFLongRestSystem` |
@@ -184,9 +191,19 @@ These replace stock's right-click for attackers with `CFCombatant` and `CFAbilit
 - The stock client only sends a disarm for unarmed swings. The one marked line in `Content.Client/Weapons/Melee/MeleeWeaponSystem.cs` adds whatever `CFWeaponSystem.ManeuverOnRightClick` allows. The server applies the same rule, so a client cannot maneuver with a weapon that does not qualify.
 - A `Disarm` weapon against an empty-handed target shows a popup and costs nothing. A `Shove` weapon always shoves. A weapon with both follows the empty hand rule.
 - `Sweep` wins. A sweep weapon keeps its wide swing and gives up the maneuver.
-- Keybinds are fixed: do not edit upstream keybinds. Z is use in hand. Alt+Z is a Swashbuckler's finisher, and Z on the weapon chooses which, so there is no weapon mode switch.
+- CarpFinder has key functions of its own since 24 November 2026 (`CFKeyFunctions`, see "Keys of our own" below). Z is still use in hand, Alt+Z a Swashbuckler's finisher, and Z on the weapon chooses which, so there is no weapon mode switch.
 
-Trip has no action. Three successful shoves in a row knock the target prone (`CFConditionSystem.NoteShove`). This is a deliberate change from PF2e, to keep the HUD small. Shoves from anyone count, a miss neither counts nor resets, and each must land within 6 seconds of the last.
+Trip is its own action since 24 November 2026: the Trip key (L) at the enemy being aimed at, or a right-click with a weapon that has the `Trip` trait and neither `Shove` nor `Sweep`. It needs a free hand or such a weapon (`CFManeuverSystem.CanTrip`, `TryTrip`). Three Shoves no longer knock a creature prone.
+
+## Keys of our own
+
+Decided by the user on 24 November 2026: an action used in a fight that has no stock input gets a key, not a button, and everything else is a right-click verb.
+
+- A key function is a `BoundKeyFunction` in `Content.Shared/_CF/Input/CFKeyFunctions.cs`, a class with `[KeyFunctions]` so the engine sends it to the server. Its name is written `CfTrip`, not `CFTrip`: the rebind menu turns the name into the locale key `ui-options-function-cf-trip`.
+- `Content.Client/_CF/Input/CFInputSystem` adds it to the `human` input context. Stock's `ContentContexts` is not edited.
+- Its default key is at the end of `Resources/keybinds.yml`, and its row in the rebind menu is in `KeyRebindTab.xaml.cs` under the CarpFinder header. Both are marked edits. The engine only learns defaults from that file, so a default registered in code would not come back on "reset".
+- The handler is bound with `CommandBinds` in a shared system's `Initialize`, and unregistered in `Shutdown` (`CFManeuverSystem.Jump.cs`). It runs on both sides: act on the server only.
+- Free plain keys left: M, N, O. Trip is L, Long Jump J, High Jump Shift+J.
 
 ## Prone
 
@@ -218,7 +235,6 @@ Rangers, Thaumaturges, and Investigators mark with the stock point gesture, thro
 ## Known gaps in maneuvers
 
 - Shove, Disarm, Grapple, and Escape do not count toward MAP.
-- The `Trip` weapon trait does nothing now that Trip is not an action.
 - Shove's optional Stride after the target is not automatic. The player walks after them.
 - PF2e lets you drop a shove or disarm weapon on a critical failure to take a plain failure instead. The critical failure always applies here.
 - Disarm's −2 applies to all the target's attacks, not only those with that item.
@@ -239,6 +255,7 @@ All edits carry `// CarpFinder` markers, so `grep -rn CarpFinder Content.Client 
 | Language menu | `Content.Client/UserInterface/Systems/MenuBar/Widgets/GameTopMenuBar.xaml`, `GameTopMenuBarUIController.cs` | A speech bubble button on the top bar opens `CFLanguageMenuWindow` |
 | Ghost respawn | `Content.Client/UserInterface/Systems/Ghost/Widgets/GhostGui.xaml(.cs)` | A Respawn button left of Return to body. It asks once more, then runs `respawn` |
 | Instruments | `Content.Server/Instruments/InstrumentSystem.cs`, `Content.Client/Instruments/UI/InstrumentBoundUserInterface.cs`, `InstrumentMenu.xaml.cs` | An instrument plays on after its window closes, while it is held or, for a placed one, while the player stays in reach (`CFInstrumentSystem`). Stock's window stopped the song itself as it closed (`ExitedTree`); that line is commented out. Reopening the window does not stop it |
+| Keys | `Resources/keybinds.yml`, `Content.Client/Options/UI/Tabs/KeyRebindTab.xaml.cs` | Default keys and rebind rows for CarpFinder's own key functions (Trip, Long Jump, High Jump) |
 | Melee | `Content.Client/Weapons/Melee/MeleeWeaponSystem.cs`, `MeleeWeaponSystem.Effects.cs` | Right-click maneuvers for shields and trait weapons, left-click aim assist, a swing animation half as long |
 | Crafting menu | `Content.Client/Construction/ConstructionSystem.cs`, `Content.Server/Construction/ConstructionSystem.Initial.cs` | The stock menu needs training in Crafting |
 | Characters | `HumanoidCharacterProfile.cs`, `HumanoidVisualLayers.cs` | The PF2e build; pelvis layer for split bodies |

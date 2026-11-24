@@ -391,6 +391,46 @@ public sealed partial class CFCombatOptionsComponent : Component
     [DataField, AutoNetworkedField]
     public bool HeftyHauler;
 
+    /// <summary>High Jump and Long Jump cost 1 action (Quick Jump).</summary>
+    [DataField]
+    public bool QuickJump;
+
+    /// <summary>A Leap and a Long Jump carry 5 feet farther (Powerful Leap).</summary>
+    [DataField]
+    public bool PowerfulLeap;
+
+    /// <summary>Demoralize needs no shared language (Intimidating Glare).</summary>
+    [DataField]
+    public bool IntimidatingGlare;
+
+    /// <summary>Steal takes from a pocket without the -5 (Pickpocket).</summary>
+    [DataField]
+    public bool Pickpocket;
+
+    /// <summary>Subsist never does worse than a success, and finds twice as much (Forager).</summary>
+    [DataField]
+    public bool Forager;
+
+    /// <summary>Repair takes 3 seconds (Quick Repair).</summary>
+    [DataField]
+    public bool QuickRepair;
+
+    /// <summary>Perform with Acrobatics when it is the better skill (Acrobatic Performer).</summary>
+    [DataField]
+    public bool AcrobaticPerformer;
+
+    /// <summary>A success at Treat Poison or Treat Disease gives +4 (Robust Recovery).</summary>
+    [DataField]
+    public bool RobustRecovery;
+
+    /// <summary>Treat Wounds with Nature when it is the better skill (Natural Medicine).</summary>
+    [DataField]
+    public bool NaturalMedicine;
+
+    /// <summary>A patient can have Treat Wounds again after 10 minutes, not an hour (Continual Recovery).</summary>
+    [DataField]
+    public bool ContinualRecovery;
+
     /// <summary>Nine Lives Catfolk: the dying value does not raise the recovery check's DC.</summary>
     [DataField, AutoNetworkedField]
     public bool NineLives;
@@ -877,6 +917,16 @@ public enum CFCombatOption : byte
     InvertHarm,
     OverwhelmingHarm,
     ChanneledProtection,
+    QuickJump,
+    PowerfulLeap,
+    Pickpocket,
+    Forager,
+    QuickRepair,
+    AcrobaticPerformer,
+    RobustRecovery,
+    NaturalMedicine,
+    ContinualRecovery,
+    IntimidatingGlare,
 }
 
 public enum CFPointMark : byte

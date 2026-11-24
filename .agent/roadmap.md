@@ -23,7 +23,7 @@ Measured on 23 November 2026, after difficult terrain (1.11), the Fighter, Rogue
 | Class feats             | 585   | 375, and 2 in part (11 of them only give a familiar's body, see 3.8)      | 288 in `feats-class.ftl`                                                                                                      |
 | Class features          | 181   | No placeholders                                                           | 37 in the class files                                                                                                         |
 | Subclass options        |       | Every class has its options                                               | 284 in `class-choices.ftl`. Runes repeat 6 times, ikons and tactics 3 times, implements twice, so about 150 different options |
-| General and skill feats | 131   | 15 in `general_feats.py`'s `WORKING`, and the scan agrees (Alchemical and Magical Crafting gate brewing since 20 November 2026) | Marked `(TBA)` in the builder. See "General and skill feats"                                                                  |
+| General and skill feats | 131   | 32 in `general_feats.py`'s `WORKING` since 24 November 2026 (17 came with Trip, the jumps and the skill actions) | Marked `(TBA)` in the builder. See "General and skill feats"                                                                  |
 | Spells                  | 63    | All 63 have an action                                                     | None in `spells.ftl`                                                                                                          |
 | Focus spells            | 67    | The pipeline works                                                        | 13 in `focus.yml`, 5 in `hexes.yml`, 2 in `qi.yml`, 4 in `bloodlines.yml`, 1 in `revelations.yml`                                                                                               |
 | Deities                 | 7     | Skill, favored weapon, font, three domains each                           | None                                                                                                                          |
@@ -363,7 +363,9 @@ All 62 spells in the catalog have an action and an effect. What is left is spell
 
 `Feats/General/feats.yml` holds 131 feats through level 4 from Player Core, Player Core 2 and GM Core, with the site's one line summaries. `.agent/port-scripts/general_feats.py` rewrites that file from Archives of Nethys, so put fixes in the script. Of 74 feats backgrounds name, 65 match by name. 259 of 324 backgrounds grant one.
 
-- [ ] Effects for the rest. 15 work: Battle Medicine, Multilingual, Arcane Sense, Armor Proficiency, Canny Acumen, Diehard, Feather Step, Fleet, Hefty Hauler, Shield Block, Skill Training, Toughness, Weapon Proficiency, and Alchemical Crafting and Magical Crafting, which brewing a potion asks for. `general_feats.py` keeps them in `WORKING`. Tests: `CFGeneralFeatTest`.
+- [ ] Effects for the rest. 32 work. The first 15: Battle Medicine, Multilingual, Arcane Sense, Armor Proficiency, Canny Acumen, Diehard, Feather Step, Fleet, Hefty Hauler, Shield Block, Skill Training, Toughness, Weapon Proficiency, and Alchemical Crafting and Magical Crafting, which brewing a potion asks for. Added on 24 November 2026: Acrobatic Performer, Ancestral Paragon, Bon Mot, Cat Fall (a fall counts 10 feet shorter: `feetLess` on `CFGrantSafeFall`), Continual Recovery, Dirty Trick, Fascinating Performance, Forager, Intimidating Glare, Natural Medicine, Pet (a familiar's body), Pickpocket, Powerful Leap, Quick Jump, Quick Repair, Robust Recovery, Virtuosic Performer. `general_feats.py` keeps them in `WORKING`, with what each does here in `NOTES`. Tests: `CFGeneralFeatTest`, `CFSkillActionTest`.
+    - Demoralize now takes -4 against a creature that does not understand the language the user speaks, as the rules say, which is what Intimidating Glare removes. A creature with no languages of its own, such as an animal, is not counted.
+    - The 99 left mostly wait on something that is not built: social actions and NPC attitudes (about 25: Charming Liar, Glad-Hand, Group Coercion, Hobnobber, Lie to Me and the like), downtime (Bargain Hunter, Experienced Professional, Magical Shorthand), size (Titan Wrestler), swimming and mounts (Underwater Marauder, Ride, Express Rider), climbing and squeezing (Combat Climber, Rapid Mantel, Quick Squeeze), identifying magic (Quick Identification, Assured Identification, Recognize Spell), Assurance, Untrained Improvisation and Adopted Ancestry, which each touch every check or every feat list.
 - [ ] First the ones other options hand out (1.1, 2.2): Intimidating Glare, Group Coercion, Ride, Combat Climber, Terrain Stalker, Quick Squeeze, Specialty Crafting, Forager, Steady Balance, Untrained Improvisation, Adopted Ancestry, Assurance, Shameless Request, Quick Disguise, Lengthy Diversion, Snare Crafting, Impressive Performance, Titan Wrestler, Hobnobber, Alchemical Crafting, Cat Fall, Pet, Bon Mot, Dirty Trick, Fascinating Performance, Pickpocket.
 - [ ] Weapon Proficiency only gives martial weapons, not the advanced weapon a character already trained in martial would get. Toughness and Fleet do not show in the builder's preview.
 - [ ] 119 prerequisites are still text only: familiars, class features such as Spellstrike, an innovation, a focus pool, an age.
@@ -477,8 +479,18 @@ Order: cover and light first (A2, A1), because every Strike and every Stealth ch
 
 ### B. Actions everyone has
 
-- [ ] Trip as an action. High Jump and Long Jump.
-- [ ] Skill actions (1.16, 3.19, 3.20): Balance, Squeeze, Steal, Palm an Object, Sense Motive, Lie, Make an Impression, Request, Coerce, Gather Information, Impersonate, Perform, Command an Animal, Track, Cover Tracks, Subsist, Repair, Identify Magic, Learn a Spell, Decipher Writing, Earn Income.
+- [x] Trip, High Jump and Long Jump, built on 24 November 2026 (`CFManeuverTest`), not played yet. They have keys and no buttons: L trips the enemy being aimed at, J is Long Jump and Shift+J High Jump, all rebindable under Options, Controls, CarpFinder. A weapon with the trip trait also Trips on right-click. The rule that three Shoves knock prone is gone, as the user decided.
+    - Our changes from the rules: a Long Jump does not name its distance first: the roll sets it, 5 feet per 5 rolled, up to Speed and never less than a Leap. Neither jump asks for the 10 foot Stride. A High Jump clears 5 feet (8 on a critical success) and lands a tile on, and there is nothing in the world yet that 5 feet up reaches, so it is mostly for show.
+    - [ ] Options that waited for Trip and still say `TBA`: Topple the Titans, Wolf Stance's trip, the wolf's Knockdown, Flurry of Maneuvers, living hair's trip. Trip does not count toward the multiple attack penalty, as no maneuver does (Step 4).
+- [ ] Skill actions (1.16, 3.19, 3.20). The user chose the hands-on and wilderness ones on 24 November 2026, as right-click verbs (`CFSkillActionSystem`, `CFSkillActionTest`). Not played yet.
+    - [x] Steal: Thievery against Perception DC at -5, 1 action, taking what is in one of the target's pockets. Only on a creature the thief could harm, so never a party member. A failure is seen by the target, a critical failure by everyone.
+    - [x] Perform: 1 action against the DC for the performer's level. It only shows how it went.
+    - [x] Subsist: 12 seconds, Survival against DC 15, a ration on a success and two on a critical success, fatigued on a critical failure, once per 15 minutes. The rules take a day.
+    - [x] Track: 3 seconds, trained Survival against DC 15. A success shows the scent trails for a minute, five on a critical success, as the Scent sense does. Cover Tracks: half Speed and no trail laid.
+    - [x] Treat Poison (1 action) and Treat Disease (12 seconds, where the rules take 8 hours): trained Medicine and a healer's toolkit in hand, against the affliction's DC, for +2 or +4 to the patient's next save, or -2 on a critical failure.
+    - [x] Repair: 12 seconds, Crafting against the item's DC, on a damaged shield. It asks for no repair kit. The rules take 10 minutes.
+    - Left out of that set: Palm an Object, because nothing in the game watches what a creature picks up. Command an Animal, because every animal is either a companion, which already obeys pointing, or hostile, which the rules make an automatic failure. Steal takes a wallet whole. Track's DC is always 15, and it does not single out one creature's trail.
+    - [ ] Not chosen, and still to decide: the social ones against NPCs (Make an Impression, Request, Coerce, Lie, Sense Motive), which need NPC attitudes first, and the downtime ones (Earn Income, Gather Information, Decipher Writing, Learn a Spell, Identify Magic). Balance, Squeeze and Impersonate have nothing to act on.
 - [ ] Decide for each, since most mean nothing in real time: Ready, Delay, Point Out, Avert Gaze, Arrest a Fall.
 - Maneuvers and the multiple attack penalty are under Step 4.
 
@@ -647,7 +659,6 @@ Smaller gaps found while building the earlier phases. Take them when the system 
 - [ ] `CFDcSource.Item` (needs item level, Phase 2). Line of effect is a `CFTargeting` flag but no spell turns it on yet.
 - [ ] Damage type fields are still strings on pets (`CFPetPrototype.Damage`). Spells and weapons use `ProtoId<CFDamageTypePrototype>` with PascalCase ids. Convert pets when companions are next touched.
 - [ ] 16 `_CF` systems subscribe in `Initialize()` instead of with `[SubscribeLocalEvent]` attributes. Convert each one when that system is next touched, not as a bulk change.
-- [ ] Give the `Trip` weapon trait a use, such as counting as an extra shove.
 - [ ] Attack-trait maneuvers (Shove, Disarm, Grapple, Escape) should count toward MAP.
 - [ ] A visible raised state. Today it is a popup and an examine line. The riot shield RSI has no raised sprite.
 - [ ] Only the spear flies point first and sticks in a target. The dagger, hatchet, light hammer and dart reach the cursor and Strike, but spin and drop. Each needs a `ThrowingAngle` to suit its sprite.
@@ -796,7 +807,7 @@ A kobold tribe that eats, drinks, farms, stores food, shares it, talks, and asks
 ## Working notes
 
 - Every step ends with a full build (`dotnet build -c Tools`, errors only) and targeted integration tests.
-- No new key functions and no edits to core input code. If something cannot be reached with stock controls, it goes in the verb menu or on the wheel.
+- Since 24 November 2026 an action used in a fight with no stock input may have a key of its own (`CFKeyFunctions`). Everything else goes in the verb menu or on the wheel. Stock keys are not rebound.
 - AI systems never cheat with omniscience: tracking uses sight, the influence maps, LKP and nodes only.
 - Before subscribing a component and event pair, check `ss14rules.md`: `ProjectileComponent` + `BeforeProjectileHitEvent` already belongs to `CFStrikeSystem`.
 - Imported CP14 code keeps its logic but takes CF names, namespaces and `_CF` folders. Credit CP14 in a header comment where a file is mostly theirs.

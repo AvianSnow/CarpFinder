@@ -508,6 +508,36 @@ public sealed partial class CFCharacterFeatureSystem : EntitySystem
             case CFCombatOption.HeftyHauler:
                 options.HeftyHauler = true;
                 break;
+            case CFCombatOption.QuickJump:
+                options.QuickJump = true;
+                break;
+            case CFCombatOption.PowerfulLeap:
+                options.PowerfulLeap = true;
+                break;
+            case CFCombatOption.IntimidatingGlare:
+                options.IntimidatingGlare = true;
+                break;
+            case CFCombatOption.Pickpocket:
+                options.Pickpocket = true;
+                break;
+            case CFCombatOption.Forager:
+                options.Forager = true;
+                break;
+            case CFCombatOption.QuickRepair:
+                options.QuickRepair = true;
+                break;
+            case CFCombatOption.AcrobaticPerformer:
+                options.AcrobaticPerformer = true;
+                break;
+            case CFCombatOption.RobustRecovery:
+                options.RobustRecovery = true;
+                break;
+            case CFCombatOption.NaturalMedicine:
+                options.NaturalMedicine = true;
+                break;
+            case CFCombatOption.ContinualRecovery:
+                options.ContinualRecovery = true;
+                break;
             case CFCombatOption.NineLives:
                 options.NineLives = true;
                 break;

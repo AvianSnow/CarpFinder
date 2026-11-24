@@ -145,7 +145,7 @@ public sealed partial class CFWeaponSystem : EntitySystem
             return true;
 
         var traits = Traits(weapon);
-        return !traits.Sweep && (traits.Shove || traits.Disarm);
+        return !traits.Sweep && (traits.Shove || traits.Disarm || traits.Trip);
     }
 
     /// <summary>Melee reach in feet: the weapon's own reach, raised by the reach trait.</summary>

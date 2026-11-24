@@ -901,9 +901,21 @@ public sealed partial class CFGrantSafeFall : CFGrant
     [DataField]
     public bool HalfDistance;
 
+    /// <summary>Falls count as this many feet shorter instead of none (Cat Fall).</summary>
+    [DataField]
+    public int FeetLess;
+
     public override void Apply(IEntityManager entities, CFGrantArgs args)
     {
         var safe = entities.EnsureComponent<CFSafeFallComponent>(args.Mob);
+
+        // Cat Fall on a creature that already falls better keeps the better fall.
+        if (FeetLess > 0)
+        {
+            safe.FeetLess = Math.Max(safe.FeetLess, FeetLess);
+            return;
+        }
+
         safe.NeedsFreeHand = NeedsFreeHand;
         safe.HalfDistance = HalfDistance;
     }

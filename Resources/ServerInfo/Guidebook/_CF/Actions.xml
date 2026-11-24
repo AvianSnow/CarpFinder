@@ -4,7 +4,7 @@ Most actions use the controls you already have. They are not on the wheel, so th
 
 ## Fighting
 - [bold]Left-click in combat mode:[/bold] Strike. Aim roughly toward an enemy in reach and you hit the closest one. Neutral creatures have to be clicked.
-- [bold]Right-click in combat mode:[/bold] a wide swing. With an empty hand, a shield, or a weapon with the shove or disarm trait, it Shoves or Disarms instead. Three shoves in a row knock a target prone.
+- [bold]Right-click in combat mode:[/bold] a wide swing. With an empty hand, a shield, or a weapon with the shove or disarm trait, it Shoves or Disarms instead. A weapon with the trip trait Trips.
 - [bold]Use in hand (Z), a weapon with several damage types:[/bold] switches to the next type, for 1 action. The hand panel shows which is set.
 - [bold]Throw a weapon with the thrown trait:[/bold] a ranged Strike at the first enemy it touches. It flies to your cursor, up to six times its range. Past its range you take a penalty, and a spear sticks in what it hits.
 - [bold]Pull a living enemy:[/bold] Grapple. Press a move key while grabbed to Escape.
@@ -32,6 +32,23 @@ A creature in dim light is concealed from you unless you have low-light vision o
 ## Cover
 A wall or a corner between you and an attacker is cover: +2 to your AC, or +4 when almost all of you is behind it. It also adds to Reflex saves against an area that starts on the far side. Another creature standing in the line of an attack gives +1 to AC. Cover does not add to a raised shield: the larger of the two counts.
 - [bold]Take Cover, on the Common tab:[/bold] with cover from an enemy, it becomes greater cover (1 action). Lying prone, you get greater cover against ranged attacks with nothing to hide behind. It lasts until you leave the spot or attack.
+
+## Keys of their own
+These have no button. Change the keys under Options, Controls, CarpFinder.
+- [bold]L:[/bold] Trip the enemy you are aiming at (1 action). You need a free hand, or a weapon with the trip trait. Athletics against Reflex: a success knocks it prone, and a critical failure puts you on the ground.
+- [bold]J:[/bold] Long Jump the way you face (2 actions). Athletics: you jump 5 feet for every 5 you roll, up to your Speed, and at least as far as a Leap.
+- [bold]Shift+J:[/bold] High Jump (2 actions). Athletics against DC 30 to clear 5 feet straight up.
+
+## Right-click yourself
+- [bold]Perform:[/bold] a Performance check everyone near can see the result of (1 action).
+- [bold]Forage (Subsist):[/bold] 12 seconds and a Survival check for a ration. You can try once every 15 minutes.
+- [bold]Look for tracks (Track):[/bold] 3 seconds and a Survival check, trained only. On a success you see the trails creatures have left for a minute.
+- [bold]Cover your tracks:[/bold] trained in Survival. You move at half Speed and leave no trail until you stop.
+
+## Right-click something else
+- [bold]A creature that is not your ally, then Steal:[/bold] Thievery against its Perception, at -5 (1 action). On a success you take what is in one of its pockets and it does not notice.
+- [bold]A poisoned creature, or yourself, then Treat Poison:[/bold] with a healer's toolkit in hand and training in Medicine (1 action). A success gives +2 to the next save against the poison. Treat Disease is the same for a disease, and takes 12 seconds.
+- [bold]A damaged shield, then Repair:[/bold] 12 seconds and a Crafting check. A success restores 5 Hit Points and 5 more for each rank you have in Crafting.
 
 ## Helping
 - [bold]Click a creature with a healer's toolkit:[/bold] Treat Wounds. It takes 12 seconds and 3 actions spread across them, and needs training in Medicine. You hold your patient still until it is done, and if they break free it ends.

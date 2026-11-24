@@ -10,7 +10,9 @@
   - "Trained in Acrobatics"
   requiresSkill: Acrobatics
   requiresRank: Trained
-  pendingAction: true
+  grants:
+  - !type:CFGrantOption
+    option: AcrobaticPerformer
 
 - type: cfFeat
   id: CFAdditionalLore
@@ -45,7 +47,10 @@
   description: cf-feat-ancestral-paragon-desc
   category: General
   level: 3
-  pendingAction: true
+  choices:
+  - kind: Feat
+    featSlot: AncestryFeat
+    featLevel: 1
 
 - type: cfFeat
   id: CFArcaneSense
@@ -193,7 +198,9 @@
   requiresSkill: Diplomacy
   requiresRank: Trained
   action: Action
-  pendingAction: true
+  grants:
+  - !type:CFGrantAction
+    action: CFActBonMot
 
 - type: cfFeat
   id: CFBondedAnimal
@@ -236,7 +243,9 @@
   - "Trained in Acrobatics"
   requiresSkill: Acrobatics
   requiresRank: Trained
-  pendingAction: true
+  grants:
+  - !type:CFGrantSafeFall
+    feetLess: 10
 
 - type: cfFeat
   id: CFCharmingLiar
@@ -308,7 +317,9 @@
   - "Expert in Medicine"
   requiresSkill: Medicine
   requiresRank: Expert
-  pendingAction: true
+  grants:
+  - !type:CFGrantOption
+    option: ContinualRecovery
 
 - type: cfFeat
   id: CFCourtlyGraces
@@ -370,7 +381,9 @@
   requiresSkill: Thievery
   requiresRank: Trained
   action: Action
-  pendingAction: true
+  grants:
+  - !type:CFGrantAction
+    action: CFActDirtyTrick
 
 - type: cfFeat
   id: CFDiscreetInquiry
@@ -500,7 +513,9 @@
   - "Trained in Performance"
   requiresSkill: Performance
   requiresRank: Trained
-  pendingAction: true
+  grants:
+  - !type:CFGrantAction
+    action: CFActFascinatingPerformance
 
 - type: cfFeat
   id: CFFastRecovery
@@ -510,8 +525,6 @@
   level: 1
   prerequisites:
   - "Constitution +2"
-  requiresAbility:
-    Constitution: 2
   pendingAction: true
 
 - type: cfFeat
@@ -522,8 +535,6 @@
   level: 1
   prerequisites:
   - "Dexterity +2"
-  requiresAbility:
-    Dexterity: 2
   grants:
   - !type:CFGrantIgnoreTerrain
     featherStep: true
@@ -546,7 +557,9 @@
   - "Trained in Survival"
   requiresSkill: Survival
   requiresRank: Trained
-  pendingAction: true
+  grants:
+  - !type:CFGrantOption
+    option: Forager
 
 - type: cfFeat
   id: CFForensicAcumen
@@ -699,7 +712,9 @@
   - "Trained in Intimidation"
   requiresSkill: Intimidation
   requiresRank: Trained
-  pendingAction: true
+  grants:
+  - !type:CFGrantOption
+    option: IntimidatingGlare
 
 - type: cfFeat
   id: CFIntimidatingProwess
@@ -709,8 +724,6 @@
   level: 2
   prerequisites:
   - "Strength +3; Expert in Intimidation"
-  requiresAbility:
-    Strength: 3
   requiresSkill: Intimidation
   requiresRank: Expert
   pendingAction: true
@@ -783,9 +796,6 @@
   - "Uncommon"
   prerequisites:
   - "Courtly Graces or Streetwise; Expert in Society"
-  requiresFeats:
-    - CFCourtlyGraces
-    - CFStreetwise
   pendingAction: true
 
 - type: cfFeat
@@ -845,7 +855,9 @@
   - "Trained in Nature"
   requiresSkill: Nature
   requiresRank: Trained
-  pendingAction: true
+  grants:
+  - !type:CFGrantOption
+    option: NaturalMedicine
 
 - type: cfFeat
   id: CFNimbleCrawl
@@ -896,7 +908,9 @@
   description: cf-feat-pet-desc
   category: General
   level: 1
-  pendingAction: true
+  grants:
+  - !type:CFGrantPet
+    kind: Familiar
 
 - type: cfFeat
   id: CFPickUpThePace
@@ -906,8 +920,6 @@
   level: 3
   prerequisites:
   - "Constitution +2"
-  requiresAbility:
-    Constitution: 2
   pendingAction: true
 
 - type: cfFeat
@@ -920,7 +932,9 @@
   - "Trained in Thievery"
   requiresSkill: Thievery
   requiresRank: Trained
-  pendingAction: true
+  grants:
+  - !type:CFGrantOption
+    option: Pickpocket
 
 - type: cfFeat
   id: CFPilgrimSToken
@@ -944,7 +958,9 @@
   - "Expert in Athletics"
   requiresSkill: Athletics
   requiresRank: Expert
-  pendingAction: true
+  grants:
+  - !type:CFGrantOption
+    option: PowerfulLeap
 
 - type: cfFeat
   id: CFPrescientPlanner
@@ -998,7 +1014,9 @@
   - "Trained in Athletics"
   requiresSkill: Athletics
   requiresRank: Trained
-  pendingAction: true
+  grants:
+  - !type:CFGrantOption
+    option: QuickJump
 
 - type: cfFeat
   id: CFQuickRepair
@@ -1010,7 +1028,9 @@
   - "Trained in Crafting"
   requiresSkill: Crafting
   requiresRank: Trained
-  pendingAction: true
+  grants:
+  - !type:CFGrantOption
+    option: QuickRepair
 
 - type: cfFeat
   id: CFQuickSqueeze
@@ -1111,7 +1131,9 @@
   - "Expert in Medicine"
   requiresSkill: Medicine
   requiresRank: Expert
-  pendingAction: true
+  grants:
+  - !type:CFGrantOption
+    option: RobustRecovery
 
 - type: cfFeat
   id: CFRollingLanding
@@ -1121,8 +1143,6 @@
   level: 2
   prerequisites:
   - "Cat Fall"
-  requiresFeats:
-    - CFCatFall
   pendingAction: true
 
 - type: cfFeat
@@ -1213,8 +1233,6 @@
   level: 1
   prerequisites:
   - "Intelligence +1"
-  requiresAbility:
-    Intelligence: 1
   choices:
   - kind: Skill
 
@@ -1447,8 +1465,6 @@
   - "Uncommon"
   prerequisites:
   - "Streetwise; Expert in Society"
-  requiresFeats:
-    - CFStreetwise
   requiresSkill: Society
   requiresRank: Expert
   pendingAction: true
@@ -1507,7 +1523,12 @@
   - "Trained in Performance"
   requiresSkill: Performance
   requiresRank: Trained
-  pendingAction: true
+  grants:
+  - !type:CFGrantBonus
+    stat: SkillChecks
+    type: Circumstance
+    value: 1
+    skill: Performance
 
 - type: cfFeat
   id: CFWardMedic
