@@ -207,6 +207,17 @@ public static class CFGOAPSteeringMath
     }
 
     /// <summary>
+    /// How near a dangerous tile is or is about to be: the smaller of the distance now and the distance from where
+    /// the creature will be after the time it needs to turn. A tile it will pass beside is no nearer then than now.
+    /// </summary>
+    public static float HazardDistance(Box2 bounds, Vector2 position, Vector2 velocity)
+    {
+        var now = (position - ClosestPoint(bounds, position)).Length();
+        var soon = position + velocity * HazardLeadSeconds;
+        return MathF.Min(now, (soon - ClosestPoint(bounds, soon)).Length());
+    }
+
+    /// <summary>
     /// The closest point of a box to a position, which is the position itself when it is inside.
     /// Measuring to the surface matters: a wall tile's center can be a whole tile away while it is touching.
     /// </summary>

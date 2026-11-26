@@ -795,6 +795,15 @@ Measured with `CFGOAPStressTest`, the old build (both steps undone) against the 
 - [ ] Not played yet: a creature walking, fighting, breaking a window, opening a door, shooting, and a companion fetching, all on the new loops. The tests cover each, but feel is for a real client.
 - [ ] Still from stock: `NpcFactionMember` on the bodies, which stock HTN mobs read to pick their targets, and the stock melee loop for a stock mob a Command order drives. Both are stock mobs' business, and only `Content.Server/NPC/Systems/NPCUtilitySystem.cs` and `NPCSystem.IsNpc` still carry CF edits.
 
+**6p. Bridges and corridors (26 November 2026)**
+
+A creature on a one-tile bridge between lava shook in place and never crossed, and one in a corridor strayed. Fixed in the safety circle, the speed lead, the straight-line check and the change from arrows to a straight line: see "Bridges and corridors" in `goap.md`. On the arena the bridge is now crossed at full speed with no sideways reversal and no more than 0.10 tiles off the middle, where it reversed 298 times in 10 seconds and never arrived.
+
+- [ ] Not played: the Dragon Dungeon's two bridges by the wizard statue (`CFStatueWizard` at -32.5, 71.5 and -29.5, 71.5 on the ground level). Their chasm is empty tiles, not chasm entities, which the arena tests with lava do not model; only `AStraightLineNeedsFloorUnderIt` covers it.
+- [ ] The feelers and the safety circle do not see empty tiles. A creature pushed toward the edge of such a bridge has nothing turning it back.
+- [ ] Not checked: a creature on arrows clipping a dangerous tile at a corner, now that the circle has no speed lead there and the fan ignores dangerous tiles there.
+- [ ] `ItBreaksGlassAndClimbsThroughTheFrame` failed 2 runs in 15 after this, both in a process where `TripKnocksProneAndACriticalFailureDropsTheTripper` also failed, and passed 8 of 8 alone. `CFHazardTest.SteppingOnItSetsItOff` failed once in a full run and passed 4 of 4 alone. Neither failure message was caught.
+
 **Debug code to remove**
 
 - [ ] The decision log, once the AI has settled. `goap.md` lists the steps.

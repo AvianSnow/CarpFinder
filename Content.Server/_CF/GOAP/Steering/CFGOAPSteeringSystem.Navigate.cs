@@ -18,6 +18,9 @@ public sealed partial class CFGOAPSteeringSystem
     /// <summary>Half the width of a creature's body, in tiles.</summary>
     private const float BodyHalfWidth = 0.35f;
 
+    /// <summary>How far apart the floor is checked along a straight line, in tiles. Under a tile, so none is skipped.</summary>
+    private const float FloorStep = 0.45f;
+
     /// <summary>
     /// How far from a creature's centre it stops to fight, in tiles. Two bodies touch at 0.7, and a Strike reaches
     /// 1.25, so this leaves a little room either way.
@@ -40,6 +43,13 @@ public sealed partial class CFGOAPSteeringSystem
 
     /// <summary>A follower going somewhere further from the field's goal than this does not use it.</summary>
     private const float FieldShareRange = 6f;
+
+    /// <summary>
+    /// How many checks in a row, half a second apart, the straight line has to be clear before a creature on arrows
+    /// leaves them for it. A line that clears for one check at a corner and closes at the next would otherwise have it
+    /// change its mind every half second.
+    /// </summary>
+    private const int StraightAfterClearChecks = 2;
 
     [Dependency] private IPrototypeManager _prototypes = default!;
     [Dependency] private CFGOAPEncounterSystem _encounters = default!;
@@ -70,10 +80,16 @@ public sealed partial class CFGOAPSteeringSystem
             if (!steering.UsingField && !rerouted && !HeadingElsewhere(steering, goal, target))
                 return;
 
+            // On arrows it waits for the line to stay clear, so it does not flicker between the two at a corner.
+            if (steering.UsingField && !rerouted && ++steering.ClearChecks < StraightAfterClearChecks)
+                return;
+
+            steering.ClearChecks = 0;
             HeadStraightThere(uid, goal, target);
             return;
         }
 
+        steering.ClearChecks = 0;
         if (!TryGetField(ent, goal, alone, out var field))
         {
             if (rerouted)
@@ -288,7 +304,35 @@ public sealed partial class CFGOAPSteeringSystem
 
         var direction = line / length;
         var side = new Vector2(direction.Y, -direction.X) * BodyHalfWidth;
-        return IsSideClear(uid, from + side, direction, length) && IsSideClear(uid, from - side, direction, length);
+        return IsSideClear(uid, from + side, direction, length)
+               && IsSideClear(uid, from - side, direction, length)
+               && HasFloorAlong(uid, from, direction, length)
+               && HasFloorAlong(uid, from + side, direction, length)
+               && HasFloorAlong(uid, from - side, direction, length);
+    }
+
+    /// <summary>
+    /// Whether there is floor under the whole line. A ray only touches things, and a hole is nothing: a chasm made of
+    /// empty tiles, or the edge of an island, stops no ray, so a creature that could see its target across one walked
+    /// straight in. With a hole on the line it follows arrows instead, which never cross an empty tile.
+    /// </summary>
+    private bool HasFloorAlong(EntityUid uid, Vector2 from, Vector2 direction, float length)
+    {
+        if (Transform(uid).GridUid is not { } grid || !TryComp(grid, out MapGridComponent? gridComp))
+            return true;
+
+        for (var along = 0f; along < length; along += FloorStep)
+        {
+            if (!IsFloor(grid, gridComp, from + direction * along))
+                return false;
+        }
+
+        return IsFloor(grid, gridComp, from + direction * length);
+    }
+
+    private bool IsFloor(EntityUid grid, MapGridComponent gridComp, Vector2 point)
+    {
+        return _maps.TryGetTileRef(grid, gridComp, _maps.WorldToTile(grid, gridComp, point), out var tile) && !tile.Tile.IsEmpty;
     }
 
     private bool IsSideClear(EntityUid uid, Vector2 from, Vector2 direction, float length)

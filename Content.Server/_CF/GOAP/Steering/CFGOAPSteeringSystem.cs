@@ -84,8 +84,20 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
     /// <summary>The search has to reach as far as the widest circle speed can give.</summary>
     private const float PanicLeadSearch = 0.2f;
 
-    /// <summary>Well above anything else steering writes, so it wins outright.</summary>
+    /// <summary>
+    /// What the safety circle writes when something is deep inside it: well above anything else steering writes, so
+    /// it wins outright.
+    /// </summary>
     private const float PanicForce = 4f;
+
+    /// <summary>The danger it writes toward something at the very edge of the circle: enough to cancel a goal that way.</summary>
+    private const float PanicSoft = 1.2f;
+
+    /// <summary>
+    /// The wish away from something at the very edge of the circle. Well under the 1 any goal has, so a creature a
+    /// hair off the middle of a bridge tilts back toward it and keeps walking.
+    /// </summary>
+    private const float PanicBias = 0.4f;
 
     /// <summary>Added to the search, because a tile's center is further away than its edge.</summary>
     private const float PanicSearchMargin = 0.75f;
@@ -511,7 +523,9 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
 
     /// <summary>
     /// The safety circle. Rays run ahead, so a creature sliding alongside lava can miss all three while its body
-    /// clips the tile. Anything inside the circle overrides everything else, with no easing, and snaps it away.
+    /// clips the tile. Anything inside the circle pushes it away at once, harder the deeper it is: a touch at the edge
+    /// only tilts the way it was going, and anything deep inside wins outright. It used to snap at full force and wipe
+    /// every other wish, which on a one-tile bridge threw the creature from edge to edge and never let it go forward.
     /// </summary>
     private void Panic(Entity<CFGOAPSteeringComponent> ent, ref CFGOAPSteerArgs args, bool look)
     {
@@ -523,7 +537,8 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
         if (look)
             FindPanicMobs(ent, position, search);
 
-        PanicFromFixed(ent, position, velocity, search, ref escape, ref onlyWalls);
+        var inside = 0f;
+        PanicFromFixed(ent, position, velocity, search, ref escape, ref onlyWalls, ref inside);
 
         foreach (var other in ent.Comp.PanicMobs)
         {
@@ -541,6 +556,7 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
             if (distance > 0f && distance < ent.Comp.PanicRadius)
             {
                 escape += away / distance * (ent.Comp.PanicRadius - distance);
+                inside += ent.Comp.PanicRadius - distance;
                 onlyWalls = false;
             }
         }
@@ -567,12 +583,23 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
                 escape = committed;
         }
 
+        // How deep inside the circle it is, summed over everything pushing, measured against the circle itself.
+        // Steering only ever sends a direction at full input, so a push stronger than the goal is a whole step
+        // sideways however small it was meant to be. A shallow touch is therefore a bias: danger toward the thing,
+        // and a wish away from it that stays under the 1 a goal has, so the creature keeps going and only tilts.
+        // The wish grows with the square of the depth and passes the goal about halfway in.
+        // Only what is inside the plain circle counts as depth. The extra reach speed gives a dangerous tile starts
+        // the bias sooner, but on a one-tile bridge it reaches past the middle, and counted as depth it had the far
+        // edge shove a creature that was only drifting toward it.
+        var depth = Math.Clamp(inside / ent.Comp.PanicRadius, 0f, 1f);
+        var danger = PanicSoft + (PanicForce - PanicSoft) * depth;
+        var wish = PanicBias + (PanicForce - PanicBias) * depth * depth;
         var norm = Vector2.Normalize(args.OffsetRotation.RotateVec(escape));
         for (var i = 0; i < CFGOAPSteeringMath.DirectionCount; i++)
         {
             var alignment = Vector2.Dot(norm, CFGOAPSteeringMath.Directions[i]);
-            args.Steering.Interest[i] = Math.Max(0f, alignment) * PanicForce;
-            args.Steering.Danger[i] = Math.Max(0f, -alignment) * PanicForce;
+            args.Steering.Interest[i] = MathF.Max(args.Steering.Interest[i], MathF.Max(0f, alignment) * wish);
+            args.Steering.Danger[i] = MathF.Max(args.Steering.Danger[i], MathF.Max(0f, -alignment) * danger);
         }
     }
 
@@ -581,7 +608,7 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
     /// bounds are kept on the grid and looked for again only once it has walked about a tile, so each tick is plain
     /// math. A door that opened, or anything destroyed, is skipped by checking its body.
     /// </summary>
-    private void PanicFromFixed(Entity<CFGOAPSteeringComponent> ent, Vector2 position, Vector2 velocity, float search, ref Vector2 escape, ref bool onlyWalls)
+    private void PanicFromFixed(Entity<CFGOAPSteeringComponent> ent, Vector2 position, Vector2 velocity, float search, ref Vector2 escape, ref bool onlyWalls, ref float inside)
     {
         if (Transform(ent).GridUid is not { } grid || !TryComp(grid, out MapGridComponent? gridComp))
         {
@@ -606,6 +633,7 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
         var wallsCount = ent.Comp.Through == null && !ent.Comp.OnArrows;
         var climbing = TryComp(ent, out ClimbingComponent? climb) && climb.IsClimbing;
         var toWorld = _transform.GetWorldRotation(grid);
+        var localVelocity = (-toWorld).RotateVec(velocity);
         foreach (var other in ent.Comp.PanicFixed)
         {
             if (other.Uid == ent.Comp.Target || other.Uid == ent.Comp.Through || climbing && other.Climbable)
@@ -629,15 +657,19 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
 
             var away = toWorld.RotateVec(awayLocal);
 
-            // A wall only stops it, so it can come close. Lava it has to turn away from in time.
-            var radius = other.Dangerous
-                ? CFGOAPSteeringMath.HazardRadius(ent.Comp.PanicRadius, velocity, -away)
-                : ent.Comp.PanicRadius;
-
+            // A wall only stops it, so it can come close. Lava it has to turn away from in time, so that is also
+            // measured from where it will be in a moment. Widening the circle by its speed instead counted the tiles
+            // diagonally ahead on both sides of a bridge, whose pushes add up to straight back. On arrows, which
+            // never lead onto a dangerous tile, the circle only has to catch a push off them.
             var distance = away.Length();
-            if (distance > 0f && distance < radius)
+            var reach = other.Dangerous && !ent.Comp.OnArrows
+                ? CFGOAPSteeringMath.HazardDistance(other.Bounds, local, localVelocity)
+                : distance;
+
+            if (distance > 0f && reach < ent.Comp.PanicRadius)
             {
-                escape += away / distance * (radius - distance);
+                escape += away / distance * (ent.Comp.PanicRadius - reach);
+                inside += MathF.Max(0f, ent.Comp.PanicRadius - distance);
                 onlyWalls &= !other.Dangerous;
             }
         }
@@ -834,8 +866,8 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
                 return FeelMob(ent, ref args, hit.Entity);
             }
 
-            // What is fixed is left to the arrows, which already go round it.
-            if (ent.Comp.OnArrows && IsFixed(hit.Entity) && !HasComp<CFDangerousTileComponent>(hit.Entity))
+            // What is fixed, and what is dangerous, is left to the arrows, which already go round both.
+            if (ent.Comp.OnArrows && (IsFixed(hit.Entity) || HasComp<CFDangerousTileComponent>(hit.Entity)))
                 return 0f;
 
             var danger = (1f - hit.Distance / length) * FeelerDanger;

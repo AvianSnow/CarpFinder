@@ -173,6 +173,44 @@ public sealed class CFGOAPMazeTest : CFGOAPLoggedTest
     }
 
     /// <summary>
+    /// The same corridor. The way to the goal is blocked at first, so it follows arrows, and somewhere along the
+    /// corridor the straight line clears. It should change over once, not flicker between the two every half second.
+    /// </summary>
+    [Test]
+    public async Task ItChangesFromArrowsToAStraightLineOnce()
+    {
+        await Load();
+        Entity<CFGOAPComponent> boss = default;
+        var switches = 0;
+        var lastField = false;
+        var x = 0f;
+        await Server.WaitPost(() =>
+        {
+            boss = Boss((-3, 5), (-3, 5));
+            boss.Comp.Lkp = Xform.ToMapCoordinates(At(12, 7));
+        });
+
+        for (var tick = 0; tick < 30 * 30 && x < 6.5f; tick++)
+        {
+            await Pair.RunTicksSync(1);
+            await Server.WaitPost(() =>
+            {
+                x = Xform.GetMoverCoordinates(boss).Position.X;
+                if (!SEntMan.TryGetComponent(boss, out CFGOAPSteeringComponent steering) || steering.UsingField == lastField)
+                    return;
+
+                switches++;
+                lastField = steering.UsingField;
+            });
+        }
+
+        await NpcsOff();
+        TestContext.Out.WriteLine(FormattableString.Invariant($"x {x:F2}, field switches {switches}"));
+        Assert.That(x, Is.GreaterThanOrEqualTo(6.5f), "It never reached the end of the corridor.");
+        Assert.That(switches, Is.LessThanOrEqualTo(2), "It flickered between arrows and a straight line.");
+    }
+
+    /// <summary>
     /// The door at (0, -5) leads south into a corridor that turns east, so the goal is out of a straight line from both
     /// sides of it. It opens the door, walks through, and builds its field again from the far side.
     /// </summary>

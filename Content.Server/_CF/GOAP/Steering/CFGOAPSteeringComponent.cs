@@ -252,6 +252,9 @@ public sealed partial class CFGOAPSteeringComponent : Component
     /// <summary>Whether it is following a flow field rather than heading straight there.</summary>
     public bool UsingField;
 
+    /// <summary>How many checks in a row the straight line to the goal has been clear while it followed arrows.</summary>
+    public int ClearChecks;
+
     /// <summary>The tile underfoot had an arrow on this steering tick, so feelers leave what is fixed to the arrows.</summary>
     public bool OnArrows;
 

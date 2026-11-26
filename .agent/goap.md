@@ -162,6 +162,19 @@ Only `Navigate` deals with these, so a step that moves any other way cannot get 
 
 **Doors.** When an arrow leads into a closed door it walks up and opens it. Once the door is open it walks through to the tile the door's arrow points at (`PassingThrough`, `PassTile`), with the door as `Through` so the feelers and safety circle leave the frame alone. On that tile it lets go of the door and sets `Rebuild` on its field, so the navigator builds the arrows again from the far side. If the goal is in a straight line once the door is open, it heads straight there instead. A door that shuts before it is through gets opened again. After 4 seconds it carries on from wherever it is. Tests: `ItWalksThroughADoorThenBuildsANewField` in `CFGOAPMazeTest`, 20 of 20 in a sweep. `FollowScent` is one. A mob working on something is left alone by the safety circle, except by lava and other mobs, or the next table along would throw it off the one it is climbing.
 
+## Bridges and corridors
+
+Fixed on 26 November 2026, after a creature on a one-tile bridge between lava shook in place and never crossed. Tests: `ItCrossesAOneTileBridgeWithoutRattling`, `ItWalksAOneTileCorridorWithoutRattling`, `AStraightLineNeedsFloorUnderIt` (`CFGOAPSteeringTest`) and `ItChangesFromArrowsToAStraightLineOnce` (`CFGOAPMazeTest`). What was learned, each from a per-tick trace:
+
+- **Steering only sends a direction, at full input.** So anything written above the 1 a goal has is a whole step that way, however small it was meant to be. The safety circle used to assign interest and danger at force 4 and wipe the goal. It now adds, and a shallow touch is a bias: danger toward the thing (`PanicSoft`, 1.2) and a wish away that starts at `PanicBias` (0.4), under the goal, and grows with the square of the depth up to `PanicForce`. The creature keeps walking and tilts about 15 degrees. A first attempt with the wish just above the goal sent it sideways at full speed and into the lava.
+- **Depth is only what is inside the plain circle.** What the speed lead adds starts the bias sooner and never raises the force.
+- **The speed lead looks at where the body will be**, not at a wider circle: `CFGOAPSteeringMath.HazardDistance` is the smaller of the distance now and the distance in 0.15 seconds. A circle widened by speed counted the lava tiles diagonally ahead on both sides of a bridge, and their pushes add up to straight back.
+- **On arrows the circle and the fan leave dangerous tiles to the arrows**, as they already left walls: the circle uses the distance now, and a ray that touches a dangerous tile reports nothing. Not checked: whether a creature cutting between tile centres on arrows can clip a hazard.
+- **A straight line needs floor under it.** `CanWalkStraight` also walks the three lines in steps of 0.45 tiles and fails on an empty tile (`HasFloorAlong`). A ray only touches things, and a chasm made of empty tiles, as the Dragon Dungeon's is, or the edge of an island, stops no ray.
+- **Arrows are left only after the straight line has been clear twice in a row**, a second apart in all (`StraightAfterClearChecks`, `ClearChecks`).
+
+Still open: the feelers and the safety circle do not see empty tiles at all, so on a bridge over a hole nothing pushes a creature back from the edge; only `CanWalkStraight` and the arrows know. Nothing has been played on the Dragon Dungeon's two bridges.
+
 ## Feelers and the safety circle
 
 `CFGOAPSteeringSystem.Feel` runs on every steering tick, from `Drive`, and is most of what GOAP costs. To keep it cheap it does not look every tick:
