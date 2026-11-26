@@ -139,3 +139,22 @@
       limit: 1
       required: true
       default: [ CEInfernalTail ]
+
+# The ancestor kobold sheet is one drawing, so only its head takes markings: the stock lizard
+# ears, horns, frills and snouts, as copies in markings/kobold.yml. A kobold starts with ears and
+# a snout. Stock only fills in a default on a required layer, so each of the two always has one.
+- type: markingsGroup
+  id: CFKoboldAnimal
+  onlyGroupWhitelisted: true
+  limits:
+    enum.HumanoidVisualLayers.HeadTop:
+      limit: 2
+      required: true
+      default: [ CFKoboldHornsKoboldEars ]
+    enum.HumanoidVisualLayers.HeadSide:
+      limit: 1
+      required: false
+    enum.HumanoidVisualLayers.Snout:
+      limit: 1
+      required: true
+      default: [ CFKoboldSnoutRound ]

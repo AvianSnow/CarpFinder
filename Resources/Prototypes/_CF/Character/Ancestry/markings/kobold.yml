@@ -1,0 +1,217 @@
+# CarpFinder: the stock lizard ears, horns, frills and snouts, offered on the ancestor kobold sprite.
+# They are copies with ids of their own, so the stock marking file stays as upstream has it.
+# The art is stock's reptilian_parts.rsi, which the stock kobold wears too.
+
+- type: marking
+  id: CFKoboldFrillsAquatic
+  bodyPart: HeadSide
+  groupWhitelist: [CFKoboldAnimal]
+  sprites:
+  - sprite: Mobs/Customization/reptilian_parts.rsi
+    state: frills_aquatic
+
+- type: marking
+  id: CFKoboldFrillsShort
+  bodyPart: HeadSide
+  groupWhitelist: [CFKoboldAnimal]
+  sprites:
+  - sprite: Mobs/Customization/reptilian_parts.rsi
+    state: frills_short
+
+- type: marking
+  id: CFKoboldFrillsSimple
+  bodyPart: HeadSide
+  groupWhitelist: [CFKoboldAnimal]
+  sprites:
+  - sprite: Mobs/Customization/reptilian_parts.rsi
+    state: frills_simple
+
+- type: marking
+  id: CFKoboldFrillsDivinity
+  bodyPart: HeadSide
+  groupWhitelist: [CFKoboldAnimal]
+  sprites:
+  - sprite: Mobs/Customization/reptilian_parts.rsi
+    state: frills_divinity
+
+- type: marking
+  id: CFKoboldFrillsBig
+  bodyPart: HeadSide
+  groupWhitelist: [CFKoboldAnimal]
+  sprites:
+  - sprite: Mobs/Customization/reptilian_parts.rsi
+    state: frills_big
+
+- type: marking
+  id: CFKoboldFrillsAxolotl
+  bodyPart: HeadSide
+  groupWhitelist: [CFKoboldAnimal]
+  sprites:
+  - sprite: Mobs/Customization/reptilian_parts.rsi
+    state: frills_axolotl
+
+- type: marking
+  id: CFKoboldFrillsHood
+  bodyPart: HeadSide
+  groupWhitelist: [CFKoboldAnimal]
+  sprites:
+  - sprite: Mobs/Customization/reptilian_parts.rsi
+    state: frills_hood_primary
+  - sprite: Mobs/Customization/reptilian_parts.rsi
+    state: frills_hood_secondary
+
+- type: marking
+  id: CFKoboldFrillsNeckfull
+  bodyPart: HeadSide
+  groupWhitelist: [CFKoboldAnimal]
+  sprites:
+  - sprite: Mobs/Customization/reptilian_parts.rsi
+    state: frills_neckfull
+
+- type: marking
+  id: CFKoboldHornsAngler
+  bodyPart: HeadTop
+  groupWhitelist: [CFKoboldAnimal]
+  sprites:
+  - sprite: Mobs/Customization/reptilian_parts.rsi
+    state: horns_angler
+
+- type: marking
+  id: CFKoboldHornsCurled
+  bodyPart: HeadTop
+  groupWhitelist: [CFKoboldAnimal]
+  sprites:
+  - sprite: Mobs/Customization/reptilian_parts.rsi
+    state: horns_curled
+
+- type: marking
+  id: CFKoboldHornsRam
+  bodyPart: HeadTop
+  groupWhitelist: [CFKoboldAnimal]
+  sprites:
+  - sprite: Mobs/Customization/reptilian_parts.rsi
+    state: horns_ram
+
+- type: marking
+  id: CFKoboldHornsShort
+  bodyPart: HeadTop
+  groupWhitelist: [CFKoboldAnimal]
+  sprites:
+  - sprite: Mobs/Customization/reptilian_parts.rsi
+    state: horns_short
+
+- type: marking
+  id: CFKoboldHornsSimple
+  bodyPart: HeadTop
+  groupWhitelist: [CFKoboldAnimal]
+  sprites:
+  - sprite: Mobs/Customization/reptilian_parts.rsi
+    state: horns_simple
+
+- type: marking
+  id: CFKoboldHornsDouble
+  bodyPart: HeadTop
+  groupWhitelist: [CFKoboldAnimal]
+  sprites:
+  - sprite: Mobs/Customization/reptilian_parts.rsi
+    state: horns_double
+
+- type: marking
+  id: CFKoboldSnoutRound
+  bodyPart: Snout
+  forcedColoring: true
+  groupWhitelist: [CFKoboldAnimal]
+  sprites:
+  - sprite: Mobs/Customization/reptilian_parts.rsi
+    state: snout_round
+
+- type: marking
+  id: CFKoboldSnoutSharp
+  bodyPart: Snout
+  forcedColoring: true
+  groupWhitelist: [CFKoboldAnimal]
+  sprites:
+  - sprite: Mobs/Customization/reptilian_parts.rsi
+    state: snout_sharp
+
+- type: marking
+  id: CFKoboldSnoutSplotch
+  bodyPart: Snout
+  groupWhitelist: [CFKoboldAnimal]
+  sprites:
+  - sprite: Mobs/Customization/reptilian_parts.rsi
+    state: snout_splotch_primary
+  - sprite: Mobs/Customization/reptilian_parts.rsi
+    state: snout_splotch_secondary
+
+- type: marking
+  id: CFKoboldSnoutVisageRound
+  bodyPart: Snout
+  groupWhitelist: [CFKoboldAnimal]
+  sprites:
+  - sprite: Mobs/Customization/reptilian_parts.rsi
+    state: visage_round
+
+- type: marking
+  id: CFKoboldSnoutVisageSharp
+  bodyPart: Snout
+  groupWhitelist: [CFKoboldAnimal]
+  sprites:
+  - sprite: Mobs/Customization/reptilian_parts.rsi
+    state: visage_sharp
+
+- type: marking
+  id: CFKoboldHornsArgali
+  bodyPart: HeadTop
+  groupWhitelist: [CFKoboldAnimal]
+  sprites:
+  - sprite: Mobs/Customization/reptilian_parts.rsi
+    state: horns_argali
+
+- type: marking
+  id: CFKoboldHornsAyrshire
+  bodyPart: HeadTop
+  groupWhitelist: [CFKoboldAnimal]
+  sprites:
+  - sprite: Mobs/Customization/reptilian_parts.rsi
+    state: horns_ayrshire
+
+- type: marking
+  id: CFKoboldHornsMyrsore
+  bodyPart: HeadTop
+  groupWhitelist: [CFKoboldAnimal]
+  sprites:
+  - sprite: Mobs/Customization/reptilian_parts.rsi
+    state: horns_myrsore
+
+- type: marking
+  id: CFKoboldHornsBighorn
+  bodyPart: HeadTop
+  groupWhitelist: [CFKoboldAnimal]
+  sprites:
+  - sprite: Mobs/Customization/reptilian_parts.rsi
+    state: horns_bighorn
+
+- type: marking
+  id: CFKoboldHornsDemonic
+  bodyPart: HeadTop
+  groupWhitelist: [CFKoboldAnimal]
+  sprites:
+  - sprite: Mobs/Customization/reptilian_parts.rsi
+    state: horns_demonic
+
+- type: marking
+  id: CFKoboldHornsKoboldEars
+  bodyPart: HeadTop
+  groupWhitelist: [CFKoboldAnimal]
+  sprites:
+  - sprite: Mobs/Customization/reptilian_parts.rsi
+    state: horns_kobold_ears
+
+- type: marking
+  id: CFKoboldHornsFloppyKoboldEars
+  bodyPart: HeadSide
+  groupWhitelist: [CFKoboldAnimal]
+  sprites:
+  - sprite: Mobs/Customization/reptilian_parts.rsi
+    state: horns_floppy_kobold_ears

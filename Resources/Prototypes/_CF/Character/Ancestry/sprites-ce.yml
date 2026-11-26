@@ -1873,6 +1873,14 @@
         sprite: Mobs/Animals/Ancestors/kobold.rsi
         state: kobold
         visible: false
+    # The head is the one organ with markings: ears, horns, frills and a snout, as the stock kobold wears.
+    - type: VisualOrganMarkings
+      hideableLayers:
+        - enum.HumanoidVisualLayers.Snout
+        - enum.HumanoidVisualLayers.HeadTop
+        - enum.HumanoidVisualLayers.HeadSide
+      markingData:
+        group: CFKoboldAnimal
 
 - type: entity
   parent: [OrganBaseArmLeft, OrganCFKoboldAnimalExternal]
