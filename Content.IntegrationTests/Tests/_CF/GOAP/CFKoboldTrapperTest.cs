@@ -7,7 +7,6 @@ using Content.Server.CF.GOAP;
 using Content.Server.CF.GOAP.Encounters;
 using Content.Server.CF.GOAP.Sensors;
 using Content.Server.CF.GOAP.Steps;
-using Content.Server.NPC.Systems;
 using Content.Shared.CCVar;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Effects;
@@ -391,7 +390,7 @@ public sealed class CFKoboldTrapperTest : GameTest
         foreach (var mob in mobs)
         {
             SEntMan.System<SharedPhysicsSystem>().WakeBody(mob);
-            SEntMan.System<NPCSystem>().WakeNPC(mob);
+            SEntMan.System<CFGOAPDriverSystem>().Wake(mob);
         }
     }
 

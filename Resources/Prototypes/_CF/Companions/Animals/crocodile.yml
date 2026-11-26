@@ -41,9 +41,6 @@
   description: "A young crocodile companion. It can hold its breath for about 2 hours."
   suffix: Companion
   components:
-  - type: HTN
-    rootTask:
-      task: CFGOAPCompound
   - type: NpcFactionMember
     factions:
     - Passive

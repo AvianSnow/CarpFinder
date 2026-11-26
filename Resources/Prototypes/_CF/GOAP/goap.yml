@@ -1,25 +1,16 @@
 # The brain every CF monster thinks with. The monster bases take it as a parent, such as
 # parent: [ SimpleMobBase, MobCombat, CFMonsterGhostRole, CFGOAPBrain ]. Stock SS14 mobs keep stock HTN.
+# A brain runs on CFGOAPDriverSystem, not HTN: whatever HTN the body brought is removed as the brain initialises.
 
 - type: entity
   abstract: true
   id: CFGOAPBrain
   categories: [ HideSpawnMenu ]
   components:
-  - type: HTN
-    rootTask:
-      task: CFGOAPCompound
   - type: CFGOAP
   - type: CFGOAPSteering
   - type: CFGOAPScentEmitter
     layer: Ally
-
-- type: htnCompound
-  id: CFGOAPCompound
-  branches:
-  - tasks:
-    - !type:HTNPrimitiveTask
-      operator: !type:CFGOAPOperator
 
 # Goals. The highest priority that can be planned for wins.
 

@@ -1,7 +1,6 @@
 using Content.IntegrationTests.Fixtures;
 using Content.IntegrationTests.Tests.CF;
 using Content.Server.CF.GOAP;
-using Content.Server.NPC.HTN;
 using Content.Shared.Actions.Components;
 using Content.Shared.CF.Actions;
 using Content.Shared.CF.Combat;
@@ -56,7 +55,6 @@ public sealed class CFToxicSpewTest : GameTest
     private EntityUid SpawnSpewer(int x, int y)
     {
         var spewer = SEntMan.SpawnAttachedTo("CFSpewTestDragon", _map.Local(x, y));
-        SEntMan.RemoveComponent<HTNComponent>(spewer);
         SEntMan.RemoveComponent<CFGOAPComponent>(spewer);
         return spewer;
     }

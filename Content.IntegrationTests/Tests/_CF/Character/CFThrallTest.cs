@@ -190,7 +190,7 @@ public sealed class CFThrallTest : GameTest
             Assert.Multiple(() =>
             {
                 Assert.That(SEntMan.HasComponent<CFGOAPComponent>(thrall), "It thinks for itself.");
-                Assert.That(SEntMan.GetComponent<HTNComponent>(thrall).RootTask.Task, Is.EqualTo("CFGOAPCompound"));
+                Assert.That(SEntMan.HasComponent<HTNComponent>(thrall), Is.False, "The brain removes stock HTN.");
                 Assert.That(SEntMan.HasComponent<CFSummonedComponent>(thrall));
                 Assert.That(SEntMan.GetComponent<CFTraitComponent>(thrall).HasTrait("Summoned"));
             });

@@ -7,6 +7,14 @@ namespace Content.Server.CF.GOAP.Steering;
 /// </summary>
 public static class CFGOAPSteeringMath
 {
+    /// <summary>How many ways a creature can be sent: one every 30 degrees, as stock context steering had it.</summary>
+    public const int DirectionCount = 12;
+
+    public const float DirectionRadians = MathF.Tau / DirectionCount;
+
+    /// <summary>Each of the 12 ways as a unit vector, in the mover's frame.</summary>
+    public static readonly Vector2[] Directions = BuildDirections();
+
     /// <summary>The cosine of 45°.</summary>
     private const float FeelerSpreadStart = 0.7071f;
 
@@ -21,6 +29,17 @@ public static class CFGOAPSteeringMath
 
     /// <summary>The time a creature needs to change direction, at the usual acceleration.</summary>
     private const float HazardLeadSeconds = 0.15f;
+
+    private static Vector2[] BuildDirections()
+    {
+        var directions = new Vector2[DirectionCount];
+        for (var i = 0; i < DirectionCount; i++)
+        {
+            directions[i] = new Angle(DirectionRadians * i).ToVec();
+        }
+
+        return directions;
+    }
 
     public static Vector2 Seek(Vector2 position, Vector2 target)
     {

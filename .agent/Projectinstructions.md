@@ -50,10 +50,10 @@ Never build only Shared: build Server, Client, or both via a normal `dotnet buil
 
 `MSB3027` / "file is locked" errors mean Content.Server or Content.Client is running and holding DLLs in `bin/`. Ask the user to close them; rebuilding will not help.
 
-To build and test while the server stays up, send the output to a folder of its own, two levels under the repo root so tests still find `Resources`. Delete it afterwards:
+To build and test while the server stays up, or to test another commit beside the working tree, send the output to a folder of its own, two levels under the repo root so tests still find `Resources`. Write the path with forward slashes: Git Bash eats backslashes, and the build then fails with `Could not find a part of the path`. Delete the folder afterwards:
 
 ```bash
-dotnet build Content.IntegrationTests/Content.IntegrationTests.csproj -c Tools -p:OutputPath=C:\project\CarpFinder\bin\Check\
+dotnet build Content.IntegrationTests/Content.IntegrationTests.csproj -c Tools -p:OutputPath=C:/project/CarpFinder/bin/Check/
 dotnet test bin/Check/Content.IntegrationTests.dll --filter "FullyQualifiedName~TestName"
 ```
 

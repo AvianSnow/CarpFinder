@@ -54,9 +54,6 @@
         Base: bear_dead
       Dead:
         Base: bear_dead
-  - type: HTN
-    rootTask:
-      task: CFGOAPCompound
   - type: NpcFactionMember
     factions:
     - Passive

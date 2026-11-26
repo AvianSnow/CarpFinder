@@ -26,9 +26,6 @@
     thresholds:
       0: Alive
       100: Dead
-  - type: HTN
-    rootTask:
-      task: CFGOAPCompound
   - type: NpcFactionMember
     factions:
     - Passive

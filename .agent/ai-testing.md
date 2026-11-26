@@ -149,7 +149,7 @@ It shows as `Skipped` in a full run, because its asserts are inside `WaitAsserti
 CF_GOAP_STRESS=1 CF_GOAP_STRESS_OUT=stress.md dotnet test Content.IntegrationTests/Content.IntegrationTests.csproj -c Tools --no-build --filter "FullyQualifiedName~CFGOAPStressTest" --logger "console;verbosity=detailed"
 ```
 
-It loads `npc_test_map`, spawns the same kobold warriors with stock HTN or with `CFGOAPBrain` from one seed, and runs 150 ticks of warmup then 900 measured ticks (30 game seconds). Idle has no enemies. Fight has 5 heroes that do not fight back, with every kobold starting within 30 feet of one. Per system times come from the engine's own update timing. GOAP thinks inside `NPCSystem` and steers inside `NPCSteeringSystem`, so those hold most of its cost. Two throwaway runs go first, because the JIT made the first real run look twice as slow.
+It loads `npc_test_map`, spawns the same kobold warriors with stock HTN or with `CFGOAPBrain` from one seed, and runs 150 ticks of warmup then 900 measured ticks (30 game seconds). Idle has no enemies. Fight has 5 heroes that do not fight back, with every kobold starting within 30 feet of one. Per system times come from the engine's own update timing. GOAP thinks inside `CFGOAPDriverSystem` and steers inside `CFGOAPSteeringSystem` (inside `NPCSystem` through HTN, and `NPCSteeringSystem` through its event, until 26 November 2026), so those hold most of its cost. Two throwaway runs go first, because the JIT made the first real run look twice as slow.
 
 Results on 10 November 2026, on the Linux machine, server only. A tick has 33 ms at 30 ticks a second.
 
@@ -199,11 +199,13 @@ What was done, and what it found:
 
 Calm goals, also on 10 November 2026: `Idle` and `GoHome` think once a second and cast no long rays, and none at all on open floor. GOAP AI time for 30 idle mobs went from 0.77 to 0.64 ms, almost all from thinking (0.16 to 0.10). The open floor skip fired 3 times in about 18,800 calm looks, because the maze nearly always has a wall within 2.5 tiles. A benchmark on an open map would show it.
 
+Measured again on 26 November 2026, on the Windows machine, with the old build run beside the new one in the same sitting (the roadmap's 6o has the numbers): leaving stock HTN and stock steering changed nothing for idle mobs and made fights about 15 percent cheaper, with steering at 0.32 ms and the new combat loop at 0.10 ms for 30 fighting mobs. Two false starts are worth knowing about: a benchmark run while the machine is doing anything else doubles every number, no-AI modes included, so compare the stock HTN rows between two runs before trusting a change; and an old build run from a side folder reads this repo's Resources, so it has to get its own copy of `Resources` and `RobustToolbox/Resources` two levels up from its DLL, and `bin/Content.Server` and `bin/Content.Client` folders beside it, or the brains never think and the host refuses to start.
+
 Still open:
 
 1. Skip the fan where the flow field already knows the way. On arrows, walls are not felt anyway, so only mobs need checking, and `CFFlankingSystem` already tracks enemies in reach.
 2. Idle mobs need almost nothing. A mob with no goal beyond `Idle` or `Wander` can think once a second instead of twice, and walk without feelers in open floor.
-3. Our own update loop instead of riding stock steering. Stock steering still runs its own pass per mob and calls ours through an event. Stock forces one thread because of "dependency issues across threads", and engine lookups and rays are not safe to call from several, so threading would only work for the pure math once the world has been read.
+3. Done on 26 November 2026: our own update loop, `CFGOAPSteeringSystem.Update`, instead of riding stock steering, which ran its own pass per mob and called ours through an event. Stock forces one thread because of "dependency issues across threads", and engine lookups and rays are not safe to call from several, so threading would only work for the pure math once the world has been read.
 
 ## Checks in a real client
 

@@ -1,12 +1,13 @@
-using Content.Server.NPC.Components;
+using Content.Server.CF.GOAP.Combat;
 using Content.Shared.CF.GOAP;
 using Content.Shared.CombatMode;
 
 namespace Content.Server.CF.GOAP.Steps;
 
 /// <summary>
-/// Lets stock melee swing, which CF turns into Strikes, while it keeps in reach. It stands while the target stands and
-/// walks with them when they move, so it can swing on the move instead of waiting for the next think to chase.
+/// Lets the GOAP melee loop swing (<see cref="CFGOAPCombatSystem"/>), which CF turns into Strikes, while it keeps in
+/// reach. It stands while the target stands and walks with them when they move, so it can swing on the move instead of
+/// waiting for the next think to chase.
 /// </summary>
 public sealed partial class CFGOAPStrikeStepSystem : CFGOAPStepSystem
 {
@@ -23,7 +24,7 @@ public sealed partial class CFGOAPStrikeStepSystem : CFGOAPStepSystem
         // A creature with several attacks takes the best one that reaches this target.
         _attacks.PickFor(ent.Owner, target);
         _combatMode.SetInCombatMode(ent, true);
-        EnsureComp<NPCMeleeCombatComponent>(ent).Target = target;
+        EnsureComp<CFGOAPMeleeComponent>(ent).Target = target;
         Steering.Engage(ent, target);
     }
 
@@ -36,6 +37,6 @@ public sealed partial class CFGOAPStrikeStepSystem : CFGOAPStepSystem
 
     public override void End(Entity<CFGOAPComponent> ent, CFGOAPActionPrototype action)
     {
-        RemComp<NPCMeleeCombatComponent>(ent);
+        RemComp<CFGOAPMeleeComponent>(ent);
     }
 }

@@ -19,11 +19,12 @@ Content.Server/_CF/GOAP/
   CFGOAPSystem.*        Decides: think, choose a goal, run the plan. Reflexes and node choice are partials
   CFGOAPPlanner         Backward A* over the facts. Plain code, so it tests without a game
   CFGOAPComponent       The brain
-  CFGOAPOperator        The bridge from HTN
+  CFGOAPDriverSystem    Wakes, sleeps and ticks every brain. A creature with a brain has no stock HTN
   Sensors/              Say what is true, one system per subject
   Steps/                Do the work, one system per CFGOAPStep
   Tactics/              Puts numbers on a fight: target scores, and what an action is worth
-  Steering/             Feelers, flow fields, doors and glass, on top of stock steering
+  Steering/             Its own context steering loop: behaviours, feelers, the safety circle, flow fields, doors and glass
+  Combat/               Swings and shoots for the Close, Strike and Shoot steps
   Sleep/                Switches a brain off while no player is near
   DecisionLog/          DEBUG, to be removed: the decision log
   Encounters/           The spawner and groups
@@ -36,7 +37,7 @@ Resources/Prototypes/_CF/GOAP/
 
 ## One think
 
-`CFGOAPOperator` calls `Tick` every tick, and `Tick` calls `Think` twice a second, or once a second while the goal has `calm: true` (`Idle` and `GoHome`). Being hurt, or an order from an encounter's leader, makes it think at once.
+`CFGOAPDriverSystem` calls `Tick` on every awake brain each tick, and `Tick` calls `Think` twice a second, or once a second while the goal has `calm: true` (`Idle` and `GoHome`). Being hurt, or an order from an encounter's leader, makes it think at once.
 
 1. `Think` raises `CFGOAPSenseEvent`. Every sensor system handles it and adds facts. `CFGOAPSightSensorSystem` goes first, because it decides who the creature is after and the others read that.
 2. Reflexes can force a goal.
@@ -49,24 +50,49 @@ Then `RunStep` looks the current action's `step` up in a table of step systems a
 
 Built on 13 November 2026 to stop twitching. Tests: `CFGOAPMovementTest`, `CFGOAPSteeringMathTest`.
 
-- **Aiming between directions.** Stock steering picks the best of 12 directions, so a creature heading 15 degrees off one zigzags between two. For GOAP mobs a marked edit in `NPCSteeringSystem.Steer` calls `CFGOAPSteeringMath.Aim`, which fits a curve through the best slot and its neighbours and aims at its peak.
-- **Arrive slows and stops.** `Arrive` slows over the profile's `arriveRadius` (default 1.5 tiles), never below 30% speed, and stops within 0.1 tiles of `Standoff` short of the goal. It aims a moving creature's position up to 0.4 seconds ahead, and adds the goal's speed away from it, so it keeps up with someone walking off. Once stopped (`Settled`) it stays until the goal is `Resume` further off, so a small shuffle does not set it walking. Settled, it clears stock's interest, because stock only eases old interest toward zero and any interest at all is a step at full input: that was a creature walking on past where it stopped. Habits (wall following, separation) are skipped while settled.
+- **Aiming between directions.** Stock steering picks the best of 12 directions, so a creature heading 15 degrees off one zigzags between two. `CFGOAPSteeringSystem.Drive` calls `CFGOAPSteeringMath.Aim`, which fits a curve through the best slot and its neighbours and aims at its peak.
+- **Arrive slows and stops.** `Arrive` slows over the profile's `arriveRadius` (default 1.5 tiles), never below 30% speed, and stops within 0.1 tiles of `Standoff` short of the goal. It aims a moving creature's position up to 0.4 seconds ahead, and adds the goal's speed away from it, so it keeps up with someone walking off. Once stopped (`Settled`) it stays until the goal is `Resume` further off, so a small shuffle does not set it walking. Settled, it clears the interest map, because the map only eases old interest toward zero and any interest at all is a step at full input: that was a creature walking on past where it stopped. Habits (wall following, separation) are skipped while settled.
 - **Closing on a creature.** `Chase` is `Arrive` with a standoff of 0.85 tiles (bodies touch at 0.7, a Strike reaches 1.25) and a resume of 0.25. The target's own felt interest is skipped, or the feelers would drive it into their body. `Close` ends the moment `CFGOAPSightSensorSystem.InReach` says so, not at the next think.
-- **Swinging on the move.** When a Strike is next in the plan, `Close` puts `NPCMeleeCombat` on at the start, so stock melee swings the moment the target is in weapon range. `Strike` uses `Engage`: the same arrive, ignoring other enemies, so it stands while the target stands and walks with them when they move.
+- **Swinging on the move.** When a Strike is next in the plan, `Close` puts `CFGOAPMelee` on at the start, so the melee loop (`CFGOAPCombatSystem`) swings the moment the target is in weapon range. `Strike` uses `Engage`: the same arrive, ignoring other enemies, so it stands while the target stands and walks with them when they move.
 - **Idle walks.** `Wander` picks a spot 1.5 tiles up to `wanderDistance` (4) away that it can stand on and walk straight to, inside its home range, walks there slowing down, and rests `wanderRestMin` to `wanderRestMax` seconds (1.5 to 4). Past 60% of its home range it only picks spots back toward home, so it never needs sending home. A walk that takes too long is given up and it rests where it is. `Cowardly` rests 0.5 to 1.5 seconds and walks 3 tiles at most.
 - **The safety circle measures to bodies.** It used to measure other creatures to their whole bounds, which the 2.5 tile flanking sensor sets, so a creature was pushed off anything within about 1.67 tiles of another combatant and stepped back and forth there. It now uses `GetHardAABB`.
 - `MoveTo` to a spot near the one it is already walking to only moves the spot, so `Flank` re-aiming every half second does not restart the walk.
 
+## Running a brain
+
+`CFGOAPDriverSystem` runs every brain, since 26 November 2026. Before that a brain was the one operator of a stock HTN plan, and waking meant waiting for HTN to plan again.
+
+- A creature with `CFGOAP` has no `HTN`: the driver removes whatever its body brought as the brain initialises. So a stock mob given a brain, as an encounter does, thinks with the brain alone, `CFGOAPBrain` sets no root task, and a monster on a stock body no longer repeats `HTN` to beat the first parent.
+- Awake is `CFGOAPComponent.Awake`, which only `Wake` and `Sleep` set; `IsAwake` reads it. `ActiveNPCComponent` is stock HTN's, and a brain never has it. `Wake` refuses a body with a player or a mind in it, or one that is down; a player attaching sleeps the brain and leaving wakes it, as going down and getting up do.
+- `Restart` after changing a brain's lists or profile, as `Enlist` does. `Pause` and `Resume` for a companion that stock steering walks: it stays awake, so steering runs, but does not think.
+- `npc.enabled` still stops every brain, so a test that turns NPCs off keeps the world still. `NPCSystem.IsNpc` counts a brain as an NPC (a marked edit), so combat mode gives it no mouse rotator.
+- Stock HTN stays for stock mobs and the training dummy. A test that wants a CF body on it calls `CFStockAi.MakeStock`, which puts an `HTN` back and wakes it.
+- Steering and combat are ours too, since the same day: see the next section. What GOAP still takes from stock NPC code is `NpcFactionMember` on the bodies, which stock HTN mobs read to pick their targets, and the stock melee system to swing a weapon when a Command order drives a stock mob (that mob keeps its HTN asleep and its own steering off).
+
+## The steering loop
+
+`CFGOAPSteeringSystem.Update` steers every creature with `CFGOAPSteeringComponent` whose `Moving` is set, which `Steer` sets and `Stop` clears. Until 26 November 2026 the system wrote into stock steering's maps during its `NPCSteeringEvent` and stock chose the direction; now `Drive` does the whole tick, in the same order, so nothing moved differently:
+
+1. Each behaviour `Add`s interest in the 12 directions (`CFGOAPSteeringMath.Directions`), in the mover's frame. A settled Arrive clears the interest first.
+2. `Feel` adds the feelers' danger and the safety circle's override, as before, and `ApplySpeed` the speed share.
+3. `Separation` adds a little danger toward allies moving the same way within 0.6 tiles, which is stock's Separation on CF factions.
+4. `Blend` eases the maps: interest a third of the way toward nothing each tick at 30 a second, danger a third of the way toward this tick's. A wish written every tick holds at about two thirds. This is stock's blend, and it is what keeps a creature from twitching.
+5. The best direction after danger is taken from interest, aimed between slots by `Aim`, becomes `InputMoverComponent.CurTickSprintMovement`, as a held key would, before physics runs (`UpdatesBefore SharedPhysicsSystem`).
+
+`Stop`, the component going away, and `npc.enabled` turning off all zero that input, or the body would slide on with its last one. A `Hold` behaviour wants nothing, so the input is zero.
+
+`CFGOAPCombatSystem` swings and shoots. `CFGOAPMeleeComponent` on a creature, with a `Target`, swings its weapon or its own attack each tick the target is within the weapon's range and a clear line, and `CFGOAPRangedComponent` shoots the gun in hand once the target has been in a clear line for 0.2 seconds, facing it first and aiming ahead of its movement. Both put the creature in combat mode while they are on it and take it out after, as stock NPC combat did. Stock's melee loop also walked the creature after its target; here only the steps say where a creature stands.
+
 ## Sleeping
 
-`CFGOAPSleepSystem` puts a brain to sleep while no living player is within `WakeFeet` (default 60) and wakes it when one comes in. Sleeping is stock `NPCSystem.SleepNPC`: it removes `ActiveNPCComponent`, so HTN, the plan, sensors and steering all stop, and the operator's `TaskShutdown` ends the step. The brain keeps `Target`, `Lkp` and `Home`, so it carries on from there when woken. Waking is `WakeNPC`, and HTN starts the operator again.
+`CFGOAPSleepSystem` puts a brain to sleep while no living player is within `WakeFeet` (default 60) and wakes it when one comes in. Sleeping is `CFGOAPDriverSystem.Sleep`: it ends the step, drops the plan and clears `Awake`, so sensors and steering stop too. The brain keeps `Target`, `Lkp` and `Home`, so it carries on from there when woken. Waking is `Wake`, and the brain thinks on its next tick.
 
 - A brain with `NeverSleeps` stays awake whatever the players do. A tribe sets it on its members.
 - It only sleeps once no player has been near for `SleepDelay` (default 10 seconds), so walking along the edge of the range does not flip it. A new creature waits out the delay too.
 - It stays awake while it can see an enemy, is on fire, or is under a Command order, and sleeps once that ends. Freezing mid-fight would look wrong.
 - Being hurt by an enemy wakes it and its whole encounter group, so an arrow from past 60 feet still gets an answer. `CFGOAPPainSensorSystem` calls `Wake`.
-- Only a living body with a player in it counts, as for the encounter spawner, so ghosts and aghosts wake nothing. A body with a player or a mind in it, or one that is down, is left to stock.
-- `cf.goap_sleep` turns it off. Integration tests turn it off in `PoolManager.Cvars.cs`, because their heroes have no player in them. `CFGOAPSleepTest` turns it on.
+- Only a living body with a player in it counts, as for the encounter spawner, so ghosts and aghosts wake nothing. A body with a player or a mind in it, or one that is down, is left to the driver.
+- `cf.goap_sleep` turns it off. Integration tests turn it off in `PoolManager.Cvars.cs`, because their heroes have no player in them. `CFGOAPSleepTest` turns it on. Four of its tests also keep `npc.enabled` off, so only the sleep system touches whether a brain is awake; the two `ItFightsAgain` tests keep NPCs on and check that a woken brain gets its HTN plan back, picks `KillTarget` and hits the player (the hero starts as a friend, or seeing it would keep the boss awake).
 - `WakeFeet` and `SleepDelay` are `CFGOAP` fields, so a boss can wake from further away.
 
 ## How to add to it
@@ -138,7 +164,7 @@ Only `Navigate` deals with these, so a step that moves any other way cannot get 
 
 ## Feelers and the safety circle
 
-`CFGOAPSteeringSystem.Feel` runs on every steering tick, inside stock's `NPCSteeringEvent`, and is most of what GOAP costs. To keep it cheap it does not look every tick:
+`CFGOAPSteeringSystem.Feel` runs on every steering tick, from `Drive`, and is most of what GOAP costs. To keep it cheap it does not look every tick:
 
 - The fan looks every third tick (`FeelEvery`), or at once after a turn of more than 30 degrees, after `Steer` or `Stop`, or every tick while a dangerous tile is close. What it found holds in between: `FeelerTarget` keeps its danger, and `FanMobs` adds its chase or avoid interest again each tick.
 - At each look the three rays reach only the feeler's length. Past that a ray can only spot an enemy, so a long ray out to `FeelerSight` is cast every 0.25 seconds, or at once after a turn, and `SightMobs` holds what it saw. The sight sensor reads `Felt`, which this sets.
@@ -160,7 +186,7 @@ A flow field reaches 20 tiles. For a known place further off, `CFGOAPSteeringSys
 
 ## Shooting
 
-`Shoot` is an action like `Strike`, and the step hands the work to stock NPC shooting, which CF turns into Strikes. It needs `HasShot`: `CFGOAPShotSensorSystem` sets that for a loaded gun or bow in hand with the same line check stock shooting makes, so glass it can see through does not count. Its cost is 0.9, under a clean Strike, so an archer stays where it is even with an enemy beside it. Out of arrows, or with no line, it plans `Close` and `Strike` as anything else does. It keeps the empty bow in hand and uses its claws.
+`Shoot` is an action like `Strike`, and the step hands the work to the ranged loop in `CFGOAPCombatSystem`, which CF turns into Strikes. It needs `HasShot`: `CFGOAPShotSensorSystem` sets that for a loaded gun or bow in hand with the same line check stock shooting makes, so glass it can see through does not count. Its cost is 0.9, under a clean Strike, so an archer stays where it is even with an enemy beside it. Out of arrows, or with no line, it plans `Close` and `Strike` as anything else does. It keeps the empty bow in hand and uses its claws.
 
 `Shoot` has no `valuedBy`, so it does not weigh Multiple Attack Penalty. The action pool still paces its shots. `CFStrikeSystem.TryPreviewMelee` has no ranged version yet.
 
@@ -231,5 +257,5 @@ Animal companions, familiars, eidolons, constructs and thralls all have `CFCompa
 - **Home is the master.** `CFGOAPCompanionSensorSystem` sets `Home` to the master's position on every think, before the home sensor reads it, and the `HasMaster` fact.
 - **Following.** With nothing to fight, a companion plans `StayWithMaster` (priority 1.6, above `GoHome` and `Idle`, so it never wanders off). The `Follow` step keeps a place 1.5 tiles behind the master, by the way they last walked. It moves the place every tick and passes the master's speed on (`PointVelocity`), so it walks with them; when they stop it slows down, stands, and only sets off again once its place has moved a tile. Further companions of one master stand 40 degrees out to alternate sides. A wall behind the master puts it on its own side instead. Round a corner it uses `Travel`.
 - **The leash.** Companions use `CFGOAPLair` with `engageTiles: 12` (so they never just guard), `leashTiles: 10` and `chaseTime: 20`, except while they have an order. Pointing at the master sets `Returning`, which sends it home at once.
-- **Fetching** walks the companion with stock steering, so `CFCompanionSystem` switches its HTN off for the trip (`BrainPaused`) and back on after, as the Command spell does for stock mobs.
+- **Fetching** walks the companion with `CFGOAPSteeringSystem.Navigate`, so `CFCompanionSystem` pauses its brain for the trip (`BrainPaused`, `CFGOAPDriverSystem.Pause`) and resumes it after. The Command spell does the like for a stock mob by switching its HTN off.
 - A companion needs `CombatMode` for the Strike step, which a clean bot body lacks, so the base gives it.

@@ -4,8 +4,6 @@ using Content.IntegrationTests.Fixtures;
 using Content.IntegrationTests.Tests.CF;
 using Content.Server.CF.GOAP;
 using Content.Server.CF.GOAP.Sensors;
-using Content.Server.NPC.HTN;
-using Content.Server.NPC.Systems;
 using Content.Shared.Actions;
 using Content.Shared.Actions.Components;
 using Content.Shared.CCVar;
@@ -91,7 +89,6 @@ public sealed class CFJuvenileHornedDragonTest : GameTest
     private EntityUid SpawnStillDragon(int x, int y)
     {
         var dragon = SEntMan.SpawnAttachedTo(Dragon, _map.Local(x, y));
-        SEntMan.RemoveComponent<HTNComponent>(dragon);
         SEntMan.RemoveComponent<CFGOAPComponent>(dragon);
         return dragon;
     }
@@ -408,7 +405,7 @@ public sealed class CFJuvenileHornedDragonTest : GameTest
             hero = SEntMan.SpawnEntity("CFDragonTestHero", _map.Local(5, 0));
             SEntMan.System<SharedPhysicsSystem>().WakeBody(dragon);
             SEntMan.System<SharedPhysicsSystem>().WakeBody(hero);
-            SEntMan.System<NPCSystem>().WakeNPC(dragon);
+            SEntMan.System<CFGOAPDriverSystem>().Wake(dragon);
             config.SetCVar(CCVars.NPCEnabled, true);
         });
 

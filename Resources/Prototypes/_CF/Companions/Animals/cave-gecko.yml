@@ -39,9 +39,6 @@
   description: "A young cave gecko companion."
   suffix: Companion
   components:
-  - type: HTN
-    rootTask:
-      task: CFGOAPCompound
   - type: NpcFactionMember
     factions:
     - Passive

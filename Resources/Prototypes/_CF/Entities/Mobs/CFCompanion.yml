@@ -38,9 +38,6 @@
     interfaces:
       enum.StrippingUiKey.Key:
         type: StrippableBoundUserInterface
-  - type: HTN
-    rootTask:
-      task: CFGOAPCompound
   - type: CFFaction
     faction: Neutral
   - type: NpcFactionMember
@@ -96,9 +93,6 @@
   description: An eidolon, animal companion, familiar, or summon. It fights for its summoner, and goes for the creature they point at first.
   suffix: Companion
   components:
-  - type: HTN
-    rootTask:
-      task: CFGOAPCompound
   - type: NpcFactionMember
     factions:
     - Passive

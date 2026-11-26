@@ -4,7 +4,6 @@ using Content.IntegrationTests.Tests.CF.GOAP.DecisionLog;
 using Content.Server.CF.GOAP;
 using Content.Server.CF.GOAP.Encounters;
 using Content.Server.CF.GOAP.Steering;
-using Content.Server.NPC.Systems;
 using Content.Shared.CCVar;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Combat;
@@ -117,7 +116,7 @@ public sealed class CFGOAPObstacleTest : CFGOAPLoggedTest
     {
         Config.SetCVar(CCVars.NPCEnabled, true);
         SEntMan.System<SharedPhysicsSystem>().WakeBody(mob);
-        SEntMan.System<NPCSystem>().WakeNPC(mob);
+        SEntMan.System<CFGOAPDriverSystem>().Wake(mob);
     }
 
     private int Hp(EntityUid mob)

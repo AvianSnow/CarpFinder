@@ -1,6 +1,5 @@
 using System.Numerics;
 using Content.Server.CF.GOAP.Encounters;
-using Content.Server.NPC.Components;
 using Content.Shared.CF.GOAP;
 using Content.Shared.Mobs.Components;
 using Robust.Shared.Map;
@@ -203,7 +202,7 @@ public sealed partial class CFGOAPSteeringSystem
             && steering.Behaviors[0] is { Kind: CFGOAPSteeringKind.Arrive, Standoff: 0f } current
             && MathF.Abs(current.Radius - profile.ArriveRadius) < 0.001f
             && (old - point).Length() < FieldGoalSlack
-            && HasComp<NPCSteeringComponent>(uid))
+            && steering.Moving)
         {
             steering.Point = point;
             return;

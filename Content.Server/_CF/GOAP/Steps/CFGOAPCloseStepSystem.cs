@@ -1,5 +1,5 @@
+using Content.Server.CF.GOAP.Combat;
 using Content.Server.CF.GOAP.Sensors;
-using Content.Server.NPC.Components;
 using Content.Shared.CF.GOAP;
 using Content.Shared.CombatMode;
 
@@ -25,11 +25,11 @@ public sealed partial class CFGOAPCloseStepSystem : CFGOAPStepSystem
 
         Steering.Chase(ent, quarry);
 
-        // Stock melee only swings once the target is in range, so it is safe to have it ready the whole way.
+        // The melee loop only swings once the target is in reach, so it is safe to have it ready the whole way.
         if (Goap.NextAction(ent)?.Step == CFGOAPStep.Strike)
         {
             _combatMode.SetInCombatMode(ent, true);
-            EnsureComp<NPCMeleeCombatComponent>(ent).Target = quarry;
+            EnsureComp<CFGOAPMeleeComponent>(ent).Target = quarry;
         }
     }
 
@@ -48,6 +48,6 @@ public sealed partial class CFGOAPCloseStepSystem : CFGOAPStepSystem
 
     public override void End(Entity<CFGOAPComponent> ent, CFGOAPActionPrototype action)
     {
-        RemComp<NPCMeleeCombatComponent>(ent);
+        RemComp<CFGOAPMeleeComponent>(ent);
     }
 }

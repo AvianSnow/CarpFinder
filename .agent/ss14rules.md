@@ -84,7 +84,7 @@ One directed component + event pair. A second subscriber throws `Duplicate Subsc
 - `GunCombatCompound`'s `JukeOperator` strafes for the whole plan, not once. Its `MoveToOperator` uses `shutdownState: PlanFinished`, which leaves steering registered, and an NPC that has arrived then keeps its last move input forever. Strafing hides that, so take both out together.
 - A bow holds one arrow, and nothing in stock AI reloads a gun. `CFArrowSupply` nocks the next one.
 - Kobolds and other `MobBaseAncestor` mobs use the `monkey` inventory template, which has no pockets, belt or back. Stock `pocket1` also depends on `jumpsuit`. CF kobolds use the `CFKobold` template (`Resources/Prototypes/_CF/InventoryTemplates/kobold.yml`): a pocket, a belt and a back slot, with `CFKoboldBackpack` on the back from their gear.
-- With two parents, the first parent's copy of a component wins. `parent: [ CFMobSomething, CFGOAPBrain ]` keeps the mob's own `HTN`, which is why `CFGOAPSystem.OnBrainInit` sets the root task.
+- With two parents, the first parent's copy of a component wins. `parent: [ CFMobSomething, CFGOAPBrain ]` keeps the mob's own `HTN`, which is why `CFGOAPDriverSystem` removes `HTN` from anything with a brain as it initialises.
 - A thrown item without `LandAtCursor` ends its flight at about 80% of the way and slides the rest, so it never hits what the cursor is on. Every thrown weapon needs it, and `CFThrownWeaponTest` checks that.
 - `BeforeThrowEvent.Direction` is read-only and already clamped to `HandsComponent.ThrowRange`. Range has to change in `HandsSystem.ThrowHeldItem`.
 - Stock times a flight as if air did not slow the item, so a long throw lands short. `CFStrikeSystem.OnThrown` stretches `LandTime` for thrown weapons.
@@ -129,7 +129,7 @@ One directed component + event pair. A second subscriber throws `Duplicate Subsc
 - `SharedContainerSystem.GetAllContainers` on an entity with no `ContainerManagerComponent` throws. `TryComp` it first when walking into items.
 - `GetTileMixture` returns null for a tile under a wall, window, grille or closed door. That is not vacuum.
 - A steering safety radius must stay under 0.5 tiles. The middle of a one-tile doorway is 0.5 from each side, so anything larger overrides the way forward and holds the NPC there.
-- `Vector2.Normalize(Vector2.Zero)` is NaN. In `NPCSteeringComponent.Interest` or `Danger`, stock's blend keeps a NaN forever and the NPC stands still with no error. Check before normalizing.
+- `Vector2.Normalize(Vector2.Zero)` is NaN. In `CFGOAPSteeringComponent.Interest` or `Danger` (stock's `NPCSteeringComponent` has the same two), the blend keeps a NaN forever and the NPC stands still with no error. Check before normalizing.
 - The path graph takes a few seconds to build after a map loads. An NPC test that needs a real path should run ticks first.
 - A map with no `MapAtmosphere` kills low-HP mobs in seconds, with full CF HP: a kobold's bar is only 7. Every map mobs stand on needs the block in `meteor-arena.yml`.
 - An occasional test failure in `SetUp` with `Value cannot be null. (Parameter 'key')` from `PrototypeManager.Freeze` is an engine race. Rerun the test.

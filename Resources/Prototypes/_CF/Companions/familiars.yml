@@ -19,9 +19,6 @@
   description: A bat familiar. It keeps close to its master and does not fight.
   suffix: Familiar
   components:
-  - type: HTN
-    rootTask:
-      task: CFGOAPCompound
   - type: NpcFactionMember
     factions:
     - Passive
@@ -42,9 +39,6 @@
   description: A cat familiar. It keeps close to its master and does not fight.
   suffix: Familiar
   components:
-  - type: HTN
-    rootTask:
-      task: CFGOAPCompound
   - type: NpcFactionMember
     factions:
     - Passive
@@ -65,9 +59,6 @@
   description: A raven familiar. It keeps close to its master and does not fight. It is drawn as a parrot until there is raven art.
   suffix: Familiar
   components:
-  - type: HTN
-    rootTask:
-      task: CFGOAPCompound
   - type: NpcFactionMember
     factions:
     - Passive
@@ -88,9 +79,6 @@
   description: A owl familiar. It keeps close to its master and does not fight. It is drawn as a parrot until there is owl art.
   suffix: Familiar
   components:
-  - type: HTN
-    rootTask:
-      task: CFGOAPCompound
   - type: NpcFactionMember
     factions:
     - Passive
@@ -111,9 +99,6 @@
   description: A rat familiar. It keeps close to its master and does not fight. It is drawn as a mouse until there is rat art.
   suffix: Familiar
   components:
-  - type: HTN
-    rootTask:
-      task: CFGOAPCompound
   - type: NpcFactionMember
     factions:
     - Passive
@@ -134,9 +119,6 @@
   description: A toad familiar. It keeps close to its master and does not fight. It is drawn as a frog until there is toad art.
   suffix: Familiar
   components:
-  - type: HTN
-    rootTask:
-      task: CFGOAPCompound
   - type: NpcFactionMember
     factions:
     - Passive
@@ -157,9 +139,6 @@
   description: A fox familiar. It keeps close to its master and does not fight.
   suffix: Familiar
   components:
-  - type: HTN
-    rootTask:
-      task: CFGOAPCompound
   - type: NpcFactionMember
     factions:
     - Passive
@@ -180,9 +159,6 @@
   description: A snake familiar. It keeps close to its master and does not fight.
   suffix: Familiar
   components:
-  - type: HTN
-    rootTask:
-      task: CFGOAPCompound
   - type: NpcFactionMember
     factions:
     - Passive

@@ -40,7 +40,7 @@ public sealed class CFMonsterTest : GameTest
             {
                 if (proto.Abstract
                     || proto.ID.Contains("Test")
-                    || !proto.TryComp<HTNComponent>(out var htn, factory)
+                    || !proto.TryComp<HTNComponent>(out _, factory) && !proto.TryComp<CFGOAPComponent>(out _, factory)
                     || !proto.TryComp<CFCombatantComponent>(out var combatant, factory)
                     || !proto.TryComp<CFFactionComponent>(out var faction, factory)
                     || faction.Faction != "Monster")
@@ -49,9 +49,6 @@ public sealed class CFMonsterTest : GameTest
                 monsters++;
                 if (!proto.TryComp<CFGOAPComponent>(out _, factory))
                     failures.Add($"{proto.ID} has no GOAP brain: give its base CFGOAPBrain as a parent");
-
-                if (htn.RootTask.Task != "CFGOAPCompound")
-                    failures.Add($"{proto.ID} still names {htn.RootTask.Task} as its root task");
 
                 if (!combatant.DiesAtZeroHp)
                     failures.Add($"{proto.ID} does not die at 0 Hit Points: give it CFBaseMonster as a parent");

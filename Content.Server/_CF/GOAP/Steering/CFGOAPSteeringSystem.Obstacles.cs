@@ -1,6 +1,6 @@
 using System.Numerics;
+using Content.Server.CF.GOAP.Combat;
 using Content.Server.Destructible;
-using Content.Server.NPC.Components;
 using Content.Shared.CF.Combat;
 using Content.Shared.Climbing.Components;
 using Content.Shared.Climbing.Systems;
@@ -34,8 +34,7 @@ public enum CFGOAPBlocker : byte
 }
 
 /// <summary>
-/// Everything in the way that is not a wall: doors, glass, tables, crates, barrels. Stock handles these from its path code,
-/// and GOAP has no paths, so a flow field counts them as slow tiles and the creature deals with them when an arrow leads
+/// Everything in the way that is not a wall: doors, glass, tables, crates, barrels. A flow field counts them as slow tiles and the creature deals with them when an arrow leads
 /// it into one. What it cannot deal with is blocked, so it goes around.
 /// </summary>
 public sealed partial class CFGOAPSteeringSystem
@@ -275,7 +274,7 @@ public sealed partial class CFGOAPSteeringSystem
             if (ent.Comp.Working)
             {
                 ent.Comp.Working = false;
-                RemComp<NPCMeleeCombatComponent>(ent);
+                RemComp<CFGOAPMeleeComponent>(ent);
                 WalkUpTo(ent, obstacle);
             }
 
@@ -296,7 +295,7 @@ public sealed partial class CFGOAPSteeringSystem
             if (kind == CFGOAPBlocker.Smash)
             {
                 _combatMode.SetInCombatMode(ent, true);
-                EnsureComp<NPCMeleeCombatComponent>(ent).Target = obstacle;
+                EnsureComp<CFGOAPMeleeComponent>(ent).Target = obstacle;
             }
         }
 
@@ -373,7 +372,7 @@ public sealed partial class CFGOAPSteeringSystem
         ent.Comp.ObstacleField = null;
         ent.Comp.Working = false;
         ent.Comp.Rerouted = true;
-        RemComp<NPCMeleeCombatComponent>(ent);
+        RemComp<CFGOAPMeleeComponent>(ent);
     }
 
     /// <summary>Takes it off the map and looks for another way. With none, it stops trying for a while.</summary>

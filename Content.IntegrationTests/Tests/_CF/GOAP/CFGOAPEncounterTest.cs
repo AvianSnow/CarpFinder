@@ -6,7 +6,6 @@ using Content.Server.CF.GOAP;
 using Content.Server.CF.GOAP.Encounters;
 using Content.Server.CF.GOAP.Steering;
 using Content.Server.NPC.HTN;
-using Content.Server.NPC.Systems;
 using Content.Shared.CCVar;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Detection;
@@ -140,7 +139,7 @@ public sealed class CFGOAPEncounterTest : CFGOAPLoggedTest
         {
             var plain = SEntMan.SpawnEntity("CFKoboldWarrior", _map.Local(3, 0));
             Assert.That(SEntMan.HasComponent<CFGOAPComponent>(plain), "Every CF monster thinks with GOAP.");
-            Assert.That(SEntMan.GetComponent<HTNComponent>(plain).RootTask.Task.Id, Is.EqualTo("CFGOAPCompound"));
+            Assert.That(SEntMan.HasComponent<HTNComponent>(plain), Is.False, "The brain removes stock HTN.");
 
             var spawner = Spawner();
             Encounters.Spawn(spawner);
@@ -288,7 +287,7 @@ public sealed class CFGOAPEncounterTest : CFGOAPLoggedTest
             foreach (var member in spawner.Comp.Members)
             {
                 SEntMan.System<SharedPhysicsSystem>().WakeBody(member);
-                SEntMan.System<NPCSystem>().WakeNPC(member);
+                SEntMan.System<CFGOAPDriverSystem>().Wake(member);
             }
         });
 
@@ -340,7 +339,7 @@ public sealed class CFGOAPEncounterTest : CFGOAPLoggedTest
             foreach (var member in spawner.Comp.Members)
             {
                 SEntMan.System<SharedPhysicsSystem>().WakeBody(member);
-                SEntMan.System<NPCSystem>().WakeNPC(member);
+                SEntMan.System<CFGOAPDriverSystem>().Wake(member);
             }
         });
 

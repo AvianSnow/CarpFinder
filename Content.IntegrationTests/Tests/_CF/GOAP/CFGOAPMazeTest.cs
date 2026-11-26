@@ -6,7 +6,6 @@ using Content.Server.Atmos.EntitySystems;
 using Content.Server.CF.GOAP;
 using Content.Server.CF.GOAP.DecisionLog;
 using Content.Server.CF.GOAP.Steering;
-using Content.Server.NPC.Systems;
 using Content.Shared.Atmos.Components;
 using Content.Shared.CCVar;
 using Content.Shared.CF.GOAP;
@@ -82,7 +81,7 @@ public sealed class CFGOAPMazeTest : CFGOAPLoggedTest
         var goap = SEntMan.GetComponent<CFGOAPComponent>(boss);
         goap.Home = At(home.X, home.Y);
         SEntMan.System<SharedPhysicsSystem>().WakeBody(boss);
-        SEntMan.System<NPCSystem>().WakeNPC(boss);
+        SEntMan.System<CFGOAPDriverSystem>().Wake(boss);
         return (boss, goap);
     }
 

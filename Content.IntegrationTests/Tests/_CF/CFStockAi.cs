@@ -1,13 +1,15 @@
 using Content.Server.CF.GOAP;
 using Content.Server.CF.GOAP.Steering;
 using Content.Server.NPC.HTN;
+using Content.Server.NPC.Systems;
 using Robust.Shared.GameObjects;
 
 namespace Content.IntegrationTests.Tests.CF;
 
 /// <summary>
-/// Every CF monster thinks with a GOAP brain. A test that needs the same body on stock HTN, to compare with it or to
-/// test a stock path, takes the brain out right after spawning, before HTN has planned anything.
+/// Every CF monster thinks with a GOAP brain, and the brain removes the HTN its body brought. A test that needs the same
+/// body on stock HTN, to compare with it or to test a stock path, takes the brain out right after spawning and gives
+/// it an HTN with a stock root task.
 /// </summary>
 public static class CFStockAi
 {
@@ -15,6 +17,8 @@ public static class CFStockAi
     {
         entities.RemoveComponent<CFGOAPComponent>(mob);
         entities.RemoveComponent<CFGOAPSteeringComponent>(mob);
-        entities.GetComponent<HTNComponent>(mob).RootTask = new HTNCompoundTask { Task = rootTask };
+        var htn = entities.EnsureComponent<HTNComponent>(mob);
+        htn.RootTask = new HTNCompoundTask { Task = rootTask };
+        entities.System<NPCSystem>().WakeNPC(mob, htn);
     }
 }

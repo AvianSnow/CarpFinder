@@ -7,8 +7,7 @@ using Content.IntegrationTests.Tests.CF.GOAP.DecisionLog;
 using Content.Server.CF.Companions;
 using Content.Server.CF.GOAP;
 using Content.Server.CF.GOAP.Sensors;
-using Content.Server.NPC.Components;
-using Content.Server.NPC.Systems;
+using Content.Server.CF.GOAP.Combat;
 using Content.Shared.CCVar;
 using Content.Shared.CF.GOAP;
 using Content.Shared.Hands.EntitySystems;
@@ -109,7 +108,7 @@ public sealed class CFGOAPMovementTest : CFGOAPLoggedTest
     private void Wake(EntityUid uid)
     {
         SEntMan.System<SharedPhysicsSystem>().WakeBody(uid);
-        SEntMan.System<NPCSystem>().WakeNPC(uid);
+        SEntMan.System<CFGOAPDriverSystem>().Wake(uid);
     }
 
     /// <summary>Runs the game a sixth of a second at a time, calling <paramref name="sample"/> after each.</summary>
@@ -214,11 +213,11 @@ public sealed class CFGOAPMovementTest : CFGOAPLoggedTest
             if (boss.Comp.StepStarted
                 && boss.Comp.Step < boss.Comp.Plan.Count
                 && boss.Comp.Plan[boss.Comp.Step] == "Close")
-                readyWhileClosing |= SEntMan.HasComponent<NPCMeleeCombatComponent>(boss);
+                readyWhileClosing |= SEntMan.HasComponent<CFGOAPMeleeComponent>(boss);
         });
 
         await NpcsOff();
-        Assert.That(readyWhileClosing, "Stock melee is ready while it closes, so it swings the moment it is in reach.");
+        Assert.That(readyWhileClosing, "Melee is ready while it closes, so it swings the moment it is in reach.");
     }
 
     [Test]

@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Content.Server.CF.GOAP;
 using Content.Server.NPC.Components;
 using Content.Server.NPC.HTN;
 using Content.Shared.CCVar;
@@ -80,7 +81,7 @@ namespace Content.Server.NPC.Systems
 
         public override bool IsNpc(EntityUid uid)
         {
-            return HasComp<HTNComponent>(uid);
+            return HasComp<HTNComponent>(uid) || HasComp<CFGOAPComponent>(uid); // CarpFinder: a GOAP brain is an NPC too
         }
 
         /// <summary>

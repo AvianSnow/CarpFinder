@@ -6,7 +6,6 @@ using Content.Server.CF.GOAP;
 using Content.Server.CF.GOAP.Encounters;
 using Content.Server.CF.GOAP.Society;
 using Content.Server.CF.Temperature;
-using Content.Server.NPC.Systems;
 using Content.Shared.Botany.Components;
 using Content.Shared.Botany.Systems;
 using Content.Shared.CCVar;
@@ -124,7 +123,7 @@ public sealed class CFGOAPSocietyTest : CFGOAPLoggedTest
         var kobold = group.Members[0];
         Feed(kobold, hunger);
         SEntMan.System<SharedPhysicsSystem>().WakeBody(kobold);
-        SEntMan.System<NPCSystem>().WakeNPC(kobold);
+        SEntMan.System<CFGOAPDriverSystem>().Wake(kobold);
         return kobold;
     }
 

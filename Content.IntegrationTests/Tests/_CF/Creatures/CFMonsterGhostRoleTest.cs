@@ -5,13 +5,11 @@ using Content.IntegrationTests.Tests.CF;
 using Content.Server.CF.GOAP;
 using Content.Server.Ghost.Roles;
 using Content.Server.Ghost.Roles.Components;
-using Content.Server.NPC.HTN;
 using Content.Shared.CF.Actions;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Factions;
 using Content.Shared.Mobs;
 using Content.Shared.Mobs.Systems;
-using Content.Shared.NPC;
 using Robust.Shared.Console;
 using Robust.Shared.GameObjects;
 using Robust.Shared.Maths;
@@ -61,7 +59,7 @@ public sealed class CFMonsterGhostRoleTest : GameTest
             {
                 if (proto.Abstract
                     || proto.ID.Contains("Test")
-                    || !proto.TryComp<HTNComponent>(out _, factory)
+                    || !proto.TryComp<CFGOAPComponent>(out _, factory)
                     || !proto.TryComp<CFCombatantComponent>(out _, factory)
                     || !proto.TryComp<CFFactionComponent>(out var faction, factory)
                     || faction.Faction != "Monster")
@@ -117,7 +115,7 @@ public sealed class CFMonsterGhostRoleTest : GameTest
         Assert.Multiple(() =>
         {
             Assert.That(listed, "A free monster should be in the menu.");
-            Assert.That(SEntMan.HasComponent<ActiveNPCComponent>(mob), "Its AI should run until someone takes it.");
+            Assert.That(SEntMan.System<CFGOAPDriverSystem>().IsAwake(mob), "Its AI should run until someone takes it.");
         });
 
         var took = false;
@@ -130,7 +128,7 @@ public sealed class CFMonsterGhostRoleTest : GameTest
             Assert.That(took, "The role should be taken.");
             Assert.That(session.AttachedEntity, Is.EqualTo(mob));
             Assert.That(listed, Is.False, "A taken monster should leave the menu.");
-            Assert.That(SEntMan.HasComponent<ActiveNPCComponent>(mob), Is.False, "The AI should let go of the body.");
+            Assert.That(SEntMan.System<CFGOAPDriverSystem>().IsAwake(mob), Is.False, "The AI should let go of the body.");
             Assert.That(SEntMan.HasComponent<CFActionPoolComponent>(mob), "A player pays for actions like anyone else.");
         });
 
@@ -152,7 +150,7 @@ public sealed class CFMonsterGhostRoleTest : GameTest
         {
             Assert.That(session.AttachedEntity, Is.Not.EqualTo(mob));
             Assert.That(listed, "A monster left alive should go back in the menu.");
-            Assert.That(SEntMan.HasComponent<ActiveNPCComponent>(mob), "Its AI should take back over.");
+            Assert.That(SEntMan.System<CFGOAPDriverSystem>().IsAwake(mob), "Its AI should take back over.");
         });
     }
 

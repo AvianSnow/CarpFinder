@@ -3,7 +3,6 @@ using System.Linq;
 using Content.IntegrationTests.Fixtures;
 using Content.IntegrationTests.Tests.CF;
 using Content.Server.CF.GOAP;
-using Content.Server.NPC.Systems;
 using Content.Shared.CCVar;
 using Content.Shared.CF.Actions;
 using Content.Shared.CF.Character;
@@ -72,7 +71,7 @@ public sealed class CFHobgoblinSoldierTest : GameTest
             SEntMan.System<SharedPhysicsSystem>().WakeBody(mob);
         }
 
-        SEntMan.System<NPCSystem>().WakeNPC(mobs[0]);
+        SEntMan.System<CFGOAPDriverSystem>().Wake(mobs[0]);
     }
 
     private async Task RunNpcs(int ticks)

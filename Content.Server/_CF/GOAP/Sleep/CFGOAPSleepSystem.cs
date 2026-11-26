@@ -1,6 +1,4 @@
 using Content.Server.CF.GOAP.Encounters;
-using Content.Server.NPC.HTN;
-using Content.Server.NPC.Systems;
 using Content.Shared.CF;
 using Content.Shared.CF.Effects.Areas;
 using Content.Shared.CF.GOAP;
@@ -8,7 +6,6 @@ using Content.Shared.CF.Spells;
 using Content.Shared.Mind.Components;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
-using Content.Shared.NPC;
 using Robust.Server.Player;
 using Robust.Shared.Configuration;
 using Robust.Shared.Map;
@@ -21,7 +18,7 @@ namespace Content.Server.CF.GOAP.Sleep;
 /// Puts a GOAP brain to sleep while no living player is within its <see cref="CFGOAPComponent.WakeFeet"/>, and wakes
 /// it when one comes in. It only sleeps once no player has been near for <see cref="CFGOAPComponent.SleepDelay"/>, so
 /// a player stepping in and out of range does not flip it each time.
-/// Sleeping is stock <see cref="NPCSystem.SleepNPC"/>: HTN, the plan, steering and sensors all stop, and the creature
+/// Sleeping is <see cref="CFGOAPDriverSystem.Sleep"/>: the plan, steering and sensors all stop, and the creature
 /// stands where it is. It keeps its target and last known position, so it picks up where it was on waking.
 /// </summary>
 public sealed partial class CFGOAPSleepSystem : EntitySystem
@@ -32,9 +29,9 @@ public sealed partial class CFGOAPSleepSystem : EntitySystem
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private IPlayerManager _players = default!;
     [Dependency] private CFCommandSystem _command = default!;
+    [Dependency] private CFGOAPDriverSystem _driver = default!;
     [Dependency] private CFGOAPEncounterSystem _encounters = default!;
     [Dependency] private MobStateSystem _mobState = default!;
-    [Dependency] private NPCSystem _npc = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
 
     /// <summary>The cvar, cached. Settings are not game state.</summary>
@@ -46,13 +43,6 @@ public sealed partial class CFGOAPSleepSystem : EntitySystem
         Subs.CVar(_config, CFCVars.GoapSleep, value => _enabled = value, true);
     }
 
-    /// <summary>A new creature waits out the delay before it can sleep, as if a player had just left.</summary>
-    [SubscribeLocalEvent]
-    private void OnMapInit(Entity<CFGOAPComponent> ent, ref MapInitEvent args)
-    {
-        ent.Comp.LastWoken = _timing.CurTime;
-    }
-
     public override void Update(float frameTime)
     {
         base.Update(frameTime);
@@ -61,8 +51,8 @@ public sealed partial class CFGOAPSleepSystem : EntitySystem
 
         var now = _timing.CurTime;
         List<MapCoordinates>? players = null;
-        var query = EntityQueryEnumerator<CFGOAPComponent, HTNComponent>();
-        while (query.MoveNext(out var uid, out var goap, out var htn))
+        var query = EntityQueryEnumerator<CFGOAPComponent>();
+        while (query.MoveNext(out var uid, out var goap))
         {
             if (now < goap.NextSleepCheck)
                 continue;
@@ -75,13 +65,13 @@ public sealed partial class CFGOAPSleepSystem : EntitySystem
             if (goap.NeverSleeps || IsPlayerNear(uid, goap, players))
             {
                 goap.LastWoken = now;
-                if (!HasComp<ActiveNPCComponent>(uid))
-                    _npc.WakeNPC(uid, htn);
+                if (!_driver.IsAwake(uid))
+                    _driver.Wake((uid, goap));
                 continue;
             }
 
-            if (HasComp<ActiveNPCComponent>(uid) && now >= goap.LastWoken + goap.SleepDelay && !IsBusy((uid, goap)))
-                _npc.SleepNPC(uid, htn);
+            if (_driver.IsAwake(uid) && now >= goap.LastWoken + goap.SleepDelay && !IsBusy((uid, goap)))
+                _driver.Sleep((uid, goap));
         }
     }
 
@@ -107,17 +97,17 @@ public sealed partial class CFGOAPSleepSystem : EntitySystem
 
     private void WakeOne(EntityUid uid)
     {
-        if (!TryComp(uid, out CFGOAPComponent? goap) || !TryComp(uid, out HTNComponent? htn) || !Manages(uid))
+        if (!TryComp(uid, out CFGOAPComponent? goap) || !Manages(uid))
             return;
 
         goap.LastWoken = _timing.CurTime;
-        if (!HasComp<ActiveNPCComponent>(uid))
-            _npc.WakeNPC(uid, htn);
+        if (!_driver.IsAwake(uid))
+            _driver.Wake((uid, goap));
     }
 
     /// <summary>
-    /// A body with a player in it, or one that is down, is left to stock: it sleeps those itself, and waking one would
-    /// fight it.
+    /// A body with a player in it, or one that is down, is left to the driver: it sleeps those itself, and waking one
+    /// would fight it.
     /// </summary>
     private bool Manages(EntityUid uid)
     {

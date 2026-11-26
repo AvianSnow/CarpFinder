@@ -2,7 +2,6 @@ using Content.Server.CF.GOAP.Influence;
 using Content.Server.CF.GOAP.Sensors;
 using Content.Server.CF.GOAP.Steering;
 using Content.Server.CF.GOAP.Steps;
-using Content.Server.NPC.HTN;
 using Content.Server.CF.GOAP.Tactics;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Factions;
@@ -17,7 +16,8 @@ using Robust.Shared.Timing;
 namespace Content.Server.CF.GOAP;
 
 /// <summary>
-/// Goal-oriented planning for advanced NPCs, on top of HTN. <see cref="CFGOAPOperator"/> calls <see cref="Tick"/>.
+/// Goal-oriented planning for advanced NPCs. <see cref="CFGOAPDriverSystem"/> wakes and sleeps a brain and calls
+/// <see cref="Tick"/> on every awake one each tick.
 /// This only decides: sensors in <c>Sensors/</c> say what is true, and steps in <c>Steps/</c> do the work.
 /// It never cheats: sensors use sight, the influence maps, the last known position, and nodes.
 /// </summary>
@@ -71,17 +71,6 @@ public sealed partial class CFGOAPSystem : EntitySystem
     public bool HasStep(CFGOAPStep kind)
     {
         return _steps.ContainsKey(kind);
-    }
-
-    /// <summary>
-    /// A brain always runs the creature. With two parents the first one's <c>HTN</c> wins, so a mob with stock AI of its
-    /// own would otherwise keep that and never think, whatever <c>CFGOAPBrain</c> says.
-    /// </summary>
-    [SubscribeLocalEvent]
-    private void OnBrainInit(Entity<CFGOAPComponent> ent, ref ComponentInit args)
-    {
-        if (TryComp(ent, out HTNComponent? htn))
-            htn.RootTask = new HTNCompoundTask { Task = "CFGOAPCompound" };
     }
 
     /// <summary>Gets a brain ready to run.</summary>

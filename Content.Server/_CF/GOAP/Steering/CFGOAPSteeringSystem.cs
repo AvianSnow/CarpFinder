@@ -1,8 +1,7 @@
 using System.Numerics;
+using Content.Server.CF.GOAP.Combat;
 using Content.Server.CF.GOAP.Influence;
-using Content.Server.NPC.Components;
-using Content.Server.NPC.Events;
-using Content.Server.NPC.Systems;
+using Content.Shared.CCVar;
 using Content.Shared.CF.Combat;
 using Content.Shared.CF.Detection;
 using Content.Shared.CF.Factions;
@@ -11,9 +10,10 @@ using Content.Shared.Climbing.Components;
 using Content.Shared.Mobs.Components;
 using Content.Shared.Mobs.Systems;
 using Content.Shared.Movement.Components;
+using Content.Shared.Movement.Events;
 using Content.Shared.Movement.Systems;
-using Content.Shared.NPC;
 using Content.Shared.Physics;
+using Robust.Shared.Configuration;
 using Robust.Shared.Map;
 using Robust.Shared.Map.Components;
 using Robust.Shared.Physics;
@@ -29,11 +29,32 @@ namespace Content.Server.CF.GOAP.Steering;
 public readonly record struct CFGOAPFeelerHit(EntityUid Entity, float Distance);
 
 /// <summary>
-/// Writes steering behaviours into stock's interest map during <see cref="NPCSteeringEvent"/>, as stock juking does.
-/// Stock then removes danger from it, so walls and other mobs are still avoided.
+/// One steering tick's view of a creature: its maps, where it stands, and the turn from world directions into the
+/// mover's frame.
+/// </summary>
+public readonly record struct CFGOAPSteerArgs(CFGOAPSteeringComponent Steering, Vector2 WorldPosition, Angle OffsetRotation);
+
+/// <summary>
+/// Context steering for GOAP creatures, on a loop of its own since 26 November 2026. Each tick the behaviours a step
+/// asked for write interest in 12 directions, the feelers and the safety circle write danger, allies in the way add a
+/// little more, and the best direction left once danger is taken from interest becomes the mover input. The maps ease
+/// from tick to tick, as stock steering's did, so nothing twitches. Stock NPC steering plays no part: it still runs
+/// for stock mobs, which never have this component outside a Command order.
 /// </summary>
 public sealed partial class CFGOAPSteeringSystem : EntitySystem
 {
+    /// <summary>
+    /// How fast the maps follow this tick's values, per second. At 30 ticks a second a third of the way each tick,
+    /// which is what kept stock steering from stuttering. A wish written every tick holds at about two thirds.
+    /// </summary>
+    private const float BlendWeight = 10f;
+
+    /// <summary>How close an ally has to be, in tiles, to count as in the way. A body is 0.35 wide, theirs about 0.25.</summary>
+    private const float SeparationRadius = 0.6f;
+
+    /// <summary>Allies only nudge: well under the 1 any goal has.</summary>
+    private const float SeparationWeight = 0.25f;
+
     /// <summary>Speed changes smaller than this are not worth refreshing movement for.</summary>
     private const float SpeedStep = 0.05f;
 
@@ -113,11 +134,12 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
     /// <summary>Lava and the like are not hard, which makes them sensors. <c>Static</c> alone does not find them.</summary>
     private const LookupFlags TileLookup = LookupFlags.Static | LookupFlags.Sensors;
 
+    [Dependency] private IConfigurationManager _config = default!;
     [Dependency] private IGameTiming _timing = default!;
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private EntityLookupSystem _lookup = default!;
     [Dependency] private MovementSpeedModifierSystem _speed = default!;
-    [Dependency] private NPCSteeringSystem _npcSteering = default!;
+    [Dependency] private SharedMoverController _mover = default!;
     [Dependency] private RayCastSystem _rays = default!;
     [Dependency] private SharedMapSystem _maps = default!;
     [Dependency] private SharedPhysicsSystem _physics = default!;
@@ -136,15 +158,44 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
     private EntityUid? _feelThrough;
     private Func<EntityUid, bool> _feelIgnored = default!;
 
+    /// <summary>The cvar, cached. Settings are not game state.</summary>
+    private bool _enabled;
+
     public override void Initialize()
     {
         base.Initialize();
 
         // One delegate for every ray. A lambda per ray allocated each time.
         _feelIgnored = IsFeelIgnored;
+
+        // The input has to be in before physics moves the body this tick, as a held key would be.
+        UpdatesBefore.Add(typeof(SharedPhysicsSystem));
+        Subs.CVar(_config, CCVars.NPCEnabled, SetEnabled, true);
     }
 
-    /// <summary>Starts or changes what this creature is doing. Stock only steers something it has registered.</summary>
+    private void SetEnabled(bool enabled)
+    {
+        _enabled = enabled;
+        if (enabled)
+            return;
+
+        // Switched off mid-walk, every creature stops where it is rather than sliding on with its last input.
+        var query = AllEntityQuery<CFGOAPSteeringComponent, InputMoverComponent>();
+        while (query.MoveNext(out var uid, out _, out var mover))
+        {
+            SetInput(uid, mover, Vector2.Zero);
+        }
+    }
+
+    /// <summary>A creature whose steering goes away stands still, instead of walking on with its last input.</summary>
+    [SubscribeLocalEvent]
+    private void OnShutdown(Entity<CFGOAPSteeringComponent> ent, ref ComponentShutdown args)
+    {
+        if (!TerminatingOrDeleted(ent))
+            Halt(ent);
+    }
+
+    /// <summary>Starts or changes what this creature is doing. Nothing moves it until this has been called.</summary>
     public void Steer(
         EntityUid uid,
         List<CFGOAPSteeringBehavior> behaviors,
@@ -166,15 +217,10 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
         steering.Settled = false;
         steering.FeelCountdown = 0;
         steering.FeelForced = true;
-
-        // Stock leaves this set for good, and a creature in it does not steer at all.
-        if (TryComp(uid, out NPCSteeringComponent? stock) && stock.Status == SteeringStatus.NoPath)
-            _npcSteering.Unregister(uid, stock);
-
-        _npcSteering.Register(uid, Transform(uid).Coordinates);
+        steering.Moving = true;
     }
 
-    /// <summary>Stays where it is. This also keeps stock from walking it after a melee target.</summary>
+    /// <summary>Stays where it is.</summary>
     public void Hold(EntityUid uid, EntityUid? through = null)
     {
         Steer(uid, new List<CFGOAPSteeringBehavior> { new() { Kind = CFGOAPSteeringKind.Hold } }, through: through);
@@ -187,7 +233,7 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
             return;
 
         if (ent.Comp.Working)
-            RemComp<NPCMeleeCombatComponent>(ent);
+            RemComp<CFGOAPMeleeComponent>(ent);
 
         ent.Comp.UsingField = false;
         ent.Comp.Obstacle = null;
@@ -207,49 +253,179 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
         ent.Comp.FeelForced = true;
         ent.Comp.Route.Clear();
         ApplySpeed((ent.Owner, ent.Comp));
-        _npcSteering.Unregister(ent);
+        Halt((ent.Owner, ent.Comp));
     }
 
-    [SubscribeLocalEvent]
-    private void OnSteering(Entity<CFGOAPSteeringComponent> ent, ref NPCSteeringEvent args)
+    public override void Update(float frameTime)
     {
-        var usesStockSeek = false;
+        base.Update(frameTime);
+        if (!_enabled)
+            return;
+
+        var query = EntityQueryEnumerator<CFGOAPSteeringComponent, InputMoverComponent, TransformComponent>();
+        while (query.MoveNext(out var uid, out var steering, out var mover, out var xform))
+        {
+            if (steering.Moving)
+                Drive((uid, steering), mover, xform, frameTime);
+        }
+    }
+
+    /// <summary>
+    /// One steering tick, in the order stock steering had: behaviours and feelers first, then allies in the way, then
+    /// the maps ease toward this tick, and the best direction left once danger is taken from interest is the input.
+    /// </summary>
+    private void Drive(Entity<CFGOAPSteeringComponent> ent, InputMoverComponent mover, TransformComponent xform, float frameTime)
+    {
+        if (!mover.CanMove)
+        {
+            SetInput(ent, mover, Vector2.Zero);
+            return;
+        }
+
+        // Interest is kept in the mover's frame, so a creature on a turned grid still walks the way it means to.
+        var args = new CFGOAPSteerArgs(ent.Comp, _transform.GetWorldPosition(xform), -_mover.GetParentGridAngle(mover));
         foreach (var behavior in ent.Comp.Behaviors)
         {
-            if (behavior.Kind == CFGOAPSteeringKind.Seek)
-            {
-                usesStockSeek = true;
-                continue;
-            }
-
             // Arrive comes first and has stopped it. Habits such as keeping to walls would only nudge it off the spot,
             // and then it walks back: that back and forth is the twitch.
             if (ent.Comp.Settled && IsHabit(behavior.Kind))
                 continue;
 
-            Add(ref args, Desired(ent, behavior, args.WorldPosition, args.Steering.LastSteerDirection), behavior.Weight);
+            Add(ref args, Desired(ent, behavior, args.WorldPosition, ent.Comp.LastSteerDirection), behavior.Weight);
         }
 
-        if (ent.Comp.Behaviors.Count > 0 && !usesStockSeek)
-            args.Steering.CanSeek = false;
-
-        // Stock keeps last tick's interest and only eases it toward zero, and any interest at all is a step at full
-        // input. Without clearing it, a creature that has arrived keeps walking on for a moment and overshoots.
+        // Interest only eases toward nothing, and any interest at all is a step at full input. Without clearing it, a
+        // creature that has arrived keeps walking on for a moment and overshoots.
         if (ent.Comp.Settled)
-            Array.Clear(args.Steering.Interest);
+            Array.Clear(ent.Comp.Interest);
 
         Feel(ent, ref args);
         ApplySpeed(ent);
+        Separation(ent, ref args, xform);
+        Blend(ent.Comp, frameTime);
+
+        var best = -1;
+        var bestValue = 0f;
+        for (var i = 0; i < CFGOAPSteeringMath.DirectionCount; i++)
+        {
+            var value = Math.Clamp(ent.Comp.Interest[i] - ent.Comp.Danger[i], 0f, 1f);
+            if (value <= bestValue)
+                continue;
+
+            best = i;
+            bestValue = value;
+        }
+
+        var direction = Vector2.Zero;
+        if (best >= 0)
+        {
+            // Between the 12 directions, or a creature heading 15 degrees off one zigzags between two.
+            var slot = CFGOAPSteeringMath.Aim(ent.Comp.Interest, ent.Comp.Danger, best);
+            direction = new Angle(slot * CFGOAPSteeringMath.DirectionRadians).ToVec();
+        }
+
+        ent.Comp.LastSteerDirection = direction;
+        SetInput(ent, mover, direction);
+    }
+
+    /// <summary>Hands the direction to the mover as this tick's input, the way a held key would.</summary>
+    private void SetInput(EntityUid uid, InputMoverComponent mover, Vector2 direction)
+    {
+        mover.CurTickSprintMovement = direction;
+        mover.LastInputTick = _timing.CurTick;
+        mover.LastInputSubTick = ushort.MaxValue;
+        var ev = new SpriteMoveEvent(true);
+        RaiseLocalEvent(uid, ref ev);
+    }
+
+    /// <summary>Stands still and forgets its maps, so the next thing it does starts from nothing.</summary>
+    private void Halt(Entity<CFGOAPSteeringComponent> ent)
+    {
+        ent.Comp.Moving = false;
+        ent.Comp.LastSteerDirection = Vector2.Zero;
+        Array.Clear(ent.Comp.Interest);
+        Array.Clear(ent.Comp.Danger);
+        Array.Clear(ent.Comp.TickDanger);
+        if (!TryComp(ent, out InputMoverComponent? mover))
+            return;
+
+        mover.CurTickSprintMovement = Vector2.Zero;
+        var ev = new SpriteMoveEvent(false);
+        RaiseLocalEvent(ent, ref ev);
     }
 
     /// <summary>
-    /// A three-ray fan along the way it is heading. Stock takes danger away from interest, so a feeler touching
+    /// Allies moving its way within touching distance add a little danger toward them, so a pack does not pile up in
+    /// a doorway. Stock steering's Separation, on CF factions and the hard bodies alone.
+    /// </summary>
+    private void Separation(Entity<CFGOAPSteeringComponent> ent, ref CFGOAPSteerArgs args, TransformComponent xform)
+    {
+        Array.Clear(ent.Comp.TickDanger);
+        var velocity = CompOrNull<PhysicsComponent>(ent)?.LinearVelocity ?? Vector2.Zero;
+        if (velocity == Vector2.Zero)
+            return;
+
+        var (layer, mask) = _physics.GetHardCollision(ent);
+        _panicFound.Clear();
+        _lookup.GetEntitiesInRange(ent, SeparationRadius, _panicFound, LookupFlags.Dynamic | LookupFlags.Approximate);
+        foreach (var other in _panicFound)
+        {
+            if (other == ent.Owner
+                || !TryComp(other, out PhysicsComponent? otherBody)
+                || !otherBody.Hard
+                || !otherBody.CanCollide
+                || (mask & otherBody.CollisionLayer) == 0 && (layer & otherBody.CollisionMask) == 0
+                || !HasComp<MobStateComponent>(other)
+                || _factions.CanHarm(ent, other)
+                || Vector2.Dot(otherBody.LinearVelocity, velocity) <= 0f)
+                continue;
+
+            if (!_physics.TryGetNearest(ent, other, out var pointA, out var pointB, out var distance, xform, Transform(other))
+                || distance > SeparationRadius)
+                continue;
+
+            var weight = 1f;
+            var away = pointB - pointA;
+            if (distance == 0f)
+            {
+                // Inside each other, so their centres have to do.
+                away = _transform.GetWorldPosition(other) - args.WorldPosition;
+                if (away == Vector2.Zero)
+                    away = _random.NextAngle().ToVec();
+            }
+            else
+            {
+                weight = distance / SeparationRadius;
+            }
+
+            var norm = Vector2.Normalize(args.OffsetRotation.RotateVec(away));
+            weight *= SeparationWeight;
+            for (var i = 0; i < CFGOAPSteeringMath.DirectionCount; i++)
+            {
+                ent.Comp.TickDanger[i] = MathF.Max(Vector2.Dot(norm, CFGOAPSteeringMath.Directions[i]) * weight, ent.Comp.TickDanger[i]);
+            }
+        }
+    }
+
+    /// <summary>Interest eases toward nothing and danger toward this tick's, by <see cref="BlendWeight"/>.</summary>
+    private static void Blend(CFGOAPSteeringComponent steering, float frameTime)
+    {
+        var blend = Math.Min(1f, frameTime * BlendWeight);
+        for (var i = 0; i < CFGOAPSteeringMath.DirectionCount; i++)
+        {
+            steering.Interest[i] -= steering.Interest[i] * blend;
+            steering.Danger[i] += (steering.TickDanger[i] - steering.Danger[i]) * blend;
+        }
+    }
+
+    /// <summary>
+    /// A three-ray fan along the way it is heading. Danger is taken away from interest, so a feeler touching
     /// something turns every kind of movement aside. A ray that reaches an enemy adds to the vectors instead.
     /// Rays reach further at speed, which makes their danger work like time to impact.
     /// The rays only look every <see cref="FeelEvery"/> ticks, or sooner on a sharp turn or near a dangerous tile.
     /// What they found holds in between, and the interest they add is added again each tick.
     /// </summary>
-    private void Feel(Entity<CFGOAPSteeringComponent> ent, ref NPCSteeringEvent args)
+    private void Feel(Entity<CFGOAPSteeringComponent> ent, ref CFGOAPSteerArgs args)
     {
         ent.Comp.OnArrows = OnArrows(ent, args.WorldPosition);
         var heading = Heading(ent, ref args);
@@ -307,7 +483,7 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
             Add(ref args, ent.Comp.AvoidDirection, AvoidWeight);
 
         var frameTime = (float) _timing.FrameTime.TotalSeconds;
-        for (var i = 0; i < SharedNPCSteeringSystem.InterestDirections; i++)
+        for (var i = 0; i < CFGOAPSteeringMath.DirectionCount; i++)
         {
             ent.Comp.FeelerDanger[i] = CFGOAPSteeringMath.SmoothDanger(ent.Comp.FeelerDanger[i], ent.Comp.FeelerTarget[i], frameTime);
             args.Steering.Danger[i] = MathF.Max(args.Steering.Danger[i], ent.Comp.FeelerDanger[i]);
@@ -337,7 +513,7 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
     /// The safety circle. Rays run ahead, so a creature sliding alongside lava can miss all three while its body
     /// clips the tile. Anything inside the circle overrides everything else, with no easing, and snaps it away.
     /// </summary>
-    private void Panic(Entity<CFGOAPSteeringComponent> ent, ref NPCSteeringEvent args, bool look)
+    private void Panic(Entity<CFGOAPSteeringComponent> ent, ref CFGOAPSteerArgs args, bool look)
     {
         var position = args.WorldPosition;
         var velocity = CompOrNull<PhysicsComponent>(ent)?.LinearVelocity ?? Vector2.Zero;
@@ -392,9 +568,9 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
         }
 
         var norm = Vector2.Normalize(args.OffsetRotation.RotateVec(escape));
-        for (var i = 0; i < SharedNPCSteeringSystem.InterestDirections; i++)
+        for (var i = 0; i < CFGOAPSteeringMath.DirectionCount; i++)
         {
-            var alignment = Vector2.Dot(norm, NPCSteeringSystem.Directions[i]);
+            var alignment = Vector2.Dot(norm, CFGOAPSteeringMath.Directions[i]);
             args.Steering.Interest[i] = Math.Max(0f, alignment) * PanicForce;
             args.Steering.Danger[i] = Math.Max(0f, -alignment) * PanicForce;
         }
@@ -582,12 +758,12 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
     }
 
     /// <summary>Where its behaviours want to go this tick, in world space.</summary>
-    private static Vector2 Wanted(ref NPCSteeringEvent args)
+    private static Vector2 Wanted(ref CFGOAPSteerArgs args)
     {
         var wanted = Vector2.Zero;
-        for (var i = 0; i < SharedNPCSteeringSystem.InterestDirections; i++)
+        for (var i = 0; i < CFGOAPSteeringMath.DirectionCount; i++)
         {
-            wanted += NPCSteeringSystem.Directions[i] * args.Steering.Interest[i];
+            wanted += CFGOAPSteeringMath.Directions[i] * args.Steering.Interest[i];
         }
 
         return (-args.OffsetRotation).RotateVec(wanted);
@@ -615,7 +791,7 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
         return IsFixed(other);
     }
 
-    private void FeelFan(Entity<CFGOAPSteeringComponent> ent, ref NPCSteeringEvent args, Vector2 heading, bool sweep)
+    private void FeelFan(Entity<CFGOAPSteeringComponent> ent, ref CFGOAPSteerArgs args, Vector2 heading, bool sweep)
     {
         var speed = CompOrNull<PhysicsComponent>(ent)?.LinearVelocity.Length() ?? 0f;
         var length = CFGOAPSteeringMath.FeelerReach(ent.Comp.FeelerLength, speed, ent.Comp.FeelerFullSpeed, ent.Comp.FeelerMinLength);
@@ -648,7 +824,7 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
     /// reaches the feeler's length. Past that it can only spot an enemy, which a long ray looks for when
     /// <paramref name="sweep"/> is set; what it saw counts until the next sweep.
     /// </summary>
-    private float FeelAlong(Entity<CFGOAPSteeringComponent> ent, ref NPCSteeringEvent args, Vector2 direction, float length, int ray, bool sweep, bool apply = true)
+    private float FeelAlong(Entity<CFGOAPSteeringComponent> ent, ref CFGOAPSteerArgs args, Vector2 direction, float length, int ray, bool sweep, bool apply = true)
     {
         if (TryFeel(ent, args.WorldPosition, direction, length, out var hit, ent.Comp.Through))
         {
@@ -685,7 +861,7 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
         return FeelMob(ent, ref args, seen);
     }
 
-    private float FeelMob(Entity<CFGOAPSteeringComponent> ent, ref NPCSteeringEvent args, EntityUid mob)
+    private float FeelMob(Entity<CFGOAPSteeringComponent> ent, ref CFGOAPSteerArgs args, EntityUid mob)
     {
         ent.Comp.Felt ??= mob;
         var toMob = _transform.GetWorldPosition(mob) - args.WorldPosition;
@@ -702,15 +878,15 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
         return FeelerDanger;
     }
 
-    private static void AddDanger(Entity<CFGOAPSteeringComponent> ent, ref NPCSteeringEvent args, Vector2 direction, float danger)
+    private static void AddDanger(Entity<CFGOAPSteeringComponent> ent, ref CFGOAPSteerArgs args, Vector2 direction, float danger)
     {
         if (direction == Vector2.Zero)
             return;
 
         var norm = Vector2.Normalize(args.OffsetRotation.RotateVec(direction));
-        for (var i = 0; i < SharedNPCSteeringSystem.InterestDirections; i++)
+        for (var i = 0; i < CFGOAPSteeringMath.DirectionCount; i++)
         {
-            var result = CFGOAPSteeringMath.FeelerSpread(Vector2.Dot(norm, NPCSteeringSystem.Directions[i])) * danger;
+            var result = CFGOAPSteeringMath.FeelerSpread(Vector2.Dot(norm, CFGOAPSteeringMath.Directions[i])) * danger;
             if (result > 0f)
                 ent.Comp.FeelerTarget[i] = MathF.Max(ent.Comp.FeelerTarget[i], result);
         }
@@ -793,7 +969,7 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
     }
 
     /// <summary>Where it is going. Before it has moved, that is what it most wants to do.</summary>
-    private Vector2 Heading(EntityUid uid, ref NPCSteeringEvent args)
+    private Vector2 Heading(EntityUid uid, ref CFGOAPSteerArgs args)
     {
         var toWorld = -args.OffsetRotation;
         if (args.Steering.LastSteerDirection != Vector2.Zero)
@@ -805,7 +981,7 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
 
         var best = -1;
         var strongest = 0f;
-        for (var i = 0; i < SharedNPCSteeringSystem.InterestDirections; i++)
+        for (var i = 0; i < CFGOAPSteeringMath.DirectionCount; i++)
         {
             if (args.Steering.Interest[i] <= strongest)
                 continue;
@@ -814,7 +990,7 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
             strongest = args.Steering.Interest[i];
         }
 
-        return best < 0 ? Vector2.Zero : toWorld.RotateVec(NPCSteeringSystem.Directions[best]);
+        return best < 0 ? Vector2.Zero : toWorld.RotateVec(CFGOAPSteeringMath.Directions[best]);
     }
 
     /// <summary>Whether a point is on a dangerous tile.</summary>
@@ -1000,15 +1176,15 @@ public sealed partial class CFGOAPSteeringSystem : EntitySystem
         return nearest <= WallOffset ? Vector2.Zero : best;
     }
 
-    private static void Add(ref NPCSteeringEvent args, Vector2 desired, float weight)
+    private static void Add(ref CFGOAPSteerArgs args, Vector2 desired, float weight)
     {
         if (desired == Vector2.Zero || weight <= 0f)
             return;
 
         var norm = Vector2.Normalize(args.OffsetRotation.RotateVec(desired));
-        for (var i = 0; i < SharedNPCSteeringSystem.InterestDirections; i++)
+        for (var i = 0; i < CFGOAPSteeringMath.DirectionCount; i++)
         {
-            var result = Vector2.Dot(norm, NPCSteeringSystem.Directions[i]) * weight;
+            var result = Vector2.Dot(norm, CFGOAPSteeringMath.Directions[i]) * weight;
             if (result > 0f)
                 args.Steering.Interest[i] = MathF.Max(args.Steering.Interest[i], result);
         }

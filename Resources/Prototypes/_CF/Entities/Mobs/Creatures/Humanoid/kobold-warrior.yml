@@ -30,9 +30,6 @@
     rules: cf-ghost-monster-rules
   - type: InputMover
   - type: MobMover
-  - type: HTN
-    rootTask:
-      task: CFGOAPCompound
   - type: CFTrait
     traits:
     - Humanoid

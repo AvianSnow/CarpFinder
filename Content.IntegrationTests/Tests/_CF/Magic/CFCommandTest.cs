@@ -200,7 +200,7 @@ public sealed class CFCommandTest : CFGOAPLoggedTest
             Command.Give(hero, boss, CFCommandOrder.Halt, 3f, 15);
             start = Distance(boss, hero);
             SEntMan.System<SharedPhysicsSystem>().WakeBody(boss);
-            SEntMan.System<NPCSystem>().WakeNPC(boss);
+            SEntMan.System<CFGOAPDriverSystem>().Wake(boss);
         });
 
         await Pair.RunTicksSync(60);

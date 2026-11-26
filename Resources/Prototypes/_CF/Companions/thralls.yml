@@ -9,9 +9,6 @@
   description: A mindless dead thing that fights for the Necromancer who raised it. It falls apart after a minute.
   suffix: Companion
   components:
-  - type: HTN
-    rootTask:
-      task: CFGOAPCompound
   - type: NpcFactionMember
     factions:
     - Passive

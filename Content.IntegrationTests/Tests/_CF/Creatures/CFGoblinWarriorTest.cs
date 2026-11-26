@@ -3,7 +3,6 @@ using System.Linq;
 using Content.IntegrationTests.Fixtures;
 using Content.IntegrationTests.Tests.CF;
 using Content.Server.CF.GOAP;
-using Content.Server.NPC.Systems;
 using Content.Shared.CCVar;
 using Content.Shared.CF.Character;
 using Content.Shared.CF.Combat;
@@ -73,7 +72,7 @@ public sealed class CFGoblinWarriorTest : GameTest
             SEntMan.System<SharedPhysicsSystem>().WakeBody(mob);
         }
 
-        SEntMan.System<NPCSystem>().WakeNPC(mobs[0]);
+        SEntMan.System<CFGOAPDriverSystem>().Wake(mobs[0]);
     }
 
     /// <summary>Runs NPCs for a while. Asserts go on the test thread after this, where a failure keeps its message.</summary>

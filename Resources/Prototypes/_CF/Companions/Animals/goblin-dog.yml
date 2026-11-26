@@ -34,9 +34,6 @@
   description: "A young goblin dog companion. It is built to be ridden. When it matures, it can stay Medium."
   suffix: Companion
   components:
-  - type: HTN
-    rootTask:
-      task: CFGOAPCompound
   - type: NpcFactionMember
     factions:
     - Passive

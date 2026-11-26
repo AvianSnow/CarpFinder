@@ -7,7 +7,7 @@ namespace Content.Server.CF.GOAP;
 
 /// <summary>
 /// The brain of an advanced NPC: a mini boss or a special encounter. Simple mobs stay on stock HTN and do not have this.
-/// The root task has to be <c>CFGOAPCompound</c>, which is what runs it.
+/// <c>CFGOAPDriverSystem</c> runs it, and removes any stock HTN the body brought.
 /// </summary>
 [RegisterComponent]
 public sealed partial class CFGOAPComponent : Component
@@ -149,6 +149,15 @@ public sealed partial class CFGOAPComponent : Component
 
     /// <summary>When a player was last within <see cref="WakeFeet"/>, or something last woke it.</summary>
     public TimeSpan LastWoken;
+
+    /// <summary>Thinking. <c>CFGOAPDriverSystem.Wake</c> and <c>Sleep</c> set it; nothing else should.</summary>
+    public bool Awake;
+
+    /// <summary>
+    /// Awake but not thinking, while something else walks the creature, such as a companion fetching.
+    /// <c>CFGOAPDriverSystem.Pause</c> and <c>Resume</c>.
+    /// </summary>
+    public bool Paused;
 
     public TimeSpan NextSleepCheck;
 }

@@ -40,9 +40,6 @@
   description: "A young goat companion. It is built to be ridden."
   suffix: Companion
   components:
-  - type: HTN
-    rootTask:
-      task: CFGOAPCompound
   - type: NpcFactionMember
     factions:
     - Passive

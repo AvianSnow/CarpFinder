@@ -28,8 +28,8 @@ Each monster has a file of its own, named after it, in the folder of its creatur
 `CFBaseMonster` is what every monster is: GOAP brain, ghost role, Monster faction, combat mode, a `CFCombatant` that dies at 0 Hit Points, `CFAbilityScore`, `CFCombatOptions` and `CFHarvestable`. The monster sets its own numbers on those; it does not need to repeat `diesAtZeroHp` or the faction.
 
 - An entity id starts with `CF`: `CFMobGiantRat`. Variants of one creature share an abstract base, such as `CFMobSkeletonguardBase`, and each sets `name` and `Loadout`.
-- When the first parent is a stock mob with its own `HTN`, such as `MobBaseKobold`, the first parent's copy wins, so set `HTN` with `rootTask: CFGOAPCompound` on the monster. See `CFKoboldWarrior`.
-- `CFBaseMonster` gives `InputMover`, `MobMover`, `NpcFactionMember` with `SimpleHostile`, and `CFFaction` with `Monster`. On a stock body the body's copy wins, so set `HTN`, `NpcFactionMember` and `GhostRole` again on the monster if the body has them.
+- When the first parent is a stock mob with its own `HTN`, such as `MobBaseKobold`, nothing needs doing about it: the brain removes the HTN as it initialises (`CFGOAPDriverSystem`).
+- `CFBaseMonster` gives `InputMover`, `MobMover`, `NpcFactionMember` with `SimpleHostile`, and `CFFaction` with `Monster`. On a stock body the body's copy wins, so set `NpcFactionMember` and `GhostRole` again on the monster if the body has them.
 - Monster parts: `CFBaseMonster` has `CFHarvestable`. List what the body gives in its `parts` (meat, leather, bone; or nothing, for generic monster parts), never a `ToolRefinable` and never `BaseSlicingRefinableButchering`. What they are worth comes from the level.
 - Sprites: stock bodies come from the species. Other art stays in its fork folder with its `meta.json`. An RSI with `idle` and `moving` states walks through `SpriteMovement`, and its layer needs the `movement` map as well. See `CFMobHuntingSpider`.
 
@@ -45,7 +45,7 @@ Each creature sets the name and description a ghost sees, with its text in `ghos
   description: cf-ghost-giant-rat-desc
 ```
 
-The role needs no AI work. Stock HTN sleeps while a player is in the body and wakes when they leave, and a GOAP brain runs inside HTN. `CFMonsterGhostRoleTest` fails if a monster has no role or no text.
+The role needs no AI work. The brain sleeps while a player is in the body and wakes when they leave (`CFGOAPDriverSystem`). `CFMonsterGhostRoleTest` fails if a monster has no role or no text.
 
 ## Stat block to YAML
 
@@ -99,11 +99,11 @@ The role needs no AI work. Stock HTN sleeps while a player is in the body and wa
 
 Every monster has a GOAP brain from its base, so there is no root task to pick.
 
-- It needs `HTN`, `CFCombatant`, `CFAbilityScore` and `CFCombatOptions`. A creature with a natural attack, or a held weapon with `CFItemUse`, counts as armed.
+- It needs `CFGOAP` (from its base), `CFCombatant`, `CFAbilityScore` and `CFCombatOptions`. A creature with a natural attack, or a held weapon with `CFItemUse`, counts as armed.
 - Set its tactics on `CFGOAP`: `tactics: Beast` for animals, `Mindless` for mindless creatures. See `goap-weights.md`. An encounter that names tactics replaces them for its group.
 - A leader that fights unlike its group sets `keepOwnLists: true` and its own `CFGOAP` lists, so an encounter leaves it alone. See `CFMobKoboldTrapper`.
 - Melee plans `Close`, then `Strike`. Anything holding a loaded gun or bow plans `Shoot` once it has a clear line. With nothing loaded it keeps the weapon and closes in with its natural attack.
-- A test that needs the same body on stock HTN calls `CFStockAi.MakeStock` right after spawning it.
+- A test that needs the same body on stock HTN calls `CFStockAi.MakeStock` right after spawning it, which takes the brain out and puts an `HTN` back.
 
 ## Traps
 

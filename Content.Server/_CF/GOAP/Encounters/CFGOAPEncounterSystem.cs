@@ -1,7 +1,6 @@
 using System.Numerics;
 using Content.Server.CF.GOAP.Society;
 using Content.Server.CF.GOAP.Steering;
-using Content.Server.NPC.HTN;
 using Content.Shared.CF.Effects.Areas;
 using Content.Shared.CF.GOAP;
 using Content.Shared.DeviceLinking;
@@ -45,7 +44,7 @@ public sealed partial class CFGOAPEncounterSystem : EntitySystem
     [Dependency] private IRobustRandom _random = default!;
     [Dependency] private CFGOAPSteeringSystem _steering = default!;
     [Dependency] private DeviceLinkSystem _links = default!;
-    [Dependency] private HTNSystem _htn = default!;
+    [Dependency] private CFGOAPDriverSystem _driver = default!;
     [Dependency] private MobStateSystem _mobState = default!;
     [Dependency] private SharedMapSystem _maps = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
@@ -261,12 +260,7 @@ public sealed partial class CFGOAPEncounterSystem : EntitySystem
         }
 
         EnsureComp<CFGOAPSteeringComponent>(mob);
-
-        if (!TryComp(mob, out HTNComponent? htn))
-            return;
-
-        htn.RootTask = new HTNCompoundTask { Task = "CFGOAPCompound" };
-        _htn.Replan(htn);
+        _driver.Restart((mob, goap));
     }
 
     /// <summary>Broadcast: <c>MobStateComponent</c> and this event are already taken as a directed pair.</summary>

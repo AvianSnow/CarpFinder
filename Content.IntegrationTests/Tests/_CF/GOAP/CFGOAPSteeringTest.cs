@@ -4,8 +4,6 @@ using Content.IntegrationTests.Fixtures;
 using Content.IntegrationTests.Tests.CF;
 using Content.Server.CF.GOAP.Steering;
 using Content.Server.NPC.Components;
-using Content.Server.NPC.HTN;
-using Content.Server.NPC.Systems;
 using Content.Shared.Atmos.Components;
 using Content.Shared.CCVar;
 using Content.Shared.CF.Detection;
@@ -34,10 +32,6 @@ public sealed class CFGOAPSteeringTest : GameTest
 - type: entity
   parent: MobHuman
   id: CFSteeringMob
-  components:
-  - type: HTN
-    rootTask:
-      task: IdleCompound
 
 - type: entity
   parent: CFSteeringMob
@@ -73,7 +67,6 @@ public sealed class CFGOAPSteeringTest : GameTest
             }
 
             SEntMan.System<SharedPhysicsSystem>().WakeBody(mob);
-            SEntMan.System<NPCSystem>().WakeNPC(mob);
             SEntMan.System<CFGOAPSteeringSystem>().Steer(
                 mob,
                 new List<CFGOAPSteeringBehavior> { new() { Kind = CFGOAPSteeringKind.Flee } },
@@ -108,7 +101,6 @@ public sealed class CFGOAPSteeringTest : GameTest
 
             goal = transform.ToMapCoordinates(map.Local(6, 0)).Position;
             SEntMan.System<SharedPhysicsSystem>().WakeBody(mob);
-            SEntMan.System<NPCSystem>().WakeNPC(mob);
             SEntMan.System<CFGOAPSteeringSystem>().Steer(
                 mob,
                 new List<CFGOAPSteeringBehavior> { new() { Kind = CFGOAPSteeringKind.Arrive } },
@@ -119,7 +111,7 @@ public sealed class CFGOAPSteeringTest : GameTest
 
         await Server.WaitAssertion(() =>
         {
-            var steering = SEntMan.GetComponent<NPCSteeringComponent>(mob);
+            var steering = SEntMan.GetComponent<CFGOAPSteeringComponent>(mob);
             Assert.That(float.IsNaN(steering.Interest[0]), Is.False, "A NaN here would stop it for good, with no error.");
             Assert.That(Vector2.Distance(transform.GetWorldPosition(mob), goal), Is.LessThan(1.5f), "It gets past the wall to the goal.");
             config.SetCVar(CCVars.NPCEnabled, false);
@@ -148,7 +140,6 @@ public sealed class CFGOAPSteeringTest : GameTest
 
             var goal = transform.ToMapCoordinates(map.Local(6, 0)).Position + new Vector2(0f, 0.1f);
             SEntMan.System<SharedPhysicsSystem>().WakeBody(mob);
-            SEntMan.System<NPCSystem>().WakeNPC(mob);
             SEntMan.System<CFGOAPSteeringSystem>().Steer(
                 mob,
                 new List<CFGOAPSteeringBehavior> { new() { Kind = CFGOAPSteeringKind.Arrive } },
@@ -217,7 +208,6 @@ public sealed class CFGOAPSteeringTest : GameTest
             mob = SEntMan.SpawnEntity("CFSteeringMob", map.Local(3, 0));
             threat = SEntMan.SpawnEntity("CFSteeringMob", map.Local(2, 0));
             SEntMan.System<SharedPhysicsSystem>().WakeBody(mob);
-            SEntMan.System<NPCSystem>().WakeNPC(mob);
             SEntMan.System<CFGOAPSteeringSystem>().Steer(
                 mob,
                 new List<CFGOAPSteeringBehavior> { new() { Kind = CFGOAPSteeringKind.Flee } },

@@ -37,9 +37,6 @@
   description: "A young isgeri boarhound companion."
   suffix: Companion
   components:
-  - type: HTN
-    rootTask:
-      task: CFGOAPCompound
   - type: NpcFactionMember
     factions:
     - Passive

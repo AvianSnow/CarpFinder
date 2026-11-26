@@ -8,7 +8,6 @@ using Content.Server.CF.GOAP.Influence;
 using Content.Server.CF.GOAP.Nodes;
 using Content.Server.CF.GOAP.Steering;
 using Content.Server.CF.GOAP.Steps;
-using Content.Server.NPC.Systems;
 using Content.Shared.CCVar;
 using Content.Shared.CF.Actions;
 using Content.Shared.CF.Character;
@@ -519,7 +518,7 @@ public sealed class CFGOAPTest : CFGOAPLoggedTest
             goap.Target = hero;
             goap.Lkp = SEntMan.System<SharedTransformSystem>().GetMapCoordinates(hero);
             SEntMan.System<SharedPhysicsSystem>().WakeBody(boss);
-            SEntMan.System<NPCSystem>().WakeNPC(boss);
+            SEntMan.System<CFGOAPDriverSystem>().Wake(boss);
         });
 
         await Pair.RunTicksSync(450);
@@ -600,7 +599,7 @@ public sealed class CFGOAPTest : CFGOAPLoggedTest
             var goap = SEntMan.GetComponent<CFGOAPComponent>(boss);
             goap.Lkp = SEntMan.System<SharedTransformSystem>().GetMapCoordinates(hero);
             SEntMan.System<SharedPhysicsSystem>().WakeBody(boss);
-            SEntMan.System<NPCSystem>().WakeNPC(boss);
+            SEntMan.System<CFGOAPDriverSystem>().Wake(boss);
         });
 
         // Usually about 6 seconds, and it has taken 29. Ticks are cheap, so the window is not what should fail this.
@@ -690,7 +689,7 @@ public sealed class CFGOAPTest : CFGOAPLoggedTest
             SEntMan.GetComponent<CFAbilityScoreComponent>(boss).AbilityModifiers[Content.Shared.CF.Preferences.CFAbility.Strength] = 30;
             hero = Hero(4);
             SEntMan.System<SharedPhysicsSystem>().WakeBody(boss);
-            SEntMan.System<NPCSystem>().WakeNPC(boss);
+            SEntMan.System<CFGOAPDriverSystem>().Wake(boss);
         });
 
         await Pair.RunTicksSync(300);

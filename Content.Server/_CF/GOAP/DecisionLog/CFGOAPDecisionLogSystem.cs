@@ -1,7 +1,6 @@
 using System.Linq;
 using System.Text;
 using Content.Server.CF.GOAP.Steering;
-using Content.Server.NPC.Systems;
 using Content.Shared.CF.GOAP;
 using Robust.Shared.Timing;
 
@@ -26,7 +25,7 @@ public sealed partial class CFGOAPDecisionLogSystem : EntitySystem
     public override void Initialize()
     {
         base.Initialize();
-        UpdatesAfter.Add(typeof(NPCSystem));
+        UpdatesAfter.Add(typeof(CFGOAPDriverSystem));
     }
 
     public override void Update(float frameTime)

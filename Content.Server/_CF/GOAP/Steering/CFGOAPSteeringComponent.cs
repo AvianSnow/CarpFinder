@@ -1,14 +1,11 @@
 using System.Numerics;
 using Content.Server.CF.GOAP.Influence;
-using Content.Shared.NPC;
 using Robust.Shared.Physics.Components;
 
 namespace Content.Server.CF.GOAP.Steering;
 
 public enum CFGOAPSteeringKind : byte
 {
-    /// <summary>Stock path-following to the steering coordinates. Without this, stock seek is off.</summary>
-    Seek,
     Flee,
 
     /// <summary>
@@ -32,7 +29,7 @@ public enum CFGOAPSteeringKind : byte
     /// <summary>Along the trail on <see cref="CFGOAPSteeringBehavior.Layer"/>, left by the target if there is one.</summary>
     FieldFollow,
 
-    /// <summary>Stay put. This also keeps stock from pathing, as it would for melee.</summary>
+    /// <summary>Stay put.</summary>
     Hold,
 
     /// <summary>Follow the arrow on the square underfoot, in <see cref="CFGOAPSteeringComponent.Field"/>.</summary>
@@ -89,8 +86,9 @@ public sealed partial class CFGOAPSteeringBehavior
 }
 
 /// <summary>
-/// Adds to stock context steering for an advanced NPC, so doors, walls and collisions keep working.
-/// Only creatures set up for GOAP have this. Simple mobs stay on stock steering.
+/// Context steering for an advanced NPC, run by <see cref="CFGOAPSteeringSystem"/>: what it is doing, what its
+/// feelers and safety circle found, and the maps of where it wants to go. Creatures set up for GOAP have this, and a
+/// stock mob while a Command order drives it. Simple mobs stay on stock steering.
 /// </summary>
 [RegisterComponent]
 public sealed partial class CFGOAPSteeringComponent : Component
@@ -196,11 +194,31 @@ public sealed partial class CFGOAPSteeringComponent : Component
     /// <summary>A dangerous tile is close, so the feelers look every tick.</summary>
     public bool NearDanger;
 
-    /// <summary>What the feelers report this tick, for each stock steering direction.</summary>
-    public readonly float[] FeelerTarget = new float[SharedNPCSteeringSystem.InterestDirections];
+    /// <summary>What the feelers report this tick, for each of the 12 directions.</summary>
+    public readonly float[] FeelerTarget = new float[CFGOAPSteeringMath.DirectionCount];
 
     /// <summary>The same, eased over a few frames.</summary>
-    public readonly float[] FeelerDanger = new float[SharedNPCSteeringSystem.InterestDirections];
+    public readonly float[] FeelerDanger = new float[CFGOAPSteeringMath.DirectionCount];
+
+    /// <summary>
+    /// Whether <c>Steer</c> has given it something to do. Nothing moves it until then, and <c>Stop</c> ends it.
+    /// </summary>
+    public bool Moving;
+
+    /// <summary>
+    /// How much it wants to go each of the 12 ways, in the mover's frame. Kept from tick to tick and eased toward
+    /// nothing, so a wish that stops being written fades over a few ticks instead of cutting out.
+    /// </summary>
+    public readonly float[] Interest = new float[CFGOAPSteeringMath.DirectionCount];
+
+    /// <summary>How much each way is to be avoided, eased toward <see cref="TickDanger"/> plus what the feelers hold.</summary>
+    public readonly float[] Danger = new float[CFGOAPSteeringMath.DirectionCount];
+
+    /// <summary>Danger from allies in the way this tick, which <see cref="Danger"/> follows.</summary>
+    public readonly float[] TickDanger = new float[CFGOAPSteeringMath.DirectionCount];
+
+    /// <summary>The way it was sent last tick, in the mover's frame. Zero when it stood still.</summary>
+    public Vector2 LastSteerDirection;
 
     /// <summary>The creature that behaviours chase or run from.</summary>
     public EntityUid? Target;

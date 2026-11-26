@@ -22,8 +22,9 @@
 
 # What every CF monster is, whatever body it has. Every monster has this as a parent, directly or through
 # CFBaseCreature. A monster on a stock body lists the body first and this second: [ MobBaseKobold, CFBaseMonster ].
-# With two parents the first parent's copy of a component wins, so such a monster still sets its own HTN,
-# NpcFactionMember and GhostRole fields where the stock body has them. See .agent/importcreatures.md.
+# With two parents the first parent's copy of a component wins, so such a monster still sets its own
+# NpcFactionMember and GhostRole fields where the stock body has them. The body's HTN needs nothing: the brain
+# removes it. See .agent/importcreatures.md.
 #
 # - It thinks with a GOAP brain (CFGOAPBrain) and a ghost can take it (CFMonsterGhostRole).
 # - It is in the Monster faction, which every adventure company opposes.
@@ -40,9 +41,6 @@
     - type: InputMover
     - type: MobMover
     - type: CombatMode
-    - type: HTN
-      rootTask:
-        task: CFGOAPCompound
     - type: NpcFactionMember
       factions:
         - SimpleHostile
@@ -67,9 +65,6 @@
     # SimpleMobBase comes first, so the brain's parts it also has are set again here.
     - type: InputMover
     - type: MobMover
-    - type: HTN
-      rootTask:
-        task: CFGOAPCompound
     - type: NpcFactionMember
       factions:
         - SimpleHostile

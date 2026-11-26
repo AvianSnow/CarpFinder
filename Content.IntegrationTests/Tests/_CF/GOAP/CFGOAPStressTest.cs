@@ -208,7 +208,7 @@ public sealed class CFGOAPStressTest : GameTest
         long damage = 0;
         await Server.WaitPost(() =>
         {
-            awake = mobs.Count(m => entities.HasComponent<ActiveNPCComponent>(m));
+            awake = mobs.Count(m => entities.TryGetComponent(m, out CFGOAPComponent goap) ? goap.Awake : entities.HasComponent<ActiveNPCComponent>(m));
             foreach (var hero in heroes)
             {
                 var combat = entities.GetComponent<CFCombatantComponent>(hero);
@@ -240,8 +240,8 @@ public sealed class CFGOAPStressTest : GameTest
             perSystem);
     }
 
-    /// <summary>NPC and GOAP systems. GOAP thinks inside <c>NPCSystem</c>, through HTN, and steers inside
-    /// <c>NPCSteeringSystem</c>, so those two hold most of its cost.</summary>
+    /// <summary>NPC and GOAP systems. GOAP thinks inside <c>CFGOAPDriverSystem</c> and steers inside
+    /// <c>CFGOAPSteeringSystem</c>, so those two hold most of its cost.</summary>
     private static bool IsAi(string system)
     {
         return system.StartsWith("NPC") || system.StartsWith("HTN") || system.StartsWith("CFGOAP");

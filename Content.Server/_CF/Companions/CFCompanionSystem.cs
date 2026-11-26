@@ -1,12 +1,10 @@
+using Content.Server.CF.GOAP.Steering;
 using Robust.Shared.Prototypes;
 using Content.Shared.CF.Preferences;
 using Content.Shared.CF.Combat;
-using System.Numerics;
+using Robust.Shared.Timing;
 using Content.Server.CF.GOAP;
 using Content.Server.CF.GOAP.Sensors;
-using Content.Server.NPC.Components;
-using Content.Server.NPC.HTN;
-using Content.Server.NPC.Systems;
 using Content.Shared.CF.Actions;
 using Content.Shared.CF.Companions;
 using Content.Shared.CF.Factions;
@@ -22,7 +20,6 @@ using Content.Shared.Pointing;
 using Content.Shared.Popups;
 using Content.Shared.Throwing;
 using Robust.Shared.Containers;
-using Robust.Shared.Map;
 
 namespace Content.Server.CF.Companions;
 
@@ -47,10 +44,11 @@ public sealed partial class CFCompanionSystem : EntitySystem
     [Dependency] private SharedHandsSystem _hands = default!;
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
-    [Dependency] private NPCSteeringSystem _steering = default!;
+    [Dependency] private IGameTiming _timing = default!;
+    [Dependency] private CFGOAPSteeringSystem _steering = default!;
     [Dependency] private CFActionPoolSystem _actions = default!;
     [Dependency] private CFFactionSystem _factions = default!;
-    [Dependency] private HTNSystem _htn = default!;
+    [Dependency] private CFGOAPDriverSystem _driver = default!;
 
     private readonly List<(EntityUid Companion, EntityUid Item)> _pendingGives = new();
     private readonly HashSet<EntityUid> _thrown = new();
@@ -350,19 +348,17 @@ public sealed partial class CFCompanionSystem : EntitySystem
 
         PauseBrain(companion, comp);
         MakeHandFree(companion, item);
-        var steering = _steering.Register(companion, new EntityCoordinates(item, Vector2.Zero));
-        steering.Range = PickupRange;
-        steering.Status = SteeringStatus.Moving;
+        _steering.Navigate(companion, _transform.GetWorldPosition(item), null, alone: true);
     }
 
-    /// <summary>Fetching walks the companion itself, so its brain sleeps for the trip. HTN would fight the steering.</summary>
+    /// <summary>Fetching walks the companion itself, so its brain pauses for the trip. Thinking would fight the steering.</summary>
     private void PauseBrain(EntityUid companion, CFCompanionComponent comp)
     {
-        if (comp.BrainPaused || !TryComp(companion, out HTNComponent? htn))
+        if (comp.BrainPaused)
             return;
 
         comp.BrainPaused = true;
-        _htn.SetHTNEnabled((companion, htn), false);
+        _driver.Pause(companion);
     }
 
     private void ResumeBrain(EntityUid companion, CFCompanionComponent comp)
@@ -371,10 +367,8 @@ public sealed partial class CFCompanionSystem : EntitySystem
             return;
 
         comp.BrainPaused = false;
-        _steering.Unregister(companion);
-        if (TryComp(companion, out HTNComponent? htn))
-            _htn.SetHTNEnabled((companion, htn), true);
-
+        _steering.Stop(companion);
+        _driver.Resume(companion);
         ThinkNow(companion);
     }
 
@@ -421,9 +415,8 @@ public sealed partial class CFCompanionSystem : EntitySystem
 
         MakeHandFree(uid, item);
 
-        if (TryComp(uid, out NPCSteeringComponent? stuck)
-            && stuck.Status == SteeringStatus.NoPath
-            && stuck.FailedPathCount >= NPCSteeringComponent.FailedPathLimit)
+        // It gave up on the way there and found no other.
+        if (TryComp(uid, out CFGOAPSteeringComponent? stuck) && _timing.CurTime < stuck.NoWayUntil)
         {
             Follow(uid, comp);
             return;
@@ -441,13 +434,11 @@ public sealed partial class CFCompanionSystem : EntitySystem
             && _hands.TryPickupAnyHand(uid, item, checkActionBlocker: true, item: itemComp))
         {
             comp.FetchWaits = 0;
-            _steering.Unregister(uid);
+            _steering.Stop(uid);
             return;
         }
 
-        var steering = _steering.Register(uid, new EntityCoordinates(item, Vector2.Zero));
-        steering.Range = PickupRange;
-
+        _steering.Navigate(uid, _transform.GetWorldPosition(item), null, alone: true);
         if (distance > PickupRange)
         {
             comp.FetchWaits = 0;
@@ -476,12 +467,11 @@ public sealed partial class CFCompanionSystem : EntitySystem
 
         if (distance > FollowRange)
         {
-            var steering = _steering.Register(uid, new EntityCoordinates(comp.Summoner, Vector2.Zero));
-            steering.Range = FollowRange;
+            _steering.Navigate(uid, _transform.GetWorldPosition(comp.Summoner), comp.Summoner, alone: true);
             return;
         }
 
-        _steering.Unregister(uid);
+        _steering.Stop(uid);
         DropForSummoner(uid, comp, item, comp.Summoner);
     }
 
