@@ -7,8 +7,9 @@
 # spreads over the cone in about 2 seconds; anyone standing where it has thickened rolls, once, and it fades after.
 # Not in yet: Draconic Frenzy, the Twisting Tail reaction, and its fly 30 feet and swim 20 feet Speeds.
 # It keeps a lair (CFGOAPLair): where it spawns is home. It breathes on whoever the cone would catch whenever its breath is
-# charged, waits in its lair while it recharges, only closes on someone within 3 tiles, and goes home once it is 8 tiles
-# out or has been away 10 seconds.
+# charged, and goes for anyone it sees or is hurt by anywhere in its lair, which reaches 30 tiles from that spot. Past
+# the edge of the lair it turns back at once. It used to wait for whoever came within 3 tiles, so casters stood off and
+# shot it where it sat (changed 26 November 2026).
 # Sprite: _CF/Mobs/Monsters/Dragon/horned_dragon.rsi, made for CarpFinder, 64x64, so it is drawn about two tiles wide.
 - type: entity
   parent: [CFBaseCreature]
@@ -48,11 +49,13 @@
         - CFActPoisonBreath
     - type: CFDraconicMomentum
     - type: CFGOAPLair
+      engageTiles: 30
+      leashTiles: 30
     # It is the boss of its adventure, and a thinker, so it sizes everyone up and does not wait as long between bites.
     # It keeps its own lists, so an encounter cannot send it chasing or fleeing out of its lair.
     - type: CFGOAP
       tactics: Tactician
-      homeRange: 3
+      homeRange: 30
       keepOwnLists: true
       goals:
         - PutOutFire

@@ -64,7 +64,21 @@ public sealed class CFJuvenileHornedDragonTest : GameTest
     currentHp: 60
     diesAtZeroHp: true
     printedAttack: 40
+
+# The lair rules on numbers of its own, so the real dragon can be rebalanced: it goes for what comes within 3 tiles,
+# its lair is 3 tiles, and it turns back 8 tiles out.
+- type: entity
+  parent: CFMobJuvenileHornedDragon
+  id: CFDragonTestLairKeeper
+  components:
+  - type: CFGOAPLair
+    engageTiles: 3
+    leashTiles: 8
+  - type: CFGOAP
+    homeRange: 3
 ";
+
+    private const string LairKeeper = "CFDragonTestLairKeeper";
 
     private CFDevMap _map = default!;
 
@@ -351,12 +365,32 @@ public sealed class CFJuvenileHornedDragonTest : GameTest
         _map = await CFDevMap.Load(Pair, LairFootprint, avoidStructures: true);
         await Server.WaitAssertion(() =>
         {
-            var mob = Brain(SEntMan.SpawnEntity(Dragon, _map.Local(0, 0)));
+            var mob = Brain(SEntMan.SpawnEntity(LairKeeper, _map.Local(0, 0)));
             SEntMan.SpawnEntity("CFDragonTestHero", _map.Local(tiles, 0));
             SpendBreath(mob);
             SEntMan.System<CFGOAPSystem>().Start(mob);
 
             Assert.That(Plan(mob), Is.EqualTo(plan));
+        });
+    }
+
+    /// <summary>
+    /// The real dragon does not sit and take it: with its breath spent it goes for an intruder well past the 3 tiles a
+    /// plain lair keeper waits for, and its lair is wide enough that it is still at home when it gets there.
+    /// </summary>
+    [Test]
+    public async Task TheDragonGoesForAnIntruderAcrossItsLair()
+    {
+        _map = await CFDevMap.Load(Pair, LairFootprint, avoidStructures: true);
+        await Server.WaitAssertion(() =>
+        {
+            var mob = Brain(SEntMan.SpawnEntity(Dragon, _map.Local(0, 0)));
+            SEntMan.SpawnEntity("CFDragonTestHero", _map.Local(5, 0));
+            SpendBreath(mob);
+            SEntMan.System<CFGOAPSystem>().Start(mob);
+
+            Assert.That(Plan(mob), Is.EqualTo(new[] { "Close", "Strike" }));
+            Assert.That(mob.Comp.HomeRange, Is.GreaterThan(5f), "Five tiles out is still inside its lair.");
         });
     }
 
@@ -368,7 +402,7 @@ public sealed class CFJuvenileHornedDragonTest : GameTest
         _map = await CFDevMap.Load(Pair, LairFootprint, avoidStructures: true);
         await Server.WaitAssertion(() =>
         {
-            var uid = SEntMan.SpawnEntity(Dragon, _map.Local(0, 0));
+            var uid = SEntMan.SpawnEntity(LairKeeper, _map.Local(0, 0));
             var mob = Brain(uid);
             SEntMan.System<CFGOAPSystem>().Start(mob);
             SEntMan.System<CFGOAPSystem>().Think(mob);
@@ -401,7 +435,7 @@ public sealed class CFJuvenileHornedDragonTest : GameTest
         var config = Server.ResolveDependency<IConfigurationManager>();
         await Server.WaitPost(() =>
         {
-            dragon = SEntMan.SpawnEntity(Dragon, _map.Local(0, 0));
+            dragon = SEntMan.SpawnEntity(LairKeeper, _map.Local(0, 0));
             hero = SEntMan.SpawnEntity("CFDragonTestHero", _map.Local(5, 0));
             SEntMan.System<SharedPhysicsSystem>().WakeBody(dragon);
             SEntMan.System<SharedPhysicsSystem>().WakeBody(hero);

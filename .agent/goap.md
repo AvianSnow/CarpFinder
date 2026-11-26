@@ -227,6 +227,7 @@ It is not "Strike, Strike, Raise a Shield". In real time an NPC never gets two s
 
 - `Guarding`: the target is further than `EngageTiles` (3). `Close` will not run, so `KillTarget` plans `Await` (the `Wait` step) instead: it lets the target come, and its breath recharge. A charged breath still fires at any range the cone reaches.
 - `LeftLair`: once it is further than `LeashTiles` (8) from home, or has been out of its lair for `ChaseTime` (10 seconds), it sets off back and keeps going until the home sensor says `AtHome`. The `ReturnToLair` goal (5.9) is above `KillTarget`, but not while an enemy is in reach: it does not chase, but it does fight back where it stands.
+- The juvenile horned dragon sets `engageTiles`, `leashTiles` and `homeRange` to 30 since 26 November 2026, so it is never `Guarding` against anything it can see: it chases across its whole lair and turns back at the edge. With the defaults (3 and 8) casters stood off and shot it where it sat. `CFDragonTestLairKeeper` keeps the small numbers for the tests of the rules.
 - Give it its own lists with `keepOwnLists: true` and no `StayAlive`, or an encounter or a low Hit Point flee can take it out of its lair.
 
 ## Laying traps
