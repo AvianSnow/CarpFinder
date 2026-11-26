@@ -46,6 +46,7 @@ Everything below is under `Content.Shared/_CF/`.
 | `Lighting/` | How bright a place is: bright, dim or dark, from the map's ambient light or sun, roofs, and point lights with a clear line. Dim light conceals and darkness hides from eyes without the sense for it. Worked out on demand and kept half a second. `cf.light_rules` turns it off, as integration tests do | `CFLightSystem` |
 | `Locks/` | Keys, Pick a Lock, Force Open, on top of the stock `Lock` | `CFLockSystem` |
 | `Outdoors/` | The outdoor map component, temperature rules, weather effects. The logic is server-side. | `CFEnvironmentRules`, `CFOutdoorsWorldSystem` |
+| `Gathering/` | Chopping and mining with no attack roll: `CFWorkTool` on the hatchet, battle axe and pick, `CFWorkable` on trees, rocks, cave walls and ore veins. Breaking any object, by tool or by Strikes, goes through `CFObjectBreakSystem` in `Combat/`, which the server answers by walking the object's damage thresholds from the lowest up | `CFToolWorkSystem`, `CFObjectBreakSystem` |
 | `Farming/` | Plant, seed and harvest data. The logic is server-side. | `CFFarmingSystem` |
 | `Cooking/` | The mortar, mixing flour into water, pots and pans that cook a dish from what is in them, serving it, and barrels that brew. A fire heats what is on it from `Content.Server/_CF/Temperature/CFFireHeaterSystem`; clicking the fire with food or a pot sets it on top (`CFCookingSurfaceSystem`), and an empty mug on a tap fills (`CFTapSystem`). | `CFSharedCookerSystem`, `CFFermenterSystem`, `CFMortarSystem` |
 | `Adventure/` | Site prototypes, encounter and treasure tables. Generation is server-side. | `CFEncounterRules`, `CFAdventureSiteSystem` |
@@ -117,6 +118,8 @@ An area with `CFAreaFill` or `CFBreathGas` is drawn on its tiles. `ResolveArea` 
 | Combat mode, right-click, weapon with the `Shove` or `Disarm` trait and no `Sweep` | That maneuver instead of the wide swing | `CFManeuverSystem.OnDisarmAttempt` |
 | Combat mode, right-click, empty hand | Disarm if the target holds something, otherwise Shove | `CFManeuverSystem.OnDisarmAttempt` |
 | Combat mode, right-click, shield | Shove, always | `CFManeuverSystem.OnDisarmAttempt` |
+| Combat mode, left-click a tree with a hatchet or battle axe, or rock or an ore vein with a pick | Tool work: no attack roll and no multiple attack penalty. The target breaks after its `hits` swings (tree 3, large tree 5, small rock 3, cave wall and ore vein 4, big rock 5) and drops what it drops. Against a creature the tool is the weapon it also is | `CFToolWorkSystem.TryWork`, from `CFStrikeSystem.BeginMeleeStrikes` |
+| Click a log with a hatchet or battle axe, out of combat mode | Three planks | `CFLogSystem` (server) |
 | Throw a weapon with the thrown trait | Ranged Strike at the first living enemy it touches (1 action). It flies to the cursor, up to six range increments | `CFStrikeSystem.OnThrownHit`, `CFWeaponSystem.ThrowRange` |
 | Use in hand (Z), shield | Raise (1 action) or lower (free) | `CFShieldSystem.OnUseInHand` |
 | Pull the trigger of a jammed firearm, or reload it | Clears the jam (1 action). It does not fire | `CFGunslingerSystem.TryClear` |

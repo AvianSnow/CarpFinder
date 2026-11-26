@@ -47,7 +47,8 @@ public sealed partial class CFStrikeSystem : EntitySystem
     [Dependency] private SharedPopupSystem _popup = default!;
     [Dependency] private MobStateSystem _mobState = default!;
     [Dependency] private DamageableSystem _damageable = default!;
-    [Dependency] private SharedDestructibleSystem _destructible = default!;
+    [Dependency] private CFObjectBreakSystem _break = default!;
+    [Dependency] private Content.Shared.CF.Gathering.CFToolWorkSystem _toolWork = default!;
     [Dependency] private SharedHandsSystem _hands = default!;
     [Dependency] private InventorySystem _inventory = default!;
     [Dependency] private SharedTransformSystem _transform = default!;
@@ -305,6 +306,10 @@ public sealed partial class CFStrikeSystem : EntitySystem
         var exacting = targets.Count == 1;
         foreach (var target in targets)
         {
+            // An axe on a tree or a pick on rock is work, not an attack: no roll, and no multiple attack penalty.
+            if (melee && _toolWork.TryWork(user, weaponUid, target))
+                continue;
+
             // Party members never reach AC, the d20, or damage.
             if (!_factions.CanHarm(user, target))
                 continue;
@@ -1511,16 +1516,7 @@ public sealed partial class CFStrikeSystem : EntitySystem
 
     private void DestroyObject(EntityUid user, EntityUid target)
     {
-        var finish = new DamageSpecifier();
-        finish.DamageDict["Blunt"] = 10000;
-        _damageable.TryChangeDamage(target, finish, ignoreResistances: true, origin: user);
-
-        if (!Deleted(target) && !EntityManager.IsQueuedForDeletion(target))
-        {
-            _destructible.BreakEntity(target);
-            if (!Deleted(target) && !EntityManager.IsQueuedForDeletion(target))
-                _destructible.DestroyEntity(target);
-        }
+        _break.Break(user, target);
     }
 
     private string ToSs14DamageType(string pf2eType)

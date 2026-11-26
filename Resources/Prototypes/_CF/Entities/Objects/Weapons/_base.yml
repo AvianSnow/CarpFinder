@@ -352,6 +352,9 @@
     - Sweep
   - type: CFItemPrice
     copper: 100
+  # Fells a tree in a few swings with no attack roll, and splits a log into planks.
+  - type: CFWorkTool
+    kinds: [ Chop ]
 
 - type: entity
   parent: [ CFBaseWeapon, CFBaseWeaponCarryNeck ]
@@ -569,6 +572,9 @@
   - type: CFItemPrice
     copper: 40
   - type: LandAtCursor
+  # Fells a tree in a few swings with no attack roll, and splits a log into planks.
+  - type: CFWorkTool
+    kinds: [ Chop ]
 
 - type: entity
   parent: [ CFBaseWeapon, CFBaseWeaponCarryBelt ]
@@ -696,6 +702,9 @@
     - FatalD10
   - type: CFItemPrice
     copper: 70
+  # Mines rock and ore veins in a few swings with no attack roll.
+  - type: CFWorkTool
+    kinds: [ Mine ]
 
 - type: entity
   parent: [ CFBaseWeapon, CFBaseWeaponCarryNeck ]

@@ -21,6 +21,14 @@
     damageModifierSet: Rock
   - type: Injurable
     damageContainer: StructuralInorganic
+  # A pick breaks it in this many swings, with no attack roll (CFToolWorkSystem).
+  - type: CFWorkable
+    kind: Mine
+    hits: 3
+    sound:
+      path: /Audio/Effects/break_stone.ogg
+      params:
+        volume: -10
 
 - type: entity
   id: CFRockSmall
@@ -84,6 +92,8 @@
   parent: CFBaseRock
   suffix: Big
   components:
+  - type: CFWorkable
+    hits: 5
   - type: Fixtures
     fixtures:
       fix1:

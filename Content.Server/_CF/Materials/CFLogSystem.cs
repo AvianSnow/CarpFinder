@@ -1,3 +1,4 @@
+using Content.Shared.CF.Gathering;
 using Content.Shared.Containers;
 using Content.Shared.Hands.EntitySystems;
 using Content.Shared.Interaction;
@@ -13,6 +14,7 @@ public sealed partial class CFLogSystem : EntitySystem
     [Dependency] private SharedContainerSystem _containerSystem = default!;
     [Dependency] private RandomHelperSystem _randomHelper = default!;
     [Dependency] private SharedToolSystem _toolSystem = default!;
+    [Dependency] private CFToolWorkSystem _toolWork = default!;
 
     public override void Initialize()
     {
@@ -23,7 +25,9 @@ public sealed partial class CFLogSystem : EntitySystem
 
     private void OnInteractUsing(Entity<CFLogComponent> ent, ref InteractUsingEvent args)
     {
-        if (!_toolSystem.HasQuality(args.Used, ent.Comp.ToolQuality))
+        // An axe splits it, as well as anything with the tool quality.
+        if (args.Handled
+            || !_toolWork.Does(args.Used, CFToolWork.Chop) && !_toolSystem.HasQuality(args.Used, ent.Comp.ToolQuality))
             return;
 
         var inContainer = _containerSystem.IsEntityInContainer(ent.Owner);

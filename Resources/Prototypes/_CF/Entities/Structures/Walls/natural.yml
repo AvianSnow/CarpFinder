@@ -17,6 +17,14 @@
       damageModifierSet: CFRockStructural
     - type: Injurable
       damageContainer: StructuralInorganic
+    # A pick mines it in this many swings, with no attack roll (CFToolWorkSystem). Ore veins are children of this.
+    - type: CFWorkable
+      kind: Mine
+      hits: 4
+      sound:
+        path: /Audio/Effects/break_stone.ogg
+        params:
+          volume: -10
     - type: Destructible
       thresholds:
         - trigger: !type:DamageTrigger

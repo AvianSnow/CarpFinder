@@ -54,6 +54,8 @@ These have no button. Change the keys under Options, Controls, CarpFinder.
 - [bold]Click a creature with a healer's toolkit:[/bold] Treat Wounds. It takes 12 seconds and 3 actions spread across them, and needs training in Medicine. You hold your patient still until it is done, and if they break free it ends.
 - [bold]Right-click a verdant seed in your hand:[/bold] grow it into a staff, a spear or a sling (1 action). Right-click the weapon to turn it back into the seed (1 action). Druids with Verdant Weapon have one.
 - [bold]Throw a healing potion:[/bold] it breaks. On a living creature it heals them as if they drank it. Anywhere else it leaves a puddle, good for 5 minutes, that heals whoever lies prone in it or drinks it (alt-click the puddle).
+- [bold]Combat mode, left-click a tree with a hatchet or battle axe:[/bold] chop it. No attack roll: a tree falls in 3 swings, a large one in 5, and drops logs. Click a log with the axe, out of combat mode, to split it into planks.
+- [bold]Combat mode, left-click rock or an ore vein with a pick:[/bold] mine it. No attack roll: a small rock breaks in 3 swings, a cave wall or vein in 4, a big rock in 5. Against creatures all three are still weapons and roll to hit.
 - [bold]Use a healer's toolkit in hand in combat mode:[/bold] Battle Medicine on the nearest hurt ally, if you have the feat.
 - [bold]Right-click an ally, then Aid:[/bold] help with their next check.
 - [bold]Buckle into a bed, then click the Sleep icon on the right of the screen, under the temperature and pressure icons:[/bold] a long rest. It restores your Hit Points, spell slots and focus points. While you sleep the icon is Wake: click it to get up.

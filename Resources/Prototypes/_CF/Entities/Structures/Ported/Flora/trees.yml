@@ -70,6 +70,12 @@
             min: 1
             max: 3
   - type: Material
+  # An axe fells it in this many swings, with no attack roll (CFToolWorkSystem).
+  - type: CFWorkable
+    kind: Chop
+    hits: 3
+    sound:
+      path: /Audio/Effects/chop.ogg
 
 - type: entity
   parent: CFBaseTree
@@ -77,6 +83,8 @@
   name: large tree
   abstract: true
   components:
+  - type: CFWorkable
+    hits: 5
   - type: Sprite
     offset: 0,1.55
   - type: Destructible
