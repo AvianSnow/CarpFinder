@@ -1,0 +1,24 @@
+- type: entity
+  id: stone_of_encouragment
+  parent: BaseItem
+  name: Stone of Encouragement
+  description: A block of white marble, but it gives you hope.
+  categories: [ ForkFiltered ]
+  components:
+  - type: CFItemPrice
+    copper: 100 # KCTG: Marble
+    fullResale: true
+  - type: Item
+    size: Normal
+  - type: ActionGrant
+    actions:
+    - CFActStoneOfEncouragement
+  - type: ItemActionGrant
+  - type: CFStoneOfEncouragement
+  - type: Speech
+  - type: Sprite
+    noRot: true
+    sprite: _CP14/Objects/Materials/marble_block.rsi
+    layers:
+    - state: stone
+      map: ["base"]
